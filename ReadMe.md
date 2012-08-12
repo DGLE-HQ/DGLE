@@ -45,8 +45,8 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 
 Simple C++ *"HelloWorld"* application for Windows.
 This code will setup engine, create window and render *"Hello, World!"* text on screen via default font.
-You can copy-paste this code to your 'main.cpp' and you are done! Also don't forget to copy engine headers
-(you can find them in *"include/cpp"* folder) and library 'DGLE2.dll' (you can find it in *"bin/win"* folder)
+You can copy-paste this code to your *'main.cpp'* and you are done! Also don't forget to copy engine headers
+(you can find them in *"include/cpp"* folder) and library *'DGLE2.dll'* (you can find it in *"bin/win"* folder)
 in suitable locations to be found by compiler and executable.
 
 ```cpp
@@ -98,9 +98,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 You can find more examples in the *"src/examples"* folder. Also for other supported languages.
 
-You can find build instructions [here](docs/HowToBuild.txt).
+You can find build instructions [here](DGLE2/blob/master/docs/HowToBuild.txt).
 
-Also if you want to participate in the project development process you must read and understand [development rules](docs/DevelopmentRules.txt).
+Also if you want to participate in the project development process you must read and understand [development rules](DGLE2/blob/master/docs/DevelopmentRules.txt).
 
 ## Documentation
 
@@ -114,7 +114,7 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 
 Compiled and ready to use latest cross platform SDK always could be found [here](https://github.com/megaDRONe86/DGLE2/downloads). 
 
-See [ChangeLog](ChangeLog.txt) for full list of changes.
+See [ChangeLog](DGLE2/blob/master/ChangeLog.txt) for full list of changes.
 
 ## Credits
 
