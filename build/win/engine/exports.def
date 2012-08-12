@@ -1,0 +1,5 @@
+LIBRARY	"DGLE2"
+
+EXPORTS
+	CreateEngine		PRIVATE
+	FreeEngine			PRIVATE

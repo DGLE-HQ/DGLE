@@ -1,0 +1,33 @@
+===============================================================================
+  Common
+-----------
+
+There is no automake tools for now.
+So use IDE to build project.
+We use most common IDE for each platform.
+You can find solutions and projects files in "build/<your platform>/" folder.
+
+===============================================================================
+  Windows
+-----------
+
+To build engine for Windows you should have at least Microsoft Visual Studio 2010 Express for C++ and C# or any later version.
+You can use MonoDevelop as well for building .Net utilites and tools.
+Is better to have DirectX SDK installed, engine uses August 2009 version. If you don't want to use DirectX SDK you should uncomment
+NO_DIRECTX define in "src/engine/Common.h" but some features would be unavailable.
+
+===============================================================================
+   Linux
+-----------
+
+===============================================================================
+   MacOS
+-----------
+
+===============================================================================
+    iOS
+-----------
+
+===============================================================================
+  Android
+-----------

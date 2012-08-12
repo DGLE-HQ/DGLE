@@ -1,26 +1,33 @@
+# Forces not to commit DevTest's main.cpp
+#src/tests/dev/main.cpp
+
+# Engine specific
+log.txt
+docs/api_help/
+
 # Windows
 desktop.ini
-bin/*
+DGLE2.dll
+bin/win/tests/*.exe
+bin/win/x64/tests/*.exe
+bin/win/examples/*.exe
+bin/win/x64/examples/*.exe
+bin/win/plugins/*.dplug
+bin/win/x64/plugins/*.dplug
+bin/win/tools/*.exe
+bin/win/x64/tools/*.exe
 
-# MacOS
-.DS_Store
-
-# Build Folders
-[Bb]in/
-[Oo]bj/
-
-# Visual Studio User-specific files
+# Visual Studio
 *.suo
 *.user
 *.sln.docstates
-
-# Build results
 [Dd]ebug/
 [Rr]elease/
-x64/
 *_i.c
 *_p.c
 *.ilk
+*.lib
+*.exp
 *.meta
 *.obj
 *.pch
@@ -36,29 +43,25 @@ x64/
 *.vspscc
 *.vssscc
 .builds
-
-# Visual C++ cache files
 ipch/
 *.aps
 *.ncb
 *.opensdf
 *.sdf
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Delphi
+*.dcu
+*.~*~
+*.local
+*.identcache
+__history/
+*.drc
+*.map
 
-# Compiled Dynamic libraries
-*.so
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+# MacOS
+.DS_Store
 
 # XCode
-build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -73,33 +76,3 @@ xcuserdata
 profile
 *.moved-aside
 DerivedData
-
-# built application files
-*.apk
-*.ap_
-
-# files for the dex VM
-*.dex
-
-# Java class files
-*.class
-
-# generated files
-bin/
-gen/
-
-# Local configuration file (sdk path, etc)
-local.properties
-
-# Eclipse project files
-.classpath
-.project
-
-# Delphi
-*.dcu
-*.~*~
-*.local
-*.identcache
-__history
-*.drc
-*.map

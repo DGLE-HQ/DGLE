@@ -1,0 +1,231 @@
+================================== Important ==================================
+ If you want participate in engine development you must follow this rules.
+ Otherwise your pull request will be guaranteed rejected.
+===============================================================================
+
+1.	About structure and naming of folders and files.
+	a)	All folders names are lower-case. Words are separated by "_". Never use upper-case characters.
+	b)	You can create subfolders and files only in "src/examples/<your example name>", "src/plugins/<your plugin name>",
+		"include/<your language bindings>" and "resources/examples/<your example name>" folders. Project files also could
+		be created in "build/<your platform>/examples/<your example name>" or "build/<your platform>/plugins/<your plugin name>"
+		folders if needed.
+	c)	All *.txt files must be named in CamelCase style.
+	d)	All resource and other miscellaneous files are named in lower-case with "_" word separator.
+	e)	All examples "src/examples/" and common "src/common" source files are named in lower-case with "_" word separator.
+	f)	All engine and plugin sources are named in CamelCase style. Solutions and projects are named in CamelCase as well.
+		The only exceptions are some engine headers like "DGLE2_Types.h", "DGLE2_CoreRenderer.h", "DGLE2_EXT.h", etc. This
+		exception spreads onlu upon system headers started with "DGLE2".
+	g)	All binaries are named in CamelCase style.
+	
+2.	Way to solve include collisions of headers.
+	a)	Do not use platform specific things like #pragma once .
+	b)	If your file has for example name "GraphVis.h" the precompiler directive should be:
+		
+		#ifndef _GRAPH_VIS_H
+		#define _GRAPH_VIS_H
+		
+		< your code here >
+		
+		#endif // _GRAPH_VIS_H
+	
+3.	Functions and methods naming.
+	a)	All functions and public methods are named in CamelCase style.
+	b)	All private class methods begins with symbol "_".
+	
+4.	Naming of classes, structures, types and enums.
+	a)	All class names begins with symbol "C" followed by CamelCase styled name ex. "CMyGame".
+	b)	Rules for structs and typedefs are the same as for classes except the first symbol is "T".
+	c)	Enums have upper-case names with symbol "_" as word separator. First two symbols of the name must be "E_".
+		Enum elements also have upper-case names with symbol "_" as word separator. First characters of the element name
+		must be concatenation of first characters of every word of the enum name. First element value of the enum must be
+		set. See example below for clear understanding.
+		
+		enum E_BATCH_MODE
+		{
+			BM_AUTO = 0,
+			BM_DISABLED,
+			BM_ENABLED,
+			BM_ENABLED_UPDATE_EVERY_TICK
+		};
+	
+5.	Variables naming rules.
+	a)	Global variables, public class members and function arguments are named in lowerCamelCase style. For example: bool isGameStarted;
+	b)	Private class members are named as public but first character is "_".
+	c)	Local variables must have lower-case names with "_" as separator. Example: bool is_game_started;
+	
+6.	Variables prefixes and data types.
+	a)	We use Hungarian Notation especially for pointers and strings. It is highly recommended to use
+		this notation almost everywhere in project. There are type and special prefixes. Prefixes could be combined.
+		See tables and code sample at the bottom of the file for better understanding.
+		
+		/-----------------------\
+		|  Type		|   Prefix  |
+		-------------------------
+		| int		|	i 		|
+		| unsigned	|	u		| 
+		| long int	|	i32		|
+		| short int	|	i16		|
+		| long long	|	i64		|
+		| float		|	f		|
+		| double	|	d 		|
+		| char/byte	|	bt		|
+		| bool		|	b		|
+		| char		|	c		|
+		| wchar		|	wc		|
+		| class		|	cl		|
+		| <type>*	|	p		|
+		| enum		|	e		|
+		| struct 	|	st		|
+		| string	|	str		|
+		| &			|	r		|
+		| array		|	a		|
+		| typedef	|	t		|
+		\-----------------------/
+		
+		/-----------------------\
+		|	Special prefixes	|
+		-------------------------
+		| const		|	c_		|
+		| static	|	s_		|
+		| volatile	|	v_		|
+		| mutable	|	m_		|
+		| extern	|	e_		|
+		\-----------------------/
+	
+	b)	Project uses its own data types becuse they are platform independent. And you must use them too. You could
+		find all of them in the "include/cpp/DGLE2_Types.h". Here is most common types:
+	
+		/---------------------------------------------------\
+		| short int					|	int16				|
+		| long int					|	int32				|
+		| signed char				|	int8				|
+		| wchar_t					|	wchar				|
+		| unsigned short int		|	uint				|
+		| unsigned short int		|	uint16				|
+		| unsigned long int			|	uint32				|
+		| unsigned char				|	uint8				|
+		| unsigned char				|	uchar				|
+		| signed long long			|	int64				|
+		| unsigned long long		|	uint64				|
+		| window descriptor			|	TWinHandle			|
+		| color descriptor			|	TColor4				|
+		| two component vector		|	TPoint2 or TVec2	|
+		| three component vector	|	TPoint3 or TVec3	|
+		| rectangle discriptor		|	TRectF				|
+		|  .......................  |  ...................  |
+		\---------------------------------------------------/
+		
+7.	Comments and auto documentation.
+	a) Every header or cpp file of engine or plugin must starts with this header:
+	
+		/**
+		\author		< your full name > aka < your nickname >
+		\date		< last makor modification date dd.mm.yyyy > (c)Korotkov Andrey
+		
+		This file is a part of DGLE2 project and is distributed
+		under the terms of the GNU Lesser General Public License.
+		See "DGLE2.h" for more details.
+		*/
+		
+		It is not necessary to paste this header into examples, tools or your custom plugins, only in core project source code.
+	b)	All source code in "include/" folder must be commented the way to be later auto documented by doxygen. See engine headers as the example.
+	c)	Use only english language in comments.
+	
+8.	Macroses naming rule is simple. Use upper-case characters separated by "_".
+
+9.	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
+	One tab is equal to four spaces.
+	
+10.	If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
+	to make right decision concerning the style and principles of code around.
+	
+================================ Code Sample ==================================
+
+ Here is a code sample written according to described rules.
+ 
+===============================================================================
+
+-----------------
+|	MyGame.h	|
+-----------------
+
+#ifndef _MY_GAME_H
+#define _MY_GAME_H
+
+#include "DGLE.h"
+using namespace DGLE2;
+
+#define GAME_SPEED 10
+
+E_GAME_STATES
+{
+	GS_STAGE_1 = 0,
+	GS_STAGE_2
+};
+
+class CCoolGame
+{
+	static const uint _s_c_uiMaxLives;
+	
+	TVec2	_stPlayerPos;
+	float	_someValue;
+	bool	_bIsGameStarted;
+	
+	void _Update(double dDeltaTime);
+
+public:
+	
+	E_GAME_STATES eGameState;
+	
+	CCoolGame(uint uiGameSpeed);
+	bool StartGame();
+
+};
+
+bool InitGame(const char *pcArguments, uint uiArgsCount);
+	
+#endif // _MY_GAME_H
+
+-----------------
+|	MyGame.cpp	|
+-----------------
+
+#include "MyGame.h"
+
+const uint c_someMagicValue = 10;
+
+CCoolGame::CCoolGame(uint uiGameSpeed):
+_s_c_uiMaxLives(c_someMagicValue),
+_bIsGameStarted(false),
+eGameState(GS_STAGE_1)
+{
+	_someValue = float(rand()%100);
+}
+
+CCoolGame::_Update(double dDeltaTime)
+{
+	//ToDo: Insert code here
+}
+
+bool CCoolGame::StartGame()
+{
+	eGameState = GS_STAGE_1;
+	_bIsGameStarted = true;
+	_stPlayerPos = TVec2(float(rand()%640), float(rand()%480));
+	
+	return true;
+}
+
+CCoolGame clGameOne(GAME_SPEED), *pGameTwo = NULL;
+
+bool InitGame(const char *pcArguments, uint uiArgsCount)
+{
+	int16 i16_my_magic_number = 44;
+	
+	bool is_game_started = false;
+	
+	if (i16_my_magic_number == rand()%88)
+		is_game_started = clGameOne.StartGame();
+
+	return is_game_started;
+}

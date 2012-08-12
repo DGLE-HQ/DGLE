@@ -2,30 +2,39 @@
 * text=auto
 
 # Custom for Visual Studio
-*.cs     diff=csharp
-*.sln    merge=union
-*.csproj merge=union
-*.vbproj merge=union
-*.fsproj merge=union
-*.dbproj merge=union
+*.cs		diff=csharp
+*.sln		merge=union
+*.csproj	merge=union
+*.vbproj	merge=union
+*.fsproj	merge=union
+*.dbproj	merge=union
 
 # Always normalized line endings for these files
-*.c text
-*.cpp text
-*.h text
+*.c		text
+*.cpp	text
+*.h		text
 
 # Standard to msysgit
-*.doc	 diff=astextplain
-*.DOC	 diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
-*.dot  diff=astextplain
-*.DOT  diff=astextplain
-*.pdf  diff=astextplain
-*.PDF	 diff=astextplain
-*.rtf	 diff=astextplain
-*.RTF	 diff=astextplain
+*.doc	diff=astextplain
+*.DOC	diff=astextplain
+*.docx	diff=astextplain
+*.DOCX	diff=astextplain
+*.dot	diff=astextplain
+*.DOT	diff=astextplain
+*.pdf	diff=astextplain
+*.PDF	diff=astextplain
+*.rtf	diff=astextplain
+*.RTF	diff=astextplain
 
 # Binary files
-*.png binary
-*.jpg binary
+*.png	binary
+*.jpg	binary
+*.bmp	binary
+*.tga	binary
+*.dcp	binary
+*.dft	binary
+*.dmd	binary
+*.exe	binary
+*.dll	binary
+*.bin	binary
+*.max	binary

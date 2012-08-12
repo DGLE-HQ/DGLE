@@ -2,7 +2,7 @@
 
 ## Introduction
 
-[DGLE2](http://dgle2.dronprogs.org) is a powerful cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+[DGLE2](http://dgle.dronprogs.org) is a powerful cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
 The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology, capable of building any 2D/3D
 games, real-time visualizations, scientific applications etc. It should be easy to make great projects only by using editors and scripts or go deeper and use
@@ -10,9 +10,9 @@ your programming skills of your favorite language to create really exciting proj
 for engine and share them with others over the web or just get plugins already made by others. When project is complete it can be easily build for every popular
 platform.
 
-See [gallery](http://dgle2.dronprogs.org/dgle2_gallery) for screenshots of projects based on this engine.
+See [gallery](http://dgle.dronprogs.org/dgle2_gallery) for screenshots of projects based on this engine.
 
-Visit [official website](http://dgle2.dronprogs.org) for more details on this project and also plugins, articles, tutorials, samples and forum.
+Visit [official website](http://dgle.dronprogs.org) for more details on this project and also plugins, articles, tutorials, samples and forum.
 
 ## Features
 
@@ -22,6 +22,7 @@ Visit [official website](http://dgle2.dronprogs.org) for more details on this pr
 * Multi render support: OpenGL (1.x-2.x and 4.x), OpenGL ES (1.1, 2.0 and 3.0), Direct3D (9.0c and 11.1).
 * Have set of visual editors for rapid application development.
 * Provides all necessary API for development high quality  2D and 3D real-time applications.
+* Flexible abstraction levels allow you to programming without any restrictions from API.
 * Made by GameDev professionals for you with LoVe!
 
 ## Supported Platforms
@@ -38,7 +39,7 @@ Visit [official website](http://dgle2.dronprogs.org) for more details on this pr
 * C#
 * Delphi
 * Free Pascal
-* Lua
+* Lua (for scripting purpose only)
 
 ## Getting Started
 
@@ -48,16 +49,16 @@ You can copy-paste this code to your 'main.cpp' and you are done! Also don't for
 (you can find them in *"include/cpp"* folder) and library 'DGLE2.dll' (you can find it in *"bin/win"* folder)
 in suitable locations to be found by compiler and executable.
 
-```C++
+```cpp
 #include "DGLE2.h"
 
 using namespace DGLE2;
 
 ENG_DYNAMIC_FUNC
 
-IEngineCore	*pEngineCore = NULL;
-IBitmapFont	*pFont = NULL;
-IRender2D	*pRender2D = NULL;
+IEngineCore *pEngineCore = NULL;
+IBitmapFont *pFont = NULL;
+IRender2D *pRender2D = NULL;
 
 void CALLBACK Init(void *pParametr)
 {
@@ -71,7 +72,7 @@ void CALLBACK Init(void *pParametr)
 	resMan->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj *&)pFont);
 }
 
-void CALLBACK Render(void *pParametr, uint uiDeltaTime)
+void CALLBACK Render(void *pParametr)
 {
 	pRender2D->Begin2D();
 	pFont->Draw2D(0, 0, "Hello, World!");
@@ -95,39 +96,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 ```
 
-You can find more examples in the *"src/examples"* folder.
+You can find more examples in the *"src/examples"* folder. Also for other supported languages.
 
-You can find build instructions [here](the build/HowTo.txt).
+You can find build instructions [here](docs/HowToBuild.txt).
+
+Also if you want to participate in the project development process you must read and understand [development rules](docs/DevelopmentRules.txt).
 
 ## Documentation
 
-You can find engine API documentation [here](docs/api/index.html).
+You can find engine API documentation [here](http://dgle.dronprogs.org/api_help/index.html).
 
 ## License
 
 Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License).
 
-## Release History
+## Latest SDK version
 
-### Current version
+Compiled and ready to use latest cross platform SDK always could be found [here](https://github.com/megaDRONe86/DGLE2/downloads). 
 
-0.3.0 beta (18.08.2012)
-
-### Discription
-
-This version is like a new and fresh start for the project.
-
-### Major changes
- 
-* Total engine reengineering, a lot of stuff was made from scratch.
-* Multi render support and totally new rendering subsystem.
-* Isolation of platform depended code.
-* Some old stuff (like plugins for browsers) was dropped off.
-* No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
-
-*And much more!*
-
-See [ChangeLog](ChangeLog.txt) for full list of versions and changes.
+See [ChangeLog](ChangeLog.txt) for full list of changes.
 
 ## Credits
 
@@ -167,6 +154,6 @@ All DeeProSoft employees for project support
 
 ## Contacts
 
-Visit [http://dgle2.dronprogs.org](http://dgle2.dronprogs.org) for more details.
+Visit [http://dgle.dronprogs.org](http://dgle.dronprogs.org) for more details.
 
-Feel free to mail us [dgle2@dronprogs.org](mailto:dgle2@dronprogs.org) with any questions.
+Feel free to mail us [dgle@dronprogs.org](mailto:dgle@dronprogs.org) with any questions.
