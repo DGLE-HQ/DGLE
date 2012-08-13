@@ -2,7 +2,7 @@
 \file		DGLE2.h
 \author		Korotkov Andrey aka DRON
 \version	Beta 3
-\date		XX.XX.2012 (c)Korotkov Andrey
+\date		XX.XX.2012 (c)Korotkov Andrey ($Rev: 1 $) ($Date: $)
 
 \brief		Main DGLE2 engine header.
 

@@ -4,8 +4,8 @@
 [!+!]	- new major feature added
 [ - ]	- removed
 (WinXP) - platform name for changes which influence only one platform
-#		- means that subject is not yet finished
-*		- means that subject is not yet commited
+#	- means that subject is not yet finished
+*	- means that subject is not yet commited
 
 ===============================================================================
 
@@ -37,8 +37,8 @@ Below goes changes for previous pre GitHub releases. All in russian.
 [!+!]	- серьезное добавление
 [ - ]	- убрано
 (WinXP) - у изменения может быть указана платформа, если оно повлияло только на конкретную систему
-#		- означает, что пункт не доделан или не протестирован и к использованию не пригоден
-*		- означает, что пункт еще не был закоммичен
+#	- означает, что пункт не доделан или не протестирован и к использованию не пригоден
+*	- означает, что пункт еще не был закоммичен
 
 ===============================================================================
 

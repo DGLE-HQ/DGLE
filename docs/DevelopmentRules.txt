@@ -17,16 +17,7 @@
 		exception spreads onlu upon system headers started with "DGLE2".
 	g)	All binaries are named in CamelCase style.
 	
-2.	Way to solve include collisions of headers.
-	a)	Do not use platform specific things like #pragma once .
-	b)	If your file has for example name "GraphVis.h" the precompiler directive should be:
-		
-		#ifndef _GRAPH_VIS_H
-		#define _GRAPH_VIS_H
-		
-		< your code here >
-		
-		#endif // _GRAPH_VIS_H
+2.	Use only "#pragma once" to solve include collisions of headers, never use other metods.
 	
 3.	Functions and methods naming.
 	a)	All functions and public methods are named in CamelCase style.
@@ -58,62 +49,62 @@
 		this notation almost everywhere in project. There are type and special prefixes. Prefixes could be combined.
 		See tables and code sample at the bottom of the file for better understanding.
 		
-		/-----------------------\
-		|  Type		|   Prefix  |
-		-------------------------
-		| int		|	i 		|
-		| unsigned	|	u		| 
-		| long int	|	i32		|
-		| short int	|	i16		|
-		| long long	|	i64		|
-		| float		|	f		|
-		| double	|	d 		|
-		| char/byte	|	bt		|
-		| bool		|	b		|
-		| char		|	c		|
-		| wchar		|	wc		|
-		| class		|	cl		|
-		| <type>*	|	p		|
-		| enum		|	e		|
-		| struct 	|	st		|
-		| string	|	str		|
-		| &			|	r		|
-		| array		|	a		|
-		| typedef	|	t		|
-		\-----------------------/
+		/-------------------------------\
+		|  Type		|     Prefix    |
+		---------------------------------
+		| int		|	i	|
+		| unsigned	|	u	| 
+		| long int	|	i32	|
+		| short int	|	i16	|
+		| long long	|	i64	|
+		| float		|	f	|
+		| double	|	d	|
+		| char/byte	|	bt	|
+		| bool		|	b	|
+		| char		|	c	|
+		| wchar		|	wc	|
+		| class		|	cl	|
+		| <type>*	|	p	|
+		| enum		|	e	|
+		| struct 	|	st	|
+		| string	|	str	|
+		| &		|	r	|
+		| array		|	a	|
+		| typedef	|	t	|
+		\-------------------------------/
 		
-		/-----------------------\
+		/-------------------------------\
 		|	Special prefixes	|
-		-------------------------
-		| const		|	c_		|
-		| static	|	s_		|
-		| volatile	|	v_		|
-		| mutable	|	m_		|
-		| extern	|	e_		|
-		\-----------------------/
+		---------------------------------
+		| const		|	c_	|
+		| static	|	s_	|
+		| volatile	|	v_	|
+		| mutable	|	m_	|
+		| extern	|	e_	|
+		\-------------------------------/
 	
 	b)	Project uses its own data types becuse they are platform independent. And you must use them too. You could
 		find all of them in the "include/cpp/DGLE2_Types.h". Here is most common types:
 	
-		/---------------------------------------------------\
-		| short int					|	int16				|
-		| long int					|	int32				|
-		| signed char				|	int8				|
-		| wchar_t					|	wchar				|
-		| unsigned short int		|	uint				|
-		| unsigned short int		|	uint16				|
-		| unsigned long int			|	uint32				|
-		| unsigned char				|	uint8				|
-		| unsigned char				|	uchar				|
-		| signed long long			|	int64				|
-		| unsigned long long		|	uint64				|
-		| window descriptor			|	TWinHandle			|
-		| color descriptor			|	TColor4				|
-		| two component vector		|	TPoint2 or TVec2	|
-		| three component vector	|	TPoint3 or TVec3	|
-		| rectangle discriptor		|	TRectF				|
-		|  .......................  |  ...................  |
-		\---------------------------------------------------/
+		/-------------------------------------------------------\
+		| short int			|	int16		|
+		| long int			|	int32		|
+		| signed char			|	int8		|
+		| wchar_t			|	wchar		|
+		| unsigned short int		|	uint		|
+		| unsigned short int		|	uint16		|
+		| unsigned long int		|	uint32		|
+		| unsigned char			|	uint8		|
+		| unsigned char			|	uchar		|
+		| signed long long		|	int64		|
+		| unsigned long long		|	uint64		|
+		| window descriptor		|	TWinHandle	|
+		| color descriptor		|	TColor4		|
+		| two component vector		|	TPoint2 or TVec2|
+		| three component vector	|	TPoint3 or TVec3|
+		| rectangle discriptor		|	TRectF		|
+		|    .......................    |  ...................  |
+		\-------------------------------------------------------/
 		
 7.	Comments and auto documentation.
 	a) Every header or cpp file of engine or plugin must starts with this header:
@@ -146,7 +137,7 @@
 ===============================================================================
 
 -----------------
-|	MyGame.h	|
+|   MyGame.h	|
 -----------------
 
 #ifndef _MY_GAME_H
@@ -187,7 +178,7 @@ bool InitGame(const char *pcArguments, uint uiArgsCount);
 #endif // _MY_GAME_H
 
 -----------------
-|	MyGame.cpp	|
+|  MyGame.cpp	|
 -----------------
 
 #include "MyGame.h"

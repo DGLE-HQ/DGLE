@@ -1,6 +1,3 @@
-# Forces not to commit DevTest's main.cpp
-#src/tests/dev/main.cpp
-
 # Engine specific
 log.txt
 docs/api_help/
