@@ -92,7 +92,7 @@ void CConsole::_Cmdlist()
 		for (size_t i = 0; i<_commands.size(); i++)
 			lst += " >" + string(_commands[i].pcName) + "\r\n";
 		
-		lst+=string("------" + IntToStr(_commands.size()) + " registered commands------\r\n");
+		lst+=string("------" + UIntToStr((uint)_commands.size()) + " registered commands------\r\n");
 		
 		Write(lst.c_str());
 	}
@@ -203,7 +203,7 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 		if (flag)
 		{
 			count++;
-			idx = i;
+			idx = (int)i;
 			cmds += " >"+string(_commands[i].pcName) + "\r\n";
 		}
 	}

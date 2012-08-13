@@ -51,7 +51,7 @@ extern bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS 
 
 	EngineInstances[cur_id].eGetEngFlags = eFlags;
 	EngineInstances[cur_id].pclConsole = new CConsole(!(eFlags & GEF_FORCE_SINGLE_THREAD));
-	EngineInstances[cur_id].pclCore = new CCore(cur_id, eFlags & GEF_FORCE_SINGLE_THREAD);
+	EngineInstances[cur_id].pclCore = new CCore((uint)cur_id, eFlags & GEF_FORCE_SINGLE_THREAD);
 
 	if (eFlags & GEF_FORCE_QUIT)
 		bTerminate = true;

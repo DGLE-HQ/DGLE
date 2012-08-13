@@ -32,11 +32,11 @@ CMainWindow::~CMainWindow()
 
 int CMainWindow::_wWinMain(HINSTANCE hInstance)
 {
-	LOG("**Entering main loop**", LT_INFO);
-
 	_bIsLooping = true;
 	
 	MSG st_msg = {0};
+
+	LOG("**Entering main loop**", LT_INFO);
 
 	while (_bIsLooping)
 		if (PeekMessage(&st_msg, NULL, 0, 0, PM_REMOVE ))
@@ -52,9 +52,9 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 		else 
 			_pDelMainLoop->Invoke();
 
-	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
-
 	LOG("**Exiting main loop**", LT_INFO);
+
+	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
 
 	return (int) st_msg.wParam;
 }

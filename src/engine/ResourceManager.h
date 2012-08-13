@@ -42,7 +42,7 @@ struct TResource
 	TResource(const char *pFullName, IEngBaseObj *pObject):
 	pObj(pObject)
 	{
-		nameHash = GetCRC32((uint8*)pFullName, strlen(pFullName)*sizeof(char));
+		nameHash = GetCRC32((uint8*)pFullName, (uint32)strlen(pFullName)*sizeof(char));
 	}
 };
 

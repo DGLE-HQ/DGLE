@@ -1,6 +1,6 @@
 /**
-\author		Korotkov Andrey aka DRON
-\date		23.04.2012 (c)Sivkov Ilya
+\author		Sivkov Ilya
+\date		23.04.2012 (c)Andrey Korotkov
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -93,7 +93,7 @@ HRESULT CALLBACK CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN
 
 	string pack_name = string(pcName);
 
-	int palka_pos = pack_name.find_first_of("|");
+	uint palka_pos = (uint)pack_name.find_first_of("|");
 
 	if (!(palka_pos > 0 && palka_pos != string::npos))
 	{
@@ -182,7 +182,7 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 
 uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName)
 {
-	uint32 crc32 = GetCRC32((uint8*)strName.c_str(), strName.size());
+	uint32 crc32 = GetCRC32((uint8*)strName.c_str(), (uint32)strName.size());
 
 	if (_pInfoTable)
 		for (uint32 i = 0; i < _ui32FilesCount; i++)
@@ -196,7 +196,7 @@ HRESULT CALLBACK CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	string pack_name = string(pcName);
 
-	int palka_pos = pack_name.find_first_of("|");
+	uint palka_pos = (uint)pack_name.find_first_of("|");
 
 	if (!(palka_pos > 0 && palka_pos != string::npos))
 	{
@@ -219,7 +219,7 @@ HRESULT CALLBACK CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, I
 {
 	string pack_name = string(pcMask);
 
-	int palka_pos = pack_name.find_first_of("|");
+	uint palka_pos = (uint)pack_name.find_first_of("|");
 
 	if (!(palka_pos > 0 && palka_pos != string::npos))
 	{
@@ -262,17 +262,17 @@ HRESULT CALLBACK CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, I
 
 void CDCPFileSystem::_ReplaceChInStr(string &outStr, const string &findCh, const string &repCh)
 {
-	int posCh = 0;
+	uint posCh = 0;
 
-	posCh = outStr.find_first_of(findCh.c_str(), posCh);
+	posCh = (uint)outStr.find_first_of(findCh.c_str(), posCh);
 
 	while (posCh != string::npos)
 	{		
-		outStr.replace(posCh, findCh.size(),repCh);
+		outStr.replace(posCh, findCh.size(), repCh);
 
-		posCh += repCh.size();
+		posCh += (uint)repCh.size();
 
-		posCh = outStr.find_first_of(findCh.c_str(), posCh);	
+		posCh = (uint)outStr.find_first_of(findCh.c_str(), posCh);	
 	}
 }
 

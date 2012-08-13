@@ -128,7 +128,7 @@ HRESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 		}
 	} 
 
-	_iPrevLineSize = strlen(pcTxt);
+	_iPrevLineSize = (int)strlen(pcTxt);
 
 	return S_OK;
 }
@@ -276,9 +276,9 @@ int WINAPI CConsoleWindow::_WinMain(HINSTANCE hInstance)
 	
 	SetWindowLongPtr(_hEdit, GWLP_USERDATA, (LONG_PTR)this);
 
-	_pOldEditProc = (void*)SetWindowLong(_hEdit, GWLP_WNDPROC, (LONG)(WNDPROC)CConsoleWindow::_s_WndEditProc); 
-	
-	SendMessage(_hEdit, WM_SETFONT, (WPARAM)_hFont, MAKELPARAM(TRUE,0));
+	_pOldEditProc = (void*)SetWindowLongPtr(_hEdit, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)CConsoleWindow::_s_WndEditProc); 
+
+	SendMessage(_hEdit, WM_SETFONT, (WPARAM)_hFont, MAKELPARAM(TRUE, 0));
 	
 	ResetSizeAndPos();
 

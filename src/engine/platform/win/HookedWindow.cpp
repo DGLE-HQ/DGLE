@@ -109,7 +109,7 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 			_stOldRootWindowProc = NULL;
 		else
 		{
-			_stOldRootWindowProc = (WNDPROC)SetWindowLong(_tRootHWnd, GWLP_WNDPROC, (long)_s_RootWindowProc);
+			_stOldRootWindowProc = (WNDPROC)SetWindowLongPtr(_tRootHWnd, GWLP_WNDPROC, (LONG_PTR)_s_RootWindowProc);
 
 			if (_stOldRootWindowProc == NULL)
 				LOG("Failed to set root window message hook.", LT_ERROR);
@@ -122,7 +122,7 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 		}
 	}
 
-	_stOldWindowProc = (WNDPROC)SetWindowLong(_tWnd, GWLP_WNDPROC, (long)_s_WindowProc);
+	_stOldWindowProc = (WNDPROC)SetWindowLongPtr(_tWnd, GWLP_WNDPROC, (LONG_PTR)_s_WindowProc);
 	
 	if (_stOldWindowProc!=NULL)
 	{
@@ -249,8 +249,8 @@ void CHookedWindow::_KillWindow()
 		LOG("Can't kill update timer.", LT_ERROR);
 
 	if(
-		SetWindowLong(_tWnd, GWLP_WNDPROC, (long)_stOldWindowProc)!=NULL &&
-		(_stOldRootWindowProc == NULL || SetWindowLong(_tRootHWnd, GWLP_WNDPROC, (long)_stOldRootWindowProc) != NULL)
+		SetWindowLongPtr(_tWnd, GWLP_WNDPROC, (LONG_PTR)_stOldWindowProc)!=NULL &&
+		(_stOldRootWindowProc == NULL || SetWindowLongPtr(_tRootHWnd, GWLP_WNDPROC, (LONG_PTR)_stOldRootWindowProc) != NULL)
 		)
 		LOG("Window controls message hooks unset successfully.", LT_INFO);
 	else 

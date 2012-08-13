@@ -86,7 +86,7 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_CHAR:
-		return TWinMessage(WMT_ENTER_CHAR, wParam);
+		return TWinMessage(WMT_ENTER_CHAR, (uint32)wParam);
 
 	case WM_MOUSEMOVE:
 		return TWinMessage(WMT_MOUSE_MOVE, LOWORD(lParam), HIWORD(lParam));
@@ -320,7 +320,7 @@ uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer)
 
 	UINT id = 0;
 
-	if (t.uiId = SetTimer(NULL, id, uiInterval, TimerProc), t.uiId == 0)
+	if (t.uiId = (uint)SetTimer(NULL, id, uiInterval, TimerProc), t.uiId == 0)
 		return -1;
 	else
 	{
@@ -409,9 +409,9 @@ bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames, boo
 			{
 				string fullname(tmp);
 
-				int pos = fullname.find_last_of("\\");
+				int pos = (int)fullname.find_last_of("\\");
 
-				fullname = fullname.substr(0,pos+1);
+				fullname = fullname.substr(0, pos + 1);
 				fullname += string(wfd.cFileName);
 				fileNames.push_back(fullname);
 			}
@@ -829,7 +829,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	stSysInfo.uiVideocardRAM    = 0;
 	stSysInfo.uiVideocardCount  = 0;
 
-	strcpy(stSysInfo.cVideocardName,dd.DeviceString); 
+	strcpy(stSysInfo.cVideocardName, dd.DeviceString); 
 
 #ifdef DXDIAG_VIDEO_INFO
 	}

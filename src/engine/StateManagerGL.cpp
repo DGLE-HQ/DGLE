@@ -555,7 +555,7 @@ inline void CTextureState::UnbindAll()
 		if (_textures[i].enabled)
 		{
 			if (_textures.size() > 1)
-				glActiveTextureARB(GL_TEXTURE0_ARB + i);
+				glActiveTextureARB(GL_TEXTURE0_ARB + (GLenum)i);
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 			::glDisable(GL_TEXTURE_2D);

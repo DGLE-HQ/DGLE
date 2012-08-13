@@ -86,7 +86,7 @@ void CRender2D::DrawProfiler()
 	{
 		uint 
 			objs_count  = _iObjsDrawnCount,
-			vbos_count  = _pBatchBuffers.size(),
+			vbos_count  = (uint)_pBatchBuffers.size(),
 			vbos_in_use = _batchBufferCurCounter,
 			effective_b = _batchBuffersNotModefiedPerFrameCounter,
 			max_b_size	= _batchMaxSize,

@@ -336,7 +336,7 @@ HRESULT CALLBACK CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjType, I
 
 HRESULT CALLBACK CResourceManager::GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj)
 {
-	uint32 hash = GetCRC32((uint8*)pcFileName, strlen(pcFileName)*sizeof(char));
+	uint32 hash = GetCRC32((uint8*)pcFileName, (uint32)strlen(pcFileName)*sizeof(char));
 
 	for (size_t i = 0; i < _resList.size(); i++)
 		if (_resList[i].nameHash == hash)
@@ -1244,7 +1244,7 @@ void CResourceManager::_ProfilerEventHandler() const
 	Core()->RenderProfilerTxt("== Resource Man. Profiler ==", color);
 
 	if (_iProfilerState > 0)
-		Core()->RenderProfilerTxt(("Resources loaded: " + UIntToStr(_resList.size())).c_str(), color);
+		Core()->RenderProfilerTxt(("Resources loaded: " + UIntToStr((uint)_resList.size())).c_str(), color);
 
 	if (_iProfilerState > 1)
 	{
@@ -1485,7 +1485,7 @@ inline uint CResourceManager::_GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE e
 	for (size_t i = 0; i<_clFileFormats.size(); i++)
 		if ((eObjType == EOT_UNKNOWN || _clFileFormats[i].type == eObjType) && _clFileFormats[i].ext == file_ext)
 		{
-			ret = i;
+			ret = (uint)i;
 			break;
 		}
 

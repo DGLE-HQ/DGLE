@@ -83,7 +83,7 @@ HRESULT CALLBACK CBitmapFont::Draw3D(const char *pcTxt)
 
 	if (_uiBufferSize < length*12*2)
 	{
-		_uiBufferSize = length*12*2;
+		_uiBufferSize = (uint)length*12*2;
 		delete[] _pBuffer;
 		_pBuffer = new float[_uiBufferSize];
 	}
@@ -116,7 +116,7 @@ HRESULT CALLBACK CBitmapFont::Draw3D(const char *pcTxt)
 		x += curb_w * _fScale;
 	}
 
-	Core()->pCoreRenderer()->Draw(TDrawDataDesc((uint8 *)_pBuffer, length*12*sizeof(float)), CRDM_TRIANGLES, length*6);
+	Core()->pCoreRenderer()->Draw(TDrawDataDesc((uint8 *)_pBuffer, (uint)length*12*sizeof(float)), CRDM_TRIANGLES, (uint)length*6);
 
 	return S_OK;
 }
