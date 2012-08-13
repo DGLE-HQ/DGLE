@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _HDFILE_H
-#define _HDFILE_H
+#pragma once
 
 #include "..\Common.h"
 
@@ -36,5 +35,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION(IFile)
 };
-
-#endif	//_HDFILE_H

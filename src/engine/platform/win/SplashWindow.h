@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _SPLASH_H
-#define _SPLASH_H
+#pragma once
 
 #include "..\Common.h"
 
@@ -34,5 +33,3 @@ public:
 	HRESULT Free();
 
 };
-
-#endif //_SPLASH_H

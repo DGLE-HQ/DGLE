@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _UTILS_H
-#define _UTILS_H
+#pragma once
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -45,5 +44,3 @@ uint8 ASCIIKeyToEngKey(const uchar key);
 uint32 GetCRC32(uint8 *pData, uint32 ui32Size);
 
 uint8 GetDataAlignmentIncrement(uint uiLineWidth, uint8 ui8BytesPerPixel, uint8 ui8Alignment);
-
-#endif //_UTILS_H

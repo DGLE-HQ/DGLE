@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _CONSOLE_H
-#define _CONSOLE_H
+#pragma once
 
 #include "Common.h"
 
@@ -71,5 +70,3 @@ public:
 	void  LeaveCrSection();
 	void  ResetWinPos();
 };
-
-#endif //_CONSOLE_H

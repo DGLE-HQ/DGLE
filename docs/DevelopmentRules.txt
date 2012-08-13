@@ -111,7 +111,7 @@
 	
 		/**
 		\author		< your full name > aka < your nickname >
-		\date		< last makor modification date dd.mm.yyyy > (c)Korotkov Andrey
+		\date		< last major modification date dd.mm.yyyy > (c)Korotkov Andrey
 		
 		This file is a part of DGLE2 project and is distributed
 		under the terms of the GNU Lesser General Public License.

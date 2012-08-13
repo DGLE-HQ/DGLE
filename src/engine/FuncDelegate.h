@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _FUNCDEL_H
-#define _FUNCDEL_H
+#pragma once
 
 #if defined(_MSC_VER)
 #	pragma warning(push)
@@ -192,5 +191,3 @@ typedef TCFuncDelegate<TPEventProc, void (IBaseEvent *)> TEventProcDelegate;
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif
-
-#endif //_FUNCDEL_H

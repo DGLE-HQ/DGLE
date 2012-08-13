@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _MAINWINDOW_H
-#define _MAINWINDOW_H
+#pragma once
 
 #include "..\Common.h"
 
@@ -44,4 +43,3 @@ public:
 	HRESULT Free();
 
 };
-#endif //_MAINWINDOW_H

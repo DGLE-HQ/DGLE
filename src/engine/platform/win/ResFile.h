@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _RESFILE_H
-#define _RESFILE_H
+#pragma once
 
 #include "..\Common.h"
 
@@ -39,5 +38,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION(IFile)
 };
-
-#endif //_RESFILE_H

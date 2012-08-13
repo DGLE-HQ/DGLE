@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _TEXTURE_H
-#define _TEXTURE_H
+#pragma once
 
 #include "Common.h"
 
@@ -45,5 +44,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION1(ITexture, IEngBaseObj)
 };
-
-#endif //_TEXTURE_H

@@ -7,16 +7,14 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _BASERENDERERGL_H
-#define _BASERENDERERGL_H
-
+#pragma once
 
 #include "..\..\Common.h"
 
 #ifndef NO_BUILTIN_RENDERER
 
-#include <GL/glew.h>
-#include <GL/wglew.h>
+#include <gl\glew.h>
+#include <gl\wglew.h>
 
 class CBaseRendererGL : public CInstancedObj
 {
@@ -37,5 +35,3 @@ public:
 };
 
 #endif
-
-#endif //_BASERENDERERGL_H

@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _STATE_MANAGER_H
-#define _STATE_MANAGER_H
+#pragma once
 
 #include "Common.h"
 
@@ -537,5 +536,3 @@ private:
 };
 
 #endif
-
-#endif //_STATE_MANAGER_H

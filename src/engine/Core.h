@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _CORE_H
-#define _CORE_H
+#pragma once
 
 #include "Common.h"
 
@@ -268,5 +267,3 @@ public:
 #endif//DGLE2_USE_COM
 
 };
-
-#endif //_CORE_H

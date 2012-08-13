@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _BUFFILE_H
-#define _BUFFILE_H
+#pragma once
 
 #include "Common.h"
 
@@ -34,5 +33,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION(IFile)
 };
-
-#endif //_BUFFILE_H

@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _CORERENDERERGL_H
-#define _CORERENDERERGL_H
+#pragma once
 
 #include "Common.h"
 
@@ -127,5 +126,3 @@ public:
 };
 
 #endif
-
-#endif //_CORERENDERERGL_H

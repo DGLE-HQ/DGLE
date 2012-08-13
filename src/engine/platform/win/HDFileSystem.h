@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _HDFILESYSTEM_H
-#define _HDFILESYSTEM_H
+#pragma once
 
 #include "..\Common.h"
 
@@ -41,5 +40,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION(IFileSystem)
 };
-
-#endif	//_HDFILESYSTEM_H

@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _FONT_H
-#define _FONT_H
+#pragma once
 
 #include "Common.h"
 
@@ -60,5 +59,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION1(IBitmapFont, IEngBaseObj)
 };
-
-#endif //_FONT_H

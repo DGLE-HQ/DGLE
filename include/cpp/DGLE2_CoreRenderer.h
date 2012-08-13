@@ -1,12 +1,14 @@
 /**
 \file		DGLE2_CoreRenderer.h
 \author		Korotkov Andrey aka DRON
-\version	Beta 3
+\version	0.3.0 beta
 \date		xx.xx.2012 (c)Korotkov Andrey
 
 \brief		This header provides interface of low-level DGLE2 rendering API.
 
-This header is a part of DGLE2_SDK.
+This header is a part of DGLE2 SDK.
+
+\note		Include this header after "DGLE2.h".
 */
 
 #ifndef DGLE2_CRENDERER

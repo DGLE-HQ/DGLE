@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _PLATFORMAPI_H
-#define _PLATFORMAPI_H
+#pragma once
 
 #include <DGLE2.h>
 #include "../FuncDelegate.h"
@@ -124,5 +123,3 @@ void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 void Terminate();
 
 }
-
-#endif //_PLATFORMAPI_H

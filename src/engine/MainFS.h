@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _MAINFS_H
-#define _MAINFS_H
+#pragma once
 
 #include "Common.h"
 #include "HDFileSystem.h"
@@ -63,5 +62,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION1(IMainFileSystem, IEngineSubSystem)
 };
-
-#endif	//_MAINFS_H

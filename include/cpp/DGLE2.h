@@ -1,8 +1,8 @@
 /**
 \file		DGLE2.h
 \author		Korotkov Andrey aka DRON
-\version	Beta 3
-\date		XX.XX.2012 (c)Korotkov Andrey ($Rev: 1 $) ($Date: $)
+\version	0.3.0 beta
+\date		XX.XX.2012 (c)Korotkov Andrey
 
 \brief		Main DGLE2 engine header.
 
@@ -15,9 +15,9 @@ This header is a part of DGLE2 SDK.
  
 \section	intro_sec Introduction
 
-- DGLE2 is powerfull crossplatform engine for games and scientific applications.
-- DGLE2 is opensource project and free to use(under the terms of license, see below).
-- DGLE2 is based on widely spread open standarts, formats and APIs such as OpenGL, OpenCL, OGG Vorbis, Lua, Box2D, Bullet physics, e.t.c..
+- DGLE2 is a powerful cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+- DGLE2 is opensource project and free to use (under the terms of license, see below).
+- DGLE2 is based on widely spread open standarts, formats and APIs such as OpenGL, OpenAL, OpenCL, OGG Vorbis, Lua, Box2D, Bullet physics, Mono, e.t.c..
 
 \image html Open_Standarts.png
 
@@ -26,32 +26,28 @@ This documentation is also suitable for any supported programming language.
 
 \section	aim_sec The aim of the project
 
-The aim of the project is to create flexible and extensible technology that any user can use.
-It should be easy to make great projects only by using editors and scripts (Lua) or go
-deeper and use your programming skills of your favorite language(C++, C#, Delphi, e.t.c.)
-and create really exciting projects.
-Users can also add new formats and functionallity by creating new plugins for engine and share
-them with others over the web or just get plugins already made by others.
-And when project is complete it can be easily build not only for Windows but also Linux,
-MacOS, iOS, Android and consoles. Projects can also be a runtime part of the web page to use them in
-popular browsers like IE, Firefox, Opera, Chrome and Safari.
+The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology,
+capable of building any 2D/3D games, real-time visualizations, scientific applications etc. It should be easy to make great projects
+only by using editors and scripts or go deeper and use your programming skills of your favorite language to create really exciting projects.
+Users can also add new formats and functionality by creating new plugins for engine and share them with others over the web or just get
+plugins already made by others. When project is complete it can be easily build for every popular platform.
 
 \section gstart_sec Getting started
 
 Simple steps to make your first DGLE2 application.
 
-- 1. Include this("DGLE2.h") header to your project.
-- 2. Connect DGLE2 namespace to your project(ex. "using namespace DGLE2;").
-- 3. Paste "ENG_DYNAMIC_FUNC" macros to your main source file(ex. "Main.cpp").
+- 1. Include this header ("DGLE2.h") to your project.
+- 2. Connect DGLE2 namespace to your project (ex. "using namespace DGLE2;").
+- 3. Paste "ENG_DYNAMIC_FUNC" macros to your main source file (ex. "main.cpp").
 - 4. Declare pointer to IEngineCore class like "IEngineCore *pEngineCore".
-- 5. Call "GetEngine" function to retrieve IEngineCore pointer. For dynamic library it should be like this "GetEngine("DGLE2.dll",pEngineCore);".
-- 6. Now you can use IEngineCore methods. For example, you can initialize engine like this "pEngineCore->InitializeEngine(NULL,"HelloWorld");".
+- 5. Call "GetEngine" function to retrieve IEngineCore pointer. For dynamic library it should be like this "GetEngine("DGLE2.dll", pEngineCore);".
+- 6. Now you can use IEngineCore methods. For example, you can initialize engine like this "pEngineCore->InitializeEngine(NULL, "HelloWorld");".
 - 7. After engine initialization you should call "pEngineCore->StartEngine();" to start engine.
 - 8. When you are done with engine don't forget to call "FreeEngine()" routine before exit.
 
 Please see "HelloWorld" sample code at the "Examples" tab of this help file.
 
-You can browse ".\Source\Examples" folder or go to "Examples" tab of this manual for futher information.
+You can browse ".\src\examples" folder or go to "Examples" tab of this manual for futher information.
 
 \section license_sec License
 
@@ -78,13 +74,13 @@ Also we would be happy for any donations to support futher project development.
 \section additional_sec Additional help and information
 
 Visit official DGLE2 engine website http://dgle.dronprogs.org/ for additional information.
-There you can download latest version, gain help, support project or just say your oppinion or ask question at official DGLE2 forum.
+There you can download latest version, gain help, support project or just say your oppinion or ask question at official DGLE2 forum ( http://forum.dronprogs.org/viewforum.php?f=3 ).
 
 Feel free to write directly to project leader on e-mail dgle@dronprogs.org.
 
 \example HelloWorld.cpp
 This is simplest DGLE2 application for Windows.
-\note To make this sample work you should copy "DGLE2.h" header to your project source directory and place "DGLE2.dll" in your project output folder. 
+\note To make this sample work you should copy "DGLE2.h" header to your project source directory and place DGLE2 library file (ex. "DGLE2.dll" for Windows) in your project output folder. 
 
 */
 

@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _CONSOLEWINDOW_H
-#define _CONSOLEWINDOW_H
+#pragma once
 
 #include "..\..\Common.h"
 
@@ -61,5 +60,3 @@ public:
 	HRESULT Free();
 
 };
-
-#endif //_CONSOLEWINDOW_H

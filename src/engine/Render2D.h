@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _RENDER2D_H
-#define _RENDER2D_H
+#pragma once
 
 #include "Common.h"
 
@@ -152,5 +151,3 @@ public:
 	IDGLE2_BASE_IMPLEMENTATION(IRender2D)
 
 };
-
-#endif //_RENDER2D_H

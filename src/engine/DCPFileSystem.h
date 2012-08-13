@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
 */
 
-#ifndef _DCPFILESYSTEM_H
-#define _DCPFILESYSTEM_H
+#pragma once
 
 #include "Common.h"
 
@@ -69,5 +68,3 @@ public:
 
 	IDGLE2_BASE_IMPLEMENTATION(IFileSystem);
 };
-
-#endif //_DCPFILESYSTEM_H

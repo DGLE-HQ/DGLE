@@ -1,12 +1,12 @@
 /**
 \file		DGLE2_types.h
 \author		Korotkov Andrey aka DRON
-\version	Beta 3
+\version	0.3.0 beta
 \date		xx.xx.2012 (c)Korotkov Andrey
 
 \brief		Engine types definition header.
 
-This header is a part of DGLE2_SDK.
+This header is a part of DGLE2 SDK.
 
 \warning	Don't include this header directly, include "DGLE2.h" instead.
 \see		DGLE2.h
