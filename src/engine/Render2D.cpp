@@ -38,7 +38,7 @@ CRender2D::~CRender2D()
 {
 	delete[] _pBuffer;
 
-	for (size_t i = 0; i < _pBatchBuffers.size(); i++)
+	for (size_t i = 0; i < _pBatchBuffers.size(); ++i)
 		_pBatchBuffers[i]->Free();
 
 	_batchAccumulator.clear();
@@ -149,7 +149,7 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 /*	if (_bCameraWasSet)
 	{
 		rotated = true;
-		for(int i = 0; i<4; i++)
+		for(int i = 0; i<4; ++i)
 		{
 			float	x = vertices[i*2], 
 					y = vertices[i*2+1];
@@ -267,7 +267,7 @@ void CRender2D::RefreshBatchData()
 {
 	_batchNeedToRefreshBatches = true;
 
-//	for(uint i = 0; i<_batchVBOs.size(); i++)
+//	for(uint i = 0; i<_batchVBOs.size(); ++i)
 //		_batchVBOs[i].uiSize = 0;
 }
 
@@ -770,7 +770,7 @@ HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &
 			if (eFlags & PF_FILL)
 				_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f, 0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
 
-			for (uint i = 0; i <= uiQuality; i++)
+			for (uint i = 0; i <= uiQuality; ++i)
 				_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(i*k*(float)M_PI/180.f), stCoords.y + stRadius.y * sinf(i*k*(float)M_PI/180.f), 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
 		}
 	else
@@ -788,7 +788,7 @@ HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &
 			_pBuffer[1] = stCoords.y;
 		}
 
-		for (uint i = 0; i <= uiQuality; i++)
+		for (uint i = 0; i <= uiQuality; ++i)
 		{
 			_pBuffer[2 + i*2] = stCoords.x + stRadius.x * cosf(i*k*(float)M_PI/180.f);
 			_pBuffer[3 + i*2] = stCoords.y + stRadius.y * sinf(i*k*(float)M_PI/180.f);
@@ -903,7 +903,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 			const float c_epsilon = 0.001F;
 
 			bool *active = new bool[vertexCount];
-			for (int32 a = 0; a < vertexCount; a++)
+			for (int32 a = 0; a < vertexCount; ++a)
 				active[a] = true;
 
 			int32 triangleCount = 0;
@@ -954,7 +954,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 						n3.OrthoCW();
 					}
 
-					for (int32 a = 0; a < vertexCount; a++)
+					for (int32 a = 0; a < vertexCount; ++a)
 					{	// Look for other vertices inside the triangle
 						if (active[a] && a != p1 && a != p2 && a != m1)
 						{
@@ -992,7 +992,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 						n3.OrthoCW();
 					}
 
-					for (int32 a = 0; a < vertexCount; a++)
+					for (int32 a = 0; a < vertexCount; ++a)
 					{	// Look for other vertices inside the triangle
 						if (active[a] && a != m1 && a != m2 && a != p1)
 						{
@@ -1095,7 +1095,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 			min_x =  numeric_limits<float>::infinity(),
 			min_y =  numeric_limits<float>::infinity();
 
-	for (uint i = 0; i < uiVerticesCount; i++)
+	for (uint i = 0; i < uiVerticesCount; ++i)
 	{
 		max_x = max(pstVertices[i].x, max_x);
 		max_y = max(pstVertices[i].y, max_y);
@@ -1135,7 +1135,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 
 		float angle = 0;
 		TVector2D e1 = (TPoint2D(pstVertices[0]) - pstVertices[uiVerticesCount - 1]).Normalize(), e2;
-		for (uint vert_idx = 0; vert_idx < uiVerticesCount; e1 = e2, vert_idx++)
+		for (uint vert_idx = 0; vert_idx < uiVerticesCount; e1 = e2, ++vert_idx)
 		{
 			e2 = (TPoint2D(pstVertices[(vert_idx + 1) % uiVerticesCount]) - pstVertices[vert_idx]).Normalize();
 			const float s = e1 % e2, c = e1 * e2;
@@ -1161,8 +1161,8 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 		if (do_batch_update)
 		{
 			if (_batchNeedToRefreshBatches)
-				for (int32 tri_idx = 0; tri_idx < tri_count; tri_idx++)
-					for (uint8 v = 0; v < 3; v++)
+				for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
+					for (uint8 v = 0; v < 3; ++v)
 						_batchAccumulator.push_back(pstVertices[tris[tri_idx].index[v]]);
 		}
 		else
@@ -1174,8 +1174,8 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 				_pBuffer = new float[_uiBufferSize];
 			}
 
-			for (int32 tri_idx = 0; tri_idx < tri_count; tri_idx++)
-				for (uint8 v = 0; v < 3; v++)
+			for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
+				for (uint8 v = 0; v < 3; ++v)
 					memcpy(&_pBuffer[tri_idx*8*3 + v*8], pstVertices[tris[tri_idx].index[v]].data, sizeof(TVertex2));
 
 			TDrawDataDesc desc;
@@ -1202,7 +1202,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 		{
 			if (_batchNeedToRefreshBatches)
 			{
-				for (uint i = 0; i < uiVerticesCount; i++)
+				for (uint i = 0; i < uiVerticesCount; ++i)
 					_batchAccumulator.push_back(pstVertices[i]);
 				_batchAccumulator.push_back(pstVertices[0]);
 			}
@@ -1259,7 +1259,7 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 			min_x =  numeric_limits<float>::infinity(),
 			min_y =  numeric_limits<float>::infinity();
 
-	for (uint i = 0; i < uiVerticesCount; i++)
+	for (uint i = 0; i < uiVerticesCount; ++i)
 	{
 		max_x = max(pstVertices[i].x, max_x);
 		max_y = max(pstVertices[i].y, max_y);
@@ -1294,8 +1294,8 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 		if (!_batchNeedToRefreshBatches)
 			_batchBufferReadyToRender = true;
 		else
-			for (uint i = 0; i < uiVerticesCount/3; i++)
-				for (uint8 j = 0; j < 3; j++)
+			for (uint i = 0; i < uiVerticesCount/3; ++i)
+				for (uint8 j = 0; j < 3; ++j)
 					{
 						if (!(eFlags & PF_FILL) && j > 0)
 							_batchAccumulator.push_back(pstVertices[i*3 + j - 1]);
@@ -1314,8 +1314,8 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 				_pBuffer = new float[_uiBufferSize];
 			}
 
-			for (uint i = 0; i < uiVerticesCount/3; i++)
-				for (uint8 j = 0; j < 6; j++)
+			for (uint i = 0; i < uiVerticesCount/3; ++i)
+				for (uint8 j = 0; j < 6; ++j)
 					memcpy(&_pBuffer[i*6*8 + j], &pstVertices[i*3 + j], sizeof(TVertex2));
 	
 			desc.pData = (uint8*)_pBuffer;

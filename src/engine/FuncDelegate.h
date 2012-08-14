@@ -113,7 +113,7 @@ public:
 
 	void Remove(T1 pFunc, void *pParametr)
 	{
-		for (std::size_t i = 0; i < _funcList.size(); i++)
+		for (std::size_t i = 0; i < _funcList.size(); ++i)
 			if (_funcList[i].pParametr == pParametr && _funcList[i].pFunc == pFunc)
 			{
 				_funcList.erase(_funcList.begin() + i);
@@ -142,7 +142,7 @@ public:
 	{
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(
-			for (std::size_t i = 0; i < _parent._funcList.size(); i++)
+			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
 				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr);
 			)
 	}
@@ -158,7 +158,7 @@ public:
 	{
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(
-			for (std::size_t i = 0; i < _parent._funcList.size(); i++)
+			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
 				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr, stMsg);
 			)
 	}
@@ -174,7 +174,7 @@ public:
 	{
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(
-			for (std::size_t i = 0; i < _parent._funcList.size(); i++)
+			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
 				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr, pEvent);
 			)
 	}

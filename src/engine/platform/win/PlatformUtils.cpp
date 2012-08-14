@@ -305,7 +305,7 @@ vector<TTimer> timers;
 
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-	for (size_t i = 0; i < timers.size(); i++)
+	for (size_t i = 0; i < timers.size(); ++i)
 		if (timers[i].uiId == idEvent)
 		{
 			timers[i].pDelegate->Invoke();
@@ -331,7 +331,7 @@ uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer)
 
 bool ReleaseTimer(uint id)
 {
-	for (size_t i = 0; i < timers.size(); i++)
+	for (size_t i = 0; i < timers.size(); ++i)
 		if (timers[i].uiId == id)
 		{
 			timers.erase(timers.begin() + i);
@@ -790,7 +790,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		
 		string str_ts = txt, str_ts2 = "", str_res = "";
 		
-		for (uint i = 0; i < str_ts.length(); i++)
+		for (uint i = 0; i < str_ts.length(); ++i)
 			if (str_ts[i] == '.')
 				str_res = str_ts2;
 			else

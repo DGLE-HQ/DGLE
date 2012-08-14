@@ -766,7 +766,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 			else
 				i_start_level = 2;
 
-			for (int l = 0; l < i_start_level; l++)
+			for (int l = 0; l < i_start_level; ++l)
 			{
 				i_cur_w /= 2;
 				i_cur_h /= 2;
@@ -781,7 +781,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 			}
 		}
 
-		for (int i = i_start_level; i <= i_mipmaps; i++)
+		for (int i = i_start_level; i <= i_mipmaps; ++i)
 		{
 			i_cur_w /= 2;
 			if (i_cur_w == 0) i_cur_w = 1;

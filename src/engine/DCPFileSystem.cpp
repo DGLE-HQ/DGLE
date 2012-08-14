@@ -185,7 +185,7 @@ uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName)
 	uint32 crc32 = GetCRC32((uint8*)strName.c_str(), (uint32)strName.size());
 
 	if (_pInfoTable)
-		for (uint32 i = 0; i < _ui32FilesCount; i++)
+		for (uint32 i = 0; i < _ui32FilesCount; ++i)
 			if (crc32 == _pInfoTable[i].ui32CRC32)
 				return i;
 
@@ -244,7 +244,7 @@ HRESULT CALLBACK CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, I
 
 	_clFindedFiles.resize(0);
 
-	for (uint32 i = 0; i < _ui32FilesCount; i++)
+	for (uint32 i = 0; i < _ui32FilesCount; ++i)
 	{
 		MatchResult result = regexp.Match(_pInfoTable[i].cPackedFName);
 

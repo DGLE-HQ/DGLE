@@ -88,7 +88,7 @@ HRESULT CALLBACK CBitmapFont::Draw3D(const char *pcTxt)
 		_pBuffer = new float[_uiBufferSize];
 	}
 
-	for (size_t i = 0; i < length; i++)
+	for (size_t i = 0; i < length; ++i)
 	{
 		const uchar ch = static_cast<const uchar>(pcTxt[i]) - 32;
 		const int

@@ -38,7 +38,7 @@ _pConsoleWindow(NULL)
 
 CConsole::~CConsole()
 {
-	for(uint i = 0; i<_commands.size(); i++)
+	for(uint i = 0; i<_commands.size(); ++i)
 	{
 		delete[] _commands[i].pcName;
 		delete[] _commands[i].pcHelp;
@@ -65,7 +65,7 @@ void CConsole::_Help(const char* pcParam)
 		if(par[par.length()-1] == ' ')
 			par.erase(par.length() - 1, 1);
 
-		for (size_t i = 0; i < _commands.size(); i++)
+		for (size_t i = 0; i < _commands.size(); ++i)
 		 if (par == string(_commands[i].pcName))
 		 {
 			 if(string(_commands[i].pcHelp)=="")
@@ -89,7 +89,7 @@ void CConsole::_Cmdlist()
 	string lst = "----------Commands List----------\r\n";
 	if (!_commands.empty())
 	{
-		for (size_t i = 0; i<_commands.size(); i++)
+		for (size_t i = 0; i<_commands.size(); ++i)
 			lst += " >" + string(_commands[i].pcName) + "\r\n";
 		
 		lst+=string("------" + UIntToStr((uint)_commands.size()) + " registered commands------\r\n");
@@ -114,7 +114,7 @@ bool CConsole::_ProcessConCmd(const char* pcParam)
 	
 	bool done = false, rparam = false;
 
-	for (uint i = 0; i<cur.length(); i++)
+	for (uint i = 0; i<cur.length(); ++i)
 	 if (cur[i]==' ' && !rparam) 
 		 done = true;
 	 else
@@ -126,7 +126,7 @@ bool CConsole::_ProcessConCmd(const char* pcParam)
 			 par+=cur[i];
 		 }
 	
-	for (size_t i = 0; i < _commands.size(); i++)
+	for (size_t i = 0; i < _commands.size(); ++i)
 		if (com == string(_commands[i].pcName))
 		{
 			if (_commands[i].piValue==NULL)
@@ -186,14 +186,14 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 	string cmds = "----\r\n";
 	int count = 0, idx = 0;
 	
-	for (size_t i = 0; i < _commands.size(); i++)
+	for (size_t i = 0; i < _commands.size(); ++i)
 	{	
 		bool flag = true;
 	
 		if (strlen(pcParam) > strlen(_commands[i].pcName))
 			flag = false;
 		else
-			for (uint j = 0; j < strlen(pcParam); j++)
+			for (uint j = 0; j < strlen(pcParam); ++j)
 				if (pcParam[j] != _commands[i].pcName[j])
 				{
 					flag = false;
@@ -219,7 +219,7 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 bool CConsole::UnRegCom(const char *pcName)
 {
 	if (_commands.size() > 0)
-		for (size_t i = 0; i < _commands.size(); i++)
+		for (size_t i = 0; i < _commands.size(); ++i)
 			if (string(_commands[i].pcName) == string(pcName))
 			{
 				delete[] _commands[i].pcName;

@@ -32,7 +32,7 @@ struct INDICES
 			IDX_BLOCK_TYPE<(block_bytes > sizeof(uint32))>::TYPE uint: block_bits;
 			uint8 bytes[block_bytes];
 		};
-		for(uint8 byte_idx = 0; byte_idx < block_bytes; byte_idx++)
+		for(uint8 byte_idx = 0; byte_idx < block_bytes; ++byte_idx)
 			bytes[byte_idx] = data[byte_idx];
 		return uint >> i * bpi & mask;
 	}
@@ -87,8 +87,8 @@ void UnpackBC1(uint16 width, uint16 height, const uint8 *src, uint8 *dst)
 		INDICES<2> indices;
 	};
 #pragma pack(pop)
-	for (uint16 blockY = 0; blockY < (height + 3) / 4; blockY++)
-		for (uint16 blockX = 0; blockX < (width + 3) / 4; blockX++)
+	for (uint16 blockY = 0; blockY < (height + 3) / 4; ++blockY)
+		for (uint16 blockX = 0; blockX < (width + 3) / 4; ++blockX)
 		{
 			const BC1_BLOCK &cur_block = reinterpret_cast<const BC1_BLOCK *>(src)[blockY * ((width + 3) / 4) + blockX];
 			COLOR24 color_table[4] =
@@ -98,8 +98,8 @@ void UnpackBC1(uint16 width, uint16 height, const uint8 *src, uint8 *dst)
 				(color_table[0] * 2 + color_table[1]) / 3,
 				(color_table[0] + color_table[1] * 2) / 3
 			};
-			for (int y = 0; y < 4 && y < height - blockY * 4; y++)
-				for (int x = 0; x < 4 && x < width - blockX * 4; x++)
+			for (int y = 0; y < 4 && y < height - blockY * 4; ++y)
+				for (int x = 0; x < 4 && x < width - blockX * 4; ++x)
 				{
 					uint8 (&dst_pixel)[3] = reinterpret_cast<uint8 (*const&)[3]>(dst)[(blockY * 4 + y) * width + (blockX * 4 + x)];
 					uint color_idx = cur_block.indices[y * 4 + x];
@@ -121,8 +121,8 @@ void UnpackBC3(uint16 width, uint16 height, const uint8 *src, uint8 *dst)
 		INDICES<2> color_indices;
 	};
 #pragma pack(pop)
-	for (uint16 blockY = 0; blockY < (height + 3) / 4; blockY++)
-		for (uint16 blockX = 0; blockX < (width + 3) / 4; blockX++)
+	for (uint16 blockY = 0; blockY < (height + 3) / 4; ++blockY)
+		for (uint16 blockX = 0; blockX < (width + 3) / 4; ++blockX)
 		{
 			const BC3_BLOCK &cur_block = reinterpret_cast<const BC3_BLOCK *>(src)[blockY * ((width + 3) / 4) + blockX];
 			COLOR24 color_table[4] =
@@ -151,8 +151,8 @@ void UnpackBC3(uint16 width, uint16 height, const uint8 *src, uint8 *dst)
 				alpha_table[6] = 0;
 				alpha_table[7] = 255;
 			}
-			for (int y = 0; y < 4 && y < height - blockY * 4; y++)
-				for (int x = 0; x < 4 && x < width - blockX * 4; x++)
+			for (int y = 0; y < 4 && y < height - blockY * 4; ++y)
+				for (int x = 0; x < 4 && x < width - blockX * 4; ++x)
 				{
 					uint8 (&dst_pixel)[4] = reinterpret_cast<uint8 (*const&)[4]>(dst)[(blockY * 4 + y) * width + (blockX * 4 + x)];
 					uint color_idx = cur_block.color_indices[y * 4 + x];

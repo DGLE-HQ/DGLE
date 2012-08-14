@@ -149,7 +149,7 @@ HRESULT CALLBACK CRender::Unbind(E_ENG_OBJ_TYPE eType)
 		Unbind(EOT_MESH);
 		break;
 	case EOT_TEXTURE:
-		for (int i = _iMaxTexUnits - 1; i >= 0; i--)
+		for (int i = _iMaxTexUnits - 1; i >= 0; --i)
 			_pCoreRenderer->BindTexture(NULL, i);
 		break;
 	case EOT_MESH:

@@ -441,7 +441,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		_pMainWindow->Free();
 
-		for (size_t i = 0; i < _clEvents.size(); i++)
+		for (size_t i = 0; i < _clEvents.size(); ++i)
 			delete _clEvents[i].pDEvent;
 
 		_clEvents.clear();
@@ -529,7 +529,7 @@ void CCore::_MainLoop()
 		if (cycles_cnt > 0)
 			_ui64ProcessDelay = GetPerfTimer();
 
-		for (uint i = 0; i < cycles_cnt; i++)
+		for (uint i = 0; i < cycles_cnt; ++i)
 		{
 			if (((!_bPause && _iAllowPause) ||
 				!_iAllowPause) && !_clDelUpdate.IsNull() && !_bQuitFlag) 
@@ -670,7 +670,7 @@ HRESULT CALLBACK CCore::DisconnectPlugin(IPlugin *pPlugin)
 
 HRESULT CALLBACK CCore::GetPlugin(const char* pcPluginName, IPlugin *&prPlugin)
 {
-	for (size_t i = 0; i < _clPlugins.size(); i++)
+	for (size_t i = 0; i < _clPlugins.size(); ++i)
 	{
 		TPluginInfo info;
 		_clPlugins[i].pPlugin->GetPluginInfo(info);
@@ -686,7 +686,7 @@ HRESULT CALLBACK CCore::GetPlugin(const char* pcPluginName, IPlugin *&prPlugin)
 
 bool CCore::_UnloadPlugin(IPlugin *pPlugin)
 {
-	for (size_t i = 0; i < _clPlugins.size(); i++)
+	for (size_t i = 0; i < _clPlugins.size(); ++i)
 		if (_clPlugins[i].pPlugin == pPlugin)
 		{
 			TPluginInfo info;
@@ -762,7 +762,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 void CCore::_PrintPluginsInfo()
 {
 	string tmp = "------Connected Plugins------\r\n";
-	for (size_t i = 0; i < _clPlugins.size(); i++)
+	for (size_t i = 0; i < _clPlugins.size(); ++i)
 	{
 		TPluginInfo info;
 		_clPlugins[i].pPlugin->GetPluginInfo(info);
@@ -843,7 +843,7 @@ HRESULT CALLBACK CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppli
 		{
 			string ext_fnames[] = {eng_path + "DGLE2_EXT.dplug", eng_path + "plugins\\DGLE2_EXT.dplug"};
 
-			for (int i = 0; i < sizeof(ext_fnames)/sizeof(ext_fnames[0]); i++)
+			for (int i = 0; i < sizeof(ext_fnames)/sizeof(ext_fnames[0]); ++i)
 				if (_access(ext_fnames[i].c_str(), 0) != -1)
 				{
 					_clPluginInitList.push_back(ext_fnames[i]);
@@ -883,8 +883,8 @@ HRESULT CALLBACK CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppli
 
 		if (!_clPluginInitList.empty())
 		{
-			for (size_t i = 0; i < _clPluginInitList.size(); i++)
-				for (size_t j = i; j < _clPluginInitList.size(); j++)
+			for (size_t i = 0; i < _clPluginInitList.size(); ++i)
+				for (size_t j = i; j < _clPluginInitList.size(); ++j)
 					if (ToUpperCase(GetOnlyFileName(_clPluginInitList[i].c_str())) == ToUpperCase(GetOnlyFileName(_clPluginInitList[j].c_str())))
 					{
 						_clPluginInitList.erase(_clPluginInitList.begin() + j);
@@ -892,7 +892,7 @@ HRESULT CALLBACK CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppli
 						break;
 					}
 
-			for (size_t i = 0; i < _clPluginInitList.size(); i++)
+			for (size_t i = 0; i < _clPluginInitList.size(); ++i)
 			{
 				IPlugin *plugin;
 				if (S_OK == ConnectPlugin(_clPluginInitList[i].c_str(), plugin))
@@ -1186,7 +1186,7 @@ HRESULT CALLBACK CCore::GetTimer(uint64 &uiTick)
 
 HRESULT CALLBACK CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {	
-	for(size_t i = 0; i < _clEvents.size(); i++)
+	for(size_t i = 0; i < _clEvents.size(); ++i)
 		if(eEventType == _clEvents[i].eType)
 		{
 			if(!_clEvents[i].pDEvent->IsNull())
@@ -1202,7 +1202,7 @@ HRESULT CALLBACK CCore::AddEventListner(E_EVENT_TYPE eEventType, void (CALLBACK 
 	if (eEventType == ET_BEFORE_INIT && _bInitedFlag)//Means that engine already inited and event will never happend
 		return S_FALSE;
 	
-	for (size_t i = 0; i < _clEvents.size(); i++)
+	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)
 		{
 			_clEvents[i].pDEvent->Add(pListnerProc, pParametr);
@@ -1222,7 +1222,7 @@ HRESULT CALLBACK CCore::AddEventListner(E_EVENT_TYPE eEventType, void (CALLBACK 
 
 HRESULT CALLBACK CCore::RemoveEventListner(E_EVENT_TYPE eEventType, void (CALLBACK *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
 {
-	for (size_t i = 0; i < _clEvents.size(); i++)
+	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)
 		{
 			_clEvents[i].pDEvent->Remove(pListnerProc, pParametr);

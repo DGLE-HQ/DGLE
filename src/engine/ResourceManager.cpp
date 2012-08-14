@@ -272,7 +272,7 @@ HRESULT CALLBACK CResourceManager::RegisterDefaultResource(E_ENG_OBJ_TYPE eObjTy
 
 HRESULT CALLBACK CResourceManager::UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
 {
-	for (size_t i = 0; i < _defRes.size(); i++)
+	for (size_t i = 0; i < _defRes.size(); ++i)
 		if (_defRes[i].type == eObjType && _defRes[i].pBaseObj == pObj)
 		{
 			_defRes.erase(_defRes.begin() + i);
@@ -284,7 +284,7 @@ HRESULT CALLBACK CResourceManager::UnregisterDefaultResource(E_ENG_OBJ_TYPE eObj
 
 HRESULT CALLBACK CResourceManager::UnregisterFileFormat(const char* pcExtension)
 {
-	for (size_t i = 0; i < _clFileFormats.size(); i++)
+	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
 			_clFileFormats.erase(_clFileFormats.begin()+i);
@@ -306,7 +306,7 @@ HRESULT CALLBACK CResourceManager::GetRegisteredExtensions(char* pcTxt, uint uiC
 {
 	string exts;
 
-	for (size_t i = 0; i<_clFileFormats.size(); i++)
+	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		exts += _clFileFormats[i].ext + ";";
 
 	if (exts.size() > uiCharsCount)
@@ -322,7 +322,7 @@ HRESULT CALLBACK CResourceManager::GetRegisteredExtensions(char* pcTxt, uint uiC
 
 HRESULT CALLBACK CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj)
 {
-	for (int i = (int)_defRes.size() - 1; i > -1; i--)
+	for (int i = (int)_defRes.size() - 1; i > -1; --i)
 		if (eObjType == _defRes[i].type)
 		{
 			prObj = _defRes[i].pBaseObj;
@@ -338,7 +338,7 @@ HRESULT CALLBACK CResourceManager::GetResourceByFileName(const char *pcFileName,
 {
 	uint32 hash = GetCRC32((uint8*)pcFileName, (uint32)strlen(pcFileName)*sizeof(char));
 
-	for (size_t i = 0; i < _resList.size(); i++)
+	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].nameHash == hash)
 		{
 			prObj = _resList[i].pObj;
@@ -452,8 +452,8 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 
 		uint ui_line_w = uiWidth*3 + align;
 			
-		for(uint j = 0; j < uiHeight; j++)
-			for(uint i = 0; i < ui_line_w; i++)
+		for(uint j = 0; j < uiHeight; ++j)
+			for(uint i = 0; i < ui_line_w; ++i)
 				if (i%3 == 0)
 				{
 					uint8
@@ -468,7 +468,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 		{
 			format = TDF_RGBA8;
 
-			for (uint i = 0; i < uiWidth*uiHeight; i++)
+			for (uint i = 0; i < uiWidth*uiHeight; ++i)
 			{
 				uint8
 				ubt_tmp = pData[i*4];
@@ -507,12 +507,12 @@ uint CResourceManager::_GenerateScaleImage(const uint8 *pDataIn, uint uiWidth, u
 
 	float x_factor = (float)uiNewWidth/(float)uiWidth, y_factor = (float)uiNewHeight/(float)uiHeight;
 	
-	for (int cy = 0; cy < (int)uiNewHeight; cy++)
-		for (int cx = 0; cx < (int)uiNewWidth; cx++)
+	for (int cy = 0; cy < (int)uiNewHeight; ++cy)
+		for (int cx = 0; cx < (int)uiNewWidth; ++cx)
 		{
 			int pixel = cy*(uiNewWidth*bytes_per_pix + new_align) + cx*bytes_per_pix;
 			int nearest_match = (int)(cy/y_factor)*(uiWidth*bytes_per_pix + cur_align) + (int)(cx/x_factor)*bytes_per_pix;
-			for (int i = 0; i < bytes_per_pix; i++)
+			for (int i = 0; i < bytes_per_pix; ++i)
 				prDataOut[pixel + i] = pDataIn[nearest_match + i];
 		}
 
@@ -538,7 +538,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, u
 	int i_cur_w = (int)uiWidth*2, i_cur_h = (int)uiHeight*2;
 	uint data_size = 0, dat_offset = 0, dat_last_offset, cur_align = 0;
 
-	for (int i = 0; i <= i_mipmaps; i++)
+	for (int i = 0; i <= i_mipmaps; ++i)
 	{
 		i_cur_w /= 2; if (i_cur_w == 0) i_cur_w = 1;
 		i_cur_h /= 2; if (i_cur_h == 0) i_cur_h = 1;
@@ -560,7 +560,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, u
 
 	memcpy(prDataOut, pDataIn, dat_last_offset);
 
-	for (int i = 1; i <= i_mipmaps; i++)
+	for (int i = 1; i <= i_mipmaps; ++i)
 	{
 		int prev_w = i_cur_w, prev_h = i_cur_h;
 
@@ -738,7 +738,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint
 
 HRESULT CALLBACK CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (CALLBACK *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr)
 {
-	for (size_t i = 0; i<_clFileFormats.size(); i++)
+	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == string(pcExtension) && _clFileFormats[i].type == eObjType)
 			LOG(string("File format with extension \"")+string(pcExtension)+"\" was overrided.",LT_WARNING);
 
@@ -824,9 +824,9 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 					pFile->Read(&p_data[i_data_offset], i_bytes_per_pixel, ui_read);
 					i_current_byte += i_bytes_per_pixel;
 
-					for (int counter = 1; counter < ui8_chunkheader; counter++)
+					for (int counter = 1; counter < ui8_chunkheader; ++counter)
 					{
-						for (int elementCounter=0; elementCounter < i_bytes_per_pixel; elementCounter++)
+						for (int elementCounter=0; elementCounter < i_bytes_per_pixel; ++elementCounter)
 							p_data[i_current_byte + elementCounter] = p_data[i_data_offset + elementCounter];
 
 						i_current_byte += i_bytes_per_pixel;
@@ -982,7 +982,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	
 	uint8 *p_out = new uint8[ui_bitmap_length];
 	
-	for (int i = 0; i < st_info_header.i32Height; i++)
+	for (int i = 0; i < st_info_header.i32Height; ++i)
 		memcpy((void*)&p_out[i*i_line_w], (void*)&p_data[ui_bitmap_length - (i + 1)*i_line_w], i_line_w);
 
 	delete[] p_data;
@@ -1182,7 +1182,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 
 	bool ret = false;
 
-	for (uint i = 0; i < ui_mcount; i++)
+	for (uint i = 0; i < ui_mcount; ++i)
 	{
 		float points[6];
 		pFile->Read(&points, sizeof(float)*6, ui_read);
@@ -1252,7 +1252,7 @@ void CResourceManager::_ProfilerEventHandler() const
 		uint cnt[c_size];
 		memset(cnt, 0, c_size);
 
-		for (size_t i = 0; i < _resList.size(); i++)
+		for (size_t i = 0; i < _resList.size(); ++i)
 		{
 			E_ENG_OBJ_TYPE type;
 			_resList[i].pObj->GetType(type);
@@ -1261,7 +1261,7 @@ void CResourceManager::_ProfilerEventHandler() const
 
 		Core()->RenderProfilerTxt("---- Resource Statistic ----", color);
 
-		for (int i = 0; i < c_size; i++)
+		for (int i = 0; i < c_size; ++i)
 		{
 			string s;
 			
@@ -1482,7 +1482,7 @@ inline uint CResourceManager::_GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE e
 
 	string file_ext = ToUpperCase(GetFileExt(pcFileName));
 
-	for (size_t i = 0; i<_clFileFormats.size(); i++)
+	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		if ((eObjType == EOT_UNKNOWN || _clFileFormats[i].type == eObjType) && _clFileFormats[i].ext == file_ext)
 		{
 			ret = (uint)i;
@@ -1499,7 +1499,7 @@ inline uint CResourceManager::_GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE e
 
 HRESULT CALLBACK CResourceManager::GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType)
 {
-	for (size_t i = 0; i < _clFileFormats.size(); i++)
+	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
 			eType = _clFileFormats[i].type;
@@ -1513,7 +1513,7 @@ HRESULT CALLBACK CResourceManager::GetExtensionType(const char *pcExtension, E_E
 
 HRESULT CALLBACK CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount)
 {
-	for (size_t i = 0; i < _clFileFormats.size(); i++)
+	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
 			if (_clFileFormats[i].discr.size() > uiCharsCount)
@@ -1636,7 +1636,7 @@ HRESULT CALLBACK CResourceManager::FreeResource(IEngBaseObj *&prObj)
 
 HRESULT CALLBACK CResourceManager::AddResource(const char *pcName, IEngBaseObj *pObj)
 {
-	for (size_t i = 0; i < _resList.size(); i++)
+	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].pObj == pObj)
 			return E_INVALIDARG;
 
@@ -1647,7 +1647,7 @@ HRESULT CALLBACK CResourceManager::AddResource(const char *pcName, IEngBaseObj *
 
 HRESULT CALLBACK CResourceManager::RemoveResource(IEngBaseObj *pObj, bool &bCanDelete)
 {
-	for (size_t i = 0; i < _resList.size(); i++)
+	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].pObj == pObj)
 		{
 			bCanDelete = true;
@@ -1657,7 +1657,7 @@ HRESULT CALLBACK CResourceManager::RemoveResource(IEngBaseObj *pObj, bool &bCanD
 
 	bCanDelete = true;
 
-	for (size_t i = 0; i < _defRes.size(); i++)
+	for (size_t i = 0; i < _defRes.size(); ++i)
 		if (pObj == _defRes[i].pBaseObj)
 			bCanDelete = false;
 	

@@ -32,7 +32,7 @@ CMainFS::~CMainFS()
 
 void CMainFS::UnregisterAndFreeAll()
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); i++)
+	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		_clVFileSystems[i].pdc(_clVFileSystems[i].param, _clVFileSystems[i].fs);
 
 	_clVFileSystems.clear();
@@ -41,7 +41,7 @@ void CMainFS::UnregisterAndFreeAll()
 
 HRESULT CALLBACK CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); i++)
+	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
 			_clVFileSystems[i].pdc(_clVFileSystems[i].param, _clVFileSystems[i].fs);
@@ -57,7 +57,7 @@ HRESULT CALLBACK CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCh
 	string exts;
 
 	if (_clVFileSystems.size() > 1)
-		for (size_t i = 1; i<_clVFileSystems.size(); i++)
+		for (size_t i = 1; i<_clVFileSystems.size(); ++i)
 			exts += _clVFileSystems[i].ext + ";";
 
 	if (exts.size() > uiCharsCount)
@@ -98,7 +98,7 @@ HRESULT CALLBACK CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
 	if (string(pcFileName).find("|") == string::npos)
 		p_fs = (IFileSystem*)_pHddFS;
 	else
-		for (size_t i = 0; i<_clVFileSystems.size(); i++)
+		for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 			if ((ToUpperCase(string(pcFileName)).find("." + ToUpperCase(_clVFileSystems[i].ext) + "|") != string::npos))
 			{
 				p_fs = _clVFileSystems[i].fs;
@@ -131,7 +131,7 @@ HRESULT CALLBACK CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFile
 		return S_OK;
 	}
 
-	for (size_t i = 0; i<_clVFileSystems.size(); i++)
+	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
 			prVFS = _clVFileSystems[i].fs;
@@ -145,7 +145,7 @@ HRESULT CALLBACK CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFile
 
 HRESULT CALLBACK CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount)
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); i++)
+	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
 			if (_clVFileSystems[i].discr.size() > uiCharsCount)
@@ -166,7 +166,7 @@ HRESULT CALLBACK CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExten
 
 HRESULT CALLBACK CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (CALLBACK *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr)
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); i++)
+	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == string(pcVFSExtension))
 		{
 			LOG("Virtual file system with extension \"" + string(pcVFSExtension) + "\" already registered.", LT_WARNING);

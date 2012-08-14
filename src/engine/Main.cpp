@@ -25,7 +25,7 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 {
 	if (uiInstIdx == -1)
 	{
-		for (std::size_t i = 0; i < EngineInstances.size(); i++)
+		for (std::size_t i = 0; i < EngineInstances.size(); ++i)
 			if (EngineInstances[i].pclCore)
 				EngineInstances[i].pclCore->AddToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		return;
@@ -66,7 +66,7 @@ extern bool CALLBACK FreeEngine(DGLE2::IEngineCore *pEngineCore)
 	if (!pEngineCore)
 		return false;
 
-	for (std::size_t i = 0; i < EngineInstances.size(); i++)
+	for (std::size_t i = 0; i < EngineInstances.size(); ++i)
 		if (pEngineCore == EngineInstances[i].pclCore)
 		{
 			delete EngineInstances[i].pclCore;
@@ -102,7 +102,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 	case DLL_PROCESS_DETACH:
 		
-		for(size_t i = 0; i < EngineInstances.size(); i++)
+		for(size_t i = 0; i < EngineInstances.size(); ++i)
 		{
 			if(EngineInstances[i].pclCore)
 				delete EngineInstances[i].pclCore;

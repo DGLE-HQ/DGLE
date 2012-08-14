@@ -100,7 +100,7 @@ You can find more examples in the *"src/examples"* folder. Also for other suppor
 
 You can find build instructions [here](DGLE2/blob/master/docs/HowToBuild.txt).
 
-Also if you want to participate in the project development process you must read and understand [development rules](DGLE2/blob/master/docs/DevelopmentRules.txt).
+Also if you want to participate in the project development process you must read and understand [Development Rules](DGLE2/blob/master/docs/DevelopmentRules.txt).
 
 ## Documentation
 
