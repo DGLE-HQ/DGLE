@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		30.04.2012 (c)Korotkov Andrey
+\date		19.08.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,7 +24,7 @@ _bIn2D(false),_bInProfilerMode(false),
 _ui64DrawDelay(0), _iObjsDrawnCount(0),
 _batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
 _batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
-_iResCorWidth(0), _iResCorHeight(0), _iResCorConstProp(false),
+_iResCorWidth(0), _iResCorHeight(0), _iResCorConstProp(false), _fLineWidth(1.f),
 _ePrevBlendingMode(EBF_NORMAL),
 _uiBufferSize(34)// never less than 34
 {
@@ -114,7 +114,7 @@ void CRender2D::DrawProfiler()
 void CRender2D::_SetDefaultStates()
 {
 	_stRotationPoint = TPoint2();
-	_stScale = TPoint2();
+	_stScale = TPoint2(1.f, 1.f);
 	_astVerticesOffset[0] = _astVerticesOffset[1] = _astVerticesOffset[2] = _astVerticesOffset[3] =  TPoint2();
 	_stColormix = TColor4();
 
@@ -144,41 +144,41 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 	//Case when calling from profiler
 	if (!_bIn2D) return true;
 
-	static float vrtcs[10];
+	float vrtcs[10];
 
-/*	if (_bCameraWasSet)
+	if (_bCameraWasSet)
 	{
 		rotated = true;
-		for(int i = 0; i<4; ++i)
+		
+		for (int i = 0; i < 4; ++i)
 		{
-			float	x = vertices[i*2], 
-					y = vertices[i*2+1];
+			const float	&x = vertices[i*2], &y = vertices[i*2+1];
 
-			vrtcs[i*2]		= _stCamTransform.a00 * x + _stCamTransform.a01 * y + _stCamTransform.a03;
-			vrtcs[i*2+1]	= _stCamTransform.a10 * x + _stCamTransform.a11 * y + _stCamTransform.a13;		
+			vrtcs[i*2]		= _stCamTransform._2D[0][0] * x + _stCamTransform._2D[1][0] * y + _stCamTransform._2D[3][0];
+			vrtcs[i*2+1]	= _stCamTransform._2D[0][1] * x + _stCamTransform._2D[1][1] * y + _stCamTransform._2D[3][1];		
 		}
+
 	}
-	else*/
+	else
 		memcpy(&vrtcs[0], &vertices[0], 8*sizeof(float));
 
 	if (_iDoDrawBBoxes == 1)
 	{
-		/*
 		if (_bCameraWasSet)
-		{	
-			glPushMatrix();
-			mat4 inv_transform;
-			invert(inv_transform,_stCamTransform);
-			glMultMatrixf(inv_transform.mat_array);
-		}*/
+			_pCoreRenderer->SetMatrix(MatrixInverse(_stCamTransform) * _stCamTransform);
 
 		vrtcs[8] = vrtcs[0]; vrtcs[9] = vrtcs[1];
+		
 		_pCoreRenderer->BindTexture(NULL);
 		_pCoreRenderer->SetColor(TColor4()); 
+		_pCoreRenderer->SetLineWidth(1.f);
+		
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs), CRDM_LINE_STRIP, 5);
+		
+		_pCoreRenderer->SetLineWidth(_fLineWidth);
 
-//		if(_bCameraWasSet)
-//			glPopMatrix();
+		if (_bCameraWasSet)
+			_pCoreRenderer->SetMatrix(_stCamTransform);
 	}
 
 	if (!rotated && (((vrtcs[0] > _uiScreenWidth)  || (vrtcs[2] < 0.f) || (vrtcs[1] > _uiScreenHeight) || (vrtcs[5] < 0.f))))
@@ -401,15 +401,15 @@ HRESULT CALLBACK CRender2D::Begin2D()
 
 	if (_iResCorWidth + _iResCorHeight != 0)
 	{
-		if (_iResCorConstProp && fabs((float)_uiPrevViewPortW/(float)_uiPrevViewPortH - _fResCorKoef) > 0.001)
+		if (_iResCorConstProp && fabs((float)_uiPrevViewPortW/(float)_uiPrevViewPortH - _fResCorCoef) > 0.001)
 		{
-			_uiCropW = (int)((float)_uiPrevViewPortH*_fResCorKoef);
+			_uiCropW = (int)((float)_uiPrevViewPortH*_fResCorCoef);
 
 			if (_uiPrevViewPortW > _uiCropW)
 				_uiCropH = _uiPrevViewPortH;
 			else
 			{
-				_uiCropH = (int)((float)_uiPrevViewPortW/_fResCorKoef);
+				_uiCropH = (int)((float)_uiPrevViewPortW/_fResCorCoef);
 				_uiCropW = _uiPrevViewPortW;
 			}
 
@@ -456,8 +456,8 @@ HRESULT CALLBACK CRender2D::End2D()
 	_BatchFlush();
 	(uint&)_eBatchDrawMode = -1;
 
-//	if (_bCameraWasSet)
-//		glPopMatrix();
+	if (_bCameraWasSet)
+		_pCoreRenderer->SetMatrix(_stPrevCamTransform);
 
 	_batchBuffersNotModefiedPerFrameCounter = _batchBuffersRepetedUseCounter;
 
@@ -481,49 +481,55 @@ HRESULT CALLBACK CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY, bo
 	_iResCorWidth		= uiResX;
 	_iResCorHeight		= uiResY;
 	_iResCorConstProp	= bConstaintProportions;
-	_fResCorKoef		= (float)_iResCorWidth/(float)_iResCorHeight;
+	_fResCorCoef		= (float)_iResCorWidth/(float)_iResCorHeight;
 
 	return S_OK;
 }
 
 HRESULT CALLBACK CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale)
 {
-	/*
 	_BatchFlush();
 
-	if(_bCameraWasSet)
-		glPopMatrix();
+	if (stCenter.x == 0.f && stCenter.y == 0.f && fAngle == 0.f && stScale.x == 0.f && stScale.y == 0.f)
+	{
+		if (_bCameraWasSet)
+			_pCoreRenderer->SetMatrix(_stPrevCamTransform);
 
-	if(stCenter.x == 0.f && stCenter.y == 0.f && fAngle == 0.f && stScale.x == 1.f && stScale.y == 1.f)
 		_bCameraWasSet = false;
+	}
 	else
 	{
-		_stCamScale		= stScale;
-	
-		glPushMatrix();
+		_pCoreRenderer->GetMatrix(_stPrevCamTransform);
 
-		if(fAngle!=0.f || stScale.x!=1.f || stScale.y!=1.f)
+		_stCamScale	= stScale;
+		_stCamTransform = MatrixIdentity();
+	
+		if (fAngle != 0.f || stScale.x != 1.f || stScale.y != 1.f)
 		{
-			glTranslatef((float)_uiScreenWidth/2.f, (float)_uiScreenHeight/2.f,0.f);
-			if(stScale.x!=1.f || stScale.y!=1.f)
-				glScalef(stScale.x, stScale.y, 1.f);
-			if(fAngle!=0.f)
-				glRotatef(fAngle, 0.f, 0.f, 1.f);
-			glTranslatef(-(float)_uiScreenWidth/2.f, -(float)_uiScreenHeight/2.f, 0.f);
+			_stCamTransform = MatrixTranslate(TPoint3((float)_uiScreenWidth/2.f, (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+
+			if (_stCamScale.x != 1.f || _stCamScale.y != 1.f)
+				_stCamTransform = MatrixScale(TPoint3(stScale.x, stScale.y, 1.f)) * _stCamTransform;
+
+			if (fAngle != 0.f)
+				_stCamTransform = MatrixRotate(fAngle, TPoint3(0.f, 0.f, 1.f)) * _stCamTransform;
+
+			_stCamTransform = MatrixTranslate(TPoint3(-(float)_uiScreenWidth/2.f, -(float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
 		}
 
-		glTranslatef(_uiScreenWidth/2.f - stCenter.x, _uiScreenHeight/2.f - stCenter.y, 0.f);
+		_stCamTransform = MatrixTranslate(TPoint3(stCenter.x - (float)_uiScreenWidth/2.f, stCenter.y - (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
 
-		glGetFloatv(GL_MODELVIEW_MATRIX, _stCamTransform.mat_array);
+		_pCoreRenderer->SetMatrix(_stCamTransform);
 
 		_bCameraWasSet = true;
 	}
-	*/
+
 	return S_OK;
 }
 
 HRESULT CALLBACK CRender2D::LineWidth(uint uiWidth)
 {
+	_fLineWidth = (float)uiWidth;
 	_pCoreRenderer->SetLineWidth((float)uiWidth);
 	return S_OK;
 }
@@ -551,20 +557,19 @@ HRESULT CALLBACK CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &st
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		bool smooth = uiSize > 1 || stColor.a < 1.f;
-
-		if (smooth != _stRasterStateDesc.bSmoothPointsAndLines)
+		if (stColor.a < 1.f)
 		{
+			_stBlendStateDesc.bEnable = true;
 			_stRasterStateDesc.bAlphaTestEnable = false;
-			_stRasterStateDesc.bSmoothPointsAndLines = smooth;
-			_stBlendStateDesc.bEnable = _stRasterStateDesc.bSmoothPointsAndLines;
-			_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
 		}
 		else
 		{
-			_pCoreRenderer->ToggleAlphaTestState(false);
-			_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+			_stBlendStateDesc.bEnable = false;
+			_stRasterStateDesc.bAlphaTestEnable = true;
 		}
+
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 	}
 
 	if (do_batch_update)
@@ -578,7 +583,7 @@ HRESULT CALLBACK CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &st
 
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy), CRDM_POINTS, 1);
 		
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -605,12 +610,11 @@ HRESULT CALLBACK CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &st
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		_stRasterStateDesc.bSmoothPointsAndLines = (eFlags & PF_SMOOTH) != 0;
 		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = stColor.a < 1.f || eFlags & PF_SMOOTH;
+		_stBlendStateDesc.bEnable = stColor.a < 1.f;
 
-		_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
-		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 
 		_pCoreRenderer->SetColor(stColor);
 	}
@@ -620,7 +624,7 @@ HRESULT CALLBACK CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &st
 			_batchBufferReadyToRender = true;
 		else
 		{
-			if (eFlags & PF_VCA)
+			if (eFlags & PF_VERTICES_COLOR)
 			{
 				_batchAccumulator.push_back(TVertex2(stCoords1.x, stCoords1.y, 0.f ,0.f , _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
 				_batchAccumulator.push_back(TVertex2(stCoords2.x, stCoords2.y, 0.f ,0.f , _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
@@ -638,7 +642,7 @@ HRESULT CALLBACK CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &st
 
 		TDrawDataDesc desc((uint8*)_pBuffer);
 
-		if (eFlags & PF_VCA)
+		if (eFlags & PF_VERTICES_COLOR)
 		{
 			memcpy(&_pBuffer[4], _astVerticesColors, 8*sizeof(float));
 			desc.uiColorOffset = 4*sizeof(float);
@@ -646,7 +650,7 @@ HRESULT CALLBACK CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &st
 
 		_pCoreRenderer->Draw(desc, CRDM_LINES, 2);
 
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -672,12 +676,11 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		_stRasterStateDesc.bSmoothPointsAndLines = false;
 		_stRasterStateDesc.bAlphaTestEnable = false;
 		_stBlendStateDesc.bEnable = stColor.a < 1.f;
 
-		_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
-		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 
 		_pCoreRenderer->SetColor(stColor);
 	}
@@ -687,7 +690,7 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 			_batchBufferReadyToRender = true;
 		else
 		{
-			if (eFlags & PF_VCA)
+			if (eFlags & PF_VERTICES_COLOR)
 			{
 				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f ,0.f , _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
 				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f ,0.f , _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
@@ -710,7 +713,7 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 	{
 		TDrawDataDesc desc((uint8*)_pBuffer);
 
-		if(eFlags & PF_VCA)
+		if(eFlags & PF_VERTICES_COLOR)
 		{
 			memcpy(&_pBuffer[10], _astVerticesColors, 16*sizeof(float));
 			desc.uiColorOffset = 8*sizeof(float);
@@ -718,7 +721,7 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 
 		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? 4 : 5);
 
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -750,11 +753,11 @@ HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		_stRasterStateDesc.bSmoothPointsAndLines = eFlags & PF_SMOOTH && !(eFlags & PF_FILL);
 		_stRasterStateDesc.bAlphaTestEnable = false;
+		_stBlendStateDesc.bEnable = stColor.a < 1.f;
 
-		_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);//медленно, подумать как исправить
-		_pCoreRenderer->ToggleBlendState(stColor.a < 1.f || eFlags & PF_SMOOTH);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 
 		_pCoreRenderer->SetColor(stColor);
 	}
@@ -796,7 +799,7 @@ HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &
 
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)&_pBuffer[eFlags & PF_FILL ? 0 : 2]), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
 
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -811,28 +814,19 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 		uint16 index[3];
 	};
 
-	struct TVector2D
+	struct TVector2D : TPoint2
 	{
-		float x, y;
-
 		TVector2D() {}
 
-		TVector2D(float r, float s)
-		{
-			x = r;
-			y = s;
-		}
+		TVector2D(const TPoint2 &p) : TPoint2(p) {}
 
-		// Dot product
-		float operator *(const TVector2D &v) const
-		{
-			return x * v.x + y * v.y;
-		}
+		TVector2D(const TVertex2 &v) : TPoint2(v.data) {}
 
-		// Cross product
-		float operator %(const TVector2D &v) const
+		TVector2D(float x, float y) : TPoint2(x, y) {}
+
+		TVector2D Diff(const TVector2D &p) const
 		{
-			return x * v.y - v.x * y;
+			return TPoint2(x - p.x, y - p.y);
 		}
 
 		TVector2D &OrthoCCW()
@@ -855,25 +849,6 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 			return TVector2D(*this).OrthoCW();
 		}
 
-		TVector2D &Normalize()
-		{
-			const float len = sqrt(x * x + y * y);
-			x /= len, y /= len;
-			return *this;
-		}
-	};
-
-	struct TPoint2D: TVector2D
-	{
-		TPoint2D() {}
-		TPoint2D(float r, float s): TVector2D(r, s) {}
-		TPoint2D(const TVertex2 &v): TVector2D(v.x, v.y) {}
-
-		// Difference between two points is a vector
-		TVector2D operator -(const TPoint2D &p) const
-		{
-			return TVector2D(x - p.x, y - p.y);
-		}
 	};
 
 	struct TFContainer
@@ -900,7 +875,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 	public:
 		static __forceinline int32 TriangulatePolygon(int32 vertexCount, const TVertex2 *vertex, bool ccw, TTriangle *triangle)
 		{
-			const float c_epsilon = 0.001F;
+			const float c_epsilon = 0.001f;
 
 			bool *active = new bool[vertexCount];
 			for (int32 a = 0; a < vertexCount; ++a)
@@ -921,28 +896,25 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 					triangle->index[0] = (uint16)m1;
 					triangle->index[1] = (uint16)p1;
 					triangle->index[2] = (uint16)p2;
-					triangleCount++;
+					++triangleCount;
 					break;
 				}
 
-				const TPoint2D c_vp1 = vertex[p1];
-				const TPoint2D c_vp2 = vertex[p2];
-				const TPoint2D c_vm1 = vertex[m1];
-				const TPoint2D c_vm2 = vertex[m2];
-				bool  positive = false;
-				bool  negative = false;
+				const TVector2D c_vp1 = vertex[p1], c_vp2 = vertex[p2],
+				c_vm1 = vertex[m1], c_vm2 = vertex[m2];
+				bool  positive = false, negative = false;
 
 				// Determine whether c_vp1, c_vp2 and c_vm1 form a valid triangle
-				TVector2D n1 = (c_vm1 - c_vp2).Normalize();
+				TVector2D n1 = c_vm1.Diff(c_vp2).Normalize();
 				if (ccw)
 					n1.OrthoCCW();
 				else
 					n1.OrthoCW();
-				if (n1 * (c_vp1 - c_vp2) > c_epsilon)
+				if (n1.Dot(c_vp1.Diff(c_vp2)) > c_epsilon)
 				{
 					positive = true;
-					TVector2D n2 = (c_vp1 - c_vm1).Normalize();
-					TVector2D n3 = (c_vp2 - c_vp1).Normalize();
+					TVector2D n2 = c_vp1.Diff(c_vm1).Normalize();
+					TVector2D n3 = c_vp2.Diff(c_vp1).Normalize();
 					if (ccw)
 					{
 						n2.OrthoCCW();
@@ -958,10 +930,10 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 					{	// Look for other vertices inside the triangle
 						if (active[a] && a != p1 && a != p2 && a != m1)
 						{
-							const TPoint2D c_v = vertex[a];
-							if( n1 * (c_v - c_vp2).Normalize() > -c_epsilon &&
-								n2 * (c_v - c_vm1).Normalize() > -c_epsilon &&
-								n3 * (c_v - c_vp1).Normalize() > -c_epsilon)
+							const TVector2D c_v = vertex[a];
+							if( n1.Dot(c_v.Diff(c_vp2).Normalize()) > -c_epsilon &&
+								n2.Dot(c_v.Diff(c_vm1).Normalize()) > -c_epsilon &&
+								n3.Dot(c_v.Diff(c_vp1).Normalize()) > -c_epsilon)
 							{
 								positive = false;
 								break;
@@ -971,16 +943,16 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 				}
 
 				// Determine whether c_vm1, c_vm2 and c_vp1 form a valid triangle
-				n1 = (c_vm2 - c_vp1).Normalize();
+				n1 = c_vm2.Diff(c_vp1).Normalize();
 				if (ccw)
 					n1.OrthoCCW();
 				else
 					n1.OrthoCW();
-				if (n1 * (c_vm1 - c_vp1) > c_epsilon)
+				if (n1.Dot(c_vm1.Diff(c_vp1)) > c_epsilon)
 				{
 					negative = true;
-					TVector2D n2 = (c_vm1 - c_vm2).Normalize();
-					TVector2D n3 = (c_vp1 - c_vm1).Normalize();
+					TVector2D n2 = (c_vm1.Diff(c_vm2)).Normalize();
+					TVector2D n3 = (c_vp1.Diff(c_vm1)).Normalize();
 					if (ccw)
 					{
 						n2.OrthoCCW();
@@ -996,10 +968,10 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 					{	// Look for other vertices inside the triangle
 						if (active[a] && a != m1 && a != m2 && a != p1)
 						{
-							const TPoint2D v = vertex[a];
-							if (n1 * (v - c_vp1).Normalize() > -c_epsilon &&
-								n2 * (v - c_vm2).Normalize() > -c_epsilon &&
-								n3 * (v - c_vm1).Normalize() > -c_epsilon)
+							const TVector2D v = vertex[a];
+							if (n1.Dot(v.Diff(c_vp1).Normalize()) > -c_epsilon &&
+								n2.Dot(v.Diff(c_vm2).Normalize()) > -c_epsilon &&
+								n3.Dot(v.Diff(c_vm1).Normalize()) > -c_epsilon)
 							{
 								negative = false;
 								break;
@@ -1011,8 +983,8 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 				// If both triangles valid, choose the one having the larger smallest angle
 				if (positive && negative)
 				{
-					float pd = (c_vp2 - c_vm1).Normalize() * (c_vm2 - c_vm1).Normalize();
-					float md = (c_vm2 - c_vp1).Normalize() * (c_vp2 - c_vp1).Normalize();
+					float pd = (c_vp2.Diff(c_vm1)).Normalize().Dot(c_vm2.Diff(c_vm1).Normalize());
+					float md = (c_vm2.Diff(c_vp1)).Normalize().Dot(c_vp2.Diff(c_vp1).Normalize());
 
 					if (abs(pd - md) < c_epsilon)
 					{
@@ -1036,8 +1008,8 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 					triangle->index[0] = (uint16)m1;
 					triangle->index[1] = (uint16)p1;
 					triangle->index[2] = (uint16)p2;
-					triangleCount++;
-					triangle++;
+					++triangleCount;
+					++triangle;
 
 					p1 = GetNextActive(p1, vertexCount, active);
 					p2 = GetNextActive(p2, vertexCount, active);
@@ -1050,8 +1022,8 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 					triangle->index[0] = (uint16)m2;
 					triangle->index[1] = (uint16)m1;
 					triangle->index[2] = (uint16)p1;
-					triangleCount++;
-					triangle++;
+					++triangleCount;
+					++triangle;
 
 					m1 = GetPrevActive(m1, vertexCount, active);
 					m2 = GetPrevActive(m2, vertexCount, active);
@@ -1117,11 +1089,10 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 	{
 		_pCoreRenderer->BindTexture(p_tex);
 
-		_stRasterStateDesc.bSmoothPointsAndLines = eFlags & PF_SMOOTH && !(eFlags & PF_FILL);
 		_stRasterStateDesc.bAlphaTestEnable = false;
 		_stBlendStateDesc.bEnable = true;
 
-		_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
 		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
 	}
 
@@ -1134,11 +1105,11 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 		}
 
 		float angle = 0;
-		TVector2D e1 = (TPoint2D(pstVertices[0]) - pstVertices[uiVerticesCount - 1]).Normalize(), e2;
+		TVector2D e1 = (TVector2D(pstVertices[0]).Diff(pstVertices[uiVerticesCount - 1])).Normalize(), e2;
 		for (uint vert_idx = 0; vert_idx < uiVerticesCount; e1 = e2, ++vert_idx)
 		{
-			e2 = (TPoint2D(pstVertices[(vert_idx + 1) % uiVerticesCount]) - pstVertices[vert_idx]).Normalize();
-			const float s = e1 % e2, c = e1 * e2;
+			e2 = TVector2D(TVector2D(pstVertices[(vert_idx + 1) % uiVerticesCount]).Diff(pstVertices[vert_idx])).Normalize();
+			const float s = e1.Cross(e2), c = e1.Dot(e2);
 			angle += atan2(s, c);
 		}
 
@@ -1190,13 +1161,13 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 
 			_pCoreRenderer->Draw(desc, CRDM_TRIANGLES, tri_count*3);
 
-			_iObjsDrawnCount++;
+			++_iObjsDrawnCount;
 		}
 
 		delete[] tris;
 
 	}
-	else//Draw Line
+	else //Draw Line
 	{
 		if (do_batch_update)
 		{
@@ -1231,7 +1202,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 
 			_pCoreRenderer->Draw(desc, CRDM_LINE_STRIP, uiVerticesCount + 1);
 
-			_iObjsDrawnCount++;
+			++_iObjsDrawnCount;
 	}
 
 	}
@@ -1281,11 +1252,10 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 	{
 		_pCoreRenderer->BindTexture(p_tex);
 
-		_stRasterStateDesc.bSmoothPointsAndLines = eFlags & PF_SMOOTH && !(eFlags & PF_FILL);
 		_stRasterStateDesc.bAlphaTestEnable = false;
 		_stBlendStateDesc.bEnable = true;
 
-		_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
 		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
 	}
 
@@ -1304,25 +1274,31 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 	else
 	{
 		TDrawDataDesc desc;
-
+		
 		if (!(eFlags & PF_FILL))
 		{
-			if (_uiBufferSize < uiVerticesCount*6*8)
+			if (_uiBufferSize < uiVerticesCount*8*2)
 			{
-				_uiBufferSize = uiVerticesCount*6*8;
+				_uiBufferSize = uiVerticesCount*8*2;
 				delete[] _pBuffer;
 				_pBuffer = new float[_uiBufferSize];
 			}
 
-			for (uint i = 0; i < uiVerticesCount/3; ++i)
-				for (uint8 j = 0; j < 6; ++j)
-					memcpy(&_pBuffer[i*6*8 + j], &pstVertices[i*3 + j], sizeof(TVertex2));
-	
+			for (uint i = 0; i < uiVerticesCount; ++i)
+			{
+				memcpy(&_pBuffer[i*8*2], &pstVertices[i], sizeof(TVertex2));
+
+				if (i != 0 && (i + 1)% 3 == 0)
+					memcpy(&_pBuffer[i*8*2 + 8], &pstVertices[i - 2], sizeof(TVertex2));
+				else
+					memcpy(&_pBuffer[i*8*2 + 8], &pstVertices[i + 1], sizeof(TVertex2));
+			}
+
 			desc.pData = (uint8*)_pBuffer;
 		}
 		else
 			desc.pData = (uint8*)pstVertices;
-		
+				
 		desc.bVertexCoord2 = true;
 		desc.uiVertexStride = 8*sizeof(float);
 		desc.uiTexCoordOffset = 2*sizeof(float);
@@ -1332,7 +1308,7 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 
 		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, eFlags & PF_FILL ? uiVerticesCount : uiVerticesCount*2);
 
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -1447,7 +1423,7 @@ HRESULT CALLBACK CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPo
 		if(_batchMode > BM_DISABLED)
 			glEnableClientState(GL_VERTEX_ARRAY);
 
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 
 	glPopMatrix();
@@ -1640,17 +1616,28 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 		if (flags & EF_BLEND)
 		{
 			_stRasterStateDesc.bAlphaTestEnable = false;
+			_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+
 			_stBlendStateDesc.bEnable = true;
-			_pCoreRenderer->ToggleAlphaTestState(false);
-			_pCoreRenderer->ToggleBlendState(true);
+			_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 		}
-		else 
-		{
-			_stRasterStateDesc.bAlphaTestEnable = true;
-			_stBlendStateDesc.bEnable = false;
-			_pCoreRenderer->ToggleAlphaTestState(true);
-			_pCoreRenderer->ToggleBlendState(false);
-		}
+		else
+			if (flags & EF_NONE)
+			{
+				_stRasterStateDesc.bAlphaTestEnable = false;
+				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+
+				_stBlendStateDesc.bEnable = false;
+				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+			}
+			else 
+			{
+				_stRasterStateDesc.bAlphaTestEnable = true;
+				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+
+				_stBlendStateDesc.bEnable = false;
+				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+			}
 	}
 
 	if (do_batch_update)
@@ -1701,7 +1688,7 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 
 		_pCoreRenderer->Draw(desc, CRDM_TRIANGLE_STRIP, 4);
 		
-		_iObjsDrawnCount++;
+		++_iObjsDrawnCount;
 	}
 }
 
@@ -1729,17 +1716,28 @@ void CRender2D::DrawTexQuadAsIs(ITexture *tex, const float *points, E_EFFECT2D_F
 		if (flags & EF_BLEND)
 		{
 			_stRasterStateDesc.bAlphaTestEnable = false;
+			_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+
 			_stBlendStateDesc.bEnable = true;
-			_pCoreRenderer->ToggleAlphaTestState(false);
-			_pCoreRenderer->ToggleBlendState(true);
+			_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 		}
-		else 
-		{
-			_stRasterStateDesc.bAlphaTestEnable = true;
-			_stBlendStateDesc.bEnable = false;
-			_pCoreRenderer->ToggleAlphaTestState(true);
-			_pCoreRenderer->ToggleBlendState(false);
-		}
+		else
+			if (flags & EF_NONE)
+			{
+				_stRasterStateDesc.bAlphaTestEnable = false;
+				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+
+				_stBlendStateDesc.bEnable = false;
+				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+			}
+			else 
+			{
+				_stRasterStateDesc.bAlphaTestEnable = true;
+				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+
+				_stBlendStateDesc.bEnable = false;
+				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+			}
 	}
 
 	if (do_batch_update)
@@ -1785,7 +1783,7 @@ void CRender2D::DrawTexQuadAsIs(ITexture *tex, const float *points, E_EFFECT2D_F
 		_pCoreRenderer->Draw(desc, CRDM_TRIANGLE_STRIP, 4);
 		
 		if (!_bInProfilerMode)
-			_iObjsDrawnCount++;
+			++_iObjsDrawnCount;
 	}
 }
 
@@ -1862,9 +1860,9 @@ HRESULT CALLBACK CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
 
 HRESULT CALLBACK CRender2D::SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4)
 {
-	_astVerticesOffset[0] = stCoords1;
-	_astVerticesOffset[1] = stCoords2;
-	_astVerticesOffset[2] = stCoords3;
+	_astVerticesOffset[0] = stCoords2;
+	_astVerticesOffset[1] = stCoords3;
+	_astVerticesOffset[2] = stCoords1;
 	_astVerticesOffset[3] = stCoords4;
 
 	return S_OK;
@@ -1872,9 +1870,9 @@ HRESULT CALLBACK CRender2D::SetVerticesOffset(const TPoint2 &stCoords1, const TP
 
 HRESULT CALLBACK CRender2D::SetVerticesColors( const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4 )
 {
-	_astVerticesColors[0] = stColor1;
-	_astVerticesColors[1] = stColor2;
-	_astVerticesColors[2] = stColor3;
+	_astVerticesColors[0] = stColor2;
+	_astVerticesColors[1] = stColor3;
+	_astVerticesColors[2] = stColor1;
 	_astVerticesColors[3] = stColor4;
 
 	return S_OK;

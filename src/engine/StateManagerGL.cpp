@@ -570,7 +570,7 @@ inline void CTextureState::Set(const CTextureState &previous)
 {
 	for (int i = (int)_textures.size() - 1; i > -1; --i)
 	{
-		if (_textures[i].texture == ~0 || _textures[i].enabled == previous._textures[i].enabled || _textures[i].texture == previous._textures[i].texture)
+		if (_textures[i].texture == ~0 || (_textures[i].enabled == previous._textures[i].enabled && _textures[i].texture == previous._textures[i].texture))
 			continue;
 
 		if (!_textures[i].enabled)
@@ -584,7 +584,7 @@ inline void CTextureState::Set(const CTextureState &previous)
 			::glEnable(GL_TEXTURE_2D);
 		}
 
-		glBindTexture(GL_TEXTURE_2D, _textures[i].texture);
+		::glBindTexture(GL_TEXTURE_2D, _textures[i].texture);
 	}
 }
 

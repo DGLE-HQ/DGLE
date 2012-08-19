@@ -271,7 +271,7 @@ namespace DGLE2
 		typedef const float (&cref)[4];
 
 		inline TColor4():r(1.f), g(1.f), b(1.f), a(1.f){}
-		inline TColor4(int color, uint8 alpha):
+		inline TColor4(uint color, uint8 alpha):
 			r(GetRValue(color)/255.f),
 			g(GetGValue(color)/255.f),
 			b(GetBValue(color)/255.f),
@@ -369,7 +369,7 @@ namespace DGLE2
 		{
 			return TPoint2(*this) -= point;
 		}
-
+		
 		TPoint2 &operator *= (const TPoint2 &point)
 		{
 			x *= point.x;
@@ -394,11 +394,28 @@ namespace DGLE2
 			return TPoint2(*this) /= point;
 		}
 
+		inline float Dot(const TPoint2 &point) const
+		{
+			return x * point.x + y * point.y;
+		}
+
+		inline float Cross(const TPoint2 &point) const
+		{
+			return x * point.y - point.x * y;
+		}
+
+		inline TPoint2 &Normalize()
+		{
+			const float len = sqrtf(x * x + y * y);
+			x /= len, y /= len;
+			return *this;
+		}
+
 		inline operator ref() { return xy; }
 		inline operator cref() const { return xy; }
 	};
 
-	typedef TPoint2 TVec2;
+	typedef TPoint2 TVec2, TVector2;
 
 	/** Describes point coordinates in 3D space. */
 	struct TPoint3
@@ -418,6 +435,7 @@ namespace DGLE2
 		inline TPoint3():x(0.f), y(0.f), z(0.f){}
 		inline TPoint3(const float *pfArray):x(pfArray[0]), y(pfArray[1]), z(pfArray[2]){}
 		inline TPoint3(float fX, float fY, float fZ):x(fX), y(fY), z(fZ){}
+		inline TPoint3(const TPoint2 &p):x(p.x), y(p.y), z(0.f){}
 
 		TPoint3 &operator += (const TPoint3 &point)
 		{
@@ -444,7 +462,7 @@ namespace DGLE2
 		{
 			return TPoint3(*this) -= point;
 		}
-
+		
 		TPoint3 &operator *= (const TPoint3 &point)
 		{
 			x *= point.x;
@@ -476,7 +494,7 @@ namespace DGLE2
 
 	};
 
-	typedef TPoint3 TVec3;
+	typedef TPoint3 TVec3, TVector3;
 
 	/** Describes graphical point coordinates, color and its texture coordinates in 2D space. */
 	struct TVertex2

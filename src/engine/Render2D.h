@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		30.04.2012 (c)Korotkov Andrey
+\date		19.08.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -49,7 +49,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 	// End Batching //
 
 	bool		_bCameraWasSet;
-	TMatrix		_stCamTransform;
+	TMatrix		_stCamTransform, _stPrevCamTransform;
 	TPoint2		_stCamScale;
 	
 	// Saved State //
@@ -61,6 +61,8 @@ class CRender2D: public CInstancedObj, public IRender2D
 	float		*_pBuffer;
 	uint		_uiBufferSize;
 
+	float		_fLineWidth;
+
 	TColor4		_stColormix, _stPrevColormix,
 				_astVerticesColors[4];
 
@@ -69,7 +71,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 
 	int			_iResCorWidth, _iResCorHeight;
 	bool		_iResCorConstProp;
-	float		_fResCorKoef;
+	float		_fResCorCoef;
 
 	uint		_uiScreenWidth, _uiScreenHeight,
 				_uiCropX, _uiCropY,

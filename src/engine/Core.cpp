@@ -282,9 +282,9 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 	
 	switch (eType)
 	{
-		 case LT_WARNING:	msg="[WARNING] " + string(pcTxt); _iLogWarningsCount++; break;
-		 case LT_ERROR:		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")"; _LogErrorsCount++; break;
-		 case LT_FATAL:		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")"; _LogErrorsCount++;
+		 case LT_WARNING:	msg="[WARNING] " + string(pcTxt); ++_iLogWarningsCount; break;
+		 case LT_ERROR:		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")"; ++_LogErrorsCount; break;
+		 case LT_FATAL:		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")"; ++_LogErrorsCount;
 							_LogWrite(msg.c_str(), true);		 
 							
 							CEvFatalMessage *ev_fatal_msg;
@@ -392,7 +392,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			if (strcmp(iname, "ISubSystemPlugin") != 0)
 				_UnloadPlugin(_clPlugins[i].pPlugin);
 			else
-				i++;
+				++i;
 		}
 
 		_pResMan->FreeAllResources();
@@ -488,7 +488,7 @@ void CCore::_OnTimer()
 	if (!_bPause)
 	{
 		_ui64FPSSumm  += _uiLastFPS;
-		_ui64CiclesCount ++;
+		++_ui64CiclesCount;
 
 		if (_iFPSToCaption == 1)
 			_pMainWindow->SetCaption((string(_pcApplicationCaption) + string(" FPS:") + IntToStr(_uiLastFPS)).c_str());
@@ -539,7 +539,7 @@ void CCore::_MainLoop()
 				
 				_clDelUpdate.Invoke();
 
-				_uiUPSCount++;
+				++_uiUPSCount;
 			}
 
 			flag = true;
@@ -613,7 +613,7 @@ void CCore::_MainLoop()
 
 		_pRender->EndRender();
 
-		_uiFPSCount++;
+		++_uiFPSCount;
 
 		Console()->LeaveCrSection();
 	}

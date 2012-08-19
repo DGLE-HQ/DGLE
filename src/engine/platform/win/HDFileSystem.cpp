@@ -122,3 +122,20 @@ HRESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterat
 
 	return S_FALSE;
 }
+
+HRESULT CALLBACK CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
+{
+	char res[] = "Not supported for this realisation.";
+
+	if (strlen(res) < uiCharsCount)
+	{
+		strcpy(pcResult, res);
+		return E_INVALIDARG;
+	}
+	else
+	{
+		strcpy(pcResult, "");
+		LOG("Too small \"pcResult\" buffer size.", LT_ERROR);
+		return E_INVALIDARG;
+	}
+}

@@ -14,6 +14,8 @@ See "DGLE2.h" for more details.
 
 using namespace std;
 
+//CDCPFileSystem//
+
 CDCPFileSystem::CDCPFileSystem(uint uiInstIdx, IMainFileSystem *pFS):
 CInstancedObj(uiInstIdx), _pFS(pFS)
 {
@@ -260,6 +262,11 @@ HRESULT CALLBACK CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, I
 	return S_OK;
 }
 
+HRESULT CALLBACK CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
+{
+	return E_FAIL;
+}
+
 void CDCPFileSystem::_ReplaceChInStr(string &outStr, const string &findCh, const string &repCh)
 {
 	uint posCh = 0;
@@ -296,6 +303,8 @@ void CDCPFileSystem::_Clean()
 
 	_pInfoTable = NULL;
 }
+
+//CDCPFileIterator//
 
 CDCPFileIterator::CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList):
 CInstancedObj(uiInstIdx), _clNameList(clNameList)

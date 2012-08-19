@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		29.04.2012 (c)Andrey Korotkov
+\date		19.08.2012 (c)Andrey Korotkov
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -279,7 +279,7 @@ class CCoreTexture : public ICoreTexture
 		while (l != lod)
 		{
 			w /= 2; h /= 2;
-			l++;
+			++l;
 		}
 
 		if (w == 0 || h == 0)
@@ -418,13 +418,19 @@ HRESULT CALLBACK CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 		}
 
 		LOG("Can't initialize OpenGL Extension Wrangler. " + cause, LT_FATAL);
+		
 		CBaseRendererGL::Finalize();
+
 		return E_ABORT;
 	}
 	
 	_strOpenGLExtensions = string((char*)glGetString(GL_EXTENSIONS));
 
-	LOG(string("OpenGL ") + (char*)glGetString(GL_VERSION) + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ")", LT_INFO);
+	string gl_ver((char*)glGetString(GL_VERSION));
+
+	if (GLEW_VERSION_2_1) gl_ver = "2.1";
+
+	LOG(string("OpenGL ") + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ")", LT_INFO);
 
 #ifdef PLATFORM_WINDOWS
 	if (string((char*)glGetString(GL_RENDERER)).find("GDI") != string::npos && string((char*)glGetString(GL_VENDOR)).find("Microsoft") != string::npos && !GLEW_VERSION_1_2)
@@ -463,8 +469,8 @@ HRESULT CALLBACK CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glHint(GL_FOG_HINT, GL_NICEST);
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	
+	glEnable(GL_POINT_SMOOTH);
 
 	if (_iMaxTexUnits > 1)
 		_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -749,7 +755,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 		while (max_side > 0)
 		{
 			max_side /= 2;
-			i_mipmaps++;
+			++i_mipmaps;
 		}
 
 		int i_cur_w = uiWidth*2, i_cur_h = uiHeight*2;
@@ -1056,53 +1062,64 @@ inline GLenum CCoreRendererGL::_GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode)
 
 __forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
 {
-	if (_bVerticesBufferBindedFlag || uiCount > _sc_uiMaxVerticesCountForLegact || !stDrawDesc.bVertexCoord2 || stDrawDesc.pIndexBuffer != NULL || stDrawDesc.uiNormalOffset != -1)
+	if (_bVerticesBufferBindedFlag || uiCount > _sc_uiMaxVerticesCountForLegacy || stDrawDesc.pIndexBuffer != NULL)
 		return false;
 
 	const float *data = (float *)stDrawDesc.pData;
 
 	glBegin(_GetGLDrawMode(eMode));
+	
+	const	uint tex_offset = stDrawDesc.uiTexCoordOffset/sizeof(float),
+			color_offset = stDrawDesc.uiColorOffset/sizeof(float),
+			normals_offset = stDrawDesc.uiNormalOffset/sizeof(float),
+			vert_stride = stDrawDesc.uiVertexStride == 0 ? (stDrawDesc.bVertexCoord2 ? 2 : 3):
+			stDrawDesc.uiVertexStride/sizeof(float),
+			tex_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride/sizeof(float),
+			color_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride/sizeof(float),
+			normals_stride = stDrawDesc.uiNormalStride == 0 ? 3 : stDrawDesc.uiNormalStride/sizeof(float);
 
-	const	uint tex_offset = stDrawDesc.uiTexCoordOffset/sizeof(float), color_offset = stDrawDesc.uiColorOffset/sizeof(float),
-			vert_stride = stDrawDesc.uiVertexStride/sizeof(float)/2, tex_stride = stDrawDesc.uiTexCoordStride/sizeof(float)/2,
-			color_stride = stDrawDesc.uiTexCoordStride/sizeof(float)/4;
-
-	if (uiCount == 4) // most common case
+	if (uiCount == 4 && stDrawDesc.bVertexCoord2 && stDrawDesc.uiNormalOffset == -1) // most common case for 2D
 	{
-		if (stDrawDesc.uiTexCoordOffset != -1)
-			glTexCoord2f(data[tex_offset], data[tex_offset + 1]);
-		if (stDrawDesc.uiColorOffset != -1)
-			glColor4f(data[color_offset], data[color_offset + 1], data[color_offset + 2], data[color_offset + 3]);
-		glVertex2f(data[0], data[1]);
+			if (stDrawDesc.uiTexCoordOffset != -1)
+				glTexCoord2fv(&data[tex_offset]);	
+			if (stDrawDesc.uiColorOffset != -1)
+				glColor4fv(&data[color_offset]);
+			glVertex2fv(&data[0]);
 
-		if (stDrawDesc.uiTexCoordOffset != -1)
-			glTexCoord2f(data[tex_offset + tex_stride + 2], data[tex_offset + tex_stride + 3]);
-		if (stDrawDesc.uiColorOffset != -1)
-			glColor4f(data[color_offset + color_stride + 4], data[color_offset + color_stride + 5], data[color_offset + color_stride + 6], data[color_offset + color_stride + 7]);
-		glVertex2f(data[2 + vert_stride], data[3 + vert_stride]);
+			if (stDrawDesc.uiTexCoordOffset != -1)
+				glTexCoord2fv(&data[tex_offset + tex_stride]);	
+			if (stDrawDesc.uiColorOffset != -1)
+				glColor4fv(&data[color_offset + color_stride]);
+			glVertex2fv(&data[vert_stride]);
 
-		if (stDrawDesc.uiTexCoordOffset != -1)
-			glTexCoord2f(data[tex_offset + tex_stride*2 + 4], data[tex_offset + tex_stride*2 + 5]);
-		if (stDrawDesc.uiColorOffset != -1)
-			glColor4f(data[color_offset + color_stride*2 + 8], data[color_offset + color_stride*2 + 9], data[color_offset + color_stride*2 + 10], data[color_offset + color_stride*2 + 11]);
-		glVertex2f(data[4 + vert_stride*2], data[5 + vert_stride*2]);
+			if (stDrawDesc.uiTexCoordOffset != -1)
+				glTexCoord2fv(&data[tex_offset + 2*tex_stride]);	
+			if (stDrawDesc.uiColorOffset != -1)
+				glColor4fv(&data[color_offset + 2*color_stride]);
+			glVertex2fv(&data[2*vert_stride]);
 
-		if (stDrawDesc.uiTexCoordOffset != -1)
-			glTexCoord2f(data[tex_offset + tex_stride*3 + 6], data[tex_offset + tex_stride*3 + 7]);
-		if (stDrawDesc.uiColorOffset != -1)
-			glColor4f(data[color_offset + color_stride*3 + 12], data[color_offset + color_stride*3 + 13], data[color_offset + color_stride*3 + 14], data[color_offset + color_stride*3 + 15]);
-		glVertex2f(data[6 + vert_stride*3], data[7 + vert_stride*3]);
+			if (stDrawDesc.uiTexCoordOffset != -1)
+				glTexCoord2fv(&data[tex_offset + 3*tex_stride]);	
+			if (stDrawDesc.uiColorOffset != -1)
+				glColor4fv(&data[color_offset + 3*color_stride]);
+			glVertex2fv(&data[3*vert_stride]);
 	}
 	else
 		for (uint i = 0; i < uiCount; ++i)
 		{
+			if (stDrawDesc.uiNormalOffset != -1)
+				glNormal3fv(&data[normals_offset + i*normals_stride]);
+
 			if (stDrawDesc.uiTexCoordOffset != -1)
-				glTexCoord2f(data[tex_offset + i*(tex_stride + 2)], data[tex_offset + i*(tex_stride + 2) + 1]);
+				glTexCoord2fv(&data[tex_offset + i*tex_stride]);
 			
 			if (stDrawDesc.uiColorOffset != -1)
-				glColor4f(data[color_offset + i*(color_stride + 4)], data[color_offset + i*(color_stride + 4) + 1], data[color_offset + i*(color_stride + 4) + 2], data[color_offset + i*(color_stride + 4) + 3]);
+				glColor4fv(&data[color_offset + i*color_stride]);
 
-			glVertex2f(data[i*(2 + vert_stride)], data[i*(2 + vert_stride) + 1]);
+			if (stDrawDesc.bVertexCoord2)
+				glVertex2fv(&data[i*vert_stride]);
+			else
+				glVertex3fv(&data[i*vert_stride]);
 		}
 
 	glEnd();
@@ -1115,14 +1132,14 @@ __forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc,
 
 HRESULT CALLBACK CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
 {
-	_uiOverallDrawCalls++;
+	++_uiOverallDrawCalls;
 
 	_TriangleStatistics(eMode, uiCount);
 
 	if (_LegacyDraw(stDrawDesc, eMode, uiCount))
 		return S_OK;
 
-	_uiOverallDrawSetups++;
+	++_uiOverallDrawSetups;
 
 	if (!_bVerticesBufferBindedFlag && GLEW_ARB_vertex_buffer_object)
 	{
@@ -1132,7 +1149,7 @@ HRESULT CALLBACK CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_R
 
 	if (_bStateFilterEnabled && (memcmp(&stDrawDesc, &_stDrawDataDesc, sizeof(TDrawDataDesc)) != 0 || eMode != _eDrawMode || uiCount != _uiDrawCount))
 	{
-		_uiUnfilteredDrawSetups++;
+		++_uiUnfilteredDrawSetups;
 
 		if (stDrawDesc.uiColorOffset != -1)
 		{
@@ -1178,9 +1195,6 @@ HRESULT CALLBACK CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_R
 		glDrawElements(_GetGLDrawMode(eMode), uiCount, stDrawDesc.bIndexBuffer32 ? GL_UNSIGNED_INT : GL_UNSIGNED_SHORT, stDrawDesc.pIndexBuffer);
 	else
 		glDrawArrays(_GetGLDrawMode(eMode), 0, uiCount);
-
-//	if (stDrawDesc.uiColorOffset != -1) //fix for some video card driver bug
-//		glColor4f(_stCurrentState.stColor.r, _stCurrentState.stColor.g, _stCurrentState.stColor.b, _stCurrentState.stColor.a);
 
 	return S_OK;
 }
@@ -1316,11 +1330,15 @@ HRESULT CALLBACK CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTexture
 		_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB + uiTextureLayer);
 	
 	if (pTex == NULL)
+	{
 		_pStateMan->glBindTexture(GL_TEXTURE_2D, 0);
+		_stCurrentState.clActivatedTexUnits[uiTextureLayer] = false;
+	}
 	else
+	{
 		_pStateMan->glBindTexture(GL_TEXTURE_2D, ((CCoreTexture*)pTex)->GetTex());
-	
-	_stCurrentState.clActivatedTexUnits[uiTextureLayer] = true;
+		_stCurrentState.clActivatedTexUnits[uiTextureLayer] = true;
+	}
 
 	return S_OK;
 }
@@ -1384,17 +1402,6 @@ HRESULT CALLBACK CCoreRendererGL::SetRasterizerState(const TRasterizerStateDesc 
 		_pStateMan->glFrontFace(GL_CCW);
 	else
 		_pStateMan->glFrontFace(GL_CW);
-
-	if (stState.bSmoothPointsAndLines)
-	{
-		_pStateMan->glEnable(GL_POINT_SMOOTH);
-		_pStateMan->glEnable(GL_LINE_SMOOTH);
-	}
-	else
-	{
-		_pStateMan->glDisable(GL_POINT_SMOOTH);
-		_pStateMan->glDisable(GL_LINE_SMOOTH);
-	}
 
 	_stCurrentState.stRasterDesc = stState;
 

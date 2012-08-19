@@ -6,6 +6,7 @@
 //==============================================================================================================================//
 
 #include <DGLE2.h>
+#include <string>
 
 using namespace DGLE2;
 
@@ -17,16 +18,19 @@ ENG_DYNAMIC_FUNC
 #	ifdef _WIN64
 #		define DLL_PATH			"..\\..\\..\\bin\\win\\x64\\DGLE2.dll"
 #		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\x64\\plugins\\DGLE2_EXT.dplug"
-#		define RESOURCE_PATH	"..\\..\\..\\..\\resources\\"
 #	else
 #		define DLL_PATH			"..\\..\\..\\bin\\win\\DGLE2.dll"
 #		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\plugins\\DGLE2_EXT.dplug"
-#		define RESOURCE_PATH	"..\\..\\..\\resources\\"
 #	endif
+#	define RESOURCE_PATH		"..\\..\\..\\resources\\"
 #else // for release build paths are configured to run executeble itself
 #	define DLL_PATH				"..\\DGLE2.dll"
 #	define EXT_PLUG_PATH		"..\\plugins\\DGLE2_EXT.dplug"
-#	define RESOURCE_PATH		"..\\..\\..\\..\\resources\\"
+#	ifdef _WIN64
+#		define RESOURCE_PATH	"..\\..\\..\\..\\resources\\"
+#	else
+#		define RESOURCE_PATH	"..\\..\\..\\resources\\"
+#endif
 #endif
 
 #else // PLATFORM_WINDOWS
@@ -34,35 +38,51 @@ ENG_DYNAMIC_FUNC
 #endif
 
 #define APP_CAPTION	"DevTest"
+#define SCREEN_X 800
+#define SCREEN_Y 600
 
 IEngineCore *pEngineCore = NULL;
+IRender2D *pRender2D = NULL;
 uint uiCounter = 0;
+
+ITexture *pTex = NULL;
 
 void CALLBACK Init(void *pParametr)
 {
+	IResourceManager *prman;
+	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)prman);
+	prman->Load(RESOURCE_PATH"tests\\npot_tex.bmp", (IEngBaseObj *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
 
+	IRender *pr;
+	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pr);
+	pr->GetRender2D(pRender2D);
 }
 
 void CALLBACK Free(void *pParametr)
 {
-
 }
 
 void CALLBACK Update(void *pParametr)
 {
-	uiCounter++;
+	++uiCounter;
 }
 
 void CALLBACK Render(void *pParametr)
 {
-
+	pRender2D->Begin2D();
+	
+	uint w, h;
+	pTex->GetDimensions(w, h);
+	pTex->Draw2DSimple((SCREEN_X - w)/2, (SCREEN_Y - w)/2);
+	
+	pRender2D->End2D();
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	if (GetEngine(DLL_PATH, pEngineCore))
 	{
-		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngWindow(800, 600, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, EIF_LOAD_ALL_PLUGINS)))
+		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngWindow(SCREEN_X, SCREEN_Y, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, EIF_LOAD_ALL_PLUGINS)))
 		{
 			pEngineCore->ConsoleExec("core_fps_in_caption 1");
 			pEngineCore->AddProcedure(EPT_INIT, &Init);

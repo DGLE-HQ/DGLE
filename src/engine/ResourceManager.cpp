@@ -122,7 +122,7 @@ _iProfilerState(0)
 	
 	_pCoreRenderer = Core()->pCoreRenderer();
 
-	Console()->RegComValue("rman_profiler", "Displays resource manager subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComValue("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
 	Console()->RegComProc("rman_list_reged_fformats", "Lists all file formats registered in Resource Manager.", &_s_ConListFileFormats, (void*)this);
 
 	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, (void*)this);
@@ -530,7 +530,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, u
 	while (max_side > 0)
 	{
 		max_side /= 2;
-		i_mipmaps++;
+		++i_mipmaps;
 	}
 
 	uint8 bytes_per_pix = _GetBytesPerPixel(format);
@@ -813,7 +813,7 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 				if (ui8_chunkheader < 128)
 				{
-					ui8_chunkheader++;
+					++ui8_chunkheader;
 					pFile->Read(&p_data[i_current_byte], i_bytes_per_pixel * ui8_chunkheader, ui_read);
 					i_current_byte += i_bytes_per_pixel * ui8_chunkheader;
 				}
@@ -870,7 +870,7 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		
 		E_TEXTURE_CREATION_FLAGS e_create_params = TCF_DEFAULT;
 		
-		if (st_header.ui16ImageWidth%4 != 0)
+		if (st_header.ui16ImageWidth % 4 != 0)
 			(int&)e_create_params |= TCF_PIXEL_ALIGNMENT_1;
 		
 		b_result = _CreateTexture(prTex, p_out, st_header.ui16ImageWidth, st_header.ui16ImageHeight, TDF_RGB8, e_create_params, eFlags);
@@ -894,7 +894,7 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 				in += (int)st_header.ui16ImageWidth;
 			}
 
-			b_result = _CreateTexture(prTex, p_out, st_header.ui16ImageWidth, st_header.ui16ImageHeight, TDF_RGBA8, TCF_DEFAULT, eFlags);
+			b_result = _CreateTexture(prTex, p_out, st_header.ui16ImageWidth, st_header.ui16ImageHeight, TDF_BGRA8, TCF_DEFAULT, eFlags);
 		}
 		else
 			LOG("Unsupported TGA format.", LT_ERROR);
@@ -1250,13 +1250,13 @@ void CResourceManager::_ProfilerEventHandler() const
 	{
 		const uint c_size = EOT_GUI_FORMS + 1;
 		uint cnt[c_size];
-		memset(cnt, 0, c_size);
+		memset(cnt, 0, c_size*sizeof(uint));
 
 		for (size_t i = 0; i < _resList.size(); ++i)
 		{
 			E_ENG_OBJ_TYPE type;
 			_resList[i].pObj->GetType(type);
-			cnt[type]++;
+			++cnt[type];
 		}
 
 		Core()->RenderProfilerTxt("---- Resource Statistic ----", color);
@@ -1265,7 +1265,7 @@ void CResourceManager::_ProfilerEventHandler() const
 		{
 			string s;
 			
-			switch (c_size)
+			switch (i)
 			{
 			case EOT_UNKNOWN: s = "Unknown:"; break;
 			case EOT_TEXTURE: s = "Texture:"; break;

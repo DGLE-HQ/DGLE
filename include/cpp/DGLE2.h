@@ -663,23 +663,25 @@ namespace DGLE2
 	enum E_PRIMITIVE2D_FLAGS
 	{
 		PF_DEFAULT			= 0x00000000,
+		PF_LINE				= 0x00000000,
 		PF_FILL				= 0x00000001, 
-		PF_SMOOTH			= 0x00000002, 
-		PF_VCA				= 0x00000004
+		PF_VERTICES_COLOR	= 0x00000002
 	};
 
 	//Flags for Effects
 	enum E_EFFECT2D_FLAGS
 	{
 		EF_DEFAULT			= 0x00000000,
-		EF_BLEND			= 0x00000001, 
-		EF_FLIPX			= 0x00000002, 
-		EF_FLIPY			= 0x00000004, 
-		EF_COLORMIX			= 0x00000008, 
-		EF_SCALE			= 0x00000010,  
-		EF_VERTICES_OFFSET	= 0x00000020, 
-		EF_VERTICES_COLOR	= 0x00000040, 
-		EF_ROTATEPT			= 0x00000080
+		EF_NONE				= 0x00000001,
+		EF_ALPHA_TEST		= 0x00000002,
+		EF_BLEND			= 0x00000004, 
+		EF_FLIPX			= 0x00000008, 
+		EF_FLIPY			= 0x00000010, 
+		EF_COLORMIX			= 0x00000020, 
+		EF_SCALE			= 0x00000040,  
+		EF_VERTICES_OFFSET	= 0x00000080, 
+		EF_VERTICES_COLOR	= 0x00000100, 
+		EF_ROTATEPT			= 0x00000200
 	};
 
 	//Flags for Effects Blend mode
@@ -945,7 +947,7 @@ namespace DGLE2
 	class IMesh : public IEngBaseObj
 	{
 	public:
-		/*КОСТЫЛЬ, убрать!*/virtual HRESULT CALLBACK Draw(bool notspace = false) = 0;
+		virtual HRESULT CALLBACK Draw() = 0;
 		virtual HRESULT CALLBACK GetCenter(TPoint3 &stCenter) = 0;
 		virtual HRESULT CALLBACK GetExtents(TPoint3 &stExtents) = 0;
 		virtual HRESULT CALLBACK GetTrianglesCount(uint &uiTriCnt) = 0;
@@ -1208,10 +1210,11 @@ namespace DGLE2
 	class IFileSystem : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT CALLBACK OpenFile(const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) = 0;	//если передан только путь "C:\MyFolder\" то создаст папку
-		virtual HRESULT CALLBACK DeleteFile(const char* pcName) = 0; //Если передан только путь то удалит папку
-		virtual HRESULT CALLBACK FileExists(const char* pcName, bool &bExists) = 0;//если передан только путь, то проверяет существование папки
-		virtual HRESULT CALLBACK Find(const char* pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
+		virtual HRESULT CALLBACK OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) = 0;	//если передан только путь "C:\MyFolder\" то создаст папку
+		virtual HRESULT CALLBACK DeleteFile(const char *pcName) = 0; //Если передан только путь то удалит папку
+		virtual HRESULT CALLBACK FileExists(const char *pcName, bool &bExists) = 0;//если передан только путь, то проверяет существование папки
+		virtual HRESULT CALLBACK Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
+		virtual HRESULT CALLBACK SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount) = 0;
 	};
 
 }// end of namespace

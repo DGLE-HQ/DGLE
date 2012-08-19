@@ -65,6 +65,7 @@ public:
 	HRESULT CALLBACK DeleteFile(const char *pcName);
 	HRESULT CALLBACK FileExists(const char *pcName, bool &bExists);
 	HRESULT CALLBACK Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator);
+	HRESULT CALLBACK SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount);
 
 	IDGLE2_BASE_IMPLEMENTATION(IFileSystem);
 };

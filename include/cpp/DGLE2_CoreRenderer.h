@@ -6,6 +6,7 @@
 
 \brief		This header provides interface of low-level DGLE2 rendering API.
 
+Using of this header is recommended only for experienced users familiar with some GAPI and rendering pipeline.
 This header is a part of DGLE2 SDK.
 
 \note		Include this header after "DGLE2.h".
@@ -215,8 +216,6 @@ namespace DGLE2
 				eAlphaTestFunc;
 		float	fAlphaTestRefValue;
 
-		bool	bSmoothPointsAndLines;
-
 		/* For future needs.
 		int		iDepthBias;
 		float	fDepthBiasClamp;
@@ -226,7 +225,7 @@ namespace DGLE2
 
 		TRasterizerStateDesc():
 		bWireframe(false), eCullMode(PCM_NONE), bFrontCounterClockwise(true), bScissorEnable(false),
-		bAlphaTestEnable(false), eAlphaTestFunc(CF_GREATER), fAlphaTestRefValue(0.25f), bSmoothPointsAndLines(false)
+		bAlphaTestEnable(false), eAlphaTestFunc(CF_GREATER), fAlphaTestRefValue(0.25f)
 		{}
 	};
 

@@ -202,7 +202,7 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 
 		if (flag)
 		{
-			count++;
+			++count;
 			idx = (int)i;
 			cmds += " >"+string(_commands[i].pcName) + "\r\n";
 		}
