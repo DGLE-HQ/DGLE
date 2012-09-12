@@ -537,6 +537,7 @@ namespace DGLE2
 
 		inline TRectF(): x(0.f), y(0.f), width(0.f), height(0.f){}
 		inline TRectF(float fX, float fY, float fWidth, float fHeight): x(fX), y(fY), width(fWidth), height(fHeight){}
+		inline TRectF(const TPoint2 &stLeftTop, const TPoint2 &stRightBottom): x(stLeftTop.x), y(stLeftTop.y), width(stRightBottom.x - stLeftTop.x), height(stRightBottom.y - stLeftTop.y){}
 		
 		inline bool IntersectRect(const TRectF &stRect) const
 		{
@@ -556,61 +557,23 @@ namespace DGLE2
 
 		inline TRectF GetIntersectionRect(const TRectF &stRect) const
 		{
-			TRectF result(0, 0, 0, 0);
-			if(IntersectRect(stRect))
+			if ( IntersectRect(stRect) )
 			{
-				if (y < stRect.y)
-				{
-					result.y = stRect.y;
-					if (y + height > stRect.y + stRect.height)
-						result.height = stRect.height;
-					else
-						result.height = y + height - stRect.y;
-					if (x >= stRect.x)
-					{
-						result.x = x;
-						result.width = stRect.x + stRect.width - x;
-					}
-					else
-					{
-						result.x = stRect.x;
-						result.width = x + width - stRect.x;
-						if (x + width > stRect.x + stRect.width)
-							result.width = stRect.width;
-					}
-					if (stRect.x + stRect.width >= x + width && stRect.x <= x)
-						result.width = width;
-				}
-				else
-				{
-					result.y = y;
-					if (stRect.y + stRect.height >= y + height)
-						result.height = height;
-					else
-						result.height = stRect.y + stRect.height - y;
-					if (x >= stRect.x)
-					{
-						result.x = x;
-						if (stRect.x + stRect.width >= x + width)
-							result.width = width;
-						else
-							result.width = stRect.x + stRect.width - x;
-					}
-					else
-					{
-						result.x = stRect.x;
-						if (stRect.x + stRect.width >= x + width && stRect.x <= x)
-							result.width = width;
-						else
-						{
-							result.width = x + width - stRect.x;
-							if (x + width > stRect.x + stRect.width)
-								result.width -= x + width - stRect.x - stRect.width;
-						}
-					}
-				}
+				TRectF result = stRect;
+				
+				if (x > stRect.x) result.x = x;
+				if (y > stRect.y) result.y = y;
+				
+				float rectr = x + width, strectr = stRect.x + stRect.width;
+				result.width = (rectr > strectr ? strectr : rectr) - result.x;
+				
+				float rectb = y + height, strectb = stRect.y + stRect.height;
+				result.height = (rectb > strectb ? strectb : rectb) - result.y;
+
+				return result;
 			}
-			return result;
+			else
+				return TRectF();
 		}
 	};
 
@@ -818,7 +781,7 @@ namespace DGLE2
 	}
 	
 	/** Returns scaled matrix by given vector. */
-	inline TMatrix MatrixScale(const TPoint3 &stVec)
+	inline TMatrix MatrixScale(const TVector3 &stVec)
 	{
 		return TMatrix(
 			stVec.x, 0.f, 0.f, 0.f,
@@ -828,7 +791,7 @@ namespace DGLE2
 	}
 
 	/** Returns translated matrix by given vector. */
-	inline TMatrix MatrixTranslate(const TPoint3 &stVec)
+	inline TMatrix MatrixTranslate(const TVector3 &stVec)
 	{
 		return TMatrix(
 			1.f, 0.f, 0.f, 0.f,
@@ -838,7 +801,7 @@ namespace DGLE2
 	}
 
 	/** Returns rotated matrix by given axes vector and angle. */
-	inline TMatrix MatrixRotate(float fAngle, TPoint3 &stAxes)
+	inline TMatrix MatrixRotate(float fAngle, TVector3 &stAxes)
 	{
 		const float
 			axis_norm = sqrt(stAxes.x*stAxes.x + stAxes.y*stAxes.y + stAxes.z*stAxes.z),

@@ -55,6 +55,12 @@ namespace DGLE2
 		MT_TEXTURE
 	};
 
+	enum E_TEXTURE_TYPE
+	{
+		TT_2D = 0,
+		TT_3D
+	};
+
 	enum E_CORE_RENDERER_METRIC_TYPE
 	{
 		CRMT_MAX_TEXTURE_RESOLUTION = 0,
@@ -320,10 +326,13 @@ namespace DGLE2
 	{
 	public:
 		virtual HRESULT CALLBACK GetSize(uint &width, uint &height) = 0;
+		virtual HRESULT CALLBACK GetDepth(uint &depth) = 0;
+		virtual HRESULT CALLBACK GetType(E_TEXTURE_TYPE &eType) = 0;
 		virtual HRESULT CALLBACK GetFormat(E_TEXTURE_DATA_FORMAT &eFormat) = 0;
 		virtual HRESULT CALLBACK GetLoadFlags(E_TEXTURE_LOAD_FLAGS &eLoadFlags) = 0;
 		virtual HRESULT CALLBACK GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel = 0) = 0;
 		virtual HRESULT CALLBACK SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel = 0) = 0;
+		virtual HRESULT CALLBACK Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
 		virtual HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;
 		virtual HRESULT CALLBACK Free() = 0;
 	};
@@ -337,6 +346,7 @@ namespace DGLE2
 	public:
 		virtual HRESULT CALLBACK GetGeometryData(TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
 		virtual HRESULT CALLBACK SetGeometryData(const TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
+		virtual HRESULT CALLBACK Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode) = 0;
 		virtual HRESULT CALLBACK GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount) = 0;
 		virtual HRESULT CALLBACK GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode) = 0;
 		virtual HRESULT CALLBACK GetBufferType(E_CORE_RENDERER_BUFFER_TYPE &eType) = 0;

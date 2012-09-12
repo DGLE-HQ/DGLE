@@ -23,7 +23,7 @@ struct TConEntry
 
 	void(CALLBACK *pProc)(void *pParametr, const char *pcParam);
 
-	bool operator < (const TConEntry &entry)
+	bool operator < (const TConEntry &entry) const
 	{
 		std::string s1(pcName), s2(entry.pcName);
 		return std::lexicographical_compare(s1.begin(), s1.end(), s2.begin(), s2.end());

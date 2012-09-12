@@ -99,7 +99,7 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	static bool CALLBACK _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool CALLBACK _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool CALLBACK _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static void CALLBACK _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent) throw();
+	static void CALLBACK _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
 
 public:
 

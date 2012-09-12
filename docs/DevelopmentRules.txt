@@ -126,8 +126,13 @@
 
 9.	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
 	One tab is equal to four spaces.
+
+10.	Write constant safe code. Use "const" not only for constant variables but also for constant class methods, references and pointers. It's often better to use "mutable" but
+	leave class method constant.
+
+11.	In classes private members must go first, then goes private methods and then goes all public methods. Try not to use public members and friend classes.
 	
-10.	If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
+12.	If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
 	to make right decision concerning the style and principles of code around.
 	
 ================================ Code Sample ==================================
@@ -170,6 +175,8 @@ public:
 	
 	CCoolGame(uint uiGameSpeed);
 	bool StartGame();
+	bool IsGameStarted() const;
+	void SetPlayerPos(const TVec2 &pos);
 
 };
 
@@ -190,7 +197,7 @@ _s_c_uiMaxLives(c_someMagicValue),
 _bIsGameStarted(false),
 eGameState(GS_STAGE_1)
 {
-	_someValue = float(rand()%100);
+	_someValue = float(rand() % 100);
 }
 
 CCoolGame::_Update(double dDeltaTime)
@@ -207,6 +214,16 @@ bool CCoolGame::StartGame()
 	return true;
 }
 
+bool CCoolGame::IsGameStarted() const
+{
+	return _bIsGameStarted;
+}
+
+void CCoolGame::SetPlayerPos(const TVec2 &pos)
+{
+	_stPlayerPos = pos;
+}
+
 CCoolGame clGameOne(GAME_SPEED), *pGameTwo = NULL;
 
 bool InitGame(const char *pcArguments, uint uiArgsCount)
@@ -215,7 +232,7 @@ bool InitGame(const char *pcArguments, uint uiArgsCount)
 	
 	bool is_game_started = false;
 	
-	if (i16_my_magic_number == rand()%88)
+	if (i16_my_magic_number == rand() % 88)
 		is_game_started = clGameOne.StartGame();
 
 	return is_game_started;

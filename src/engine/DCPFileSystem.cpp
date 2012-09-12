@@ -182,7 +182,7 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 	return true;
 }
 
-uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName)
+uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName) const
 {
 	uint32 crc32 = GetCRC32((uint8*)strName.c_str(), (uint32)strName.size());
 

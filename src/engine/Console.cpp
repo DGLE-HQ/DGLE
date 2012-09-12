@@ -17,7 +17,7 @@ using namespace std;
 
 #define CON_SPLIT_TWO_PARAMS(params)\
 	size_t pos = params.find_first_of(' ');\
-	string par1(params.substr(0,pos)), par2(params.substr(pos+1,params.size()-pos - 1));
+	string par1(params.substr(0, pos)), par2(params.substr(pos + 1, params.size() - pos - 1));
 
 CConsole::CConsole(bool bInSeparateThread):
 _pConsoleWindow(NULL)
@@ -62,7 +62,7 @@ void CConsole::_Help(const char* pcParam)
 	} 
 	else
 	{
-		if(par[par.length()-1] == ' ')
+		if (par[par.length()  - 1] == ' ')
 			par.erase(par.length() - 1, 1);
 
 		for (size_t i = 0; i < _commands.size(); ++i)

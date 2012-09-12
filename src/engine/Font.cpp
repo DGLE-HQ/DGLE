@@ -105,7 +105,7 @@ HRESULT CALLBACK CBitmapFont::Draw3D(const char *pcTxt)
 		_pBuffer[i*12 + 8] = x; _pBuffer[i*12 + 9] = _pBuffer[i*12 + 3];
 		_pBuffer[i*12 + 10] = x + curb_w * _fScale; _pBuffer[i*12 + 11] = _pBuffer[i*12 + 3];
 
-		_pBuffer[length*12 + i*12]	 = (curb_x + curb_w) / (float)t_w;	_pBuffer[length*12 + i*12 + 1] = (curb_y + curb_h) / (float)t_h;
+		_pBuffer[length*12 + i*12]	   = (curb_x + curb_w) / (float)t_w;_pBuffer[length*12 + i*12 + 1] = (curb_y + curb_h) / (float)t_h;
 		_pBuffer[length*12 + i*12 + 2] = _pBuffer[length*12 + i*12];	_pBuffer[length*12 + i*12 + 3] = curb_y / (float)t_h;
 		_pBuffer[length*12 + i*12 + 4] = curb_x / (float)t_w;			_pBuffer[length*12 + i*12 + 5] = _pBuffer[length*12 + i*12 + 1];
 		
@@ -214,7 +214,7 @@ HRESULT CALLBACK CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, cons
 		rot._2D[1][0] = +s;
 		rot._2D[1][1] = +c;
 
-		transform = MatrixTranslate(TPoint3(-(fX + width / 2.f), -(fY + height / 2.f), 0.f)) * rot * MatrixTranslate(TPoint3(fX + width / 2.f, fY + height / 2.f, 0.f));
+		transform = MatrixTranslate(TVec3(-(fX + width / 2.f), -(fY + height / 2.f), 0.f)) * rot * MatrixTranslate(TVec3(fX + width / 2.f, fY + height / 2.f, 0.f));
 
 		float x = quad[0], y = quad[1];
 		quad[0]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];

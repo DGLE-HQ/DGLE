@@ -714,8 +714,11 @@ namespace DGLE2
 		virtual HRESULT CALLBACK End2D() = 0;
 		//Note: Only one pair Begin2D-End2D per frame is allowed or batching must be disabled.
 		virtual HRESULT CALLBACK BatchRender(E_BATCH_MODE2D eMode) = 0;
+		virtual HRESULT CALLBACK BeginBatch() = 0;
+		virtual HRESULT CALLBACK EndBatch() = 0;
 		virtual HRESULT CALLBACK SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
 		virtual HRESULT CALLBACK SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f,1.f)) = 0;
+		virtual HRESULT CALLBACK CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
 
 		// 2D Primitives
 		virtual HRESULT CALLBACK LineWidth(uint uiWidth) = 0;
@@ -733,7 +736,7 @@ namespace DGLE2
 
 		// Extra
 		virtual HRESULT CALLBACK DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual HRESULT CALLBACK DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TPoint3 &stDimensions, const TPoint3 &stAxis = TPoint3(), float fAngle = 0.f, bool bClip = true, float fFovY = 90.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual HRESULT CALLBACK DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis = TVector3(), float fAngle = 0.f, bool bClip = true, float fFovY = 90.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		//Effects
 		virtual HRESULT CALLBACK SetRotationPoint(const TPoint2 &stCoords) = 0;//In texture coord system
@@ -781,7 +784,7 @@ namespace DGLE2
 		virtual HRESULT CALLBACK FrustumSetup() = 0;
 		virtual HRESULT CALLBACK CullPoint(const TPoint3 &stCoords, bool &bCull) = 0;
 		virtual HRESULT CALLBACK CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull) = 0;
-		virtual HRESULT CALLBACK CullBox(const TPoint3 &stCenterCoords, const TPoint3 &stExtents, bool &bCull) = 0;
+		virtual HRESULT CALLBACK CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull) = 0;
 
 		virtual HRESULT CALLBACK CreateLight(ILight *&prLight) throw() = 0;
 		virtual HRESULT CALLBACK EnableLighting(bool enable) throw() = 0;
@@ -808,7 +811,7 @@ namespace DGLE2
 		virtual HRESULT CALLBACK SetDiffuseColor(const TColor4 &stColor) = 0;
 		virtual HRESULT CALLBACK SetSpecularColor(const TColor4 &stColor) = 0;
 		virtual HRESULT CALLBACK SetPos(const TPoint3 &stPos) = 0;
-		virtual HRESULT CALLBACK SetDir(const TPoint3 &stDir) = 0;
+		virtual HRESULT CALLBACK SetDir(const TVector3 &stDir) = 0;
 		virtual HRESULT CALLBACK SetRange(float range) = 0;
 		virtual HRESULT CALLBACK SetConstantAttenuation(float attenuation) = 0;
 		virtual HRESULT CALLBACK SetLinearAttenuation(float attenuation) = 0;
@@ -819,7 +822,7 @@ namespace DGLE2
 		virtual HRESULT CALLBACK GetDiffuseColor(TColor4 &stColor) = 0;
 		virtual HRESULT CALLBACK GetSpecularColor(TColor4 &stColor) = 0;
 		virtual HRESULT CALLBACK GetPos(TPoint3 &stPos) = 0;
-		virtual HRESULT CALLBACK GetDir(TPoint3 &stDir) = 0;
+		virtual HRESULT CALLBACK GetDir(TVector3 &stDir) = 0;
 		virtual HRESULT CALLBACK GetRange(float &range) = 0;
 		virtual HRESULT CALLBACK GetConstantAttenuation(float &attenuation) = 0;
 		virtual HRESULT CALLBACK GetLinearAttenuation(float &attenuation) = 0;
@@ -949,7 +952,7 @@ namespace DGLE2
 	public:
 		virtual HRESULT CALLBACK Draw() = 0;
 		virtual HRESULT CALLBACK GetCenter(TPoint3 &stCenter) = 0;
-		virtual HRESULT CALLBACK GetExtents(TPoint3 &stExtents) = 0;
+		virtual HRESULT CALLBACK GetExtents(TVector3 &stExtents) = 0;
 		virtual HRESULT CALLBACK GetTrianglesCount(uint &uiTriCnt) = 0;
 		virtual HRESULT CALLBACK GetGeometryInfo(uint &uiVertsCount, uint &uiFacesCount, uint &uiDataSize, E_MESH_CREATION_FLAGS &eCreationFlags) = 0;
 		/*Format x,y,z*vertex_count, nx,ny,nz*vertex_count s,q*vertex_count tx,ty,tz,bx,by,bz*vertex_count int16*uiFacesCount*/
@@ -1049,8 +1052,8 @@ namespace DGLE2
 		virtual HRESULT CALLBACK SetMaxChannelsCount(uint uiCount) = 0;
 		virtual HRESULT CALLBACK SetListnerPosition(const TPoint3 &stCoords) = 0;
 		virtual HRESULT CALLBACK GetListnerPosition(TPoint3 &stCoords) = 0;
-		virtual HRESULT CALLBACK SetListnerOrientation(const TPoint3 &stDir, const TPoint3 &stUp) = 0;
-		virtual HRESULT CALLBACK GetListnerOrientation(TPoint3 &stDir, TPoint3 &stUp) = 0;
+		virtual HRESULT CALLBACK SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp) = 0;
+		virtual HRESULT CALLBACK GetListnerOrientation(TVector3 &stDir, TVector3 &stUp) = 0;
 	};
 
 	//SoundSample interface//

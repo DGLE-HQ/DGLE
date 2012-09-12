@@ -526,7 +526,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, u
 
 	int i_mipmaps = 0, max_side = max(uiWidth, uiHeight)/2;
 
-	//This loop is more correct because of NPOT textures than calculation like this: (int)(log((float)max(uiWidth, uiHeight))/log(2.0f))
+	//This loop is more correct because of NPOT textures than calculation like this: (int)(log((float)max(uiWidth, uiHeight))/log(2.f))
 	while (max_side > 0)
 	{
 		max_side /= 2;
@@ -652,13 +652,13 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint
 		i_new_w = i_max_tex_res;
 	else
 		if (!b_feature_supported)
-			i_new_w = 1 << (int)floor((log((double)uiWidth)/log(2.0f)) + 0.5f);
+			i_new_w = 1 << (int)floor((log((double)uiWidth)/log(2.f)) + 0.5f);
 
 	if (uiHeight > (uint)i_max_tex_res)
 		i_new_h = i_max_tex_res;
 	else
 		if (!b_feature_supported)
-			i_new_h = 1 << (int)floor((log((double)uiHeight)/log(2.0f)) + 0.5f);
+			i_new_h = 1 << (int)floor((log((double)uiHeight)/log(2.f)) + 0.5f);
 
 	bool b_need_scale = (i_new_w != uiWidth || i_new_h != uiHeight);
 
@@ -703,7 +703,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint
 
 	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_MIPMAP_GENERATION, b_feature_supported);
 
-	if (!b_feature_supported && eCreationFlags & TLF_GENERATE_MIPMAPS)
+	if (!b_feature_supported && eLoadFlags & TLF_GENERATE_MIPMAPS)
 	{
 		uint8 *p_out_dat = NULL;
 		

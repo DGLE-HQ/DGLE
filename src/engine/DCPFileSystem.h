@@ -50,7 +50,7 @@ class CDCPFileSystem :public CInstancedObj, public IFileSystem
 	std::vector<std::string> _clFindedFiles;
 
 	bool _ReadFileInfo();
-	uint32 _GetTableNumber(const std::string &strName);
+	uint32 _GetTableNumber(const std::string &strName) const;
 	bool _OpenPack(const std::string &strPackName);
 	void _Clean();
 	void _ReplaceChInStr(std::string &outStr, const std::string &findCh, const std::string &repCh);

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.08.2012 (c)Korotkov Andrey
+\date		12.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -18,6 +18,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 	TBlendStateDesc _stBlendStateDesc;
 
 	bool _bIn2D;
+	bool _bUseGeometryBuffers;
 
 	// Batching //
 	
@@ -31,14 +32,14 @@ class CRender2D: public CInstancedObj, public IRender2D
 				 _batchMode,
 				 _batchPreProfilerMode;
 	bool		 _batchNeedToRefreshBatches;
-	std::vector<ICoreGeometryBuffer*>
+	std::vector<ICoreGeometryBuffer *>
 				 _pBatchBuffers;
 	uint		 _batchBufferCurCounter;
 	bool		 _batchBufferReadyToRender;/**< \remark Only in BM_ENABLED_UEP mode. */
 	
 	//Profilers//
 
-	bool		 _bInProfilerMode;
+	bool		 _bInProfilerMode, _bInLocalBatchMode;
 	uint		 _batchBuffersRepetedUseCounter,
 				 _batchBuffersNotModefiedPerFrameCounter,
 				 _batchMaxSize,
@@ -125,8 +126,11 @@ public:
 	HRESULT CALLBACK Begin2D();
 	HRESULT CALLBACK End2D();
 	HRESULT CALLBACK BatchRender(E_BATCH_MODE2D eMode);
+	HRESULT CALLBACK BeginBatch();
+	HRESULT CALLBACK EndBatch();
 	HRESULT CALLBACK SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions); 
 	HRESULT CALLBACK SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale);
+	HRESULT CALLBACK CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull);
 
 	HRESULT CALLBACK LineWidth(uint uiWidth);
 	HRESULT CALLBACK DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor, uint uiSize);
@@ -141,7 +145,7 @@ public:
 	HRESULT CALLBACK DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle, E_EFFECT2D_FLAGS eFlags);
 
 	HRESULT CALLBACK DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TPoint3 &stDimensions, const TPoint3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);
+	HRESULT CALLBACK DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);
 
 	HRESULT CALLBACK SetRotationPoint(const TPoint2 &stCoords);
 	HRESULT CALLBACK SetScale(const TPoint2 &stScale);

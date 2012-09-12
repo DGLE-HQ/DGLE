@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		19.08.2012 (c)Andrey Korotkov
+\date		11.09.2012 (c)Andrey Korotkov
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -68,8 +68,8 @@ class CCoreGeometryBuffer : public ICoreGeometryBuffer
 	E_CORE_RENDERER_BUFFER_TYPE _eBufferType;
 
 public:
-	CCoreGeometryBuffer(CCoreRendererGL *pCoreRenderer, const TDrawDataDesc &drawDesc, uint verDatSize, uint idxDatSize, uint verCnt, uint idxCnt,
-		E_CORE_RENDERER_DRAW_MODE mode, E_CORE_RENDERER_BUFFER_TYPE type, GLuint verVBO, GLuint idxVBO):
+	CCoreGeometryBuffer(CCoreRendererGL *pCoreRenderer, GLuint verVBO, GLuint idxVBO, const TDrawDataDesc &drawDesc, uint verDatSize, uint idxDatSize, uint verCnt, uint idxCnt,
+		E_CORE_RENDERER_DRAW_MODE mode, E_CORE_RENDERER_BUFFER_TYPE type):
 		_pCoreRenderer(pCoreRenderer), _clGLContainer(verVBO, idxVBO),	_stDrawDataDesc(drawDesc), _uiVerticesDataSize(verDatSize),
 		_uiIndexesDataSize(idxDatSize), _uiVerticesCount(verCnt), _uiIndexesCount(idxCnt), _eDrawMode(mode), _eBufferType(type)
 	{}
@@ -101,7 +101,7 @@ public:
 		{
 			memcpy(stDesc.pData, _stDrawDataDesc.pData, _uiVerticesDataSize);
 
-			if (_uiIndexesDataSize != -1)
+			if (_uiIndexesDataSize != 0)
 				memcpy(stDesc.pIndexBuffer, _stDrawDataDesc.pIndexBuffer, _uiIndexesDataSize);
 		}
 		else
@@ -124,6 +124,20 @@ public:
 		if (uiVerticesDataSize != _uiVerticesDataSize || uiIndexesDataSize != _uiIndexesDataSize)
 			return E_INVALIDARG;
 
+		return Reallocate(stDesc, _uiVerticesCount, _uiIndexesCount, _eDrawMode);
+	}
+
+	HRESULT CALLBACK Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode)
+	{
+		uint vertices_data_size = uiVerticesCount*sizeof(float)*((stDesc.bVertexCoord2 ? 2 : 3) + (stDesc.uiNormalOffset != -1 ? 3 : 0) + (stDesc.uiTexCoordOffset != -1 ? 2 : 0) + (stDesc.uiColorOffset != -1 ? 4 : 0)),
+		 indexes_data_size = uiIndexesCount*(stDesc.bIndexBuffer32 ? sizeof(uint16) : sizeof(uint32))*(stDesc.pIndexBuffer ? 3 : 0);
+
+		if (_uiIndexesDataSize == 0 && indexes_data_size != 0)
+			return E_INVALIDARG;
+
+		_uiVerticesCount = uiVerticesCount;
+		_eDrawMode = eMode;
+
 		uint8 *p_data = _stDrawDataDesc.pData, *p_idx = _stDrawDataDesc.pIndexBuffer;
 		_stDrawDataDesc = stDesc;
 		_stDrawDataDesc.pData = p_data;
@@ -131,20 +145,40 @@ public:
 		
 		if (_eBufferType == CRBT_SOFTWARE)
 		{
+			if (_uiVerticesDataSize != vertices_data_size)
+			{
+				_uiVerticesDataSize = vertices_data_size;
+				delete[] _stDrawDataDesc.pData;
+				_stDrawDataDesc.pData = new uint8[_uiVerticesDataSize];
+			}
+
 			memcpy(_stDrawDataDesc.pData, stDesc.pData, _uiVerticesDataSize);
 
-			if (_uiIndexesDataSize != -1)
+			if (_uiIndexesDataSize != 0)
+			{
+				if (_uiIndexesDataSize != indexes_data_size)
+				{
+					_uiIndexesCount = indexes_data_size;
+					delete[] _stDrawDataDesc.pIndexBuffer;
+					_stDrawDataDesc.pIndexBuffer = new uint8[_uiIndexesCount];
+				}
+
 				memcpy(_stDrawDataDesc.pIndexBuffer, stDesc.pIndexBuffer, _uiIndexesDataSize);
+			}
 		}
 		else
 		{
+			_uiVerticesDataSize = vertices_data_size;
 			_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ARRAY_BUFFER_ARB, _clGLContainer.GetVerticesVBO());
-			glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, (GLvoid*)stDesc.pData, (_eBufferType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
+			glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, NULL, (_eBufferType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
+			glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid*)stDesc.pData);
 
 			if (_clGLContainer.GetIndexesVBO() != 0)
 			{
+				_uiIndexesDataSize = indexes_data_size;
 				_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _clGLContainer.GetIndexesVBO());
-				glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer, (_eBufferType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
+				glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, NULL, (_eBufferType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
+				glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer);
 			}
 		}
 
@@ -225,7 +259,8 @@ class CCoreTexture : public ICoreTexture
 {
 	CCoreRendererGL *_pCR;
 	COpenGLTextureContainer _clGLContainer;
-	uint _w, _h;
+	E_TEXTURE_TYPE _type;
+	uint _w, _h, _d;
 	E_TEXTURE_DATA_FORMAT _format;
 	E_TEXTURE_LOAD_FLAGS _loadFlags;
 	bool _bMipMaps;
@@ -295,8 +330,8 @@ class CCoreTexture : public ICoreTexture
 
 public:
 
-	CCoreTexture(CCoreRendererGL *pCR, GLuint tex, uint w, uint h, E_TEXTURE_DATA_FORMAT format, E_TEXTURE_LOAD_FLAGS loadFlags, bool bMipMaps):
-	_pCR(pCR), _clGLContainer(tex), _w(w), _h(h), _format(format), _loadFlags(loadFlags), _bMipMaps(bMipMaps)
+	CCoreTexture(CCoreRendererGL *pCR, GLuint tex, E_TEXTURE_TYPE type, uint w, uint h, uint d, E_TEXTURE_DATA_FORMAT format, E_TEXTURE_LOAD_FLAGS loadFlags, bool bMipMaps):
+	_pCR(pCR), _clGLContainer(tex), _type(type), _w(w), _h(h), _d(d), _format(format), _loadFlags(loadFlags), _bMipMaps(bMipMaps)
 	{}
 
 	inline GLuint GetTex() const { return _clGLContainer.GetTex(); }
@@ -304,6 +339,18 @@ public:
 	HRESULT CALLBACK GetSize(uint &width, uint &height)
 	{
 		width = _w; height = _h;
+		return S_OK;
+	}
+
+	HRESULT CALLBACK GetDepth(uint &depth)
+	{
+		depth = _d;
+		return S_OK;
+	}
+
+	HRESULT CALLBACK GetType(E_TEXTURE_TYPE &eType)
+	{
+		eType = _type;
 		return S_OK;
 	}
 	
@@ -329,7 +376,7 @@ public:
 		if (size != uiDataSize)
 		{
 			uiDataSize = size;
-			return E_INVALIDARG;
+			return S_FALSE;
 		}
 
 		_pCR->BindTexture(this, 0);
@@ -352,12 +399,46 @@ public:
 		if (_DataSize(uiLodLevel, w, h) != uiDataSize)
 			return E_INVALIDARG;
 
+		_pCR->BindTexture(this, 0);
+
 		if (_format == TDF_DXT1 || _format == TDF_DXT5)
 			glCompressedTexSubImage2DARB(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), uiDataSize, (GLvoid*)pData);
 		else
 			glTexSubImage2D(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), GL_UNSIGNED_BYTE, (GLvoid*)pData);
 
 		return S_OK;
+	}
+
+	HRESULT CALLBACK Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat)
+	{
+		if (eDataFormat != _format)
+			return E_INVALIDARG;
+
+		_w = uiWidth; _h = uiHeight;
+
+		_pCR->BindTexture(this, 0);
+
+		if (_bMipMaps && (!GLEW_ARB_framebuffer_object && GLEW_SGIS_generate_mipmap))
+			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+
+		HRESULT ret = SetPixelData(pData, _DataSize(0, _w, _h), 0);
+
+		if (_bMipMaps)
+		{
+			if (GLEW_ARB_framebuffer_object)
+				glGenerateMipmap(GL_TEXTURE_2D);
+			else
+				if (GLEW_SGIS_generate_mipmap)
+					glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
+		}
+
+		if (FAILED(ret))
+			return E_ABORT;
+		else
+			if (_bMipMaps && (!GLEW_ARB_framebuffer_object && !GLEW_SGIS_generate_mipmap))
+				return S_FALSE;
+			else
+				return S_OK;
 	}
 
 	HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj)
@@ -607,7 +688,7 @@ HRESULT CALLBACK CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
-	bool b_non_power_of_two = uiWidth != 1 << (int)floor((log((double)uiWidth)/log(2.0f)) + 0.5f) || uiHeight != 1 << (int)floor((log((double)uiHeight)/log(2.0f)) + 0.5f);
+	bool b_non_power_of_two = uiWidth != 1 << (int)floor( ( log( (double)uiWidth ) / log(2.f) ) + 0.5f ) || uiHeight != 1 << (int)floor( ( log( (double)uiHeight ) / log(2.f) ) + 0.5f );
 
 	if (
 		((eDataFormat == TDF_BGR8 || eDataFormat == TDF_BGRA8) && !GLEW_EXT_bgra) || 
@@ -751,7 +832,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 	{
 		int i_mipmaps = 0, max_side = max(uiWidth, uiHeight)/2;
 
-		//This loop is more correct because of NPOT textures than calculation like this: (int)(log((float)max(uiWidth, uiHeight))/log(2.0f))
+		//This loop is more correct because of NPOT textures than calculation like this: (int)(log((float)max(uiWidth, uiHeight))/log(2.f))
 		while (max_side > 0)
 		{
 			max_side /= 2;
@@ -824,19 +905,27 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 	}
 	else
 	{
-		if ((eLoadFlags & TLF_GENERATE_MIPMAPS) && (b_is_compressed || !GLEW_SGIS_generate_mipmap))
+		if ((eLoadFlags & TLF_GENERATE_MIPMAPS) && (b_is_compressed || (!GLEW_SGIS_generate_mipmap && !GLEW_ARB_framebuffer_object)))
 		{
 			(int &)eLoadFlags |= TLF_GENERATE_MIPMAPS;
 			ret = S_FALSE;
 		}
 
-		if (eLoadFlags & TLF_GENERATE_MIPMAPS && GLEW_SGIS_generate_mipmap)
+		if (eLoadFlags & TLF_GENERATE_MIPMAPS && (!GLEW_ARB_framebuffer_object && GLEW_SGIS_generate_mipmap))
 			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
 		if (b_is_compressed)
 			glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex_format, uiWidth, uiHeight, 0, ((uiWidth + 3)/4)*((uiHeight + 3)/4)*bytes_per_pixel, (void*)pData);
 		else
 			glTexImage2D(GL_TEXTURE_2D, 0, tex_internal_format, uiWidth, uiHeight, 0, tex_format, GL_UNSIGNED_BYTE, (void*)pData);
+
+		if (eLoadFlags & TLF_GENERATE_MIPMAPS)
+		{
+			if (GLEW_ARB_framebuffer_object)
+				glGenerateMipmap(GL_TEXTURE_2D);
+			else
+				glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
+		}
 	}
 
 	if (bMipmapsPresented || eLoadFlags & TLF_GENERATE_MIPMAPS)
@@ -895,7 +984,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 	if (eDataAlignment == CRDA_ALIGNED_BY_1)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-	prTex = new CCoreTexture(this, new_tex, uiWidth, uiHeight, eDataFormat, eLoadFlags, eLoadFlags & TLF_GENERATE_MIPMAPS || bMipmapsPresented);
+	prTex = new CCoreTexture(this, new_tex, TT_2D, uiWidth, uiHeight, 0, eDataFormat, eLoadFlags, eLoadFlags & TLF_GENERATE_MIPMAPS || bMipmapsPresented);
 
 	return ret;
 }
@@ -919,7 +1008,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *&prB
 
 	if (GLEW_ARB_vertex_buffer_object && eType != CRBT_SOFTWARE)
 	{
-		glGenBuffersARB(uiIndexesCount != -1 ? 2 : 1, vbos);
+		glGenBuffersARB(indexes_data_size != 0 ? 2 : 1, vbos);
 
 		_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbos[0]);
 		glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices_data_size, (GLvoid*)stDrawDesc.pData, (eType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
@@ -941,7 +1030,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *&prB
 		desc.pData = new uint8[vertices_data_size];
 		memcpy(desc.pData, stDrawDesc.pData, vertices_data_size);
 
-		if (uiIndexesCount != -1 && stDrawDesc.pIndexBuffer != NULL)
+		if (indexes_data_size != 0)
 		{
 			desc.pIndexBuffer = new uint8[indexes_data_size];
 			memcpy(desc.pIndexBuffer, stDrawDesc.pIndexBuffer, indexes_data_size);
@@ -950,7 +1039,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *&prB
 			desc.pIndexBuffer = NULL;
 	}
 
-	prBuffer = new CCoreGeometryBuffer(this, desc, vertices_data_size, indexes_data_size, uiVerticesCount, uiIndexesCount, eMode, eType, vbos[0], vbos[1]);
+	prBuffer = new CCoreGeometryBuffer(this, vbos[0], vbos[1], desc, vertices_data_size, indexes_data_size, uiVerticesCount, uiIndexesCount, eMode, eType);
 
 	return ret;
 }
@@ -1459,7 +1548,7 @@ HRESULT CALLBACK CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYP
 	case CRSF_NON_POWER_OF_TWO_TEXTURES : bIsSupported = GLEW_ARB_texture_non_power_of_two == GL_TRUE; break;
 	case CRSF_DEPTH_TEXTURES : bIsSupported = GLEW_ARB_depth_texture == GL_TRUE; break;
 	case CRSF_TEXTURE_ANISOTROPY : bIsSupported = GLEW_EXT_texture_filter_anisotropic == GL_TRUE; break;
-	case CRSF_TEXTURE_MIPMAP_GENERATION : bIsSupported = false;/*GLEW_SGIS_generate_mipmap == GL_TRUE;*/ break;
+	case CRSF_TEXTURE_MIPMAP_GENERATION : bIsSupported = false;/*GLEW_SGIS_generate_mipmap == GL_TRUE || GLEW_ARB_framebuffer_object == GL_TRUE;*/ break;
 	case CRDF_TEXTURE_MIRRORED_REPEAT : bIsSupported = GLEW_VERSION_1_4 == GL_TRUE; break;
 	case CRDF_TEXTURE_MIRROR_CLAMP : bIsSupported = GLEW_EXT_texture_mirror_clamp == GL_TRUE; break;
 	case CRDF_GEOMETRY_BUFFER : bIsSupported = GLEW_ARB_vertex_buffer_object == GL_TRUE; break;

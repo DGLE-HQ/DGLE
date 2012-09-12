@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.08.2012 (c)Korotkov Andrey
+\date		12.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -8,19 +8,20 @@ See "DGLE2.h" for more details.
 */
 
 #include "Render2D.h"
-//#include "Frustum.h"
 #include "Core.h"
 #include "Render.h"
 
 using namespace std;
 
 #define _2D_DO_BATCH_UPDATE(mode, tex, is_color)\
-(_batchMode > BM_DISABLED && (_BatchSet(mode, tex, is_color) || (_batchNeedToRefreshBatches || (_batchMode == BM_ENABLED_UEP && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
+((_batchMode > BM_DISABLED || _bInLocalBatchMode) && (_BatchSet(mode, tex, is_color) || (_batchNeedToRefreshBatches || (_batchMode == BM_ENABLED_UEP && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
+
+#define IN_2D_GUARD if (!_bIn2D) return E_FAIL;
 
 CRender2D::CRender2D(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _iProfilerState(0), _iDoDrawBBoxes(0),
-_bIn2D(false),_bInProfilerMode(false),
+_bIn2D(false),_bInProfilerMode(false), _bInLocalBatchMode(false),
 _ui64DrawDelay(0), _iObjsDrawnCount(0),
 _batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
 _batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
@@ -30,6 +31,8 @@ _uiBufferSize(34)// never less than 34
 {
 	_pBuffer = new float[_uiBufferSize];
 	_pCoreRenderer = Core()->pCoreRenderer();
+	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
+
 	Console()->RegComValue("r2d_profiler", "Displays render 2D subsystems profiler.", &_iProfilerState, 0, 2);
 	Console()->RegComValue("r2d_drawbboxes", "Displays bounding boxes of 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
 }
@@ -135,14 +138,12 @@ void CRender2D::_SetDefaultStates()
 
 	_stBlendStateDesc = TBlendStateDesc();
 	_pCoreRenderer->SetBlendState(_stBlendStateDesc);
-
-//	GL_SMAN->glDisable(GL_LIGHTING);
 }
 
 __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) const
 {
-	//Case when calling from profiler
-	if (!_bIn2D) return true;
+	if (_bInProfilerMode)
+		return true;
 
 	float vrtcs[10];
 
@@ -211,41 +212,63 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 
 HRESULT CALLBACK CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 {
-	if (eMode != _batchMode && _bIn2D)
-		_BatchFlush();
+	if (_bIn2D)
+		return E_FAIL;
 
 	_batchMode = eMode;
-
-	bool b_buffers_supported;
-	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, b_buffers_supported);
 
 	switch(eMode)
 	{
 	case BM_AUTO:
+		
+		bool b_buffers_supported;
+		_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, b_buffers_supported);
+
 		if (!b_buffers_supported)
-		{	
-			_batchMode = BM_DISABLED;
-			return S_FALSE;
-		}
-		else
+			_batchMode = BM_ENABLED_UER;
+		else		
 			_batchMode = BM_ENABLED_UEP;
+
 	case BM_ENABLED_UEP:
 	case BM_ENABLED_UER:
-//		if(!GLEW_ARB_vertex_buffer_object && _batchMode==BM_ENABLED_UEP)
-//			_batchMode	= BM_ENABLED_UER;
-//		GL_SMAN->glEnableClientState(GL_VERTEX_ARRAY);
+		
+		_batchMode	= BM_ENABLED_UER;	
 		_pBatchCurTex = NULL;
 		(uint&)_eBatchDrawMode = -1;
 		_bBatchColor = false;
-		break;
-
-	case BM_DISABLED:
-//		GL_SMAN->glDisableClientState(GL_VERTEX_ARRAY);
-//		GL_SMAN->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-//		GL_SMAN->glDisableClientState(GL_COLOR_ARRAY);
+		
 		break;
 	}
 	
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::BeginBatch()
+{
+	IN_2D_GUARD
+
+	if (_batchMode > BM_DISABLED)
+		return S_FALSE;
+
+	_bInLocalBatchMode = true;
+
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::EndBatch()
+{
+	IN_2D_GUARD
+
+	if (_batchMode > BM_DISABLED)
+		return S_FALSE;
+
+	if (!_bInLocalBatchMode)
+		return E_FAIL;
+
+	_BatchFlush();
+
+	_bInLocalBatchMode = false;
+
 	return S_OK;
 }
 
@@ -266,99 +289,79 @@ inline bool CRender2D::_BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTextu
 void CRender2D::RefreshBatchData()
 {
 	_batchNeedToRefreshBatches = true;
-
-//	for(uint i = 0; i<_batchVBOs.size(); ++i)
-//		_batchVBOs[i].uiSize = 0;
 }
 
 inline void CRender2D::_BatchFlush()
-{/*
-	if(!_batchVBOReadyToRender && _batchAccumulator.size()==0)
+{
+	if (!_batchBufferReadyToRender && _batchAccumulator.size() == 0)
 		return;
 
-	void *data;
+	TDrawDataDesc desc;
 
-	if(GLEW_ARB_vertex_buffer_object)
+	desc.pData = (uint8*)&_batchAccumulator[0];
+	desc.bVertexCoord2 = true;
+	desc.uiVertexStride = 8*sizeof(float);
+	desc.uiTexCoordOffset = 2*sizeof(float);
+	desc.uiTexCoordStride = 8*sizeof(float);
+	desc.uiColorOffset = 4*sizeof(float);
+	desc.uiColorStride = 8*sizeof(float);
+
+	uint size = _batchAccumulator.size();
+
+	if (_bUseGeometryBuffers && !_bInLocalBatchMode)
 	{
-		_batchVBOCurCounter++;
+		_batchBufferCurCounter++;
 
-		if(_batchVBOCurCounter <= _batchVBOs.size())
+		ICoreGeometryBuffer *p_buffer;
+
+		if (_batchBufferCurCounter <= _pBatchBuffers.size())
 		{
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, _batchVBOs[_batchVBOCurCounter-1].uiVboIdx);
-			
-			if(_batchNeedToRefreshBatches)
+			if (_batchNeedToRefreshBatches)
 			{
-				_batchVBOs[_batchVBOCurCounter-1].uiSize = _batchAccumulator.size();
-				glBufferDataARB(GL_ARRAY_BUFFER_ARB, _batchVBOs[_batchVBOCurCounter-1].uiSize*sizeof(TBatchVertex), NULL, GL_DYNAMIC_DRAW_ARB);
-				glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, _batchVBOs[_batchVBOCurCounter-1].uiSize*sizeof(TBatchVertex), &_batchAccumulator[0]);
-				
+				p_buffer = _pBatchBuffers[_batchBufferCurCounter - 1];
+				p_buffer->Reallocate(desc, _batchAccumulator.size(), 0, _eBatchDrawMode);
 			}
 			else
-				_batchVBOsRepetedUseCounter++;
+				++_batchBuffersRepetedUseCounter;
 		}
 		else
 		{
-			TBatchVBO temp_vbo;
-			glGenBuffersARB(1, &temp_vbo.uiVboIdx);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, temp_vbo.uiVboIdx);
-			temp_vbo.uiSize = _batchAccumulator.size();
-			glBufferDataARB(GL_ARRAY_BUFFER_ARB, temp_vbo.uiSize*sizeof(TBatchVertex), &_batchAccumulator[0], GL_DYNAMIC_DRAW_ARB);
-			_batchVBOs.push_back(temp_vbo);
+			_pCoreRenderer->CreateGeometryBuffer(p_buffer, desc, _batchAccumulator.size(), 0, _eBatchDrawMode, _batchMode < BM_ENABLED_UER ? CRBT_HARDWARE_STATIC : CRBT_HARDWARE_DYNAMIC);
+			_pBatchBuffers.push_back(p_buffer);
 		}
 
-		data = NULL;
+		uint tmp;
+		p_buffer->GetBufferDemensions(tmp, size, tmp, tmp);
+
+		_pCoreRenderer->DrawBuffer(p_buffer);
 	}
 	else
-		data = &_batchAccumulator[0];
+		_pCoreRenderer->Draw(desc, _eBatchDrawMode, _batchAccumulator.size());
 	
-	if(_batchCurTex!=0)
+	switch (_eBatchDrawMode)
 	{
-		GL_SMAN->glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(TBatchVertex), (GLvoid*)(((char*)data)+sizeof(float)*2));
-	}
-	else
-		GL_SMAN->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	if(_batchColor)
-	{
-		GL_SMAN->glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4,GL_FLOAT, sizeof(TBatchVertex), (GLvoid*)(((char*)data)+sizeof(float)*4));
-	}
-	else
-		GL_SMAN->glDisableClientState(GL_COLOR_ARRAY);
-
-	glVertexPointer(2, GL_FLOAT, sizeof(TBatchVertex), (GLvoid*)(data));
-
-	uint size;
-
-	if(!_batchVBOReadyToRender)
-		size = _batchAccumulator.size();
-	else
-		size = _batchVBOs[_batchVBOCurCounter-1].uiSize;
-
-	glDrawArrays(_batchPrimType,0,size);
-
-	switch(_batchPrimType)
-	{
-	case GL_LINES:
-		_iObjsDrawnCount+=size/2;
+	case CRDM_POINTS:
+		_iObjsDrawnCount += size;
 		break;
-	case GL_QUADS:
-		_iObjsDrawnCount+=size/4;
+
+	case CRDM_LINES:
+		_iObjsDrawnCount += size / 2;
 		break;
-	case GL_TRIANGLES:
-		_iObjsDrawnCount+=size/3;
+
+	case CRDM_TRIANGLES:
+		_iObjsDrawnCount += size / 3;
 		break;
+
 	default:
-		_iObjsDrawnCount+=size;
-		break;
+		LOG("Unallowed draw mode " + UIntToStrX(_eBatchDrawMode) + " passed to 2D batching system! This is program logic issue, please report to engine developers.", LT_FATAL);
 	}
-	
-	_batchMaxSize = max(_batchMaxSize,size);
-	_batchMinSize = min(_batchMinSize,size);
+
+	_batchMaxSize = max(_batchMaxSize, size);
+	_batchMinSize = min(_batchMinSize, size);
 
 	_batchAccumulator.clear();
-	_batchVBOReadyToRender = false;*/
+
+	_batchBufferReadyToRender = false;
 }
 
 void CRender2D::_Set2DProjMatrix(uint width, uint height)
@@ -373,8 +376,8 @@ void CRender2D::_Set2DProjMatrix(uint width, uint height)
 
 HRESULT CALLBACK CRender2D::Begin2D()
 {
-	if (_bIn2D) 
-		return S_FALSE;
+	if (_bIn2D)
+		return E_FAIL;
 	
 	_bIn2D = true;
 	_bCameraWasSet = false;
@@ -383,7 +386,7 @@ HRESULT CALLBACK CRender2D::Begin2D()
 	_batchBuffersRepetedUseCounter = 0;
 	_iObjsDrawnCount = 0;
 	
-	if (_batchMode == BM_ENABLED_UER)
+	if (_batchMode != BM_ENABLED_UEP)
 		_batchNeedToRefreshBatches = true;
 
 	_batchMinSize = (numeric_limits<uint>::max)();
@@ -450,8 +453,7 @@ HRESULT CALLBACK CRender2D::Begin2D()
 
 HRESULT CALLBACK CRender2D::End2D()
 {
-	if (!_bIn2D)
-		return S_FALSE;
+	IN_2D_GUARD
 
 	_BatchFlush();
 	(uint&)_eBatchDrawMode = -1;
@@ -488,6 +490,8 @@ HRESULT CALLBACK CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY, bo
 
 HRESULT CALLBACK CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale)
 {
+	IN_2D_GUARD
+
 	_BatchFlush();
 
 	if (stCenter.x == 0.f && stCenter.y == 0.f && fAngle == 0.f && stScale.x == 0.f && stScale.y == 0.f)
@@ -506,23 +510,74 @@ HRESULT CALLBACK CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, con
 	
 		if (fAngle != 0.f || stScale.x != 1.f || stScale.y != 1.f)
 		{
-			_stCamTransform = MatrixTranslate(TPoint3((float)_uiScreenWidth/2.f, (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+			_stCamTransform = MatrixTranslate(TVec3((float)_uiScreenWidth/2.f, (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
 
 			if (_stCamScale.x != 1.f || _stCamScale.y != 1.f)
-				_stCamTransform = MatrixScale(TPoint3(stScale.x, stScale.y, 1.f)) * _stCamTransform;
+				_stCamTransform = MatrixScale(TVec3(stScale.x, stScale.y, 1.f)) * _stCamTransform;
 
 			if (fAngle != 0.f)
-				_stCamTransform = MatrixRotate(fAngle, TPoint3(0.f, 0.f, 1.f)) * _stCamTransform;
+				_stCamTransform = MatrixRotate(fAngle, TVec3(0.f, 0.f, 1.f)) * _stCamTransform;
 
-			_stCamTransform = MatrixTranslate(TPoint3(-(float)_uiScreenWidth/2.f, -(float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+			_stCamTransform = MatrixTranslate(TVec3(-(float)_uiScreenWidth/2.f, -(float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
 		}
 
-		_stCamTransform = MatrixTranslate(TPoint3(stCenter.x - (float)_uiScreenWidth/2.f, stCenter.y - (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+		_stCamTransform = MatrixTranslate(TVec3(stCenter.x - (float)_uiScreenWidth/2.f, stCenter.y - (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
 
 		_pCoreRenderer->SetMatrix(_stCamTransform);
 
 		_bCameraWasSet = true;
 	}
+
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull)
+{
+	IN_2D_GUARD
+
+	_pBuffer[0] = stBBox.x; _pBuffer[1] = stBBox.y;
+	_pBuffer[2] = stBBox.x + stBBox.width; _pBuffer[2] = _pBuffer[1];
+	_pBuffer[3] = _pBuffer[2]; _pBuffer[4] = stBBox.y + stBBox.height;
+	_pBuffer[5] = _pBuffer[0]; _pBuffer[6] = _pBuffer[4];
+
+	TMatrix transform;
+
+	if (fAngle != 0.f)
+	{
+		TMatrix rot = MatrixIdentity();
+		
+		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
+
+		rot._2D[0][0] = +c;
+		rot._2D[0][1] = -s;
+		rot._2D[1][0] = +s;
+		rot._2D[1][1] = +c;
+
+		transform = MatrixTranslate(TVec3(-(stBBox.x + stBBox.width / 2.f), -(stBBox.y + stBBox.height / 2.f), 0.f)) * rot * MatrixTranslate(TVec3(stBBox.x + stBBox.width / 2.f, stBBox.y + stBBox.height / 2.f, 0.f));
+
+		_pBuffer[7] = _pBuffer[0], _pBuffer[8] = _pBuffer[1];
+		_pBuffer[0]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
+		_pBuffer[1]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+
+		_pBuffer[7] = _pBuffer[2]; _pBuffer[8] = _pBuffer[3];
+		_pBuffer[2]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
+		_pBuffer[3]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+
+		_pBuffer[7] = _pBuffer[4]; _pBuffer[8] = _pBuffer[5];
+		_pBuffer[4]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
+		_pBuffer[5]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+
+		_pBuffer[7] = _pBuffer[6]; _pBuffer[8] = _pBuffer[7];
+		_pBuffer[6]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
+		_pBuffer[7]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+	}
+
+	int prev = _iDoDrawBBoxes;
+	_iDoDrawBBoxes = 0;
+
+	bCull = !BBoxInScreen(_pBuffer, false);
+
+	_iDoDrawBBoxes = prev;
 
 	return S_OK;
 }
@@ -536,6 +591,8 @@ HRESULT CALLBACK CRender2D::LineWidth(uint uiWidth)
 
 HRESULT CALLBACK CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor, uint uiSize)
 {
+	IN_2D_GUARD
+
 	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_POINTS, NULL, true);
 	
 	if (_batchMode != BM_DISABLED && !do_batch_update)
@@ -591,6 +648,8 @@ HRESULT CALLBACK CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &st
 
 HRESULT CALLBACK CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
+	IN_2D_GUARD
+
 	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_LINES, NULL, true);
 	
 	if (_batchMode != BM_DISABLED && !do_batch_update)
@@ -658,7 +717,9 @@ HRESULT CALLBACK CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &st
 
 HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
-	bool do_batch_update = _2D_DO_BATCH_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, NULL, true);
+	IN_2D_GUARD
+
+	bool do_batch_update = _2D_DO_BATCH_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, NULL, true);
 	
 	if (_batchMode != BM_DISABLED && !do_batch_update)
 		return S_OK;
@@ -683,6 +744,15 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 
 		_pCoreRenderer->SetColor(stColor);
+
+		if (eFlags & PF_FILL)
+		{
+			_pBuffer[8] = _pBuffer[0]; _pBuffer[9] = _pBuffer[1];
+
+			_pBuffer[0] = _pBuffer[2];	_pBuffer[1] = _pBuffer[3];
+			_pBuffer[2] = _pBuffer[4];	_pBuffer[3] = _pBuffer[5];
+			_pBuffer[4] = _pBuffer[8];	_pBuffer[5] = _pBuffer[9];
+		}
 	}
 
 	if (do_batch_update)
@@ -692,21 +762,33 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 		{
 			if (eFlags & PF_VERTICES_COLOR)
 			{
-				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f ,0.f , _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f ,0.f , _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f ,0.f , _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f ,0.f , _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
+				
 				if (!(eFlags & PF_FILL))
-					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f ,0.f , _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
+				{
+					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
+					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
+				}
 			}
 			else
 			{
-				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				
 				if (!(eFlags & PF_FILL))
-					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
+				{
+					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				}
 			}
 		}
 	else
@@ -719,7 +801,7 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 			desc.uiColorOffset = 8*sizeof(float);
 		}
 
-		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? 4 : 5);
+		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLE_STRIP : CRDM_LINE_STRIP, eFlags & PF_FILL ? 4 : 5);
 
 		++_iObjsDrawnCount;
 	}
@@ -734,7 +816,9 @@ HRESULT CALLBACK CRender2D::DrawCircle(const TPoint2 &stCoords, uint uiRadius, u
 
 HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
-	bool do_batch_update = _2D_DO_BATCH_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, NULL, true);
+	IN_2D_GUARD
+
+	bool do_batch_update = _2D_DO_BATCH_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, NULL, true);
 	
 	if (_batchMode != BM_DISABLED && !do_batch_update)
 		return S_OK;
@@ -762,7 +846,7 @@ HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &
 		_pCoreRenderer->SetColor(stColor);
 	}
 
-	if (uiQuality > 360/2) uiQuality = 360/2;
+	if (uiQuality > 360 / 2) uiQuality = 360 / 2;
 	float k = 360.f / uiQuality;
 
 	if (do_batch_update)
@@ -770,11 +854,25 @@ HRESULT CALLBACK CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &
 			_batchBufferReadyToRender = true;
 		else
 		{
+			_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x, stCoords.y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+			
 			if (eFlags & PF_FILL)
-				_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f, 0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+			
+			_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(k*(float)M_PI/180.f), stCoords.y + stRadius.y * sinf(k*(float)M_PI/180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 
-			for (uint i = 0; i <= uiQuality; ++i)
-				_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(i*k*(float)M_PI/180.f), stCoords.y + stRadius.y * sinf(i*k*(float)M_PI/180.f), 0.f ,0.f ,stColor.r, stColor.g, stColor.b, stColor.a));
+			for (uint i = 2; i <= uiQuality; ++i)
+			{
+				if (eFlags & PF_FILL)
+				{
+					_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+					_batchAccumulator.push_back(_batchAccumulator[_batchAccumulator.size() - 2]);
+				}
+				else
+					_batchAccumulator.push_back(_batchAccumulator[_batchAccumulator.size() - 1]);
+
+				_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(i*k*(float)M_PI/180.f), stCoords.y + stRadius.y * sinf(i*k*(float)M_PI/180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+			}
 		}
 	else
 	{
@@ -1049,8 +1147,10 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 		}
 	};
 
-	if (uiVerticesCount<3)
-		return E_FAIL;
+	IN_2D_GUARD
+
+	if (uiVerticesCount < 3)
+		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;;
 
@@ -1212,7 +1312,9 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 
 HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags)
 {
-	if (uiVerticesCount%3 != 0)
+	IN_2D_GUARD
+
+	if (uiVerticesCount % 3 != 0)
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;;
@@ -1314,8 +1416,9 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TPoint3 &stDimensions, const TPoint3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags)
+HRESULT CALLBACK CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags)
 {
+	IN_2D_GUARD
 	/*
 	if(!pMesh || !pTexture)
 		return E_INVALIDARG;
@@ -1479,12 +1582,15 @@ HRESULT CALLBACK CRender2D::DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoo
 
 __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TPoint2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
 {
+	if (!_bIn2D)
+		return;
+
 	ICoreTexture *p_tex = NULL;
 
 	if (tex)
 		tex->GetCoreTexture(p_tex);
 
-	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_TRIANGLE_STRIP, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
+	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_TRIANGLES, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
 	
 	if (_batchMode != BM_DISABLED && !do_batch_update)
 		return;
@@ -1521,13 +1627,13 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 
 		if (flags & EF_ROTATEPT)
 		{
-			translate_back = MatrixTranslate(TPoint3(coord.x + _stRotationPoint.x, coord.y + _stRotationPoint.y, 0.f));
-			translate = MatrixTranslate(TPoint3(-(coord.x + _stRotationPoint.x), -(coord.y + _stRotationPoint.y), 0.f));
+			translate_back = MatrixTranslate(TVec3(coord.x + _stRotationPoint.x, coord.y + _stRotationPoint.y, 0.f));
+			translate = MatrixTranslate(TVec3(-(coord.x + _stRotationPoint.x), -(coord.y + _stRotationPoint.y), 0.f));
 		}
 		else
 		{
-			translate_back = MatrixTranslate(TPoint3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
-			translate = MatrixTranslate(TPoint3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
+			translate_back = MatrixTranslate(TVec3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
+			translate = MatrixTranslate(TVec3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
 		}
 
 		transform = translate * rot * translate_back;
@@ -1541,8 +1647,8 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 		scale._2D[0][0] = _stScale.x;
 		scale._2D[1][1] = _stScale.y;
 
-		TMatrix translate_back = MatrixTranslate(TPoint3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
-		TMatrix translate = MatrixTranslate(TPoint3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
+		TMatrix translate_back = MatrixTranslate(TVec3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
+		TMatrix translate = MatrixTranslate(TVec3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
 		transform = translate * scale * translate_back * transform;
 	}
 
@@ -1650,6 +1756,8 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 					_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8],	_pBuffer[9], _astVerticesColors[1].r,_astVerticesColors[1].g,_astVerticesColors[1].b,_astVerticesColors[1].a));
 					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
 					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
+					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
+					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
 					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12],_pBuffer[11], _astVerticesColors[3].r,_astVerticesColors[3].g,_astVerticesColors[3].b,_astVerticesColors[3].a));
 				}
 				else
@@ -1660,6 +1768,8 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 						col = _stColormix;
 
 					_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], col.r,col.g,col.b,col.a));
+					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11],col.r,col.g,col.b,col.a));
+					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r,col.g,col.b,col.a));
 					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11],col.r,col.g,col.b,col.a));
 					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r,col.g,col.b,col.a));
 					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12],_pBuffer[11], col.r,col.g,col.b,col.a));
@@ -1699,7 +1809,7 @@ void CRender2D::DrawTexQuadAsIs(ITexture *tex, const float *points, E_EFFECT2D_F
 	if (tex)
 		tex->GetCoreTexture(p_tex);
 
-	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_TRIANGLE_STRIP, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
+	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_TRIANGLES, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
 	
 	if (_batchMode != BM_DISABLED && !do_batch_update)
 		return;
@@ -1750,6 +1860,8 @@ void CRender2D::DrawTexQuadAsIs(ITexture *tex, const float *points, E_EFFECT2D_F
 					_batchAccumulator.push_back(TVertex2(points[4], points[5], points[6],	points[7], _astVerticesColors[1].r,_astVerticesColors[1].g,_astVerticesColors[1].b,_astVerticesColors[1].a));
 					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
 					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
+					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
+					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
 					_batchAccumulator.push_back(TVertex2(points[12],points[13],points[14],  points[15],_astVerticesColors[3].r,_astVerticesColors[3].g,_astVerticesColors[3].b,_astVerticesColors[3].a));
 				}
 				else
@@ -1759,12 +1871,13 @@ void CRender2D::DrawTexQuadAsIs(ITexture *tex, const float *points, E_EFFECT2D_F
 					_batchAccumulator.push_back(TVertex2(points[4], points[5], points[6],	points[7], col.r,col.g,col.b,col.a));
 					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],col.r,col.g,col.b,col.a));
 					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], col.r,col.g,col.b,col.a));
+					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],col.r,col.g,col.b,col.a));
+					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], col.r,col.g,col.b,col.a));
 					_batchAccumulator.push_back(TVertex2(points[12],points[13],points[14],  points[15],col.r,col.g,col.b,col.a));
 				}
 			}
 	else
 	{
-
 		_pBuffer[0] = points[4]; _pBuffer[1] = points[5]; _pBuffer[2] = points[6]; _pBuffer[3] = points[7];
 		_pBuffer[4] = points[8]; _pBuffer[5] = points[9]; _pBuffer[6] = points[10]; _pBuffer[7] = points[11];
 		_pBuffer[8] = points[0]; _pBuffer[9] = points[1]; _pBuffer[10] = points[2]; _pBuffer[11] = points[3];
@@ -1818,6 +1931,8 @@ HRESULT CALLBACK CRender2D::SetColorMix(const TColor4 &stColor)
 
 HRESULT CALLBACK CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
 {
+	IN_2D_GUARD
+
 	if (_ePrevBlendingMode == eMode)
 		return S_OK;
 	else
