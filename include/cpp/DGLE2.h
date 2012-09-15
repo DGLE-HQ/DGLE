@@ -630,6 +630,11 @@ namespace DGLE2
 	class IRender3D;
 	class ILight;
 	class IPostprocess;
+	class ICoreGeometryBuffer;
+	
+	struct TDrawDataDesc;
+
+	enum E_CORE_RENDERER_DRAW_MODE;
 
 	enum E_GET_POINT3_FLAG
 	{
@@ -716,8 +721,9 @@ namespace DGLE2
 		virtual HRESULT CALLBACK BatchRender(E_BATCH_MODE2D eMode) = 0;
 		virtual HRESULT CALLBACK BeginBatch() = 0;
 		virtual HRESULT CALLBACK EndBatch() = 0;
+		virtual HRESULT CALLBACK NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
 		virtual HRESULT CALLBACK SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
-		virtual HRESULT CALLBACK SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f,1.f)) = 0;
+		virtual HRESULT CALLBACK SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f, 1.f)) = 0;
 		virtual HRESULT CALLBACK CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
 
 		// 2D Primitives
@@ -738,13 +744,25 @@ namespace DGLE2
 		virtual HRESULT CALLBACK DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual HRESULT CALLBACK DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis = TVector3(), float fAngle = 0.f, bool bClip = true, float fFovY = 90.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
+		//Advanced
+		virtual HRESULT CALLBACK Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
+		virtual HRESULT CALLBACK DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
+		virtual HRESULT CALLBACK DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY) = 0;
+
 		//Effects
 		virtual HRESULT CALLBACK SetRotationPoint(const TPoint2 &stCoords) = 0;//In texture coord system
 		virtual HRESULT CALLBACK SetScale(const TPoint2 &stScale) = 0;
 		virtual HRESULT CALLBACK SetColorMix(const TColor4 &stColor = TColor4()) = 0;
 		virtual HRESULT CALLBACK SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
 		virtual HRESULT CALLBACK SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
-		virtual HRESULT CALLBACK SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3 = TColor4(), const TColor4 &stColor4 = TColor4()) = 0;
+		virtual HRESULT CALLBACK SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
+		
+		virtual HRESULT CALLBACK GetRotationPoint(TPoint2 &stCoords) = 0;
+		virtual HRESULT CALLBACK GetScale(TPoint2 &stScale) = 0;
+		virtual HRESULT CALLBACK GetColorMix(TColor4 &stColor) = 0;
+		virtual HRESULT CALLBACK GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode) = 0;
+		virtual HRESULT CALLBACK GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
+		virtual HRESULT CALLBACK GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4) = 0;
 	};
 
 	//Render3D interface//

@@ -148,8 +148,8 @@ namespace DGLE2
 	{
 		CRDM_POINTS = 0,
 		CRDM_LINES,
-		CRDM_LINE_STRIP,
 		CRDM_TRIANGLES,
+		CRDM_LINE_STRIP,
 		CRDM_TRIANGLE_STRIP,
 		CRDM_TRIANGLE_FAN
 	};
@@ -348,6 +348,7 @@ namespace DGLE2
 		virtual HRESULT CALLBACK SetGeometryData(const TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
 		virtual HRESULT CALLBACK Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode) = 0;
 		virtual HRESULT CALLBACK GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount) = 0;
+		virtual HRESULT CALLBACK GetBufferDrawDataDesc(TDrawDataDesc &stDesc) = 0;
 		virtual HRESULT CALLBACK GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode) = 0;
 		virtual HRESULT CALLBACK GetBufferType(E_CORE_RENDERER_BUFFER_TYPE &eType) = 0;
 		virtual HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;

@@ -10,7 +10,9 @@ See "DGLE2.h" for more details.
 #ifndef _COMMONENG_H
 #define _COMMONENG_H
 
+#if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include "DGLE2.h"
 
@@ -34,12 +36,6 @@ typedef HMODULE TDynLibHandle;
 #endif //PLATFORM_WINDOWS
 
 // Standart includes //
-
-/*
-#define _SECURE_SCL 0
-#define _CRTDBG_MAP_ALLOC
-
-*/
 
 //#include <new>
 //#include <new.h>

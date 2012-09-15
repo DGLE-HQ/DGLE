@@ -21,6 +21,8 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] BeginBatch/EndBatch IRender2D methods for custom batchs. Also added CullBoundingBox method.
 [ + ] Helper methods Draw2DSimple and Draw2DRect for UBitmapFont interface.
 [ + ] GetResourceByFileName method of interface IResourceManager.
+[ + ] Added some getters methods to IRender2D.
+[ + ] Added some advanced Draw, DrawBuffer and DrawBuffer3D methods to IRender2D for experienced users.
 [ - ] Some old stuff (like plugins for browsers) was dropped off.
 [ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
 

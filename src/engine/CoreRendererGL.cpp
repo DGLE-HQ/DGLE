@@ -194,6 +194,12 @@ public:
 		return S_OK;
 	}
 
+	HRESULT CALLBACK GetBufferDrawDataDesc(TDrawDataDesc &stDesc)
+	{
+		stDesc = _stDrawDataDesc;
+		return S_OK;
+	}
+
 	HRESULT CALLBACK GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode)
 	{
 		eMode = _eDrawMode;

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.09.2012 (c)Korotkov Andrey
+\date		16.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,7 +16,7 @@ using namespace std;
 #define _2D_DO_BATCH_UPDATE(mode, tex, is_color)\
 ((_batchMode > BM_DISABLED || _bInLocalBatchMode) && (_BatchSet(mode, tex, is_color) || (_batchNeedToRefreshBatches || (_batchMode == BM_ENABLED_UEP && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
 
-#define IN_2D_GUARD if (!_bIn2D) return E_FAIL;
+#define IN_2D_GUARD if (!_bIn2D && !_bInProfilerMode) return E_FAIL;
 
 CRender2D::CRender2D(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
@@ -85,6 +85,8 @@ void CRender2D::EndProfiler2D()
 
 void CRender2D::DrawProfiler()
 {
+	Core()->ConsoleWrite(UIntToStr(_batchBuffersNotModefiedPerFrameCounter).c_str(), false);
+
 	if (_iProfilerState > 0)
 	{
 		uint 
@@ -104,11 +106,11 @@ void CRender2D::DrawProfiler()
 		if (_iProfilerState > 1)
 		{
 			Core()->RenderProfilerTxt("--------Batch Render--------", TColor4());
-			Core()->RenderProfilerTxt(("Buffers count  :" + IntToStr(vbos_count)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Buffers in use :" + IntToStr(vbos_in_use)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Effective calls:" + IntToStr(effective_b)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Max. batch size:" + IntToStr(max_b_size)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Min. batch size:" + IntToStr(min_b_size)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Buffers count  :" + UIntToStr(vbos_count)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Buffers in use :" + UIntToStr(vbos_in_use)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Effective calls:" + UIntToStr(effective_b)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Max. batch size:" + UIntToStr(max_b_size)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Min. batch size:" + UIntToStr(min_b_size)).c_str(), TColor4());
 			Core()->RenderProfilerTxt("----------------------------", TColor4());
 		}
 	}
@@ -230,9 +232,14 @@ HRESULT CALLBACK CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 			_batchMode = BM_ENABLED_UEP;
 
 	case BM_ENABLED_UEP:
+		if (eMode == BM_ENABLED_UEP)
+			_batchMode	= BM_ENABLED_UEP;
+
 	case BM_ENABLED_UER:
 		
-		_batchMode	= BM_ENABLED_UER;	
+		if (eMode == BM_ENABLED_UER)
+			_batchMode	= BM_ENABLED_UER;	
+		
 		_pBatchCurTex = NULL;
 		(uint&)_eBatchDrawMode = -1;
 		_bBatchColor = false;
@@ -272,6 +279,13 @@ HRESULT CALLBACK CRender2D::EndBatch()
 	return S_OK;
 }
 
+HRESULT CALLBACK CRender2D::NeedToUpdateBatchData(bool &bNeedUpdate)
+{
+	bNeedUpdate = _batchMode != BM_ENABLED_UEP || (!_bInProfilerMode && _batchNeedToRefreshBatches);
+
+	return S_OK;
+}
+
 inline bool CRender2D::_BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor)
 {
 	if (_eBatchDrawMode != eDrawMode || _pBatchCurTex != pTex || _bBatchColor != bColor)
@@ -298,7 +312,6 @@ inline void CRender2D::_BatchFlush()
 
 	TDrawDataDesc desc;
 
-	desc.pData = (uint8*)&_batchAccumulator[0];
 	desc.bVertexCoord2 = true;
 	desc.uiVertexStride = 8*sizeof(float);
 	desc.uiTexCoordOffset = 2*sizeof(float);
@@ -308,6 +321,9 @@ inline void CRender2D::_BatchFlush()
 
 	uint size = _batchAccumulator.size();
 
+	if (size != 0)
+		desc.pData = (uint8*)&_batchAccumulator[0];
+
 	if (_bUseGeometryBuffers && !_bInLocalBatchMode)
 	{
 		_batchBufferCurCounter++;
@@ -316,17 +332,16 @@ inline void CRender2D::_BatchFlush()
 
 		if (_batchBufferCurCounter <= _pBatchBuffers.size())
 		{
+			p_buffer = _pBatchBuffers[_batchBufferCurCounter - 1];
+
 			if (_batchNeedToRefreshBatches)
-			{
-				p_buffer = _pBatchBuffers[_batchBufferCurCounter - 1];
-				p_buffer->Reallocate(desc, _batchAccumulator.size(), 0, _eBatchDrawMode);
-			}
+				p_buffer->Reallocate(desc, size, 0, _eBatchDrawMode);
 			else
 				++_batchBuffersRepetedUseCounter;
 		}
 		else
 		{
-			_pCoreRenderer->CreateGeometryBuffer(p_buffer, desc, _batchAccumulator.size(), 0, _eBatchDrawMode, _batchMode < BM_ENABLED_UER ? CRBT_HARDWARE_STATIC : CRBT_HARDWARE_DYNAMIC);
+			_pCoreRenderer->CreateGeometryBuffer(p_buffer, desc, size, 0, _eBatchDrawMode, _batchMode == BM_ENABLED_UEP ? CRBT_HARDWARE_STATIC : CRBT_HARDWARE_DYNAMIC);
 			_pBatchBuffers.push_back(p_buffer);
 		}
 
@@ -336,7 +351,7 @@ inline void CRender2D::_BatchFlush()
 		_pCoreRenderer->DrawBuffer(p_buffer);
 	}
 	else
-		_pCoreRenderer->Draw(desc, _eBatchDrawMode, _batchAccumulator.size());
+		_pCoreRenderer->Draw(desc, _eBatchDrawMode, size);
 	
 	switch (_eBatchDrawMode)
 	{
@@ -744,15 +759,6 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 
 		_pCoreRenderer->SetColor(stColor);
-
-		if (eFlags & PF_FILL)
-		{
-			_pBuffer[8] = _pBuffer[0]; _pBuffer[9] = _pBuffer[1];
-
-			_pBuffer[0] = _pBuffer[2];	_pBuffer[1] = _pBuffer[3];
-			_pBuffer[2] = _pBuffer[4];	_pBuffer[3] = _pBuffer[5];
-			_pBuffer[4] = _pBuffer[8];	_pBuffer[5] = _pBuffer[9];
-		}
 	}
 
 	if (do_batch_update)
@@ -760,6 +766,15 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 			_batchBufferReadyToRender = true;
 		else
 		{
+			if (eFlags & PF_FILL)
+			{
+				_pBuffer[8] = _pBuffer[0]; _pBuffer[9] = _pBuffer[1];
+
+				_pBuffer[0] = _pBuffer[2];	_pBuffer[1] = _pBuffer[3];
+				_pBuffer[2] = _pBuffer[4];	_pBuffer[3] = _pBuffer[5];
+				_pBuffer[4] = _pBuffer[8];	_pBuffer[5] = _pBuffer[9];
+			}
+
 			if (eFlags & PF_VERTICES_COLOR)
 			{
 				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
@@ -793,6 +808,15 @@ HRESULT CALLBACK CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColo
 		}
 	else
 	{
+		if (eFlags & PF_FILL)
+		{
+			_pBuffer[8] = _pBuffer[0]; _pBuffer[9] = _pBuffer[1];
+
+			_pBuffer[0] = _pBuffer[2];	_pBuffer[1] = _pBuffer[3];
+			_pBuffer[2] = _pBuffer[4];	_pBuffer[3] = _pBuffer[5];
+			_pBuffer[4] = _pBuffer[8];	_pBuffer[5] = _pBuffer[9];
+		}
+
 		TDrawDataDesc desc((uint8*)_pBuffer);
 
 		if(eFlags & PF_VERTICES_COLOR)
@@ -1149,7 +1173,7 @@ HRESULT CALLBACK CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertice
 
 	IN_2D_GUARD
 
-	if (uiVerticesCount < 3)
+	if ((_batchNeedToRefreshBatches && !pstVertices) || uiVerticesCount < 3)
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;;
@@ -1314,7 +1338,7 @@ HRESULT CALLBACK CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVerti
 {
 	IN_2D_GUARD
 
-	if (uiVerticesCount % 3 != 0)
+	if ((_batchNeedToRefreshBatches && !pstVertices) || uiVerticesCount % 3 != 0)
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;;
@@ -1538,6 +1562,204 @@ HRESULT CALLBACK CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPo
 	return S_OK;
 }
 
+HRESULT CALLBACK CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags)
+{
+	IN_2D_GUARD
+
+	if (_batchNeedToRefreshBatches && (!stDrawDesc.bVertexCoord2 || !stDrawDesc.pData || stDrawDesc.uiNormalOffset != -1))
+		return E_INVALIDARG;
+
+	ICoreTexture *p_tex = NULL;
+
+	if (pTexture)
+		pTexture->GetCoreTexture(p_tex);
+
+	bool do_batch_update, flag = false;
+	
+	if (stDrawDesc.pIndexBuffer != NULL || eMode > CRDM_TRIANGLES)
+	{
+		flag = true;
+		do_batch_update = false;
+	}
+	else
+		do_batch_update = _2D_DO_BATCH_UPDATE(eMode, p_tex, (eFlags & EF_COLORMIX) != 0);
+	
+	if (_batchMode != BM_DISABLED && !do_batch_update)
+	{
+		if (flag)
+			_BatchFlush();
+		else
+			return S_OK;
+	}
+
+	if (stAABB.x != 0.f || stAABB.y != 0.f || stAABB.width != 0.f || stAABB.height != 0.f)
+	{
+		_pBuffer[0] = stAABB.x; _pBuffer[1] = stAABB.y;
+		_pBuffer[2] = stAABB.x + stAABB.width; _pBuffer[3] = stAABB.y;
+		_pBuffer[4] = _pBuffer[2]; _pBuffer[5] = stAABB.y + stAABB.height;
+		_pBuffer[6] = stAABB.x; _pBuffer[7] = _pBuffer[5];
+
+		if (!BBoxInScreen(_pBuffer, false))
+			return S_OK;
+	}
+
+	if (_batchMode == BM_DISABLED || _batchAccumulator.empty())
+	{
+		if (eFlags & EF_COLORMIX)
+			_pCoreRenderer->SetColor(_stColormix);
+		else  
+			_pCoreRenderer->SetColor(TColor4());
+
+		_pCoreRenderer->BindTexture(p_tex);
+
+		if (eFlags & EF_BLEND)
+		{
+			_stRasterStateDesc.bAlphaTestEnable = false;
+			_stBlendStateDesc.bEnable = true;
+		}
+		else
+			if (eFlags & EF_NONE)
+			{
+				_stRasterStateDesc.bAlphaTestEnable = false;
+				_stBlendStateDesc.bEnable = false;
+			}
+			else 
+			{
+				_stRasterStateDesc.bAlphaTestEnable = true;
+				_stBlendStateDesc.bEnable = false;
+			}
+
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+	}
+
+	if (do_batch_update)
+		if (!_batchNeedToRefreshBatches)
+			_batchBufferReadyToRender = true;
+		else
+		{
+			const float *data = (float *)stDrawDesc.pData;
+			
+			const uint	v_stride = stDrawDesc.uiVertexStride == 0 ? 2 : stDrawDesc.uiVertexStride/sizeof(float),
+						t_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride/sizeof(float),
+						c_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride/sizeof(float),
+						t_offset = stDrawDesc.uiTexCoordOffset == -1 ? 0 : stDrawDesc.uiTexCoordOffset/sizeof(float),
+						c_offset = stDrawDesc.uiColorOffset == -1 ? 0 : stDrawDesc.uiColorOffset/sizeof(float);
+
+			for (uint i = 0; i < uiCount; ++i)
+			{
+				const uint	v_idx = i*v_stride,
+							t_idx = t_offset + i*t_stride,
+							c_idx = c_offset + i*c_stride;
+
+				TVertex2 v;
+
+				v.x = data[v_idx]; v.y = data[v_idx + 1];
+
+				if (stDrawDesc.uiTexCoordOffset != -1)
+				{
+					v.u = data[t_idx];
+					v.w = data[t_idx + 1];
+				}
+
+				if (stDrawDesc.uiColorOffset != -1)
+				{
+					v.r = data[c_idx];
+					v.g = data[c_idx + 1];
+					v.b = data[c_idx + 2];
+					v.a = data[c_idx + 3];
+				}
+				else
+				{
+					v.r = _stColormix.r;
+					v.g = _stColormix.g;
+					v.b = _stColormix.b;
+					v.a = _stColormix.a;
+				}
+
+				_batchAccumulator.push_back(v);
+			}
+		}
+	else
+		_pCoreRenderer->Draw(stDrawDesc, eMode, uiCount);
+
+	++_iObjsDrawnCount;
+
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags)
+{
+	IN_2D_GUARD
+
+	if (!pBuffer)
+		return E_INVALIDARG;
+
+	TDrawDataDesc desc;
+	pBuffer->GetBufferDrawDataDesc(desc);
+
+	if (!desc.bVertexCoord2 || desc.uiNormalOffset != -1)
+		return E_INVALIDARG;
+
+	if (stAABB.x != 0.f || stAABB.y != 0.f || stAABB.width != 0.f || stAABB.height != 0.f)
+	{
+		_pBuffer[0] = stAABB.x; _pBuffer[1] = stAABB.y;
+		_pBuffer[2] = stAABB.x + stAABB.width; _pBuffer[3] = stAABB.y;
+		_pBuffer[4] = _pBuffer[2]; _pBuffer[5] = stAABB.y + stAABB.height;
+		_pBuffer[6] = stAABB.x; _pBuffer[7] = _pBuffer[5];
+
+		if (!BBoxInScreen(_pBuffer, false))
+			return S_OK;
+	}
+
+	_BatchFlush();
+
+	if (eFlags & EF_COLORMIX)
+		_pCoreRenderer->SetColor(_stColormix);
+	else  
+		_pCoreRenderer->SetColor(TColor4());
+
+	if (pTexture)
+		pTexture->Bind();
+	else
+		_pCoreRenderer->BindTexture(NULL);
+
+	if (eFlags & EF_BLEND)
+	{
+		_stRasterStateDesc.bAlphaTestEnable = false;
+		_stBlendStateDesc.bEnable = true;
+	}
+	else
+		if (eFlags & EF_NONE)
+		{
+			_stRasterStateDesc.bAlphaTestEnable = false;
+			_stBlendStateDesc.bEnable = false;
+		}
+		else 
+		{
+			_stRasterStateDesc.bAlphaTestEnable = true;
+			_stBlendStateDesc.bEnable = false;
+		}
+
+	_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+	_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+
+	_pCoreRenderer->DrawBuffer(pBuffer);
+
+	++_iObjsDrawnCount;
+
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
+{
+	IN_2D_GUARD
+
+	//ToDo
+
+	return S_OK;
+}
+
 HRESULT CALLBACK CRender2D::DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	uint width = 0, height = 0;
@@ -1722,28 +1944,23 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 		if (flags & EF_BLEND)
 		{
 			_stRasterStateDesc.bAlphaTestEnable = false;
-			_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-
 			_stBlendStateDesc.bEnable = true;
-			_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 		}
 		else
 			if (flags & EF_NONE)
 			{
 				_stRasterStateDesc.bAlphaTestEnable = false;
-				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-
 				_stBlendStateDesc.bEnable = false;
-				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 			}
 			else 
 			{
 				_stRasterStateDesc.bAlphaTestEnable = true;
-				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-
 				_stBlendStateDesc.bEnable = false;
-				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 			}
+
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+
 	}
 
 	if (do_batch_update)
@@ -1800,115 +2017,6 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 		
 		++_iObjsDrawnCount;
 	}
-}
-
-void CRender2D::DrawTexQuadAsIs(ITexture *tex, const float *points, E_EFFECT2D_FLAGS flags)
-{
-	ICoreTexture *p_tex = NULL;
-
-	if (tex)
-		tex->GetCoreTexture(p_tex);
-
-	bool do_batch_update = _2D_DO_BATCH_UPDATE(CRDM_TRIANGLES, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
-	
-	if (_batchMode != BM_DISABLED && !do_batch_update)
-		return;
-
-	if (_batchMode == BM_DISABLED || _batchAccumulator.empty())
-	{
-		if (flags & EF_COLORMIX)
-			_pCoreRenderer->SetColor(_stColormix);
-		else  
-			_pCoreRenderer->SetColor(TColor4());
-
-		_pCoreRenderer->BindTexture(p_tex);
-
-		if (flags & EF_BLEND)
-		{
-			_stRasterStateDesc.bAlphaTestEnable = false;
-			_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-
-			_stBlendStateDesc.bEnable = true;
-			_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
-		}
-		else
-			if (flags & EF_NONE)
-			{
-				_stRasterStateDesc.bAlphaTestEnable = false;
-				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-
-				_stBlendStateDesc.bEnable = false;
-				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
-			}
-			else 
-			{
-				_stRasterStateDesc.bAlphaTestEnable = true;
-				_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-
-				_stBlendStateDesc.bEnable = false;
-				_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
-			}
-	}
-
-	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
-			_batchBufferReadyToRender = true;
-		else
-			{
-				if (flags & EF_VERTICES_COLOR)
-				{
-					_batchAccumulator.push_back(TVertex2(points[4], points[5], points[6],	points[7], _astVerticesColors[1].r,_astVerticesColors[1].g,_astVerticesColors[1].b,_astVerticesColors[1].a));
-					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
-					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
-					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
-					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
-					_batchAccumulator.push_back(TVertex2(points[12],points[13],points[14],  points[15],_astVerticesColors[3].r,_astVerticesColors[3].g,_astVerticesColors[3].b,_astVerticesColors[3].a));
-				}
-				else
-				{
-					TColor4 col;
-					if (flags & EF_COLORMIX) col = _stColormix;
-					_batchAccumulator.push_back(TVertex2(points[4], points[5], points[6],	points[7], col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(points[8], points[9], points[10],	points[11],col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(points[0], points[1], points[2],	points[3], col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(points[12],points[13],points[14],  points[15],col.r,col.g,col.b,col.a));
-				}
-			}
-	else
-	{
-		_pBuffer[0] = points[4]; _pBuffer[1] = points[5]; _pBuffer[2] = points[6]; _pBuffer[3] = points[7];
-		_pBuffer[4] = points[8]; _pBuffer[5] = points[9]; _pBuffer[6] = points[10]; _pBuffer[7] = points[11];
-		_pBuffer[8] = points[0]; _pBuffer[9] = points[1]; _pBuffer[10] = points[2]; _pBuffer[11] = points[3];
-		_pBuffer[12] = points[12]; _pBuffer[13] = points[13]; _pBuffer[14] = points[14]; _pBuffer[15] = points[15];
-
-		TDrawDataDesc desc((uint8 *)_pBuffer, 2*sizeof(float));
-		desc.uiVertexStride = 4*sizeof(float);
-		desc.uiTexCoordStride = 4*sizeof(float);
-
-		if (flags & EF_VERTICES_COLOR)
-		{
-			desc.uiColorOffset = 16*sizeof(float);
-			memcpy(&_pBuffer[16], _astVerticesColors, sizeof(TColor4)*4);
-		}
-		
-		_pCoreRenderer->Draw(desc, CRDM_TRIANGLE_STRIP, 4);
-		
-		if (!_bInProfilerMode)
-			++_iObjsDrawnCount;
-	}
-}
-
-void CRender2D::SetColorMixPush(const TColor4 &color)
-{
-	_stPrevColormix = _stColormix;
-	_stColormix = color;
-}
-
-void CRender2D::ColorMixPop()
-{
-	_stColormix = _stPrevColormix;
 }
 
 HRESULT CALLBACK CRender2D::SetRotationPoint(const TPoint2 &stCoords)
@@ -1989,6 +2097,50 @@ HRESULT CALLBACK CRender2D::SetVerticesColors( const TColor4 &stColor1, const TC
 	_astVerticesColors[1] = stColor3;
 	_astVerticesColors[2] = stColor1;
 	_astVerticesColors[3] = stColor4;
+
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::GetRotationPoint(TPoint2 &stCoords)
+{
+	stCoords = _stRotationPoint;
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::GetScale(TPoint2 &stScale)
+{
+	stScale = _stScale;
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::GetColorMix(TColor4 &stColor)
+{
+	stColor = _stColormix;
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode)
+{
+	eMode = _ePrevBlendingMode;
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4)
+{
+	stCoords2 = _astVerticesOffset[0];
+	stCoords3 = _astVerticesOffset[1];
+	stCoords1 = _astVerticesOffset[2];
+	stCoords4 = _astVerticesOffset[3];
+
+	return S_OK;
+}
+
+HRESULT CALLBACK CRender2D::GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4)
+{
+	stColor2 = _astVerticesColors[0];
+	stColor3 = _astVerticesColors[1];
+	stColor1 = _astVerticesColors[2];
+	stColor4 = _astVerticesColors[3];
 
 	return S_OK;
 }

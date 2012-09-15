@@ -194,11 +194,25 @@ HRESULT CALLBACK CBitmapFont::Draw2DSimple(int iX, int iY, const char *pcTxt, co
 
 HRESULT CALLBACK CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors)
 {
-	if (strlen(pcTxt) == 0)
+	uint length = strlen(pcTxt);
+
+	if (length == 0)
 		return S_FALSE;
 
+	bool b_need_update;
+
+	Core()->pRender()->pRender2D()->NeedToUpdateBatchData(b_need_update);
+
+	if (!b_need_update)
+	{
+		Core()->pRender()->pRender2D()->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLORMIX)));
+		return S_OK;
+	}
+
 	uint width, height;
+	
 	GetTextDimensions(pcTxt, width, height);
+	
 	float quad[] = {fX, fY, fX + (float)width, fY, fX + (float)width, fY + (float)height, fX, fY + (float)height};
 	
 	TMatrix transform;
@@ -241,47 +255,92 @@ HRESULT CALLBACK CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, cons
 	
 	_pTex->GetDimensions(t_w, t_h);
 
-	Core()->pRender()->pRender2D()->SetColorMixPush(stColor);
+	TColor4 prev_color, verts_colors[4];
+	
+	Core()->pRender()->pRender2D()->GetColorMix(prev_color);
+	Core()->pRender()->pRender2D()->SetColorMix(stColor);
 
-	for (uint i = 0; i < strlen(pcTxt); ++i)
+	if (bVerticesColors)
+		Core()->pRender()->pRender2D()->GetVerticesColors(verts_colors[0], verts_colors[1], verts_colors[2], verts_colors[3]);
+
+	uint size = length*12*2;
+
+	if (bVerticesColors)
+		size = length*24*2;
+
+	if (_uiBufferSize < size)
+	{
+		_uiBufferSize = size;
+		delete[] _pBuffer;
+		_pBuffer = new float[_uiBufferSize];
+	}
+
+	for (uint i = 0; i < length; ++i)
 	{
 		const uchar ch = static_cast<const uchar>(pcTxt[i]) - 32;
+		
 		const int
 			&curb_x = _astChars[ch].iX,
 			&curb_y = _astChars[ch].iY,
 			&curb_w = _astChars[ch].iW,
 			&curb_h = _astChars[ch].iH;
+		
+		const uint idx = i*24;
 
-		_pBuffer[0] = fX + xoffset; _pBuffer[1] = fY; _pBuffer[2] = (float)curb_x/(float)t_w; _pBuffer[3] = (float)curb_y/(float)t_h;
-		_pBuffer[4] = fX + xoffset + (float)curb_w*_fScale; _pBuffer[5] = fY; _pBuffer[6] = (float)(curb_x + curb_w)/(float)t_w; _pBuffer[7] = (float)curb_y/(float)t_h;
-		_pBuffer[8] = fX + xoffset + (float)curb_w*_fScale; _pBuffer[9] = fY + (float)curb_h*_fScale; _pBuffer[10] = (float)(curb_x+curb_w)/(float)t_w; _pBuffer[11] = (float)(curb_y+curb_h)/(float)t_h;
-		_pBuffer[12] = fX + xoffset; _pBuffer[13] = fY + (float)curb_h*_fScale; _pBuffer[14] = (float)curb_x/(float)t_w; _pBuffer[15] = (float)(curb_y+curb_h)/(float)t_h;
+		_pBuffer[idx] = fX + xoffset; _pBuffer[idx + 1] = fY; _pBuffer[idx + 2] = (float)curb_x/(float)t_w; _pBuffer[idx + 3] = (float)curb_y/(float)t_h;
+		_pBuffer[idx + 4] = fX + xoffset + (float)curb_w*_fScale; _pBuffer[idx + 5] = fY; _pBuffer[idx + 6] = (float)(curb_x + curb_w)/(float)t_w; _pBuffer[idx + 7] = (float)curb_y/(float)t_h;
+		_pBuffer[idx + 8] = fX + xoffset + (float)curb_w*_fScale; _pBuffer[idx + 9] = fY + (float)curb_h*_fScale; _pBuffer[idx + 10] = (float)(curb_x+curb_w)/(float)t_w; _pBuffer[idx + 11] = (float)(curb_y+curb_h)/(float)t_h;
+		_pBuffer[idx + 12] = _pBuffer[idx]; _pBuffer[idx + 13] = _pBuffer[idx + 1]; _pBuffer[idx + 14] = _pBuffer[idx + 2]; _pBuffer[idx + 15] = _pBuffer[idx + 3];
+		_pBuffer[idx + 16] = _pBuffer[idx + 8]; _pBuffer[idx + 17] = _pBuffer[idx + 9]; _pBuffer[idx + 18] = _pBuffer[idx + 10]; _pBuffer[idx + 19] = _pBuffer[idx + 11];
+		_pBuffer[idx + 20] = fX + xoffset; _pBuffer[idx + 21] = fY + (float)curb_h*_fScale; _pBuffer[idx + 22] = (float)curb_x/(float)t_w; _pBuffer[idx + 23] = (float)(curb_y+curb_h)/(float)t_h;
 
 		if (fAngle != 0.f)
 		{
-			float x = _pBuffer[0], y = _pBuffer[1];
-			_pBuffer[0]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-			_pBuffer[1]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
+			float x = _pBuffer[idx], y = _pBuffer[idx + 1];
+			_pBuffer[idx]		= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+			_pBuffer[idx + 1]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 
-			 x = _pBuffer[4]; y = _pBuffer[5];
-			_pBuffer[4]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-			_pBuffer[5]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
+			 x = _pBuffer[idx + 4]; y = _pBuffer[idx + 5];
+			_pBuffer[idx + 4]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+			_pBuffer[idx + 5]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 
-			x = _pBuffer[8]; y = _pBuffer[9];
-			_pBuffer[8]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-			_pBuffer[9]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
+			x = _pBuffer[idx + 8]; y = _pBuffer[idx + 9];
+			_pBuffer[idx + 8]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+			_pBuffer[idx + 9]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 
-			x = _pBuffer[12]; y = _pBuffer[13];
-			_pBuffer[12] = transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-			_pBuffer[13] = transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
+			x = _pBuffer[idx + 20]; y = _pBuffer[idx + 21];
+			_pBuffer[idx + 20] = transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+			_pBuffer[idx + 21] = transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
+
+			_pBuffer[idx + 12] = _pBuffer[idx]; _pBuffer[idx + 13] = _pBuffer[idx + 1];
+			_pBuffer[idx + 16] = _pBuffer[idx + 8]; _pBuffer[idx + 17] = _pBuffer[idx + 9];
 		}
 
-		Core()->pRender()->pRender2D()->DrawTexQuadAsIs(_pTex, _pBuffer, (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_VERTICES_COLOR : EF_COLORMIX)));
+		if (bVerticesColors)
+		{
+			const uint idx = length*24 + i*24;
+			memcpy(&_pBuffer[idx], verts_colors[0], 12*sizeof(float));
+			memcpy(&_pBuffer[idx + 12], verts_colors[0], 4*sizeof(float));
+			memcpy(&_pBuffer[idx + 16], verts_colors[2], 8*sizeof(float));
+		}
 
 		xoffset += (float)curb_w*_fScale;
 	}
 
-	Core()->pRender()->pRender2D()->ColorMixPop();
+	TDrawDataDesc desc;
+
+	desc.pData = (uint8 *)_pBuffer;
+	desc.uiVertexStride = 4*sizeof(float);
+	desc.bVertexCoord2 = true;
+	desc.uiTexCoordOffset = 2*sizeof(float);
+	desc.uiTexCoordStride = desc.uiVertexStride;
+
+	if (bVerticesColors)
+		desc.uiColorOffset = length*24*sizeof(float);
+
+	Core()->pRender()->pRender2D()->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLORMIX)));
+
+	Core()->pRender()->pRender2D()->SetColorMix(prev_color);
 
 	return S_OK;
 }
