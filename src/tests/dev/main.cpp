@@ -47,7 +47,7 @@ uint uiCounter = 0;
 
 ITexture *pTex = NULL;
 
-void CALLBACK Init(void *pParametr)
+void DGLE2_API Init(void *pParametr)
 {
 	IResourceManager *prman;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)prman);
@@ -58,23 +58,24 @@ void CALLBACK Init(void *pParametr)
 	pr->GetRender2D(pRender2D);
 }
 
-void CALLBACK Free(void *pParametr)
+void DGLE2_API Free(void *pParametr)
 {
 }
 
-void CALLBACK Update(void *pParametr)
+void DGLE2_API Update(void *pParametr)
 {
 	++uiCounter;
 }
 
-void CALLBACK Render(void *pParametr)
+void DGLE2_API Render(void *pParametr)
 {
 	pRender2D->Begin2D();
 	
 	uint w, h;
 	pTex->GetDimensions(w, h);
+
 	pTex->Draw2DSimple((SCREEN_X - w)/2, (SCREEN_Y - w)/2);
-	
+
 	pRender2D->End2D();
 }
 

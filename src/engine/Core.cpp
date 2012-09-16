@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.04.2012 (c)Korotkov Andrey
+\date		16.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -227,7 +227,7 @@ _pSplashWindow(NULL),
 _bDoExit(false), _bInDrawProfilers(false),
 _bStartedFlag(false), _bInitedFlag(false), _bQuitFlag(false),
 _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
-_bNeedApplyNewWnd(false),
+_bNeedApplyNewWnd(false), _ui64LastUpdateDeltaTime(0),
 //Delegates initialization
 _clDelUpdate(uiInstIdx),
 _clDelRender(uiInstIdx),
@@ -375,10 +375,14 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		LOG("Finalizing Engine...", LT_INFO);
 
-		if (!_clDelFree.IsNull()) 
+		if (!_clDelFree.IsNull() || !_clUserCallbacks.empty()) 
 		{
 			LOG("Calling user finalization procedure...", LT_INFO);
+			
+			_InvokeUserCallback(EPT_FREE);
+
 			_clDelFree.Invoke();
+			
 			LOG("Done.", LT_INFO);
 		}
 
@@ -526,17 +530,20 @@ void CCore::_MainLoop()
 			if (cycles_cnt > c_MaxProcessCycles)
 				cycles_cnt = c_MaxProcessCycles;
 
+		_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiProcessInterval;
+
 		if (cycles_cnt > 0)
-			_ui64ProcessDelay = GetPerfTimer();
+			_ui64UpdateDelay = GetPerfTimer();
 
 		for (uint i = 0; i < cycles_cnt; ++i)
 		{
-			if (((!_bPause && _iAllowPause) ||
-				!_iAllowPause) && !_clDelUpdate.IsNull() && !_bQuitFlag) 
+			if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
 			{
-				if (_pRender && i == 0)
+				if (_pRender && i == cycles_cnt - 1)
 					_pRender->pRender2D()->RefreshBatchData();
 				
+				_InvokeUserCallback(EPT_UPDATE);
+
 				_clDelUpdate.Invoke();
 
 				++_uiUPSCount;
@@ -547,7 +554,7 @@ void CCore::_MainLoop()
 
 		if (flag)
 		{
-			_ui64ProcessDelay = GetPerfTimer() - _ui64ProcessDelay;
+			_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
 			_ui64TimeOld = GetPerfTimer()/1000 - time_delta % _uiProcessInterval;
 		}
 
@@ -558,6 +565,8 @@ void CCore::_MainLoop()
 		_ui64RenderDelay = GetPerfTimer();
 
 		CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
+
+		_InvokeUserCallback(EPT_RENDER);
 
 		_clDelRender.Invoke();
 
@@ -596,7 +605,7 @@ void CCore::_MainLoop()
 				if (_iDrawProfiler > 1)
 				{
 					RenderProfilerTxt(("Render  delay:" + UInt64ToStr(_ui64RenderDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
-					RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64ProcessDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
+					RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64UpdateDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
 				}
 			}
 				
@@ -623,6 +632,23 @@ void CCore::_MainLoop()
 
 	if (sleep > 0)
 		Suspend(sleep);
+}
+
+void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
+{
+	if (_clUserCallbacks.empty())
+		return;
+
+	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
+	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
+		switch(eProcType)
+		{
+		case EPT_UPDATE: _clUserCallbacks[i]->Update(_ui64LastUpdateDeltaTime); break;
+		case EPT_RENDER: _clUserCallbacks[i]->Render(); break;
+		case EPT_INIT: _clUserCallbacks[i]->Initialize(); break;
+		case EPT_FREE: _clUserCallbacks[i]->Free(); break;
+		}
+	)
 }
 
 HRESULT DGLE2_API CCore::RenderProfilerTxt(const char* pcTxt, const TColor4 &stColor)
@@ -1106,10 +1132,14 @@ HRESULT DGLE2_API CCore::StartEngine()
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return E_ABORT;
 
-	if (!_clDelInit.IsNull()) 
+	if (!_clDelInit.IsNull() || !_clUserCallbacks.empty()) 
 	{
 		LOG("Calling user initialization procedure...", LT_INFO);
+		
+		_InvokeUserCallback(EPT_INIT);
+
 		_clDelInit.Invoke();
+		
 		LOG("Done.", LT_INFO);
 	}
 
@@ -1172,6 +1202,12 @@ HRESULT DGLE2_API CCore::GetFPS(uint &uiFPS)
 	return S_OK;
 }
 
+HRESULT DGLE2_API CCore::GetLastUpdateDeltaTime(uint64 &ui64DeltaTime)
+{
+	ui64DeltaTime = _ui64LastUpdateDeltaTime;
+	return S_OK;
+}
+
 HRESULT DGLE2_API CCore::GetInstanceIdx(uint &uiIdx)
 {
 	uiIdx = InstIdx();
@@ -1230,6 +1266,29 @@ HRESULT DGLE2_API CCore::RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE2
 		}
 
 	return E_INVALIDARG;
+}
+
+HRESULT DGLE2_API CCore::AddUserCallback(IUserCallback *pUserCallback)
+{
+	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
+		if (_clUserCallbacks[i] == pUserCallback)
+			return S_FALSE;
+
+	_clUserCallbacks.push_back(pUserCallback);
+
+	return S_OK;
+}
+
+HRESULT DGLE2_API CCore::RemoveUserCallback(IUserCallback *pUserCallback)
+{
+	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
+		if (_clUserCallbacks[i] == pUserCallback)
+		{
+			_clUserCallbacks.erase(_clUserCallbacks.begin() + i);
+			return S_OK;
+		}
+
+	return S_FALSE;
 }
 
 HRESULT DGLE2_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr)

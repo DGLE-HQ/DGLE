@@ -65,6 +65,9 @@ This header is a part of DGLE2 SDK.
 /** Return value of HRESULT type. Method returns E_ABORT when operation aborted due to errors of some other function. */
 #define E_ABORT			0x80004004
 
+/** Return value of HRESULT type. Method returns E_NOTIMPL when it is empty dummy or this routine is unsupported by realisation. */
+#define E_NOTIMPL		0x80004001
+
 /** Macros to check HRESULT value. Returns true if value is S_OK or S_FALSE and false otherwise.
 	\param[in] hr HRESULT value to be checked.
 	\code

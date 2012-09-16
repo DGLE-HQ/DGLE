@@ -8,7 +8,7 @@ IEngineCore	*pEngineCore = NULL;
 IBitmapFont	*pFont = NULL;
 IRender2D	*pRender2D = NULL;
 
-void CALLBACK Init(void *pParametr)
+void DGLE2_API Init(void *pParametr)
 {
 	IResourceManager *resMan;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)resMan);
@@ -20,7 +20,7 @@ void CALLBACK Init(void *pParametr)
 	resMan->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj *&)pFont);
 }
 
-void CALLBACK Render(void *pParametr)
+void DGLE2_API Render(void *pParametr)
 {
 	pRender2D->Begin2D();
 	pFont->Draw2D(0, 0, "Hello, World!");

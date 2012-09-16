@@ -24,25 +24,28 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 
 const char* FormWin32ExceptionString(DWORD dwCode);
 
-#define CATCH_ALL_EXCEPTIONS(expression) \
-if(!_parent._bCatchExpts) expression else \
+#define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression) \
+if(!doCatch) expression else \
 __try{ expression }\
 __except(EXCEPTION_EXECUTE_HANDLER)\
 {\
-	LogWrite(_parent._uiInstIdx, FormWin32ExceptionString(GetExceptionCode()), LT_FATAL, __FILE__, __LINE__);\
+	LogWrite(instIdx, FormWin32ExceptionString(GetExceptionCode()), LT_FATAL, __FILE__, __LINE__);\
 }
+
 #else
-#define CATCH_ALL_EXCEPTIONS(expression) \
-if(!_parent._bCatchExpts) expression else \
+
+#define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression) \
+if(!doCatch) expression else \
 try{ expression }\
 catch(const std::exception &exc)\
 {\
-	LogWrite(_parent._uiInstIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + std::string(exc.what()) + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);\
+	LogWrite(instIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + std::string(exc.what()) + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);\
 }\
 catch(...)\
 {\
-	LogWrite(_parent._uiInstIdx, "We are very sorry, but program crashed! Unhandled cpp exception occured.", LT_FATAL, __FILE__, __LINE__);\
+	LogWrite(instIdx, "We are very sorry, but program crashed! Unhandled cpp exception occured.", LT_FATAL, __FILE__, __LINE__);\
 }
+
 #endif
 
 namespace DGLE2
@@ -141,7 +144,7 @@ public:
 	void operator ()()
 	{
 		if (_parent._bAllowInvoke)
-			CATCH_ALL_EXCEPTIONS(
+			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
 				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr);
 			)
@@ -157,7 +160,7 @@ public:
 	void operator ()(const TWinMessage &stMsg)
 	{
 		if (_parent._bAllowInvoke)
-			CATCH_ALL_EXCEPTIONS(
+			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
 				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr, stMsg);
 			)
@@ -173,14 +176,12 @@ public:
 	void operator ()(IBaseEvent *pEvent)
 	{
 		if (_parent._bAllowInvoke)
-			CATCH_ALL_EXCEPTIONS(
+			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
 				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr, pEvent);
 			)
 	}
 };
-
-#undef CATCH_ALL_EXCEPTIONS
 
 typedef TCFuncDelegate<TPProc, void ()> TProcDelegate;
 typedef TCFuncDelegate<TPMsgProc, void (const TWinMessage &)> TMsgProcDelegate;

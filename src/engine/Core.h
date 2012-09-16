@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.04.2011 (c)Korotkov Andrey
+\date		16.09.2011 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -54,6 +54,9 @@ class CCore: public CInstancedObj, public IEngineCore
 						 _clDelOnFPSTimer;
 	TMsgProcDelegate	 _clDelMProc;
 
+	std::vector<IUserCallback *>
+						 _clUserCallbacks;
+
 	std::vector<TEvent>	 _clEvents;
 
 	std::fstream		 _clLogFile;
@@ -87,7 +90,8 @@ class CCore: public CInstancedObj, public IEngineCore
 	uint64				 _ui64FPSSumm,
 						 _ui64CiclesCount,
 						 _ui64RenderDelay,
-						 _ui64ProcessDelay;
+						 _ui64UpdateDelay,
+						 _ui64LastUpdateDeltaTime;
 
 	bool				 _bInDrawProfilers;
 	uint				 _uiProfilerCurTxtXOffset,
@@ -121,6 +125,8 @@ class CCore: public CInstancedObj, public IEngineCore
 	void				_OnTimer();
 	void				_MessageProc(const TWinMessage &msg);
 	
+	void				_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType);
+
 	void				_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 	void				_LogWrite(const char *pcTxt, bool bFlush = false);
 	
@@ -175,6 +181,9 @@ public:
 	HRESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin);
 	HRESULT DGLE2_API GetPlugin(const char* pcPluginName, IPlugin *&prPlugin);
 
+	HRESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback);
+	HRESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback);
+
 	HRESULT DGLE2_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr);
 	HRESULT DGLE2_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr);
 
@@ -190,6 +199,7 @@ public:
 	HRESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo);
 	HRESULT DGLE2_API GetCurrentWin(TEngWindow &stWin);
 	HRESULT DGLE2_API GetFPS(uint &uiFPS);
+	HRESULT DGLE2_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime);
 	HRESULT DGLE2_API GetHandle(TWinHandle &tHandle);
 
 	HRESULT DGLE2_API ChangeWinMode(const TEngWindow &stNewWin);

@@ -410,7 +410,20 @@ namespace DGLE2
 
 //Main Engine System//
 
-	/** Type of engine DGLE2_APIs. 
+	// {371B1338-BB25-4B8C-BD6A-BCDF241CC52C}
+	static const GUID IID_IUserCallback = 
+	{ 0x371b1338, 0xbb25, 0x4b8c, { 0xbd, 0x6a, 0xbc, 0xdf, 0x24, 0x1c, 0xc5, 0x2c } };
+
+	class IUserCallback : public IDGLE2_Base
+	{
+	public:
+		virtual HRESULT DGLE2_API Initialize() = 0;
+		virtual HRESULT DGLE2_API Free() = 0;
+		virtual HRESULT DGLE2_API Update(uint64 ui64DeltaTime) = 0;
+		virtual HRESULT DGLE2_API Render() = 0;
+	};
+
+	/** Type of engine callbacks. 
 		IEngineCore can register calbacks of these types.
 		\see IEngineCore::AddProcedure, IEngineCore::RemoveProcedure
 	 */
@@ -439,7 +452,7 @@ namespace DGLE2
 	enum E_ENGINE_INIT_FLAGS
 	{
 		EIF_DEFAULT				= 0x00000000,	/**< Use default settings. */
-		EIF_CATCH_UNHANDLED		= 0x00000001,	/**< All user DGLE2_APIs will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
+		EIF_CATCH_UNHANDLED		= 0x00000001,	/**< All user callbacks will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
 		EIF_FORCE_NO_SOUND		= 0x00000002,	/**< Sound subsystem will not be initialized. */
 		EIF_LOAD_ALL_PLUGINS	= 0x00000004,	/**< Engine will try to connect any found *.dplug files near it and in all inner folders. \note DGLE2_EXT.dplug is connected automatically without this flag as well. */
 		EIF_FORCE_LIMIT_FPS		= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine process interval(uiProcessInterval). \note Recommended for casual games and desktop applications. */
@@ -492,6 +505,9 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin) = 0;	
 		virtual HRESULT DGLE2_API GetPlugin(const char* pcPluginName, IPlugin *&prPlugin) = 0;	
 
+		virtual HRESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback) = 0;
+		virtual HRESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
+
 		virtual HRESULT DGLE2_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
 		virtual HRESULT DGLE2_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
 
@@ -507,6 +523,7 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
 		virtual HRESULT DGLE2_API GetCurrentWin(TEngWindow &stWin) = 0;
 		virtual HRESULT DGLE2_API GetFPS(uint &uiFPS) = 0;
+		virtual HRESULT DGLE2_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime) = 0;
 		virtual HRESULT DGLE2_API GetHandle(TWinHandle &tHandle) = 0;
 
 		virtual HRESULT DGLE2_API ChangeWinMode(const TEngWindow &stNewWin) = 0;
