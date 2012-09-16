@@ -349,52 +349,76 @@ namespace DGLE2
 			memcpy(TPoint2::xy, xy, sizeof xy);
 		}
 
-		TPoint2 &operator += (const TPoint2 &point)
+		inline TPoint2 &operator += (const TPoint2 &point)
 		{
 			x += point.x;
 			y += point.y;
 			return *this;
 		}
 
-		TPoint2 operator + (const TPoint2 &point) const
+		inline TPoint2 operator + (const TPoint2 &point) const
 		{
 			return TPoint2(*this) += point;
 		}
 
-		TPoint2 &operator -= (const TPoint2 &point)
+		inline TPoint2 &operator -= (const TPoint2 &point)
 		{
 			x -= point.x;
 			y -= point.y;
 			return *this;
 		}
 
-		TPoint2 operator - (const TPoint2 &point) const
+		inline TPoint2 operator - (const TPoint2 &point) const
 		{
 			return TPoint2(*this) -= point;
 		}
 		
-		TPoint2 &operator *= (const TPoint2 &point)
+		inline TPoint2 &operator *= (const TPoint2 &point)
 		{
 			x *= point.x;
 			y *= point.y;
 			return *this;
 		}
 
-		TPoint2 operator * (const TPoint2 &point) const
+		inline TPoint2 operator * (const TPoint2 &point) const
 		{
 			return TPoint2(*this) *= point;
 		}
 
-		TPoint2 &operator /= (const TPoint2 &point)
+		inline TPoint2 &operator *= (float val)
+		{
+			x *= val;
+			y *= val;
+			return *this;
+		}
+
+		inline TPoint2 operator * (float val) const
+		{
+			return TPoint2(*this) *= val;
+		}
+
+		inline TPoint2 &operator /= (const TPoint2 &point)
 		{
 			x /= point.x;
 			y /= point.y;
 			return *this;
 		}
 
-		TPoint2 operator / (const TPoint2 &point) const
+		inline TPoint2 operator / (const TPoint2 &point) const
 		{
 			return TPoint2(*this) /= point;
+		}
+
+		inline TPoint2 &operator /= (float val)
+		{
+			x /= val;
+			y /= val;
+			return *this;
+		}
+
+		inline TPoint2 operator / (float val) const
+		{
+			return TPoint2(*this) /= val;
 		}
 
 		inline float Dot(const TPoint2 &point) const
@@ -407,11 +431,52 @@ namespace DGLE2
 			return x * point.y - point.x * y;
 		}
 
+		inline float DistTo(const TPoint2 &point) const
+		{
+			return sqrtf( (point.x - x)*(point.x - x) + (point.y - y)*(point.y - y) );
+		}
+
+		inline float DistToQ(const TPoint2 &point) const
+		{
+			return (point - *this).LengthQ();
+		}
+
+		inline float LengthQ() const
+		{
+			return x*x + y*y;
+		}
+
+		inline float Length() const
+		{
+			return sqrtf(LengthQ());
+		}
+
 		inline TPoint2 &Normalize()
 		{
-			const float len = sqrtf(x * x + y * y);
+			const float len = Length();
 			x /= len, y /= len;
 			return *this;
+		}
+		
+		inline TPoint2 Lerp(const TPoint2 &point, float coeff) const
+		{
+			return *this + (point - *this) * coeff;
+		}
+
+		inline float Angle(const TPoint2 &point) const
+		{
+			return atan2f(x * point.y - y * point.x, x * point.x + y * point.y);
+		}
+
+		inline TPoint2 Rotate(float fAngle) const
+		{
+			const float s = sinf(fAngle), c = cosf(fAngle);
+			return TPoint2(x * c - y * s, x * s + y * c);
+		}
+
+		inline TPoint2 Reflect(const TPoint2 &normal) const
+		{
+			return *this - normal * (2.f * Dot(normal));
 		}
 
 		inline operator ref() { return xy; }
@@ -439,8 +504,12 @@ namespace DGLE2
 		inline TPoint3(const float *pfArray):x(pfArray[0]), y(pfArray[1]), z(pfArray[2]){}
 		inline TPoint3(float fX, float fY, float fZ):x(fX), y(fY), z(fZ){}
 		inline TPoint3(const TPoint2 &p):x(p.x), y(p.y), z(0.f){}
+		inline TPoint3(cref xyz)
+		{
+			memcpy(TPoint3::xyz, xyz, sizeof xyz);
+		}
 
-		TPoint3 &operator += (const TPoint3 &point)
+		inline TPoint3 &operator += (const TPoint3 &point)
 		{
 			x += point.x;
 			y += point.y;
@@ -448,12 +517,12 @@ namespace DGLE2
 			return *this;
 		}
 
-		TPoint3 operator + (const TPoint3 &point) const
+		inline TPoint3 operator + (const TPoint3 &point) const
 		{
 			return TPoint3(*this) += point;
 		}
 
-		TPoint3 &operator -= (const TPoint3 &point)
+		inline TPoint3 &operator -= (const TPoint3 &point)
 		{
 			x -= point.x;
 			y -= point.y;
@@ -461,12 +530,12 @@ namespace DGLE2
 			return *this;
 		}
 
-		TPoint3 operator - (const TPoint3 &point) const
+		inline TPoint3 operator - (const TPoint3 &point) const
 		{
 			return TPoint3(*this) -= point;
 		}
 		
-		TPoint3 &operator *= (const TPoint3 &point)
+		inline TPoint3 &operator *= (const TPoint3 &point)
 		{
 			x *= point.x;
 			y *= point.y;
@@ -474,12 +543,25 @@ namespace DGLE2
 			return *this;
 		}
 
-		TPoint3 operator * (const TPoint3 &point) const
+		inline TPoint3 operator * (const TPoint3 &point) const
 		{
 			return TPoint3(*this) *= point;
 		}
 
-		TPoint3 &operator /= (const TPoint3 &point)
+		inline TPoint3 &operator *= (float val)
+		{
+			x *= val;
+			y *= val;
+			z *= val;
+			return *this;
+		}
+
+		inline TPoint3 operator * (float val) const
+		{
+			return TPoint3(*this) *= val;
+		}
+
+		inline TPoint3 &operator /= (const TPoint3 &point)
 		{
 			x /= point.x;
 			y /= point.y;
@@ -487,9 +569,92 @@ namespace DGLE2
 			return *this;
 		}
 
-		TPoint3 operator / (const TPoint3 &point) const 
+		inline TPoint3 operator / (const TPoint3 &point) const 
 		{ 
 			return TPoint3(*this) /= point; 
+		}
+
+		inline TPoint3 &operator /= (float val)
+		{
+			x /= val;
+			y /= val;
+			z /= val;
+			return *this;
+		}
+
+		inline TPoint3 operator / (float val) const 
+		{ 
+			return TPoint3(*this) /= val; 
+		}
+
+		inline float Dot(const TPoint3 &point) const
+		{
+			return x * point.x + y * point.y + z * point.z;
+		}
+
+		inline TPoint3 Cross(const TPoint3 &point) const
+		{
+			return TPoint3(y * point.z - z * point.y, z * point.x - x * point.z, x * point.y - y * point.x);
+		}
+
+		inline float FlatDistTo(const TPoint3 &point) const
+		{
+			return sqrtf( (point.x - x)*(point.x - x) + (point.y - y)*(point.y - y) );
+		}
+
+		inline float DistTo(const TPoint3 &point) const
+		{
+			return sqrtf( (point.x - x)*(point.x - x) + (point.y - y)*(point.y - y) + (point.z - z)*(point.z - z) );
+		}
+
+		inline float DistToQ(const TPoint3 &point) const
+		{
+			return (point - *this).LengthQ();
+		}
+
+		inline float LengthQ() const
+		{
+			return x*x + y*y + z*z;
+		}
+
+		inline float Length() const
+		{
+			return sqrtf(LengthQ());
+		}
+
+		inline TPoint3 &Normalize()
+		{
+			const float len = Length();
+			x /= len, y /= len; z /= len;
+			return *this;
+		}
+
+		inline TPoint3 Lerp(const TPoint3 &point, float coeff) const
+		{
+			return *this + (point - *this) * coeff;
+		}
+
+		inline float Angle(const TPoint3 &point) const
+		{
+			return acosf(Dot(point) / sqrtf( LengthQ() * point.LengthQ() ));
+		}
+
+		inline TPoint3 Rotate(float fAngle, const TPoint3 &axis) const
+		{
+			const float s = sinf(fAngle), c = cosf(fAngle);
+			
+			TPoint3 v[3];
+			
+			v[0] = axis * Dot(axis);
+			v[1] = *this - v[0];
+			v[2] = axis.Cross(v[1]);
+
+			return TPoint3(v[0].x + v[1].x * c + v[2].x * s, v[0].y + v[1].y * c + v[2].y * s, v[0].z + v[1].z * c + v[2].z * s);
+		}
+
+		inline TPoint3 Reflect(const TPoint3 &normal) const
+		{
+			return *this - normal * (2.f * Dot(normal));
 		}
 
 		inline operator ref() { return xyz; }
