@@ -24,7 +24,7 @@ struct TFileFormat
 	std::string discr;
 	E_ENG_OBJ_TYPE type;
 	void *pParametr;
-	bool (CALLBACK *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 };
 
 struct TDefaultRes
@@ -92,14 +92,14 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 
 	void _ProfilerEventHandler() const;
 
-	static void CALLBACK _s_ConListFileFormats(void *pParametr, const char *pcParam);
-	static bool CALLBACK _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool CALLBACK _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
-	static bool CALLBACK _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
-	static bool CALLBACK _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool CALLBACK _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool CALLBACK _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static void CALLBACK _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
+	static void DGLE2_API _s_ConListFileFormats(void *pParametr, const char *pcParam);
+	static bool DGLE2_API _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE2_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
+	static bool DGLE2_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
+	static bool DGLE2_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE2_API _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE2_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static void DGLE2_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
 
 public:
 
@@ -109,29 +109,29 @@ public:
 	inline IBitmapFont* pISystemFont(){return (IBitmapFont*)_pDefBmpFnt;}
 	void FreeAllResources();
 
-	HRESULT CALLBACK CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
-	HRESULT CALLBACK CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse);
-	HRESULT CALLBACK CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
+	HRESULT DGLE2_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
+	HRESULT DGLE2_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse);
+	HRESULT DGLE2_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
 	
-	HRESULT CALLBACK RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (CALLBACK *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr);
-	HRESULT CALLBACK UnregisterFileFormat(const char* pcExtension);
-	HRESULT CALLBACK RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
-	HRESULT CALLBACK UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
-	HRESULT CALLBACK GetRegisteredExtensions(char* pcTxt, uint uiCharsCount);
-	HRESULT CALLBACK GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount);
-	HRESULT CALLBACK GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType);
+	HRESULT DGLE2_API RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr);
+	HRESULT DGLE2_API UnregisterFileFormat(const char* pcExtension);
+	HRESULT DGLE2_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
+	HRESULT DGLE2_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
+	HRESULT DGLE2_API GetRegisteredExtensions(char* pcTxt, uint uiCharsCount);
+	HRESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount);
+	HRESULT DGLE2_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType);
 	
-	HRESULT CALLBACK GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj);
-	HRESULT CALLBACK GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
+	HRESULT DGLE2_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj);
+	HRESULT DGLE2_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
 	
-	HRESULT CALLBACK Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags);
-	HRESULT CALLBACK Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags);
+	HRESULT DGLE2_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags);
+	HRESULT DGLE2_API Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags);
 	
-	HRESULT CALLBACK FreeResource(IEngBaseObj *&prObj);
-	HRESULT CALLBACK AddResource(const char *pcName, IEngBaseObj *pObj);
-	HRESULT CALLBACK RemoveResource(IEngBaseObj *pObj, bool &bCanDelete);
+	HRESULT DGLE2_API FreeResource(IEngBaseObj *&prObj);
+	HRESULT DGLE2_API AddResource(const char *pcName, IEngBaseObj *pObj);
+	HRESULT DGLE2_API RemoveResource(IEngBaseObj *pObj, bool &bCanDelete);
 
-	HRESULT CALLBACK GetType(E_ENGINE_SUB_SYSTEM &eSubSysType);
+	HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSysType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(IResourceManager, IEngineSubSystem)
 };

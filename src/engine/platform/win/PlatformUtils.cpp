@@ -303,7 +303,7 @@ struct TTimer
 
 vector<TTimer> timers;
 
-void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+void DGLE2_API TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	for (size_t i = 0; i < timers.size(); ++i)
 		if (timers[i].uiId == idEvent)

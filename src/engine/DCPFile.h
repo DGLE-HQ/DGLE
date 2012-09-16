@@ -21,14 +21,14 @@ class CDCPFile : public CInstancedObj, public IFile
 public:
 	CDCPFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, uint8 *pBuffer, uint32 ui32Size);
 
-	HRESULT CALLBACK Read(void *pBuffer, uint uiCount, uint &uiRead);
-	HRESULT CALLBACK Write(const void *pBuffer, uint uiCount, uint &uiWritten);
-	HRESULT CALLBACK Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position);
-	HRESULT CALLBACK GetSize(uint32 &ui32Size);
-	HRESULT CALLBACK IsOpen(bool &bOpened);
-	HRESULT CALLBACK GetName(char *pcName, uint uiCharsCount);
-	HRESULT CALLBACK GetPath(char *pcPath, uint uiCharsCount);
-	HRESULT CALLBACK Free();
+	HRESULT DGLE2_API Read(void *pBuffer, uint uiCount, uint &uiRead);
+	HRESULT DGLE2_API Write(const void *pBuffer, uint uiCount, uint &uiWritten);
+	HRESULT DGLE2_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position);
+	HRESULT DGLE2_API GetSize(uint32 &ui32Size);
+	HRESULT DGLE2_API IsOpen(bool &bOpened);
+	HRESULT DGLE2_API GetName(char *pcName, uint uiCharsCount);
+	HRESULT DGLE2_API GetPath(char *pcPath, uint uiCharsCount);
+	HRESULT DGLE2_API Free();
 
 	IDGLE2_BASE_IMPLEMENTATION(IFile);
 };

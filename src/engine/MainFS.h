@@ -19,14 +19,14 @@ struct TVFileSystem
 	std::string discr;
 	IFileSystem *fs;
 	void *param;
-	void (CALLBACK *pdc)(void *pParametr, IFileSystem *pVFS);
+	void (DGLE2_API *pdc)(void *pParametr, IFileSystem *pVFS);
 
-	TVFileSystem(const char *pcExt, const char *pcDiscr, IFileSystem *pVFS, void (CALLBACK *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr)
+	TVFileSystem(const char *pcExt, const char *pcDiscr, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr)
 	{
 		ext		= ToUpperCase(std::string(pcExt));
 		discr	= std::string(pcDiscr);
 		fs		= pVFS;
-		pdc		= pDeleteCallback;
+		pdc		= pDeleteDGLE2_API;
 		param	= pParametr;
 	}
 };
@@ -41,8 +41,8 @@ class CMainFS: public CInstancedObj, public IMainFileSystem
 	std::vector<TVFileSystem> _clVFileSystems;
 	std::string _strVFSsDescs;
 
-	static void CALLBACK _s_ConListVFS(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_FSDeleteCallback(void *pParametr, IFileSystem *pVFS);
+	static void DGLE2_API _s_ConListVFS(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_FSDeleteDGLE2_API(void *pParametr, IFileSystem *pVFS);
 
 public:
 	
@@ -51,14 +51,14 @@ public:
 
 	void UnregisterAndFreeAll();
 
-	HRESULT CALLBACK LoadFile(const char* pcFileName, IFile *&prFile);
-	HRESULT CALLBACK GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
-	HRESULT CALLBACK RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (CALLBACK *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr);
-	HRESULT CALLBACK UnregisterVirtualFileSystem(const char* pcVFSExtension);
-	HRESULT CALLBACK GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCharsCount);
-	HRESULT CALLBACK GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount);
+	HRESULT DGLE2_API LoadFile(const char* pcFileName, IFile *&prFile);
+	HRESULT DGLE2_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
+	HRESULT DGLE2_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr);
+	HRESULT DGLE2_API UnregisterVirtualFileSystem(const char* pcVFSExtension);
+	HRESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCharsCount);
+	HRESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount);
 
-	HRESULT CALLBACK GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(IMainFileSystem, IEngineSubSystem)
 };

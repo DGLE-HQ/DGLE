@@ -284,7 +284,7 @@ namespace DGLE2
 	class IBaseRenderObjectContainer : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT CALLBACK GetObjectType(E_ENG_OBJ_TYPE &eType) = 0;
+		virtual HRESULT DGLE2_API GetObjectType(E_ENG_OBJ_TYPE &eType) = 0;
 	};
 
 #if defined(OPENGL_LEGACY_BASE_OBJECTS)
@@ -302,7 +302,7 @@ namespace DGLE2
 	class IOpenGLTextureContainer : public IBaseRenderObjectContainer
 	{
 	public:
-		virtual HRESULT CALLBACK GetTexture(GLuint &texture) = 0;
+		virtual HRESULT DGLE2_API GetTexture(GLuint &texture) = 0;
 	};
 
 	// {152B744F-7C1B-414F-BEC1-CD40A308E5DF}
@@ -312,8 +312,8 @@ namespace DGLE2
 	class IOpenGLBufferContainer : public IBaseRenderObjectContainer
 	{
 	public:
-		virtual HRESULT CALLBACK GetVertexBufferObject(GLuint &vbo) = 0;
-		virtual HRESULT CALLBACK GetIndexBufferObject(GLuint &vbo) = 0;
+		virtual HRESULT DGLE2_API GetVertexBufferObject(GLuint &vbo) = 0;
+		virtual HRESULT DGLE2_API GetIndexBufferObject(GLuint &vbo) = 0;
 	};
 
 #endif
@@ -325,16 +325,16 @@ namespace DGLE2
 	class ICoreTexture : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT CALLBACK GetSize(uint &width, uint &height) = 0;
-		virtual HRESULT CALLBACK GetDepth(uint &depth) = 0;
-		virtual HRESULT CALLBACK GetType(E_TEXTURE_TYPE &eType) = 0;
-		virtual HRESULT CALLBACK GetFormat(E_TEXTURE_DATA_FORMAT &eFormat) = 0;
-		virtual HRESULT CALLBACK GetLoadFlags(E_TEXTURE_LOAD_FLAGS &eLoadFlags) = 0;
-		virtual HRESULT CALLBACK GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel = 0) = 0;
-		virtual HRESULT CALLBACK SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel = 0) = 0;
-		virtual HRESULT CALLBACK Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
-		virtual HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;
-		virtual HRESULT CALLBACK Free() = 0;
+		virtual HRESULT DGLE2_API GetSize(uint &width, uint &height) = 0;
+		virtual HRESULT DGLE2_API GetDepth(uint &depth) = 0;
+		virtual HRESULT DGLE2_API GetType(E_TEXTURE_TYPE &eType) = 0;
+		virtual HRESULT DGLE2_API GetFormat(E_TEXTURE_DATA_FORMAT &eFormat) = 0;
+		virtual HRESULT DGLE2_API GetLoadFlags(E_TEXTURE_LOAD_FLAGS &eLoadFlags) = 0;
+		virtual HRESULT DGLE2_API GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel = 0) = 0;
+		virtual HRESULT DGLE2_API SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel = 0) = 0;
+		virtual HRESULT DGLE2_API Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
+		virtual HRESULT DGLE2_API GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;
+		virtual HRESULT DGLE2_API Free() = 0;
 	};
 
 	// {9A77DCFF-9E4B-4716-9BBB-A316BF217F7A}
@@ -344,15 +344,15 @@ namespace DGLE2
 	class ICoreGeometryBuffer : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT CALLBACK GetGeometryData(TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
-		virtual HRESULT CALLBACK SetGeometryData(const TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
-		virtual HRESULT CALLBACK Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode) = 0;
-		virtual HRESULT CALLBACK GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount) = 0;
-		virtual HRESULT CALLBACK GetBufferDrawDataDesc(TDrawDataDesc &stDesc) = 0;
-		virtual HRESULT CALLBACK GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode) = 0;
-		virtual HRESULT CALLBACK GetBufferType(E_CORE_RENDERER_BUFFER_TYPE &eType) = 0;
-		virtual HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;
-		virtual HRESULT CALLBACK Free() = 0;
+		virtual HRESULT DGLE2_API GetGeometryData(TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
+		virtual HRESULT DGLE2_API SetGeometryData(const TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize) = 0;
+		virtual HRESULT DGLE2_API Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode) = 0;
+		virtual HRESULT DGLE2_API GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount) = 0;
+		virtual HRESULT DGLE2_API GetBufferDrawDataDesc(TDrawDataDesc &stDesc) = 0;
+		virtual HRESULT DGLE2_API GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode) = 0;
+		virtual HRESULT DGLE2_API GetBufferType(E_CORE_RENDERER_BUFFER_TYPE &eType) = 0;
+		virtual HRESULT DGLE2_API GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;
+		virtual HRESULT DGLE2_API Free() = 0;
 	};
 
 	// {C3B687A1-57B0-4E21-BE4C-4D92F3FAB311}
@@ -363,45 +363,45 @@ namespace DGLE2
 	{
 	public:
 		//Must not be called by user
-		virtual HRESULT CALLBACK Prepare(TCRendererInitResult &stResults) = 0;
-		virtual HRESULT CALLBACK Initialize(TCRendererInitResult &stResults) = 0;
-		virtual HRESULT CALLBACK Finalize() = 0;
-		virtual HRESULT CALLBACK AdjustMode(TEngWindow &stNewWin) = 0;
+		virtual HRESULT DGLE2_API Prepare(TCRendererInitResult &stResults) = 0;
+		virtual HRESULT DGLE2_API Initialize(TCRendererInitResult &stResults) = 0;
+		virtual HRESULT DGLE2_API Finalize() = 0;
+		virtual HRESULT DGLE2_API AdjustMode(TEngWindow &stNewWin) = 0;
 		//
 		
-		virtual HRESULT CALLBACK MakeCurrent() = 0;
-		virtual HRESULT CALLBACK Present() = 0;
-		virtual HRESULT CALLBACK SetClearColor(const TColor4 &stColor) = 0;
-		virtual HRESULT CALLBACK Clear(bool bColor = true, bool bDepth = true, bool bStencil = true) = 0;
-		virtual HRESULT CALLBACK SetViewport(uint x, uint y, uint width, uint height) = 0;
-		virtual HRESULT CALLBACK GetViewport(uint &x, uint &y, uint &width, uint &height) = 0;
-		virtual HRESULT CALLBACK SetScissor(uint x, uint y, uint width, uint height) = 0;
-		virtual HRESULT CALLBACK SetLineWidth(float fWidth) = 0;
-		virtual HRESULT CALLBACK SetPointSize(float fSize) = 0;
-		virtual HRESULT CALLBACK ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
-		virtual HRESULT CALLBACK SetRenderTarget(ICoreTexture *pTexture) = 0;
-		virtual HRESULT CALLBACK CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags) = 0;
-		virtual HRESULT CALLBACK CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType) = 0;
-		virtual HRESULT CALLBACK ToggleStateFilter(bool bEnabled) = 0;
-		virtual HRESULT CALLBACK PushStates() = 0;
-		virtual HRESULT CALLBACK PopStates() = 0;
-		virtual HRESULT CALLBACK SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
-		virtual HRESULT CALLBACK GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
-		virtual HRESULT CALLBACK Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount) = 0;
-		virtual HRESULT CALLBACK DrawBuffer(ICoreGeometryBuffer *pBuffer) = 0;
-		virtual HRESULT CALLBACK SetColor(const TColor4 &stColor) = 0;
-		virtual HRESULT CALLBACK ToggleBlendState(bool bEnabled) = 0;
-		virtual HRESULT CALLBACK ToggleAlphaTestState(bool bEnabled) = 0;
-		virtual HRESULT CALLBACK SetBlendState(const TBlendStateDesc &stState) = 0;
-		virtual HRESULT CALLBACK GetBlendState(TBlendStateDesc &stState) = 0;
-		virtual HRESULT CALLBACK SetDepthStencilState(const TDepthStencilDesc &stState) = 0;
-		virtual HRESULT CALLBACK GetDepthStencilState(TDepthStencilDesc &stState) = 0;
-		virtual HRESULT CALLBACK SetRasterizerState(const TRasterizerStateDesc &stState) = 0;
-		virtual HRESULT CALLBACK GetRasterizerState(TRasterizerStateDesc &stState) = 0;
-		virtual HRESULT CALLBACK BindTexture(ICoreTexture *pTex, uint uiTextureLayer = 0) = 0;
-		virtual HRESULT CALLBACK GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue) = 0;
-		virtual HRESULT CALLBACK IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported) = 0;
-		virtual HRESULT CALLBACK GetRendererType(E_CORE_RENDERER_TYPE &eType) = 0;
+		virtual HRESULT DGLE2_API MakeCurrent() = 0;
+		virtual HRESULT DGLE2_API Present() = 0;
+		virtual HRESULT DGLE2_API SetClearColor(const TColor4 &stColor) = 0;
+		virtual HRESULT DGLE2_API Clear(bool bColor = true, bool bDepth = true, bool bStencil = true) = 0;
+		virtual HRESULT DGLE2_API SetViewport(uint x, uint y, uint width, uint height) = 0;
+		virtual HRESULT DGLE2_API GetViewport(uint &x, uint &y, uint &width, uint &height) = 0;
+		virtual HRESULT DGLE2_API SetScissor(uint x, uint y, uint width, uint height) = 0;
+		virtual HRESULT DGLE2_API SetLineWidth(float fWidth) = 0;
+		virtual HRESULT DGLE2_API SetPointSize(float fSize) = 0;
+		virtual HRESULT DGLE2_API ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
+		virtual HRESULT DGLE2_API SetRenderTarget(ICoreTexture *pTexture) = 0;
+		virtual HRESULT DGLE2_API CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags) = 0;
+		virtual HRESULT DGLE2_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType) = 0;
+		virtual HRESULT DGLE2_API ToggleStateFilter(bool bEnabled) = 0;
+		virtual HRESULT DGLE2_API PushStates() = 0;
+		virtual HRESULT DGLE2_API PopStates() = 0;
+		virtual HRESULT DGLE2_API SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
+		virtual HRESULT DGLE2_API GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
+		virtual HRESULT DGLE2_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount) = 0;
+		virtual HRESULT DGLE2_API DrawBuffer(ICoreGeometryBuffer *pBuffer) = 0;
+		virtual HRESULT DGLE2_API SetColor(const TColor4 &stColor) = 0;
+		virtual HRESULT DGLE2_API ToggleBlendState(bool bEnabled) = 0;
+		virtual HRESULT DGLE2_API ToggleAlphaTestState(bool bEnabled) = 0;
+		virtual HRESULT DGLE2_API SetBlendState(const TBlendStateDesc &stState) = 0;
+		virtual HRESULT DGLE2_API GetBlendState(TBlendStateDesc &stState) = 0;
+		virtual HRESULT DGLE2_API SetDepthStencilState(const TDepthStencilDesc &stState) = 0;
+		virtual HRESULT DGLE2_API GetDepthStencilState(TDepthStencilDesc &stState) = 0;
+		virtual HRESULT DGLE2_API SetRasterizerState(const TRasterizerStateDesc &stState) = 0;
+		virtual HRESULT DGLE2_API GetRasterizerState(TRasterizerStateDesc &stState) = 0;
+		virtual HRESULT DGLE2_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer = 0) = 0;
+		virtual HRESULT DGLE2_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue) = 0;
+		virtual HRESULT DGLE2_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported) = 0;
+		virtual HRESULT DGLE2_API GetRendererType(E_CORE_RENDERER_TYPE &eType) = 0;
 	};
 
 }

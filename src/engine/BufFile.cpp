@@ -79,13 +79,13 @@ HRESULT CBufFile::GetName(char *pcName, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT CALLBACK CBufFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CBufFile::GetPath(char *pcPath, uint uiCharsCount)
 {
 	strcpy(pcPath, "");
 	return S_OK;
 }
 
-HRESULT CALLBACK CBufFile::Free()
+HRESULT DGLE2_API CBufFile::Free()
 {
 	delete this;
 	return S_OK;

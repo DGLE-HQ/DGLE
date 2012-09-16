@@ -34,9 +34,9 @@ using namespace std;
 class CBObjDummy: public IEngBaseObj
 {
 public:
-	HRESULT CALLBACK Free(){return S_FALSE;}
-	HRESULT CALLBACK GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_UNKNOWN;return S_OK;}
-	HRESULT CALLBACK GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = 0; return S_OK;}
+	HRESULT DGLE2_API Free(){return S_FALSE;}
+	HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_UNKNOWN;return S_OK;}
+	HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = 0; return S_OK;}
 
 	IDGLE2_BASE_IMPLEMENTATION(IEngBaseObj)
 };
@@ -44,19 +44,19 @@ public:
 class CSSoundChannelDummy : public ISoundChannel
 {
 public:
-	HRESULT CALLBACK PlayOrPause(){return S_FALSE;}
-	HRESULT CALLBACK Stop(){return S_FALSE;}
-	HRESULT CALLBACK IsPlaying(bool &bIsPlaying){bIsPlaying = false; return S_FALSE;}
-	HRESULT CALLBACK SetVolume(uint uiVolume){return S_FALSE;}
-	HRESULT CALLBACK GetVolume(uint &uiVolume){uiVolume = 0; return S_FALSE;}
-	HRESULT CALLBACK SetPan(int iPan){return S_FALSE;}
-	HRESULT CALLBACK GetPan(int &iPan){iPan = 0; return S_FALSE;}
-	HRESULT CALLBACK SetFrequency(uint32 uiFreq){return S_FALSE;}
-	HRESULT CALLBACK GetFrequency(uint32 &uiFreq){uiFreq = 0;return S_FALSE;}
-	HRESULT CALLBACK SetPosition(const TPoint3 &stCoords){return S_FALSE;}
-	HRESULT CALLBACK GetPosition(TPoint3 &stCoords){stCoords = TPoint3();return S_FALSE;}
-	HRESULT CALLBACK SetEffects(E_SOUND_CHANNEL_EFFECTS eFlags){return S_FALSE;}
-	HRESULT CALLBACK Unaquire(){delete this; return S_FALSE;}
+	HRESULT DGLE2_API PlayOrPause(){return S_FALSE;}
+	HRESULT DGLE2_API Stop(){return S_FALSE;}
+	HRESULT DGLE2_API IsPlaying(bool &bIsPlaying){bIsPlaying = false; return S_FALSE;}
+	HRESULT DGLE2_API SetVolume(uint uiVolume){return S_FALSE;}
+	HRESULT DGLE2_API GetVolume(uint &uiVolume){uiVolume = 0; return S_FALSE;}
+	HRESULT DGLE2_API SetPan(int iPan){return S_FALSE;}
+	HRESULT DGLE2_API GetPan(int &iPan){iPan = 0; return S_FALSE;}
+	HRESULT DGLE2_API SetFrequency(uint32 uiFreq){return S_FALSE;}
+	HRESULT DGLE2_API GetFrequency(uint32 &uiFreq){uiFreq = 0;return S_FALSE;}
+	HRESULT DGLE2_API SetPosition(const TPoint3 &stCoords){return S_FALSE;}
+	HRESULT DGLE2_API GetPosition(TPoint3 &stCoords){stCoords = TPoint3();return S_FALSE;}
+	HRESULT DGLE2_API SetEffects(E_SOUND_CHANNEL_EFFECTS eFlags){return S_FALSE;}
+	HRESULT DGLE2_API Unaquire(){delete this; return S_FALSE;}
 
 	IDGLE2_BASE_IMPLEMENTATION(ISoundChannel)
 };
@@ -64,12 +64,12 @@ public:
 class CSSampleDummy: public ISoundSample
 {
 public:
-	HRESULT CALLBACK Play() {return S_FALSE;}
-	HRESULT CALLBACK PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags) {pSndChnl = (ISoundChannel*)new CSSoundChannelDummy; return S_FALSE;}
+	HRESULT DGLE2_API Play() {return S_FALSE;}
+	HRESULT DGLE2_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags) {pSndChnl = (ISoundChannel*)new CSSoundChannelDummy; return S_FALSE;}
 	
-	HRESULT CALLBACK Free(){return S_FALSE;}
-	HRESULT CALLBACK GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE;return S_OK;}
-	HRESULT CALLBACK GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
+	HRESULT DGLE2_API Free(){return S_FALSE;}
+	HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE;return S_OK;}
+	HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
 
 	IDGLE2_BASE_IMPLEMENTATION1(ISoundSample, IEngBaseObj)
 };
@@ -77,19 +77,19 @@ public:
 class CMusicDummy: public IMusic
 {
 public:
-	HRESULT CALLBACK Play(bool bLooped){return S_FALSE;}
-	HRESULT CALLBACK Pause(bool bPaused){return S_FALSE;}
-	HRESULT CALLBACK Stop(){return S_FALSE;}
-	HRESULT CALLBACK IsPlaying(bool &bIsPlaying){bIsPlaying=false;return S_FALSE;}
-	HRESULT CALLBACK SetVolume(uint uiVolume){return S_FALSE;}
-	HRESULT CALLBACK GetVolume(uint &uiVolume){uiVolume=0;return S_FALSE;}
-	HRESULT CALLBACK SetCurrentPosition(uint uiPos){return S_FALSE;}
-	HRESULT CALLBACK GetCurrentPosition(uint &uiPos){uiPos=0;return S_FALSE;}
-	HRESULT CALLBACK GetLength(uint &uiLength){uiLength=0;return S_FALSE;}
+	HRESULT DGLE2_API Play(bool bLooped){return S_FALSE;}
+	HRESULT DGLE2_API Pause(bool bPaused){return S_FALSE;}
+	HRESULT DGLE2_API Stop(){return S_FALSE;}
+	HRESULT DGLE2_API IsPlaying(bool &bIsPlaying){bIsPlaying=false;return S_FALSE;}
+	HRESULT DGLE2_API SetVolume(uint uiVolume){return S_FALSE;}
+	HRESULT DGLE2_API GetVolume(uint &uiVolume){uiVolume=0;return S_FALSE;}
+	HRESULT DGLE2_API SetCurrentPosition(uint uiPos){return S_FALSE;}
+	HRESULT DGLE2_API GetCurrentPosition(uint &uiPos){uiPos=0;return S_FALSE;}
+	HRESULT DGLE2_API GetLength(uint &uiLength){uiLength=0;return S_FALSE;}
 
-	HRESULT CALLBACK Free(){return S_FALSE;}
-	HRESULT CALLBACK GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_MUSIC;return S_OK;}
-	HRESULT CALLBACK GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
+	HRESULT DGLE2_API Free(){return S_FALSE;}
+	HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_MUSIC;return S_OK;}
+	HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
 
 	IDGLE2_BASE_IMPLEMENTATION1(IMusic, IEngBaseObj)
 };
@@ -97,17 +97,17 @@ public:
 class CBitmapFontDummy: public IBitmapFont
 {
 public:
-	HRESULT CALLBACK GetTexture(ITexture *&prTexture){prTexture = NULL; return S_FALSE;}
-	HRESULT CALLBACK SetScale(const float &fScale){return S_FALSE;}
-	HRESULT CALLBACK GetScale(float &fScale){fScale = 1.f; return S_FALSE;}
-	HRESULT CALLBACK GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight){uiWidth = 0; uiHeight = 0; return S_FALSE;}
-	HRESULT CALLBACK Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor){return S_FALSE;}
-	HRESULT CALLBACK Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor){return S_FALSE;}
-	HRESULT CALLBACK Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors){return S_FALSE;}
-	HRESULT CALLBACK Draw3D(const char *pcTxt){return S_FALSE;}
-	HRESULT CALLBACK Free(){return S_FALSE;}
-	HRESULT CALLBACK GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT;return S_OK;}
-	HRESULT CALLBACK GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
+	HRESULT DGLE2_API GetTexture(ITexture *&prTexture){prTexture = NULL; return S_FALSE;}
+	HRESULT DGLE2_API SetScale(const float &fScale){return S_FALSE;}
+	HRESULT DGLE2_API GetScale(float &fScale){fScale = 1.f; return S_FALSE;}
+	HRESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight){uiWidth = 0; uiHeight = 0; return S_FALSE;}
+	HRESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor){return S_FALSE;}
+	HRESULT DGLE2_API Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor){return S_FALSE;}
+	HRESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors){return S_FALSE;}
+	HRESULT DGLE2_API Draw3D(const char *pcTxt){return S_FALSE;}
+	HRESULT DGLE2_API Free(){return S_FALSE;}
+	HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT;return S_OK;}
+	HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
 
 	IDGLE2_BASE_IMPLEMENTATION1(IBitmapFont, IEngBaseObj)
 };
@@ -260,7 +260,7 @@ void CResourceManager::FreeAllResources()
 	delete _pBObjDummy;
 }
 
-HRESULT CALLBACK CResourceManager::RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
+HRESULT DGLE2_API CResourceManager::RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
 {
 	if (eObjType == EOT_UNKNOWN)
 		return E_INVALIDARG;
@@ -270,7 +270,7 @@ HRESULT CALLBACK CResourceManager::RegisterDefaultResource(E_ENG_OBJ_TYPE eObjTy
 	return S_OK;
 }
 
-HRESULT CALLBACK CResourceManager::UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
+HRESULT DGLE2_API CResourceManager::UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
 {
 	for (size_t i = 0; i < _defRes.size(); ++i)
 		if (_defRes[i].type == eObjType && _defRes[i].pBaseObj == pObj)
@@ -282,7 +282,7 @@ HRESULT CALLBACK CResourceManager::UnregisterDefaultResource(E_ENG_OBJ_TYPE eObj
 	return E_INVALIDARG;
 }
 
-HRESULT CALLBACK CResourceManager::UnregisterFileFormat(const char* pcExtension)
+HRESULT DGLE2_API CResourceManager::UnregisterFileFormat(const char* pcExtension)
 {
 	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
@@ -294,7 +294,7 @@ HRESULT CALLBACK CResourceManager::UnregisterFileFormat(const char* pcExtension)
 	return E_INVALIDARG;
 }
 
-void CALLBACK CResourceManager::_s_ConListFileFormats(void *pParametr, const char *pcParam)
+void DGLE2_API CResourceManager::_s_ConListFileFormats(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CResourceManager, "No parametrs expected.");
@@ -302,7 +302,7 @@ void CALLBACK CResourceManager::_s_ConListFileFormats(void *pParametr, const cha
 		CON(CResourceManager, string("---Supported File Formats---\r\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
 }
 
-HRESULT CALLBACK CResourceManager::GetRegisteredExtensions(char* pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint uiCharsCount)
 {
 	string exts;
 
@@ -320,7 +320,7 @@ HRESULT CALLBACK CResourceManager::GetRegisteredExtensions(char* pcTxt, uint uiC
 	return S_OK;
 }
 
-HRESULT CALLBACK CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj)
+HRESULT DGLE2_API CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj)
 {
 	for (int i = (int)_defRes.size() - 1; i > -1; --i)
 		if (eObjType == _defRes[i].type)
@@ -334,7 +334,7 @@ HRESULT CALLBACK CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjType, I
 	return E_INVALIDARG;
 }
 
-HRESULT CALLBACK CResourceManager::GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj)
+HRESULT DGLE2_API CResourceManager::GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj)
 {
 	uint32 hash = GetCRC32((uint8*)pcFileName, (uint32)strlen(pcFileName)*sizeof(char));
 
@@ -736,7 +736,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint
 	return true;
 }
 
-HRESULT CALLBACK CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (CALLBACK *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr)
+HRESULT DGLE2_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr)
 {
 	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == string(pcExtension) && _clFileFormats[i].type == eObjType)
@@ -1381,7 +1381,7 @@ bool CResourceManager::_LoadMusicMCI(IFile *pFile, IMusic *&prMusic)
 	return true;
 }
 
-bool CALLBACK CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE2_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadTextureBMP(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
@@ -1389,7 +1389,7 @@ bool CALLBACK CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&pr
 	return ret;
 }
 
-bool CALLBACK CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE2_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadTextureTGA(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
@@ -1397,7 +1397,7 @@ bool CALLBACK CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&pr
 	return ret;
 }
 
-bool CALLBACK CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE2_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadTextureDTX(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
@@ -1405,7 +1405,7 @@ bool CALLBACK CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&pr
 	return ret;
 }
 
-bool CALLBACK CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE2_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	IEngBaseObj *pobj = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadDMDFile(pFile, pobj, (E_MESH_LOAD_FLAGS)uiLoadFlags);
@@ -1413,7 +1413,7 @@ bool CALLBACK CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj
 	return ret;
 }
 
-bool CALLBACK CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE2_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	IBitmapFont *pfnt = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt);
@@ -1421,7 +1421,7 @@ bool CALLBACK CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj
 	return ret;
 }
 
-bool CALLBACK CResourceManager::_s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE2_API CResourceManager::_s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	IMusic *pm = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadMusicMCI(pFile, pm);
@@ -1429,12 +1429,12 @@ bool CALLBACK CResourceManager::_s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prOb
 	return ret;
 }
 
-void CALLBACK CResourceManager::_s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent)
+void DGLE2_API CResourceManager::_s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent)
 {
 	PTHIS(CResourceManager)->_ProfilerEventHandler();
 }
 
-HRESULT CALLBACK CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
+HRESULT DGLE2_API CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
 {
 	HRESULT result = _CreateTexture(prTex, pData, uiWidth, uiHeight, eDataFormat, eCreationFlags, eLoadFlags) ? S_OK : S_FALSE;
 	
@@ -1449,13 +1449,13 @@ HRESULT CALLBACK CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *
 	return result;
 }
 
-HRESULT CALLBACK CResourceManager::CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse)
+HRESULT DGLE2_API CResourceManager::CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse)
 {
 	//ToDo
 	return E_FAIL;
 }
 
-HRESULT CALLBACK CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
+HRESULT DGLE2_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
 {
 	HRESULT result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
 
@@ -1497,7 +1497,7 @@ inline uint CResourceManager::_GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE e
 	return ret;
 }
 
-HRESULT CALLBACK CResourceManager::GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType)
+HRESULT DGLE2_API CResourceManager::GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType)
 {
 	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
@@ -1511,7 +1511,7 @@ HRESULT CALLBACK CResourceManager::GetExtensionType(const char *pcExtension, E_E
 	return S_FALSE;
 }
 
-HRESULT CALLBACK CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount)
 {
 	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
@@ -1571,7 +1571,7 @@ inline HRESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile, uin
 	return ret ? S_OK : S_FALSE;
 }
 
-HRESULT CALLBACK CResourceManager::Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags)
+HRESULT DGLE2_API CResourceManager::Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags)
 {
 	if (pcFileName == NULL || strlen(pcFileName) == 0)
 	{
@@ -1599,7 +1599,7 @@ HRESULT CALLBACK CResourceManager::Load(const char *pcFileName, IEngBaseObj *&pr
 	return ret;
 }
 
-HRESULT CALLBACK CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags)
+HRESULT DGLE2_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags)
 {
 	if (pFile == NULL)
 	{
@@ -1626,7 +1626,7 @@ HRESULT CALLBACK CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, uint
 	return _Load(file_name.c_str(), pFile, _GetFFIdx(name, EOT_UNKNOWN, prObj), prObj, uiLoadFlags);
 }
 
-HRESULT CALLBACK CResourceManager::FreeResource(IEngBaseObj *&prObj)
+HRESULT DGLE2_API CResourceManager::FreeResource(IEngBaseObj *&prObj)
 {
 	E_ENG_OBJ_TYPE obj_type;
 	prObj->GetType(obj_type);
@@ -1634,7 +1634,7 @@ HRESULT CALLBACK CResourceManager::FreeResource(IEngBaseObj *&prObj)
 	return GetDefaultResource(obj_type, prObj);
 }
 
-HRESULT CALLBACK CResourceManager::AddResource(const char *pcName, IEngBaseObj *pObj)
+HRESULT DGLE2_API CResourceManager::AddResource(const char *pcName, IEngBaseObj *pObj)
 {
 	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].pObj == pObj)
@@ -1645,7 +1645,7 @@ HRESULT CALLBACK CResourceManager::AddResource(const char *pcName, IEngBaseObj *
 	return S_OK;
 }
 
-HRESULT CALLBACK CResourceManager::RemoveResource(IEngBaseObj *pObj, bool &bCanDelete)
+HRESULT DGLE2_API CResourceManager::RemoveResource(IEngBaseObj *pObj, bool &bCanDelete)
 {
 	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].pObj == pObj)
@@ -1664,7 +1664,7 @@ HRESULT CALLBACK CResourceManager::RemoveResource(IEngBaseObj *pObj, bool &bCanD
 	return S_FALSE;
 }
 
-HRESULT CALLBACK CResourceManager::GetType(E_ENGINE_SUB_SYSTEM &eSubSysType)
+HRESULT DGLE2_API CResourceManager::GetType(E_ENGINE_SUB_SYSTEM &eSubSysType)
 {
 	eSubSysType = ESS_RESOURCE_MANAGER;
 	return S_OK;

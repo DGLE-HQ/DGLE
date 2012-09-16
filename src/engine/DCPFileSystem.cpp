@@ -79,13 +79,13 @@ bool CDCPFileSystem::_ReadFileInfo()
 	return true;
 }
 
-HRESULT CALLBACK CDCPFileSystem::DeleteFile(const char *pcName)
+HRESULT DGLE2_API CDCPFileSystem::DeleteFile(const char *pcName)
 {
 	LOG("DCP packages are read only.", LT_ERROR);
 	return E_FAIL;
 }
 
-HRESULT CALLBACK CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
+HRESULT DGLE2_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	if (eFlags & FSOF_WRITE || eFlags & FSOF_TRUNC)
 	{
@@ -194,7 +194,7 @@ uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName) const
 	return -1;
 }
 
-HRESULT CALLBACK CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
+HRESULT DGLE2_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	string pack_name = string(pcName);
 
@@ -217,7 +217,7 @@ HRESULT CALLBACK CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 	return S_OK;	
 }
 
-HRESULT CALLBACK CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
+HRESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
 	string pack_name = string(pcMask);
 
@@ -262,7 +262,7 @@ HRESULT CALLBACK CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, I
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
+HRESULT DGLE2_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
 {
 	return E_FAIL;
 }
@@ -312,7 +312,7 @@ CInstancedObj(uiInstIdx), _clNameList(clNameList)
 	_clNameListIter = _clNameList.begin();
 }
 
-HRESULT CALLBACK CDCPFileIterator::FileName(char *pcName, DGLE2::uint uiCharsCount)
+HRESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint uiCharsCount)
 {
 	if ((*_clNameListIter).size() > uiCharsCount)
 			return E_ABORT;
@@ -325,7 +325,7 @@ HRESULT CALLBACK CDCPFileIterator::FileName(char *pcName, DGLE2::uint uiCharsCou
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFileIterator::Next()
+HRESULT DGLE2_API CDCPFileIterator::Next()
 {
 	if (++_clNameListIter == _clNameList.end())
 		return S_FALSE;
@@ -333,7 +333,7 @@ HRESULT CALLBACK CDCPFileIterator::Next()
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFileIterator::Free()
+HRESULT DGLE2_API CDCPFileIterator::Free()
 {
 	delete this;
 	return S_OK;

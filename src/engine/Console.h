@@ -21,7 +21,7 @@ struct TConEntry
 			 iMaxValue;
 	bool	 bNeedCritical;
 
-	void(CALLBACK *pProc)(void *pParametr, const char *pcParam);
+	void(DGLE2_API *pProc)(void *pParametr, const char *pcParam);
 
 	bool operator < (const TConEntry &entry) const
 	{
@@ -43,17 +43,17 @@ class CConsole
 	void _Cmdlist();
 	void _Help(const char* pcParam);
 	
-	static void CALLBACK _s_Hide(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_Show(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_Clear(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_Terminate(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_SetPos(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_SetSize(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_ResetPos(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_Cmdlist(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_Help(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_OnCmdExec(CConsole *pConsole, const char *pcCommand);
-	static void CALLBACK _s_OnCmdComplete(CConsole *pConsole, const char *pcCommand);
+	static void DGLE2_API _s_Hide(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_Show(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_Clear(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_Terminate(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_SetPos(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_SetSize(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_ResetPos(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_Cmdlist(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_Help(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_OnCmdExec(CConsole *pConsole, const char *pcCommand);
+	static void DGLE2_API _s_OnCmdComplete(CConsole *pConsole, const char *pcCommand);
 
 public:
 
@@ -63,8 +63,8 @@ public:
 	void  Visible(bool bVisible);
 	void  Write(const char *pcText, bool bToPrevLine = false);
 	void  Exec(const char *pcCommand);
-	void  RegComProc(const char *pcName, const char *pcHelp, void (CALLBACK *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare = true); 
-	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (CALLBACK *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL, bool bShare = true);
+	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare = true); 
+	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL, bool bShare = true);
 	bool  UnRegCom(const char *pcName);
 	bool  EnterCrSection();
 	void  LeaveCrSection();

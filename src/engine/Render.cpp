@@ -133,13 +133,13 @@ void CRender::OnResize(uint uiWidth, uint uiHeight)
 	_pCoreRenderer->SetMatrix(MatrixIdentity());
 }
 
-HRESULT CALLBACK CRender::SetClearColor(const TColor4 &stColor)
+HRESULT DGLE2_API CRender::SetClearColor(const TColor4 &stColor)
 {
 	_pCoreRenderer->SetClearColor(stColor);
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::Unbind(E_ENG_OBJ_TYPE eType)
+HRESULT DGLE2_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
 {
 	switch (eType)
 	{
@@ -166,7 +166,7 @@ HRESULT CALLBACK CRender::Unbind(E_ENG_OBJ_TYPE eType)
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::EnableScissor(const TRectF &stArea)
+HRESULT DGLE2_API CRender::EnableScissor(const TRectF &stArea)
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
@@ -176,7 +176,7 @@ HRESULT CALLBACK CRender::EnableScissor(const TRectF &stArea)
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::DisableScissor()
+HRESULT DGLE2_API CRender::DisableScissor()
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
@@ -185,36 +185,36 @@ HRESULT CALLBACK CRender::DisableScissor()
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::SetRenderTarget(ITexture* pTargetTex)
+HRESULT DGLE2_API CRender::SetRenderTarget(ITexture* pTargetTex)
 {
 	//ToDo
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::ScreenshotBMP(const char* pFileName)
+HRESULT DGLE2_API CRender::ScreenshotBMP(const char* pFileName)
 {
 	//ToDo
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::CreatePostProcess(IPostprocess *&pPP)
+HRESULT DGLE2_API CRender::CreatePostProcess(IPostprocess *&pPP)
 {
 	//ToDo
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::GetRender2D(IRender2D *&prRender2D)
+HRESULT DGLE2_API CRender::GetRender2D(IRender2D *&prRender2D)
 {
 	prRender2D = _pRender2D;
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::GetRender3D(IRender3D *&prRender3D)
+HRESULT DGLE2_API CRender::GetRender3D(IRender3D *&prRender3D)
 {
 	return S_OK;
 }
 
-HRESULT CALLBACK CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
+HRESULT DGLE2_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 {
 	eSubSystemType = ESS_RENDER;
 	return S_OK;

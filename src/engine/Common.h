@@ -179,7 +179,7 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 
 /*
 template<class Interface, typename Type, typename ReturnType = Type>
-struct CComGetWrapper: public binary_function<Interface *, HRESULT (CALLBACK Interface::*)(Type &), ReturnType>
+struct CComGetWrapper: public binary_function<Interface *, HRESULT (DGLE2_API Interface::*)(Type &), ReturnType>
 {
 	result_type operator ()(first_argument_type object, second_argument_type method) const
 	{

@@ -232,7 +232,7 @@ bool CConsole::UnRegCom(const char *pcName)
 	return false;
 }
 
-void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (CALLBACK *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare)
+void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare)
 {
 	TConEntry t;
 	t.pcName = new char[strlen(pcName)+1];
@@ -249,7 +249,7 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (CALLBACK
 	sort(_commands.begin(), _commands.end());
 }
 
-void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (CALLBACK *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare) 
+void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare) 
 {
 	TConEntry t;
 	t.pcName = new char[strlen(pcName)+1];
@@ -353,7 +353,7 @@ void CConsole::Write(const char* pcText, bool bToPrevLine)
 	_pConsoleWindow->OutputTxt(pcText, bToPrevLine);
 }
 
-void CALLBACK CConsole::_s_Hide(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_Hide(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -361,7 +361,7 @@ void CALLBACK CConsole::_s_Hide(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->Visible(false);
 }
 
-void CALLBACK CConsole::_s_Show(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_Show(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -369,7 +369,7 @@ void CALLBACK CConsole::_s_Show(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->Visible(true);
 }
 
-void CALLBACK CConsole::_s_Clear(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_Clear(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -377,7 +377,7 @@ void CALLBACK CConsole::_s_Clear(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->_pConsoleWindow->Clear();
 }
 
-void CALLBACK CConsole::_s_Terminate(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_Terminate(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -385,17 +385,17 @@ void CALLBACK CConsole::_s_Terminate(void *pParametr, const char *pcParam)
 		Terminate();
 }
 
-void CALLBACK CConsole::_s_SetPos(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_SetPos(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_SetPos(pcParam);
 }
 
-void CALLBACK CConsole::_s_SetSize(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_SetSize(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_SetSize(pcParam);
 }
 
-void CALLBACK CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -403,7 +403,7 @@ void CALLBACK CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->_pConsoleWindow->ResetSizeAndPos();
 }
 
-void CALLBACK CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -411,17 +411,17 @@ void CALLBACK CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->_Cmdlist();
 }
 
-void CALLBACK CConsole::_s_Help(void *pParametr, const char *pcParam)
+void DGLE2_API CConsole::_s_Help(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_Help(pcParam);
 }
 
-void CALLBACK CConsole::_s_OnCmdExec(CConsole *pConsole, const char *pcCommand)
+void DGLE2_API CConsole::_s_OnCmdExec(CConsole *pConsole, const char *pcCommand)
 {
 	pConsole->_ProcessConCmd(pcCommand);
 }
 
-void CALLBACK CConsole::_s_OnCmdComplete(CConsole *pConsole, const char *pcCommand)
+void DGLE2_API CConsole::_s_OnCmdComplete(CConsole *pConsole, const char *pcCommand)
 {
 	pConsole->_OnCmdComplete(pcCommand);
 }

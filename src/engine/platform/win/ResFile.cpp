@@ -102,13 +102,13 @@ HRESULT CResFile::GetName(char *pcName, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT CALLBACK CResFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CResFile::GetPath(char *pcPath, uint uiCharsCount)
 {
 	strcpy(pcPath, "");
 	return S_OK;
 }
 
-HRESULT CALLBACK CResFile::Free()
+HRESULT DGLE2_API CResFile::Free()
 {
 	delete this;
 	return S_OK;

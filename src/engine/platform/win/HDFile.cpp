@@ -108,7 +108,7 @@ HRESULT CHDFile::GetName(char* pcName, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT CALLBACK CHDFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CHDFile::GetPath(char *pcPath, uint uiCharsCount)
 {
 	if (uiCharsCount < strlen(_acPath))
 	{
@@ -121,7 +121,7 @@ HRESULT CALLBACK CHDFile::GetPath(char *pcPath, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT CALLBACK CHDFile::Free()
+HRESULT DGLE2_API CHDFile::Free()
 {
 	delete this;
 	return S_OK;

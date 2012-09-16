@@ -36,7 +36,7 @@ _pOldEditProc(NULL), _bVisible(false),
 _pOnCmdExec(NULL), _pConsole(NULL)
 {}
 
-HRESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (CALLBACK *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (CALLBACK *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole)
+HRESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (DGLE2_API *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole)
 {
 	_pOnCmdExec = pOnCmdExec;
 	_pOnCmdComplete = pOnCmdComplete;
@@ -296,7 +296,7 @@ void CConsoleWindow::_Realign()
 	MoveWindow(_hEdit, 0, rect.bottom - C_EDIT_HEIGHT, rect.right, C_EDIT_HEIGHT, true);
 }
 
-LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT DGLE2_API CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CConsoleWindow *this_ptr = (CConsoleWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -341,7 +341,7 @@ LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wPar
 
 }
 
-LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT DGLE2_API CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CConsoleWindow *this_ptr = (CConsoleWindow*)GetWindowLongPtr(GetParent(hWnd), GWLP_USERDATA);
 	

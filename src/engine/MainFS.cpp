@@ -19,8 +19,8 @@ CInstancedObj(uiInstIdx)
 	_pHddFS = new CHDFileSystem(InstIdx());
 	_pDCPFS = new CDCPFileSystem(InstIdx(), this);
 
-	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem*)_pHddFS, &_s_FSDeleteCallback, this);
-	RegisterVirtualFileSystem("dcp","Dgle Compiled Package(DCP) file archives.",(IFileSystem*)_pDCPFS, &_s_FSDeleteCallback, this);
+	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem*)_pHddFS, &_s_FSDeleteDGLE2_API, this);
+	RegisterVirtualFileSystem("dcp","Dgle Compiled Package(DCP) file archives.",(IFileSystem*)_pDCPFS, &_s_FSDeleteDGLE2_API, this);
 	
 	LOG("Filesystem Subsystem initialized.", LT_INFO);
 }
@@ -39,7 +39,7 @@ void CMainFS::UnregisterAndFreeAll()
 	_strVFSsDescs.clear();
 }
 
-HRESULT CALLBACK CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
+HRESULT DGLE2_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
 {
 	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
@@ -52,7 +52,7 @@ HRESULT CALLBACK CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension
 	return E_INVALIDARG;
 }
 
-HRESULT CALLBACK CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCharsCount)
 {
 	string exts;
 
@@ -72,7 +72,7 @@ HRESULT CALLBACK CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCh
 	return S_OK;
 }
 
-void CALLBACK CMainFS::_s_ConListVFS(void *pParametr, const char *pcParam)
+void DGLE2_API CMainFS::_s_ConListVFS(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CMainFS, "No parametrs expected.");
@@ -80,7 +80,7 @@ void CALLBACK CMainFS::_s_ConListVFS(void *pParametr, const char *pcParam)
 		CON(CMainFS, string("---Supported VFile Systems---\r\n" + PTHIS(CMainFS)->_strVFSsDescs + "-----------------------------").c_str());
 }
 
-void CALLBACK CMainFS::_s_FSDeleteCallback(void *pParametr, IFileSystem *pVFS)
+void DGLE2_API CMainFS::_s_FSDeleteDGLE2_API(void *pParametr, IFileSystem *pVFS)
 {
 	if (PTHIS(CMainFS)->_pHddFS == pVFS)
 		delete PTHIS(CMainFS)->_pHddFS;
@@ -89,7 +89,7 @@ void CALLBACK CMainFS::_s_FSDeleteCallback(void *pParametr, IFileSystem *pVFS)
 		delete PTHIS(CMainFS)->_pDCPFS;
 }
 
-HRESULT CALLBACK CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
+HRESULT DGLE2_API CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
 {
 	prFile = NULL;
 
@@ -123,7 +123,7 @@ HRESULT CALLBACK CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
 	return p_fs->OpenFile(pcFileName, (E_FILE_SYSTEM_OPEN_FLAGS)(FSOF_READ | FSOF_BINARY), prFile);
 }
 
-HRESULT CALLBACK CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS)
+HRESULT DGLE2_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS)
 {
 	if (pcVFSExtension == NULL)
 	{
@@ -143,7 +143,7 @@ HRESULT CALLBACK CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFile
 	return E_INVALIDARG;
 }
 
-HRESULT CALLBACK CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount)
 {
 	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
@@ -164,7 +164,7 @@ HRESULT CALLBACK CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExten
 	return S_FALSE;
 }
 
-HRESULT CALLBACK CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (CALLBACK *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr)
+HRESULT DGLE2_API CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr)
 {
 	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == string(pcVFSExtension))
@@ -173,14 +173,14 @@ HRESULT CALLBACK CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, 
 			return E_INVALIDARG;
 		}
 	
-	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteCallback, pParametr));
+	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteDGLE2_API, pParametr));
 
 	_strVFSsDescs += string("- " + ToUpperCase(string(pcVFSExtension)) + " " + string(pcDiscription) + "\r\n");
 
 	return S_OK;
 }
 
-HRESULT CALLBACK CMainFS::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
+HRESULT DGLE2_API CMainFS::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 {
 	eSubSystemType = ESS_FILE_SYSTEM;
 	return S_OK;

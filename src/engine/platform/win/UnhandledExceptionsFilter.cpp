@@ -32,7 +32,7 @@ bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, si
 static LPTOP_LEVEL_EXCEPTION_FILTER m_previousFilter = NULL;
 static string str_info = "";
 
-void CALLBACK con_dump(void *pParametr, const char *pcParam)
+void DGLE2_API con_dump(void *pParametr, const char *pcParam)
 {
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 

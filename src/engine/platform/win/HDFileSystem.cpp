@@ -62,7 +62,7 @@ HRESULT CHDFileIterator::Next()
 	return S_FALSE;
 }
 
-HRESULT CALLBACK CHDFileIterator::Free()
+HRESULT DGLE2_API CHDFileIterator::Free()
 {
 	delete this;
 	return S_OK;
@@ -123,7 +123,7 @@ HRESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterat
 	return S_FALSE;
 }
 
-HRESULT CALLBACK CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
+HRESULT DGLE2_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
 {
 	char res[] = "Not supported for this realisation.";
 

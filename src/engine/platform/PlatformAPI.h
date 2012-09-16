@@ -63,7 +63,7 @@ static const GUID IID_IConsoleWindow =
 class IConsoleWindow
 {
 public:
-	virtual HRESULT InitWindow(bool bSeparateThread, void (CALLBACK *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (CALLBACK *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole) = 0;
+	virtual HRESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (DGLE2_API *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole) = 0;
 	virtual HRESULT Visible(bool bVisible) = 0;
 	virtual HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) = 0;
 	virtual HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
@@ -84,9 +84,9 @@ static const GUID IID_IEngineCoreWrapper =
 class IEngineCoreWrapper
 {
 public:
-	virtual HRESULT CALLBACK SetWindowAPI(IMainWindow *pMainWindow) = 0;
-	virtual HRESULT CALLBACK TranslateMessage(const TWinMessage &stWinMsg) = 0;
-	virtual HRESULT CALLBACK KillEngine() = 0;
+	virtual HRESULT DGLE2_API SetWindowAPI(IMainWindow *pMainWindow) = 0;
+	virtual HRESULT DGLE2_API TranslateMessage(const TWinMessage &stWinMsg) = 0;
+	virtual HRESULT DGLE2_API KillEngine() = 0;
 };
 
 #ifdef PLATFORM_WINDOWS

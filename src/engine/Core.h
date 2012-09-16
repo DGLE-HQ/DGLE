@@ -132,16 +132,16 @@ class CCore: public CInstancedObj, public IEngineCore
 	TEngWindow			_stWndToApply;
 	bool				_bNeedApplyNewWnd;
 
-	static void CALLBACK _s_MainLoop(void *pParametr);
-	static void CALLBACK _s_OnTimer(void *pParametr);
-	static void CALLBACK _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
+	static void DGLE2_API _s_MainLoop(void *pParametr);
+	static void DGLE2_API _s_OnTimer(void *pParametr);
+	static void DGLE2_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
 
-	static void CALLBACK _s_ConAutoPause(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_ConPrintVersion(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_ConFeatures(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_ConListPlugs(void *pParametr, const char *pcParam);
-	static void CALLBACK _s_ConChangeMode(void *pParametr, const char *pcParam);	
-	static void CALLBACK _s_InstIdx(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_ConAutoPause(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_ConPrintVersion(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_ConFeatures(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_ConListPlugs(void *pParametr, const char *pcParam);
+	static void DGLE2_API _s_ConChangeMode(void *pParametr, const char *pcParam);	
+	static void DGLE2_API _s_InstIdx(void *pParametr, const char *pcParam);
 
 public:
 
@@ -163,49 +163,49 @@ public:
 
 	void	ToogleSuspendEngine(bool bSuspend);
 
-	HRESULT CALLBACK LoadSplashPicture(const char *pcBmpFileName);
-	HRESULT CALLBACK AddPluginToInitList(const char *pcFileName);
+	HRESULT DGLE2_API LoadSplashPicture(const char *pcBmpFileName);
+	HRESULT DGLE2_API AddPluginToInitList(const char *pcFileName);
 
-	HRESULT CALLBACK InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags);
-	HRESULT CALLBACK SetProcessInterval(uint uiProcessInterval);
-	HRESULT CALLBACK StartEngine();
-	HRESULT CALLBACK QuitEngine();
+	HRESULT DGLE2_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags);
+	HRESULT DGLE2_API SetProcessInterval(uint uiProcessInterval);
+	HRESULT DGLE2_API StartEngine();
+	HRESULT DGLE2_API QuitEngine();
 
-	HRESULT CALLBACK ConnectPlugin(const char* pcFileName, IPlugin *&prPlugin);
-	HRESULT CALLBACK DisconnectPlugin(IPlugin *pPlugin);
-	HRESULT CALLBACK GetPlugin(const char* pcPluginName, IPlugin *&prPlugin);
+	HRESULT DGLE2_API ConnectPlugin(const char* pcFileName, IPlugin *&prPlugin);
+	HRESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin);
+	HRESULT DGLE2_API GetPlugin(const char* pcPluginName, IPlugin *&prPlugin);
 
-	HRESULT CALLBACK AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (CALLBACK *pProc)(void *pParametr), void *pParametr);
-	HRESULT CALLBACK RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (CALLBACK *pProc)(void *pParametr), void *pParametr);
+	HRESULT DGLE2_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr);
+	HRESULT DGLE2_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr);
 
-	HRESULT CALLBACK CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
-	HRESULT CALLBACK AddEventListner(E_EVENT_TYPE eEventType, void (CALLBACK *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
-	HRESULT CALLBACK RemoveEventListner(E_EVENT_TYPE eEventType, void (CALLBACK *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
+	HRESULT DGLE2_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
+	HRESULT DGLE2_API AddEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
+	HRESULT DGLE2_API RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
 
-	HRESULT CALLBACK GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
+	HRESULT DGLE2_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
 
-	HRESULT CALLBACK RenderProfilerTxt(const char* pcTxt, const TColor4 &stColor);
-	HRESULT CALLBACK GetInstanceIdx(uint &uiIdx);
-	HRESULT CALLBACK GetTimer(uint64 &uiTick);
-	HRESULT CALLBACK GetSystemInfo(TSystemInfo &stSysInfo);
-	HRESULT CALLBACK GetCurrentWin(TEngWindow &stWin);
-	HRESULT CALLBACK GetFPS(uint &uiFPS);
-	HRESULT CALLBACK GetHandle(TWinHandle &tHandle);
+	HRESULT DGLE2_API RenderProfilerTxt(const char* pcTxt, const TColor4 &stColor);
+	HRESULT DGLE2_API GetInstanceIdx(uint &uiIdx);
+	HRESULT DGLE2_API GetTimer(uint64 &uiTick);
+	HRESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo);
+	HRESULT DGLE2_API GetCurrentWin(TEngWindow &stWin);
+	HRESULT DGLE2_API GetFPS(uint &uiFPS);
+	HRESULT DGLE2_API GetHandle(TWinHandle &tHandle);
 
-	HRESULT CALLBACK ChangeWinMode(const TEngWindow &stNewWin);
-	HRESULT CALLBACK AllowPause(bool bAllow);
+	HRESULT DGLE2_API ChangeWinMode(const TEngWindow &stNewWin);
+	HRESULT DGLE2_API AllowPause(bool bAllow);
 
-	HRESULT CALLBACK AddToLog(const char *pcTxt);
-	HRESULT CALLBACK AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+	HRESULT DGLE2_API AddToLog(const char *pcTxt);
+	HRESULT DGLE2_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
-	HRESULT CALLBACK ConsoleVisible(bool bIsVisible);
-	HRESULT CALLBACK ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
-	HRESULT CALLBACK ConsoleExec(const char* pcCommandTxt);
-	HRESULT CALLBACK ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (CALLBACK *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
-	HRESULT CALLBACK ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (CALLBACK *pProc)(void *pParametr, const char *pcParam), void *pParametr);
-	HRESULT CALLBACK ConsoleUnregCom(const char* pcCommandName);
+	HRESULT DGLE2_API ConsoleVisible(bool bIsVisible);
+	HRESULT DGLE2_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
+	HRESULT DGLE2_API ConsoleExec(const char* pcCommandTxt);
+	HRESULT DGLE2_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
+	HRESULT DGLE2_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr);
+	HRESULT DGLE2_API ConsoleUnregCom(const char* pcCommandName);
 
-	HRESULT CALLBACK GetVersion(char* pcBuffer, uint uiBufferSize);
+	HRESULT DGLE2_API GetVersion(char* pcBuffer, uint uiBufferSize);
 
 #ifndef DGLE2_USE_COM
 
@@ -213,19 +213,19 @@ public:
 
 #else
 
-	HRESULT CALLBACK SetWindowAPI(IMainWindow *pMainWindow)
+	HRESULT DGLE2_API SetWindowAPI(IMainWindow *pMainWindow)
 	{
 		_pMainWindow = pMainWindow;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK TranslateMessage(const TWinMessage &stWinMsg)
+	HRESULT DGLE2_API TranslateMessage(const TWinMessage &stWinMsg)
 	{
 		_clDelMProc.Invoke(stWinMsg);
 		return S_OK;
 	}
 
-	HRESULT CALLBACK KillEngine()
+	HRESULT DGLE2_API KillEngine()
 	{
 		_bDoExit = true;
 		_MainLoop();
@@ -234,13 +234,13 @@ public:
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetGUID(GUID &guid)
+	HRESULT DGLE2_API GetGUID(GUID &guid)
 	{
 		guid = IID_IEngineCore;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
+	HRESULT DGLE2_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
 	{
 		*ppvObject = NULL;
 		
@@ -261,8 +261,8 @@ public:
 		return S_OK;
 	}
 	
-	ULONG CALLBACK AddRef(){return 1;}
-	ULONG CALLBACK Release(){return 1;}
+	ULONG DGLE2_API AddRef(){return 1;}
+	ULONG DGLE2_API Release(){return 1;}
 
 #endif//DGLE2_USE_COM
 

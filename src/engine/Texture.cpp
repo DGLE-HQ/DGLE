@@ -35,27 +35,27 @@ CTexture::~CTexture()
 	_pCoreTexture->Free();
 }
 
-HRESULT CALLBACK CTexture::SetFrameSize(uint uiFrameWidth, uint uiFrameHeight)
+HRESULT DGLE2_API CTexture::SetFrameSize(uint uiFrameWidth, uint uiFrameHeight)
 {
 	_uiFrameWidth	= uiFrameWidth;
 	_uiFrameHeight	= uiFrameHeight;
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight)
+HRESULT DGLE2_API CTexture::GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight)
 {
 	uiFrameWidth	= _uiFrameWidth;
 	uiFrameHeight	= _uiFrameHeight;
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::GetCoreTexture(ICoreTexture *&prCoreTex)
+HRESULT DGLE2_API CTexture::GetCoreTexture(ICoreTexture *&prCoreTex)
 {
 	prCoreTex = _pCoreTexture;
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
+HRESULT DGLE2_API CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
 {
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
 	{
@@ -66,7 +66,7 @@ HRESULT CALLBACK CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
 		return _pRender2D->DrawSpriteA((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), uiFrameIndex, 0.f, EF_BLEND);
 }
 
-HRESULT CALLBACK CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex)
+HRESULT DGLE2_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex)
 {
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
 	{
@@ -77,7 +77,7 @@ HRESULT CALLBACK CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, f
 		return _pRender2D->DrawSpriteA((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), uiFrameIndex, fAngle, EF_BLEND);
 }
 
-HRESULT CALLBACK CTexture::Draw3D(uint uiFrameIndex)
+HRESULT DGLE2_API CTexture::Draw3D(uint uiFrameIndex)
 {
 	_pCoreRenderer->BindTexture(_pCoreTexture);
 
@@ -101,20 +101,20 @@ HRESULT CALLBACK CTexture::Draw3D(uint uiFrameIndex)
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::GetDimensions(uint &uiWidth, uint &uiHeight)
+HRESULT DGLE2_API CTexture::GetDimensions(uint &uiWidth, uint &uiHeight)
 {
 	uiWidth  = _uiWidth;
 	uiHeight = _uiHeight;
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::Bind(uint uiMTextureLayer)
+HRESULT DGLE2_API CTexture::Bind(uint uiMTextureLayer)
 {
 	Core()->pCoreRenderer()->BindTexture(_pCoreTexture);
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::Free()
+HRESULT DGLE2_API CTexture::Free()
 {
 	bool can_delete;
 
@@ -129,13 +129,13 @@ HRESULT CALLBACK CTexture::Free()
 		return S_FALSE;
 }
 
-HRESULT CALLBACK CTexture::GetType(E_ENG_OBJ_TYPE &eObjType)
+HRESULT DGLE2_API CTexture::GetType(E_ENG_OBJ_TYPE &eObjType)
 {
 	eObjType = EOT_TEXTURE;
 	return S_OK;
 }
 
-HRESULT CALLBACK CTexture::GetUnknownType(uint &uiObjUnknownType)
+HRESULT DGLE2_API CTexture::GetUnknownType(uint &uiObjUnknownType)
 {
 	uiObjUnknownType = -1;
 	return S_FALSE;

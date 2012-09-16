@@ -22,8 +22,8 @@ class CMainWindow : public CInstancedObj, public IMainWindow
 	bool					_bIsLooping;
 
 	int WINAPI				_wWinMain(HINSTANCE hInstance);	
-	static LRESULT CALLBACK _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static void CALLBACK	_s_ConsoleQuit(void *pParametr, const char *pcParam);
+	static LRESULT DGLE2_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static void DGLE2_API	_s_ConsoleQuit(void *pParametr, const char *pcParam);
 
 public:
 	

@@ -32,21 +32,21 @@ class CConsoleWindow : public IConsoleWindow
 	std::string			_strLastEditTxt;
 	
 	CConsole *_pConsole;
-	void (CALLBACK *_pOnCmdExec)(CConsole *pConsole, const char *pcCommand); 
-	void (CALLBACK *_pOnCmdComplete)(CConsole *pConsole, const char *pcCommand); 
+	void (DGLE2_API *_pOnCmdExec)(CConsole *pConsole, const char *pcCommand); 
+	void (DGLE2_API *_pOnCmdComplete)(CConsole *pConsole, const char *pcCommand); 
 
 	void _Realign();
 	int WINAPI _WinMain(HINSTANCE hInstance);	
 	
-	static LRESULT CALLBACK _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static LRESULT CALLBACK _s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static LRESULT DGLE2_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static LRESULT DGLE2_API _s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static DWORD WINAPI		_s_ThreadProc(LPVOID lpParameter);
 
 public:
 
 	CConsoleWindow();
 
-	HRESULT InitWindow(bool bSeparateThread, void (CALLBACK *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (CALLBACK *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole);
+	HRESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (DGLE2_API *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole);
 	HRESULT Visible(bool bVisible);
 	HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
 	HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);

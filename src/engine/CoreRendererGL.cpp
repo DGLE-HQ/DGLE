@@ -34,19 +34,19 @@ public:
 	inline GLuint GetVerticesVBO() const { return _verticesVBO; }
 	inline GLuint GetIndexesVBO() const { return _indexesVBO; }
 
-	HRESULT CALLBACK GetVertexBufferObject(GLuint &vbo)
+	HRESULT DGLE2_API GetVertexBufferObject(GLuint &vbo)
 	{
 		vbo = _verticesVBO;
 		return S_OK;
 	}
 	
-	HRESULT CALLBACK GetIndexBufferObject(GLuint &vbo)
+	HRESULT DGLE2_API GetIndexBufferObject(GLuint &vbo)
 	{
 		vbo = _indexesVBO;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetObjectType(E_ENG_OBJ_TYPE &eType)
+	HRESULT DGLE2_API GetObjectType(E_ENG_OBJ_TYPE &eType)
 	{
 		eType = EOT_MESH;
 		return S_OK;
@@ -87,7 +87,7 @@ public:
 	inline uint GetIndexesCount() const { return _uiIndexesCount; }
 	inline const TDrawDataDesc & GetDrawDesc() const { return _stDrawDataDesc; }
 
-	HRESULT CALLBACK GetGeometryData(TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize)
+	HRESULT DGLE2_API GetGeometryData(TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize)
 	{
 		if (uiVerticesDataSize != _uiVerticesDataSize || uiIndexesDataSize != _uiIndexesDataSize)
 			return E_INVALIDARG;
@@ -119,7 +119,7 @@ public:
 		return S_OK;
 	}
 
-	HRESULT CALLBACK SetGeometryData(const TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize)
+	HRESULT DGLE2_API SetGeometryData(const TDrawDataDesc &stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize)
 	{
 		if (uiVerticesDataSize != _uiVerticesDataSize || uiIndexesDataSize != _uiIndexesDataSize)
 			return E_INVALIDARG;
@@ -127,7 +127,7 @@ public:
 		return Reallocate(stDesc, _uiVerticesCount, _uiIndexesCount, _eDrawMode);
 	}
 
-	HRESULT CALLBACK Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode)
+	HRESULT DGLE2_API Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode)
 	{
 		uint vertices_data_size = uiVerticesCount*sizeof(float)*((stDesc.bVertexCoord2 ? 2 : 3) + (stDesc.uiNormalOffset != -1 ? 3 : 0) + (stDesc.uiTexCoordOffset != -1 ? 2 : 0) + (stDesc.uiColorOffset != -1 ? 4 : 0)),
 		 indexes_data_size = uiIndexesCount*(stDesc.bIndexBuffer32 ? sizeof(uint16) : sizeof(uint32))*(stDesc.pIndexBuffer ? 3 : 0);
@@ -185,7 +185,7 @@ public:
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount)
+	HRESULT DGLE2_API GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount)
 	{
 		uiVerticesDataSize = _uiVerticesDataSize;
 		uiVerticesCount = _uiVerticesCount;
@@ -194,31 +194,31 @@ public:
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetBufferDrawDataDesc(TDrawDataDesc &stDesc)
+	HRESULT DGLE2_API GetBufferDrawDataDesc(TDrawDataDesc &stDesc)
 	{
 		stDesc = _stDrawDataDesc;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode)
+	HRESULT DGLE2_API GetBufferDrawMode(E_CORE_RENDERER_DRAW_MODE &eMode)
 	{
 		eMode = _eDrawMode;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetBufferType(E_CORE_RENDERER_BUFFER_TYPE &eType)
+	HRESULT DGLE2_API GetBufferType(E_CORE_RENDERER_BUFFER_TYPE &eType)
 	{
 		eType = _eBufferType;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj)
+	HRESULT DGLE2_API GetBaseObject(IBaseRenderObjectContainer *&prObj)
 	{
 		prObj = &_clGLContainer;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK Free()
+	HRESULT DGLE2_API Free()
 	{
 		delete this;
 		return S_OK;
@@ -244,13 +244,13 @@ public:
 
 	inline GLuint GetTex() const { return _tex; }
 
-	HRESULT CALLBACK GetObjectType(E_ENG_OBJ_TYPE &eType)
+	HRESULT DGLE2_API GetObjectType(E_ENG_OBJ_TYPE &eType)
 	{
 		eType = EOT_TEXTURE;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetTexture(GLuint &texture)
+	HRESULT DGLE2_API GetTexture(GLuint &texture)
 	{
 		texture = _tex;
 		return S_OK;
@@ -342,37 +342,37 @@ public:
 
 	inline GLuint GetTex() const { return _clGLContainer.GetTex(); }
 
-	HRESULT CALLBACK GetSize(uint &width, uint &height)
+	HRESULT DGLE2_API GetSize(uint &width, uint &height)
 	{
 		width = _w; height = _h;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetDepth(uint &depth)
+	HRESULT DGLE2_API GetDepth(uint &depth)
 	{
 		depth = _d;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetType(E_TEXTURE_TYPE &eType)
+	HRESULT DGLE2_API GetType(E_TEXTURE_TYPE &eType)
 	{
 		eType = _type;
 		return S_OK;
 	}
 	
-	HRESULT CALLBACK GetFormat(E_TEXTURE_DATA_FORMAT &eFormat)
+	HRESULT DGLE2_API GetFormat(E_TEXTURE_DATA_FORMAT &eFormat)
 	{
 		eFormat = _format;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK GetLoadFlags(E_TEXTURE_LOAD_FLAGS &eLoadFlags)
+	HRESULT DGLE2_API GetLoadFlags(E_TEXTURE_LOAD_FLAGS &eLoadFlags)
 	{
 		eLoadFlags = _loadFlags;
 		return S_OK;
 	}
 	
-	HRESULT CALLBACK GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel)
+	HRESULT DGLE2_API GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel)
 	{
 		if (!_bMipMaps && uiLodLevel != 0)
 			return E_INVALIDARG;
@@ -395,7 +395,7 @@ public:
 		return S_OK;
 	}
 
-	HRESULT CALLBACK SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel)
+	HRESULT DGLE2_API SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel)
 	{
 		if (!_bMipMaps && uiLodLevel != 0)
 			return E_INVALIDARG;
@@ -415,7 +415,7 @@ public:
 		return S_OK;
 	}
 
-	HRESULT CALLBACK Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat)
+	HRESULT DGLE2_API Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat)
 	{
 		if (eDataFormat != _format)
 			return E_INVALIDARG;
@@ -447,13 +447,13 @@ public:
 				return S_OK;
 	}
 
-	HRESULT CALLBACK GetBaseObject(IBaseRenderObjectContainer *&prObj)
+	HRESULT DGLE2_API GetBaseObject(IBaseRenderObjectContainer *&prObj)
 	{
 		prObj = &_clGLContainer;
 		return S_OK;
 	}
 
-	HRESULT CALLBACK Free()
+	HRESULT DGLE2_API Free()
 	{
 		delete this;
 		return S_OK;
@@ -473,12 +473,12 @@ _uiOverallTrianglesCount(0), _bVerticesBufferBindedFlag(false), _bIndexesBufferB
 	Console()->RegComValue("cr_profiler", "Displays CoreRendererGL subsystems profiler.", &_iProfilerState, 0, 2);
 }
 
-HRESULT CALLBACK CCoreRendererGL::Prepare(TCRendererInitResult &stResults)
+HRESULT DGLE2_API CCoreRendererGL::Prepare(TCRendererInitResult &stResults)
 {
 	return CBaseRendererGL::Prepare(stResults) ? S_OK : E_FAIL;
 }
 
-HRESULT CALLBACK CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
+HRESULT DGLE2_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 {
 	LOG("Initializing Core Renderer...", LT_INFO);
 
@@ -580,7 +580,7 @@ HRESULT CALLBACK CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::Finalize()
+HRESULT DGLE2_API CCoreRendererGL::Finalize()
 {
 	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
@@ -593,23 +593,23 @@ HRESULT CALLBACK CCoreRendererGL::Finalize()
 	return ret;
 }
 
-HRESULT CALLBACK CCoreRendererGL::AdjustMode(TEngWindow &stNewWin)
+HRESULT DGLE2_API CCoreRendererGL::AdjustMode(TEngWindow &stNewWin)
 {
 	return CBaseRendererGL::AdjustMode(stNewWin) ? S_OK : S_FALSE;
 }
 
-HRESULT CALLBACK CCoreRendererGL::MakeCurrent()
+HRESULT DGLE2_API CCoreRendererGL::MakeCurrent()
 {
 	return CBaseRendererGL::MakeCurrent() ? S_OK : E_ABORT;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetClearColor(const TColor4 &stColor)
+HRESULT DGLE2_API CCoreRendererGL::SetClearColor(const TColor4 &stColor)
 {
 	glClearColor(stColor.r, stColor.g, stColor.b, stColor.a);
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::Clear(bool bColor, bool bDepth, bool bStencil)
+HRESULT DGLE2_API CCoreRendererGL::Clear(bool bColor, bool bDepth, bool bStencil)
 {
 	GLbitfield mask = 0;
 
@@ -622,7 +622,7 @@ HRESULT CALLBACK CCoreRendererGL::Clear(bool bColor, bool bDepth, bool bStencil)
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetViewport(uint x, uint y, uint width, uint height)
+HRESULT DGLE2_API CCoreRendererGL::SetViewport(uint x, uint y, uint width, uint height)
 {
 	_stCurrentState.iViewPortX = x; _stCurrentState.iViewPortY = y;
 	_stCurrentState.iViewPortWidth = width; _stCurrentState.iViewPortHeight = height;
@@ -630,32 +630,32 @@ HRESULT CALLBACK CCoreRendererGL::SetViewport(uint x, uint y, uint width, uint h
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetViewport(uint &x, uint &y, uint &width, uint &height)
+HRESULT DGLE2_API CCoreRendererGL::GetViewport(uint &x, uint &y, uint &width, uint &height)
 {
 	x = _stCurrentState.iViewPortX; y = _stCurrentState.iViewPortY;
 	width = _stCurrentState.iViewPortWidth; height = _stCurrentState.iViewPortHeight;
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetScissor(uint x, uint y, uint width, uint height)
+HRESULT DGLE2_API CCoreRendererGL::SetScissor(uint x, uint y, uint width, uint height)
 {
 	glScissor(_stCurrentState.iViewPortX + x, (int)(_stCurrentState.iViewPortHeight - y - height), width, height);
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetLineWidth(float fWidth)
+HRESULT DGLE2_API CCoreRendererGL::SetLineWidth(float fWidth)
 {
 	_pStateMan->glLineWidth(fWidth);
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetPointSize(float fSize)
+HRESULT DGLE2_API CCoreRendererGL::SetPointSize(float fSize)
 {
 	_pStateMan->glPointSize(fSize);
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat)
+HRESULT DGLE2_API CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat)
 {
 	GLenum format;
 	int bytes;
@@ -687,12 +687,12 @@ HRESULT CALLBACK CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataSize,
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
+HRESULT DGLE2_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 {
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
+HRESULT DGLE2_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
 	bool b_non_power_of_two = uiWidth != 1 << (int)floor( ( log( (double)uiWidth ) / log(2.f) ) + 0.5f ) || uiHeight != 1 << (int)floor( ( log( (double)uiHeight ) / log(2.f) ) + 0.5f );
 
@@ -995,7 +995,7 @@ HRESULT CALLBACK CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint
 	return ret;
 }
 
-HRESULT CALLBACK CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType)
+HRESULT DGLE2_API CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType)
 {
 	if (!stDrawDesc.pData || uiVerticesCount == 0)
 		return E_INVALIDARG;
@@ -1050,14 +1050,14 @@ HRESULT CALLBACK CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *&prB
 	return ret;
 }
 
-HRESULT CALLBACK CCoreRendererGL::ToggleStateFilter(bool bEnabled)
+HRESULT DGLE2_API CCoreRendererGL::ToggleStateFilter(bool bEnabled)
 {
 	_bStateFilterEnabled = bEnabled;
 	_pStateMan = bEnabled ? (_pCachedStateMan->~CStateManager(), new(_pCachedStateMan) CStateManager<true>(InstIdx(), _iMaxTexUnits), static_cast<IStateManager *>(_pCachedStateMan)) : &_clPassThroughStateMan;
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::PushStates()
+HRESULT DGLE2_API CCoreRendererGL::PushStates()
 {
 	_pStateMan->Push();
 	_clStatesStack.push(_stCurrentState);
@@ -1065,7 +1065,7 @@ HRESULT CALLBACK CCoreRendererGL::PushStates()
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::PopStates()
+HRESULT DGLE2_API CCoreRendererGL::PopStates()
 {
 	if (_clStatesStack.empty())
 		return E_ABORT;
@@ -1085,7 +1085,7 @@ HRESULT CALLBACK CCoreRendererGL::PopStates()
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType)
+HRESULT DGLE2_API CCoreRendererGL::SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType)
 {
 	if (eMatType != MT_MODELVIEW)
 	{
@@ -1111,7 +1111,7 @@ HRESULT CALLBACK CCoreRendererGL::SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE 
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType)
+HRESULT DGLE2_API CCoreRendererGL::GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType)
 {
 	switch (eMatType)
 	{
@@ -1225,7 +1225,7 @@ __forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc,
 	return true;
 }
 
-HRESULT CALLBACK CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
+HRESULT DGLE2_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
 {
 	++_uiOverallDrawCalls;
 
@@ -1294,7 +1294,7 @@ HRESULT CALLBACK CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_R
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
+HRESULT DGLE2_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 {
 	if (!pBuffer && GLEW_ARB_vertex_buffer_object)
 	{
@@ -1328,14 +1328,14 @@ HRESULT CALLBACK CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetColor(const TColor4 &stColor)
+HRESULT DGLE2_API CCoreRendererGL::SetColor(const TColor4 &stColor)
 {
 	_pStateMan->glColor4f(stColor.r, stColor.g, stColor.b, stColor.a);
 	_stCurrentState.stColor = stColor;
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::ToggleBlendState(bool bEnabled)
+HRESULT DGLE2_API CCoreRendererGL::ToggleBlendState(bool bEnabled)
 {
 	_stCurrentState.stBlendDesc.bEnable = bEnabled;
 
@@ -1347,7 +1347,7 @@ HRESULT CALLBACK CCoreRendererGL::ToggleBlendState(bool bEnabled)
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::ToggleAlphaTestState(bool bEnabled)
+HRESULT DGLE2_API CCoreRendererGL::ToggleAlphaTestState(bool bEnabled)
 {
 	_stCurrentState.stRasterDesc.bAlphaTestEnable = bEnabled;
 
@@ -1376,7 +1376,7 @@ inline GLenum CCoreRendererGL::_GetGLBlendFactor(E_BLEND_FACTOR factor)
 	return GL_ZERO;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetBlendState(const TBlendStateDesc &stState)
+HRESULT DGLE2_API CCoreRendererGL::SetBlendState(const TBlendStateDesc &stState)
 {
 	if (stState.bEnable)
 		_pStateMan->glEnable(GL_BLEND);
@@ -1390,7 +1390,7 @@ HRESULT CALLBACK CCoreRendererGL::SetBlendState(const TBlendStateDesc &stState)
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetBlendState(TBlendStateDesc &stState)
+HRESULT DGLE2_API CCoreRendererGL::GetBlendState(TBlendStateDesc &stState)
 {
 	stState = _stCurrentState.stBlendDesc;
 	return S_OK;
@@ -1413,7 +1413,7 @@ inline GLenum CCoreRendererGL::_GetGLComparsionMode(E_COMPARISON_FUNC mode)
 	return GL_NEVER;
 }
 
-HRESULT CALLBACK CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTextureLayer)
+HRESULT DGLE2_API CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTextureLayer)
 {
 	if (uiTextureLayer > (uint)_iMaxTexUnits)
 		return E_INVALIDARG;
@@ -1438,7 +1438,7 @@ HRESULT CALLBACK CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTexture
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetDepthStencilState(const TDepthStencilDesc &stState)
+HRESULT DGLE2_API CCoreRendererGL::SetDepthStencilState(const TDepthStencilDesc &stState)
 {
 	if (stState.bDepthTestEnable)
 		_pStateMan->glEnable(GL_DEPTH_TEST);
@@ -1457,13 +1457,13 @@ HRESULT CALLBACK CCoreRendererGL::SetDepthStencilState(const TDepthStencilDesc &
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetDepthStencilState(TDepthStencilDesc &stState)
+HRESULT DGLE2_API CCoreRendererGL::GetDepthStencilState(TDepthStencilDesc &stState)
 {
 	stState = _stCurrentState.stDepthStencilDesc;
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::SetRasterizerState(const TRasterizerStateDesc &stState)
+HRESULT DGLE2_API CCoreRendererGL::SetRasterizerState(const TRasterizerStateDesc &stState)
 {
 	if (stState.bAlphaTestEnable)
 		_pStateMan->glEnable(GL_ALPHA_TEST);
@@ -1503,13 +1503,13 @@ HRESULT CALLBACK CCoreRendererGL::SetRasterizerState(const TRasterizerStateDesc 
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetRasterizerState(TRasterizerStateDesc &stState)
+HRESULT DGLE2_API CCoreRendererGL::GetRasterizerState(TRasterizerStateDesc &stState)
 {
 	stState = _stCurrentState.stRasterDesc;
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::Present()
+HRESULT DGLE2_API CCoreRendererGL::Present()
 {
 	CBaseRendererGL::Present();
 	_uiUnfilteredDrawSetups = 0;
@@ -1520,7 +1520,7 @@ HRESULT CALLBACK CCoreRendererGL::Present()
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue)
+HRESULT DGLE2_API CCoreRendererGL::GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue)
 {
 	switch (eMetric)
 	{
@@ -1536,7 +1536,7 @@ HRESULT CALLBACK CCoreRendererGL::GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eM
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported)
+HRESULT DGLE2_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported)
 {
 	switch (eFeature)
 	{
@@ -1604,7 +1604,7 @@ void CCoreRendererGL::_ProfilerEventHandler(IBaseEvent *pEvent) const
 	_pStateMan->ResetProfileData();
 }
 
-void CALLBACK CCoreRendererGL::_s_ConPrintGLExts(void *pParametr, const char *pcParam)
+void DGLE2_API CCoreRendererGL::_s_ConPrintGLExts(void *pParametr, const char *pcParam)
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 	
@@ -1616,18 +1616,18 @@ void CALLBACK CCoreRendererGL::_s_ConPrintGLExts(void *pParametr, const char *pc
 		CON(CCoreRendererGL, res.c_str());
 }
 
-void CALLBACK CCoreRendererGL::_s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent)
+void DGLE2_API CCoreRendererGL::_s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent)
 {
 	PTHIS(CCoreRendererGL)->_ProfilerEventHandler(pEvent);
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetRendererType(E_CORE_RENDERER_TYPE &eType)
+HRESULT DGLE2_API CCoreRendererGL::GetRendererType(E_CORE_RENDERER_TYPE &eType)
 {
 	eType = CRT_OPENGL_LEGACY;
 	return S_OK;
 }
 
-HRESULT CALLBACK CCoreRendererGL::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
+HRESULT DGLE2_API CCoreRendererGL::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 {
 	eSubSystemType = ESS_CORE_RENDERER;
 	return S_OK;

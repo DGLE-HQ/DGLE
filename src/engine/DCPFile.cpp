@@ -19,7 +19,7 @@ CInstancedObj(uiInstIdx), _ui32SeekPos(0)
 	_ui32Size = ui32Size;
 }
 
-HRESULT CALLBACK CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+HRESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {	
 	uiRead = uiCount > _ui32Size - _ui32SeekPos ? _ui32Size - _ui32SeekPos : uiCount;
 
@@ -30,13 +30,13 @@ HRESULT CALLBACK CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+HRESULT DGLE2_API CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	LOG("Writing to DCP package is not supported.", LT_WARNING);
 	return E_FAIL;
 }
 
-HRESULT CALLBACK CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+HRESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
 	switch(eWay)
 	{
@@ -50,13 +50,13 @@ HRESULT CALLBACK CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay,
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFile::GetSize(uint32 &ui32Size)
+HRESULT DGLE2_API CDCPFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = _ui32Size;
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFile::IsOpen(bool &bOpened)
+HRESULT DGLE2_API CDCPFile::IsOpen(bool &bOpened)
 {
 	if (_pBuffer)
 		bOpened = true;
@@ -66,7 +66,7 @@ HRESULT CALLBACK CDCPFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFile::GetName(char *pcName, uint uiCharsCount)
+HRESULT DGLE2_API CDCPFile::GetName(char *pcName, uint uiCharsCount)
 {
 	if (uiCharsCount < strlen(_acName))
 	{
@@ -79,7 +79,7 @@ HRESULT CALLBACK CDCPFile::GetName(char *pcName, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CDCPFile::GetPath(char *pcPath, uint uiCharsCount)
 {
 	if (uiCharsCount < strlen(_acPath))
 	{
@@ -92,7 +92,7 @@ HRESULT CALLBACK CDCPFile::GetPath(char *pcPath, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT CALLBACK CDCPFile::Free()
+HRESULT DGLE2_API CDCPFile::Free()
 {
 	delete[] _pBuffer;
 	delete this;

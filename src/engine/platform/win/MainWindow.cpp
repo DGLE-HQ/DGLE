@@ -59,7 +59,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 	return (int) st_msg.wParam;
 }
 
-void CALLBACK CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
+void DGLE2_API CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CMainWindow, "No parametrs expected.");
@@ -67,7 +67,7 @@ void CALLBACK CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 		::SendMessage(PTHIS(CMainWindow)->_tWnd, WM_CLOSE, NULL, NULL);
 }
 
-LRESULT CALLBACK CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT DGLE2_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CMainWindow *this_ptr = (CMainWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 

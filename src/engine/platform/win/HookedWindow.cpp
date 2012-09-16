@@ -16,7 +16,7 @@ _tWnd(NULL), _tDC(NULL), _tRootHWnd(NULL),
 _uiUpdateTimer(-1)
 {}
 
-LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT DGLE2_API CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -59,7 +59,7 @@ LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wP
 	}
 }
 
-LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT DGLE2_API CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -279,7 +279,7 @@ HRESULT CHookedWindow::Free()
 	return S_OK;
 }
 
-void CALLBACK CHookedWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
+void DGLE2_API CHookedWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam)!=0)
 		CON(CHookedWindow, "No parametrs expected.");

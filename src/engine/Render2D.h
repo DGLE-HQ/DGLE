@@ -103,48 +103,48 @@ public:
 	void EndProfiler2D();
 	//------------------//
 
-	HRESULT CALLBACK Begin2D();
-	HRESULT CALLBACK End2D();
-	HRESULT CALLBACK BatchRender(E_BATCH_MODE2D eMode);
-	HRESULT CALLBACK BeginBatch();
-	HRESULT CALLBACK EndBatch();
-	HRESULT CALLBACK NeedToUpdateBatchData(bool &bNeedUpdate);
-	HRESULT CALLBACK SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions); 
-	HRESULT CALLBACK SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale);
-	HRESULT CALLBACK CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull);
+	HRESULT DGLE2_API Begin2D();
+	HRESULT DGLE2_API End2D();
+	HRESULT DGLE2_API BatchRender(E_BATCH_MODE2D eMode);
+	HRESULT DGLE2_API BeginBatch();
+	HRESULT DGLE2_API EndBatch();
+	HRESULT DGLE2_API NeedToUpdateBatchData(bool &bNeedUpdate);
+	HRESULT DGLE2_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions); 
+	HRESULT DGLE2_API SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale);
+	HRESULT DGLE2_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull);
 
-	HRESULT CALLBACK LineWidth(uint uiWidth);
-	HRESULT CALLBACK DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor, uint uiSize);
-	HRESULT CALLBACK DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawRect(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
+	HRESULT DGLE2_API LineWidth(uint uiWidth);
+	HRESULT DGLE2_API DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor, uint uiSize);
+	HRESULT DGLE2_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawRect(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
 
-	HRESULT CALLBACK DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle, E_EFFECT2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle, E_EFFECT2D_FLAGS eFlags);
 
-	HRESULT CALLBACK DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);
 
-	HRESULT CALLBACK Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
-	HRESULT CALLBACK DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY);
+	HRESULT DGLE2_API Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
+	HRESULT DGLE2_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY);
 
-	HRESULT CALLBACK SetRotationPoint(const TPoint2 &stCoords);
-	HRESULT CALLBACK SetScale(const TPoint2 &stScale);
-	HRESULT CALLBACK SetColorMix(const TColor4 &stColor);
-	HRESULT CALLBACK SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode);
-	HRESULT CALLBACK SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4);
-	HRESULT CALLBACK SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4);
+	HRESULT DGLE2_API SetRotationPoint(const TPoint2 &stCoords);
+	HRESULT DGLE2_API SetScale(const TPoint2 &stScale);
+	HRESULT DGLE2_API SetColorMix(const TColor4 &stColor);
+	HRESULT DGLE2_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode);
+	HRESULT DGLE2_API SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4);
+	HRESULT DGLE2_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4);
 
-	HRESULT CALLBACK GetRotationPoint(TPoint2 &stCoords);
-	HRESULT CALLBACK GetScale(TPoint2 &stScale);
-	HRESULT CALLBACK GetColorMix(TColor4 &stColor);
-	HRESULT CALLBACK GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode);
-	HRESULT CALLBACK GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4);
-	HRESULT CALLBACK GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4);
+	HRESULT DGLE2_API GetRotationPoint(TPoint2 &stCoords);
+	HRESULT DGLE2_API GetScale(TPoint2 &stScale);
+	HRESULT DGLE2_API GetColorMix(TColor4 &stColor);
+	HRESULT DGLE2_API GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode);
+	HRESULT DGLE2_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4);
+	HRESULT DGLE2_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4);
 
 	IDGLE2_BASE_IMPLEMENTATION(IRender2D)
 
