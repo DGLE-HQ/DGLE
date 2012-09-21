@@ -37,7 +37,8 @@ public:
 	virtual HRESULT GetWindowHandle(TWinHandle &tHandle) = 0;
 	virtual HRESULT GetDrawContext(TWinDrawHandle &tHandle) = 0;
 	virtual HRESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
-	virtual HRESULT ConfigureWindow(const TEngWindow &stWind) = 0;
+	virtual HRESULT ScreenToClient(int &iX, int &iY) = 0;
+	virtual HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus) = 0;
 	virtual HRESULT SetCaption(const char *pcTxt) = 0;
 	virtual HRESULT BeginMainLoop() = 0;
 	virtual HRESULT KillWindow() = 0;
@@ -67,6 +68,8 @@ public:
 	virtual HRESULT Visible(bool bVisible) = 0;
 	virtual HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) = 0;
 	virtual HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
+	virtual HRESULT GetWindowHandle(TWinHandle &tHandle) = 0;
+	virtual HRESULT GetThreadId(uint32 &ui32Id) = 0;
 	virtual HRESULT OutputTxt(const char *pcTxt, bool bToPrevLine) = 0;
 	virtual HRESULT GetEditTxt(char *pcTxt, uint uiBufferSize) = 0;
 	virtual HRESULT SetEditTxt(const char *pcTxt) = 0;
@@ -89,9 +92,42 @@ public:
 	virtual HRESULT DGLE2_API KillEngine() = 0;
 };
 
+#ifdef ENGINE_PLATFORM_BASE
+
+class IBaseRenderGL
+{
+public:
+	bool Prepare(TCRendererInitResult &stResults);
+	bool Initialize(TCRendererInitResult &stResults);
+	bool Finalize();
+	bool AdjustMode(TEngWindow &stNewWin);
+	bool MakeCurrent();
+	void Present();
+};
+
+class IBaseSound
+{
+public:
+};
+
+class IBaseInput
+{
+public:
+	void ShowCursor(bool bVisible);
+	void GetCursorPos(int &x, int &y);
+	void SetCursorPos(int x, int y);
+	void ClipCursor(uint left, uint top, uint right, uint bottom);
+	bool IsJoystickImplemented();
+	uint JoysticksCount();
+	std::string GetJoystickName(uint id);
+	TJoystickStates GetJoystickStates(uint id);
+};
+
 #ifdef PLATFORM_WINDOWS
+
 TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam);
 void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM &lParam);
+
 #endif
 
 struct TSysTimeAndDate
@@ -121,5 +157,7 @@ void GetEngineFilePath(std::string &strPath);
 bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs, bool bInnerFolders);
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 void Terminate();
+
+#endif //ENGINE_PLATFORM_BASE
 
 }

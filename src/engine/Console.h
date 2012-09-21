@@ -61,6 +61,8 @@ public:
 	~CConsole();
 
 	void  Visible(bool bVisible);
+	TWinHandle GetWindowHandle();
+	uint32 GetThreadId();
 	void  Write(const char *pcText, bool bToPrevLine = false);
 	void  Exec(const char *pcCommand);
 	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare = true); 

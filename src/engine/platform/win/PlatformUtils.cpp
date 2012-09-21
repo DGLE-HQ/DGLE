@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.04.2012 (c)Korotkov Andrey
+\date		17.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -43,7 +43,7 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 			return TWinMessage(WMT_PRESENT);
 		else
 			return TWinMessage();
-
+		
 	case WM_CLOSE:
 		return TWinMessage(WMT_CLOSE);
 
@@ -54,10 +54,10 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		return TWinMessage(WMT_DESTROY);
 
 	case WM_SETFOCUS:
-		return TWinMessage(WMT_ACTIVATED);
+		return TWinMessage(WMT_ACTIVATED, wParam);
 
 	case WM_KILLFOCUS:
-		return TWinMessage(WMT_DEACTIVATED);
+		return TWinMessage(WMT_DEACTIVATED, wParam);
 
 	case WM_MOVING:
 		return TWinMessage(WMT_MOVE, ((RECT*)lParam)->left, ((RECT*)lParam)->top, (RECT*)lParam);
@@ -80,10 +80,44 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 				return TWinMessage(WMT_SIZE, r.right, r.bottom, &r);
 
 	case WM_KEYUP:
-		return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
+		if (lParam & 0x00100000)
+		{
+			if (wParam == 16)
+				return TWinMessage(WMT_KEY_UP, KEY_RSHIFT);
+			else
+				if (wParam == 17)
+					return TWinMessage(WMT_KEY_UP, KEY_RCONTROL);
+				else
+					return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
+		}
+		else
+			return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_KEYDOWN:
-		return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
+		if (lParam & 0x00100000)
+		{
+			if (wParam == 16)
+				return TWinMessage(WMT_KEY_DOWN, KEY_RSHIFT);
+			else
+				if (wParam == 17)
+					return TWinMessage(WMT_KEY_DOWN, KEY_RCONTROL);
+				else
+					return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
+		}
+		else
+			return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
+
+	case WM_SYSKEYUP:
+		if (wParam == VK_MENU)
+			return TWinMessage(WMT_KEY_UP, lParam & 0x00100000 ? KEY_RALT : KEY_LALT);
+		else
+			return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
+	
+	case WM_SYSKEYDOWN:
+		if (wParam == VK_MENU)
+			return TWinMessage(WMT_KEY_DOWN, lParam & 0x00100000 ? KEY_RALT : KEY_LALT);
+		else
+			return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_CHAR:
 		return TWinMessage(WMT_ENTER_CHAR, (uint32)wParam);

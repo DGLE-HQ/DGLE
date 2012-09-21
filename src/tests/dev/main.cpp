@@ -42,6 +42,7 @@ ENG_DYNAMIC_FUNC
 #define SCREEN_Y 600
 
 IEngineCore *pEngineCore = NULL;
+IInput *pInput = NULL;
 IRender2D *pRender2D = NULL;
 uint uiCounter = 0;
 
@@ -49,6 +50,8 @@ ITexture *pTex = NULL;
 
 void DGLE2_API Init(void *pParametr)
 {
+	pEngineCore->GetSubSystem(ESS_INPUT, (IEngineSubSystem *&)pInput);
+
 	IResourceManager *prman;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)prman);
 	prman->Load(RESOURCE_PATH"tests\\npot_tex.bmp", (IEngBaseObj *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
@@ -64,6 +67,13 @@ void DGLE2_API Free(void *pParametr)
 
 void DGLE2_API Update(void *pParametr)
 {
+	bool b_prsd;
+
+	pInput->GetKey(KEY_ESCAPE, b_prsd);
+
+	if (b_prsd)
+		pEngineCore->QuitEngine();
+
 	++uiCounter;
 }
 

@@ -43,7 +43,8 @@ public:
 	HRESULT GetWindowHandle(TWinHandle &tHandle);
 	HRESULT GetDrawContext(TWinDrawHandle &tHandle);
 	HRESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight);
-	HRESULT ConfigureWindow(const TEngWindow &stWind);
+	HRESULT ScreenToClient(int &iX, int &iY);
+	HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus);
 	HRESULT SetCaption(const char *pcTxt);
 	HRESULT BeginMainLoop();
 	HRESULT KillWindow();

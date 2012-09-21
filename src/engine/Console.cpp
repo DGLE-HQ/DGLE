@@ -348,6 +348,22 @@ void CConsole::Visible(bool IsVisible)
 	_pConsoleWindow->Visible(IsVisible);
 }
 
+TWinHandle CConsole::GetWindowHandle()
+{
+	TWinHandle handle;
+	_pConsoleWindow->GetWindowHandle(handle);
+	
+	return handle;
+}
+
+uint32 CConsole::GetThreadId()
+{
+	uint32 thread_id;
+	_pConsoleWindow->GetThreadId(thread_id);
+
+	return thread_id;
+}
+
 void CConsole::Write(const char* pcText, bool bToPrevLine)
 {
 	_pConsoleWindow->OutputTxt(pcText, bToPrevLine);

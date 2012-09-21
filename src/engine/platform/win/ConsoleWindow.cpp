@@ -99,6 +99,20 @@ HRESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeigh
 	return S_OK;
 }
 
+HRESULT CConsoleWindow::GetWindowHandle(TWinHandle &tHandle)
+{
+	tHandle = _hWnd;
+
+	return S_OK;
+}
+
+HRESULT CConsoleWindow::GetThreadId(uint32 &ui32Id)
+{
+	ui32Id = _threadId;
+
+	return S_OK;
+}
+
 HRESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 {
 	int cur_l = GetWindowTextLength(_hMemo);

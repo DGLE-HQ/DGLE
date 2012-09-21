@@ -65,7 +65,7 @@ HRESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
 
 bool CSplashWindow::_CreateWindow()
 {
-	_tWnd = CreateWindowEx(WS_EX_TOPMOST, "STATIC", "", WS_POPUP | SS_BITMAP, 0, 0, 0, 0, NULL, NULL, hModule, NULL);
+	_tWnd = CreateWindowEx(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST, "STATIC", "", WS_POPUP | SS_BITMAP, 0, 0, 0, 0, NULL, NULL, hModule, NULL);
 
 	if (!_tWnd)
 	{

@@ -18,7 +18,6 @@ See "DGLE2.h" for more details.
 
 #define USE_GLEW_HEADER
 #define OPENGL_LEGACY_BASE_OBJECTS
-
 #include "DGLE2_CoreRenderer.h"
 
 using namespace DGLE2;
@@ -54,14 +53,10 @@ typedef HMODULE TDynLibHandle;
 #include <type_traits>
 #include <io.h>
 
-//#include <Math.h>
-//#include <nv_algebra.h>
-
-//#include <glew.h> 
-//#include <wglew.h>
-
 #include "Utils.h"
 #include "FuncDelegate.h"
+
+#define ENGINE_PLATFORM_BASE
 #include "PlatformAPI.h"
 
 class CCore;
@@ -166,8 +161,8 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 //#define GL_SMAN RENDERGL->pSMan()
 #define PTHIS(cl_name) (reinterpret_cast<cl_name *>(pParametr))
 #define CON(cl_name, txt) PTHIS(cl_name)->Console()->Write(txt, false)
-#define LOG(txt, type) LogWrite(this->InstIdx(), std::string(txt).c_str(), type, __FILE__, __LINE__)
-#define LOG2(cl_name, txt, type) LogWrite(PTHIS(cl_name)->InstIdx(), std::string(txt).c_str(), type, __FILE__, __LINE__)
+#define LOG(txt, type) LogWrite(this->InstIdx(), std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG2(cl_name, txt, type) LogWrite(PTHIS(cl_name)->InstIdx(), std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
 
 #define OUTPUT_HR_MESSAGE(message, hr, type) \
 {\

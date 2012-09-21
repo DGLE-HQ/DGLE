@@ -78,6 +78,12 @@
       <Filter>Platform\FileSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\engine\Main.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\BaseInput.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
@@ -184,6 +190,12 @@
     <ClInclude Include="..\..\..\src\engine\platform\win\ResFile.h">
       <Filter>Platform\FileSystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\BaseInput.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Platform">
@@ -224,6 +236,9 @@
     </Filter>
     <Filter Include="Common\minilzo">
       <UniqueIdentifier>{300f8b2a-9aa7-4dc5-9a7f-1b2d29503cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{46cbc512-e57e-4c55-b91c-a0a16f783343}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

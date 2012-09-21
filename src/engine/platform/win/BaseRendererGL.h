@@ -16,7 +16,7 @@ See "DGLE2.h" for more details.
 #include <gl\glew.h>
 #include <gl\wglew.h>
 
-class CBaseRendererGL : public CInstancedObj
+class CBaseRendererGL : public CInstancedObj, public IBaseRenderGL
 {
 	HGLRC _hRC;
 	TWinDrawHandle _hDC;

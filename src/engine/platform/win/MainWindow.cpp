@@ -76,10 +76,32 @@ LRESULT DGLE2_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam
 		if (message == WM_DESTROY)
 			PostQuitMessage(0);
 
-		this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(message, wParam, lParam));
+		const TEngInstance &eng_inst = *EngineInstance(this_ptr->InstIdx());
 
-		if ((message == WM_SYSCOMMAND && (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)) || 
-			message == WM_CLOSE)
+		switch(message)
+		{
+		case WM_SETFOCUS:
+		case WM_KILLFOCUS:
+			if (eng_inst.eGetEngFlags & GEF_FORCE_SINGLE_THREAD)
+			{
+				if (wParam == (uint32)eng_inst.pclConsole->GetWindowHandle())
+					wParam = 0;
+			}
+			else
+				break;
+
+		case WM_ACTIVATEAPP:
+			if (!(eng_inst.eGetEngFlags & GEF_FORCE_SINGLE_THREAD))
+			{
+				this_ptr->_pDelMessageProc->Invoke(TWinMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
+				break;
+			}
+
+		default:
+			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(message, wParam, lParam));
+		}
+
+		if ((message == WM_SYSCOMMAND && ( (wParam == SC_KEYMENU && (lParam >> 16) <= 0) || wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)) || message == WM_CLOSE)
 			return 0;
 	}
 
@@ -123,7 +145,7 @@ HRESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &
 	if (_tWnd)
 		return E_INVALIDARG;
 
-	_tWnd = CreateWindowExA(WS_EX_APPWINDOW, "DGLE2WindowClass", "DGLE2 Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 320, 240, NULL, NULL, _tInst, NULL);
+	_tWnd = CreateWindowEx(WS_EX_APPWINDOW, "DGLE2WindowClass", "DGLE2 Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 320, 240, NULL, NULL, _tInst, NULL);
 
 	if (!_tWnd)
 	{
@@ -195,9 +217,20 @@ HRESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 	ClientToScreen(_tWnd, &rb);
 
 	iX = lt.x;
-	iY = rb.x;
+	iY = lt.y;
 	iWidth = rb.x - lt.x;
 	iHeight = rb.y - lt.y;
+
+	return S_OK;
+}
+
+HRESULT CMainWindow::ScreenToClient(int &iX, int &iY)
+{
+	POINT p;
+
+	p.x = iX; p.y = iY;
+	::ScreenToClient(_tWnd, &p);
+	iX = p.x; iY = p.y;
 
 	return S_OK;
 }
@@ -227,7 +260,7 @@ HRESULT CMainWindow::KillWindow()
 	return S_OK;
 }
 
-HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind)
+HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
 	bool builtin_fscreen;
 
@@ -236,8 +269,6 @@ HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind)
 	if (builtin_fscreen)
 		return S_OK;
 
-	DWORD dw_style		= WS_VISIBLE;
-	DWORD dw_style_ex	= WS_EX_APPWINDOW;
 	HRESULT res = S_OK;
 
 	if (_bFScreen && !stWind.bFullScreen)
@@ -261,22 +292,26 @@ HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind)
 		{
 			LOG("Can't set fullscreen mode(" +IntToStr(stWind.uiWidth)+"X"+IntToStr(stWind.uiHeight)+"), switching back to windowed mode.", LT_ERROR);
 			_bFScreen = false;
-			const_cast<TEngWindow *>(&stWind)->bFullScreen = false; //hack consider to remove const in method prototype
+			const_cast<TEngWindow *>(&stWind)->bFullScreen = false;
 			res = S_FALSE;
 		}
 		else
 			_bFScreen = true;
 	}
 
+	DWORD dw_style = NULL;
+
 	if (stWind.bFullScreen)	
-		dw_style |= WS_POPUP;
+		dw_style = WS_POPUP;
 	else
 	{
 		if (stWind.uiFlags & EWF_ALLOW_SIZEING)
-			dw_style |= WS_OVERLAPPEDWINDOW;
+			dw_style = WS_OVERLAPPEDWINDOW;
 		else
-			dw_style |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+			dw_style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 	}
+
+	DWORD dw_style_ex = WS_EX_APPWINDOW;
 
 	if (stWind.uiFlags & EWF_TOPMOST)
 		dw_style_ex |= WS_EX_TOPMOST;
@@ -311,8 +346,6 @@ HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind)
 		if (top_y < 0) top_y = 0;
 	}
 
-	SetWindowPos(_tWnd, HWND_TOP, top_x, top_y, rc.right - rc.left, rc.bottom - rc.top, SWP_FRAMECHANGED);
-
 	if (_bFScreen && !stWind.bFullScreen)
 	{
 		RECT r;
@@ -322,12 +355,16 @@ HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind)
 		_bFScreen = false;
 	}
 
-	SetCursorPos(top_x + (rc.right - rc.left)/2, top_y + (rc.bottom - rc.top)/2);
-		
+	SetWindowPos(_tWnd, HWND_TOP, top_x, top_y, rc.right - rc.left, rc.bottom - rc.top, SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
 	if (IsWindowVisible(_tWnd) == FALSE)
 		ShowWindow(_tWnd, SW_SHOWNA);
 
-	SetForegroundWindow(_tWnd);
+	if (bSetFocus)
+	{
+		SetForegroundWindow(_tWnd);
+		SetCursorPos(top_x + (rc.right - rc.left)/2, top_y + (rc.bottom - rc.top)/2);
+	}
 
 	return res;
 }

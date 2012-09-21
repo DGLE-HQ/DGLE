@@ -1048,9 +1048,8 @@ namespace DGLE2
 	{
 		ICF_DEFAULT					= 0x00000000,
 		ICF_EXCLUSIVE				= 0x00000001,
-		ICF_BLOCK_WINKEYS			= 0x00000002,
-		ICF_HIDE_CURSOR				= 0x00000004,
-		ICF_CURSOR_BEYOND_SCREEN	= 0x00000008
+		ICF_HIDE_CURSOR				= 0x00000002,
+		ICF_CURSOR_BEYOND_SCREEN	= 0x00000004
 	};
 
 	// {64DAAF7F-F92C-425f-8B92-3BE40D8C6666}
@@ -1062,17 +1061,16 @@ namespace DGLE2
 	public:
 		virtual HRESULT DGLE2_API Configure(E_INPUT_CONFIGURATION_FLAGS eFlags = ICF_DEFAULT) = 0;
 	
-		virtual HRESULT DGLE2_API GetMouseStates(TMouseStates &stMStates) const = 0;
-		virtual HRESULT DGLE2_API GetKey(E_KEYBOARD_KEY_CODES eKeyCode, bool &bPressed) const = 0;
-		virtual HRESULT DGLE2_API GetKeyPressed(E_KEYBOARD_KEY_CODES &eKey) const = 0;
-		virtual HRESULT DGLE2_API GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, uchar &cASCIICode) const = 0;
+		virtual HRESULT DGLE2_API GetMouseStates(TMouseStates &stMStates) = 0;
+		virtual HRESULT DGLE2_API GetKey(E_KEYBOARD_KEY_CODES eKeyCode, bool &bPressed) = 0;
+		virtual HRESULT DGLE2_API GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, uchar &cASCIICode) = 0;
 
 		virtual HRESULT DGLE2_API BeginTextInput(char* pcBuffer, uint uiBufferSize) = 0;
 		virtual HRESULT DGLE2_API EndTextInput() = 0;
 		
-		virtual HRESULT DGLE2_API GetJoystickCount(uint &uiCount) = 0;
+		virtual HRESULT DGLE2_API GetJoysticksCount(uint &uiCount) = 0;
+		virtual HRESULT DGLE2_API GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount) = 0;
 		virtual HRESULT DGLE2_API GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates) = 0;
-		virtual HRESULT DGLE2_API GetJoystickButtonPressed(uint uiJoyId, uint uiNumber, bool &bPressed) = 0; // 128 buttons [num 0..127]	
 	};
 
 //Sound SubSystem interfaces//

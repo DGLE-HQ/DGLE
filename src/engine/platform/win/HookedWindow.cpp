@@ -209,7 +209,18 @@ HRESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 	return S_OK;
 }
 
-HRESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind)
+HRESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
+{
+	POINT p;
+
+	p.x = iX; p.y = iY;
+	::ScreenToClient(_tWnd, &p);
+	iX = p.x; iY = p.y;
+
+	return S_OK;
+}
+
+HRESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
 	return S_FALSE;
 }

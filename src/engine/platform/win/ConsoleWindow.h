@@ -50,6 +50,8 @@ public:
 	HRESULT Visible(bool bVisible);
 	HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
 	HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
+	HRESULT GetWindowHandle(TWinHandle &tHandle);
+	HRESULT GetThreadId(uint32 &ui32Id);
 	HRESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
 	HRESULT GetEditTxt(char *pcTxt, uint uiBufferSize);
 	HRESULT SetEditTxt(const char *pcTxt);

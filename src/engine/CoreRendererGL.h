@@ -13,7 +13,10 @@ See "DGLE2.h" for more details.
 
 #ifndef NO_BUILTIN_RENDERER
 
-#include "platform\win\BaseRendererGL.h"
+#ifdef PLATFORM_WINDOWS
+#	include "platform\win\BaseRendererGL.h"
+#endif
+
 #include "StateManagerGL.h"
 
 struct TState

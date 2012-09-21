@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.09.2011 (c)Korotkov Andrey
+\date		17.09.2011 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,13 +15,16 @@ const uint c_MaxProcessCycles		= 10;
 const uint c_AppCaptionMaxLength	= 128;
 const uint c_MaxPluginInterfaceName = 128;
 
-class CInput;
-class CDirectInput;
+#ifdef PLATFORM_WINDOWS
+
+const E_KEYBOARD_KEY_CODES c_eFScreenKeyFirst[2] = {KEY_LALT, KEY_RALT};
+const E_KEYBOARD_KEY_CODES c_eFScreenKeySecond = KEY_RETURN;
+
+#endif
+
 class CMainFS;
 class CResourceManager;
 class CRender;
-class CSoundDX;
-class CSoundMCI;
 
 void InitDbgHelp(uint InstIdx);
 
@@ -67,6 +70,8 @@ class CCore: public CInstancedObj, public IEngineCore
 	char				*_pcCustomSplash;
 	ISplashWindow		*_pSplashWindow;
 
+	bool				 _bCmdKeyIsPressed, _bFScreenKeyIsPressed;
+
 	/** \remark: Setting _bDoExit to true is the the ONLY correct way to quit engine. */
 	bool				 _bDoExit;
 
@@ -74,7 +79,7 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	uint				 _uiProcessInterval;
 	uint64				 _ui64TimeOld;
-	bool				 _bPause;
+	bool				 _bPause, _bWasFScreen;
 	char				 _pcApplicationCaption[c_AppCaptionMaxLength];
 
 	bool				 _bInitedFlag,

@@ -134,8 +134,8 @@ namespace DGLE2
 		WMT_CREATE,		/**< Message indicates that window is being created. Message parameters are not used. */
 		WMT_DESTROY,	/**< Message indicates that window is ready to be destroyed. Message parameters are not used. */
 		WMT_RELEASED,	/**< Message indicates that window was destroyed and released successfully. Message parameters are not used. */
-		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. Message parameters are not used. */
-		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. Message parameters are not used. */
+		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Param1 value is TWinHandle of the whindow which loses focus. */
+		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Param1 value is TWinHandle of the whindow which gets focus. */
 		WMT_MINIMIZED,	/**< Message indicates that window was minimized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
 		WMT_RESTORED,	/**< Message indicates that window was restored to its normal state. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
 		WMT_MOVE,		/**< Message indicates that window is being moved. Message parameter ui32Param1 stores x coordinate of upper left window corner and ui32Param2 stores y coordinate. \note Under Windows pParam3 points to RECT structure with window size. */
@@ -1095,43 +1095,15 @@ namespace DGLE2
 	*/
 	struct TJoystickStates
 	{
-		//ToDo: Убрать не нужное )
-		int iXAxes;		    /**< X-axis position. */
-		int iYAxes;		    /**< Y-axis position. */
-		int iZAxes;		    /**< Z-axis position. */
-		int iXRotate;		/**< X-axis rotation. */
-		int iYRotate;		/**< Y-axis rotation. */
-		int iZRotate;		/**< Z-axis rotation. */
-		int iVX;			/**< X-axis velocity. */
-		int iVY;			/**< Y-axis velocity. */
-		int iVZ;			/**< Z-axis velocity. */
-		int iVXRotate;		/**< X-axis angular velocity. */
-		int iVYRotate;		/**< Y-axis angular velocity. */
-		int iVZRotate;		/**< Z-axis angular velocity. */
-		int iAX;			/**< X-axis acceleration. */
-		int iAY;			/**< Y-axis acceleration. */
-		int iAZ;			/**< Z-axis acceleration. */
-		int iAXRotate;		/**< X-axis angular acceleration. */
-		int iAYRotate;		/**< Y-axis angular acceleration. */
-		int iAZRotate;		/**< Z-axis angular acceleration. */
-		int iFX;			/**< X-axis force. */
-		int iFY;			/**< Y-axis force. */
-		int iFZ;			/**< Z-axis force. */
-		int iFXRotate;		/**< X-axis torque. */
-		int iFYRotate;		/**< y-axis torque. */
-		int iFZRotate;		/**< Z-axis torque. */
-		int iSlider0;		/**< Extra axis position 0. */
-		int iSlider1;		/**< Extra axis position 1.*/
-		int iVSlider0;		/**< Extra axis velocity 0. */
-		int iVSlider1;		/**< Extra axis velocity 0.*/
-		int iASlider0;		/**< Extra axis acceleration 0. */
-		int iASlider1;		/**< Extra axis acceleration 1. */
-		int iFSlider0;		/**< Extra axis force 0. */
-		int iFSlider1;		/**< Extra axis force 1. */
-		int iPOV0;			/**< POV direction 0. */
-		int iPOV1;			/**< POV direction 1. */
-		int iPOV2;			/**< POV direction 2. */
-		int iPOV3;			/**< POV direction 3. */
+		uint uiBtnsCount;	/**< Count of available joystick buttons. */
+		bool bButtons[32];	/**< Array of joystick buttons states (pressed or not). */
+		int iXAxes;		    /**< X-axis position. Value varies -100 to 100. */
+		int iYAxes;		    /**< Y-axis position. Value varies -100 to 100. */
+		int iZAxes;		    /**< Z-axis position. Value varies -100 to 100. */
+		int iRAxes;			/**< Current position of the rudder or fourth joystick axis. Value varies -100 to 100. */
+		int iUAxes;			/**< Current fifth axis position. Value varies -100 to 100. */
+		int iVAxes;			/**< Current sixth axis position. Value varies -100 to 100. */
+		int iPOV;			/**< Point-Of-View direction. */
 	};
 
 #if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.09.2012 (c)Korotkov Andrey
+\date		17.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -12,9 +12,10 @@ See "DGLE2.h" for more details.
 #include "HookedWindow.h"
 #include "SplashWindow.h"
 #include "MainFS.h"
+#include "ResourceManager.h"
+#include "Input.h"
 #include "CoreRendererGL.h"
 #include "Render.h"
-#include "ResourceManager.h"
 #include "Render2D.h"
 
 using namespace std;
@@ -223,8 +224,8 @@ _pMainWindow(NULL), _uiFPSTimer(0),
 _iLogWarningsCount(0), _LogErrorsCount(0),
 _pRender(NULL), _pMainFS(NULL), _pResMan(NULL), _pInput(NULL), _pSound(NULL), _pCoreRenderer(NULL),
 _bBuiltInSound(true), _bBuiltInRenderer(true), _bBuiltInInput(true),
-_pSplashWindow(NULL),
-_bDoExit(false), _bInDrawProfilers(false),
+_pSplashWindow(NULL), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
+_bDoExit(false), _bInDrawProfilers(false), _bWasFScreen(false),
 _bStartedFlag(false), _bInitedFlag(false), _bQuitFlag(false),
 _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
 _bNeedApplyNewWnd(false), _ui64LastUpdateDeltaTime(0),
@@ -361,14 +362,20 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 
 void CCore::_MessageProc(const TWinMessage &stMsg)
 {
+	size_t i;
+
 	switch (stMsg.uiMsgType)
 	{
 	case WMT_REDRAW:
+
 		_clDelMLoop.Invoke();
+
 		break;
 
 	case WMT_CLOSE:
+
 		_bDoExit = true;
+
 		break;
 
 	case WMT_DESTROY:
@@ -386,8 +393,8 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			LOG("Done.", LT_INFO);
 		}
 
-		size_t i;
 		i = 0;
+
 		while (i < _clPlugins.size())
 		{
 			char iname[c_MaxPluginInterfaceName];
@@ -404,6 +411,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		if (!ReleaseTimer(_uiFPSTimer))
 			LOG("Can't release FPS timer.", LT_ERROR);
+
 		break;
 
 	case WMT_RELEASED:
@@ -417,24 +425,15 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 		while (!_clPlugins.empty())
 			_UnloadPlugin(_clPlugins.begin()->pPlugin);
 
-		//
-//		if(_eInitFlags & EIF_FORCE_API_INPUT)
-//			delete (CInput*)_pInput;
-//#ifndef NO_DIRECTX
-//		else
-//			delete (CDirectInput*)_pInput;
-//#endif
-//
-//		if(_pSound)
-//		{
-//			if(_eInitFlags & EIF_FORCE_API_SOUND)
-//				delete (CSoundMCI*)_pSound;
-//#ifndef NO_DIRECTX
-//			else
-//				delete (CSoundDX*)_pSound;
-//#endif
-//		}
-//
+#ifndef NO_BUILTIN_INPUT
+		if (_bBuiltInInput)
+			delete (CInput*)_pInput;
+#endif
+
+#ifndef NO_BUILTIN_SOUND
+		//if (_bSndEnabled && _bBuiltInSound)
+		//	delete (CSound*)_pSound;
+#endif
 
 #ifndef NO_BUILTIN_RENDERER
 		if (_bBuiltInRenderer)
@@ -445,33 +444,92 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		_pMainWindow->Free();
 
-		for (size_t i = 0; i < _clEvents.size(); ++i)
+		for (i = 0; i < _clEvents.size(); ++i)
 			delete _clEvents[i].pDEvent;
 
 		_clEvents.clear();
+
 		break;
 
 	case WMT_ACTIVATED:
+
+		if (stMsg.ui32Param1 == 1)
+			break;
+
 		_bPause = false;	
+
 		_pMainWindow->SetCaption(_pcApplicationCaption);
+		
+		if (_bWasFScreen && !_bNeedApplyNewWnd)
+		{
+			_stWndToApply.bFullScreen = true;
+			ChangeWinMode(_stWndToApply);
+			_bWasFScreen = false;
+		}
+
 		break;
 
 	case WMT_DEACTIVATED:
+
+		if (stMsg.ui32Param1 == 1)
+			break;
+
 		_bPause = true;
+
 		if (_iAllowPause)
 			_pMainWindow->SetCaption((string(_pcApplicationCaption)+string(" [Paused]")).c_str());
+		
+		if (_stWin.bFullScreen && !_bNeedApplyNewWnd)
+		{
+			_bWasFScreen = true;
+			_stWndToApply = _stWin;
+			_stWndToApply.bFullScreen = false;
+			ChangeWinMode(_stWndToApply);
+		}
+
 		break;
 
 	case WMT_RESTORED:
 	case WMT_SIZE:
+
 		_stWin.uiWidth = stMsg.ui32Param1;
 		_stWin.uiHeight= stMsg.ui32Param2;
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
+
 		break;
 
 	case WMT_KEY_UP:
+
+		if (!(_stWin.uiFlags & EWF_RESTRICT_FSCREEN_HOTKEY))
+		{
+			if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
+				_bCmdKeyIsPressed = false;
+
+			if (stMsg.ui32Param1 == c_eFScreenKeySecond)
+				_bFScreenKeyIsPressed = false;
+		}
+
 		if (stMsg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
 			Console()->Visible(true);
+
+		break;
+
+	case WMT_KEY_DOWN:
+
+		if (_stWin.uiFlags & EWF_RESTRICT_FSCREEN_HOTKEY)
+			break;
+
+		if (stMsg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
+		{
+			_bFScreenKeyIsPressed = true;
+			_stWndToApply = _stWin;
+			_stWndToApply.bFullScreen = !_stWndToApply.bFullScreen;
+			ChangeWinMode(_stWndToApply);
+		}
+
+		if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
+			_bCmdKeyIsPressed = true;
+
 		break;
 	}
 
@@ -968,14 +1026,12 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 								break;
 							}
 							else
-							{
 								if (_bSndEnabled)
 								{ 
 									_pSound = (ISound*)pss;
 									_bBuiltInSound = false;
 									break;
 								}
-							}
 						default: 
 							LOG("The subsystem which plugin tries to override is not overridable.", LT_ERROR);
 							_UnloadPlugin(plugin);
@@ -1035,10 +1091,21 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 
 		_pResMan = new CResourceManager(InstIdx());
 
-//		if (_bSndEnabled)
-//			_pSound = new CSoundMCI(InstIdx());
-		
-//		_pInput	= (IInput*)(new CInput(InstIdx()));
+#ifndef NO_BUILTIN_SOUND
+		if (_bSndEnabled && _bBuiltInSound)
+		{
+			LOG("Using builtin core audio based subsystem.", LT_INFO);
+			//_pSound = new CSound(InstIdx());
+		}
+#endif
+
+#ifndef NO_BUILTIN_INPUT
+		if (_bBuiltInInput)
+		{
+			LOG("Using builtin messages based input subsystem.", LT_INFO);
+			_pInput = new CInput(InstIdx());
+		}
+#endif
 
 		_bInitedFlag = true;
 
@@ -1082,7 +1149,7 @@ HRESULT DGLE2_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 {
 	TEngWindow wnd = stNewWin;
 
-	if (SUCCEEDED(_pMainWindow->ConfigureWindow(wnd)) && SUCCEEDED(_pCoreRenderer->AdjustMode(wnd)))
+	if (SUCCEEDED(_pMainWindow->ConfigureWindow(wnd, !_bWasFScreen && !_bFScreenKeyIsPressed)) && SUCCEEDED(_pCoreRenderer->AdjustMode(wnd)))
 	{
 		_stWin = wnd;
 
@@ -1154,7 +1221,7 @@ HRESULT DGLE2_API CCore::StartEngine()
 	if (_pSplashWindow) 
 		_pSplashWindow->Free();
 
-	if (FAILED(_pMainWindow->ConfigureWindow(_stWin)) || FAILED(_pCoreRenderer->AdjustMode(_stWin)))
+	if (FAILED(_pMainWindow->ConfigureWindow(_stWin, true)) || FAILED(_pCoreRenderer->AdjustMode(_stWin)))
 		return E_ABORT;
 
 	_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
