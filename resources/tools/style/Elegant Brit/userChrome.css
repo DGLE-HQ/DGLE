@@ -1,0 +1,22 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /* set default namespace to XUL */
+
+
+menubar > menu
+{
+    color: rgb(100%,100%,100%) !important;
+}
+
+statusbar
+{
+	font-weight: normal !important;
+    color: rgb(50%,50%,50%) !important;
+}
+
+#urlbar[fission="fusion"] > #statusbar-icon .progress-bar
+{
+	-moz-appearance: progresschunk !important;
+}
+
+menubar > menu[_moz-menuactive="true"] {
+color: MenuText !important;
+} 
