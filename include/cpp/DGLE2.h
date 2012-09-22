@@ -738,7 +738,6 @@ namespace DGLE2
 	public:
 		virtual HRESULT DGLE2_API Begin2D() = 0;
 		virtual HRESULT DGLE2_API End2D() = 0;
-		//Note: Only one pair Begin2D-End2D per frame is allowed or batching must be disabled.
 		virtual HRESULT DGLE2_API BatchRender(E_BATCH_MODE2D eMode) = 0;
 		virtual HRESULT DGLE2_API InvalidateBatchData() = 0;
 		virtual HRESULT DGLE2_API BeginBatch(bool bUpdateEveryFrame = false) = 0;

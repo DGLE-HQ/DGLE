@@ -101,10 +101,14 @@ void CRender::BeginRender()
 {
 	_pCoreRenderer->Clear();
 	_pCoreRenderer->SetMatrix(MatrixIdentity());
+
+	_pRender2D->BeginFrame();
 }
 
 void CRender::EndRender()
 {
+	_pRender2D->EndFrame();
+
 	_pCoreRenderer->Present();
 }
 

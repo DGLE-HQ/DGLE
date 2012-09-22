@@ -597,7 +597,7 @@ void CCore::_MainLoop()
 		{
 			if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
 			{
-				if (_pRender && i == cycles_cnt - 1)
+				if (i == cycles_cnt - 1)
 					_pRender->pRender2D()->RefreshBatchData();
 				
 				_InvokeUserCallback(EPT_UPDATE);

@@ -19,9 +19,9 @@ class CRender2D: public CInstancedObj, public IRender2D
 
 	bool _bIn2D;
 	bool _bUseGeometryBuffers;
-
-	// Batching //
 	
+	static const uint _sc_uiMaxBatchsPerFrame = 64;
+
 	std::vector<TVertex2>	
 				 _batchAccumulator;
 	ICoreTexture *_pBatchCurTex;
@@ -35,7 +35,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 	std::vector<ICoreGeometryBuffer *>
 				 _pBatchBuffers;
 	uint		 _batchBufferCurCounter;
-	bool		 _batchBufferReadyToRender;/**< \remark Only in BM_ENABLED_UEP mode. */
+	bool		 _batchBufferReadyToRender;
 	
 	bool		 _bInLocalBatchMode, _bLocalBatchUEP, _bLocalUEPWasTurnedOn;
 	uint		 _batchBuffersRepetedUseCounter,
@@ -45,15 +45,12 @@ class CRender2D: public CInstancedObj, public IRender2D
 				 _batchMinSize;
 
 	inline void	 _BatchFlush();
-	inline bool  _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor); /**< \note Returns true if batch was flushed. */
-
-	// End Batching //
+	inline bool  _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor);
 
 	bool		_bInProfilerMode, _bCameraWasSet;
 	TMatrix		_stCamTransform, _stPrevCamTransform;
 	TPoint2		_stCamScale;
 	
-	// Saved State //
 	TMatrix		_stPrevProjMat, _stPrevModelViewMat;
 	uint		_uiPrevViewPortX, _uiPrevViewPortY, _uiPrevViewPortW, _uiPrevViewPortH;
 	E_EFFECT2D_BLENDING_FLAGS
@@ -79,7 +76,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 
 	bool		_bViewportChanged;
 
-	uint64		_ui64DrawDelay;
+	uint64		_ui64DrawDelay, _ui64DrawAverallDelay;
 	int			_iObjsDrawnCount;
 
 	int			_iProfilerState,
@@ -95,14 +92,14 @@ public:
 
 	inline bool In2DMode() const {return _bIn2D;}
 	__forceinline bool BBoxInScreen(const float *vertices, bool rotated) const; /**< \note \a vertices size must be 8, x and y for each quad point. \a rotated true if quad is not AABB. */
-	__forceinline void DrawTexture(ITexture *tex, const TPoint2 &coord, const TPoint2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags);
+	__forceinline HRESULT DrawTexture(ITexture *tex, const TPoint2 &coord, const TPoint2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags);
 
-	//For CCore use only//
-	void RefreshBatchData();/**< Forces Render2D to rebuild all batches. */
+	void BeginFrame();
+	void EndFrame();
+	void RefreshBatchData();
 	void DrawProfiler();
 	void BeginProfiler2D();
 	void EndProfiler2D();
-	//------------------//
 
 	HRESULT DGLE2_API Begin2D();
 	HRESULT DGLE2_API End2D();

@@ -1256,13 +1256,10 @@ HRESULT DGLE2_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_
 		_pCurBindedBuffer = NULL;
 	}
 
-	if (!_bStateFilterEnabled || (_bStateFilterEnabled &&
-			(
-			(!_bVerticesBufferBindedFlag || (_bVerticesBufferBindedFlag && _pCurBindedBuffer == _pLastDrawnBuffer))
-			&& ( memcmp(&stDrawDesc, &_stDrawDataDesc, sizeof(TDrawDataDesc)) != 0 || eMode != _eDrawMode || uiCount != _uiDrawCount )
-			) ||
+	if (!_bStateFilterEnabled || (
+			((!_bVerticesBufferBindedFlag || _pCurBindedBuffer == _pLastDrawnBuffer) && ( eMode != _eDrawMode || uiCount != _uiDrawCount || memcmp(&stDrawDesc, &_stDrawDataDesc, sizeof(TDrawDataDesc)) != 0 )) ||
 			(_bVerticesBufferBindedFlag && _pCurBindedBuffer != _pLastDrawnBuffer)
-		))
+			))
 	{
 		++_uiUnfilteredDrawSetups;
 
@@ -1606,7 +1603,7 @@ void CCoreRendererGL::_ProfilerEventHandler(IBaseEvent *pEvent) const
 	{
 		if (_bStateFilterEnabled)
 		{
-			Core()->RenderProfilerTxt(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
 			Core()->RenderProfilerTxt(("Overall triangles:" + UIntToStr(_uiOverallTrianglesCount)).c_str(), TColor4());
 
 			string str("Draw states setups (unfiltered/overall):" + UIntToStr(_uiUnfilteredDrawSetups) + '/' + UIntToStr(_uiOverallDrawSetups));

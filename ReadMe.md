@@ -74,9 +74,7 @@ void DGLE2_API Init(void *pParametr)
 
 void DGLE2_API Render(void *pParametr)
 {
-	pRender2D->Begin2D();
 	pFont->Draw2D(0, 0, "Hello, World!");
-	pRender2D->End2D();
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

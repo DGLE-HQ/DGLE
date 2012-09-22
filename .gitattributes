@@ -13,6 +13,7 @@
 *.c		text
 *.cpp	text
 *.h		text
+*.txt	text
 
 # Standard to msysgit
 *.doc	diff=astextplain

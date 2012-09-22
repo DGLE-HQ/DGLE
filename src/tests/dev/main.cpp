@@ -79,14 +79,9 @@ void DGLE2_API Update(void *pParametr)
 
 void DGLE2_API Render(void *pParametr)
 {
-	pRender2D->Begin2D();
-	
 	uint w, h;
 	pTex->GetDimensions(w, h);
-
 	pTex->Draw2DSimple((SCREEN_X - w)/2, (SCREEN_Y - w)/2);
-
-	pRender2D->End2D();
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
