@@ -29,6 +29,7 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ - ] Some old stuff (like plugins for browsers) was dropped off.
 [ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
 [ - ] ICF_BLOCK_WINKEYS flag from method Configure of IInput interface.
+[ - ] Draw2DRect method of IBitmapFont cause it is high level method of some higher abstraction level not low level.
 
 And much much more!
 

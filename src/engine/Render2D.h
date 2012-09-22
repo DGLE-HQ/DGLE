@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.09.2012 (c)Korotkov Andrey
+\date		22.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -37,9 +37,10 @@ class CRender2D: public CInstancedObj, public IRender2D
 	uint		 _batchBufferCurCounter;
 	bool		 _batchBufferReadyToRender;/**< \remark Only in BM_ENABLED_UEP mode. */
 	
-	bool		 _bInLocalBatchMode;
+	bool		 _bInLocalBatchMode, _bLocalBatchUEP, _bLocalUEPWasTurnedOn;
 	uint		 _batchBuffersRepetedUseCounter,
 				 _batchBuffersNotModefiedPerFrameCounter,
+				 _batchsCount,
 				 _batchMaxSize,
 				 _batchMinSize;
 
@@ -106,7 +107,8 @@ public:
 	HRESULT DGLE2_API Begin2D();
 	HRESULT DGLE2_API End2D();
 	HRESULT DGLE2_API BatchRender(E_BATCH_MODE2D eMode);
-	HRESULT DGLE2_API BeginBatch();
+	HRESULT DGLE2_API InvalidateBatchData();
+	HRESULT DGLE2_API BeginBatch(bool bUpdateEveryFrame);
 	HRESULT DGLE2_API EndBatch();
 	HRESULT DGLE2_API NeedToUpdateBatchData(bool &bNeedUpdate);
 	HRESULT DGLE2_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions); 

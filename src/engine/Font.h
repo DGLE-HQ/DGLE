@@ -49,7 +49,6 @@ public:
 	HRESULT DGLE2_API GetScale(float &fScale);
 	HRESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight);
 	HRESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor);
-	HRESULT DGLE2_API Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor);
 	HRESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors);
 	HRESULT DGLE2_API Draw3D(const char *pcTxt);
 	

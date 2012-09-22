@@ -1,6 +1,6 @@
 /**
 \author		Kotlyarov Semen aka Kimer
-\date		16.03.2011 (c)Kotlyarov Semen
+\date		16.03.2011 (c)Andrey Korotkov
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.

@@ -170,15 +170,27 @@ public:
 		{
 			_uiVerticesDataSize = vertices_data_size;
 			_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ARRAY_BUFFER_ARB, _clGLContainer.GetVerticesVBO());
-			glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, NULL, (_eBufferType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
-			glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid*)stDesc.pData);
+			
+			if (_eBufferType == CRBT_HARDWARE_STATIC)
+			{
+				glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, NULL, GL_STATIC_DRAW_ARB);
+				glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid*)stDesc.pData);
+			}
+			else
+				glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, (GLvoid*)stDesc.pData, GL_DYNAMIC_DRAW_ARB);
 
 			if (_clGLContainer.GetIndexesVBO() != 0)
 			{
 				_uiIndexesDataSize = indexes_data_size;
 				_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _clGLContainer.GetIndexesVBO());
-				glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, NULL, (_eBufferType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
-				glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer);
+				
+				if (_eBufferType == CRBT_HARDWARE_STATIC)
+				{
+					glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, NULL, GL_STATIC_DRAW_ARB);
+					glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer);
+				}
+				else
+					glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer, GL_DYNAMIC_DRAW_ARB);
 			}
 		}
 
@@ -467,7 +479,9 @@ public:
 CCoreRendererGL::CCoreRendererGL(uint uiInstIdx):
 CBaseRendererGL(uiInstIdx), _clPassThroughStateMan(uiInstIdx), _pCachedStateMan(NULL), _iProfilerState(0),
 _bStateFilterEnabled(true), _uiUnfilteredDrawSetups(0), _uiOverallDrawSetups(0), _uiOverallDrawCalls(0),
-_uiOverallTrianglesCount(0), _bVerticesBufferBindedFlag(false), _bIndexesBufferBindedFlag(false), _uiDrawCount(-1)
+_uiOverallTrianglesCount(0), _pCurBindedBuffer(NULL), _pLastDrawnBuffer(NULL),
+_bVerticesBufferBindedFlag(false), _bIndexesBufferBindedFlag(false),
+_uiDrawCount(-1)
 {
 	Console()->RegComProc("cr_getglextlist", "Reports OpenGL supported extensions list.\r\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
 	Console()->RegComValue("cr_profiler", "Displays CoreRendererGL subsystems profiler.", &_iProfilerState, 0, 2);
@@ -907,7 +921,6 @@ HRESULT DGLE2_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uin
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, i_mipmaps - i_start_level);
 		}
-
 	}
 	else
 	{
@@ -1240,11 +1253,21 @@ HRESULT DGLE2_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_
 	{
 		_pStateMan->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 		_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		_pCurBindedBuffer = NULL;
 	}
 
-	if (_bStateFilterEnabled && (memcmp(&stDrawDesc, &_stDrawDataDesc, sizeof(TDrawDataDesc)) != 0 || eMode != _eDrawMode || uiCount != _uiDrawCount))
+	if (!_bStateFilterEnabled || (_bStateFilterEnabled &&
+			(
+			(!_bVerticesBufferBindedFlag || (_bVerticesBufferBindedFlag && _pCurBindedBuffer == _pLastDrawnBuffer))
+			&& ( memcmp(&stDrawDesc, &_stDrawDataDesc, sizeof(TDrawDataDesc)) != 0 || eMode != _eDrawMode || uiCount != _uiDrawCount )
+			) ||
+			(_bVerticesBufferBindedFlag && _pCurBindedBuffer != _pLastDrawnBuffer)
+		))
 	{
 		++_uiUnfilteredDrawSetups;
+
+		if (_bVerticesBufferBindedFlag)
+			_pLastDrawnBuffer = _pCurBindedBuffer;
 
 		if (stDrawDesc.uiColorOffset != -1)
 		{
@@ -1300,6 +1323,7 @@ HRESULT DGLE2_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 	{
 		_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 		_pStateMan->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		_pCurBindedBuffer = NULL;
 		return S_FALSE;
 	}
 
@@ -1310,6 +1334,8 @@ HRESULT DGLE2_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 		_bVerticesBufferBindedFlag = true;
 
 		_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, buff->GetVerticesVBO());
+
+		_pCurBindedBuffer = buff;
 
 		if (buff->GetIndexesVBO())
 		{

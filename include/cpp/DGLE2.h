@@ -421,6 +421,7 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API Free() = 0;
 		virtual HRESULT DGLE2_API Update(uint64 ui64DeltaTime) = 0;
 		virtual HRESULT DGLE2_API Render() = 0;
+		virtual HRESULT DGLE2_API OnEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
 	};
 
 	/** Type of engine callbacks. 
@@ -739,7 +740,8 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API End2D() = 0;
 		//Note: Only one pair Begin2D-End2D per frame is allowed or batching must be disabled.
 		virtual HRESULT DGLE2_API BatchRender(E_BATCH_MODE2D eMode) = 0;
-		virtual HRESULT DGLE2_API BeginBatch() = 0;
+		virtual HRESULT DGLE2_API InvalidateBatchData() = 0;
+		virtual HRESULT DGLE2_API BeginBatch(bool bUpdateEveryFrame = false) = 0;
 		virtual HRESULT DGLE2_API EndBatch() = 0;
 		virtual HRESULT DGLE2_API NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
 		virtual HRESULT DGLE2_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
@@ -972,7 +974,6 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API GetScale(float &fScale) = 0;
 		virtual HRESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight) = 0;
 		virtual HRESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
-		virtual HRESULT DGLE2_API Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
 		virtual HRESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor = TColor4(), float fAngle = 0, bool bVerticesColors = false) = 0;
 		virtual HRESULT DGLE2_API Draw3D(const char *pcTxt) = 0;
 	};

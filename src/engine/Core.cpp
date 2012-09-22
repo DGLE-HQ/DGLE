@@ -1288,12 +1288,18 @@ HRESULT DGLE2_API CCore::GetTimer(uint64 &uiTick)
 }
 
 HRESULT DGLE2_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
-{	
-	for(size_t i = 0; i < _clEvents.size(); ++i)
-		if(eEventType == _clEvents[i].eType)
+{
+	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
+	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
+		_clUserCallbacks[i]->OnEvent(eEventType, pEvent);
+	)
+
+	for (size_t i = 0; i < _clEvents.size(); ++i)
+		if (eEventType == _clEvents[i].eType)
 		{
-			if(!_clEvents[i].pDEvent->IsNull())
+			if (!_clEvents[i].pDEvent->IsNull())
 				_clEvents[i].pDEvent->Invoke(pEvent);
+			
 			return S_OK;
 		}
 

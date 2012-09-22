@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.09.2012 (c)Korotkov Andrey
+\date		22.09.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,14 +14,15 @@ See "DGLE2.h" for more details.
 using namespace std;
 
 #define _2D_DO_BATCH_UPDATE(mode, tex, is_color)\
-((_batchMode > BM_DISABLED || _bInLocalBatchMode) && (_BatchSet(mode, tex, is_color) || (_batchNeedToRefreshBatches || (_batchMode == BM_ENABLED_UEP && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
+((_batchMode > BM_DISABLED || _bInLocalBatchMode) &&\
+(_BatchSet(mode, tex, is_color) || ((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) || ((_batchMode == BM_ENABLED_UEP || _bLocalBatchUEP) && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
 
 #define IN_2D_GUARD if (!_bIn2D && !_bInProfilerMode) return E_FAIL;
 
 CRender2D::CRender2D(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _iProfilerState(0), _iDoDrawBBoxes(0),
-_bIn2D(false),_bInProfilerMode(false), _bInLocalBatchMode(false),
+_bIn2D(false),_bInProfilerMode(false), _bInLocalBatchMode(false), _bLocalBatchUEP(false), _bLocalUEPWasTurnedOn(false),
 _ui64DrawDelay(0), _iObjsDrawnCount(0),
 _batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
 _batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
@@ -89,9 +90,10 @@ void CRender2D::DrawProfiler()
 	{
 		uint 
 			objs_count  = _iObjsDrawnCount,
-			vbos_count  = (uint)_pBatchBuffers.size(),
-			vbos_in_use = _batchBufferCurCounter,
+			buffs_count = (uint)_pBatchBuffers.size(),
+			buffs_in_use= _batchBufferCurCounter,
 			effective_b = _batchBuffersNotModefiedPerFrameCounter,
+			batches_cnt	= _batchsCount,
 			max_b_size	= _batchMaxSize,
 			min_b_size	= _batchMinSize;
 		uint64
@@ -99,16 +101,17 @@ void CRender2D::DrawProfiler()
 
 		Core()->RenderProfilerTxt("======Render2D Profiler=====", TColor4());
 		Core()->RenderProfilerTxt(("Objects on screen :" + IntToStr(objs_count)).c_str(), TColor4());
+		Core()->RenderProfilerTxt(("Batches per frame :" + UIntToStr(batches_cnt)).c_str(), TColor4());
 		Core()->RenderProfilerTxt(("Render delay      :" + UInt64ToStr(draw_ticks/1000) + "." + IntToStr(draw_ticks%1000) + " ms.").c_str(), TColor4());
 
 		if (_iProfilerState > 1)
 		{
 			Core()->RenderProfilerTxt("--------Batch Render--------", TColor4());
-			Core()->RenderProfilerTxt(("Buffers count  :" + UIntToStr(vbos_count)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Buffers in use :" + UIntToStr(vbos_in_use)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Buffers count  :" + UIntToStr(buffs_count)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Buffers in use :" + UIntToStr(buffs_in_use)).c_str(), TColor4());
 			Core()->RenderProfilerTxt(("Effective calls:" + UIntToStr(effective_b)).c_str(), TColor4());
 			Core()->RenderProfilerTxt(("Max. batch size:" + UIntToStr(max_b_size)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Min. batch size:" + UIntToStr(min_b_size)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Min. batch size:" + UIntToStr(min_b_size == (numeric_limits<uint>::max)() ? 0 : min_b_size)).c_str(), TColor4());
 			Core()->RenderProfilerTxt("----------------------------", TColor4());
 		}
 	}
@@ -236,15 +239,31 @@ HRESULT DGLE2_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::BeginBatch()
+HRESULT DGLE2_API CRender2D::InvalidateBatchData()
+{
+	IN_2D_GUARD
+
+	_BatchFlush();
+
+	_batchNeedToRefreshBatches = true;
+
+	return S_OK;
+}
+
+HRESULT DGLE2_API CRender2D::BeginBatch(bool bUpdateEveryFrame)
 {
 	IN_2D_GUARD
 
 	if (_batchMode > BM_DISABLED)
 		return S_FALSE;
 
+	_bLocalBatchUEP = !bUpdateEveryFrame;
+
 	_bInLocalBatchMode = true;
 
+	if (!bUpdateEveryFrame)
+		_bLocalUEPWasTurnedOn = true;
+	
 	return S_OK;
 }
 
@@ -267,7 +286,9 @@ HRESULT DGLE2_API CRender2D::EndBatch()
 
 HRESULT DGLE2_API CRender2D::NeedToUpdateBatchData(bool &bNeedUpdate)
 {
-	bNeedUpdate = _batchMode != BM_ENABLED_UEP || (!_bInProfilerMode && _batchNeedToRefreshBatches);
+	IN_2D_GUARD
+
+	bNeedUpdate = _batchMode != BM_ENABLED_UEP || (!_bInProfilerMode && (_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)));
 
 	return S_OK;
 }
@@ -310,12 +331,12 @@ inline void CRender2D::_BatchFlush()
 	if (size != 0)
 		desc.pData = (uint8*)&_batchAccumulator[0];
 
-	if ((_bUseGeometryBuffers || _batchMode == BM_ENABLED_UEP) && !_bInLocalBatchMode)
+	if ((_bUseGeometryBuffers && !_bInLocalBatchMode) || _batchMode == BM_ENABLED_UEP || (_bInLocalBatchMode && _bLocalBatchUEP))
 	{
-		_batchBufferCurCounter++;
+		++_batchBufferCurCounter;
 
 		ICoreGeometryBuffer *p_buffer;
-
+		
 		if (_batchBufferCurCounter <= _pBatchBuffers.size())
 		{
 			p_buffer = _pBatchBuffers[_batchBufferCurCounter - 1];
@@ -350,7 +371,7 @@ inline void CRender2D::_BatchFlush()
 		break;
 
 	case CRDM_TRIANGLES:
-		_iObjsDrawnCount += size / 3;
+		_iObjsDrawnCount += size / 6;
 		break;
 
 	default:
@@ -363,6 +384,8 @@ inline void CRender2D::_BatchFlush()
 	_batchAccumulator.clear();
 
 	_batchBufferReadyToRender = false;
+
+	++_batchsCount;
 }
 
 void CRender2D::_Set2DProjMatrix(uint width, uint height)
@@ -385,10 +408,13 @@ HRESULT DGLE2_API CRender2D::Begin2D()
 	
 	_batchBufferCurCounter = 0;
 	_batchBuffersRepetedUseCounter = 0;
+	_batchsCount = 0;
 	_iObjsDrawnCount = 0;
 	
-	if (_batchMode != BM_ENABLED_UEP)
+	if (_batchMode != BM_ENABLED_UEP && !_bLocalUEPWasTurnedOn)
 		_batchNeedToRefreshBatches = true;
+
+	_bLocalUEPWasTurnedOn = false;
 
 	_batchMinSize = (numeric_limits<uint>::max)();
 	_batchMaxSize = 0;
@@ -631,7 +657,7 @@ HRESULT DGLE2_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &s
 	}
 
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 			_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f ,0.f , stColor.r, stColor.g, stColor.b, stColor.a));
@@ -680,7 +706,7 @@ HRESULT DGLE2_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &s
 	}
 
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 		{
@@ -748,7 +774,7 @@ HRESULT DGLE2_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stCol
 	}
 
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 		{
@@ -860,7 +886,7 @@ HRESULT DGLE2_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 
 	float k = 360.f / uiQuality;
 
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 		{
@@ -1159,7 +1185,7 @@ HRESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertic
 
 	IN_2D_GUARD
 
-	if ((_batchNeedToRefreshBatches && !pstVertices) || uiVerticesCount < 3)
+	if (((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) && !pstVertices) || uiVerticesCount < 3)
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;;
@@ -1208,7 +1234,7 @@ HRESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertic
 
 	if (eFlags & PF_FILL)
 	{
-		if (do_batch_update && !_batchNeedToRefreshBatches)
+		if (do_batch_update && !_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 		{		
 			_batchBufferReadyToRender = true;
 			return S_OK;
@@ -1241,7 +1267,7 @@ HRESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertic
 #endif
 		if (do_batch_update)
 		{
-			if (_batchNeedToRefreshBatches)
+			if (_batchNeedToRefreshBatches ||  (_bInLocalBatchMode && !_bLocalBatchUEP))
 				for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
 					for (uint8 v = 0; v < 3; ++v)
 						_batchAccumulator.push_back(pstVertices[tris[tri_idx].index[v]]);
@@ -1281,7 +1307,7 @@ HRESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertic
 	{
 		if (do_batch_update)
 		{
-			if (_batchNeedToRefreshBatches)
+			if (_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP))
 			{
 				for (uint i = 0; i < uiVerticesCount; ++i)
 					_batchAccumulator.push_back(pstVertices[i]);
@@ -1324,7 +1350,7 @@ HRESULT DGLE2_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVert
 {
 	IN_2D_GUARD
 
-	if ((_batchNeedToRefreshBatches && !pstVertices) || uiVerticesCount % 3 != 0)
+	if (((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) && !pstVertices) || uiVerticesCount % 3 != 0)
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;;
@@ -1373,7 +1399,7 @@ HRESULT DGLE2_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVert
 
 	
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 			for (uint i = 0; i < uiVerticesCount/3; ++i)
@@ -1552,7 +1578,7 @@ HRESULT DGLE2_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &stDra
 {
 	IN_2D_GUARD
 
-	if (_batchNeedToRefreshBatches && (!stDrawDesc.bVertexCoord2 || !stDrawDesc.pData || stDrawDesc.uiNormalOffset != -1))
+	if ((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) && (!stDrawDesc.bVertexCoord2 || !stDrawDesc.pData || stDrawDesc.uiNormalOffset != -1))
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;
@@ -1620,7 +1646,7 @@ HRESULT DGLE2_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &stDra
 	}
 
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 		{
@@ -1950,7 +1976,7 @@ __forceinline void CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, c
 	}
 
 	if (do_batch_update)
-		if (!_batchNeedToRefreshBatches)
+		if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP))
 			_batchBufferReadyToRender = true;
 		else
 			{

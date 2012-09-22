@@ -43,6 +43,8 @@ struct TState
 	}
 };
 
+class CCoreGeometryBuffer;
+
 class CCoreRendererGL: public CBaseRendererGL, public ICoreRenderer
 {
 	static const uint _sc_uiMaxVerticesCountForLegacy = 128;
@@ -64,6 +66,7 @@ class CCoreRendererGL: public CBaseRendererGL, public ICoreRenderer
 	E_CORE_RENDERER_DRAW_MODE _eDrawMode;
 	uint _uiDrawCount;
 
+	CCoreGeometryBuffer *_pCurBindedBuffer, *_pLastDrawnBuffer;
 	bool _bVerticesBufferBindedFlag, _bIndexesBufferBindedFlag;
 
 	bool _bStateFilterEnabled;
