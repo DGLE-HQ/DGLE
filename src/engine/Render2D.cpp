@@ -315,7 +315,7 @@ inline bool CRender2D::_BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTextu
 
 void CRender2D::RefreshBatchData()
 {
-//	_batchNeedToRefreshBatches = true;
+	_batchNeedToRefreshBatches = true;
 }
 
 inline void CRender2D::_BatchFlush()
