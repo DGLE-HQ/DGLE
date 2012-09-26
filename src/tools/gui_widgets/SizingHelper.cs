@@ -32,6 +32,12 @@ namespace GuiWidgets
 				return _window;
 			}
 		}
+		private bool _allow_sizing = true;
+		public bool AllowSizing {
+			get {
+				return _allow_sizing;
+			}
+		}
 
 		private Gtk.Widget _border;
 		public Gtk.Widget Border {
@@ -46,6 +52,7 @@ namespace GuiWidgets
 				return _isSizing;
 			}
 		}
+
 		private E_SIZING_SIDE _isSizingSide = 0;
 		// absolute mouse pos
 		private Gdk.Point _lastMousePos = Gdk.Point.Zero;
@@ -56,11 +63,12 @@ namespace GuiWidgets
 
 
 
-		public SizingHelper(Gtk.Widget window, Gtk.Widget border, uint marginSize)
+		public SizingHelper(Gtk.Widget window, Gtk.Widget border, bool allow_sizing, uint marginSize)
 		{
 			this._window = window;
 			this._border = border;
 			this._marginSize = marginSize;
+			this._allow_sizing = allow_sizing;
 
 			// check size request
 			{
@@ -71,13 +79,15 @@ namespace GuiWidgets
 				this._window.SetSizeRequest(100, 100);
 			}
 
-			this._border.AddEvents((int) Gdk.EventMask.PointerMotionMask);
-			
-			this._border.EnterNotifyEvent += HandleEnterNotifyEvent;
-			this._border.LeaveNotifyEvent += HandleLeaveNotifyEvent;
-			this._border.ButtonPressEvent += HandleButtonPressEvent;
-			this._border.ButtonReleaseEvent += HandleButtonReleaseEvent;
-			this._border.MotionNotifyEvent += HandleMotionNotifyEvent;
+			if (_allow_sizing) {
+				this._border.AddEvents((int)Gdk.EventMask.PointerMotionMask);
+				
+				this._border.EnterNotifyEvent += HandleEnterNotifyEvent;
+				this._border.LeaveNotifyEvent += HandleLeaveNotifyEvent;
+				this._border.ButtonPressEvent += HandleButtonPressEvent;
+				this._border.ButtonReleaseEvent += HandleButtonReleaseEvent;
+				this._border.MotionNotifyEvent += HandleMotionNotifyEvent;
+			}
 
 			// Set style for border from resource style
 			Gdk.Color bgc = this._window.Style.Background(Gtk.StateType.Selected);
@@ -274,7 +284,14 @@ namespace GuiWidgets
 			// not sizing
 			if (this._window.GdkWindow.State != Gdk.WindowState.Maximized) {
 				if (!IsSizing) {
-					Gdk.Point localMousePos = new Gdk.Point((int)args.Event.X, (int)args.Event.Y);
+					Gdk.Point localMousePos = Gdk.Point.Zero;
+					//new Gdk.Point((int)args.Event.X, (int)args.Event.Y);
+					{
+						int vx, vy;
+						this._border.GetPointer(out vx, out vy);
+						localMousePos.X = vx;
+						localMousePos.Y = vy;
+					}
 					SelectSizingSide(localMousePos);
 					SelectCursor();
 				}

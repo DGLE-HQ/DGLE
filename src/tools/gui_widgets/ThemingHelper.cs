@@ -15,6 +15,10 @@ namespace GuiWidgets
 	public static class ThemingHelper
 	{
 		private static Assembly _s_exe_assembly = Assembly.GetExecutingAssembly ();
+		public static string default_theme_path = @"./../../../resources/tools/style/gtkrc";
+		public static string default_min_btn_path = @".\..\..\..\resources\tools\style\Title\minimize_button_normal.png";
+		public static string default_max_btn_path = @".\..\..\..\resources\tools\style\Title\maximize_button_normal.png";
+		public static string default_close_btn_path = @".\..\..\..\resources\tools\style\Title\close_button_normal.png";
 
 		public static void LoadTheme ()
 		{
@@ -79,7 +83,7 @@ namespace GuiWidgets
 				}
 			}
 
-			InitTheme(rc_file_path);
+			InitTheme (rc_file_path);
 		}
 
 		public static void UnloadTheme()
@@ -103,15 +107,57 @@ namespace GuiWidgets
 			}    
 		}
 
-		private static void InitTheme (string rc_file_path)
+		public static void InitTheme(string rc_file_path)
 		{
-			if (File.Exists (rc_file_path))
-			{
-				Gtk.Rc.AddDefaultFile (rc_file_path);
-				Gtk.Rc.Parse (rc_file_path);
+			if (File.Exists(rc_file_path)) {
+				Gtk.Rc.AddDefaultFile(rc_file_path);
+				Gtk.Rc.Parse(rc_file_path);
+				//Gtk.Settings.Default.ThemeName = rc_file_path;
+			} else {
+				Console.WriteLine("Faile to load style from " + rc_file_path);
 			}
 		}
 
+		public static void InitTheme ()
+		{
+			string wd = Directory.GetCurrentDirectory();
+			wd = Path.GetFullPath(wd + default_theme_path);
+			InitTheme(wd);
+		}
+
+		public static Gtk.Image LoadImageFromFile(string fileName)
+		{
+			Stream file_stream = null;
+			try {
+				file_stream = System.IO.File.OpenRead(fileName);
+				Gtk.Image img = new Gtk.Image(file_stream);
+				img.SetSizeRequest(13, 16);
+				return img;
+			} catch {
+				return null;
+			} finally {
+				try {
+					if (null != file_stream)
+						file_stream.Close();
+				} catch { 
+				}
+			}
+		}
+
+		public static Gtk.Image LoadImageMinBtn()
+		{
+			return LoadImageFromFile(default_min_btn_path);
+		}
+
+		public static Gtk.Image LoadImageMaxBtn()
+		{
+			return LoadImageFromFile(default_max_btn_path);
+		}
+
+		public static Gtk.Image LoadImageCloseBtn()
+		{
+			return LoadImageFromFile(default_close_btn_path);
+		}
 	}
 }
 

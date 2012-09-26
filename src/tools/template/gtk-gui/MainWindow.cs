@@ -5,9 +5,10 @@ public partial class MainWindow
 {
 	private global::Gtk.UIManager UIManager;
 	private global::Gtk.Action FileAction;
-	private global::Gtk.Action ExitAction;
-	private global::Gtk.Action FileAction1;
-	private global::Gtk.Action ExitAction1;
+	private global::Gtk.Action QuitAction;
+	private global::Gtk.Action HelpAction;
+	private global::Gtk.Action AboutAction;
+	private global::Gtk.Action Action;
 	private global::Gtk.EventBox eventboxNonClient;
 	private global::Gtk.EventBox eventboxClient;
 	private global::Gtk.VBox vboxClient;
@@ -26,9 +27,9 @@ public partial class MainWindow
 	private global::Gtk.SpinButton spinbutton1;
 	private global::Gtk.Calendar calendar3;
 	private global::Gtk.ToggleButton togglebutton2;
-	private global::Gtk.Label label1;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
 	private global::Gtk.TextView textview3;
+	private global::Gtk.Label label1;
 	private global::Gtk.Statusbar statusbar2;
 	
 	protected virtual void Build ()
@@ -40,15 +41,17 @@ public partial class MainWindow
 		this.FileAction = new global::Gtk.Action ("FileAction", global::Mono.Unix.Catalog.GetString ("File"), null, null);
 		this.FileAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("File");
 		w1.Add (this.FileAction, null);
-		this.ExitAction = new global::Gtk.Action ("ExitAction", global::Mono.Unix.Catalog.GetString ("Exit"), null, null);
-		this.ExitAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Exit");
-		w1.Add (this.ExitAction, null);
-		this.FileAction1 = new global::Gtk.Action ("FileAction1", global::Mono.Unix.Catalog.GetString ("File"), null, null);
-		this.FileAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("File");
-		w1.Add (this.FileAction1, null);
-		this.ExitAction1 = new global::Gtk.Action ("ExitAction1", global::Mono.Unix.Catalog.GetString ("Exit"), null, null);
-		this.ExitAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("Exit");
-		w1.Add (this.ExitAction1, null);
+		this.QuitAction = new global::Gtk.Action ("QuitAction", global::Mono.Unix.Catalog.GetString ("Quit"), null, null);
+		this.QuitAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Quit");
+		w1.Add (this.QuitAction, null);
+		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
+		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
+		w1.Add (this.HelpAction, null);
+		this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
+		this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
+		w1.Add (this.AboutAction, null);
+		this.Action = new global::Gtk.Action ("Action", null, null, null);
+		w1.Add (this.Action, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -70,14 +73,16 @@ public partial class MainWindow
 		this.titlebox2.Events = ((global::Gdk.EventMask)(256));
 		this.titlebox2.Name = "titlebox2";
 		this.titlebox2.Title = "Young, strong and crazy!";
+		this.titlebox2.QuitOnClose = true;
+		this.titlebox2.MinimizeVisible = true;
+		this.titlebox2.MaximizeVisible = true;
 		this.vboxClient.Add (this.titlebox2);
 		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vboxClient [this.titlebox2]));
 		w2.Position = 0;
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vboxClient.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar4\'><menu name=\'FileAction1\' action=\'FileAction1\'><menui" +
-			"tem name=\'ExitAction1\' action=\'ExitAction1\'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString (@"<ui><menubar name='menubar4'><menu name='FileAction' action='FileAction'><menuitem name='QuitAction' action='QuitAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu><menu name='Action' action='Action'/></menubar></ui>");
 		this.menubar4 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar4")));
 		this.menubar4.Name = "menubar4";
 		this.vboxClient.Add (this.menubar4);
@@ -111,7 +116,7 @@ public partial class MainWindow
 		this.entry1.InvisibleChar = '●';
 		this.fixed1.Add (this.entry1);
 		global::Gtk.Fixed.FixedChild w5 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.entry1]));
-		w5.X = 9;
+		w5.X = 8;
 		w5.Y = 38;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.comboboxentry1 = global::Gtk.ComboBoxEntry.NewText ();
@@ -122,7 +127,7 @@ public partial class MainWindow
 		this.comboboxentry1.Active = 0;
 		this.fixed1.Add (this.comboboxentry1);
 		global::Gtk.Fixed.FixedChild w6 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.comboboxentry1]));
-		w6.X = 9;
+		w6.X = 8;
 		w6.Y = 68;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.checkbutton1 = new global::Gtk.CheckButton ();
@@ -134,7 +139,7 @@ public partial class MainWindow
 		this.fixed1.Add (this.checkbutton1);
 		global::Gtk.Fixed.FixedChild w7 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.checkbutton1]));
 		w7.X = 287;
-		w7.Y = 11;
+		w7.Y = 13;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.radiobutton1 = new global::Gtk.RadioButton (global::Mono.Unix.Catalog.GetString ("radiobutton1"));
 		this.radiobutton1.CanFocus = true;
@@ -144,7 +149,7 @@ public partial class MainWindow
 		this.radiobutton1.Group = new global::GLib.SList (global::System.IntPtr.Zero);
 		this.fixed1.Add (this.radiobutton1);
 		global::Gtk.Fixed.FixedChild w8 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.radiobutton1]));
-		w8.X = 288;
+		w8.X = 287;
 		w8.Y = 41;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.radiobutton2 = new global::Gtk.RadioButton (global::Mono.Unix.Catalog.GetString ("radiobutton2"));
@@ -155,7 +160,7 @@ public partial class MainWindow
 		this.radiobutton2.Group = this.radiobutton1.Group;
 		this.fixed1.Add (this.radiobutton2);
 		global::Gtk.Fixed.FixedChild w9 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.radiobutton2]));
-		w9.X = 288;
+		w9.X = 287;
 		w9.Y = 66;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.progressbar1 = new global::Gtk.ProgressBar ();
@@ -180,8 +185,8 @@ public partial class MainWindow
 		this.hscale1.ValuePos = ((global::Gtk.PositionType)(3));
 		this.fixed1.Add (this.hscale1);
 		global::Gtk.Fixed.FixedChild w11 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.hscale1]));
-		w11.X = 291;
-		w11.Y = 103;
+		w11.X = 287;
+		w11.Y = 105;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.spinbutton1 = new global::Gtk.SpinButton (0D, 100D, 1D);
 		this.spinbutton1.CanFocus = true;
@@ -193,7 +198,7 @@ public partial class MainWindow
 		this.fixed1.Add (this.spinbutton1);
 		global::Gtk.Fixed.FixedChild w12 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.spinbutton1]));
 		w12.X = 422;
-		w12.Y = 11;
+		w12.Y = 13;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.calendar3 = new global::Gtk.Calendar ();
 		this.calendar3.CanFocus = true;
@@ -214,14 +219,6 @@ public partial class MainWindow
 		w14.X = 79;
 		w14.Y = 9;
 		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.label1 = new global::Gtk.Label ();
-		this.label1.Name = "label1";
-		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
-		this.fixed1.Add (this.label1);
-		global::Gtk.Fixed.FixedChild w15 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label1]));
-		w15.X = 195;
-		w15.Y = 13;
-		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
@@ -234,9 +231,17 @@ public partial class MainWindow
 		this.textview3.Name = "textview3";
 		this.GtkScrolledWindow.Add (this.textview3);
 		this.fixed1.Add (this.GtkScrolledWindow);
-		global::Gtk.Fixed.FixedChild w17 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.GtkScrolledWindow]));
-		w17.X = 169;
-		w17.Y = 137;
+		global::Gtk.Fixed.FixedChild w16 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.GtkScrolledWindow]));
+		w16.X = 169;
+		w16.Y = 140;
+		// Container child fixed1.Gtk.Fixed+FixedChild
+		this.label1 = new global::Gtk.Label ();
+		this.label1.Name = "label1";
+		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
+		this.fixed1.Add (this.label1);
+		global::Gtk.Fixed.FixedChild w17 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label1]));
+		w17.X = 193;
+		w17.Y = 13;
 		this.alignment1.Add (this.fixed1);
 		this.vboxClient.Add (this.alignment1);
 		global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vboxClient [this.alignment1]));
@@ -260,6 +265,7 @@ public partial class MainWindow
 		this.DefaultHeight = 481;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
-		this.ExitAction1.Activated += new global::System.EventHandler (this.OnExitAction1Activated);
+		this.QuitAction.Activated += new global::System.EventHandler (this.OnQuitActionActivated);
+		this.AboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
 	}
 }

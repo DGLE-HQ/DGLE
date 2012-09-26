@@ -7,10 +7,10 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{21FE4ECC-BA49-433C-92F8-226F376FABE0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ToolTemplate</RootNamespace>
+    <RootNamespace>Template</RootNamespace>
     <AssemblyName>Template</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <ApplicationIcon>..\..\..\resources\tools\style\logo.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\..\misc\lamp.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -53,6 +53,8 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="AboutWindow.cs" />
+    <Compile Include="gtk-gui\Template.AboutWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -60,5 +62,11 @@
       <Project>{C408B0C5-2931-414E-AE47-A4F109992E37}</Project>
       <Name>GuiWidgets</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\misc\lamp.ico">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <Link>lamp.ico</Link>
+    </Content>
   </ItemGroup>
 </Project>

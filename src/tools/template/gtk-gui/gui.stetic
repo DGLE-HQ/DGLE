@@ -16,21 +16,26 @@
         <property name="Label" translatable="yes">File</property>
         <property name="ShortLabel" translatable="yes">File</property>
       </action>
-      <action id="ExitAction">
+      <action id="QuitAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Exit</property>
-        <property name="ShortLabel" translatable="yes">Exit</property>
+        <property name="Label" translatable="yes">Quit</property>
+        <property name="ShortLabel" translatable="yes">Quit</property>
+        <signal name="Activated" handler="OnQuitActionActivated" />
       </action>
-      <action id="FileAction1">
+      <action id="HelpAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">File</property>
-        <property name="ShortLabel" translatable="yes">File</property>
+        <property name="Label" translatable="yes">Help</property>
+        <property name="ShortLabel" translatable="yes">Help</property>
       </action>
-      <action id="ExitAction1">
+      <action id="AboutAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Exit</property>
-        <property name="ShortLabel" translatable="yes">Exit</property>
-        <signal name="Activated" handler="OnExitAction1Activated" />
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+        <signal name="Activated" handler="OnAboutActionActivated" />
+      </action>
+      <action id="Action">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -53,6 +58,9 @@
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                     <property name="Title">Young, strong and crazy!</property>
+                    <property name="QuitOnClose">True</property>
+                    <property name="MinimizeVisible">True</property>
+                    <property name="MaximizeVisible">True</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -65,9 +73,13 @@
                   <widget class="Gtk.MenuBar" id="menubar4">
                     <property name="MemberName" />
                     <node name="menubar4" type="Menubar">
-                      <node type="Menu" action="FileAction1">
-                        <node type="Menuitem" action="ExitAction1" />
+                      <node type="Menu" action="FileAction">
+                        <node type="Menuitem" action="QuitAction" />
                       </node>
+                      <node type="Menu" action="HelpAction">
+                        <node type="Menuitem" action="AboutAction" />
+                      </node>
+                      <node type="Menu" action="Action" />
                     </node>
                   </widget>
                   <packing>
@@ -106,7 +118,7 @@
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
-                            <property name="X">9</property>
+                            <property name="X">8</property>
                             <property name="Y">38</property>
                           </packing>
                         </child>
@@ -120,7 +132,7 @@ crazy</property>
                             <property name="Active">0</property>
                           </widget>
                           <packing>
-                            <property name="X">9</property>
+                            <property name="X">8</property>
                             <property name="Y">68</property>
                           </packing>
                         </child>
@@ -135,7 +147,7 @@ crazy</property>
                           </widget>
                           <packing>
                             <property name="X">287</property>
-                            <property name="Y">11</property>
+                            <property name="Y">13</property>
                           </packing>
                         </child>
                         <child>
@@ -150,7 +162,7 @@ crazy</property>
                             <property name="Group">group1</property>
                           </widget>
                           <packing>
-                            <property name="X">288</property>
+                            <property name="X">287</property>
                             <property name="Y">41</property>
                           </packing>
                         </child>
@@ -165,7 +177,7 @@ crazy</property>
                             <property name="Group">group1</property>
                           </widget>
                           <packing>
-                            <property name="X">288</property>
+                            <property name="X">287</property>
                             <property name="Y">66</property>
                           </packing>
                         </child>
@@ -194,8 +206,8 @@ crazy</property>
                             <property name="ValuePos">Bottom</property>
                           </widget>
                           <packing>
-                            <property name="X">291</property>
-                            <property name="Y">103</property>
+                            <property name="X">287</property>
+                            <property name="Y">105</property>
                           </packing>
                         </child>
                         <child>
@@ -211,7 +223,7 @@ crazy</property>
                           </widget>
                           <packing>
                             <property name="X">422</property>
-                            <property name="Y">11</property>
+                            <property name="Y">13</property>
                           </packing>
                         </child>
                         <child>
@@ -239,16 +251,6 @@ crazy</property>
                           <packing>
                             <property name="X">79</property>
                             <property name="Y">9</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="Gtk.Label" id="label1">
-                            <property name="MemberName" />
-                            <property name="LabelProp" translatable="yes">label1</property>
-                          </widget>
-                          <packing>
-                            <property name="X">195</property>
-                            <property name="Y">13</property>
                           </packing>
                         </child>
                         <child>
@@ -283,7 +285,17 @@ crazy</property>
                           </widget>
                           <packing>
                             <property name="X">169</property>
-                            <property name="Y">137</property>
+                            <property name="Y">140</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gtk.Label" id="label1">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label1</property>
+                          </widget>
+                          <packing>
+                            <property name="X">193</property>
+                            <property name="Y">13</property>
                           </packing>
                         </child>
                       </widget>
@@ -304,6 +316,84 @@ crazy</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+            </child>
+          </widget>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="Template.AboutWindow" design-size="255 194">
+    <action-group name="Default" />
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">AboutWindow</property>
+    <property name="TypeHint">Dialog</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="Decorated">False</property>
+    <child>
+      <widget class="Gtk.EventBox" id="eventboxNonClient">
+        <property name="MemberName" />
+        <child>
+          <widget class="Gtk.EventBox" id="eventboxClient">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.VBox" id="vboxClient">
+                <property name="MemberName" />
+                <property name="Spacing">5</property>
+                <child>
+                  <widget class="GuiWidgets.TitleBox" id="titlebox2">
+                    <property name="MemberName" />
+                    <property name="Events">ButtonPressMask</property>
+                    <property name="Title">About</property>
+                    <property name="QuitOnClose">False</property>
+                    <property name="MinimizeVisible">False</property>
+                    <property name="MaximizeVisible">False</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">False</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Image" id="image481">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:..\..\..\misc\dgle2_logo.png</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">False</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                    <property name="Padding">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gtk.TextView" id="textview1">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <property name="Editable">False</property>
+                        <property name="CursorVisible">False</property>
+                        <property name="Text" translatable="yes">DGLE2 Template GUI App
+23.09.2012
+Shestakov Mikhail aka MIKE</property>
+                        <property name="Justification">Center</property>
+                        <property name="PixelsAboveLines">5</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
                   </packing>
                 </child>
               </widget>
