@@ -33,10 +33,6 @@
         <property name="ShortLabel" translatable="yes">About</property>
         <signal name="Activated" handler="OnAboutActionActivated" />
       </action>
-      <action id="Action">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes" />
-      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -79,7 +75,7 @@
                       <node type="Menu" action="HelpAction">
                         <node type="Menuitem" action="AboutAction" />
                       </node>
-                      <node type="Menu" action="Action" />
+                      <node type="Menu" />
                     </node>
                   </widget>
                   <packing>
@@ -155,7 +151,6 @@ crazy</property>
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
                             <property name="Label" translatable="yes">radiobutton1</property>
-                            <property name="Active">True</property>
                             <property name="DrawIndicator">True</property>
                             <property name="HasLabel">True</property>
                             <property name="UseUnderline">True</property>

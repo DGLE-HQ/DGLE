@@ -8,7 +8,6 @@ public partial class MainWindow
 	private global::Gtk.Action QuitAction;
 	private global::Gtk.Action HelpAction;
 	private global::Gtk.Action AboutAction;
-	private global::Gtk.Action Action;
 	private global::Gtk.EventBox eventboxNonClient;
 	private global::Gtk.EventBox eventboxClient;
 	private global::Gtk.VBox vboxClient;
@@ -50,8 +49,6 @@ public partial class MainWindow
 		this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
 		this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 		w1.Add (this.AboutAction, null);
-		this.Action = new global::Gtk.Action ("Action", null, null, null);
-		w1.Add (this.Action, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -82,7 +79,10 @@ public partial class MainWindow
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vboxClient.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString (@"<ui><menubar name='menubar4'><menu name='FileAction' action='FileAction'><menuitem name='QuitAction' action='QuitAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu><menu name='Action' action='Action'/></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar4\'><menu name=\'FileAction\' action=\'FileAction\'><menuite" +
+			"m name=\'QuitAction\' action=\'QuitAction\'/></menu><menu name=\'HelpAction\' action=\'" +
+			"HelpAction\'><menuitem name=\'AboutAction\' action=\'AboutAction\'/></menu><menu/></m" +
+			"enubar></ui>");
 		this.menubar4 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar4")));
 		this.menubar4.Name = "menubar4";
 		this.vboxClient.Add (this.menubar4);
@@ -144,6 +144,7 @@ public partial class MainWindow
 		this.radiobutton1 = new global::Gtk.RadioButton (global::Mono.Unix.Catalog.GetString ("radiobutton1"));
 		this.radiobutton1.CanFocus = true;
 		this.radiobutton1.Name = "radiobutton1";
+		this.radiobutton1.Active = true;
 		this.radiobutton1.DrawIndicator = true;
 		this.radiobutton1.UseUnderline = true;
 		this.radiobutton1.Group = new global::GLib.SList (global::System.IntPtr.Zero);

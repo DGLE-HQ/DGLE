@@ -4,7 +4,7 @@
 clear
 
 # Rebuild solution
-xbuild Tools.sln
+xbuild ./../../common/tools/Tools.sln
 
 # Go to bin destination
 cd ./../../../bin/win/tools
@@ -20,3 +20,6 @@ mkbundle -c -o Template.c -oo Template.o --deps --static Template.exe
 
 # Build Template bundle
 cc -o Temlate -Wall Template.c `pkg-config --cflags --libs mono-2` Template.o
+
+# Delete temporary files
+rm *.pdb *.mdb *.o *.c
