@@ -14,7 +14,7 @@
 	e)	All examples "src/examples/" and common "src/common" source files are named in lower-case with "_" word separator.
 	f)	All engine and plugin sources are named in CamelCase style. Solutions and projects are named in CamelCase as well.
 		The only exceptions are some engine headers like "DGLE2_Types.h", "DGLE2_CoreRenderer.h", "DGLE2_EXT.h", etc. This
-		exception spreads onlu upon system headers started with "DGLE2".
+		exception spreads only upon system headers started with "DGLE2".
 	g)	All binaries are named in CamelCase style.
 	
 2.	Use only "#pragma once" to solve include collisions of headers, never use other metods.

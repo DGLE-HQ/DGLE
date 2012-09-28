@@ -39,3 +39,4 @@
 *.dll	binary
 *.bin	binary
 *.max	binary
+*.wav	binary

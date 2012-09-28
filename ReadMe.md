@@ -128,13 +128,13 @@ Alexey Shaydurov aka Ash (3D graphics programming)
 
 Kuznecov Stanislav aka STAlkerS (plugins and tools development)
 
+Mikhail Shestakov aka Mike (C# GUI and tools development, also png and jpg loaders)
+
 Firstin Anton aka First (Delphi/C# headers and minor additional programming)
 
 Semen Kotlyarov aka Kimer (plugins and tools development)
 
 Ilya Sitnikov aka Sin (C# GUI components and DCP packs)
-
-Mikhail Shestakov aka Mike (png and jpg loaders)
 
 Svyatoslav Lobov aka FascioRoma (GUI components development)
 

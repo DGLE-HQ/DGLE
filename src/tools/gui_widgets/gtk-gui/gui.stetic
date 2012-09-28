@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+    <target-gtk-version>2.12</target-gtk-version>
+  </configuration>
+  <import>
+    <widget-library name="../../../../bin/win/tools/GuiWidgets.dll" internal="true" />
+  </import>
+  <widget class="Gtk.Bin" id="GuiWidgets.TitleBox" design-size="347 24">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.EventBox" id="eventboxTitleBar">
+        <property name="MemberName" />
+        <child>
+          <widget class="Gtk.VBox" id="vboxTitleBar">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.HBox" id="hboxTitleBarTop">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.EventBox" id="eventboxCaption">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.Label" id="labelCaption">
+                        <property name="MemberName" />
+                        <property name="Xpad">7</property>
+                        <property name="Xalign">0</property>
+                        <property name="LabelProp" translatable="yes">Title</property>
+                        <property name="SingleLineMode">True</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.EventBox" id="eventboxButtons">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.HBox" id="hboxButtons">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Button" id="buttonMinimize">
+                            <property name="MemberName" />
+                            <property name="WidthRequest">22</property>
+                            <property name="HeightRequest">22</property>
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextAndIcon</property>
+                            <property name="Icon">stock:gtk-goto-bottom Menu</property>
+                            <property name="Label" translatable="yes" />
+                            <property name="UseUnderline">True</property>
+                            <property name="Xalign">0</property>
+                          </widget>
+                          <packing>
+                            <property name="Position">0</property>
+                            <property name="AutoSize">True</property>
+                            <property name="Expand">False</property>
+                            <property name="Fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gtk.Button" id="buttonMaximize">
+                            <property name="MemberName" />
+                            <property name="WidthRequest">22</property>
+                            <property name="HeightRequest">22</property>
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextAndIcon</property>
+                            <property name="Icon">stock:gtk-goto-top Menu</property>
+                            <property name="Label" translatable="yes" />
+                            <property name="UseUnderline">True</property>
+                          </widget>
+                          <packing>
+                            <property name="Position">1</property>
+                            <property name="AutoSize">True</property>
+                            <property name="Expand">False</property>
+                            <property name="Fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="Gtk.Button" id="buttonClose">
+                            <property name="MemberName" />
+                            <property name="WidthRequest">22</property>
+                            <property name="HeightRequest">22</property>
+                            <property name="CanFocus">True</property>
+                            <property name="Type">TextAndIcon</property>
+                            <property name="Icon">stock:gtk-close Menu</property>
+                            <property name="Label" translatable="yes" />
+                            <property name="UseUnderline">True</property>
+                          </widget>
+                          <packing>
+                            <property name="Position">2</property>
+                            <property name="AutoSize">True</property>
+                            <property name="Expand">False</property>
+                            <property name="Fill">False</property>
+                          </packing>
+                        </child>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="PackType">End</property>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">False</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventboxTitleBarBottom">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.HSeparator" id="hseparatorTitleBarBottom">
+                    <property name="MemberName" />
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</stetic-interface>

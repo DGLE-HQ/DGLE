@@ -168,6 +168,7 @@
     <ClCompile Include="..\..\..\src\engine\MainFS.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\win\BaseInput.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\win\BaseRendererGL.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\win\BaseSound.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\win\ConsoleWindow.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\win\HDFile.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\win\HDFileSystem.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\..\..\src\engine\Render.cpp" />
     <ClCompile Include="..\..\..\src\engine\Render2D.cpp" />
     <ClCompile Include="..\..\..\src\engine\ResourceManager.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Sound.cpp" />
     <ClCompile Include="..\..\..\src\engine\StateManagerGL.cpp" />
     <ClCompile Include="..\..\..\src\engine\Texture.cpp" />
   </ItemGroup>
@@ -209,6 +211,7 @@
     <ClInclude Include="..\..\..\src\engine\platform\PlatformAPI.h" />
     <ClInclude Include="..\..\..\src\engine\platform\win\BaseInput.h" />
     <ClInclude Include="..\..\..\src\engine\platform\win\BaseRendererGL.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\win\BaseSound.h" />
     <ClInclude Include="..\..\..\src\engine\platform\win\ConsoleWindow.h" />
     <ClInclude Include="..\..\..\src\engine\platform\win\HDFile.h" />
     <ClInclude Include="..\..\..\src\engine\platform\win\HDFileSystem.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="..\..\..\src\engine\Render.h" />
     <ClInclude Include="..\..\..\src\engine\Render2D.h" />
     <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />
+    <ClInclude Include="..\..\..\src\engine\Sound.h" />
     <ClInclude Include="..\..\..\src\engine\StateManagerGL.h" />
     <ClInclude Include="..\..\..\src\engine\Texture.h" />
     <ClInclude Include="resource.h" />

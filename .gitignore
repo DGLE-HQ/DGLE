@@ -13,7 +13,11 @@ bin/win/x64/examples/*.exe
 bin/win/plugins/*.dplug
 bin/win/x64/plugins/*.dplug
 bin/win/tools/*.exe
+bin/win/tools/*.dll
+bin/win/tools/*.o
+bin/win/tools/*.c
 bin/win/x64/tools/*.exe
+bin/win/x64/tools/*.dll
 
 # Visual Studio
 *.suo
@@ -74,3 +78,6 @@ xcuserdata
 profile
 *.moved-aside
 DerivedData
+
+#Monodevelop
+*.userprefs

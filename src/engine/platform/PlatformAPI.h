@@ -40,6 +40,7 @@ public:
 	virtual HRESULT ScreenToClient(int &iX, int &iY) = 0;
 	virtual HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus) = 0;
 	virtual HRESULT SetCaption(const char *pcTxt) = 0;
+	virtual HRESULT Minimize() = 0;
 	virtual HRESULT BeginMainLoop() = 0;
 	virtual HRESULT KillWindow() = 0;
 	virtual HRESULT Free() = 0;

@@ -41,14 +41,14 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "Comments", "http://dgle.deeprosoft.com"
+            VALUE "Comments", "See more on http://dgle.dronprogs.org ."
             VALUE "CompanyName", "Andrey Korotkov"
             VALUE "FileDescription", "DGLE2"
             VALUE "FileVersion", "0.3.0.0"
             VALUE "InternalName", "DGLE2"
-            VALUE "LegalCopyright", "Andrey Korotkov (C) 2009"
+            VALUE "LegalCopyright", "Andrey Korotkov (C) 2012"
             VALUE "OriginalFilename", "DGLE2.dll"
-            VALUE "ProductName", "DGLEngine 2"
+            VALUE "ProductName", "DGLE2 ( http://dgle.dronprogs.org )"
             VALUE "ProductVersion", "0.3.0.0"
         END
     END

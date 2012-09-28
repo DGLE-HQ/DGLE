@@ -13,13 +13,13 @@ See "DGLE2.h" for more details.
 
 class CMainWindow : public CInstancedObj, public IMainWindow
 {
-	HINSTANCE				_tInst;
-	TWinHandle				_tWnd;
-	TWinDrawHandle			_tDC;
-	TProcDelegate			*_pDelMainLoop;
-	TMsgProcDelegate		*_pDelMessageProc;
-	bool					_bFScreen;
-	bool					_bIsLooping;
+	HINSTANCE			_hInst;
+	HWND				_hWnd;
+	HDC					_hDC;
+	TProcDelegate		*_pDelMainLoop;
+	TMsgProcDelegate	*_pDelMessageProc;
+	bool				_bFScreen;
+	bool				_bIsLooping;
 
 	int WINAPI				_wWinMain(HINSTANCE hInstance);	
 	static LRESULT DGLE2_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -39,6 +39,7 @@ public:
 	HRESULT ScreenToClient(int &iX, int &iY);
 	HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus);
 	HRESULT SetCaption(const char *pcTxt);
+	HRESULT Minimize();
 	HRESULT BeginMainLoop();
 	HRESULT KillWindow();
 	HRESULT Free();

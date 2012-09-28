@@ -53,8 +53,7 @@ HRESULT CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 
 HRESULT CResFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
-	LOG("Writing to Windows module resources is not supported.", LT_WARNING);
-	return E_FAIL;
+	return E_NOTIMPL;
 }
 
 HRESULT CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)

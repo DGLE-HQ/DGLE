@@ -14,6 +14,7 @@ See "DGLE2.h" for more details.
 #include "MainFS.h"
 #include "ResourceManager.h"
 #include "Input.h"
+#include "Sound.h"
 #include "CoreRendererGL.h"
 #include "Render.h"
 #include "Render2D.h"
@@ -431,8 +432,8 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 #endif
 
 #ifndef NO_BUILTIN_SOUND
-		//if (_bSndEnabled && _bBuiltInSound)
-		//	delete (CSound*)_pSound;
+		if (_bSndEnabled && _bBuiltInSound)
+			delete (CSound*)_pSound;
 #endif
 
 #ifndef NO_BUILTIN_RENDERER
@@ -484,6 +485,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			_bWasFScreen = true;
 			_stWndToApply = _stWin;
 			_stWndToApply.bFullScreen = false;
+			_pMainWindow->Minimize();
 			ChangeWinMode(_stWndToApply);
 		}
 
@@ -948,7 +950,7 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 		Console()->RegComProc ("core_features", "Prints list of features with which engine was build.\r\nw - write to logfile.", &_s_ConFeatures, (void*)this);
 		Console()->RegComProc ("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, (void*)this);
 		Console()->RegComProc ("core_instidx", "Prints Instance Index of current engine unit.", &_s_InstIdx, (void*)this);
-		Console()->RegComProc("core_setmode", "Changes display mode.\r\nUsage: \"core_setmode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\r\nExample:\"core_setmode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
+		Console()->RegComProc ("core_setmode", "Changes display mode.\r\nUsage: \"core_setmode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\r\nExample:\"core_setmode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
 
 		if (!_pMainWindow)
 		{
@@ -1095,7 +1097,7 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 		if (_bSndEnabled && _bBuiltInSound)
 		{
 			LOG("Using builtin core audio based subsystem.", LT_INFO);
-			//_pSound = new CSound(InstIdx());
+			_pSound = new CSound(InstIdx());
 		}
 #endif
 

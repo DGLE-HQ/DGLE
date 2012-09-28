@@ -32,8 +32,7 @@ HRESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 
 HRESULT DGLE2_API CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
-	LOG("Writing to DCP package is not supported.", LT_WARNING);
-	return E_FAIL;
+	return E_NOTIMPL;
 }
 
 HRESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)

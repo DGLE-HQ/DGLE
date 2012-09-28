@@ -12,7 +12,7 @@ See "DGLE2.h" for more details.
 CHookedWindow::CHookedWindow(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _bNoMloopHook(false),
 _stOldWindowProc(NULL), _stOldRootWindowProc(NULL),
-_tWnd(NULL), _tDC(NULL), _tRootHWnd(NULL),
+_hWnd(NULL), _hDC(NULL), _hRootHWnd(NULL),
 _uiUpdateTimer(-1)
 {}
 
@@ -47,7 +47,7 @@ LRESULT DGLE2_API CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM w
 
 		case WM_SIZING:
 			RECT r;
-			GetWindowRect(this_ptr->_tWnd,&r);
+			GetWindowRect(this_ptr->_hWnd, &r);
 			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(WM_SIZING, wParam, (LPARAM)&r));
 			break;
 		}
@@ -82,7 +82,7 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 	if(_stOldWindowProc || _stOldRootWindowProc)
 		return E_FAIL;
 
-	_tWnd = tHandle;
+	_hWnd = tHandle;
 	_pDelMainLoop = pDelMainLoop;
 	_pDelMessageProc = pDelMsgProc;
 	_bNoMloopHook = (Core()->EngWindow()->uiFlags & EWF_DONT_HOOK_MLOOP) != 0;
@@ -93,13 +93,13 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 		return E_INVALIDARG;
 	}
 
-	_tRootHWnd = GetAncestor(_tWnd, GA_ROOT);
+	_hRootHWnd = GetAncestor(_hWnd, GA_ROOT);
 
-	if (_tRootHWnd == NULL)
+	if (_hRootHWnd == NULL)
 		LOG("Can't get root window handle.", LT_ERROR);
 	else
 	{
-		if (_tRootHWnd == _tWnd)
+		if (_hRootHWnd == _hWnd)
 		{
 			LOG("Engine can't be assigned to the root window.", LT_FATAL);
 			return E_INVALIDARG;
@@ -109,28 +109,28 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 			_stOldRootWindowProc = NULL;
 		else
 		{
-			_stOldRootWindowProc = (WNDPROC)SetWindowLongPtr(_tRootHWnd, GWLP_WNDPROC, (LONG_PTR)_s_RootWindowProc);
+			_stOldRootWindowProc = (WNDPROC)SetWindowLongPtr(_hRootHWnd, GWLP_WNDPROC, (LONG_PTR)_s_RootWindowProc);
 
 			if (_stOldRootWindowProc == NULL)
 				LOG("Failed to set root window message hook.", LT_ERROR);
 			else
 			{
-				SetWindowLongPtr(_tRootHWnd, GWLP_USERDATA, (LONG_PTR)this);
+				SetWindowLongPtr(_hRootHWnd, GWLP_USERDATA, (LONG_PTR)this);
 
 				Console()->RegComProc("quit", "Closes owner root window, quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this);
 			}
 		}
 	}
 
-	_stOldWindowProc = (WNDPROC)SetWindowLongPtr(_tWnd, GWLP_WNDPROC, (LONG_PTR)_s_WindowProc);
+	_stOldWindowProc = (WNDPROC)SetWindowLongPtr(_hWnd, GWLP_WNDPROC, (LONG_PTR)_s_WindowProc);
 	
-	if (_stOldWindowProc!=NULL)
+	if (_stOldWindowProc != NULL)
 	{
-		SetWindowLongPtr(_tWnd, GWLP_USERDATA, (LONG_PTR)this);
+		SetWindowLongPtr(_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 	
 		LOG("Window control message hook has been set successfully.", LT_INFO);
 		
-		if (!(_tDC=GetDC(_tWnd)))
+		if (!(_hDC = GetDC(_hWnd)))
 		{
 			LOG("Can't get window Draw Context.", LT_FATAL);
 			return E_FAIL;
@@ -147,44 +147,48 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 
 HRESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
 {
-	if (!_tWnd)
+	if (!_hWnd)
 		return E_FAIL;
 
 	UINT msg; WPARAM wparam; LPARAM lparam;
 	EngMsgToWinAPIMsg(stMsg, msg, wparam, lparam);
-	::SendMessage(_tWnd, msg, wparam, lparam);
+	::SendMessage(_hWnd, msg, wparam, lparam);
+
 	return S_OK;
 }
 
 HRESULT CHookedWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 {
 	eType = WAT_RESTRICTED_ACCESS;
+
 	return S_OK;
 }
 
 HRESULT CHookedWindow::GetWindowHandle(TWinHandle &stHandle)
 {
-	stHandle = _tWnd;
+	stHandle = _hWnd;
+
 	return S_OK;
 }
 
 HRESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
 {
-	if (!_tDC)
+	if (!_hDC)
 		return E_FAIL;
 
-	tHandle = _tDC;
+	tHandle = _hDC;
+
 	return S_OK;
 }
 
 HRESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 {
-	if (!_tWnd)
+	if (!_hWnd)
 		return E_FAIL;
 
 	RECT rect;
 	
-	if (GetClientRect(_tWnd, &rect) == FALSE)
+	if (GetClientRect(_hWnd, &rect) == FALSE)
 	{
 		iX = iY = iWidth = iHeight = 0;
 		LOG("Can't get window client rect.", LT_ERROR);
@@ -198,8 +202,8 @@ HRESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 	rb.x = rect.right;
 	rb.y = rect.bottom;
 
-	ClientToScreen(_tWnd, &lt);
-	ClientToScreen(_tWnd, &rb);
+	ClientToScreen(_hWnd, &lt);
+	ClientToScreen(_hWnd, &rb);
 
 	iX = lt.x;
 	iY = rb.x;
@@ -211,10 +215,13 @@ HRESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 
 HRESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 {
+	if (!_hWnd)
+		return E_FAIL;
+
 	POINT p;
 
 	p.x = iX; p.y = iY;
-	::ScreenToClient(_tWnd, &p);
+	::ScreenToClient(_hWnd, &p);
 	iX = p.x; iY = p.y;
 
 	return S_OK;
@@ -222,16 +229,24 @@ HRESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 
 HRESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
-	return S_FALSE;
+	return E_NOTIMPL;
 }
 
 HRESULT CHookedWindow::SetCaption(const char *pcTxt)
 {
-	return S_FALSE;
+	return E_NOTIMPL;
+}
+
+HRESULT CHookedWindow::Minimize()
+{
+	return E_NOTIMPL;
 }
 
 HRESULT CHookedWindow::BeginMainLoop()
 {
+	if (!_hWnd)
+		return E_FAIL;
+
 	if (!_stOldWindowProc && !_stOldRootWindowProc)
 		return E_FAIL;
 
@@ -260,8 +275,8 @@ void CHookedWindow::_KillWindow()
 		LOG("Can't kill update timer.", LT_ERROR);
 
 	if(
-		SetWindowLongPtr(_tWnd, GWLP_WNDPROC, (LONG_PTR)_stOldWindowProc)!=NULL &&
-		(_stOldRootWindowProc == NULL || SetWindowLongPtr(_tRootHWnd, GWLP_WNDPROC, (LONG_PTR)_stOldRootWindowProc) != NULL)
+		SetWindowLongPtr(_hWnd, GWLP_WNDPROC, (LONG_PTR)_stOldWindowProc)!=NULL &&
+		(_stOldRootWindowProc == NULL || SetWindowLongPtr(_hRootHWnd, GWLP_WNDPROC, (LONG_PTR)_stOldRootWindowProc) != NULL)
 		)
 		LOG("Window controls message hooks unset successfully.", LT_INFO);
 	else 
@@ -275,7 +290,7 @@ void CHookedWindow::_KillWindow()
 
 HRESULT CHookedWindow::KillWindow()
 {
-	if (_tDC && !ReleaseDC(_tWnd,_tDC))
+	if (_hDC && !ReleaseDC(_hWnd, _hDC))
 	{
 		LOG("Failed to release Device Context.", LT_ERROR);
 		return S_FALSE;
@@ -295,5 +310,5 @@ void DGLE2_API CHookedWindow::_s_ConsoleQuit(void *pParametr, const char *pcPara
 	if (strlen(pcParam)!=0)
 		CON(CHookedWindow, "No parametrs expected.");
 	else 
-		::SendMessage(PTHIS(CHookedWindow)->_tRootHWnd, WM_CLOSE, NULL, NULL);
+		::SendMessage(PTHIS(CHookedWindow)->_hRootHWnd, WM_CLOSE, NULL, NULL);
 }

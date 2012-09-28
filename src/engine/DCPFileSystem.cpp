@@ -81,8 +81,7 @@ bool CDCPFileSystem::_ReadFileInfo()
 
 HRESULT DGLE2_API CDCPFileSystem::DeleteFile(const char *pcName)
 {
-	LOG("DCP packages are read only.", LT_ERROR);
-	return E_FAIL;
+	return E_NOTIMPL;
 }
 
 HRESULT DGLE2_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)

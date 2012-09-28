@@ -16,7 +16,7 @@ extern HMODULE hModule;
 
 CSplashWindow::CSplashWindow(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
-_tWnd(NULL), _tOwnerWndHwnd(NULL), _tBmp(NULL)
+_hWnd(NULL), _hOwnerWndHwnd(NULL), _hBmp(NULL)
 {}
 
 HRESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileName)
@@ -44,13 +44,13 @@ HRESULT CSplashWindow::Free()
 {
 	delete[] _pcBmpFile;
 
-	ShowWindow(_tWnd, SW_HIDE);
+	ShowWindow(_hWnd, SW_HIDE);
 
-	if (_tOwnerWndHwnd)
-		SetForegroundWindow(_tOwnerWndHwnd);
+	if (_hOwnerWndHwnd)
+		SetForegroundWindow(_hOwnerWndHwnd);
 
 	if (_bInSeparateThread)
-		PostMessage(_tWnd, WM_QUIT, NULL, NULL);
+		PostMessage(_hWnd, WM_QUIT, NULL, NULL);
 	else
 		_DestroyWindow();
 
@@ -59,15 +59,15 @@ HRESULT CSplashWindow::Free()
 
 HRESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
 {
-	_tOwnerWndHwnd = tOwnerHwnd;
+	_hOwnerWndHwnd = tOwnerHwnd;
 	return S_OK;
 }
 
 bool CSplashWindow::_CreateWindow()
 {
-	_tWnd = CreateWindowEx(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST, "STATIC", "", WS_POPUP | SS_BITMAP, 0, 0, 0, 0, NULL, NULL, hModule, NULL);
+	_hWnd = CreateWindowEx(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST, "STATIC", "", WS_POPUP | SS_BITMAP, 0, 0, 0, 0, NULL, NULL, hModule, NULL);
 
-	if (!_tWnd)
+	if (!_hWnd)
 	{
 		LOG("Can't create splash window.", LT_ERROR);
 		return false;
@@ -81,27 +81,27 @@ bool CSplashWindow::_CreateWindow()
 			LOG("Can't load custom splash bitmap \"" + string(_pcBmpFile) + "\".", LT_ERROR);
 		else
 		{
-			_tBmp = bmp;
+			_hBmp = bmp;
 			bmp = LoadBitmap(hModule, MAKEINTRESOURCE(IDB_BITMAP2));
 
 			BITMAP bm1, bm2; 
-			GetObject(_tBmp, sizeof(BITMAP), &bm1);
+			GetObject(_hBmp, sizeof(BITMAP), &bm1);
 			GetObject(bmp, sizeof(BITMAP), &bm2);
 
 			if (bm1.bmWidth < bm2.bmWidth || bm1.bmHeight < bm2.bmHeight)
 			{
 				LOG("Custom splash picture must be greater than " + IntToStr(bm2.bmWidth) + "X" + IntToStr(bm2.bmHeight) + " pixels.", LT_ERROR);
 				
-				DeleteObject(_tBmp);
+				DeleteObject(_hBmp);
 				DeleteObject(bmp);
 
-				_tBmp = NULL;
+				_hBmp = NULL;
 			}
 			else
 			{
 				HDC desktop_dc	= GetDC(GetDesktopWindow()), hdc1 = CreateCompatibleDC(desktop_dc), hdc2 = CreateCompatibleDC(desktop_dc);
 
-				SelectObject(hdc1, _tBmp);
+				SelectObject(hdc1, _hBmp);
 				SelectObject(hdc2, bmp);
 				BitBlt(hdc1, bm1.bmWidth - bm2.bmWidth, bm1.bmHeight - bm2.bmHeight, bm2.bmWidth, bm2.bmHeight, hdc2, 0, 0, SRCCOPY);
 
@@ -115,9 +115,9 @@ bool CSplashWindow::_CreateWindow()
 				BitBlt(hdc3, 0, 0, bm1.bmWidth, bm1.bmHeight, hdc1, 0, 0, SRCCOPY);
 
 				DeleteDC(hdc1);
-				DeleteObject(_tBmp);
+				DeleteObject(_hBmp);
 
-				_tBmp = (HBITMAP)GetCurrentObject(hdc3, OBJ_BITMAP);
+				_hBmp = (HBITMAP)GetCurrentObject(hdc3, OBJ_BITMAP);
 
 				SelectObject(hdc3, old);
 
@@ -127,30 +127,30 @@ bool CSplashWindow::_CreateWindow()
 		}
 	}
 
-	if (!_tBmp)
-		_tBmp = LoadBitmap(hModule, MAKEINTRESOURCE(IDB_BITMAP1));
+	if (!_hBmp)
+		_hBmp = LoadBitmap(hModule, MAKEINTRESOURCE(IDB_BITMAP1));
 
 
-	if (!_tBmp)
+	if (!_hBmp)
 	{
 		LOG("Can't load splash bitmap from resource.", LT_ERROR);
 		return false;
 	}
 
-	SendMessage(_tWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)_tBmp);
+	SendMessage(_hWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)_hBmp);
 	
 	RECT st_rect;
-	GetClientRect(_tWnd, &st_rect);
+	GetClientRect(_hWnd, &st_rect);
 	
 	uint w, h;
 	GetDisplaySize(w, h);
 
-	MoveWindow(_tWnd, (w - (st_rect.right - st_rect.left))/2, (h - (st_rect.bottom - st_rect.top))/2, st_rect.right - st_rect.left,st_rect.bottom - st_rect.top, false);
+	MoveWindow(_hWnd, (w - (st_rect.right - st_rect.left))/2, (h - (st_rect.bottom - st_rect.top))/2, st_rect.right - st_rect.left,st_rect.bottom - st_rect.top, false);
 	
-	if (AnimateWindow(_tWnd, 750, AW_BLEND) == 0)
-		ShowWindow(_tWnd, SW_SHOWNORMAL);
+	if (AnimateWindow(_hWnd, 750, AW_BLEND) == 0)
+		ShowWindow(_hWnd, SW_SHOWNORMAL);
 	
-	UpdateWindow(_tWnd);
+	UpdateWindow(_hWnd);
 
 	LOG("Splash window created.", LT_INFO);
 	
@@ -159,10 +159,10 @@ bool CSplashWindow::_CreateWindow()
 
 void CSplashWindow::_DestroyWindow()
 {
-	if (!DestroyWindow(_tWnd))
+	if (!DestroyWindow(_hWnd))
 		LOG("Can't destroy splash window.", LT_ERROR);
 	
-	if (!DeleteObject(_tBmp))
+	if (!DeleteObject(_hBmp))
 		LOG("Can't release splash window bitmap.", LT_ERROR);
  
 	LOG("Splash window destroyed.", LT_INFO);

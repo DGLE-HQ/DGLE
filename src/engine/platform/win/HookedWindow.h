@@ -13,9 +13,9 @@ See "DGLE2.h" for more details.
 
 class CHookedWindow : public CInstancedObj, public IMainWindow
 {
-	TWinHandle		 _tWnd,
-					 _tRootHWnd;
-	TWinDrawHandle	 _tDC;
+	HWND			 _hWnd,
+					 _hRootHWnd;
+	HDC				 _hDC;
 
 	bool			 _bNoMloopHook;
 	
@@ -46,6 +46,7 @@ public:
 	HRESULT ScreenToClient(int &iX, int &iY);
 	HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus);
 	HRESULT SetCaption(const char *pcTxt);
+	HRESULT Minimize();
 	HRESULT BeginMainLoop();
 	HRESULT KillWindow();
 	HRESULT Free();
