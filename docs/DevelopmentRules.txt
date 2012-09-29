@@ -17,7 +17,7 @@
 		exception spreads only upon system headers started with "DGLE2".
 	g)	All binaries are named in CamelCase style.
 	
-2.	Use only "#pragma once" to solve include collisions of headers, never use other metods.
+2.	Use only "#pragma once" to solve include collisions of headers, never use other methods.
 	
 3.	Functions and methods naming.
 	a)	All functions and public methods are named in CamelCase style.
@@ -41,6 +41,7 @@
 	
 5.	Variables naming rules.
 	a)	Global variables, public class members and function arguments are named in lowerCamelCase style. For example: bool isGameStarted;
+		Note: For bools first word better to be a verb like "do", "is", "has" and so on...
 	b)	Private class members are named as public but first character is "_".
 	c)	Local variables must have lower-case names with "_" as separator. Example: bool is_game_started;
 	
@@ -54,6 +55,7 @@
 		---------------------------------
 		| int		|	i	|
 		| unsigned	|	u	| 
+		| signed	|	s	| 
 		| long int	|	i32	|
 		| short int	|	i16	|
 		| long long	|	i64	|
@@ -62,6 +64,7 @@
 		| char/byte	|	bt	|
 		| bool		|	b	|
 		| char		|	c	|
+		| char		|	i8	|
 		| wchar		|	wc	|
 		| class		|	cl	|
 		| <type>*	|	p	|
@@ -124,8 +127,10 @@
 	
 8.	Macroses naming rule is simple. Use upper-case characters separated by "_".
 
-9.	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
-	One tab is equal to four spaces.
+9.	a)	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "+=", "-=", "*=", "/=", "|=", "&=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
+		In functions calls "(" and ")" as well as unar "+", "–", "*", "&" should NOT be separated by spaces.
+		Note: Some exceptions for this rule could be done for templates.
+	b)	One tab is equal to four spaces.
 
 10.	Write constant safe code. Use "const" not only for constant variables but also for constant class methods, references and pointers. It's often better to use "mutable" but
 	leave class method constant.
