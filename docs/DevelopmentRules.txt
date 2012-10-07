@@ -41,9 +41,10 @@
 	
 5.	Variables naming rules.
 	a)	Global variables, public class members and function arguments are named in lowerCamelCase style. For example: bool isGameStarted;
-		Note: For bools first word better to be a verb like "do", "is", "has" and so on...
 	b)	Private class members are named as public but first character is "_".
 	c)	Local variables must have lower-case names with "_" as separator. Example: bool is_game_started;
+
+	Note: For bools first word better to be a verb like "do", "is", "has" and so on...
 	
 6.	Variables prefixes and data types.
 	a)	We use Hungarian Notation especially for pointers and strings. It is highly recommended to use

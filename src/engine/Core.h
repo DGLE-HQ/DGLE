@@ -11,15 +11,9 @@ See "DGLE2.h" for more details.
 
 #include "Common.h"
 
-const uint c_MaxProcessCycles		= 10;
-const uint c_AppCaptionMaxLength	= 128;
-const uint c_MaxPluginInterfaceName = 128;
-
 #ifdef PLATFORM_WINDOWS
-
-const E_KEYBOARD_KEY_CODES c_eFScreenKeyFirst[2] = {KEY_LALT, KEY_RALT};
-const E_KEYBOARD_KEY_CODES c_eFScreenKeySecond = KEY_RETURN;
-
+	const E_KEYBOARD_KEY_CODES c_eFScreenKeyFirst[2] = {KEY_LALT, KEY_RALT};
+	const E_KEYBOARD_KEY_CODES c_eFScreenKeySecond = KEY_RETURN;
 #endif
 
 class CMainFS;
@@ -47,6 +41,9 @@ class CCore: public CInstancedObj, public IEngineCore
 , public IEngineCoreWrapper
 #endif
 {
+	static const uint _sc_MaxProcessCycles		= 10;
+	static const uint _sc_AppCaptionMaxLength	= 128;
+
 	TProcDelegate		 _clDelUpdate,
 						 _clDelRender,
 						 _clDelInit,
@@ -80,7 +77,7 @@ class CCore: public CInstancedObj, public IEngineCore
 	uint				 _uiProcessInterval;
 	uint64				 _ui64TimeOld;
 	bool				 _bPause, _bWasFScreen;
-	char				 _pcApplicationCaption[c_AppCaptionMaxLength];
+	char				 _pcApplicationCaption[_sc_AppCaptionMaxLength];
 
 	bool				 _bInitedFlag,
 						 _bStartedFlag,
@@ -182,9 +179,9 @@ public:
 	HRESULT DGLE2_API StartEngine();
 	HRESULT DGLE2_API QuitEngine();
 
-	HRESULT DGLE2_API ConnectPlugin(const char* pcFileName, IPlugin *&prPlugin);
+	HRESULT DGLE2_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin);
 	HRESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin);
-	HRESULT DGLE2_API GetPlugin(const char* pcPluginName, IPlugin *&prPlugin);
+	HRESULT DGLE2_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin);
 
 	HRESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback);
 	HRESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback);
@@ -198,7 +195,7 @@ public:
 
 	HRESULT DGLE2_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
 
-	HRESULT DGLE2_API RenderProfilerTxt(const char* pcTxt, const TColor4 &stColor);
+	HRESULT DGLE2_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor);
 	HRESULT DGLE2_API GetInstanceIdx(uint &uiIdx);
 	HRESULT DGLE2_API GetTimer(uint64 &uiTick);
 	HRESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo);

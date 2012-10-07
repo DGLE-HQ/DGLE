@@ -18,13 +18,12 @@ CBaseRendererGL::CBaseRendererGL(uint uiInstIdx):
 CInstancedObj(uiInstIdx)
 {}
 
-bool CBaseRendererGL::Prepare(TCRendererInitResult &stResults)
+bool CBaseRendererGL::Prepare()
 {
-	stResults = true;
 	return true;
 }
 
-bool CBaseRendererGL::Initialize(TCRendererInitResult &stResults)
+bool CBaseRendererGL::Initialize()
 {
 	PIXELFORMATDESCRIPTOR pfd=				
 	{
@@ -58,17 +57,16 @@ bool CBaseRendererGL::Initialize(TCRendererInitResult &stResults)
 		int temp_pixel_format	= NULL;
 
 		if (
-		!(temp_win_handle = CreateWindowEx(0, "STATIC", NULL, 0, 0, 0, 0, 0, 0, 0, 0, NULL))||
-		!(temp_win_dc=GetDC(temp_win_handle))||
-		!(temp_pixel_format=ChoosePixelFormat(temp_win_dc,&pfd))||
-		!SetPixelFormat(temp_win_dc,temp_pixel_format,&pfd)||
-		!(temp_win_rc=wglCreateContext(temp_win_dc))||
-		!wglMakeCurrent(temp_win_dc,temp_win_rc)
+		!(temp_win_handle = CreateWindowEx(0, "STATIC", NULL, 0, 0, 0, 0, 0, 0, 0, 0, NULL)) ||
+		!(temp_win_dc = GetDC(temp_win_handle)) ||
+		!(temp_pixel_format = ChoosePixelFormat(temp_win_dc, &pfd)) ||
+		!SetPixelFormat(temp_win_dc, temp_pixel_format, &pfd) ||
+		!(temp_win_rc = wglCreateContext(temp_win_dc)) ||
+		!wglMakeCurrent(temp_win_dc, temp_win_rc)
 		)
 		{
 			Core()->EngWindow()->eMSampling = MM_NONE;
 			LOG("Error(s) while performing OpenGL MSAA preinit routine.", LT_ERROR);
-			stResults = false;
 		}
 		else
 		{		
@@ -103,14 +101,10 @@ bool CBaseRendererGL::Initialize(TCRendererInitResult &stResults)
 				{
 					LOG("Can't find suitable PixelFormat with required MSAA " + IntToStr((int)pow(2.f, (int)Core()->EngWindow()->eMSampling)) + "X support.", LT_WARNING);
 					Core()->EngWindow()->eMSampling = MM_NONE;
-					stResults = false;
 				}
 			}
 			else
-			{
 				Core()->EngWindow()->eMSampling = MM_NONE;
-				stResults = false;
-			}
 		}
 
 		if (
@@ -151,8 +145,6 @@ bool CBaseRendererGL::Initialize(TCRendererInitResult &stResults)
 		LOG("Can't active OpenGL Rendering Context.", LT_FATAL);
 		return false;
 	}
-
-	stResults = true;
 
 	return true;
 }

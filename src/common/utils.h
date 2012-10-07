@@ -16,13 +16,13 @@ See "DGLE2.h" for more details.
 
 using namespace DGLE2;
 
-std::string ToLowerCase(std::string &inString);
-std::string ToUpperCase(std::string &inString);
+std::string ToLowerCase(const std::string &inString);
+std::string ToUpperCase(const std::string &inString);
 
 int StrToInt(const std::string &str);
 uint StrToUInt(const std::string &str);
 float StrToFloat(const std::string &str);
-bool StrToBool(std::string &str);
+bool StrToBool(const std::string &str);
 
 std::string IntToStr(int val);
 std::string Int64ToStr(int64 val);

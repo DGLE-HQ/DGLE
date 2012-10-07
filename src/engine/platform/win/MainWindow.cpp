@@ -67,7 +67,7 @@ void DGLE2_API CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 	if (strlen(pcParam) != 0)
 		CON(CMainWindow, "No parametrs expected.");
 	else 
-		::SendMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, NULL, NULL);
+		::PostMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, NULL, NULL);
 }
 
 LRESULT DGLE2_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -165,7 +165,7 @@ HRESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &
 		return E_FAIL;
 	}
 
-	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this);
+	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this, false);
 
 	LOG("Window created successfully.",LT_INFO);
 

@@ -5,9 +5,6 @@
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
 See "DGLE2.h" for more details.
-
-\todo Perform codestyle check.
-
 */
 
 #include "..\Common.h"
@@ -50,7 +47,7 @@ void DGLE2_API con_dump(void *pParametr, const char *pcParam)
 			std::fstream dfile;
 			dfile.setf(std::ios_base::right,std::ios_base::adjustfield);
 			dfile.open("crash_dump.txt", std::ios::out|std::ios::trunc);
-			dfile << "**DGLE2 Crash Dump**\r\n";
+			dfile << "**DGLE2 Crash Dump**\n";
 			dfile << str_info.c_str();
 			dfile.close();
 			p_console->Write("Crash dump saved to \"crash_dump.txt\".");
@@ -133,22 +130,22 @@ const char* GetExceptionString(DWORD dwCode)
 void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo)
 {
 	PEXCEPTION_RECORD pExceptionRecord = pExceptionInfo->ExceptionRecord;
-	str_info+= "################################################\r\n";
-	str_info+= "################ PROGRAM CRASH! ################\r\n";
-	str_info+= "################################################\r\n\r\n";
-	str_info+= "ERROR: \"" + std::string(GetExceptionString(pExceptionRecord->ExceptionCode)) + "\"\r\n\r\n";
-	str_info+= "Sorry, but application must be restarted.\r\nIf this unhandled exception appears again please inform application/engine/plugin developer.\r\nUse console for debugging or make a dump file using \"crash_dump\" command.\r\nAlso see engine log file for any additional information available.\r\n\r\n";
+	str_info+= "################################################\n";
+	str_info+= "################ PROGRAM CRASH! ################\n";
+	str_info+= "################################################\n\n";
+	str_info+= "ERROR: \"" + std::string(GetExceptionString(pExceptionRecord->ExceptionCode)) + "\"\n\n";
+	str_info+= "Sorry, but application must be restarted.\nIf this unhandled exception appears again please inform application/engine/plugin developer.\nUse console for debugging or make a dump file using \"crash_dump\" command.\nAlso see engine log file for any additional information available.\n\n";
 	if (!SymInitialize(GetCurrentProcess(), 0, TRUE))
 	{
-		str_info+= "(Can't write call stack - SymInitialize failed!)\r\n";
-		str_info+= "################################################\r\n";
+		str_info+= "(Can't write call stack - SymInitialize failed!)\n";
+		str_info+= "################################################\n";
 		return;
 	}
 	PCONTEXT pCtx = pExceptionInfo->ContextRecord;
 	CONTEXT* pTrashableContext = pCtx;
 
 	WriteStackDetails(pTrashableContext);
-	str_info+= "################################################\r\n";
+	str_info+= "################################################\n";
 
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 
@@ -163,12 +160,12 @@ void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo)
 
 void WriteStackDetails(PCONTEXT pContext)
 {				
-	str_info+= "################################################\r\n";
-	str_info+= "################## Call stack ##################\r\n";
-	str_info+= "################################################\r\n";
+	str_info+= "################################################\n";
+	str_info+= "################## Call stack ##################\n";
+	str_info+= "################################################\n";
 
 	str_info+=
-		"|Address|{FrameFunction}\r\nFunction or method in source file[Sourcefile and line number]\r\n";
+		"|Address|{FrameFunction}\nFunction or method in source file[Sourcefile and line number]\n";
 
 	DWORD dwMachineType = 0;
 	STACKFRAME sf;
@@ -209,8 +206,8 @@ void WriteStackDetails(PCONTEXT pContext)
 			char res1[16],res2[16];
 			sprintf_s(res1,16, "%d", sf.AddrPC.Offset);
 			sprintf_s(res2,16, "%d", sf.AddrFrame.Offset);
-			str_info+= "================================================\r\n";
-			str_info+= "|"+std::string(res1)+"|{"+ std::string(res2)+"}\r\n";
+			str_info+= "================================================\n";
+			str_info+= "|"+std::string(res1)+"|{"+ std::string(res2)+"}\n";
 
 		DWORD64 symDisplacement = 0;	
 
@@ -250,7 +247,7 @@ void WriteStackDetails(PCONTEXT pContext)
 			strcat_s(szTextBuf, buf);
 		}
 
-		str_info += std::string(szTextBuf) + "\r\n";
+		str_info += std::string(szTextBuf) + "\n";
 		strcat_s(szTopFunc, szTextBuf);
 		strcat_s(szTopFunc, "\n");
 	}

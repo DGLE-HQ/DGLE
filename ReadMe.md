@@ -2,7 +2,7 @@
 
 ## Introduction
 
-[DGLE2](http://dgle.dronprogs.org) is a powerful cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+[DGLE2](http://dgle.dronprogs.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
 The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology, capable of building any 2D/3D
 games, real-time visualizations, scientific applications etc. It should be easy to make great projects only by using editors and scripts or go deeper and use
@@ -134,7 +134,7 @@ Firstin Anton aka First (Delphi/C# headers and minor additional programming)
 
 Semen Kotlyarov aka Kimer (plugins and tools development)
 
-Ilya Sitnikov aka Sin (C# GUI components and DCP packs)
+Ilya Sivkov aka Sin (DCP packs and minor additional programming)
 
 Svyatoslav Lobov aka FascioRoma (GUI components development)
 

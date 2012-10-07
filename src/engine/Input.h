@@ -17,7 +17,7 @@ See "DGLE2.h" for more details.
 #	include "platform\win\BaseInput.h"
 #endif
 
-class CInput: public CBaseInput, public IInput
+class CInput: private CBaseInput, public IInput
 {
 	bool		 _bExclusive;
 	bool		 _bHideCursor;

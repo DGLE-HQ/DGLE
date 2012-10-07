@@ -95,11 +95,18 @@ HRESULT CHDFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-HRESULT CHDFile::GetName(char* pcName, uint uiCharsCount)
+HRESULT CHDFile::GetName(char* pcName, uint &uiCharsCount)
 {
-	if (uiCharsCount < strlen(_acName))
+	if (!pcName)
 	{
-		LOG("Too small \"pcName\" buffer size.", LT_ERROR);
+		uiCharsCount = strlen(_acName) + 1;
+		return S_OK;	
+	}
+	
+	if (uiCharsCount <= strlen(_acName))
+	{
+		uiCharsCount = strlen(_acName) + 1;
+		strcpy(pcName, "");
 		return E_INVALIDARG;
 	}
 
@@ -108,11 +115,18 @@ HRESULT CHDFile::GetName(char* pcName, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CHDFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CHDFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
-	if (uiCharsCount < strlen(_acPath))
+	if (!pcPath)
 	{
-		LOG("Too small \"pcPath\" buffer size.", LT_ERROR);
+		uiCharsCount = strlen(_acPath) + 1;
+		return S_OK;	
+	}
+	
+	if (uiCharsCount <= strlen(_acPath))
+	{
+		uiCharsCount = strlen(_acPath) + 1;
+		strcpy(pcPath, "");
 		return E_INVALIDARG;
 	}
 

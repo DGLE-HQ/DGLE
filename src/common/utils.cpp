@@ -1,6 +1,6 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		07.04.2012 (c)Korotkov Andrey
+\date		07.10.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,15 +14,17 @@ See "DGLE2.h" for more details.
 
 using namespace std;
 
-string ToLowerCase(string &inString)
+string ToLowerCase(const string &inString)
 {
-	transform(inString.begin(), inString.end(), inString.begin(), std::tolower);
-	return inString;
+	string res(inString);
+	transform(inString.begin(), inString.end(), res.begin(), std::tolower);
+	return res;
 }
 
-string ToUpperCase(string &inString)
+string ToUpperCase(const string &inString)
 {
-	transform(inString.begin(), inString.end(), inString.begin(), std::toupper);
+	string res(inString);
+	transform(inString.begin(), inString.end(), res.begin(), std::toupper);
 	return inString;
 }
 
@@ -52,9 +54,15 @@ float StrToFloat(const string &str)
 	return res;
 }
 
-bool StrToBool(string &str)
+bool StrToBool(const string &str)
 {
-	if (ToLowerCase(str) == string("true"))
+	string val = ToLowerCase(str);
+
+	if (val == string("true") ||
+		val == string("on") ||
+		val == string("enabled") ||
+		val == string("1") ||
+		val == string("active"))
 		return true;
 	else
 		return false;
@@ -441,7 +449,8 @@ uint32 GetCRC32(uint8 *pData, uint32 ui32Size)
 
 uint8 GetDataAlignmentIncrement(uint uiLineWidth, uint8 ui8BytesPerPixel, uint8 ui8Alignment)
 {
-	uint8 a = (uiLineWidth*ui8BytesPerPixel)%ui8Alignment;
+	uint8 a = (uiLineWidth*ui8BytesPerPixel) % ui8Alignment;
+	
 	if ( a != 0)
 		return 4 - a;
 	else

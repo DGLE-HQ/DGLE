@@ -51,7 +51,14 @@ CInstancedObj(uiInstIdx)
 	}
 
 	if (!_clJoyCaps.empty())
+	{
 		LOG("Found " + UIntToStr(_clJoyCaps.size()) + " connected joystick" + (_clJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
+
+		for (size_t i = 0; i < _clJoyCaps.size(); ++i)
+			LOG("Joystick with id:" + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"", LT_INFO);
+	}
+
+	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
 
 #endif
 }
@@ -119,6 +126,31 @@ uint32 CBaseInput::_AxisValue(uint32 Value, uint Min, uint Max)
 		return (int)((float)(Value + Min) / (float)(Max - Min) * 200.f - 100.f);
 	else
 		return 0;
+}
+
+void CBaseInput::_PrintJoysList()
+{
+	string output("There is no connected joysticks.");
+
+	if (!_clJoyCaps.empty())
+	{
+		output = "----------- Joysticks -----------\n";
+
+		for (size_t i = 0; i < _clJoyCaps.size(); ++i)
+			output += "id: " + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"\n";
+
+		output += "---------------------------------\n";
+	}
+		
+	Console()->Write(output.c_str());
+}
+
+void DGLE2_API CBaseInput::_s_PrintJoysList(void *pParametr, const char *pcParam)
+{
+	if (strlen(pcParam) != 0)
+		CON(CBaseInput, "No parametrs expected.");
+	else
+		PTHIS(CBaseInput)->_PrintJoysList();
 }
 
 #endif

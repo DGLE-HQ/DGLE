@@ -22,7 +22,7 @@ class CDCPFileIterator: public CInstancedObj, public IFileIterator
 public:
 	CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList);
 
-	HRESULT DGLE2_API FileName(char *pcName, uint uiCharsCount);
+	HRESULT DGLE2_API FileName(char *pcName, uint &uiCharsCount);
 	HRESULT DGLE2_API Next();
 	HRESULT DGLE2_API Free();
 
@@ -65,7 +65,7 @@ public:
 	HRESULT DGLE2_API DeleteFile(const char *pcName);
 	HRESULT DGLE2_API FileExists(const char *pcName, bool &bExists);
 	HRESULT DGLE2_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator);
-	HRESULT DGLE2_API SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount);
+	HRESULT DGLE2_API SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount);
 
 	IDGLE2_BASE_IMPLEMENTATION(IFileSystem);
 };

@@ -15,7 +15,7 @@ using namespace std;
 
 #define _2D_BATCH_NEED_UPDATE(mode, tex, is_color)\
 ((_batchMode > BM_DISABLED || _bInLocalBatchMode) &&\
-(_BatchSet(mode, tex, is_color) || ((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) || ((_batchMode == BM_ENABLED_UEP || (_bInLocalBatchMode && _bLocalBatchUEP)) && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
+(_BatchSet(mode, tex, is_color) || ((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) || ((_batchMode == BM_ENABLED_UPDATE_EVERY_TICK || (_bInLocalBatchMode && _bLocalBatchUEP)) && !_batchNeedToRefreshBatches && !_batchBufferReadyToRender))))
 #define _2D_IF_BATCH_NO_UPDATE_EXIT if (do_batch_update) if (!_batchNeedToRefreshBatches && !(_bInLocalBatchMode && !_bLocalBatchUEP)) _batchBufferReadyToRender = true;
 #define _2D_IF_BATCH_DO_SET_STATES if ((_batchMode == BM_DISABLED && !_bInLocalBatchMode) || _batchAccumulator.empty())
 #define _2D_BATCH_DUMMY_DRAW_CALL_EXIT if ((_batchMode != BM_DISABLED || _bInLocalBatchMode) && !do_batch_update) return S_OK;
@@ -37,8 +37,8 @@ _uiBufferSize(34)// never less than 34
 	_pCoreRenderer = Core()->pCoreRenderer();
 	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
 
-	Console()->RegComValue("r2d_profiler", "Displays render 2D subsystems profiler.", &_iProfilerState, 0, 2);
-	Console()->RegComValue("r2d_drawbboxes", "Displays bounding boxes of 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
+	Console()->RegComValue("rend2d_profiler", "Displays render 2D subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComValue("rend2d_drawbboxes", "Displays bounding boxes of 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
 }
 
 CRender2D::~CRender2D()
@@ -226,12 +226,12 @@ HRESULT DGLE2_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 	switch(eMode)
 	{
 	case BM_AUTO:	
-	case BM_ENABLED_UEP:
-		_batchMode = BM_ENABLED_UEP;
+	case BM_ENABLED_UPDATE_EVERY_TICK:
+		_batchMode = BM_ENABLED_UPDATE_EVERY_TICK;
 		break;
 
-	case BM_ENABLED_UER:
-		_batchMode = BM_ENABLED_UER;
+	case BM_ENABLED_UPDATE_EVERY_FRAME:
+		_batchMode = BM_ENABLED_UPDATE_EVERY_FRAME;
 		break;
 	}
 	
@@ -294,7 +294,7 @@ HRESULT DGLE2_API CRender2D::NeedToUpdateBatchData(bool &bNeedUpdate)
 {
 	IN_2D_GUARD
 
-	bNeedUpdate = _batchMode != BM_ENABLED_UEP || (!_bInProfilerMode && (_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)));
+	bNeedUpdate = _batchMode != BM_ENABLED_UPDATE_EVERY_TICK || (!_bInProfilerMode && (_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)));
 
 	return S_OK;
 }
@@ -337,7 +337,7 @@ inline void CRender2D::_BatchFlush()
 	if (size != 0)
 		desc.pData = (uint8*)&_batchAccumulator[0];
 
-	if ((_bInLocalBatchMode && _bLocalBatchUEP) || _batchMode == BM_ENABLED_UEP )
+	if ((_bInLocalBatchMode && _bLocalBatchUEP) || _batchMode == BM_ENABLED_UPDATE_EVERY_TICK )
 	{
 		++_batchBufferCurCounter;
 
@@ -505,7 +505,7 @@ HRESULT DGLE2_API CRender2D::End2D()
 
 void CRender2D::BeginFrame()
 {
-	if (_batchMode != BM_ENABLED_UEP && !_bLocalUEPWasTurnedOn)
+	if (_batchMode != BM_ENABLED_UPDATE_EVERY_TICK && !_bLocalUEPWasTurnedOn)
 		_batchNeedToRefreshBatches = true;
 
 	_bLocalUEPWasTurnedOn = false;

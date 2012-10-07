@@ -58,6 +58,14 @@ public:
 	virtual HRESULT Free() = 0;
 };
 
+enum E_CONSOLE_WINDOW_EVENT
+{
+	CWE_EXECUTE_COMMAND = 0,
+	CWE_COMPLETE_COMMAND,
+	CWE_PREVIOUS_COMMAND,
+	CWE_NEXT_COMMAND
+};
+
 // {67B449F3-CFF6-4778-8232-B81084527A51}
 static const GUID IID_IConsoleWindow = 
 { 0x67b449f3, 0xcff6, 0x4778, { 0x82, 0x32, 0xb8, 0x10, 0x84, 0x52, 0x7a, 0x51 } };
@@ -65,7 +73,7 @@ static const GUID IID_IConsoleWindow =
 class IConsoleWindow
 {
 public:
-	virtual HRESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (DGLE2_API *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole) = 0;
+	virtual HRESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole) = 0;
 	virtual HRESULT Visible(bool bVisible) = 0;
 	virtual HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) = 0;
 	virtual HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
@@ -74,6 +82,7 @@ public:
 	virtual HRESULT OutputTxt(const char *pcTxt, bool bToPrevLine) = 0;
 	virtual HRESULT GetEditTxt(char *pcTxt, uint uiBufferSize) = 0;
 	virtual HRESULT SetEditTxt(const char *pcTxt) = 0;
+	virtual HRESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize) = 0;
 	virtual HRESULT Clear() = 0;
 	virtual HRESULT ResetSizeAndPos() = 0;
 	virtual HRESULT EnterThreadSafeSec() = 0;
@@ -95,23 +104,25 @@ public:
 
 #ifdef ENGINE_PLATFORM_BASE
 
-class IBaseRenderGL
+class CPlatformBaseRenderGL
 {
 public:
-	bool Prepare(TCRendererInitResult &stResults);
-	bool Initialize(TCRendererInitResult &stResults);
+	bool Prepare();
+	bool Initialize();
 	bool Finalize();
 	bool AdjustMode(TEngWindow &stNewWin);
 	bool MakeCurrent();
 	void Present();
 };
 
-class IBaseSound
+class CPlatformBaseSound
 {
 public:
+	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint32 &ui32BufferSize, void (DGLE2_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
+	void CloseDevice();
 };
 
-class IBaseInput
+class CPlatformBaseInput
 {
 public:
 	void ShowCursor(bool bVisible);

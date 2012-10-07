@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		07.04.2012 (c)Korotkov Andrey
+\date		07.10.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -19,21 +19,68 @@ using namespace std;
 	size_t pos = params.find_first_of(' ');\
 	string par1(params.substr(0, pos)), par2(params.substr(pos + 1, params.size() - pos - 1));
 
-CConsole::CConsole(bool bInSeparateThread):
-_pConsoleWindow(NULL)
+class CEvConsoleWrite : public IEvConsoleWrite
+{
+	string _txt;
+	bool _bToPrev;
+
+public:
+
+	CEvConsoleWrite(const string &txt, bool toPrev):_txt(txt), _bToPrev(toPrev) {}
+
+	HRESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine)
+	{
+		bToPrevLine = _bToPrev;
+
+		if (pcTxt == NULL)
+		{
+			uiCharsCount = _txt.size() + 1;
+			return S_OK;
+		}
+
+		if (uiCharsCount <= _txt.size())
+		{
+			uiCharsCount = _txt.size() + 1;
+			strcpy(pcTxt, "");
+			return E_INVALIDARG;
+		}
+
+		strcpy(pcTxt, _txt.c_str());
+
+		return S_OK;
+	}
+
+	HRESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	{
+		eEvType = ET_ON_CONSOLE_WRITE;
+		return S_OK;
+	}
+
+	HRESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	{
+		uiUnknEvType = -1;
+		return S_FALSE;
+	}
+
+	IDGLE2_BASE_IMPLEMENTATION(IEvConsoleWrite)
+};
+
+CConsole::CConsole(uint uiInsIdx, bool bInSeparateThread):
+_uiInsIdx(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 {
 	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, (void*)this, false);
 	RegComProc("help", "Don't be stupid! :)", &_s_Help, this, false);
 	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, (void*)this, false);
-	RegComProc("con_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos,(void*)this, false);
-	RegComProc("con_clear", "Clears all text in console.", &_s_Clear, (void*)this, false);
-	RegComProc("con_show", "Shows console window, if is hidden.", &_s_Show, (void*)this, false);
-	RegComProc("con_hide", "Hides console window.", &_s_Hide, (void*)this, false);
-	RegComProc("con_pos", "Changes console window position.\r\nUsage: \"con_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this, false);
-	RegComProc("con_size", "Changes console window size.\r\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, (void*)this, false);
+	RegComProc("clear", "Clears all text in console.", &_s_Clear, (void*)this, false);
+	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, (void*)this, false);
+	RegComProc("cons_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, (void*)this, false);
+	RegComProc("cons_show", "Shows console window, if is hidden.", &_s_Show, (void*)this, false);
+	RegComProc("cons_hide", "Hides console window.", &_s_Hide, (void*)this, false);
+	RegComProc("cons_pos", "Changes console window position.\nUsage: \"cons_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this, false);
+	RegComProc("cons_size", "Changes console window size.\nUsage: \"cons_size <width value> <height value>\"", &_s_SetSize, (void*)this, false);
 
 	_pConsoleWindow = new CConsoleWindow();
-	_pConsoleWindow->InitWindow(bInSeparateThread, &_s_OnCmdExec, &_s_OnCmdComplete, this);
+	_pConsoleWindow->InitWindow(bInSeparateThread, &_s_OnConWindowEvent, this);
 }
 
 CConsole::~CConsole()
@@ -53,7 +100,7 @@ void CConsole::_Help(const char* pcParam)
 {
 	string par(pcParam);
 
-	if (par=="" || par=="help")
+	if (par == "" || par == "help")
 	{
 		Write("Print \"cmdlist\" for list of available console commands.");
 		Write("Print \"help <command>\" for specific command help.");
@@ -62,16 +109,17 @@ void CConsole::_Help(const char* pcParam)
 	} 
 	else
 	{
-		if (par[par.length()  - 1] == ' ')
+		if (par[par.length() - 1] == ' ')
 			par.erase(par.length() - 1, 1);
 
 		for (size_t i = 0; i < _commands.size(); ++i)
 		 if (par == string(_commands[i].pcName))
 		 {
-			 if(string(_commands[i].pcHelp)=="")
-				Write(string("Help for command \"" + par + "\" not presented.").c_str());
+			 if (strlen(_commands[i].pcHelp) == 0)
+				Write(string("Help for command \"" + par + "\" is not presented.").c_str());
 			 else
 				Write(_commands[i].pcHelp);
+			 
 			 return;
 		 }
 
@@ -81,21 +129,57 @@ void CConsole::_Help(const char* pcParam)
 
 void CConsole::Exec(const char* pcCommand)
 {
-	_ProcessConCmd(pcCommand);
+	string command(pcCommand);
+
+	Write((">" + command).c_str());
+	
+	_ProcessConCmd(command);
+
+	_prevCommands.push_back(command);
+	_iPrevMarker = _prevCommands.size();
 }
 
 void CConsole::_Cmdlist()
 {
-	string lst = "----------Commands List----------\r\n";
+	string lst = "----------Commands List----------\n";
+
 	if (!_commands.empty())
 	{
-		for (size_t i = 0; i<_commands.size(); ++i)
-			lst += " >" + string(_commands[i].pcName) + "\r\n";
+		for (size_t i = 0; i < _commands.size(); ++i)
+			lst += " >" + string(_commands[i].pcName) + "\n";
 		
-		lst+=string("------" + UIntToStr((uint)_commands.size()) + " registered commands------\r\n");
+		lst += string("------" + UIntToStr((uint)_commands.size()) + " registered commands-----" + (_commands.size() < 100 ? "-" : "") + "\n");
 		
 		Write(lst.c_str());
 	}
+}
+
+void CConsole::_Save(const string &strFileName)
+{
+	uint size;
+	_pConsoleWindow->GetConsoleTxt(NULL, size);
+
+	char *p_txt = new char[size];
+
+	_pConsoleWindow->GetConsoleTxt(p_txt, size);
+
+	fstream file;
+	file.setf(ios_base::right, ios_base::adjustfield);
+
+	if (strFileName.empty())
+		file.open("console.txt", ios::out | ios::trunc);
+	else
+		file.open(strFileName.c_str(), ios::out | ios::trunc);
+
+	if (!file.is_open())
+	{
+		Write("Failed to open output file for writing.");
+		return;
+	}
+
+	file << p_txt << endl;
+
+	file.close();
 }
 
 bool CConsole::EnterCrSection()
@@ -108,28 +192,50 @@ void CConsole::LeaveCrSection()
 	_pConsoleWindow->LeaveThreadSafeSec();
 }
 
-bool CConsole::_ProcessConCmd(const char* pcParam)
+void CConsole::_OnCmdPrev()
 {
-	string cur(ToLowerCase(string(pcParam))), com, par;
+	_iPrevMarker--;
+
+	if (_iPrevMarker < 0)
+		_iPrevMarker = 0;
+
+	if ((uint)_iPrevMarker < _prevCommands.size())
+		_pConsoleWindow->SetEditTxt(_prevCommands[_iPrevMarker].c_str());
+}
+
+void CConsole::_OnCmdNext()
+{
+	_iPrevMarker++;
+
+	if ((uint)_iPrevMarker >= _prevCommands.size())
+		_iPrevMarker = _prevCommands.size() - 1;
+
+	if ((uint)_iPrevMarker < _prevCommands.size())
+		_pConsoleWindow->SetEditTxt(_prevCommands[_iPrevMarker].c_str());
+}
+
+bool CConsole::_ProcessConCmd(const std::string &command)
+{
+	string cur(ToLowerCase(command)), com, par;
 	
 	bool done = false, rparam = false;
 
-	for (uint i = 0; i<cur.length(); ++i)
-	 if (cur[i]==' ' && !rparam) 
+	for (uint i = 0; i < cur.length(); ++i)
+	 if (cur[i] == ' ' && !rparam) 
 		 done = true;
 	 else
 		 if (!done) 
-			 com+=cur[i]; 
+			 com += cur[i]; 
 		 else 
 		 {
 			 rparam = true; 
-			 par+=cur[i];
+			 par += cur[i];
 		 }
 	
 	for (size_t i = 0; i < _commands.size(); ++i)
 		if (com == string(_commands[i].pcName))
 		{
-			if (_commands[i].piValue==NULL)
+			if (_commands[i].piValue == NULL)
 			{
 				if (_commands[i].bNeedCritical) 
 					_pConsoleWindow->EnterThreadSafeSec();
@@ -143,7 +249,7 @@ bool CConsole::_ProcessConCmd(const char* pcParam)
 			{
 				if (par == "")
 				{
-					Write(string(ToUpperCase(com) + " current value is " + IntToStr(*_commands[i].piValue) + ".").c_str());
+					Write(string(ToUpperCase(com) + " current value is " + IntToStr(*_commands[i].piValue) + " .").c_str());
 					Write(string("Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
 				}
 				else
@@ -183,7 +289,7 @@ bool CConsole::_ProcessConCmd(const char* pcParam)
 
 void CConsole::_OnCmdComplete(const char *pcParam)
 {
-	string cmds = "----\r\n";
+	string cmds = "----\n";
 	int count = 0, idx = 0;
 	
 	for (size_t i = 0; i < _commands.size(); ++i)
@@ -204,7 +310,7 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 		{
 			++count;
 			idx = (int)i;
-			cmds += " >"+string(_commands[i].pcName) + "\r\n";
+			cmds += " >"+string(_commands[i].pcName) + "\n";
 		}
 	}
 		cmds+="----";
@@ -235,9 +341,9 @@ bool CConsole::UnRegCom(const char *pcName)
 void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare)
 {
 	TConEntry t;
-	t.pcName = new char[strlen(pcName)+1];
+	t.pcName = new char[strlen(pcName) + 1];
 	strcpy(t.pcName, pcName);
-	t.pcHelp = new char[strlen(pcHelp)+1];
+	t.pcHelp = new char[strlen(pcHelp) + 1];
 	strcpy(t.pcHelp, pcHelp);
 	t.pProc			= pProc;
 	t.piValue		= NULL;
@@ -252,9 +358,9 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_AP
 void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare) 
 {
 	TConEntry t;
-	t.pcName = new char[strlen(pcName)+1];
+	t.pcName = new char[strlen(pcName) + 1];
 	strcpy(t.pcName, pcName);
-	t.pcHelp = new char[strlen(pcHelp)+1];
+	t.pcHelp = new char[strlen(pcHelp) + 1];
 	strcpy(t.pcHelp, pcHelp);
 	t.pProc			= pProc;
 	t.piValue		= piValue;
@@ -275,7 +381,7 @@ void CConsole::_SetPos(const char* pcParam)
 	_pConsoleWindow->GetSizeAndPos(x, y, w, h);
 	
 	if (par.size() == 0)
-		Write(string("Current console position is " + IntToStr(x) + " " + IntToStr(y) + ".").c_str());
+		Write(string("Current console position is left: " + IntToStr(x) + " top: " + IntToStr(y) + " .").c_str());
 	else
 	{
 		CON_SPLIT_TWO_PARAMS(par);
@@ -298,7 +404,7 @@ void CConsole::_SetPos(const char* pcParam)
 
 		_pConsoleWindow->SetSizeAndPos(x, y, w, h);
 
-		Write(string("Console position is set to " + IntToStr(x) + " " + IntToStr(y) + ".").c_str());
+		Write(string("Console position is set to left: " + IntToStr(x) + " top: " + IntToStr(y) + " .").c_str());
 	}
 }
 
@@ -311,7 +417,7 @@ void CConsole::_SetSize(const char *pcParam)
 	_pConsoleWindow->GetSizeAndPos(x, y, w, h);
 
 	if (par.size() == 0)
-		Write(string("Current console size is " + IntToStr(w) + " " + IntToStr(h) + ".").c_str());
+		Write(string("Current console size is width: " + IntToStr(w) + " height: " + IntToStr(h) + " .").c_str());
 	else
 	{
 		CON_SPLIT_TWO_PARAMS(par);
@@ -334,7 +440,7 @@ void CConsole::_SetSize(const char *pcParam)
 
 		_pConsoleWindow->SetSizeAndPos(x, y, w, h);
 
-		Write(string("Console size is set to " + IntToStr(w) + " " + IntToStr(h) + ".").c_str());
+		Write(string("Console size is set to width: " + IntToStr(w) + " height: " + IntToStr(h) + " .").c_str());
 	}
 }
 
@@ -364,9 +470,23 @@ uint32 CConsole::GetThreadId()
 	return thread_id;
 }
 
-void CConsole::Write(const char* pcText, bool bToPrevLine)
+void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 {
-	_pConsoleWindow->OutputTxt(pcText, bToPrevLine);
+	string txt(strTxt);
+
+	CCore *p_core = EngineInstance(_uiInsIdx)->pclCore;
+
+	if (p_core)
+		p_core->CastEvent(ET_ON_CONSOLE_WRITE, &CEvConsoleWrite(txt, bToPrevLine));
+
+	for (size_t i = 0; i < txt.size(); ++i)
+		if (txt[i] == '\n')
+		{
+			txt.insert(i, "\r");
+			++i;
+		}
+
+	_pConsoleWindow->OutputTxt(txt.c_str(), bToPrevLine);
 }
 
 void DGLE2_API CConsole::_s_Hide(void *pParametr, const char *pcParam)
@@ -391,6 +511,11 @@ void DGLE2_API CConsole::_s_Clear(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->Write("No parametrs expected.");
 	else
 		PTHIS(CConsole)->_pConsoleWindow->Clear();
+}
+
+void DGLE2_API CConsole::_s_Save(void *pParametr, const char *pcParam)
+{
+	PTHIS(CConsole)->_Save(string(pcParam));
 }
 
 void DGLE2_API CConsole::_s_Terminate(void *pParametr, const char *pcParam)
@@ -432,12 +557,13 @@ void DGLE2_API CConsole::_s_Help(void *pParametr, const char *pcParam)
 	PTHIS(CConsole)->_Help(pcParam);
 }
 
-void DGLE2_API CConsole::_s_OnCmdExec(CConsole *pConsole, const char *pcCommand)
+void DGLE2_API CConsole::_s_OnConWindowEvent(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand)
 {
-	pConsole->_ProcessConCmd(pcCommand);
-}
-
-void DGLE2_API CConsole::_s_OnCmdComplete(CConsole *pConsole, const char *pcCommand)
-{
-	pConsole->_OnCmdComplete(pcCommand);
+	switch (eEventType)
+	{
+	case CWE_EXECUTE_COMMAND: pConsole->Exec(pcCommand); break;
+	case CWE_COMPLETE_COMMAND: pConsole->_OnCmdComplete(pcCommand); break;
+	case CWE_PREVIOUS_COMMAND: pConsole->_OnCmdPrev(); break;
+	case CWE_NEXT_COMMAND: pConsole->_OnCmdNext(); break;
+	}
 }

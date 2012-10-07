@@ -261,9 +261,12 @@ HRESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, 
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
+HRESULT DGLE2_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
-	return E_FAIL;
+	if (!pcResult)
+		uiCharsCount = 1;
+
+	return E_NOTIMPL;
 }
 
 void CDCPFileSystem::_ReplaceChInStr(string &outStr, const string &findCh, const string &repCh)
@@ -311,11 +314,21 @@ CInstancedObj(uiInstIdx), _clNameList(clNameList)
 	_clNameListIter = _clNameList.begin();
 }
 
-HRESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint uiCharsCount)
+HRESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint &uiCharsCount)
 {
-	if ((*_clNameListIter).size() > uiCharsCount)
-			return E_ABORT;
-	
+	if (!pcName)
+	{
+		uiCharsCount = (*_clNameListIter).size() + 1;
+		return S_OK;
+	}
+
+	if ((*_clNameListIter).size() >= uiCharsCount)
+	{
+		uiCharsCount = (*_clNameListIter).size() + 1;
+		strcpy(pcName, "");
+		return E_INVALIDARG;
+	}
+
 		if (_clNameListIter == _clNameList.end())
 			pcName = "";	
 		else

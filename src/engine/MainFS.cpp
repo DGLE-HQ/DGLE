@@ -14,7 +14,7 @@ using namespace std;
 CMainFS::CMainFS(uint uiInstIdx):
 CInstancedObj(uiInstIdx)
 {
-	Console()->RegComProc("mfs_list_reged_vfs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
+	Console()->RegComProc("mainfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
 
 	_pHddFS = new CHDFileSystem(InstIdx());
 	_pDCPFS = new CDCPFileSystem(InstIdx(), this);
@@ -41,7 +41,7 @@ void CMainFS::UnregisterAndFreeAll()
 
 HRESULT DGLE2_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
+	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
 			_clVFileSystems[i].pdc(_clVFileSystems[i].param, _clVFileSystems[i].fs);
@@ -52,7 +52,7 @@ HRESULT DGLE2_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtensio
 	return E_INVALIDARG;
 }
 
-HRESULT DGLE2_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount)
 {
 	string exts;
 
@@ -60,9 +60,15 @@ HRESULT DGLE2_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint uiC
 		for (size_t i = 1; i<_clVFileSystems.size(); ++i)
 			exts += _clVFileSystems[i].ext + ";";
 
-	if (exts.size() > uiCharsCount)
+	if (!pcTxt)
 	{
-		LOG("Too small \"pcTxt\" buffer size.", LT_ERROR);
+		uiCharsCount = exts.size() + 1;
+		return S_OK;
+	}
+
+	if (exts.size() >= uiCharsCount)
+	{
+		uiCharsCount = exts.size() + 1;
 		strcpy(pcTxt, "");
 		return E_INVALIDARG;
 	}
@@ -77,7 +83,7 @@ void DGLE2_API CMainFS::_s_ConListVFS(void *pParametr, const char *pcParam)
 	if (strlen(pcParam) != 0)
 		CON(CMainFS, "No parametrs expected.");
 	else 
-		CON(CMainFS, string("---Supported VFile Systems---\r\n" + PTHIS(CMainFS)->_strVFSsDescs + "-----------------------------").c_str());
+		CON(CMainFS, string("---Supported VFile Systems---\n" + PTHIS(CMainFS)->_strVFSsDescs + "-----------------------------").c_str());
 }
 
 void DGLE2_API CMainFS::_s_FSDeleteDGLE2_API(void *pParametr, IFileSystem *pVFS)
@@ -143,14 +149,21 @@ HRESULT DGLE2_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFil
 	return E_INVALIDARG;
 }
 
-HRESULT DGLE2_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount)
 {
 	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
-			if (_clVFileSystems[i].discr.size() > uiCharsCount)
+			if (!pcTxt)
 			{
-				LOG("Too small \"pcTxt\" buffer size.", LT_ERROR);
+				uiCharsCount = _clVFileSystems[i].discr.size() + 1;
+				return S_OK;
+			}
+
+			if (_clVFileSystems[i].discr.size() >= uiCharsCount)
+			{
+				uiCharsCount = _clVFileSystems[i].discr.size() + 1;
+				strcpy(pcTxt, "");
 				return E_INVALIDARG;
 			}
 
@@ -175,7 +188,7 @@ HRESULT DGLE2_API CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension,
 	
 	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteDGLE2_API, pParametr));
 
-	_strVFSsDescs += string("- " + ToUpperCase(string(pcVFSExtension)) + " " + string(pcDiscription) + "\r\n");
+	_strVFSsDescs += string("- " + ToUpperCase(string(pcVFSExtension)) + " " + string(pcDiscription) + "\n");
 
 	return S_OK;
 }

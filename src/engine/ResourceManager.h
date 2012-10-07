@@ -117,8 +117,8 @@ public:
 	HRESULT DGLE2_API UnregisterFileFormat(const char* pcExtension);
 	HRESULT DGLE2_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
 	HRESULT DGLE2_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
-	HRESULT DGLE2_API GetRegisteredExtensions(char* pcTxt, uint uiCharsCount);
-	HRESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount);
+	HRESULT DGLE2_API GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount);
+	HRESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount);
 	HRESULT DGLE2_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType);
 	
 	HRESULT DGLE2_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj);

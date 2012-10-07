@@ -122,8 +122,8 @@ _iProfilerState(0)
 	
 	_pCoreRenderer = Core()->pCoreRenderer();
 
-	Console()->RegComValue("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
-	Console()->RegComProc("rman_list_reged_fformats", "Lists all file formats registered in Resource Manager.", &_s_ConListFileFormats, (void*)this);
+	Console()->RegComValue("resman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
+	Console()->RegComProc("resman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, (void*)this);
 
 	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, (void*)this);
 	RegisterFileFormat("tga", EOT_TEXTURE, "truevision TarGA images.", &_s_LoadTextureTGA, (void*)this);
@@ -299,19 +299,26 @@ void DGLE2_API CResourceManager::_s_ConListFileFormats(void *pParametr, const ch
 	if (strlen(pcParam) != 0)
 		CON(CResourceManager, "No parametrs expected.");
 	else 
-		CON(CResourceManager, string("---Supported File Formats---\r\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
+		CON(CResourceManager, string("---Supported File Formats---\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
 }
 
-HRESULT DGLE2_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount)
 {
 	string exts;
 
-	for (size_t i = 0; i<_clFileFormats.size(); ++i)
+	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		exts += _clFileFormats[i].ext + ";";
 
-	if (exts.size() > uiCharsCount)
+	if (!pcTxt)
 	{
-		LOG("Too small \"pcTxt\" buffer size.", LT_ERROR);
+		uiCharsCount = exts.size();
+		return S_OK;
+	}
+
+	if (exts.size() >= uiCharsCount)
+	{
+		uiCharsCount = exts.size();
+		strcpy(pcTxt, "");
 		return E_INVALIDARG;
 	}
 
@@ -752,7 +759,7 @@ HRESULT DGLE2_API CResourceManager::RegisterFileFormat(const char* pcExtension, 
 
 	_clFileFormats.push_back(tff);
 
-	_strFileFormatsDescs += string("- " + ToUpperCase(string(pcExtension)) + " " + string(pcDiscription) + "\r\n");
+	_strFileFormatsDescs += string("- " + ToUpperCase(string(pcExtension)) + " " + string(pcDiscription) + "\n");
 
 	return S_OK;
 }
@@ -1511,14 +1518,21 @@ HRESULT DGLE2_API CResourceManager::GetExtensionType(const char *pcExtension, E_
 	return S_FALSE;
 }
 
-HRESULT DGLE2_API CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount)
+HRESULT DGLE2_API CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount)
 {
 	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
-			if (_clFileFormats[i].discr.size() > uiCharsCount)
+			if (!pcTxt)
 			{
-				LOG("Too small \"pcTxt\" buffer size.", LT_ERROR);
+				uiCharsCount = _clFileFormats[i].discr.size() + 1;
+				return S_OK;
+			}
+
+			if (_clFileFormats[i].discr.size() >= uiCharsCount)
+			{
+				uiCharsCount = _clFileFormats[i].discr.size() + 1;
+				strcpy(pcTxt, "");
 				return E_INVALIDARG;
 			}
 
@@ -1607,9 +1621,28 @@ HRESULT DGLE2_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, uin
 		return E_INVALIDARG;
 	}
 
-	char name[MAX_PATH], path[MAX_PATH];
+	char *name_path;
+	uint name_length, path_length;
 
-	if (FAILED(pFile->GetName(name, MAX_PATH)) || FAILED(pFile->GetPath(path, MAX_PATH)))
+	if (FAILED(pFile->GetName(NULL, name_length)))
+	{
+		prObj = (IEngBaseObj*&)_pBObjDummy;
+		LOG("Can't get file name length.", LT_ERROR);
+		return E_ABORT;
+	}
+	
+	if (FAILED(pFile->GetPath(NULL, path_length)))
+	{
+		prObj = (IEngBaseObj*&)_pBObjDummy;
+		LOG("Can't get file path length.", LT_ERROR);
+		return E_ABORT;
+	}
+
+	name_path = new char [name_length + path_length];
+
+	char * const name = name_path, * const path = name_path + name_length;
+
+	if (FAILED(pFile->GetName(name, name_length)) || FAILED(pFile->GetPath(path, path_length)))
 	{
 		prObj = (IEngBaseObj*&)_pBObjDummy;
 		LOG("Can't get filename of IFile.", LT_ERROR);
@@ -1623,7 +1656,11 @@ HRESULT DGLE2_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, uin
 
 	file_name += string(name);
 
-	return _Load(file_name.c_str(), pFile, _GetFFIdx(name, EOT_UNKNOWN, prObj), prObj, uiLoadFlags);
+	HRESULT ret = _Load(file_name.c_str(), pFile, _GetFFIdx(name, EOT_UNKNOWN, prObj), prObj, uiLoadFlags);
+
+	delete[] name_path;
+
+	return ret;
 }
 
 HRESULT DGLE2_API CResourceManager::FreeResource(IEngBaseObj *&prObj)

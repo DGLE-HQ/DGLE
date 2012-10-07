@@ -88,11 +88,18 @@ HRESULT CResFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-HRESULT CResFile::GetName(char *pcName, uint uiCharsCount)
+HRESULT CResFile::GetName(char *pcName, uint &uiCharsCount)
 {
-	if (uiCharsCount < strlen(_acName))
+	if (!pcName)
 	{
-		LOG("Too small \"pcName\" buffer size.", LT_ERROR);
+		uiCharsCount = strlen(_acName) + 1;
+		return S_OK;	
+	}
+	
+	if (uiCharsCount <= strlen(_acName))
+	{
+		uiCharsCount = strlen(_acName) + 1;
+		strcpy(pcName, "");
 		return E_INVALIDARG;
 	}
 
@@ -101,9 +108,23 @@ HRESULT CResFile::GetName(char *pcName, uint uiCharsCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CResFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CResFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
+	if (!pcPath)
+	{
+		uiCharsCount = 1;
+		return S_OK;
+	}
+
+	if (uiCharsCount < 1)
+	{
+		uiCharsCount = 1;
+		strcpy(pcPath, "");
+		return E_INVALIDARG;
+	}
+
 	strcpy(pcPath, "");
+
 	return S_OK;
 }
 

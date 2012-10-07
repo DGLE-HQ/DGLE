@@ -483,20 +483,22 @@ _uiOverallTrianglesCount(0), _pCurBindedBuffer(NULL), _pLastDrawnBuffer(NULL),
 _bVerticesBufferBindedFlag(false), _bIndexesBufferBindedFlag(false),
 _uiDrawCount(-1)
 {
-	Console()->RegComProc("cr_getglextlist", "Reports OpenGL supported extensions list.\r\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
-	Console()->RegComValue("cr_profiler", "Displays CoreRendererGL subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
+	Console()->RegComValue("crgl_profiler", "Displays CoreRendererGL subsystems profiler.", &_iProfilerState, 0, 2);
 }
 
 HRESULT DGLE2_API CCoreRendererGL::Prepare(TCRendererInitResult &stResults)
 {
-	return CBaseRendererGL::Prepare(stResults) ? S_OK : E_FAIL;
+	return stResults = CBaseRendererGL::Prepare(), stResults ? S_OK : E_FAIL;
 }
 
 HRESULT DGLE2_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 {
 	LOG("Initializing Core Renderer...", LT_INFO);
 
-	if (!CBaseRendererGL::Initialize(stResults))
+	stResults = CBaseRendererGL::Initialize();
+
+	if (!stResults)
 		return E_ABORT;
 
 	GLenum glew_res = glewInit();
@@ -536,7 +538,7 @@ HRESULT DGLE2_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 #ifdef PLATFORM_WINDOWS
 	if (string((char*)glGetString(GL_RENDERER)).find("GDI") != string::npos && string((char*)glGetString(GL_VENDOR)).find("Microsoft") != string::npos && !GLEW_VERSION_1_2)
 	{
-		LOG("Non hardware accelerated OpenGL implementation found! Videocard drivers are missing or corrupted.", LT_FATAL);
+		LOG("Non hardware accelerated OpenGL implementation found! Videocard drivers are missing, corrupted or outdated.", LT_FATAL);
 		return E_FAIL;
 	}
 #endif
@@ -1631,7 +1633,7 @@ void DGLE2_API CCoreRendererGL::_s_ConPrintGLExts(void *pParametr, const char *p
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 	
-	string res = string("------OpenGL Extensions------\r\n") + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\r\n-----------------------------";
+	string res = string("------OpenGL Extensions------\n") + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\n-----------------------------";
 
 	if (write)
 		LOG2(CCoreRendererGL, res, LT_INFO);

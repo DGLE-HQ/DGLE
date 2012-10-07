@@ -16,7 +16,7 @@ _hWnd(NULL), _hDC(NULL), _hRootHWnd(NULL),
 _uiUpdateTimer(-1)
 {}
 
-LRESULT DGLE2_API CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -59,7 +59,7 @@ LRESULT DGLE2_API CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM w
 	}
 }
 
-LRESULT DGLE2_API CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 

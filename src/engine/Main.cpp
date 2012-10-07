@@ -37,7 +37,7 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	EngineInstances[uiInstIdx].pclCore->AddToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
-extern bool DGLE2_API CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
+extern bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
 {
 	if (ubtSDKVer != _DGLE2_SDK_VER_)
 	{
@@ -50,7 +50,7 @@ extern bool DGLE2_API CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS
 	size_t cur_id = EngineInstances.size() - 1;
 
 	EngineInstances[cur_id].eGetEngFlags = eFlags;
-	EngineInstances[cur_id].pclConsole = new CConsole(!(eFlags & GEF_FORCE_SINGLE_THREAD));
+	EngineInstances[cur_id].pclConsole = new CConsole((uint)cur_id, !(eFlags & GEF_FORCE_SINGLE_THREAD));
 	EngineInstances[cur_id].pclCore = new CCore((uint)cur_id, eFlags & GEF_FORCE_SINGLE_THREAD);
 
 	if (eFlags & GEF_FORCE_QUIT)
@@ -61,7 +61,7 @@ extern bool DGLE2_API CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS
 	return true;
 }
 
-extern bool DGLE2_API FreeEngine(DGLE2::IEngineCore *pEngineCore)
+extern bool CALLBACK FreeEngine(DGLE2::IEngineCore *pEngineCore)
 {
 	if (!pEngineCore)
 		return false;
@@ -105,7 +105,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 		for(size_t i = 0; i < EngineInstances.size(); ++i)
 		{
 			if(EngineInstances[i].pclCore)
+			{
 				delete EngineInstances[i].pclCore;
+				EngineInstances[i].pclCore = NULL;
+			}
 
 			if(EngineInstances[i].pclConsole)
 				delete EngineInstances[i].pclConsole;

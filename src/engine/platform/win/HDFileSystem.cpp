@@ -34,8 +34,14 @@ CHDFileIterator::~CHDFileIterator()
 		LOG("Can't close find handle.",LT_ERROR);
 }
 
-HRESULT CHDFileIterator::FileName(char *pcName, uint uiCharsCount)
+HRESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 {
+	if (!pcName)
+	{
+		uiCharsCount = strlen(_acName) + 1;
+		return S_OK;
+	}
+
 	if (strlen(_acName) < uiCharsCount)
 	{
 		strcpy(pcName, _acName);
@@ -43,8 +49,8 @@ HRESULT CHDFileIterator::FileName(char *pcName, uint uiCharsCount)
 	}
 	else
 	{
+		uiCharsCount = strlen(_acName) + 1;
 		strcpy(pcName, "");
-		LOG("Too small \"pcName\" buffer size.", LT_ERROR);
 		return E_INVALIDARG;
 	}
 }
@@ -123,19 +129,25 @@ HRESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterat
 	return S_FALSE;
 }
 
-HRESULT DGLE2_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount)
+HRESULT DGLE2_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
 	char res[] = "Not supported for this realisation.";
+
+	if (!pcCommand)
+	{
+		uiCharsCount = strlen(res) + 1;
+		return S_OK;
+	}
 
 	if (strlen(res) < uiCharsCount)
 	{
 		strcpy(pcResult, res);
-		return E_INVALIDARG;
+		return E_NOTIMPL;
 	}
 	else
 	{
+		uiCharsCount = strlen(res) + 1;
 		strcpy(pcResult, "");
-		LOG("Too small \"pcResult\" buffer size.", LT_ERROR);
 		return E_INVALIDARG;
 	}
 }

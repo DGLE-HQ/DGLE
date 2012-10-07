@@ -174,10 +174,20 @@ public:
 	bool DoHalt() {return !_bNoHalt;}
 	bool DoShowMessage() {return !_bNoMessage;}
 
-	HRESULT DGLE2_API GetMessageTxt(char *pcTxt, uint uiCharsCount)
+	HRESULT DGLE2_API GetMessageTxt(char *pcTxt, uint &uiCharsCount)
 	{
-		if(uiCharsCount < _txt.length())
+		if (!pcTxt)
+		{
+			uiCharsCount = _txt.length() + 1;
+			return S_OK;
+		}
+
+		if (uiCharsCount <= _txt.length())
+		{
+			uiCharsCount = _txt.length() + 1;
+			strcpy(pcTxt, "");
 			return E_INVALIDARG;
+		}
 
 		strcpy(pcTxt, _txt.c_str());
 
@@ -245,7 +255,7 @@ _clDelOnFPSTimer(uiInstIdx)
 	if (!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_NO_LOG_FILE))
 	{
 		_clLogFile.setf(ios_base::right, ios_base::adjustfield);
-		_clLogFile.open((string("log")+(InstIdx() != 0 ? IntToStr(InstIdx()) : string(""))+".txt").c_str(), ios::out|ios::trunc);
+		_clLogFile.open((string("log")+(InstIdx() != 0 ? IntToStr(InstIdx()) : string(""))+".txt").c_str(), ios::out | ios::trunc);
 
 		TSysTimeAndDate time;
 		GetLocalTimaAndDate(time);
@@ -398,13 +408,21 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		while (i < _clPlugins.size())
 		{
-			char iname[c_MaxPluginInterfaceName];
-			PARANOIC_CHECK_HR(_clPlugins[i].pPlugin->GetPluginInterfaceName(iname, c_MaxPluginInterfaceName));
+			char *p_name;
+			uint chars_cnt;
+
+			_clPlugins[i].pPlugin->GetPluginInterfaceName(NULL, chars_cnt);
+
+			p_name = new char[chars_cnt];
+
+			_clPlugins[i].pPlugin->GetPluginInterfaceName(p_name, chars_cnt);
 					
-			if (strcmp(iname, "ISubSystemPlugin") != 0)
+			if (strcmp(p_name, "ISubSystemPlugin") != 0)
 				_UnloadPlugin(_clPlugins[i].pPlugin);
 			else
 				++i;
+
+			delete[] p_name;
 		}
 
 		_pResMan->FreeAllResources();
@@ -587,8 +605,8 @@ void CCore::_MainLoop()
 		if ((_eInitFlags & EIF_DISABLE_SMART_TIMING) && cycles_cnt > 1)
 			cycles_cnt = 1;
 		else
-			if (cycles_cnt > c_MaxProcessCycles)
-				cycles_cnt = c_MaxProcessCycles;
+			if (cycles_cnt > _sc_MaxProcessCycles)
+				cycles_cnt = _sc_MaxProcessCycles;
 
 		_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiProcessInterval;
 
@@ -711,7 +729,7 @@ void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 	)
 }
 
-HRESULT DGLE2_API CCore::RenderProfilerTxt(const char* pcTxt, const TColor4 &stColor)
+HRESULT DGLE2_API CCore::RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor)
 {
 	if (!_bInDrawProfilers)
 		return S_FALSE;
@@ -737,7 +755,7 @@ HRESULT DGLE2_API CCore::RenderProfilerTxt(const char* pcTxt, const TColor4 &stC
 	return S_OK;
 }
 
-HRESULT DGLE2_API CCore::ConnectPlugin(const char* pcFileName, IPlugin *&prPlugin)
+HRESULT DGLE2_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
 {
 	if (_access(pcFileName, 0) != -1)
 		return _LoadPlugin(string(pcFileName),prPlugin) ? S_OK : E_ABORT;
@@ -754,7 +772,7 @@ HRESULT DGLE2_API CCore::DisconnectPlugin(IPlugin *pPlugin)
 	return _UnloadPlugin(pPlugin) ? S_OK : E_INVALIDARG;
 }
 
-HRESULT DGLE2_API CCore::GetPlugin(const char* pcPluginName, IPlugin *&prPlugin)
+HRESULT DGLE2_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlugin)
 {
 	for (size_t i = 0; i < _clPlugins.size(); ++i)
 	{
@@ -847,12 +865,12 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 void CCore::_PrintPluginsInfo()
 {
-	string tmp = "------Connected Plugins------\r\n";
+	string tmp = "------Connected Plugins------\n";
 	for (size_t i = 0; i < _clPlugins.size(); ++i)
 	{
 		TPluginInfo info;
 		_clPlugins[i].pPlugin->GetPluginInfo(info);
-		tmp += "- " + string(info.cName)+" " + string(info.cVersion) +" by " + string(info.cVendor) + "\r\n";
+		tmp += "- " + string(info.cName)+" " + string(info.cVersion) +" by " + string(info.cVendor) + "\n";
 	}
 	tmp += "-----------------------------";
 	Console()->Write(tmp.c_str());
@@ -944,13 +962,13 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 
 		Console()->RegComValue("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, (void*)this);
 		Console()->RegComValue("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, (void*)this);
-		Console()->RegComValue("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\r\n1 - simple draw FPS and UPS.\r\n2 - additional draw performance graphs.", &_iDrawProfiler, 0, 2, NULL, (void*)this);
+		Console()->RegComValue("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additional draw performance graphs.", &_iDrawProfiler, 0, 2, NULL, (void*)this);
 		Console()->RegComValue("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, (void*)this);
 		Console()->RegComProc ("core_version", "Prints engine version.", &_s_ConPrintVersion, (void*)this);
-		Console()->RegComProc ("core_features", "Prints list of features with which engine was build.\r\nw - write to logfile.", &_s_ConFeatures, (void*)this);
+		Console()->RegComProc ("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, (void*)this);
 		Console()->RegComProc ("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, (void*)this);
 		Console()->RegComProc ("core_instidx", "Prints Instance Index of current engine unit.", &_s_InstIdx, (void*)this);
-		Console()->RegComProc ("core_setmode", "Changes display mode.\r\nUsage: \"core_setmode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\r\nExample:\"core_setmode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
+		Console()->RegComProc ("core_set_mode", "Changes display mode.\nUsage: \"core_set_mode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\nExample:\"core_set_mode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
 
 		if (!_pMainWindow)
 		{
@@ -983,10 +1001,26 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 				IPlugin *plugin;
 				if (S_OK == ConnectPlugin(_clPluginInitList[i].c_str(), plugin))
 				{
-					char iname[c_MaxPluginInterfaceName];
-					PARANOIC_CHECK_HR(plugin->GetPluginInterfaceName(iname, c_MaxPluginInterfaceName));
-					
-					if (strcmp(iname, "ISubSystemPlugin") == 0)
+					char *p_name;
+					uint chars_cnt;
+
+					if (FAILED(plugin->GetPluginInterfaceName(NULL, chars_cnt)))
+					{
+						LOG("Failed to get plugin interface name length.", LT_ERROR);
+						_UnloadPlugin(plugin);
+						continue;
+					}
+
+					p_name = new char[chars_cnt];
+
+					if (FAILED(plugin->GetPluginInterfaceName(p_name, chars_cnt)))
+					{
+						LOG("Failed to get plugin interface name.", LT_ERROR);
+						_UnloadPlugin(plugin);
+						continue;
+					}
+				
+					if (strcmp(p_name, "ISubSystemPlugin") == 0)
 					{
 						IEngineSubSystem *pss;
 						((ISubSystemPlugin*)plugin)->GetSubSystemInterface(pss);
@@ -1039,6 +1073,9 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 							_UnloadPlugin(plugin);
 						}
 					}
+
+					delete[] p_name;
+
 				}			
 			}
 		}
@@ -1070,12 +1107,12 @@ HRESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcAppl
 			_pSplashWindow->SetOwnerWindow(t_h);
 		}
 
-		if (strlen(pcApplicationName) < c_AppCaptionMaxLength)
+		if (strlen(pcApplicationName) < _sc_AppCaptionMaxLength)
 			strcpy(_pcApplicationCaption, pcApplicationName);
 		else
 		{
-			memcpy(_pcApplicationCaption, pcApplicationName, c_AppCaptionMaxLength - 1);
-			_pcApplicationCaption[c_AppCaptionMaxLength - 1] = '\0';
+			memcpy(_pcApplicationCaption, pcApplicationName, _sc_AppCaptionMaxLength - 1);
+			_pcApplicationCaption[_sc_AppCaptionMaxLength - 1] = '\0';
 			LOG("Application name is too long.", LT_WARNING);	   
 		}
 
@@ -1429,62 +1466,62 @@ HRESULT DGLE2_API CCore::AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const c
 
 void DGLE2_API CCore::_s_InstIdx(void *pParametr, const char *pcParam)
 {
-	CON(CCore, (string("Instance Index is ")+IntToStr(PTHIS(CCore)->InstIdx())+".").c_str());
+	CON(CCore, (string("Instance Index is ") + IntToStr(PTHIS(CCore)->InstIdx()) + ".").c_str());
 }
 
 void DGLE2_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 {
-	bool write = strlen(pcParam)!=0 && pcParam[0] == 'w';
+	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 
-	string res = string("Engine was build with:\r\n") +
+	string res = string("Engine was build with:\n") +
 #ifdef _DEBUG
-		"* DEBUG build.\r\n"
+		"* DEBUG build.\n"
 #else
-		"* Release build.\r\n"
+		"* Release build.\n"
 #endif		
 		+
-		"* Engine SDK version: " + IntToStr(_DGLE2_SDK_VER_) + ".\r\n" +
-		"* Plugin SDK version: " + IntToStr(_DGLE2_PLUGIN_SDK_VER_) + ".\r\n" +
+		"* Engine SDK version: " + IntToStr(_DGLE2_SDK_VER_) + ".\n" +
+		"* Plugin SDK version: " + IntToStr(_DGLE2_PLUGIN_SDK_VER_) + ".\n" +
 #ifdef DGLE2_STATIC
-		"* Static library build.\r\n"
+		"* Static library build.\n"
 #endif
 #ifdef PLATFORM_WINDOWS
 #ifdef _WIN64
-		"* Target platform Win64.\r\n"
+		"* Target platform Win64.\n"
 #elif _WIN32
-		"* Target platform Win32.\r\n"
+		"* Target platform Win32.\n"
 #endif
 #endif
 #ifdef STRUCT_ALIGNMENT_1
-		"* All engine structures are aligned by 1 byte.\r\n"
+		"* All engine structures are aligned by 1 byte.\n"
 #endif
 #ifdef PDB_DEBUG
-		"* Unhandled Exceptions Filter with support of PDB files.\r\n"
+		"* Unhandled Exceptions Filter with support of PDB files.\n"
 #endif
 #ifdef DGLE2_USE_COM
-		"* Support of Microsoft COM technology for engine interfaces.\r\n"
+		"* Support of Microsoft COM technology for engine interfaces.\n"
 #endif
 #ifdef PLATFORM_WINDOWS
 #	ifdef NO_DIRECTX
-		"* No Microsoft DirectX build.\r\n"
+		"* No Microsoft DirectX build.\n"
 #	elif defined(DXDIAG_VIDEO_INFO)
-		"* Uses Microsoft DirectX diagnostic information.\r\n"
+		"* Uses Microsoft DirectX diagnostic information.\n"
 #	endif
 #endif
 #ifdef NO_BUILTIN_RENDERER
-		"* No builtin Renderer.\r\n"
+		"* No builtin Renderer.\n"
 #else
-		"* Builtin OpenGL Legacy Renderer.\r\n"
+		"* Builtin OpenGL Legacy Renderer.\n"
 #endif
 #ifdef NO_BUILTIN_SOUND
-		"* No builtin Sound Subsystem.\r\n"
+		"* No builtin Sound Subsystem.\n"
 #else
-		"* Builtin Sound Subsystem.\r\n"
+		"* Builtin Sound Subsystem.\n"
 #endif
 #ifdef NO_BUILTIN_INPUT
-		"* No builtin Input Subsystem.\r\n"
+		"* No builtin Input Subsystem.\n"
 #else
-		"* Builtin Input Subsystem.\r\n"
+		"* Builtin Input Subsystem.\n"
 #endif
 		;
 
@@ -1496,7 +1533,7 @@ void DGLE2_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 
 void DGLE2_API CCore::_s_ConPrintVersion(void *pParametr, const char *pcParam)
 {
-	if (strlen(pcParam)!=0)
+	if (strlen(pcParam) != 0)
 		CON(CCore, "No parametrs expected.");
 	else 
 		CON(CCore, (string("Engine version: ")+string(DGLE2_VERSION)).c_str());
@@ -1504,13 +1541,13 @@ void DGLE2_API CCore::_s_ConPrintVersion(void *pParametr, const char *pcParam)
 
 void DGLE2_API CCore::_s_ConAutoPause(void *pParametr, const char *pcParam)
 {
-	if (strlen(pcParam)!=0)
+	if (strlen(pcParam) != 0)
 		CON(CCore, "No parametrs expected.");
 }
 
 void DGLE2_API CCore::_s_ConListPlugs(void *pParametr, const char *pcParam)
 {
-	if(strlen(pcParam)!=0)
+	if (strlen(pcParam) != 0)
 		CON(CCore, "No parametrs expected.");
 	else
 		PTHIS(CCore)->_PrintPluginsInfo();
@@ -1554,7 +1591,7 @@ HRESULT DGLE2_API CCore::ConsoleVisible(bool bIsVisible)
 
 HRESULT DGLE2_API CCore::ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine)
 {
-	Console()->Write(pcTxt, bWriteToPreviousLine);
+	Console()->Write(string(pcTxt), bWriteToPreviousLine);
 	return S_OK;
 }
 
@@ -1617,12 +1654,15 @@ HRESULT DGLE2_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSub
 			break;		
 
 		case ESS_INPUT:
-			prSubSystem = (IEngineSubSystem*)_pInput;
+			if(_pInput == NULL)
+				return E_NOTIMPL;
+			else
+				prSubSystem = (IEngineSubSystem*)_pInput;
 			break;	
 
 		case ESS_SOUND:
 			if(_pSound == NULL)
-				return E_INVALIDARG;
+				return E_NOTIMPL;
 			else
 				prSubSystem = (IEngineSubSystem*)_pSound;
 			break;

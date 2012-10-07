@@ -45,7 +45,7 @@ struct TState
 
 class CCoreGeometryBuffer;
 
-class CCoreRendererGL: public CBaseRendererGL, public ICoreRenderer
+class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 {
 	static const uint _sc_uiMaxVerticesCountForLegacy = 128;
 	static const uint _sc_uiMaxDrawCallsPerFrame = 3000;

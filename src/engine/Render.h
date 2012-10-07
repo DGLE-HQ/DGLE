@@ -19,12 +19,16 @@ class CRender: public CInstancedObj, public IRender
 	float _fFovAngle, _fZNear, _fZFar;
 	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLight, _iMaxTexUnits;
 
+	std::string _strFeturesList, _strMetricsList;
+
 	ICoreRenderer *_pCoreRenderer;
 
 	CRender2D *_pRender2D;
 	CRender3D *_pRender3D;
 
 	void _SetPerspectiveMatrix(uint width, uint height);
+
+	static void DGLE2_API _s_ConListFeatures(void *pParametr, const char *pcParam);
 
 public:
 

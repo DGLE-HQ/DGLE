@@ -38,7 +38,7 @@ _pcBuffer(NULL)
 	_bHideCursor			= true;
 	_bCurBeyond				= false;
 
-	LOG("Input Subsystem initialized.",LT_INFO);
+	LOG("Input Subsystem initialized.", LT_INFO);
 }
 
 CInput::~CInput()
@@ -50,7 +50,7 @@ CInput::~CInput()
 	if (_bExclusive)
 		ClipCursor(0, 0, 0, 0);
 
-	LOG("Input Subsystem finalized.",LT_INFO);
+	LOG("Input Subsystem finalized.", LT_INFO);
 }
 
 void CInput::_Loop()

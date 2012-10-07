@@ -69,19 +69,36 @@ HRESULT CBufFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-HRESULT CBufFile::GetName(char *pcName, uint uiCharsCount)
+HRESULT CBufFile::GetName(char *pcName, uint &uiCharsCount)
 {
-	if (uiCharsCount < strlen(_acName))
+	if (!pcName)
+	{
+		uiCharsCount = strlen(_acName) + 1;
+		return S_OK;
+	}
+
+	if (uiCharsCount <= strlen(_acName))
+	{
+		uiCharsCount = strlen(_acName) + 1;
+		strcpy(pcName, "");
 		return E_INVALIDARG;
+	}
 
 	strcpy(pcName, _acName);
 
 	return S_OK;
 }
 
-HRESULT DGLE2_API CBufFile::GetPath(char *pcPath, uint uiCharsCount)
+HRESULT DGLE2_API CBufFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
+	if (!pcPath)
+	{
+		uiCharsCount = 1;
+		return S_OK;
+	}
+
 	strcpy(pcPath, "");
+	
 	return S_OK;
 }
 

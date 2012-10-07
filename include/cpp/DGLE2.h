@@ -207,9 +207,10 @@ namespace DGLE2
 		/** Returns the name of interface which plugin implements or empty string if it implements nothing.
 			\param[out] pcName Pointer to allocated string.
 			\param[in] uiCharsCount Count of the chars in allocated string.
-			\return E_INVALIDARG must be returned if allocated string is too small. 
+			\return E_INVALIDARG must be returned if allocated string is too small.
+			\note If pcName is NULL then uiCharsCount will contain length of the text to allocate.
 		*/
-		virtual HRESULT DGLE2_API GetPluginInterfaceName(char* pcName, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetPluginInterfaceName(char* pcName, uint &uiCharsCount) = 0;
 	};
 
 //Engine Subsystem Plugin interface//
@@ -281,13 +282,14 @@ namespace DGLE2
 	enum E_EVENT_TYPE
 	{
 		ET_UNKNOWN = 0,				/**< Undefined or custom event type. */ 
-		ET_BEFORE_INIT,				/**< Event occures just before engine will call its initialization routines. \see IEvBeforeInit */ 
-		ET_BEFORE_RENDER,			/**< Event occures before every frame. */ 
-		ET_AFTER_RENDER,			/**< Event occures after every frame. */ 
+		ET_BEFORE_INIT,				/**< Event occurs just before engine will call its initialization routines. \see IEvBeforeInit */ 
+		ET_BEFORE_RENDER,			/**< Event occurs before every frame. */ 
+		ET_AFTER_RENDER,			/**< Event occurs after every frame. */ 
 		ET_ON_PROFILER_DRAW,		/**< It is a special event on which you can render some text information on screen. \note If you want to output some statistic or profiling information use this event and special RenderProfilerTxt method. \see IEngineCore::RenderProfilerTxt */ 
-		ET_ON_WIN_MESSAGE,			/**< Event occures every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
-		ET_ON_GET_SSYSTEM,			/**< Event occures when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realisation. \see IEvGetSubSystem */ 
-		ET_ON_ENGINE_FATAL_MESSAGE	/**< Event occures on engine fatal error. \see IEvFatalMessage */ 
+		ET_ON_WIN_MESSAGE,			/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
+		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realisation. \see IEvGetSubSystem */ 
+		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
+		ET_ON_CONSOLE_WRITE			/**< Event occurs when some text is being outputed to the engine console. \see IEvFatalMessage */
 	};
 
 	// {6DFEF982-AADF-42e9-A369-378BDB31404A}
@@ -337,6 +339,26 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
 	};
 	
+	// {9E35969A-B0D4-4E5A-A89B-1A5AAD057028}
+	static const GUID IID_IEvConsoleWrite = 
+	{ 0x9e35969a, 0xb0d4, 0x4e5a, { 0xa8, 0x9b, 0x1a, 0x5a, 0xad, 0x5, 0x70, 0x28 } };
+
+	/** Event occurs when some text is being added to the engine console.
+		\see ET_ON_CONSOLE_WRITE
+	 */
+	class IEvConsoleWrite : public IBaseEvent
+	{
+	public:
+		/** Returns console text.
+		 \param[out] pcTxt Pointer to allocated string.
+		 \param[in, out] uiCharsCount Count of the chars in allocated string.
+		 \param[out] bToPrevLine Should text replase previous console line or add new one.
+		 \return E_INVALIDARG must be returned if allocated string is too small.
+		 \note If pcTxt is NULL then uiCharsCount will contain the length of the text to allocate.
+		 */		
+		virtual HRESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine) = 0;
+	};
+
 	// {DAA4E3BC-C958-4def-B603-F63EEC908226}
 	static const GUID IID_IEvFatalMessage = 
 	{ 0xdaa4e3bc, 0xc958, 0x4def, { 0xb6, 0x3, 0xf6, 0x3e, 0xec, 0x90, 0x82, 0x26 } };
@@ -352,10 +374,11 @@ namespace DGLE2
 	public:
 		/** Returns the fatal message text.
 		 \param[out] pcTxt Pointer to allocated string.
-		 \param[in] uiCharsCount Count of the chars in allocated string.
-		 \return E_INVALIDARG must be returned if allocated string is too small. 
+		 \param[in, out] uiCharsCount Count of the chars in allocated string.
+		 \return E_INVALIDARG must be returned if allocated string is too small.
+		 \note If pcTxt is NULL then uiCharsCount will contain the length of the text to allocate.
 		 */		
-		virtual HRESULT DGLE2_API GetMessageTxt(char *pcTxt, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetMessageTxt(char *pcTxt, uint &uiCharsCount) = 0;
 		/** Suspends all engine threads and pauses all engine routines. 
 			\param[in] bFreeze Suspends if true or resumes if fales engine threads and routines.
 		 */
@@ -502,9 +525,9 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API StartEngine() = 0;
 		virtual HRESULT DGLE2_API QuitEngine() = 0;
 
-		virtual HRESULT DGLE2_API ConnectPlugin(const char* pcFileName, IPlugin *&prPlugin) = 0;	
+		virtual HRESULT DGLE2_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin) = 0;	
 		virtual HRESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin) = 0;	
-		virtual HRESULT DGLE2_API GetPlugin(const char* pcPluginName, IPlugin *&prPlugin) = 0;	
+		virtual HRESULT DGLE2_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) = 0;	
 
 		virtual HRESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback) = 0;
 		virtual HRESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
@@ -518,7 +541,7 @@ namespace DGLE2
 
 		virtual HRESULT DGLE2_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) = 0;
 
-		virtual HRESULT DGLE2_API RenderProfilerTxt(const char* pcTxt, const TColor4 &stColor = TColor4()) = 0;
+		virtual HRESULT DGLE2_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
 		virtual HRESULT DGLE2_API GetInstanceIdx(uint &uiIdx) = 0;
 		virtual HRESULT DGLE2_API GetTimer(uint64 &uiTick) = 0;
 		virtual HRESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
@@ -630,8 +653,8 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API UnregisterFileFormat(const char *pcExtension) = 0;
 		virtual HRESULT DGLE2_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
 		virtual HRESULT DGLE2_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
-		virtual HRESULT DGLE2_API GetRegisteredExtensions(char *pcTxt, uint uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetRegisteredExtensions(char *pcTxt, uint &uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount) = 0;
 		virtual HRESULT DGLE2_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType) = 0;
 
 		virtual HRESULT DGLE2_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj) = 0;
@@ -725,8 +748,8 @@ namespace DGLE2
 	{
 		BM_AUTO	= 0,
 		BM_DISABLED,
-		BM_ENABLED_UEP,//update batches every process tick
-		BM_ENABLED_UER //update batches every render frame
+		BM_ENABLED_UPDATE_EVERY_TICK,
+		BM_ENABLED_UPDATE_EVERY_FRAME
 	};
 
 	// {F5F3257A-F8B8-4d91-BA67-451167A8D63F}
@@ -806,7 +829,7 @@ namespace DGLE2
 	
 		virtual HRESULT DGLE2_API SetColor(const TColor4 &stColor) = 0;
 		virtual HRESULT DGLE2_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
-		/*!!!!!!!!!!*/virtual HRESULT DGLE2_API ToggleAlphaTest(bool bEnabled, float fAlphaMinTreshold = 0.25) = 0;
+		virtual HRESULT DGLE2_API ToggleAlphaTest(bool bEnabled, float fAlphaMinTreshold = 0.25) = 0;
 		virtual HRESULT DGLE2_API ToggleDepthTest(bool bEnabled) = 0;
 
 		virtual HRESULT DGLE2_API SetMatrix(const TMatrix &stMatrix, bool bMult) = 0;
@@ -1183,8 +1206,8 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API GetVirtualFileSystem(const char *pcVFSExtension/*NULL to get HDD file system*/, IFileSystem *&prVFS) = 0;
 		virtual HRESULT DGLE2_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr = NULL) = 0;
 		virtual HRESULT DGLE2_API UnregisterVirtualFileSystem(const char* pcVFSExtension) = 0;
-		virtual HRESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount) = 0;
 	};
 
 	enum E_FIND_FLAGS
@@ -1221,8 +1244,8 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position) = 0;
 		virtual HRESULT DGLE2_API GetSize(uint32 &ui32Size) = 0;
 		virtual HRESULT DGLE2_API IsOpen(bool &bOpened) = 0;
-		virtual HRESULT DGLE2_API GetName(char *pcName, uint uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetPath(char *pcPath, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetName(char *pcName, uint &uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API GetPath(char *pcPath, uint &uiCharsCount) = 0;
 		virtual HRESULT DGLE2_API Free() = 0;
 	};
 
@@ -1235,7 +1258,7 @@ namespace DGLE2
 	class IFileIterator : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API FileName(char *pcName, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API FileName(char *pcName, uint &uiCharsCount) = 0;
 		virtual HRESULT DGLE2_API Next() = 0;
 		virtual HRESULT DGLE2_API Free() = 0;
 	};
@@ -1253,7 +1276,7 @@ namespace DGLE2
 		virtual HRESULT DGLE2_API DeleteFile(const char *pcName) = 0; //Если передан только путь то удалит папку
 		virtual HRESULT DGLE2_API FileExists(const char *pcName, bool &bExists) = 0;//если передан только путь, то проверяет существование папки
 		virtual HRESULT DGLE2_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
-		virtual HRESULT DGLE2_API SendCommand(const char *pcCommand, char *pcResult, uint uiCharsCount) = 0;
+		virtual HRESULT DGLE2_API SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
 	};
 
 }// end of namespace
@@ -1269,23 +1292,23 @@ namespace DGLE2
 //Include one of these defines once to main CPP file//
 
 /** \def ENG_DYNAMIC_FUNC Macros you must insert in your main cpp file to use CreateEngine and FreeEngine functions.
-	\note This macros is used when engine is linked dynamically from DLL file.
+	\note This macros is used when engine is linked dynamically from lybrary file (ex. DLL for Windows).
 */
 #define ENG_DYNAMIC_FUNC \
-extern"C" bool (DGLE2_API *pCreateEngine)(DGLE2::IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, DGLE2::uint8 ubtSDKVer) = NULL;\
-extern"C" bool (DGLE2_API *pFreeEngine)(DGLE2::IEngineCore *pEngineCore) = NULL;\
+extern bool (CALLBACK *pCreateEngine)(DGLE2::IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, DGLE2::uint8 ubtSDKVer) = NULL;\
+extern bool (CALLBACK *pFreeEngine)(DGLE2::IEngineCore *pEngineCore) = NULL;\
 HMODULE hServer = NULL;\
 bool CreateEngine(DGLE2::IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags = GEF_DEFAULT)\
 {\
-	if(pCreateEngine == NULL)\
+	if (pCreateEngine == NULL)\
 		return false;\
 	return (*pCreateEngine)(pEngineCore, eFlags, _DGLE2_SDK_VER_);\
 }\
 bool FreeEngine(DGLE2::IEngineCore *pEngineCore = NULL, bool bFreeDLL = true)\
 {\
-	if(pEngineCore)\
+	if (pEngineCore)\
 		(*pFreeEngine)(pEngineCore);\
-	if(bFreeDLL && hServer)\
+	if (bFreeDLL && hServer)\
 	{\
 		FreeLibrary(hServer);\
 		hServer = NULL;\
@@ -1296,21 +1319,21 @@ bool FreeEngine(DGLE2::IEngineCore *pEngineCore = NULL, bool bFreeDLL = true)\
 }\
 bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags = GEF_DEFAULT)\
 {\
-	if(hServer == NULL)\
+	if (hServer == NULL)\
 	{\
 		pEngineCore = NULL;\
-		if(hServer == NULL)\
+		if (hServer == NULL)\
 		{\
 			hServer = ::LoadLibraryA(pcDllFileName);\
-			if(hServer == NULL) return false;\
+			if (hServer == NULL) return false;\
 		}\
-		if(pCreateEngine == NULL && pFreeEngine == NULL)\
+		if (pCreateEngine == NULL && pFreeEngine == NULL)\
 		{\
-			pCreateEngine = reinterpret_cast<bool (DGLE2_API *)(DGLE2::IEngineCore *&, E_GET_ENGINE_FLAGS, DGLE2::uint8)>\
+			pCreateEngine = reinterpret_cast<bool (CALLBACK *)(DGLE2::IEngineCore *&, E_GET_ENGINE_FLAGS, DGLE2::uint8)>\
 				(::GetProcAddress(hServer,("CreateEngine")));\
-			pFreeEngine = reinterpret_cast<bool (DGLE2_API *)(DGLE2::IEngineCore *)>\
+			pFreeEngine = reinterpret_cast<bool (CALLBACK *)(DGLE2::IEngineCore *)>\
 				(::GetProcAddress(hServer,("FreeEngine")));\
-			if(pCreateEngine == NULL || pFreeEngine == NULL)\
+			if (pCreateEngine == NULL || pFreeEngine == NULL)\
 			{\
 				FreeLibrary(hServer);\
 				hServer = NULL;\
@@ -1318,7 +1341,7 @@ bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GE
 			}\
 		}\
 	}\
-	if(hServer) return CreateEngine(pEngineCore, eFlags);\
+	if (hServer) return CreateEngine(pEngineCore, eFlags);\
 	return false;\
 }
 

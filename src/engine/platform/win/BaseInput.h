@@ -16,7 +16,7 @@ See "DGLE2.h" for more details.
 //Use this define to exlude joysticks from build
 //#define NO_JOYSTICKS
 
-class CBaseInput : public CInstancedObj, public IBaseInput
+class CBaseInput : public CInstancedObj, public CPlatformBaseInput
 {
 	HCURSOR	_hCurNone;
 	HWND	_hWnd;
@@ -35,6 +35,9 @@ class CBaseInput : public CInstancedObj, public IBaseInput
 
 	uint _GetJoyIdx(uint id);
 	uint32 _AxisValue(uint32 Value, uint Min, uint Max);
+
+	void _PrintJoysList();
+	static void DGLE2_API _s_PrintJoysList(void *pParametr, const char *pcParam);
 
 #endif
 

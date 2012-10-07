@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		08.04.2012 (c)Korotkov Andrey
+\date		07.10.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -20,8 +20,7 @@ extern HMODULE hModule;
 #define C_WND_HEIGHT 200
 #define C_WND_MIN_WIDTH  200
 #define C_WND_MIN_HEIGHT 80
-#define C_EDIT_HEIGHT 16
-#define C_MAX_CHARS 30000
+#define C_WND_EDIT_HEIGHT 16
 
 LOGFONT LF = {12, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, "Lucida Console"};
 
@@ -33,13 +32,12 @@ _bToPrevLineActive(false),
 _hWnd(NULL), _hMemo(NULL), _hEdit(NULL),
 _hInst(NULL), _hThreadHandle(NULL), _threadId(0),
 _pOldEditProc(NULL), _bVisible(false),
-_pOnCmdExec(NULL), _pConsole(NULL)
+_pConWindowEvent(NULL), _pConsole(NULL)
 {}
 
-HRESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pOnCmdExec)(CConsole *pConsole, const char *pcCommand), void (DGLE2_API *pOnCmdComplete)(CConsole *pConsole, const char *pcCommand), CConsole *pConsole)
+HRESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole)
 {
-	_pOnCmdExec = pOnCmdExec;
-	_pOnCmdComplete = pOnCmdComplete;
+	_pConWindowEvent = pConWindowEvent;
 	_pConsole = pConsole;
 
 	if (bSeparateThread)
@@ -117,9 +115,9 @@ HRESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 {
 	int cur_l = GetWindowTextLength(_hMemo);
 	
-	if (cur_l + strlen(pcTxt) + 4 >= C_MAX_CHARS)
+	if (cur_l + strlen(pcTxt) + 4 >= _sc_uiMaxConsoleTxtLength)
 	{
-		SetWindowText(_hMemo, "Console auto cleared...");
+		SetWindowText(_hMemo, "DGLE2 Console cleared...");
 		cur_l = GetWindowTextLength(_hMemo);
 	}
 	
@@ -133,11 +131,11 @@ HRESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 		_bToPrevLineActive = bToPrevLine;
 
 		if (_hThreadHandle && _hMemo == NULL)
-			_strOnCreate += string("\r\n") + pcTxt;
+			_strOnCreate += "\r\n" + string(pcTxt);
 		else
 		{
 			SendMessage(_hMemo, EM_SETSEL, cur_l, cur_l);
-			SendMessage(_hMemo, EM_REPLACESEL, false, (LPARAM)string(string("\r\n") + pcTxt).c_str());
+			SendMessage(_hMemo, EM_REPLACESEL, false, (LPARAM)("\r\n" + string(pcTxt)).c_str());
 			SendMessage(_hMemo, EM_SCROLL, SB_BOTTOM, 0);
 		}
 	} 
@@ -162,9 +160,20 @@ HRESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
 	return S_OK;
 }
 
+HRESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
+{
+	if (!pcTxt)
+	{
+		uiBufferSize = _sc_uiMaxConsoleTxtLength + 1;
+		return S_OK;
+	}
+
+	return uiBufferSize - 1 == GetWindowText(_hMemo, pcTxt, uiBufferSize) ? S_FALSE : S_OK;
+}
+
 HRESULT CConsoleWindow::Clear()
 {
-	SetWindowText(_hMemo, "Console cleared...");
+	SetWindowText(_hMemo, "DGLE2 Console cleared...");
 
 	return S_OK;
 }
@@ -269,7 +278,7 @@ int WINAPI CConsoleWindow::_WinMain(HINSTANCE hInstance)
 
 	SetWindowLongPtr(_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-	_hMemo = CreateWindow(	"EDIT","DGLE2 Console created...", 
+	_hMemo = CreateWindow(	"EDIT", "DGLE2 Console created...", 
 							WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | 
 							ES_MULTILINE | ES_READONLY, 
 							0, 0, 0, 0, _hWnd, 0, 0, NULL );
@@ -306,11 +315,11 @@ void CConsoleWindow::_Realign()
 {
 	RECT rect;
 	GetClientRect(_hWnd, &rect);
-	MoveWindow(_hMemo, 0, 0, rect.right, rect.bottom - C_EDIT_HEIGHT, true);
-	MoveWindow(_hEdit, 0, rect.bottom - C_EDIT_HEIGHT, rect.right, C_EDIT_HEIGHT, true);
+	MoveWindow(_hMemo, 0, 0, rect.right, rect.bottom - C_WND_EDIT_HEIGHT, true);
+	MoveWindow(_hEdit, 0, rect.bottom - C_WND_EDIT_HEIGHT, rect.right, C_WND_EDIT_HEIGHT, true);
 }
 
-LRESULT DGLE2_API CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CConsoleWindow *this_ptr = (CConsoleWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -355,53 +364,54 @@ LRESULT DGLE2_API CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wPa
 
 }
 
-LRESULT DGLE2_API CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CConsoleWindow *this_ptr = (CConsoleWindow*)GetWindowLongPtr(GetParent(hWnd), GWLP_USERDATA);
 	
+	char tmp[_sc_uiTmpBufferSize];
+
 	switch(message) 
 	{
 		case WM_KEYUP:
+
 			switch(wParam)
 			{
-				case 192:
+				case 192: //tilda
 					this_ptr->Visible(false);
 					SetWindowText(this_ptr->_hEdit, "");
 					break;
 
-				case 38:
-					SetWindowText(this_ptr->_hEdit, this_ptr->_strLastEditTxt.c_str());
-					SendMessage(this_ptr->_hEdit, WM_KEYDOWN, 35, 0);
+				case 38: //up			
+					this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_PREVIOUS_COMMAND, "");
 					break;
 
-				case 9:
+				case 40: //down				
+					this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_NEXT_COMMAND, "");
+					break;
+
+				case 9: //tab
 					if (GetWindowTextLength(this_ptr->_hEdit) > 0)
 					{
-						LPSTR t;
-						t = new char[256];
-						GetWindowText(this_ptr->_hEdit, t, 256);
-						string txt = t;
-						delete[] t;
-						this_ptr->_pOnCmdComplete(this_ptr->_pConsole, txt.c_str());
+						GetWindowText(this_ptr->_hEdit, tmp, _sc_uiTmpBufferSize);
+						this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_COMPLETE_COMMAND, tmp);
 					}
 					break;
 			}
+
 			break;
 
 		case WM_CHAR:
-			if (wParam == 13 && GetWindowTextLength(this_ptr->_hEdit) > 0)
+			
+			if (wParam == 13 /*return*/ && GetWindowTextLength(this_ptr->_hEdit) > 0)
 			{
-				LPSTR t;
-				t = new char[256];
-				GetWindowText(this_ptr->_hEdit, t, 256);
-				string txt = t;
-				delete[] t;
+				GetWindowText(this_ptr->_hEdit, tmp, _sc_uiTmpBufferSize);
 				SetWindowText(this_ptr->_hEdit, NULL);
-				this_ptr->_strLastEditTxt = txt;
-				this_ptr->_pConsole->Write(string(string(">") + txt).c_str());
-				this_ptr->_pConsole->Exec(txt.c_str());
+				
+				this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_EXECUTE_COMMAND, tmp);
+				
 				break;
 			}
+
 		default:
 			return CallWindowProc((WNDPROC)this_ptr->_pOldEditProc, hWnd, message, wParam, lParam);
 	}

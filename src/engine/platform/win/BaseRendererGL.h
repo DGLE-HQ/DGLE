@@ -16,7 +16,7 @@ See "DGLE2.h" for more details.
 #include <gl\glew.h>
 #include <gl\wglew.h>
 
-class CBaseRendererGL : public CInstancedObj, public IBaseRenderGL
+class CBaseRendererGL : public CInstancedObj, public CPlatformBaseRenderGL
 {
 	HGLRC _hRC;
 	TWinDrawHandle _hDC;
@@ -25,8 +25,8 @@ public:
 	
 	CBaseRendererGL(uint uiInstIdx);
 
-	bool Prepare(TCRendererInitResult &stResults);
-	bool Initialize(TCRendererInitResult &stResults);
+	bool Prepare();
+	bool Initialize();
 	bool Finalize();
 	bool AdjustMode(TEngWindow &stNewWin);
 	bool MakeCurrent();
