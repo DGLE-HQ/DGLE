@@ -51,14 +51,14 @@ public:
 
 	void UnregisterAndFreeAll();
 
-	HRESULT DGLE2_API LoadFile(const char* pcFileName, IFile *&prFile);
-	HRESULT DGLE2_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
-	HRESULT DGLE2_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr);
-	HRESULT DGLE2_API UnregisterVirtualFileSystem(const char* pcVFSExtension);
-	HRESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount);
-	HRESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount);
+	DGLE2_RESULT DGLE2_API LoadFile(const char* pcFileName, IFile *&prFile);
+	DGLE2_RESULT DGLE2_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
+	DGLE2_RESULT DGLE2_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr);
+	DGLE2_RESULT DGLE2_API UnregisterVirtualFileSystem(const char* pcVFSExtension);
+	DGLE2_RESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount);
+	DGLE2_RESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount);
 
-	HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(IMainFileSystem, IEngineSubSystem)
 };

@@ -79,12 +79,12 @@ bool CDCPFileSystem::_ReadFileInfo()
 	return true;
 }
 
-HRESULT DGLE2_API CDCPFileSystem::DeleteFile(const char *pcName)
+DGLE2_RESULT DGLE2_API CDCPFileSystem::DeleteFile(const char *pcName)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
+DGLE2_RESULT DGLE2_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	if (eFlags & FSOF_WRITE || eFlags & FSOF_TRUNC)
 	{
@@ -193,7 +193,7 @@ uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName) const
 	return -1;
 }
 
-HRESULT DGLE2_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
+DGLE2_RESULT DGLE2_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	string pack_name = string(pcName);
 
@@ -216,7 +216,7 @@ HRESULT DGLE2_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 	return S_OK;	
 }
 
-HRESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
+DGLE2_RESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
 	string pack_name = string(pcMask);
 
@@ -261,7 +261,7 @@ HRESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, 
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
 	if (!pcResult)
 		uiCharsCount = 1;
@@ -314,7 +314,7 @@ CInstancedObj(uiInstIdx), _clNameList(clNameList)
 	_clNameListIter = _clNameList.begin();
 }
 
-HRESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -337,7 +337,7 @@ HRESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint &uiCharsC
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFileIterator::Next()
+DGLE2_RESULT DGLE2_API CDCPFileIterator::Next()
 {
 	if (++_clNameListIter == _clNameList.end())
 		return S_FALSE;
@@ -345,7 +345,7 @@ HRESULT DGLE2_API CDCPFileIterator::Next()
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFileIterator::Free()
+DGLE2_RESULT DGLE2_API CDCPFileIterator::Free()
 {
 	delete this;
 	return S_OK;

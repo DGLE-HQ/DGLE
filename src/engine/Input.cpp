@@ -235,7 +235,7 @@ void CInput::_MessageProc(const TWinMessage &stMsg)
 	}
 }
 
-HRESULT DGLE2_API CInput::Configure(E_INPUT_CONFIGURATION_FLAGS eParams)
+DGLE2_RESULT DGLE2_API CInput::Configure(E_INPUT_CONFIGURATION_FLAGS eParams)
 {
 	_bExclusive	= (eParams & ICF_EXCLUSIVE) != 0;
 
@@ -256,25 +256,25 @@ HRESULT DGLE2_API CInput::Configure(E_INPUT_CONFIGURATION_FLAGS eParams)
 	return _bCurBeyond && !_bExclusive ? S_FALSE : S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetMouseStates(TMouseStates &stMs)
+DGLE2_RESULT DGLE2_API CInput::GetMouseStates(TMouseStates &stMs)
 {
 	stMs = _stMsts;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetKey(E_KEYBOARD_KEY_CODES eKey, bool &bPressed)
+DGLE2_RESULT DGLE2_API CInput::GetKey(E_KEYBOARD_KEY_CODES eKey, bool &bPressed)
 {
 	bPressed = _abKeys[eKey];
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAsciiCode)
+DGLE2_RESULT DGLE2_API CInput::GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAsciiCode)
 {
 	cAsciiCode = EngKeyToASCIIKey(eKey);
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
+DGLE2_RESULT DGLE2_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
 {
 	_pcBuffer		= cBuffer;
 	_uiBufSize		= uiBufferSize;
@@ -285,13 +285,13 @@ HRESULT DGLE2_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::EndTextInput()
+DGLE2_RESULT DGLE2_API CInput::EndTextInput()
 {
 	_bIsTxtInput = false;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetJoysticksCount(uint &uiCount)
+DGLE2_RESULT DGLE2_API CInput::GetJoysticksCount(uint &uiCount)
 {
 	if (!IsJoystickImplemented())
 	{
@@ -305,7 +305,7 @@ HRESULT DGLE2_API CInput::GetJoysticksCount(uint &uiCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CInput::GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount)
 {
 	if (pcName)
 		strcpy(pcName, "");
@@ -339,7 +339,7 @@ HRESULT DGLE2_API CInput::GetJoystickName(uint uiJoyId, char *pcName, uint &uiCh
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates)
+DGLE2_RESULT DGLE2_API CInput::GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates)
 {
 	if (!IsJoystickImplemented())
 	{
@@ -352,7 +352,7 @@ HRESULT DGLE2_API CInput::GetJoystickStates(uint uiJoyId, TJoystickStates &stJoy
 	return S_OK;
 }
 
-HRESULT DGLE2_API CInput::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
+DGLE2_RESULT DGLE2_API CInput::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
 {
 	eSubsysType = ESS_INPUT;
 	return S_OK;

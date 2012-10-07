@@ -46,47 +46,47 @@ void CSound::_Render(TSoundFrame *frames, uint uiFramesCount)
 
 }
 
-HRESULT DGLE2_API CSound::SetMasterVolume(uint uiVolume)
+DGLE2_RESULT DGLE2_API CSound::SetMasterVolume(uint uiVolume)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::PauseAllChannels(bool bPaused)
+DGLE2_RESULT DGLE2_API CSound::PauseAllChannels(bool bPaused)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::StopAllChannels()
+DGLE2_RESULT DGLE2_API CSound::StopAllChannels()
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::SetMaxChannelsCount(uint uiCount)
+DGLE2_RESULT DGLE2_API CSound::SetMaxChannelsCount(uint uiCount)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::SetListnerPosition(const TPoint3 &stCoords)
+DGLE2_RESULT DGLE2_API CSound::SetListnerPosition(const TPoint3 &stCoords)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::GetListnerPosition(TPoint3 &stCoords)
+DGLE2_RESULT DGLE2_API CSound::GetListnerPosition(TPoint3 &stCoords)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp)
+DGLE2_RESULT DGLE2_API CSound::SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::GetListnerOrientation(TVector3 &stDir, TVector3 &stUp)
+DGLE2_RESULT DGLE2_API CSound::GetListnerOrientation(TVector3 &stDir, TVector3 &stUp)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CSound::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
+DGLE2_RESULT DGLE2_API CSound::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
 {
 	eSubsysType = ESS_SOUND;
 	return S_OK;

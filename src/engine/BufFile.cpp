@@ -17,7 +17,7 @@ _ui32Size(ui32DataSize)
 	strcpy(_acName, (std::string("Virtual.") + UIntToStr(*pData)).c_str());
 }
 
-HRESULT CBufFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+DGLE2_RESULT CBufFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {
 	if (memcpy(pBuffer, (char*)(_pData) + _ui32Pos, uiCount) == 0)
 	{
@@ -32,12 +32,12 @@ HRESULT CBufFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	}
 }
 
-HRESULT CBufFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+DGLE2_RESULT CBufFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	return E_FAIL;
 }
 
-HRESULT CBufFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+DGLE2_RESULT CBufFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
 	switch(eWay)
 	{
@@ -57,19 +57,19 @@ HRESULT CBufFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &
 	return S_OK;
 }
 
-HRESULT CBufFile::GetSize(uint32 &ui32Size)
+DGLE2_RESULT CBufFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = _ui32Size;
 	return S_OK;
 }
 
-HRESULT CBufFile::IsOpen(bool &bOpened)
+DGLE2_RESULT CBufFile::IsOpen(bool &bOpened)
 {
 	bOpened = true;
 	return S_OK;
 }
 
-HRESULT CBufFile::GetName(char *pcName, uint &uiCharsCount)
+DGLE2_RESULT CBufFile::GetName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -89,7 +89,7 @@ HRESULT CBufFile::GetName(char *pcName, uint &uiCharsCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CBufFile::GetPath(char *pcPath, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CBufFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
 	if (!pcPath)
 	{
@@ -102,7 +102,7 @@ HRESULT DGLE2_API CBufFile::GetPath(char *pcPath, uint &uiCharsCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CBufFile::Free()
+DGLE2_RESULT DGLE2_API CBufFile::Free()
 {
 	delete this;
 	return S_OK;

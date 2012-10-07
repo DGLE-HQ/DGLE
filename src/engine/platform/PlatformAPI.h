@@ -31,19 +31,19 @@ static const GUID IID_IMainWindow =
 class IMainWindow
 {
 public:
-	virtual HRESULT InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) = 0;
-	virtual HRESULT SendMessage(const TWinMessage &stMsg) = 0;
-	virtual HRESULT GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType) = 0;
-	virtual HRESULT GetWindowHandle(TWinHandle &tHandle) = 0;
-	virtual HRESULT GetDrawContext(TWinDrawHandle &tHandle) = 0;
-	virtual HRESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
-	virtual HRESULT ScreenToClient(int &iX, int &iY) = 0;
-	virtual HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus) = 0;
-	virtual HRESULT SetCaption(const char *pcTxt) = 0;
-	virtual HRESULT Minimize() = 0;
-	virtual HRESULT BeginMainLoop() = 0;
-	virtual HRESULT KillWindow() = 0;
-	virtual HRESULT Free() = 0;
+	virtual DGLE2_RESULT InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) = 0;
+	virtual DGLE2_RESULT SendMessage(const TWinMessage &stMsg) = 0;
+	virtual DGLE2_RESULT GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType) = 0;
+	virtual DGLE2_RESULT GetWindowHandle(TWinHandle &tHandle) = 0;
+	virtual DGLE2_RESULT GetDrawContext(TWinDrawHandle &tHandle) = 0;
+	virtual DGLE2_RESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
+	virtual DGLE2_RESULT ScreenToClient(int &iX, int &iY) = 0;
+	virtual DGLE2_RESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus) = 0;
+	virtual DGLE2_RESULT SetCaption(const char *pcTxt) = 0;
+	virtual DGLE2_RESULT Minimize() = 0;
+	virtual DGLE2_RESULT BeginMainLoop() = 0;
+	virtual DGLE2_RESULT KillWindow() = 0;
+	virtual DGLE2_RESULT Free() = 0;
 };
 
 // {FB6FAC15-B60F-4F96-98A3-93465429750F}
@@ -53,9 +53,9 @@ static const GUID IID_ISpalshWindow =
 class ISplashWindow
 {
 public:
-	virtual HRESULT InitWindow(bool bSeparateThread, const char *pcBmpFileName) = 0;
-	virtual HRESULT SetOwnerWindow(TWinHandle tOwnerHwnd) = 0;
-	virtual HRESULT Free() = 0;
+	virtual DGLE2_RESULT InitWindow(bool bSeparateThread, const char *pcBmpFileName) = 0;
+	virtual DGLE2_RESULT SetOwnerWindow(TWinHandle tOwnerHwnd) = 0;
+	virtual DGLE2_RESULT Free() = 0;
 };
 
 enum E_CONSOLE_WINDOW_EVENT
@@ -73,21 +73,21 @@ static const GUID IID_IConsoleWindow =
 class IConsoleWindow
 {
 public:
-	virtual HRESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole) = 0;
-	virtual HRESULT Visible(bool bVisible) = 0;
-	virtual HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) = 0;
-	virtual HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
-	virtual HRESULT GetWindowHandle(TWinHandle &tHandle) = 0;
-	virtual HRESULT GetThreadId(uint32 &ui32Id) = 0;
-	virtual HRESULT OutputTxt(const char *pcTxt, bool bToPrevLine) = 0;
-	virtual HRESULT GetEditTxt(char *pcTxt, uint uiBufferSize) = 0;
-	virtual HRESULT SetEditTxt(const char *pcTxt) = 0;
-	virtual HRESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize) = 0;
-	virtual HRESULT Clear() = 0;
-	virtual HRESULT ResetSizeAndPos() = 0;
-	virtual HRESULT EnterThreadSafeSec() = 0;
-	virtual HRESULT LeaveThreadSafeSec() = 0;
-	virtual HRESULT Free() = 0;
+	virtual DGLE2_RESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole) = 0;
+	virtual DGLE2_RESULT Visible(bool bVisible) = 0;
+	virtual DGLE2_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) = 0;
+	virtual DGLE2_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
+	virtual DGLE2_RESULT GetWindowHandle(TWinHandle &tHandle) = 0;
+	virtual DGLE2_RESULT GetThreadId(uint32 &ui32Id) = 0;
+	virtual DGLE2_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine) = 0;
+	virtual DGLE2_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize) = 0;
+	virtual DGLE2_RESULT SetEditTxt(const char *pcTxt) = 0;
+	virtual DGLE2_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize) = 0;
+	virtual DGLE2_RESULT Clear() = 0;
+	virtual DGLE2_RESULT ResetSizeAndPos() = 0;
+	virtual DGLE2_RESULT EnterThreadSafeSec() = 0;
+	virtual DGLE2_RESULT LeaveThreadSafeSec() = 0;
+	virtual DGLE2_RESULT Free() = 0;
 };
 
 // {628B089E-DA74-4096-B638-9B4145832E0E}
@@ -97,9 +97,9 @@ static const GUID IID_IEngineCoreWrapper =
 class IEngineCoreWrapper
 {
 public:
-	virtual HRESULT DGLE2_API SetWindowAPI(IMainWindow *pMainWindow) = 0;
-	virtual HRESULT DGLE2_API TranslateMessage(const TWinMessage &stWinMsg) = 0;
-	virtual HRESULT DGLE2_API KillEngine() = 0;
+	virtual DGLE2_RESULT DGLE2_API SetWindowAPI(IMainWindow *pMainWindow) = 0;
+	virtual DGLE2_RESULT DGLE2_API TranslateMessage(const TWinMessage &stWinMsg) = 0;
+	virtual DGLE2_RESULT DGLE2_API KillEngine() = 0;
 };
 
 #ifdef ENGINE_PLATFORM_BASE

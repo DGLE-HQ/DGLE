@@ -19,7 +19,7 @@ CInstancedObj(uiInstIdx), _ui32SeekPos(0)
 	_ui32Size = ui32Size;
 }
 
-HRESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+DGLE2_RESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {	
 	uiRead = uiCount > _ui32Size - _ui32SeekPos ? _ui32Size - _ui32SeekPos : uiCount;
 
@@ -30,12 +30,12 @@ HRESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+DGLE2_RESULT DGLE2_API CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+DGLE2_RESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
 	switch(eWay)
 	{
@@ -49,13 +49,13 @@ HRESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFile::GetSize(uint32 &ui32Size)
+DGLE2_RESULT DGLE2_API CDCPFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = _ui32Size;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFile::IsOpen(bool &bOpened)
+DGLE2_RESULT DGLE2_API CDCPFile::IsOpen(bool &bOpened)
 {
 	if (_pBuffer)
 		bOpened = true;
@@ -65,7 +65,7 @@ HRESULT DGLE2_API CDCPFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFile::GetName(char *pcName, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CDCPFile::GetName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -85,7 +85,7 @@ HRESULT DGLE2_API CDCPFile::GetName(char *pcName, uint &uiCharsCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFile::GetPath(char *pcPath, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CDCPFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
 	if (!pcPath)
 	{
@@ -105,7 +105,7 @@ HRESULT DGLE2_API CDCPFile::GetPath(char *pcPath, uint &uiCharsCount)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CDCPFile::Free()
+DGLE2_RESULT DGLE2_API CDCPFile::Free()
 {
 	delete[] _pBuffer;
 	delete this;

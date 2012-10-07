@@ -216,7 +216,7 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 	return left && right && up && down;
 }
 
-HRESULT DGLE2_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
+DGLE2_RESULT DGLE2_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 {
 	if (_bIn2D)
 		return E_FAIL;
@@ -242,7 +242,7 @@ HRESULT DGLE2_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::InvalidateBatchData()
+DGLE2_RESULT DGLE2_API CRender2D::InvalidateBatchData()
 {
 	IN_2D_GUARD
 
@@ -253,7 +253,7 @@ HRESULT DGLE2_API CRender2D::InvalidateBatchData()
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::BeginBatch(bool bUpdateEveryFrame)
+DGLE2_RESULT DGLE2_API CRender2D::BeginBatch(bool bUpdateEveryFrame)
 {
 	IN_2D_GUARD
 
@@ -273,7 +273,7 @@ HRESULT DGLE2_API CRender2D::BeginBatch(bool bUpdateEveryFrame)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::EndBatch()
+DGLE2_RESULT DGLE2_API CRender2D::EndBatch()
 {
 	IN_2D_GUARD
 
@@ -290,7 +290,7 @@ HRESULT DGLE2_API CRender2D::EndBatch()
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::NeedToUpdateBatchData(bool &bNeedUpdate)
+DGLE2_RESULT DGLE2_API CRender2D::NeedToUpdateBatchData(bool &bNeedUpdate)
 {
 	IN_2D_GUARD
 
@@ -404,7 +404,7 @@ void CRender2D::_Set2DProjMatrix(uint width, uint height)
 		), MT_PROJECTION);
 }
 
-HRESULT DGLE2_API CRender2D::Begin2D()
+DGLE2_RESULT DGLE2_API CRender2D::Begin2D()
 {
 	if (_bIn2D)
 		return E_FAIL;
@@ -471,7 +471,7 @@ HRESULT DGLE2_API CRender2D::Begin2D()
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::End2D()
+DGLE2_RESULT DGLE2_API CRender2D::End2D()
 {
 	if (!_bIn2D)
 		return E_FAIL;
@@ -528,7 +528,7 @@ void CRender2D::EndFrame()
 	_batchNeedToRefreshBatches = false;
 }
 
-HRESULT DGLE2_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions)
+DGLE2_RESULT DGLE2_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions)
 {
 	_iResCorWidth		= uiResX;
 	_iResCorHeight		= uiResY;
@@ -538,7 +538,7 @@ HRESULT DGLE2_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY, b
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale)
+DGLE2_RESULT DGLE2_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale)
 {
 	IN_2D_GUARD
 
@@ -581,7 +581,7 @@ HRESULT DGLE2_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, co
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull)
+DGLE2_RESULT DGLE2_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull)
 {
 	IN_2D_GUARD
 
@@ -632,14 +632,14 @@ HRESULT DGLE2_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAngle,
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::LineWidth(uint uiWidth)
+DGLE2_RESULT DGLE2_API CRender2D::LineWidth(uint uiWidth)
 {
 	_fLineWidth = (float)uiWidth;
 	_pCoreRenderer->SetLineWidth((float)uiWidth);
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor, uint uiSize)
+DGLE2_RESULT DGLE2_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor, uint uiSize)
 {
 	IN_2D_GUARD
 
@@ -693,7 +693,7 @@ HRESULT DGLE2_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4 &s
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -759,7 +759,7 @@ HRESULT DGLE2_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2 &s
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -859,12 +859,12 @@ HRESULT DGLE2_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stCol
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	return DrawEllipse(stCoords, TPoint2((float)uiRadius, (float)uiRadius), uiQuality, stColor, eFlags);
 }
 
-HRESULT DGLE2_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -950,7 +950,7 @@ HRESULT DGLE2_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	// Triangulation//
 
@@ -1352,7 +1352,7 @@ HRESULT DGLE2_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVertic
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -1455,7 +1455,7 @@ HRESULT DGLE2_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstVert
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 	/*
@@ -1577,7 +1577,7 @@ HRESULT DGLE2_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TP
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -1701,7 +1701,7 @@ HRESULT DGLE2_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &stDra
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -1764,7 +1764,7 @@ HRESULT DGLE2_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer 
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
+DGLE2_RESULT DGLE2_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
 {
 	IN_2D_GUARD
 
@@ -1773,7 +1773,7 @@ HRESULT DGLE2_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffe
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	uint width = 0, height = 0;
 
@@ -1783,7 +1783,7 @@ HRESULT DGLE2_API CRender2D::DrawSpriteS(ITexture *pTexture, const TPoint2 &stCo
 	return DrawTexture(pTexture, stCoords, stDimensions, TRectF(0.f, 0.f, (float)width, (float)height), fAngle, eFlags);
 }
 
-HRESULT DGLE2_API CRender2D::DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;
@@ -1801,7 +1801,7 @@ HRESULT DGLE2_API CRender2D::DrawSpriteA(ITexture *pTexture, const TPoint2 &stCo
 		fAngle, eFlags);
 }
 
-HRESULT DGLE2_API CRender2D::DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE2_RESULT DGLE2_API CRender2D::DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;
@@ -1809,7 +1809,7 @@ HRESULT DGLE2_API CRender2D::DrawSpriteC(ITexture *pTexture, const TPoint2 &stCo
 	return DrawTexture(pTexture, stCoords, stDimensions, stRect, fAngle, eFlags);
 }
 
-__forceinline HRESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TPoint2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
+__forceinline DGLE2_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TPoint2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
 {
 	IN_2D_GUARD
 
@@ -2024,25 +2024,25 @@ __forceinline HRESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetRotationPoint(const TPoint2 &stCoords)
+DGLE2_RESULT DGLE2_API CRender2D::SetRotationPoint(const TPoint2 &stCoords)
 {
 	_stRotationPoint = stCoords;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetScale(const TPoint2 &stScale)
+DGLE2_RESULT DGLE2_API CRender2D::SetScale(const TPoint2 &stScale)
 {
 	_stScale = stScale;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetColorMix(const TColor4 &stColor)
+DGLE2_RESULT DGLE2_API CRender2D::SetColorMix(const TColor4 &stColor)
 {
 	_stColormix = stColor;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
+DGLE2_RESULT DGLE2_API CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
 {
 	IN_2D_GUARD
 
@@ -2086,7 +2086,7 @@ HRESULT DGLE2_API CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4)
+DGLE2_RESULT DGLE2_API CRender2D::SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4)
 {
 	_astVerticesOffset[0] = stCoords2;
 	_astVerticesOffset[1] = stCoords3;
@@ -2096,7 +2096,7 @@ HRESULT DGLE2_API CRender2D::SetVerticesOffset(const TPoint2 &stCoords1, const T
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4)
+DGLE2_RESULT DGLE2_API CRender2D::SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4)
 {
 	_astVerticesColors[0] = stColor2;
 	_astVerticesColors[1] = stColor3;
@@ -2106,31 +2106,31 @@ HRESULT DGLE2_API CRender2D::SetVerticesColors(const TColor4 &stColor1, const TC
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::GetRotationPoint(TPoint2 &stCoords)
+DGLE2_RESULT DGLE2_API CRender2D::GetRotationPoint(TPoint2 &stCoords)
 {
 	stCoords = _stRotationPoint;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::GetScale(TPoint2 &stScale)
+DGLE2_RESULT DGLE2_API CRender2D::GetScale(TPoint2 &stScale)
 {
 	stScale = _stScale;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::GetColorMix(TColor4 &stColor)
+DGLE2_RESULT DGLE2_API CRender2D::GetColorMix(TColor4 &stColor)
 {
 	stColor = _stColormix;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode)
+DGLE2_RESULT DGLE2_API CRender2D::GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode)
 {
 	eMode = _ePrevBlendingMode;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4)
+DGLE2_RESULT DGLE2_API CRender2D::GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4)
 {
 	stCoords2 = _astVerticesOffset[0];
 	stCoords3 = _astVerticesOffset[1];
@@ -2140,7 +2140,7 @@ HRESULT DGLE2_API CRender2D::GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCo
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender2D::GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4)
+DGLE2_RESULT DGLE2_API CRender2D::GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4)
 {
 	stColor2 = _astVerticesColors[0];
 	stColor3 = _astVerticesColors[1];

@@ -28,8 +28,8 @@ public:
 
 	CSplashWindow(uint uiInstIdx);
 
-	HRESULT InitWindow(bool bSeparateThread, const char *pcBmpFileName);
-	HRESULT SetOwnerWindow(TWinHandle tOwnerHwnd);
-	HRESULT Free();
+	DGLE2_RESULT InitWindow(bool bSeparateThread, const char *pcBmpFileName);
+	DGLE2_RESULT SetOwnerWindow(TWinHandle tOwnerHwnd);
+	DGLE2_RESULT Free();
 
 };

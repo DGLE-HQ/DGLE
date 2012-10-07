@@ -159,7 +159,7 @@ namespace DGLE2
 			\param[out] guid Uniq interface identifier.
 			\return Always returnes DGLE2_types.h::S_OK.
 		 */		
-		virtual HRESULT DGLE2_API GetGUID(GUID &guid) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetGUID(GUID &guid) = 0;
 	};
 
 //Engine SubSystem interface//
@@ -187,7 +187,7 @@ namespace DGLE2
 			\param[out] eSubSystemType Type of the subsystem to which you may cast this interface pointer.
 			\return Always returnes DGLE2_types.h::S_OK.	
 		*/
-		virtual HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType) = 0;
 	};
 
 //Engine Plugin interface//
@@ -203,14 +203,14 @@ namespace DGLE2
 		/** Returns structure with plugin description.
 			\param[out] stInfo Structure in which plugin description will be stored.
 		*/
-		virtual HRESULT DGLE2_API GetPluginInfo(TPluginInfo &stInfo) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPluginInfo(TPluginInfo &stInfo) = 0;
 		/** Returns the name of interface which plugin implements or empty string if it implements nothing.
 			\param[out] pcName Pointer to allocated string.
 			\param[in] uiCharsCount Count of the chars in allocated string.
 			\return E_INVALIDARG must be returned if allocated string is too small.
 			\note If pcName is NULL then uiCharsCount will contain length of the text to allocate.
 		*/
-		virtual HRESULT DGLE2_API GetPluginInterfaceName(char* pcName, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPluginInterfaceName(char* pcName, uint &uiCharsCount) = 0;
 	};
 
 //Engine Subsystem Plugin interface//
@@ -226,7 +226,7 @@ namespace DGLE2
 		/** Returns interface of subsystem realised in this plugin.
 			\param[out] prSubSystem Interface of the subsystem.
 		*/
-		virtual HRESULT DGLE2_API GetSubSystemInterface(IEngineSubSystem *&prSubSystem) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSubSystemInterface(IEngineSubSystem *&prSubSystem) = 0;
 	};
 
 //Engine Base Object interface//
@@ -261,17 +261,17 @@ namespace DGLE2
 		/** Releases object and deallocates memory. Also removes it from IResourceManager lists. 
 			After calling Free() method you can safely null the pointer to the object.
 		*/
-		virtual HRESULT DGLE2_API Free() = 0;
+		virtual DGLE2_RESULT DGLE2_API Free() = 0;
 		/** Returns type of object. 
 			\param[out] eObjType Type of the object to which you may cast this interface pointer.
 			\return Always returnes DGLE2_types.h::S_OK.	
 		*/
-		virtual HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType) = 0;
 		/** In case object type is EOT_UNKNOWN, you can use this function to get specific object type id.
 			\param[out] uiObjUnknownType Integer with unique object type index. Meaning of these indexes must be provided by the developer of specific object type.
 			\return Returnes DGLE2_types.h::S_FALSE if object is not of EOT_UNKNOWN type and DGLE2_types.h::S_OK otherwise.	
 		*/
-		virtual HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType) = 0;
 	};
 
 //Events Interfaces//
@@ -306,12 +306,12 @@ namespace DGLE2
 			\param[out] eEvType Type of the event. You may cast this interface pointer to special event interface if such exists.
 			\return Always returnes DGLE2_types.h::S_OK.	
 		*/
-		virtual HRESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType) = 0;
 		/** In case event type is ET_UNKNOWN, you can use this function to get specific event type id.
 			\param[out] uiUnknEvType Integer with unique event type index. Meaning of these indexes must be provided by the developer of specific event type.
 			\return Returnes DGLE2_types.h::S_FALSE if event is not of ET_UNKNOWN type and DGLE2_types.h::S_OK otherwise.	
 		*/
-		virtual HRESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType) = 0;
 	};
 
 	// {EB735739-3D12-4522-B6D7-EEE3225DF934}
@@ -331,12 +331,12 @@ namespace DGLE2
 			\param[in] stWindowParam New engine window structure to replace current.
 			\param[in] eInitFlags New engine initialization flags to replace current.
 		 */
-		virtual HRESULT DGLE2_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
 		/** Retrieves current engine initialization parametrs. 
 			\param[in] stWindowParam Current engine window structure.
 			\param[in] eInitFlags Current engine initialization flags.
 		 */
-		virtual HRESULT DGLE2_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
 	};
 	
 	// {9E35969A-B0D4-4E5A-A89B-1A5AAD057028}
@@ -356,7 +356,7 @@ namespace DGLE2
 		 \return E_INVALIDARG must be returned if allocated string is too small.
 		 \note If pcTxt is NULL then uiCharsCount will contain the length of the text to allocate.
 		 */		
-		virtual HRESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine) = 0;
 	};
 
 	// {DAA4E3BC-C958-4def-B603-F63EEC908226}
@@ -378,19 +378,19 @@ namespace DGLE2
 		 \return E_INVALIDARG must be returned if allocated string is too small.
 		 \note If pcTxt is NULL then uiCharsCount will contain the length of the text to allocate.
 		 */		
-		virtual HRESULT DGLE2_API GetMessageTxt(char *pcTxt, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetMessageTxt(char *pcTxt, uint &uiCharsCount) = 0;
 		/** Suspends all engine threads and pauses all engine routines. 
 			\param[in] bFreeze Suspends if true or resumes if fales engine threads and routines.
 		 */
-		virtual HRESULT DGLE2_API FreezeEngine(bool bFreeze) = 0;
+		virtual DGLE2_RESULT DGLE2_API FreezeEngine(bool bFreeze) = 0;
 		/** Forces engine not to show error message and console. 
 			\note If you decided not to show error message you should inform user about error somehow.
 		 */
-		virtual HRESULT DGLE2_API ForceNoMessage() = 0;
+		virtual DGLE2_RESULT DGLE2_API ForceNoMessage() = 0;
 		/** Forces engine to ignore current error and tries to continue. 
 			\warning Use with care.
 		 */
-		virtual HRESULT DGLE2_API ForceIgnoreError() = 0;
+		virtual DGLE2_RESULT DGLE2_API ForceIgnoreError() = 0;
 	};
 
 	// {8D718E48-581D-4cbb-9C40-C04998106F8D}
@@ -407,7 +407,7 @@ namespace DGLE2
 		/** Retrieves window message.
 			\param[out] stWinMsg Structure with current message information.
 		 */
-		virtual HRESULT DGLE2_API GetWinMessage(TWinMessage &stWinMsg) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetWinMessage(TWinMessage &stWinMsg) = 0;
 	};
 
 	// {2B6D2547-716E-490c-B1F1-422CB428738F}
@@ -424,11 +424,11 @@ namespace DGLE2
 		/** Returns subsystem type which user is trying to retrieve. 
 			\param[out] eSubSystem Type of retrieving subsystem.
 		 */
-		virtual HRESULT DGLE2_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem) = 0;
 		/** Substitutes engine subsystem by custom one. 
 			\param[int] pSubSystem Pointer to subsystem interface with which retrieving subsystem will be substituted.
 		 */		
-		virtual HRESULT DGLE2_API OverrideSubSystem(IEngineSubSystem *pSubSystem) = 0;
+		virtual DGLE2_RESULT DGLE2_API OverrideSubSystem(IEngineSubSystem *pSubSystem) = 0;
 	};
 
 //Main Engine System//
@@ -440,11 +440,11 @@ namespace DGLE2
 	class IUserCallback : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API Initialize() = 0;
-		virtual HRESULT DGLE2_API Free() = 0;
-		virtual HRESULT DGLE2_API Update(uint64 ui64DeltaTime) = 0;
-		virtual HRESULT DGLE2_API Render() = 0;
-		virtual HRESULT DGLE2_API OnEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
+		virtual DGLE2_RESULT DGLE2_API Initialize() = 0;
+		virtual DGLE2_RESULT DGLE2_API Free() = 0;
+		virtual DGLE2_RESULT DGLE2_API Update(uint64 ui64DeltaTime) = 0;
+		virtual DGLE2_RESULT DGLE2_API Render() = 0;
+		virtual DGLE2_RESULT DGLE2_API OnEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
 	};
 
 	/** Type of engine callbacks. 
@@ -500,13 +500,13 @@ namespace DGLE2
 		 \param[in] pcBmpFileName File name of the BMP file with picture to be set.
 		 \note You can use this method only before calling InitializeEngine.
 		 */
-		virtual HRESULT DGLE2_API LoadSplashPicture(const char *pcBmpFileName) = 0;	
+		virtual DGLE2_RESULT DGLE2_API LoadSplashPicture(const char *pcBmpFileName) = 0;	
 
 		/** Adds plugin to engine initialization list. This means that plugin will be loaded on engine initialization. This is the only correct way to setup Render, Sound, Input or other system plugins.
 		 \param[in] pcFileName File name of the plugin.
 		 \note Standart DGLE2_EXT plugin will be connected automatically (if found), so you don't need to add it to initialization list.
 		 */
-		virtual HRESULT DGLE2_API AddPluginToInitList(const char *pcFileName) = 0;	
+		virtual DGLE2_RESULT DGLE2_API AddPluginToInitList(const char *pcFileName) = 0;	
 
 		/** Initialize engine and all of its subroutines. Also creates main engine window.
 		 \param[in] tHandle Handle of some already created window control to render in or NULL in case to let engine create it's own window.
@@ -515,55 +515,55 @@ namespace DGLE2
 		 \param[in] uiProcessInterval Interval in milliseconds between calling of user process routine. \see EPT_PROCESS
 		 \param[in] eInitFlags Special engine configuration flags.
 		 */
-		virtual HRESULT DGLE2_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam = TEngWindow(), uint uiProcessInterval = 33, E_ENGINE_INIT_FLAGS eInitFlags = EIF_DEFAULT ) = 0;
+		virtual DGLE2_RESULT DGLE2_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam = TEngWindow(), uint uiProcessInterval = 33, E_ENGINE_INIT_FLAGS eInitFlags = EIF_DEFAULT ) = 0;
 		
 		/** Change interval of calling user process routine after engine has been started. \see EPT_PROCESS
 		 \param[in] uiProcessInterval Interval in milliseconds.
 		 \see InitializeEngine
 		 */
-		virtual HRESULT DGLE2_API SetProcessInterval(uint uiProcessInterval) = 0;	
-		virtual HRESULT DGLE2_API StartEngine() = 0;
-		virtual HRESULT DGLE2_API QuitEngine() = 0;
+		virtual DGLE2_RESULT DGLE2_API SetProcessInterval(uint uiProcessInterval) = 0;	
+		virtual DGLE2_RESULT DGLE2_API StartEngine() = 0;
+		virtual DGLE2_RESULT DGLE2_API QuitEngine() = 0;
 
-		virtual HRESULT DGLE2_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin) = 0;	
-		virtual HRESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin) = 0;	
-		virtual HRESULT DGLE2_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) = 0;	
+		virtual DGLE2_RESULT DGLE2_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin) = 0;	
+		virtual DGLE2_RESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin) = 0;	
+		virtual DGLE2_RESULT DGLE2_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) = 0;	
 
-		virtual HRESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback) = 0;
-		virtual HRESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
+		virtual DGLE2_RESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback) = 0;
+		virtual DGLE2_RESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
 
-		virtual HRESULT DGLE2_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
-		virtual HRESULT DGLE2_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
 
-		virtual HRESULT DGLE2_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
-		virtual HRESULT DGLE2_API AddEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr = NULL) = 0;
-		virtual HRESULT DGLE2_API RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
+		virtual DGLE2_RESULT DGLE2_API AddEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr = NULL) = 0;
 
-		virtual HRESULT DGLE2_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) = 0;
 
-		virtual HRESULT DGLE2_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
-		virtual HRESULT DGLE2_API GetInstanceIdx(uint &uiIdx) = 0;
-		virtual HRESULT DGLE2_API GetTimer(uint64 &uiTick) = 0;
-		virtual HRESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
-		virtual HRESULT DGLE2_API GetCurrentWin(TEngWindow &stWin) = 0;
-		virtual HRESULT DGLE2_API GetFPS(uint &uiFPS) = 0;
-		virtual HRESULT DGLE2_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime) = 0;
-		virtual HRESULT DGLE2_API GetHandle(TWinHandle &tHandle) = 0;
+		virtual DGLE2_RESULT DGLE2_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetInstanceIdx(uint &uiIdx) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetTimer(uint64 &uiTick) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetCurrentWin(TEngWindow &stWin) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetFPS(uint &uiFPS) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetHandle(TWinHandle &tHandle) = 0;
 
-		virtual HRESULT DGLE2_API ChangeWinMode(const TEngWindow &stNewWin) = 0;
-		virtual HRESULT DGLE2_API AllowPause(bool bAllow) = 0;
+		virtual DGLE2_RESULT DGLE2_API ChangeWinMode(const TEngWindow &stNewWin) = 0;
+		virtual DGLE2_RESULT DGLE2_API AllowPause(bool bAllow) = 0;
 
-		virtual HRESULT DGLE2_API AddToLog(const char *pcTxt) = 0;
-		virtual HRESULT DGLE2_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber) = 0;
+		virtual DGLE2_RESULT DGLE2_API AddToLog(const char *pcTxt) = 0;
+		virtual DGLE2_RESULT DGLE2_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber) = 0;
 
-		virtual HRESULT DGLE2_API ConsoleVisible(bool bIsVisible) = 0;
-		virtual HRESULT DGLE2_API ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine = false) = 0;
-		virtual HRESULT DGLE2_API ConsoleExec(const char *pcCommandTxt) = 0;
-		virtual HRESULT DGLE2_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr = NULL) = 0; 
-		virtual HRESULT DGLE2_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL) = 0;
-		virtual HRESULT DGLE2_API ConsoleUnregCom(const char *pcCommandName) = 0;
+		virtual DGLE2_RESULT DGLE2_API ConsoleVisible(bool bIsVisible) = 0;
+		virtual DGLE2_RESULT DGLE2_API ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API ConsoleExec(const char *pcCommandTxt) = 0;
+		virtual DGLE2_RESULT DGLE2_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr = NULL) = 0; 
+		virtual DGLE2_RESULT DGLE2_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API ConsoleUnregCom(const char *pcCommandName) = 0;
 
-		virtual HRESULT DGLE2_API GetVersion(char* pcBuffer, uint uiBufferSize) = 0;	
+		virtual DGLE2_RESULT DGLE2_API GetVersion(char* pcBuffer, uint uiBufferSize) = 0;	
 	};
 
 //Resource Manager SubSystem//
@@ -645,27 +645,27 @@ namespace DGLE2
 	class IResourceManager : public IEngineSubSystem
 	{
 	public:
-		virtual HRESULT DGLE2_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
-		virtual HRESULT DGLE2_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResourse = false) = 0;
-		virtual HRESULT DGLE2_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResourse = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
 	
-		virtual HRESULT DGLE2_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr = NULL) = 0;
-		virtual HRESULT DGLE2_API UnregisterFileFormat(const char *pcExtension) = 0;
-		virtual HRESULT DGLE2_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
-		virtual HRESULT DGLE2_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
-		virtual HRESULT DGLE2_API GetRegisteredExtensions(char *pcTxt, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType) = 0;
+		virtual DGLE2_RESULT DGLE2_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API UnregisterFileFormat(const char *pcExtension) = 0;
+		virtual DGLE2_RESULT DGLE2_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
+		virtual DGLE2_RESULT DGLE2_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetRegisteredExtensions(char *pcTxt, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType) = 0;
 
-		virtual HRESULT DGLE2_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj) = 0;
-		virtual HRESULT DGLE2_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj) = 0;
 
-		virtual HRESULT DGLE2_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
 	
-		virtual HRESULT DGLE2_API FreeResource(IEngBaseObj *&prObj) = 0;
-		virtual HRESULT DGLE2_API AddResource(const char *pcName, IEngBaseObj *pObj) = 0;
-		virtual HRESULT DGLE2_API RemoveResource(IEngBaseObj *pObj, bool &bCanDelete) = 0;
+		virtual DGLE2_RESULT DGLE2_API FreeResource(IEngBaseObj *&prObj) = 0;
+		virtual DGLE2_RESULT DGLE2_API AddResource(const char *pcName, IEngBaseObj *pObj) = 0;
+		virtual DGLE2_RESULT DGLE2_API RemoveResource(IEngBaseObj *pObj, bool &bCanDelete) = 0;
 	};
 
 //Render SubSystem//
@@ -694,16 +694,16 @@ namespace DGLE2
 	class IRender : public IEngineSubSystem
 	{
 	public:
-		virtual HRESULT DGLE2_API SetClearColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API Unbind(E_ENG_OBJ_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
-		virtual HRESULT DGLE2_API EnableScissor(const TRectF &stArea) = 0;	
-		virtual HRESULT DGLE2_API DisableScissor() = 0;
-		virtual HRESULT DGLE2_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0;
-		virtual HRESULT DGLE2_API ScreenshotBMP(const char* pFileName) = 0;
-		virtual HRESULT DGLE2_API CreatePostProcess(IPostprocess *&pPP) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetClearColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API Unbind(E_ENG_OBJ_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
+		virtual DGLE2_RESULT DGLE2_API EnableScissor(const TRectF &stArea) = 0;	
+		virtual DGLE2_RESULT DGLE2_API DisableScissor() = 0;
+		virtual DGLE2_RESULT DGLE2_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API ScreenshotBMP(const char* pFileName) = 0;
+		virtual DGLE2_RESULT DGLE2_API CreatePostProcess(IPostprocess *&pPP) = 0;
 		
-		virtual HRESULT DGLE2_API GetRender2D(IRender2D *&prRender2D) = 0;
-		virtual HRESULT DGLE2_API GetRender3D(IRender3D *&prRender3D) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetRender2D(IRender2D *&prRender2D) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetRender3D(IRender3D *&prRender3D) = 0;
 	};
 
 	//Render2D interface//
@@ -759,54 +759,54 @@ namespace DGLE2
 	class IRender2D : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API Begin2D() = 0;
-		virtual HRESULT DGLE2_API End2D() = 0;
-		virtual HRESULT DGLE2_API BatchRender(E_BATCH_MODE2D eMode) = 0;
-		virtual HRESULT DGLE2_API InvalidateBatchData() = 0;
-		virtual HRESULT DGLE2_API BeginBatch(bool bUpdateEveryFrame = false) = 0;
-		virtual HRESULT DGLE2_API EndBatch() = 0;
-		virtual HRESULT DGLE2_API NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
-		virtual HRESULT DGLE2_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
-		virtual HRESULT DGLE2_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f, 1.f)) = 0;
-		virtual HRESULT DGLE2_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
+		virtual DGLE2_RESULT DGLE2_API Begin2D() = 0;
+		virtual DGLE2_RESULT DGLE2_API End2D() = 0;
+		virtual DGLE2_RESULT DGLE2_API BatchRender(E_BATCH_MODE2D eMode) = 0;
+		virtual DGLE2_RESULT DGLE2_API InvalidateBatchData() = 0;
+		virtual DGLE2_RESULT DGLE2_API BeginBatch(bool bUpdateEveryFrame = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API EndBatch() = 0;
+		virtual DGLE2_RESULT DGLE2_API NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
+		virtual DGLE2_RESULT DGLE2_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f, 1.f)) = 0;
+		virtual DGLE2_RESULT DGLE2_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
 
 		// 2D Primitives
-		virtual HRESULT DGLE2_API LineWidth(uint uiWidth) = 0;
-		virtual HRESULT DGLE2_API DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor = TColor4(), uint uiSize = 1) = 0;
-		virtual HRESULT DGLE2_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawRect(const TRectF &stRect, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API LineWidth(uint uiWidth) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor = TColor4(), uint uiSize = 1) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawRect(const TRectF &stRect, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
 		// 2D Sprites		
-		virtual HRESULT DGLE2_API DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		// Extra
-		virtual HRESULT DGLE2_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual HRESULT DGLE2_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis = TVector3(), float fAngle = 0.f, bool bClip = true, float fFovY = 90.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis = TVector3(), float fAngle = 0.f, bool bClip = true, float fFovY = 90.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		//Advanced
-		virtual HRESULT DGLE2_API Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
-		virtual HRESULT DGLE2_API DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
-		virtual HRESULT DGLE2_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY) = 0;
 
 		//Effects
-		virtual HRESULT DGLE2_API SetRotationPoint(const TPoint2 &stCoords) = 0;//In texture coord system
-		virtual HRESULT DGLE2_API SetScale(const TPoint2 &stScale) = 0;
-		virtual HRESULT DGLE2_API SetColorMix(const TColor4 &stColor = TColor4()) = 0;
-		virtual HRESULT DGLE2_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
-		virtual HRESULT DGLE2_API SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
-		virtual HRESULT DGLE2_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetRotationPoint(const TPoint2 &stCoords) = 0;//In texture coord system
+		virtual DGLE2_RESULT DGLE2_API SetScale(const TPoint2 &stScale) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetColorMix(const TColor4 &stColor = TColor4()) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
 		
-		virtual HRESULT DGLE2_API GetRotationPoint(TPoint2 &stCoords) = 0;
-		virtual HRESULT DGLE2_API GetScale(TPoint2 &stScale) = 0;
-		virtual HRESULT DGLE2_API GetColorMix(TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode) = 0;
-		virtual HRESULT DGLE2_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
-		virtual HRESULT DGLE2_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetRotationPoint(TPoint2 &stCoords) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetScale(TPoint2 &stScale) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetColorMix(TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4) = 0;
 	};
 
 	//Render3D interface//
@@ -825,33 +825,33 @@ namespace DGLE2
 	class IRender3D : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API SetPerspective(float fFovAngle, float fZNear, float fZFar) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetPerspective(float fFovAngle, float fZNear, float fZFar) = 0;
 	
-		virtual HRESULT DGLE2_API SetColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
-		virtual HRESULT DGLE2_API ToggleAlphaTest(bool bEnabled, float fAlphaMinTreshold = 0.25) = 0;
-		virtual HRESULT DGLE2_API ToggleDepthTest(bool bEnabled) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
+		virtual DGLE2_RESULT DGLE2_API ToggleAlphaTest(bool bEnabled, float fAlphaMinTreshold = 0.25) = 0;
+		virtual DGLE2_RESULT DGLE2_API ToggleDepthTest(bool bEnabled) = 0;
 
-		virtual HRESULT DGLE2_API SetMatrix(const TMatrix &stMatrix, bool bMult) = 0;
-		virtual HRESULT DGLE2_API GetMatrix(TMatrix &stMatrix) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetMatrix(const TMatrix &stMatrix, bool bMult) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetMatrix(TMatrix &stMatrix) = 0;
 
-		virtual HRESULT DGLE2_API DrawAxes(float fSize = 1.f, bool bNoDepthTest = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API DrawAxes(float fSize = 1.f, bool bNoDepthTest = false) = 0;
 
-		virtual HRESULT DGLE2_API PushStates(E_PUSH_STATES_FLAGS eStates = PSF_MATRIX) = 0;
-		virtual HRESULT DGLE2_API PopStates() = 0;
+		virtual DGLE2_RESULT DGLE2_API PushStates(E_PUSH_STATES_FLAGS eStates = PSF_MATRIX) = 0;
+		virtual DGLE2_RESULT DGLE2_API PopStates() = 0;
 
-		virtual HRESULT DGLE2_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag = GP3F_FROM_Z_BUFFER) = 0;
-		virtual HRESULT DGLE2_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag = GP3F_FROM_Z_BUFFER) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen) = 0;
 
-		virtual HRESULT DGLE2_API FrustumSetup() = 0;
-		virtual HRESULT DGLE2_API CullPoint(const TPoint3 &stCoords, bool &bCull) = 0;
-		virtual HRESULT DGLE2_API CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull) = 0;
-		virtual HRESULT DGLE2_API CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull) = 0;
+		virtual DGLE2_RESULT DGLE2_API FrustumSetup() = 0;
+		virtual DGLE2_RESULT DGLE2_API CullPoint(const TPoint3 &stCoords, bool &bCull) = 0;
+		virtual DGLE2_RESULT DGLE2_API CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull) = 0;
+		virtual DGLE2_RESULT DGLE2_API CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull) = 0;
 
-		virtual HRESULT DGLE2_API CreateLight(ILight *&prLight) throw() = 0;
-		virtual HRESULT DGLE2_API EnableLighting(bool enable) throw() = 0;
-		virtual HRESULT DGLE2_API SetAmbient(const TColor4 &color) throw() = 0;
-		virtual HRESULT DGLE2_API GetAmbient(TColor4 &color) const throw() = 0;
+		virtual DGLE2_RESULT DGLE2_API CreateLight(ILight *&prLight) throw() = 0;
+		virtual DGLE2_RESULT DGLE2_API EnableLighting(bool enable) throw() = 0;
+		virtual DGLE2_RESULT DGLE2_API SetAmbient(const TColor4 &color) throw() = 0;
+		virtual DGLE2_RESULT DGLE2_API GetAmbient(TColor4 &color) const throw() = 0;
 	};
 
 	//Light interface//
@@ -869,29 +869,29 @@ namespace DGLE2
 	class ILight: public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API SetEnabled(bool bEnabled) = 0;
-		virtual HRESULT DGLE2_API SetDiffuseColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API SetSpecularColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API SetPos(const TPoint3 &stPos) = 0;
-		virtual HRESULT DGLE2_API SetDir(const TVector3 &stDir) = 0;
-		virtual HRESULT DGLE2_API SetRange(float range) = 0;
-		virtual HRESULT DGLE2_API SetConstantAttenuation(float attenuation) = 0;
-		virtual HRESULT DGLE2_API SetLinearAttenuation(float attenuation) = 0;
-		virtual HRESULT DGLE2_API SetQuadraticAttenuation(float attenuation) = 0;
-		virtual HRESULT DGLE2_API SetType(E_LIGHT_TYPE eType) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetEnabled(bool bEnabled) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetDiffuseColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetSpecularColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetPos(const TPoint3 &stPos) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetDir(const TVector3 &stDir) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetRange(float range) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetConstantAttenuation(float attenuation) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetLinearAttenuation(float attenuation) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetQuadraticAttenuation(float attenuation) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetType(E_LIGHT_TYPE eType) = 0;
 		
-		virtual HRESULT DGLE2_API GetEnabled(bool &bEnabled) = 0;
-		virtual HRESULT DGLE2_API GetDiffuseColor(TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API GetSpecularColor(TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API GetPos(TPoint3 &stPos) = 0;
-		virtual HRESULT DGLE2_API GetDir(TVector3 &stDir) = 0;
-		virtual HRESULT DGLE2_API GetRange(float &range) = 0;
-		virtual HRESULT DGLE2_API GetConstantAttenuation(float &attenuation) = 0;
-		virtual HRESULT DGLE2_API GetLinearAttenuation(float &attenuation) = 0;
-		virtual HRESULT DGLE2_API GetQuadraticAttenuation(float &attenuation) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetEnabled(bool &bEnabled) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetDiffuseColor(TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSpecularColor(TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPos(TPoint3 &stPos) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetDir(TVector3 &stDir) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetRange(float &range) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetConstantAttenuation(float &attenuation) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetLinearAttenuation(float &attenuation) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetQuadraticAttenuation(float &attenuation) = 0;
 		
-		virtual HRESULT DGLE2_API GetType(E_LIGHT_TYPE &eType) = 0;
-		virtual HRESULT DGLE2_API Free() = 0;
+		virtual DGLE2_RESULT DGLE2_API GetType(E_LIGHT_TYPE &eType) = 0;
+		virtual DGLE2_RESULT DGLE2_API Free() = 0;
 	};
 
 	//Texture interface//
@@ -905,17 +905,17 @@ namespace DGLE2
 	class ITexture : public IEngBaseObj
 	{
 	public:
-		virtual HRESULT DGLE2_API GetDimensions(uint &uiWidth, uint &uiHeight) = 0;
-		virtual HRESULT DGLE2_API SetFrameSize(uint uiFrameWidth, uint uiFrameHeight) = 0;
-		virtual HRESULT DGLE2_API GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetDimensions(uint &uiWidth, uint &uiHeight) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetFrameSize(uint uiFrameWidth, uint uiFrameHeight) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight) = 0;
 
-		virtual HRESULT DGLE2_API GetCoreTexture(ICoreTexture *&prCoreTex) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetCoreTexture(ICoreTexture *&prCoreTex) = 0;
 
-		virtual HRESULT DGLE2_API Draw2DSimple(int iX, int iY, uint uiFrameIndex = 0) = 0;
-		virtual HRESULT DGLE2_API Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle = 0.f, uint uiFrameIndex = 0) = 0;
-		virtual HRESULT DGLE2_API Draw3D(uint uiFrameIndex = 0) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw2DSimple(int iX, int iY, uint uiFrameIndex = 0) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle = 0.f, uint uiFrameIndex = 0) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw3D(uint uiFrameIndex = 0) = 0;
 
-		virtual HRESULT DGLE2_API Bind(uint uiMTextureLayer = 0) = 0;
+		virtual DGLE2_RESULT DGLE2_API Bind(uint uiMTextureLayer = 0) = 0;
 	};
 
 	//Material interface//
@@ -947,39 +947,39 @@ namespace DGLE2
 	class IMaterial: public IEngBaseObj
 	{
 	public:
-		virtual HRESULT DGLE2_API SetAmbientColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API SetDiffuseColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API SetSpecularColor(const TColor4 &stColor) = 0;
-		virtual HRESULT DGLE2_API SetHeightScale(float scale) = 0;
-		virtual HRESULT DGLE2_API SetEnvAmount(float amount) = 0;
-		virtual HRESULT DGLE2_API SetShininess(float shininess) = 0;
-		virtual HRESULT DGLE2_API SetTexMappingMode(E_TEX_MAPPING eTexMapping) = 0;
-		virtual HRESULT DGLE2_API SetDiffuseTexture(ITexture *pTexture) = 0;
-		virtual HRESULT DGLE2_API SetSpecularTexture(ITexture *pTexture) = 0;
-		virtual HRESULT DGLE2_API SetNormalTexture(ITexture *pTexture) = 0;
-		virtual HRESULT DGLE2_API SetHeightTexture(ITexture *pTexture) = 0;
-		virtual HRESULT DGLE2_API SetEnvTexture(ITexture *pTexture) = 0;
-		virtual HRESULT DGLE2_API SetEnvMask(ITexture *pTexture) = 0;
-		virtual HRESULT DGLE2_API SetNormalTechnique(E_NORMAL_TECHNIQUE technique) = 0;
-		virtual HRESULT DGLE2_API SetParallaxTechnique(E_PARALLAX_TECHNIQUE technique) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetAmbientColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetDiffuseColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetSpecularColor(const TColor4 &stColor) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetHeightScale(float scale) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetEnvAmount(float amount) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetShininess(float shininess) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetTexMappingMode(E_TEX_MAPPING eTexMapping) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetDiffuseTexture(ITexture *pTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetSpecularTexture(ITexture *pTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetNormalTexture(ITexture *pTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetHeightTexture(ITexture *pTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetEnvTexture(ITexture *pTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetEnvMask(ITexture *pTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetNormalTechnique(E_NORMAL_TECHNIQUE technique) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetParallaxTechnique(E_PARALLAX_TECHNIQUE technique) = 0;
 		
-		virtual HRESULT DGLE2_API GetAmbientColor(TColor4 &stColor) const = 0;
-		virtual HRESULT DGLE2_API GetDiffuseColor(TColor4 &stColor) const = 0;
-		virtual HRESULT DGLE2_API GetSpecularColor(TColor4 &stColor) const = 0;
-		virtual HRESULT DGLE2_API GetHeightScale(float &scale) const = 0;
-		virtual HRESULT DGLE2_API GetEnvAmount(float &amount) const = 0;
-		virtual HRESULT DGLE2_API GetShininess(float &shininess) const = 0;
-		virtual HRESULT DGLE2_API GetTexMappingMode(E_TEX_MAPPING &eTexMapping) const = 0;
-		virtual HRESULT DGLE2_API GetDiffuseTexture(ITexture *&pTexture) const = 0;
-		virtual HRESULT DGLE2_API GetSpecularTexture(ITexture *&pTexture) const = 0;
-		virtual HRESULT DGLE2_API GetNormalTexture(ITexture *&pTexture) const = 0;
-		virtual HRESULT DGLE2_API GetHeightTexture(ITexture *&pTexture) const = 0;
-		virtual HRESULT DGLE2_API GetEnvTexture(ITexture *&pTexture) const = 0;
-		virtual HRESULT DGLE2_API GetEnvMask(ITexture *&pTexture) const = 0;
-		virtual HRESULT DGLE2_API GetNormalTechnique(E_NORMAL_TECHNIQUE &technique) const = 0;
-		virtual HRESULT DGLE2_API GetParallaxTechnique(E_PARALLAX_TECHNIQUE &technique) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetAmbientColor(TColor4 &stColor) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetDiffuseColor(TColor4 &stColor) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSpecularColor(TColor4 &stColor) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetHeightScale(float &scale) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetEnvAmount(float &amount) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetShininess(float &shininess) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetTexMappingMode(E_TEX_MAPPING &eTexMapping) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetDiffuseTexture(ITexture *&pTexture) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSpecularTexture(ITexture *&pTexture) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetNormalTexture(ITexture *&pTexture) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetHeightTexture(ITexture *&pTexture) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetEnvTexture(ITexture *&pTexture) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetEnvMask(ITexture *&pTexture) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetNormalTechnique(E_NORMAL_TECHNIQUE &technique) const = 0;
+		virtual DGLE2_RESULT DGLE2_API GetParallaxTechnique(E_PARALLAX_TECHNIQUE &technique) const = 0;
 		
-		virtual HRESULT DGLE2_API Bind() const = 0;
+		virtual DGLE2_RESULT DGLE2_API Bind() const = 0;
 	};
 
 	//BitmapFont interface//
@@ -991,13 +991,13 @@ namespace DGLE2
 	class IBitmapFont : public IEngBaseObj
 	{
 	public: 	
-		virtual HRESULT DGLE2_API GetTexture(ITexture *&prTexture) = 0;
-		virtual HRESULT DGLE2_API SetScale(const float &fScale) = 0;
-		virtual HRESULT DGLE2_API GetScale(float &fScale) = 0;
-		virtual HRESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight) = 0;
-		virtual HRESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
-		virtual HRESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor = TColor4(), float fAngle = 0, bool bVerticesColors = false) = 0;
-		virtual HRESULT DGLE2_API Draw3D(const char *pcTxt) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetTexture(ITexture *&prTexture) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetScale(const float &fScale) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetScale(float &fScale) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor = TColor4(), float fAngle = 0, bool bVerticesColors = false) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw3D(const char *pcTxt) = 0;
 	};
 
 	//3D Objects interfaces//
@@ -1011,14 +1011,14 @@ namespace DGLE2
 	class IMesh : public IEngBaseObj
 	{
 	public:
-		virtual HRESULT DGLE2_API Draw() = 0;
-		virtual HRESULT DGLE2_API GetCenter(TPoint3 &stCenter) = 0;
-		virtual HRESULT DGLE2_API GetExtents(TVector3 &stExtents) = 0;
-		virtual HRESULT DGLE2_API GetTrianglesCount(uint &uiTriCnt) = 0;
-		virtual HRESULT DGLE2_API GetGeometryInfo(uint &uiVertsCount, uint &uiFacesCount, uint &uiDataSize, E_MESH_CREATION_FLAGS &eCreationFlags) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw() = 0;
+		virtual DGLE2_RESULT DGLE2_API GetCenter(TPoint3 &stCenter) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetExtents(TVector3 &stExtents) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetTrianglesCount(uint &uiTriCnt) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetGeometryInfo(uint &uiVertsCount, uint &uiFacesCount, uint &uiDataSize, E_MESH_CREATION_FLAGS &eCreationFlags) = 0;
 		/*Format x,y,z*vertex_count, nx,ny,nz*vertex_count s,q*vertex_count tx,ty,tz,bx,by,bz*vertex_count int16*uiFacesCount*/
-		virtual HRESULT DGLE2_API GetGeometry(uint8 *pubtData) = 0;
-		virtual HRESULT DGLE2_API SetGeometry(uint8 *pubtData) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetGeometry(uint8 *pubtData) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetGeometry(uint8 *pubtData) = 0;
 	};
 
 	//Skeleton xform interface//
@@ -1041,9 +1041,9 @@ namespace DGLE2
 	class IModel : public IEngBaseObj
 	{
 	public:
-		virtual HRESULT DGLE2_API MeshsCount(uint &uiCount) = 0;
-		virtual HRESULT DGLE2_API GetMesh(uint uiIdx, IMesh *&prMesh) = 0;
-		virtual HRESULT DGLE2_API Draw(float fFrameIdx) = 0;
+		virtual DGLE2_RESULT DGLE2_API MeshsCount(uint &uiCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetMesh(uint uiIdx, IMesh *&prMesh) = 0;
+		virtual DGLE2_RESULT DGLE2_API Draw(float fFrameIdx) = 0;
 	};
 
 	//Postprocess interface//
@@ -1055,14 +1055,14 @@ namespace DGLE2
 	class IPostprocess: public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API Free() = 0;
+		virtual DGLE2_RESULT DGLE2_API Free() = 0;
 
-		virtual HRESULT DGLE2_API SetTargets(ITexture *pSrc, ITexture *pDst) = 0;
-		virtual HRESULT DGLE2_API SetBlurAmount(float fBlur) = 0;
-		virtual HRESULT DGLE2_API SetBloomAmount(float fBloom) = 0;
-		virtual HRESULT DGLE2_API SetBloomThreshold(float fThreshold) = 0;
-		virtual HRESULT DGLE2_API ToggleMonochrome(bool bEnable) = 0;
-		virtual HRESULT DGLE2_API Perform() = 0;
+		virtual DGLE2_RESULT DGLE2_API SetTargets(ITexture *pSrc, ITexture *pDst) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetBlurAmount(float fBlur) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetBloomAmount(float fBloom) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetBloomThreshold(float fThreshold) = 0;
+		virtual DGLE2_RESULT DGLE2_API ToggleMonochrome(bool bEnable) = 0;
+		virtual DGLE2_RESULT DGLE2_API Perform() = 0;
 	};
 
 //Input Subsystem//
@@ -1082,18 +1082,18 @@ namespace DGLE2
 	class IInput : public IEngineSubSystem
 	{
 	public:
-		virtual HRESULT DGLE2_API Configure(E_INPUT_CONFIGURATION_FLAGS eFlags = ICF_DEFAULT) = 0;
+		virtual DGLE2_RESULT DGLE2_API Configure(E_INPUT_CONFIGURATION_FLAGS eFlags = ICF_DEFAULT) = 0;
 	
-		virtual HRESULT DGLE2_API GetMouseStates(TMouseStates &stMStates) = 0;
-		virtual HRESULT DGLE2_API GetKey(E_KEYBOARD_KEY_CODES eKeyCode, bool &bPressed) = 0;
-		virtual HRESULT DGLE2_API GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, uchar &cASCIICode) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetMouseStates(TMouseStates &stMStates) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetKey(E_KEYBOARD_KEY_CODES eKeyCode, bool &bPressed) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, uchar &cASCIICode) = 0;
 
-		virtual HRESULT DGLE2_API BeginTextInput(char* pcBuffer, uint uiBufferSize) = 0;
-		virtual HRESULT DGLE2_API EndTextInput() = 0;
+		virtual DGLE2_RESULT DGLE2_API BeginTextInput(char* pcBuffer, uint uiBufferSize) = 0;
+		virtual DGLE2_RESULT DGLE2_API EndTextInput() = 0;
 		
-		virtual HRESULT DGLE2_API GetJoysticksCount(uint &uiCount) = 0;
-		virtual HRESULT DGLE2_API GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetJoysticksCount(uint &uiCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates) = 0;
 	};
 
 //Sound SubSystem interfaces//
@@ -1105,14 +1105,14 @@ namespace DGLE2
 	class ISound : public IEngineSubSystem
 	{
 	public:
-		virtual HRESULT DGLE2_API SetMasterVolume(uint uiVolume) = 0;
-		virtual HRESULT DGLE2_API PauseAllChannels(bool bPaused) = 0;
-		virtual HRESULT DGLE2_API StopAllChannels() = 0;
-		virtual HRESULT DGLE2_API SetMaxChannelsCount(uint uiCount) = 0;
-		virtual HRESULT DGLE2_API SetListnerPosition(const TPoint3 &stCoords) = 0;
-		virtual HRESULT DGLE2_API GetListnerPosition(TPoint3 &stCoords) = 0;
-		virtual HRESULT DGLE2_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp) = 0;
-		virtual HRESULT DGLE2_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetMasterVolume(uint uiVolume) = 0;
+		virtual DGLE2_RESULT DGLE2_API PauseAllChannels(bool bPaused) = 0;
+		virtual DGLE2_RESULT DGLE2_API StopAllChannels() = 0;
+		virtual DGLE2_RESULT DGLE2_API SetMaxChannelsCount(uint uiCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetListnerPosition(const TPoint3 &stCoords) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetListnerPosition(TPoint3 &stCoords) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp) = 0;
 	};
 
 	//SoundSample interface//
@@ -1136,19 +1136,19 @@ namespace DGLE2
 	class ISoundChannel : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API PlayOrPause() = 0;
-		virtual HRESULT DGLE2_API Stop() = 0;
-		virtual HRESULT DGLE2_API IsPlaying(bool &bIsPlaying) = 0;
-		virtual HRESULT DGLE2_API SetVolume(uint uiVolume) = 0; //from 0 to 100
-		virtual HRESULT DGLE2_API GetVolume(uint &uiVolume) = 0;
-		virtual HRESULT DGLE2_API SetPan(int iPan) = 0; //from -100 to 100
-		virtual HRESULT DGLE2_API GetPan(int &iPan) = 0;
-		virtual HRESULT DGLE2_API SetFrequency(uint32 uiFreq) = 0;//from 10 to 10000
-		virtual HRESULT DGLE2_API GetFrequency(uint32 &uiFreq) = 0;
-		virtual HRESULT DGLE2_API SetPosition(const TPoint3 &stCoords) = 0;
-		virtual HRESULT DGLE2_API GetPosition(TPoint3 &stCoords) = 0;
-		virtual HRESULT DGLE2_API SetEffects(E_SOUND_CHANNEL_EFFECTS eFlags) = 0;
-		virtual HRESULT DGLE2_API Unaquire() = 0;
+		virtual DGLE2_RESULT DGLE2_API PlayOrPause() = 0;
+		virtual DGLE2_RESULT DGLE2_API Stop() = 0;
+		virtual DGLE2_RESULT DGLE2_API IsPlaying(bool &bIsPlaying) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetVolume(uint uiVolume) = 0; //from 0 to 100
+		virtual DGLE2_RESULT DGLE2_API GetVolume(uint &uiVolume) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetPan(int iPan) = 0; //from -100 to 100
+		virtual DGLE2_RESULT DGLE2_API GetPan(int &iPan) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetFrequency(uint32 uiFreq) = 0;//from 10 to 10000
+		virtual DGLE2_RESULT DGLE2_API GetFrequency(uint32 &uiFreq) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetPosition(const TPoint3 &stCoords) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPosition(TPoint3 &stCoords) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetEffects(E_SOUND_CHANNEL_EFFECTS eFlags) = 0;
+		virtual DGLE2_RESULT DGLE2_API Unaquire() = 0;
 	};
 	
 	enum E_SOUND_SAMPLE_PARAMS
@@ -1167,8 +1167,8 @@ namespace DGLE2
 	class ISoundSample : public IEngBaseObj
 	{
 	public:
-		virtual HRESULT DGLE2_API Play() = 0;
-		virtual HRESULT DGLE2_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on nul
+		virtual DGLE2_RESULT DGLE2_API Play() = 0;
+		virtual DGLE2_RESULT DGLE2_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on nul
 	};
 
 	//Music interface//
@@ -1180,15 +1180,15 @@ namespace DGLE2
 	class IMusic : public IEngBaseObj
 	{
 	public:
-		virtual HRESULT DGLE2_API Play(bool bLooped = true) = 0;
-		virtual HRESULT DGLE2_API Pause(bool bPaused) = 0;
-		virtual HRESULT DGLE2_API Stop() = 0;
-		virtual HRESULT DGLE2_API IsPlaying(bool &bIsPlaying) = 0;
-		virtual HRESULT DGLE2_API SetVolume(uint uiVolume) = 0;
-		virtual HRESULT DGLE2_API GetVolume(uint &uiVolume) = 0;
-		virtual HRESULT DGLE2_API SetCurrentPosition(uint uiPos) = 0;
-		virtual HRESULT DGLE2_API GetCurrentPosition(uint &uiPos) = 0;
-		virtual HRESULT DGLE2_API GetLength(uint &uiLength) = 0;
+		virtual DGLE2_RESULT DGLE2_API Play(bool bLooped = true) = 0;
+		virtual DGLE2_RESULT DGLE2_API Pause(bool bPaused) = 0;
+		virtual DGLE2_RESULT DGLE2_API Stop() = 0;
+		virtual DGLE2_RESULT DGLE2_API IsPlaying(bool &bIsPlaying) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetVolume(uint uiVolume) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetVolume(uint &uiVolume) = 0;
+		virtual DGLE2_RESULT DGLE2_API SetCurrentPosition(uint uiPos) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetCurrentPosition(uint &uiPos) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetLength(uint &uiLength) = 0;
 	};
 
 //FileSystem interfaces//
@@ -1202,12 +1202,12 @@ namespace DGLE2
 	class IMainFileSystem : public IEngineSubSystem
 	{
 	public:
-		virtual HRESULT DGLE2_API LoadFile(const char* pcFileName, IFile *&prFile) = 0;// c:\data.zip|img.jpg
-		virtual HRESULT DGLE2_API GetVirtualFileSystem(const char *pcVFSExtension/*NULL to get HDD file system*/, IFileSystem *&prVFS) = 0;
-		virtual HRESULT DGLE2_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr = NULL) = 0;
-		virtual HRESULT DGLE2_API UnregisterVirtualFileSystem(const char* pcVFSExtension) = 0;
-		virtual HRESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API LoadFile(const char* pcFileName, IFile *&prFile) = 0;// c:\data.zip|img.jpg
+		virtual DGLE2_RESULT DGLE2_API GetVirtualFileSystem(const char *pcVFSExtension/*NULL to get HDD file system*/, IFileSystem *&prVFS) = 0;
+		virtual DGLE2_RESULT DGLE2_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr = NULL) = 0;
+		virtual DGLE2_RESULT DGLE2_API UnregisterVirtualFileSystem(const char* pcVFSExtension) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount) = 0;
 	};
 
 	enum E_FIND_FLAGS
@@ -1239,14 +1239,14 @@ namespace DGLE2
 	class IFile : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API Read(void *pBuffer, uint uiCount, uint &uiRead) = 0;
-		virtual HRESULT DGLE2_API Write(const void *pBuffer, uint uiCount, uint &uiWritten) = 0;
-		virtual HRESULT DGLE2_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position) = 0;
-		virtual HRESULT DGLE2_API GetSize(uint32 &ui32Size) = 0;
-		virtual HRESULT DGLE2_API IsOpen(bool &bOpened) = 0;
-		virtual HRESULT DGLE2_API GetName(char *pcName, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API GetPath(char *pcPath, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API Free() = 0;
+		virtual DGLE2_RESULT DGLE2_API Read(void *pBuffer, uint uiCount, uint &uiRead) = 0;
+		virtual DGLE2_RESULT DGLE2_API Write(const void *pBuffer, uint uiCount, uint &uiWritten) = 0;
+		virtual DGLE2_RESULT DGLE2_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetSize(uint32 &ui32Size) = 0;
+		virtual DGLE2_RESULT DGLE2_API IsOpen(bool &bOpened) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetName(char *pcName, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API GetPath(char *pcPath, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API Free() = 0;
 	};
 
 	//FileIterator interface//
@@ -1258,9 +1258,9 @@ namespace DGLE2
 	class IFileIterator : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API FileName(char *pcName, uint &uiCharsCount) = 0;
-		virtual HRESULT DGLE2_API Next() = 0;
-		virtual HRESULT DGLE2_API Free() = 0;
+		virtual DGLE2_RESULT DGLE2_API FileName(char *pcName, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API Next() = 0;
+		virtual DGLE2_RESULT DGLE2_API Free() = 0;
 	};
 
 	//FileSystem interface//
@@ -1272,11 +1272,11 @@ namespace DGLE2
 	class IFileSystem : public IDGLE2_Base
 	{
 	public:
-		virtual HRESULT DGLE2_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) = 0;	//если передан только путь "C:\MyFolder\" то создаст папку
-		virtual HRESULT DGLE2_API DeleteFile(const char *pcName) = 0; //≈сли передан только путь то удалит папку
-		virtual HRESULT DGLE2_API FileExists(const char *pcName, bool &bExists) = 0;//если передан только путь, то провер€ет существование папки
-		virtual HRESULT DGLE2_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
-		virtual HRESULT DGLE2_API SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
+		virtual DGLE2_RESULT DGLE2_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) = 0;	//если передан только путь "C:\MyFolder\" то создаст папку
+		virtual DGLE2_RESULT DGLE2_API DeleteFile(const char *pcName) = 0; //≈сли передан только путь то удалит папку
+		virtual DGLE2_RESULT DGLE2_API FileExists(const char *pcName, bool &bExists) = 0;//если передан только путь, то провер€ет существование папки
+		virtual DGLE2_RESULT DGLE2_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
+		virtual DGLE2_RESULT DGLE2_API SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
 	};
 
 }// end of namespace
@@ -1345,24 +1345,24 @@ bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GE
 	return false;\
 }
 
-/** Macros checks HRESULT value and throws exception of HRESULT type if value is failed.
-	\param[in] hr HRESULT value to be checked.
+/** Macros checks DGLE2_RESULT value and throws exception of DGLE2_RESULT type if value is failed.
+	\param[in] hr DGLE2_RESULT value to be checked.
 	\see FAILED
 */
-#define CHECK_HR(hr)\
-{HRESULT hr_ = hr; if(FAILED(hr_)) throw hr_;}
+#define CHECK_RES(res)\
+{DGLE2_RESULT res_ = res; if(FAILED(res_)) throw res_;}
 
-/** \def PARANOIC_CHECK_HR(hr) Macros checks HRESULT value and drop assertion on any value except S_OK.
+/** \def PARANOIC_CHECK_RES(res) Macros checks DGLE2_RESULT value and drop assertion on any value except S_OK.
 	Useful for debugging. After skipping assertion always returns S_OK. In release macros do nothing. 
-	\param[in] hr HRESULT value to be checked.
+	\param[in] hr DGLE2_RESULT value to be checked.
 	\code
-	PARANOIC_CHECK_HR(pEngineCore->StartEngine());
+	PARANOIC_CHECK_RES(pEngineCore->StartEngine());
 	\endcode
 */
 #ifdef _DEBUG
-#	define PARANOIC_CHECK_HR(hr) assert(hr == S_OK), S_OK
+#	define PARANOIC_CHECK_RES(res) assert(res == S_OK), S_OK
 #else
-#	define PARANOIC_CHECK_HR(hr) hr
+#	define PARANOIC_CHECK_RES(res) res
 #endif
 
 //Implementation macroses//
@@ -1388,19 +1388,19 @@ bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GE
 
 #ifndef DGLE2_USE_COM
 
-#define IDGLE2_BASE_IMPLEMENTATION(interface_name) HRESULT DGLE2_API GetGUID(GUID &guid) {guid = IID_##interface_name;return S_OK;}
+#define IDGLE2_BASE_IMPLEMENTATION(interface_name) DGLE2_RESULT DGLE2_API GetGUID(GUID &guid) {guid = IID_##interface_name;return S_OK;}
 #define IDGLE2_BASE_IMPLEMENTATION1(interface1_name, interface2_name) IDGLE2_BASE_IMPLEMENTATION(interface1_name)
 #define IUNKNOWN_IMPLEMENTATION(interface_name)
 
 #else//DGLE2_USE_COM
 
 #define IDGLE2_BASE_IMPLEMENTATION(interface_name) \
-	HRESULT DGLE2_API GetGUID(GUID &guid)\
+	HRESULT CALLBACK GetGUID(GUID &guid)\
 	{\
 		guid = IID_##interface_name;\
 		return S_OK;\
 	}\
-	HRESULT DGLE2_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
+	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
 	{\
 		*ppvObject = NULL;\
 		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0) \
@@ -1410,16 +1410,16 @@ bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GE
 		else return E_NOINTERFACE;\
 		return S_OK;\
 	}\
-	ULONG DGLE2_API AddRef(){return 1;}\
-	ULONG DGLE2_API Release(){return 1;}
+	ULONG CALLBACK AddRef(){return 1;}\
+	ULONG CALLBACK Release(){return 1;}
 
 #define IDGLE2_BASE_IMPLEMENTATION1(interface1_name, interface2_name) \
-	HRESULT DGLE2_API GetGUID(GUID &guid)\
+	HRESULT CALLBACK GetGUID(GUID &guid)\
 	{\
 		guid = IID_##interface1_name;\
 		return S_OK;\
 	}\
-	HRESULT DGLE2_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
+	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
 	{\
 		*ppvObject = NULL;\
 		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0) \
@@ -1431,11 +1431,11 @@ bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GE
 		else return E_NOINTERFACE;\
 		return S_OK;\
 	}\
-	ULONG DGLE2_API AddRef(){return 1;}\
-	ULONG DGLE2_API Release(){return 1;}
+	ULONG CALLBACK AddRef(){return 1;}\
+	ULONG CALLBACK Release(){return 1;}
 
 #define IUNKNOWN_IMPLEMENTATION(interface_name) \
-	HRESULT DGLE2_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
+	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
 	{\
 		*ppvObject = NULL;\
 		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0)\
@@ -1445,8 +1445,8 @@ bool GetEngine(const char *pcDllFileName, DGLE2::IEngineCore *&pEngineCore, E_GE
 		else return E_NOINTERFACE;\
 		return S_OK;\
 	}\
-	ULONG DGLE2_API AddRef() { return 1; }\
-	ULONG DGLE2_API Release() { return 1; }
+	ULONG CALLBACK AddRef() { return 1; }\
+	ULONG CALLBACK Release() { return 1; }
 
 #endif
 

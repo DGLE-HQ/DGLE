@@ -111,7 +111,7 @@ LRESULT DGLE2_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-HRESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE2_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	_hWnd				= tHandle;
 	_pDelMainLoop		= pDelMainLoop;
@@ -172,7 +172,7 @@ HRESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &
 	return S_OK;
 }
 
-HRESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
+DGLE2_RESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -184,21 +184,21 @@ HRESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
 	return S_OK;
 }
 
-HRESULT CMainWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
+DGLE2_RESULT CMainWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 {
 	eType = WAT_FULL_ACCESS;
 
 	return S_OK;
 }
 
-HRESULT CMainWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE2_RESULT CMainWindow::GetWindowHandle(TWinHandle &stHandle)
 {
 	stHandle = _hWnd;
 
 	return S_OK;
 }
 
-HRESULT CMainWindow::GetDrawContext(HDC &hDC)
+DGLE2_RESULT CMainWindow::GetDrawContext(HDC &hDC)
 {
 	if (!_hDC)
 		return E_FAIL;
@@ -208,7 +208,7 @@ HRESULT CMainWindow::GetDrawContext(HDC &hDC)
 	return S_OK;
 }
 
-HRESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
+DGLE2_RESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -240,7 +240,7 @@ HRESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 	return S_OK;
 }
 
-HRESULT CMainWindow::ScreenToClient(int &iX, int &iY)
+DGLE2_RESULT CMainWindow::ScreenToClient(int &iX, int &iY)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -254,7 +254,7 @@ HRESULT CMainWindow::ScreenToClient(int &iX, int &iY)
 	return S_OK;
 }
 
-HRESULT CMainWindow::SetCaption(const char *pcTxt)
+DGLE2_RESULT CMainWindow::SetCaption(const char *pcTxt)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -264,7 +264,7 @@ HRESULT CMainWindow::SetCaption(const char *pcTxt)
 	return S_OK;
 }
 
-HRESULT CMainWindow::Minimize()
+DGLE2_RESULT CMainWindow::Minimize()
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -274,12 +274,12 @@ HRESULT CMainWindow::Minimize()
 	return S_OK;
 }
 
-HRESULT CMainWindow::BeginMainLoop()
+DGLE2_RESULT CMainWindow::BeginMainLoop()
 {
 	return _wWinMain(GetModuleHandle(NULL)) != -1 ? S_OK : E_FAIL;
 }
 
-HRESULT CMainWindow::KillWindow()
+DGLE2_RESULT CMainWindow::KillWindow()
 {
 	if (_hDC && !ReleaseDC(_hWnd,_hDC))
 		LOG("Failed to release Device Context.",LT_ERROR);
@@ -293,7 +293,7 @@ HRESULT CMainWindow::KillWindow()
 	return S_OK;
 }
 
-HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE2_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -305,7 +305,7 @@ HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 	if (builtin_fscreen)
 		return S_OK;
 
-	HRESULT res = S_OK;
+	DGLE2_RESULT res = S_OK;
 
 	if (_bFScreen && !stWind.bFullScreen)
 		if (ChangeDisplaySettings(NULL, 0) != DISP_CHANGE_SUCCESSFUL)
@@ -405,7 +405,7 @@ HRESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 	return res;
 }
 
-HRESULT CMainWindow::Free()
+DGLE2_RESULT CMainWindow::Free()
 {
 	delete this;
 	return S_OK;

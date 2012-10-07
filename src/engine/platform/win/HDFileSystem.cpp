@@ -34,7 +34,7 @@ CHDFileIterator::~CHDFileIterator()
 		LOG("Can't close find handle.",LT_ERROR);
 }
 
-HRESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
+DGLE2_RESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -55,7 +55,7 @@ HRESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 	}
 }
 
-HRESULT CHDFileIterator::Next()
+DGLE2_RESULT CHDFileIterator::Next()
 {
 	WIN32_FIND_DATAA find_file;
 
@@ -68,7 +68,7 @@ HRESULT CHDFileIterator::Next()
 	return S_FALSE;
 }
 
-HRESULT DGLE2_API CHDFileIterator::Free()
+DGLE2_RESULT DGLE2_API CHDFileIterator::Free()
 {
 	delete this;
 	return S_OK;
@@ -76,7 +76,7 @@ HRESULT DGLE2_API CHDFileIterator::Free()
 
 //CHDFileSystem//
 
-HRESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
+DGLE2_RESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	prFile = NULL;
 
@@ -90,7 +90,7 @@ HRESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFl
 	return _is_open ? S_OK : S_FALSE;
 }
 
-HRESULT CHDFileSystem::DeleteFile(const char *pcName)
+DGLE2_RESULT CHDFileSystem::DeleteFile(const char *pcName)
 {
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 		return RemoveDirectoryA(pcName) == 0 ? S_FALSE : S_OK;
@@ -98,7 +98,7 @@ HRESULT CHDFileSystem::DeleteFile(const char *pcName)
 	return ::DeleteFile(pcName) == 0 ? S_FALSE : S_OK;
 }
 
-HRESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
+DGLE2_RESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 	{
@@ -112,7 +112,7 @@ HRESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
 	return S_OK;
 }
 
-HRESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
+DGLE2_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
 	WIN32_FIND_DATAA find_file;
 
@@ -129,7 +129,7 @@ HRESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterat
 	return S_FALSE;
 }
 
-HRESULT DGLE2_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
 	char res[] = "Not supported for this realisation.";
 

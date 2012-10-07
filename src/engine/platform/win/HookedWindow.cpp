@@ -77,7 +77,7 @@ LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam
 		return CallWindowProc(this_ptr->_stOldWindowProc, hWnd, msg, wParam, lParam);
 }
 
-HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE2_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	if(_stOldWindowProc || _stOldRootWindowProc)
 		return E_FAIL;
@@ -145,7 +145,7 @@ HRESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult
 	}
 }
 
-HRESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
+DGLE2_RESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -157,21 +157,21 @@ HRESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
 	return S_OK;
 }
 
-HRESULT CHookedWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
+DGLE2_RESULT CHookedWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 {
 	eType = WAT_RESTRICTED_ACCESS;
 
 	return S_OK;
 }
 
-HRESULT CHookedWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE2_RESULT CHookedWindow::GetWindowHandle(TWinHandle &stHandle)
 {
 	stHandle = _hWnd;
 
 	return S_OK;
 }
 
-HRESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
+DGLE2_RESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
 {
 	if (!_hDC)
 		return E_FAIL;
@@ -181,7 +181,7 @@ HRESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
 	return S_OK;
 }
 
-HRESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
+DGLE2_RESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -213,7 +213,7 @@ HRESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 	return S_OK;
 }
 
-HRESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
+DGLE2_RESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -227,22 +227,22 @@ HRESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 	return S_OK;
 }
 
-HRESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE2_RESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT CHookedWindow::SetCaption(const char *pcTxt)
+DGLE2_RESULT CHookedWindow::SetCaption(const char *pcTxt)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT CHookedWindow::Minimize()
+DGLE2_RESULT CHookedWindow::Minimize()
 {
 	return E_NOTIMPL;
 }
 
-HRESULT CHookedWindow::BeginMainLoop()
+DGLE2_RESULT CHookedWindow::BeginMainLoop()
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -288,7 +288,7 @@ void CHookedWindow::_KillWindow()
 	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
 }
 
-HRESULT CHookedWindow::KillWindow()
+DGLE2_RESULT CHookedWindow::KillWindow()
 {
 	if (_hDC && !ReleaseDC(_hWnd, _hDC))
 	{
@@ -299,7 +299,7 @@ HRESULT CHookedWindow::KillWindow()
 	return S_OK;
 }
 
-HRESULT CHookedWindow::Free()
+DGLE2_RESULT CHookedWindow::Free()
 {
 	delete this;
 	return S_OK;

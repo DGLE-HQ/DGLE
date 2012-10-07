@@ -32,9 +32,7 @@ struct TState
 
 	TColor4 stColor;
 
-	TState(){}
-
-	TState(uint uiMaxTexLayers): clActivatedTexUnits(uiMaxTexLayers),
+	TState(): clActivatedTexUnits(32),
 	iViewPortX(0), iViewPortY(0), iViewPortWidth(0), iViewPortHeight(0)
 	{
 		stModelviewMat = MatrixIdentity();
@@ -89,45 +87,45 @@ public:
 
 	inline IStateManager* pStateMan() const {return _pStateMan;} /**< \warning Never copy IStateManager* because _pStateMan may be reallocated at any time! */
 
-	HRESULT DGLE2_API Prepare(TCRendererInitResult &stResults);
-	HRESULT DGLE2_API Initialize(TCRendererInitResult &stResults);
-	HRESULT DGLE2_API Finalize();
-	HRESULT DGLE2_API AdjustMode(TEngWindow &stNewWin);
-	HRESULT DGLE2_API MakeCurrent();
-	HRESULT DGLE2_API Present();
+	DGLE2_RESULT DGLE2_API Prepare(TCRendererInitResult &stResults);
+	DGLE2_RESULT DGLE2_API Initialize(TCRendererInitResult &stResults);
+	DGLE2_RESULT DGLE2_API Finalize();
+	DGLE2_RESULT DGLE2_API AdjustMode(TEngWindow &stNewWin);
+	DGLE2_RESULT DGLE2_API MakeCurrent();
+	DGLE2_RESULT DGLE2_API Present();
 
-	HRESULT DGLE2_API SetClearColor(const TColor4 &stColor);
-	HRESULT DGLE2_API Clear(bool bColor, bool bDepth, bool bStencil);
-	HRESULT DGLE2_API SetViewport(uint x, uint y, uint width, uint height);
-	HRESULT DGLE2_API GetViewport(uint &x, uint &y, uint &width, uint &height);
-	HRESULT DGLE2_API SetScissor(uint x, uint y, uint width, uint height);
-	HRESULT DGLE2_API SetLineWidth(float fWidth);
-	HRESULT DGLE2_API SetPointSize(float fSize);
-	HRESULT DGLE2_API ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat);
-	HRESULT DGLE2_API SetRenderTarget(ICoreTexture *pTexture);
-	HRESULT DGLE2_API CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags);
-	HRESULT DGLE2_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType);
-	HRESULT DGLE2_API ToggleStateFilter(bool bEnabled);
-	HRESULT DGLE2_API PushStates();
-	HRESULT DGLE2_API PopStates();
-	HRESULT DGLE2_API SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType);
-	HRESULT DGLE2_API GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType);
-	HRESULT DGLE2_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
-	HRESULT DGLE2_API DrawBuffer(ICoreGeometryBuffer *pBuffer);
-	HRESULT DGLE2_API SetColor(const TColor4 &stColor);
-	HRESULT DGLE2_API ToggleBlendState(bool bEnabled);
-	HRESULT DGLE2_API ToggleAlphaTestState(bool bEnabled);
-	HRESULT DGLE2_API SetBlendState(const TBlendStateDesc &stState);
-	HRESULT DGLE2_API GetBlendState(TBlendStateDesc &stState);
-	HRESULT DGLE2_API SetDepthStencilState(const TDepthStencilDesc &stState);
-	HRESULT DGLE2_API GetDepthStencilState(TDepthStencilDesc &stState);
-	HRESULT DGLE2_API SetRasterizerState(const TRasterizerStateDesc &stState);
-	HRESULT DGLE2_API GetRasterizerState(TRasterizerStateDesc &stState);
-	HRESULT DGLE2_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer);
-	HRESULT DGLE2_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue);
-	HRESULT DGLE2_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported);
-	HRESULT DGLE2_API GetRendererType(E_CORE_RENDERER_TYPE &eType);
-	HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	DGLE2_RESULT DGLE2_API SetClearColor(const TColor4 &stColor);
+	DGLE2_RESULT DGLE2_API Clear(bool bColor, bool bDepth, bool bStencil);
+	DGLE2_RESULT DGLE2_API SetViewport(uint x, uint y, uint width, uint height);
+	DGLE2_RESULT DGLE2_API GetViewport(uint &x, uint &y, uint &width, uint &height);
+	DGLE2_RESULT DGLE2_API SetScissor(uint x, uint y, uint width, uint height);
+	DGLE2_RESULT DGLE2_API SetLineWidth(float fWidth);
+	DGLE2_RESULT DGLE2_API SetPointSize(float fSize);
+	DGLE2_RESULT DGLE2_API ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat);
+	DGLE2_RESULT DGLE2_API SetRenderTarget(ICoreTexture *pTexture);
+	DGLE2_RESULT DGLE2_API CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags);
+	DGLE2_RESULT DGLE2_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType);
+	DGLE2_RESULT DGLE2_API ToggleStateFilter(bool bEnabled);
+	DGLE2_RESULT DGLE2_API PushStates();
+	DGLE2_RESULT DGLE2_API PopStates();
+	DGLE2_RESULT DGLE2_API SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType);
+	DGLE2_RESULT DGLE2_API GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType);
+	DGLE2_RESULT DGLE2_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
+	DGLE2_RESULT DGLE2_API DrawBuffer(ICoreGeometryBuffer *pBuffer);
+	DGLE2_RESULT DGLE2_API SetColor(const TColor4 &stColor);
+	DGLE2_RESULT DGLE2_API ToggleBlendState(bool bEnabled);
+	DGLE2_RESULT DGLE2_API ToggleAlphaTestState(bool bEnabled);
+	DGLE2_RESULT DGLE2_API SetBlendState(const TBlendStateDesc &stState);
+	DGLE2_RESULT DGLE2_API GetBlendState(TBlendStateDesc &stState);
+	DGLE2_RESULT DGLE2_API SetDepthStencilState(const TDepthStencilDesc &stState);
+	DGLE2_RESULT DGLE2_API GetDepthStencilState(TDepthStencilDesc &stState);
+	DGLE2_RESULT DGLE2_API SetRasterizerState(const TRasterizerStateDesc &stState);
+	DGLE2_RESULT DGLE2_API GetRasterizerState(TRasterizerStateDesc &stState);
+	DGLE2_RESULT DGLE2_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer);
+	DGLE2_RESULT DGLE2_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue);
+	DGLE2_RESULT DGLE2_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported);
+	DGLE2_RESULT DGLE2_API GetRendererType(E_CORE_RENDERER_TYPE &eType);
+	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
 	IDGLE2_BASE_IMPLEMENTATION(ICoreRenderer)
 };

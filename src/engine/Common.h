@@ -127,9 +127,6 @@ public:
 
 #ifdef _DEBUG
 
-//Break on specific alloc by number
-#	define CRT_BREAK_ON_ALLOC 0
-
 /*//DEBUG_NEW
 #	include <stdlib.h>
 #	include <crtdbg.h>
@@ -167,19 +164,19 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 #define OUTPUT_HR_MESSAGE(message, hr, type) \
 {\
 	/* termination 0 counded in _countof()*/\
-	char str[_countof(message ". hr: ") + numeric_limits<HRESULT>::digits10] = message ". hr: ";\
+	char str[_countof(message ". hr: ") + numeric_limits<DGLE2_RESULT>::digits10] = message ". hr: ";\
 	_itoa(hr, str + _countof(message ". hr: ") - 1, 10);\
 	LOG(str, type);\
 }
 
 /*
 template<class Interface, typename Type, typename ReturnType = Type>
-struct CComGetWrapper: public binary_function<Interface *, HRESULT (DGLE2_API Interface::*)(Type &), ReturnType>
+struct CComGetWrapper: public binary_function<Interface *, DGLE2_RESULT (DGLE2_API Interface::*)(Type &), ReturnType>
 {
 	result_type operator ()(first_argument_type object, second_argument_type method) const
 	{
 		Type data;
-		CHECK_HR((object->*method)(data));
+		CHECK_RES((object->*method)(data));
 		return data;
 	}
 };*/

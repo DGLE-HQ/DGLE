@@ -39,7 +39,7 @@ void CMainFS::UnregisterAndFreeAll()
 	_strVFSsDescs.clear();
 }
 
-HRESULT DGLE2_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
+DGLE2_RESULT DGLE2_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
 {
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
@@ -52,7 +52,7 @@ HRESULT DGLE2_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtensio
 	return E_INVALIDARG;
 }
 
-HRESULT DGLE2_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount)
 {
 	string exts;
 
@@ -95,7 +95,7 @@ void DGLE2_API CMainFS::_s_FSDeleteDGLE2_API(void *pParametr, IFileSystem *pVFS)
 		delete PTHIS(CMainFS)->_pDCPFS;
 }
 
-HRESULT DGLE2_API CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
+DGLE2_RESULT DGLE2_API CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
 {
 	prFile = NULL;
 
@@ -129,7 +129,7 @@ HRESULT DGLE2_API CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
 	return p_fs->OpenFile(pcFileName, (E_FILE_SYSTEM_OPEN_FLAGS)(FSOF_READ | FSOF_BINARY), prFile);
 }
 
-HRESULT DGLE2_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS)
+DGLE2_RESULT DGLE2_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS)
 {
 	if (pcVFSExtension == NULL)
 	{
@@ -149,7 +149,7 @@ HRESULT DGLE2_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFil
 	return E_INVALIDARG;
 }
 
-HRESULT DGLE2_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount)
+DGLE2_RESULT DGLE2_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount)
 {
 	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
@@ -177,7 +177,7 @@ HRESULT DGLE2_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExte
 	return S_FALSE;
 }
 
-HRESULT DGLE2_API CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr)
+DGLE2_RESULT DGLE2_API CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE2_API *pDeleteDGLE2_API)(void *pParametr, IFileSystem *pVFS), void *pParametr)
 {
 	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == string(pcVFSExtension))
@@ -193,7 +193,7 @@ HRESULT DGLE2_API CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension,
 	return S_OK;
 }
 
-HRESULT DGLE2_API CMainFS::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
+DGLE2_RESULT DGLE2_API CMainFS::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 {
 	eSubSystemType = ESS_FILE_SYSTEM;
 	return S_OK;

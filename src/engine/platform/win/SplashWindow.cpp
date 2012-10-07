@@ -19,7 +19,7 @@ CInstancedObj(uiInstIdx),
 _hWnd(NULL), _hOwnerWndHwnd(NULL), _hBmp(NULL)
 {}
 
-HRESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileName)
+DGLE2_RESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileName)
 {
 	_bInSeparateThread = bSeparateThread;
 
@@ -40,7 +40,7 @@ HRESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileNam
 		return _CreateWindow() ? S_OK : E_ABORT;
 }
 
-HRESULT CSplashWindow::Free()
+DGLE2_RESULT CSplashWindow::Free()
 {
 	delete[] _pcBmpFile;
 
@@ -57,7 +57,7 @@ HRESULT CSplashWindow::Free()
 	return S_OK;
 }
 
-HRESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
+DGLE2_RESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
 {
 	_hOwnerWndHwnd = tOwnerHwnd;
 	return S_OK;

@@ -28,7 +28,7 @@ public:
 
 	CEvConsoleWrite(const string &txt, bool toPrev):_txt(txt), _bToPrev(toPrev) {}
 
-	HRESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine)
+	DGLE2_RESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine)
 	{
 		bToPrevLine = _bToPrev;
 
@@ -50,13 +50,13 @@ public:
 		return S_OK;
 	}
 
-	HRESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_CONSOLE_WRITE;
 		return S_OK;
 	}
 
-	HRESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;

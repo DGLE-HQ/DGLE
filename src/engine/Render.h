@@ -42,18 +42,18 @@ public:
 	void EndRender();
 	void OnResize(uint uiWidth, uint uiHeight);
 
-	HRESULT DGLE2_API SetClearColor(const TColor4 &stColor);
-	HRESULT DGLE2_API Unbind(E_ENG_OBJ_TYPE eType);
-	HRESULT DGLE2_API EnableScissor(const TRectF &stArea);	
-	HRESULT DGLE2_API DisableScissor();
-	HRESULT DGLE2_API SetRenderTarget(ITexture* pTargetTex);
-	HRESULT DGLE2_API ScreenshotBMP(const char* pFileName);
-	HRESULT DGLE2_API CreatePostProcess(IPostprocess *&pPP);
+	DGLE2_RESULT DGLE2_API SetClearColor(const TColor4 &stColor);
+	DGLE2_RESULT DGLE2_API Unbind(E_ENG_OBJ_TYPE eType);
+	DGLE2_RESULT DGLE2_API EnableScissor(const TRectF &stArea);	
+	DGLE2_RESULT DGLE2_API DisableScissor();
+	DGLE2_RESULT DGLE2_API SetRenderTarget(ITexture* pTargetTex);
+	DGLE2_RESULT DGLE2_API ScreenshotBMP(const char* pFileName);
+	DGLE2_RESULT DGLE2_API CreatePostProcess(IPostprocess *&pPP);
 
-	HRESULT DGLE2_API GetRender2D(IRender2D *&prRender2D);
-	HRESULT DGLE2_API GetRender3D(IRender3D *&prRender3D);
+	DGLE2_RESULT DGLE2_API GetRender2D(IRender2D *&prRender2D);
+	DGLE2_RESULT DGLE2_API GetRender3D(IRender3D *&prRender3D);
 
-	HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(IRender, IEngineSubSystem)
 };

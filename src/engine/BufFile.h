@@ -22,14 +22,14 @@ public:
 
 	CBufFile(uint8 *pData, uint32 ui32DataSize);
 
-	HRESULT DGLE2_API Read(void *pBuffer, uint uiCount, uint &uiRead);
-	HRESULT DGLE2_API Write(const void *pBuffer, uint uiCount, uint &uiWritten);
-	HRESULT DGLE2_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position);
-	HRESULT DGLE2_API GetSize(uint32 &ui32Size);
-	HRESULT DGLE2_API IsOpen(bool &bOpened);
-	HRESULT DGLE2_API GetName(char *pcName, uint &uiCharsCount);
-	HRESULT DGLE2_API GetPath(char *pcPath, uint &uiCharsCount);
-	HRESULT DGLE2_API Free();
+	DGLE2_RESULT DGLE2_API Read(void *pBuffer, uint uiCount, uint &uiRead);
+	DGLE2_RESULT DGLE2_API Write(const void *pBuffer, uint uiCount, uint &uiWritten);
+	DGLE2_RESULT DGLE2_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position);
+	DGLE2_RESULT DGLE2_API GetSize(uint32 &ui32Size);
+	DGLE2_RESULT DGLE2_API IsOpen(bool &bOpened);
+	DGLE2_RESULT DGLE2_API GetName(char *pcName, uint &uiCharsCount);
+	DGLE2_RESULT DGLE2_API GetPath(char *pcPath, uint &uiCharsCount);
+	DGLE2_RESULT DGLE2_API Free();
 
 	IDGLE2_BASE_IMPLEMENTATION(IFile)
 };

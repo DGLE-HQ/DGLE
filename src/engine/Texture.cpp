@@ -35,27 +35,27 @@ CTexture::~CTexture()
 	_pCoreTexture->Free();
 }
 
-HRESULT DGLE2_API CTexture::SetFrameSize(uint uiFrameWidth, uint uiFrameHeight)
+DGLE2_RESULT DGLE2_API CTexture::SetFrameSize(uint uiFrameWidth, uint uiFrameHeight)
 {
 	_uiFrameWidth	= uiFrameWidth;
 	_uiFrameHeight	= uiFrameHeight;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight)
+DGLE2_RESULT DGLE2_API CTexture::GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight)
 {
 	uiFrameWidth	= _uiFrameWidth;
 	uiFrameHeight	= _uiFrameHeight;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::GetCoreTexture(ICoreTexture *&prCoreTex)
+DGLE2_RESULT DGLE2_API CTexture::GetCoreTexture(ICoreTexture *&prCoreTex)
 {
 	prCoreTex = _pCoreTexture;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
+DGLE2_RESULT DGLE2_API CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
 {
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
 		return _pRender2D->DrawTexture((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), 0.f, EF_BLEND);
@@ -63,7 +63,7 @@ HRESULT DGLE2_API CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
 		return _pRender2D->DrawSpriteA((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), uiFrameIndex, 0.f, EF_BLEND);
 }
 
-HRESULT DGLE2_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex)
+DGLE2_RESULT DGLE2_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex)
 {
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
 		return _pRender2D->DrawTexture((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), fAngle, EF_BLEND);
@@ -71,7 +71,7 @@ HRESULT DGLE2_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, 
 		return _pRender2D->DrawSpriteA((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), uiFrameIndex, fAngle, EF_BLEND);
 }
 
-HRESULT DGLE2_API CTexture::Draw3D(uint uiFrameIndex)
+DGLE2_RESULT DGLE2_API CTexture::Draw3D(uint uiFrameIndex)
 {
 	_pCoreRenderer->BindTexture(_pCoreTexture);
 
@@ -95,20 +95,20 @@ HRESULT DGLE2_API CTexture::Draw3D(uint uiFrameIndex)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::GetDimensions(uint &uiWidth, uint &uiHeight)
+DGLE2_RESULT DGLE2_API CTexture::GetDimensions(uint &uiWidth, uint &uiHeight)
 {
 	uiWidth  = _uiWidth;
 	uiHeight = _uiHeight;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::Bind(uint uiMTextureLayer)
+DGLE2_RESULT DGLE2_API CTexture::Bind(uint uiMTextureLayer)
 {
 	Core()->pCoreRenderer()->BindTexture(_pCoreTexture);
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::Free()
+DGLE2_RESULT DGLE2_API CTexture::Free()
 {
 	bool can_delete;
 
@@ -123,13 +123,13 @@ HRESULT DGLE2_API CTexture::Free()
 		return S_FALSE;
 }
 
-HRESULT DGLE2_API CTexture::GetType(E_ENG_OBJ_TYPE &eObjType)
+DGLE2_RESULT DGLE2_API CTexture::GetType(E_ENG_OBJ_TYPE &eObjType)
 {
 	eObjType = EOT_TEXTURE;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CTexture::GetUnknownType(uint &uiObjUnknownType)
+DGLE2_RESULT DGLE2_API CTexture::GetUnknownType(uint &uiObjUnknownType)
 {
 	uiObjUnknownType = -1;
 	return S_FALSE;

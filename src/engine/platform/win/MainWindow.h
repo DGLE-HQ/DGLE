@@ -30,18 +30,18 @@ public:
 	CMainWindow(uint uiInstIdx);
 	~CMainWindow();
 
-	HRESULT InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc);
-	HRESULT SendMessage(const TWinMessage &stMsg);
-	HRESULT GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType);
-	HRESULT GetWindowHandle(TWinHandle &tHandle);
-	HRESULT GetDrawContext(TWinDrawHandle &tHandle);
-	HRESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight);
-	HRESULT ScreenToClient(int &iX, int &iY);
-	HRESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus);
-	HRESULT SetCaption(const char *pcTxt);
-	HRESULT Minimize();
-	HRESULT BeginMainLoop();
-	HRESULT KillWindow();
-	HRESULT Free();
+	DGLE2_RESULT InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc);
+	DGLE2_RESULT SendMessage(const TWinMessage &stMsg);
+	DGLE2_RESULT GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType);
+	DGLE2_RESULT GetWindowHandle(TWinHandle &tHandle);
+	DGLE2_RESULT GetDrawContext(TWinDrawHandle &tHandle);
+	DGLE2_RESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight);
+	DGLE2_RESULT ScreenToClient(int &iX, int &iY);
+	DGLE2_RESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus);
+	DGLE2_RESULT SetCaption(const char *pcTxt);
+	DGLE2_RESULT Minimize();
+	DGLE2_RESULT BeginMainLoop();
+	DGLE2_RESULT KillWindow();
+	DGLE2_RESULT Free();
 
 };

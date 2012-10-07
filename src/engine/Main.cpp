@@ -83,6 +83,9 @@ extern bool CALLBACK FreeEngine(DGLE2::IEngineCore *pEngineCore)
 
 #ifdef PLATFORM_WINDOWS
 
+//Break on specific alloc by number
+#define CRT_BREAK_ON_ALLOC 0
+
 HMODULE	hModule = NULL;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)

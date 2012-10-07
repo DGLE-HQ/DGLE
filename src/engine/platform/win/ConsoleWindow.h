@@ -47,20 +47,20 @@ public:
 
 	CConsoleWindow();
 
-	HRESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole);
-	HRESULT Visible(bool bVisible);
-	HRESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
-	HRESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
-	HRESULT GetWindowHandle(TWinHandle &tHandle);
-	HRESULT GetThreadId(uint32 &ui32Id);
-	HRESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
-	HRESULT GetEditTxt(char *pcTxt, uint uiBufferSize);
-	HRESULT SetEditTxt(const char *pcTxt);
-	HRESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize);
-	HRESULT Clear();
-	HRESULT ResetSizeAndPos();
-	HRESULT EnterThreadSafeSec();
-	HRESULT LeaveThreadSafeSec();
-	HRESULT Free();
+	DGLE2_RESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole);
+	DGLE2_RESULT Visible(bool bVisible);
+	DGLE2_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
+	DGLE2_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
+	DGLE2_RESULT GetWindowHandle(TWinHandle &tHandle);
+	DGLE2_RESULT GetThreadId(uint32 &ui32Id);
+	DGLE2_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
+	DGLE2_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize);
+	DGLE2_RESULT SetEditTxt(const char *pcTxt);
+	DGLE2_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize);
+	DGLE2_RESULT Clear();
+	DGLE2_RESULT ResetSizeAndPos();
+	DGLE2_RESULT EnterThreadSafeSec();
+	DGLE2_RESULT LeaveThreadSafeSec();
+	DGLE2_RESULT Free();
 
 };

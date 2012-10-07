@@ -55,15 +55,15 @@ public:
 	CSound(uint uiInstIdx);
 	~CSound();
 
-	HRESULT DGLE2_API SetMasterVolume(uint uiVolume);
-	HRESULT DGLE2_API PauseAllChannels(bool bPaused);
-	HRESULT DGLE2_API StopAllChannels();
-	HRESULT DGLE2_API SetMaxChannelsCount(uint uiCount);
-	HRESULT DGLE2_API SetListnerPosition(const TPoint3 &stCoords);
-	HRESULT DGLE2_API GetListnerPosition(TPoint3 &stCoords);
-	HRESULT DGLE2_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp);
-	HRESULT DGLE2_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp);
-	HRESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
+	DGLE2_RESULT DGLE2_API SetMasterVolume(uint uiVolume);
+	DGLE2_RESULT DGLE2_API PauseAllChannels(bool bPaused);
+	DGLE2_RESULT DGLE2_API StopAllChannels();
+	DGLE2_RESULT DGLE2_API SetMaxChannelsCount(uint uiCount);
+	DGLE2_RESULT DGLE2_API SetListnerPosition(const TPoint3 &stCoords);
+	DGLE2_RESULT DGLE2_API GetListnerPosition(TPoint3 &stCoords);
+	DGLE2_RESULT DGLE2_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp);
+	DGLE2_RESULT DGLE2_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp);
+	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(ISound, IEngineSubSystem)
 };

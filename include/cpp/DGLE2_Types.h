@@ -27,7 +27,7 @@ This header is a part of DGLE2 SDK.
 
 #define RGB(r,g,b)	((unsigned long int)(((unsigned char)(r)|((unsigned short int)((unsigned char)(g))<<8))|(((unsigned long int)(unsigned char)(b))<<16)))
 
- //HRESULT//
+ //DGLE2_RESULT//
 
 	/** Engine interface unique identifier. 
 		Every engine interface must have it's own GUID.
@@ -41,48 +41,52 @@ This header is a part of DGLE2 SDK.
 	};
 
 	/** Default return type for all DGLE2 methods. 
-		Every engine interface method returnes HRESULT as result.
-		HRESULT must be one of these types S_OK, S_FALSE, E_FAIL, E_INVALIDARG or E_ABORT.
+		Every engine interface method returnes DGLE2_RESULT as result.
+		DGLE2_RESULT must be one of these types S_OK, S_FALSE, E_FAIL, E_INVALIDARG or E_ABORT.
 		\note Engine suppresses a lot of errors and keeps all things stable, so it is not necessary to check every methods result.
-		\see SUCCEEDED, FAILED, CHECK_HR, PARANOIC_CHECK_HR, S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT
+		\see SUCCEEDED, FAILED, CHECK_RES, PARANOIC_CHECK_RES, S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT
 	*/
-	typedef long int HRESULT;
+	typedef long int DGLE2_RESULT;
 
-//HRESULT return values//
+//DGLE2_RESULT return values//
 
-/** Return value of HRESULT type. Method returns S_OK when all of its routines were done succesfully. */
+/** Return value of DGLE2_RESULT type. Method returns S_OK when all of its routines were done succesfully. */
 #define S_OK			0
 
-/** Return value of HRESULT type. Method returns S_FALSE when most of its routines were done succesfully but some minor errors occured. */
+/** Return value of DGLE2_RESULT type. Method returns S_FALSE when most of its routines were done succesfully but some minor errors occured. */
 #define S_FALSE			1
 
-/** Return value of HRESULT type. Method returns E_FAIL when unspecified error occured. */
+/** Return value of DGLE2_RESULT type. Method returns E_FAIL when unspecified error occured. */
 #define E_FAIL			0x80004005
 
-/** Return value of HRESULT type. Method returns E_INVALIDARG when one or more arguments are invalid. */
+/** Return value of DGLE2_RESULT type. Method returns E_INVALIDARG when one or more arguments are invalid. */
 #define E_INVALIDARG	0x80070057
 
-/** Return value of HRESULT type. Method returns E_ABORT when operation aborted due to errors of some other function. */
+/** Return value of DGLE2_RESULT type. Method returns E_ABORT when operation aborted due to errors of some other function. */
 #define E_ABORT			0x80004004
 
-/** Return value of HRESULT type. Method returns E_NOTIMPL when it is empty dummy or this routine is unsupported by realisation. */
+/** Return value of DGLE2_RESULT type. Method returns E_NOTIMPL when it is empty dummy or this routine is unsupported by realisation. */
 #define E_NOTIMPL		0x80004001
 
-/** Macros to check HRESULT value. Returns true if value is S_OK or S_FALSE and false otherwise.
-	\param[in] hr HRESULT value to be checked.
+/** Macros to check DGLE2_RESULT value. Returns true if value is S_OK or S_FALSE and false otherwise.
+	\param[in] hr DGLE2_RESULT value to be checked.
 	\code
-	if(SUCCEEDED(pEngineCore->InitializeEngine(NULL,"Test"))) pEngineCore->StartEngine();
+	if(SUCCEEDED(pEngineCore->InitializeEngine(NULL, "Test"))) pEngineCore->StartEngine();
 	\endcode
 */
-#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
+#define SUCCEEDED(res) (((DGLE2_RESULT)(res)) >= 0)
 
-/** Macros to check HRESULT value. Returns true for any value except S_OK and S_FALSE.
-	\param[in] hr HRESULT value to be checked.
+/** Macros to check DGLE2_RESULT value. Returns true for any value except S_OK and S_FALSE.
+	\param[in] hr DGLE2_RESULT value to be checked.
 	\code
-	if(FAILED(pEngineCore->InitializeEngine(NULL,"Test"))) Exit(1);
+	if(FAILED(pEngineCore->InitializeEngine(NULL, "Test"))) Exit(1);
 	\endcode
 */
-#define FAILED(hr) (((HRESULT)(hr)) < 0)
+#define FAILED(res) (((DGLE2_RESULT)(res)) < 0)
+
+#else
+
+#define DGLE2_RESULT HRESULT
 
 #endif
 

@@ -35,7 +35,7 @@ _pOldEditProc(NULL), _bVisible(false),
 _pConWindowEvent(NULL), _pConsole(NULL)
 {}
 
-HRESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole)
+DGLE2_RESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole)
 {
 	_pConWindowEvent = pConWindowEvent;
 	_pConsole = pConsole;
@@ -52,7 +52,7 @@ HRESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pConWi
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::Visible(bool bVisible)
+DGLE2_RESULT CConsoleWindow::Visible(bool bVisible)
 {
 	if (!bVisible)
 		ShowWindow(_hWnd, SW_HIDE);
@@ -75,7 +75,7 @@ HRESULT CConsoleWindow::Visible(bool bVisible)
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::SetSizeAndPos(int iX, int iY, int iWidth, int iHeight)
+DGLE2_RESULT CConsoleWindow::SetSizeAndPos(int iX, int iY, int iWidth, int iHeight)
 {
 	_iX = iX;
 	_iY = iY;
@@ -87,7 +87,7 @@ HRESULT CConsoleWindow::SetSizeAndPos(int iX, int iY, int iWidth, int iHeight)
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight)
+DGLE2_RESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight)
 {
 	iX = _iX;
 	iY = _iY;
@@ -97,21 +97,21 @@ HRESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeigh
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::GetWindowHandle(TWinHandle &tHandle)
+DGLE2_RESULT CConsoleWindow::GetWindowHandle(TWinHandle &tHandle)
 {
 	tHandle = _hWnd;
 
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::GetThreadId(uint32 &ui32Id)
+DGLE2_RESULT CConsoleWindow::GetThreadId(uint32 &ui32Id)
 {
 	ui32Id = _threadId;
 
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
+DGLE2_RESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 {
 	int cur_l = GetWindowTextLength(_hMemo);
 	
@@ -145,14 +145,14 @@ HRESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::GetEditTxt(char *pcTxt, uint uiBufferSize)
+DGLE2_RESULT CConsoleWindow::GetEditTxt(char *pcTxt, uint uiBufferSize)
 {
 	GetWindowText(_hEdit, pcTxt, uiBufferSize);
 
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
+DGLE2_RESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
 {
 	SetWindowText(_hEdit, pcTxt);
 	SendMessage(_hEdit, WM_KEYDOWN, 35, 0);
@@ -160,7 +160,7 @@ HRESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
+DGLE2_RESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
 {
 	if (!pcTxt)
 	{
@@ -171,14 +171,14 @@ HRESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
 	return uiBufferSize - 1 == GetWindowText(_hMemo, pcTxt, uiBufferSize) ? S_FALSE : S_OK;
 }
 
-HRESULT CConsoleWindow::Clear()
+DGLE2_RESULT CConsoleWindow::Clear()
 {
 	SetWindowText(_hMemo, "DGLE2 Console cleared...");
 
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::ResetSizeAndPos()
+DGLE2_RESULT CConsoleWindow::ResetSizeAndPos()
 {
 	uint dt_w, dt_h;
 	GetDisplaySize(dt_w, dt_h);
@@ -200,7 +200,7 @@ HRESULT CConsoleWindow::ResetSizeAndPos()
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::EnterThreadSafeSec()
+DGLE2_RESULT CConsoleWindow::EnterThreadSafeSec()
 {
 	if (_hThreadHandle)
 		EnterCriticalSection(&_cs);
@@ -208,7 +208,7 @@ HRESULT CConsoleWindow::EnterThreadSafeSec()
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::LeaveThreadSafeSec()
+DGLE2_RESULT CConsoleWindow::LeaveThreadSafeSec()
 {
 	if (_hThreadHandle)
 		LeaveCriticalSection(&_cs);
@@ -216,7 +216,7 @@ HRESULT CConsoleWindow::LeaveThreadSafeSec()
 	return S_OK;
 }
 
-HRESULT CConsoleWindow::Free()
+DGLE2_RESULT CConsoleWindow::Free()
 {
 	if (_hThreadHandle)
 	{

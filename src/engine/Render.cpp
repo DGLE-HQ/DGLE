@@ -151,13 +151,13 @@ void CRender::OnResize(uint uiWidth, uint uiHeight)
 	_pCoreRenderer->SetMatrix(MatrixIdentity());
 }
 
-HRESULT DGLE2_API CRender::SetClearColor(const TColor4 &stColor)
+DGLE2_RESULT DGLE2_API CRender::SetClearColor(const TColor4 &stColor)
 {
 	_pCoreRenderer->SetClearColor(stColor);
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
+DGLE2_RESULT DGLE2_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
 {
 	switch (eType)
 	{
@@ -184,7 +184,7 @@ HRESULT DGLE2_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::EnableScissor(const TRectF &stArea)
+DGLE2_RESULT DGLE2_API CRender::EnableScissor(const TRectF &stArea)
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
@@ -194,7 +194,7 @@ HRESULT DGLE2_API CRender::EnableScissor(const TRectF &stArea)
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::DisableScissor()
+DGLE2_RESULT DGLE2_API CRender::DisableScissor()
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
@@ -203,36 +203,36 @@ HRESULT DGLE2_API CRender::DisableScissor()
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::SetRenderTarget(ITexture* pTargetTex)
+DGLE2_RESULT DGLE2_API CRender::SetRenderTarget(ITexture* pTargetTex)
 {
 	//ToDo
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::ScreenshotBMP(const char* pFileName)
+DGLE2_RESULT DGLE2_API CRender::ScreenshotBMP(const char* pFileName)
 {
 	//ToDo
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::CreatePostProcess(IPostprocess *&pPP)
+DGLE2_RESULT DGLE2_API CRender::CreatePostProcess(IPostprocess *&pPP)
 {
 	//ToDo
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::GetRender2D(IRender2D *&prRender2D)
+DGLE2_RESULT DGLE2_API CRender::GetRender2D(IRender2D *&prRender2D)
 {
 	prRender2D = _pRender2D;
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::GetRender3D(IRender3D *&prRender3D)
+DGLE2_RESULT DGLE2_API CRender::GetRender3D(IRender3D *&prRender3D)
 {
 	return S_OK;
 }
 
-HRESULT DGLE2_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
+DGLE2_RESULT DGLE2_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 {
 	eSubSystemType = ESS_RENDER;
 	return S_OK;

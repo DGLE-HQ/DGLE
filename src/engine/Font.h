@@ -44,17 +44,17 @@ public:
 	CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars);
 	~CBitmapFont();
 
-	HRESULT DGLE2_API GetTexture(ITexture *&prTexture);
-	HRESULT DGLE2_API SetScale(const float &fScale);
-	HRESULT DGLE2_API GetScale(float &fScale);
-	HRESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight);
-	HRESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor);
-	HRESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors);
-	HRESULT DGLE2_API Draw3D(const char *pcTxt);
+	DGLE2_RESULT DGLE2_API GetTexture(ITexture *&prTexture);
+	DGLE2_RESULT DGLE2_API SetScale(const float &fScale);
+	DGLE2_RESULT DGLE2_API GetScale(float &fScale);
+	DGLE2_RESULT DGLE2_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight);
+	DGLE2_RESULT DGLE2_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor);
+	DGLE2_RESULT DGLE2_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors);
+	DGLE2_RESULT DGLE2_API Draw3D(const char *pcTxt);
 	
-	HRESULT DGLE2_API Free();
-	HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType);
-	HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType);
+	DGLE2_RESULT DGLE2_API Free();
+	DGLE2_RESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType);
+	DGLE2_RESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(IBitmapFont, IEngBaseObj)
 };

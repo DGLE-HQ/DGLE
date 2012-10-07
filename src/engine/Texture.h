@@ -26,21 +26,21 @@ public:
 	CTexture(uint uiInstIdx, ICoreTexture *pCoreTex, uint uiWidth, uint uiHeight);
 	~CTexture();
 
-	HRESULT DGLE2_API GetDimensions(uint &uiWidth, uint &uiHeight);
-	HRESULT DGLE2_API SetFrameSize(uint uiFrameWidth, uint uiFrameHeight);
-	HRESULT DGLE2_API GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight);
+	DGLE2_RESULT DGLE2_API GetDimensions(uint &uiWidth, uint &uiHeight);
+	DGLE2_RESULT DGLE2_API SetFrameSize(uint uiFrameWidth, uint uiFrameHeight);
+	DGLE2_RESULT DGLE2_API GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight);
 	
-	HRESULT DGLE2_API GetCoreTexture(ICoreTexture *&prCoreTex);
+	DGLE2_RESULT DGLE2_API GetCoreTexture(ICoreTexture *&prCoreTex);
 	
-	HRESULT DGLE2_API Draw2DSimple(int iX, int iY, uint uiFrameIndex);
-	HRESULT DGLE2_API Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex);
-	HRESULT DGLE2_API Draw3D(uint uiFrameIndex);
+	DGLE2_RESULT DGLE2_API Draw2DSimple(int iX, int iY, uint uiFrameIndex);
+	DGLE2_RESULT DGLE2_API Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex);
+	DGLE2_RESULT DGLE2_API Draw3D(uint uiFrameIndex);
 	
-	HRESULT DGLE2_API Bind(uint uiMTextureLayer);
+	DGLE2_RESULT DGLE2_API Bind(uint uiMTextureLayer);
 
-	HRESULT DGLE2_API Free();
-	HRESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType);
-	HRESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType);
+	DGLE2_RESULT DGLE2_API Free();
+	DGLE2_RESULT DGLE2_API GetType(E_ENG_OBJ_TYPE &eObjType);
+	DGLE2_RESULT DGLE2_API GetUnknownType(uint &uiObjUnknownType);
 
 	IDGLE2_BASE_IMPLEMENTATION1(ITexture, IEngBaseObj)
 };
