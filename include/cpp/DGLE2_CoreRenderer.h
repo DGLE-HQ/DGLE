@@ -15,6 +15,10 @@ This header is a part of DGLE2 SDK.
 #ifndef DGLE2_CRENDERER
 #define DGLE2_CRENDERER
 
+#ifndef DGLE2_HEADER
+#error You must include "DGLE2.h" first.
+#endif
+
 #include "DGLE2.h"
 
 namespace DGLE2

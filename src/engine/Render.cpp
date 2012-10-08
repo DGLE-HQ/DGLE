@@ -16,7 +16,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 {
 	_pCoreRenderer = Core()->pCoreRenderer();
 
-	Console()->RegComProc("render_list_features", "Prints list of features supported by this Core Renderer implementation.", &_s_ConListFeatures, (void*)this);
+	Console()->RegComProc("rndr_list_features", "Prints list of features supported by this Core Renderer implementation.", &_s_ConListFeatures, (void*)this);
 
 	bool b_supported;
 

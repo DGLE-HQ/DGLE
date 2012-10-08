@@ -37,8 +37,8 @@ _uiBufferSize(34)// never less than 34
 	_pCoreRenderer = Core()->pCoreRenderer();
 	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
 
-	Console()->RegComValue("rend2d_profiler", "Displays render 2D subsystems profiler.", &_iProfilerState, 0, 2);
-	Console()->RegComValue("rend2d_drawbboxes", "Displays bounding boxes of 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
+	Console()->RegComValue("rndr_profiler", "Displays render 2D subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComValue("rndr_drawbboxes", "Displays bounding boxes of 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
 }
 
 CRender2D::~CRender2D()

@@ -58,7 +58,7 @@ CInstancedObj(uiInstIdx)
 			LOG("Joystick with id:" + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"", LT_INFO);
 	}
 
-	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
+	Console()->RegComProc("inpt_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
 
 #endif
 }

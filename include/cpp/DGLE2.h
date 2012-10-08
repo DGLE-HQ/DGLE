@@ -118,7 +118,7 @@ This is simplest DGLE2 application for Windows.
 /** Internal engine define, shows that target platform is Windows.*/
 #define PLATFORM_WINDOWS
 
-/** If defined, all interfaces will be derived from IUnknown. */
+/** If defined, all interfaces will be derived from IUnknown for compatibility with Microsoft COM technology. */
 #define DGLE2_USE_COM
 
 /** Define calling convention used by engine. */

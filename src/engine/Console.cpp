@@ -73,11 +73,11 @@ _uiInsIdx(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, (void*)this, false);
 	RegComProc("clear", "Clears all text in console.", &_s_Clear, (void*)this, false);
 	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, (void*)this, false);
-	RegComProc("cons_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, (void*)this, false);
-	RegComProc("cons_show", "Shows console window, if is hidden.", &_s_Show, (void*)this, false);
-	RegComProc("cons_hide", "Hides console window.", &_s_Hide, (void*)this, false);
-	RegComProc("cons_pos", "Changes console window position.\nUsage: \"cons_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this, false);
-	RegComProc("cons_size", "Changes console window size.\nUsage: \"cons_size <width value> <height value>\"", &_s_SetSize, (void*)this, false);
+	RegComProc("con_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, (void*)this, false);
+	RegComProc("con_show", "Shows console window, if is hidden.", &_s_Show, (void*)this, false);
+	RegComProc("con_hide", "Hides console window.", &_s_Hide, (void*)this, false);
+	RegComProc("con_pos", "Changes console window position.\nUsage: \"con_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this, false);
+	RegComProc("con_size", "Changes console window size.\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, (void*)this, false);
 
 	_pConsoleWindow = new CConsoleWindow();
 	_pConsoleWindow->InitWindow(bInSeparateThread, &_s_OnConWindowEvent, this);

@@ -14,7 +14,7 @@ using namespace std;
 CMainFS::CMainFS(uint uiInstIdx):
 CInstancedObj(uiInstIdx)
 {
-	Console()->RegComProc("mainfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
+	Console()->RegComProc("mnfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
 
 	_pHddFS = new CHDFileSystem(InstIdx());
 	_pDCPFS = new CDCPFileSystem(InstIdx(), this);

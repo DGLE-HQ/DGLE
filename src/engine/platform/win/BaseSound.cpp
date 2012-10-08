@@ -20,9 +20,9 @@ CBaseSound::CBaseSound(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _hWaveOut(NULL),
 _pBuffersData(NULL), _pStreamToDeviceCallback(NULL)
 {
-	Console()->RegComProc("sound_list_devices", "Prints the list of the output audio devices.", &_s_PrintDevList, (void*)this);
-	Console()->RegComProc("sound_device_id", "Prints id of the current audio device.", &_s_PrintDevId, (void*)this);
-	Console()->RegComProc("sound_force_device", "Forces sound system to use specific audio device.\nUsage: \"sound_force_device <device id>", &_s_ForceDevice, (void*)this);
+	Console()->RegComProc("snd_list_devices", "Prints the list of the output audio devices.", &_s_PrintDevList, (void*)this);
+	Console()->RegComProc("snd_device_id", "Prints id of the current audio device.", &_s_PrintDevId, (void*)this);
+	Console()->RegComProc("snd_force_device", "Forces sound system to use specific audio device.\nUsage: \"sound_force_device <device id>", &_s_ForceDevice, (void*)this);
 }
 
 CBaseSound::~CBaseSound()

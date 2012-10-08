@@ -122,8 +122,8 @@ _iProfilerState(0)
 	
 	_pCoreRenderer = Core()->pCoreRenderer();
 
-	Console()->RegComValue("resman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
-	Console()->RegComProc("resman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, (void*)this);
+	Console()->RegComValue("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
+	Console()->RegComProc("rman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, (void*)this);
 
 	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, (void*)this);
 	RegisterFileFormat("tga", EOT_TEXTURE, "truevision TarGA images.", &_s_LoadTextureTGA, (void*)this);
