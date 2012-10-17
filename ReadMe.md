@@ -1,8 +1,8 @@
-<p align="left"><img src="https://github.com/megaDRONe86/DGLE2/blob/master/misc/dgle2_logo.png?raw=true"></p>
+<p align="left"><img src="https://github.com/megaDRONe86/DGLE/blob/master/misc/dgle2_logo.png?raw=true"></p>
 
 ## Introduction
 
-[DGLE2](http://dgle.dronprogs.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+[DGLE](http://dgle.dronprogs.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
 The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology, capable of building any 2D/3D
 games, real-time visualizations, scientific applications etc. It should be easy to make great projects only by using editors and scripts or go deeper and use
@@ -10,7 +10,7 @@ your programming skills of your favorite language to create really exciting proj
 for engine and share them with others over the web or just get plugins already made by others. When project is complete it can be easily build for every popular
 platform.
 
-See [gallery](http://dgle.dronprogs.org/dgle2_gallery) for screenshots of projects based on this engine.
+See [gallery](http://dgle.dronprogs.org/dgle_gallery) for screenshots of projects based on this engine.
 
 Visit [official website](http://dgle.dronprogs.org) for more details on this project and also plugins, articles, tutorials, samples and forum.
 
@@ -20,15 +20,15 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 * Plugin based architecture with micro-core principles.
 * Flexible and highly extensible via plugins.
 * Multi render support: OpenGL (1.x-2.x and 4.x), OpenGL ES (1.1, 2.0 and 3.0), Direct3D (9.0c and 11.1).
-* Have set of visual editors for rapid application development.
-* Provides all necessary API for development high quality  2D and 3D real-time applications.
+* Have set of visual editors for rapid application development. Also for non programmers.
+* Provides all necessary API for development high quality 2D and 3D real-time applications.
 * Flexible abstraction levels allow you to programming without any restrictions from API.
-* Made by GameDev professionals for you with LoVe!
+* Made by experienced in game development professionals for you with LoVe!
 
 ## Supported Platforms
 
 * Windows (XP and later)
-* Linux (almost any distributive)
+* Linux (Ubuntu and almost any distributive)
 * MacOS (10.6 and later)
 * iOS (4.3 and later)
 * Android (2.3 and later)
@@ -36,7 +36,8 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 ## Supported Programming Languages
 
 * C++
-* C#
+* C# and any .Net language
+* Objective C
 * Delphi
 * Free Pascal
 * Lua (for scripting purpose only)
@@ -46,21 +47,21 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 Simple C++ *"HelloWorld"* application for Windows.
 This code will setup engine, create window and render *"Hello, World!"* text on screen via default font.
 You can copy-paste this code to your *'main.cpp'* and you are done! Also don't forget to copy engine headers
-(you can find them in *"include/cpp"* folder) and library *'DGLE2.dll'* (you can find it in *"bin/win"* folder)
+(you can find them in *"include/cpp"* folder) and library *'DGLE.dll'* (you can find it in *"bin/win"* folder)
 in suitable locations to be found by compiler and executable.
 
 ```cpp
-#include "DGLE2.h"
+#include "DGLE.h"
 
-using namespace DGLE2;
+using namespace DGLE;
 
-ENG_DYNAMIC_FUNC
+DGLE_DYNAMIC_FUNC
 
 IEngineCore *pEngineCore = NULL;
 IBitmapFont *pFont = NULL;
 IRender2D *pRender2D = NULL;
 
-void DGLE2_API Init(void *pParametr)
+void DGLE_API Init(void *pParametr)
 {
 	IResourceManager *resMan;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)resMan);
@@ -72,14 +73,14 @@ void DGLE2_API Init(void *pParametr)
 	resMan->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj *&)pFont);
 }
 
-void DGLE2_API Render(void *pParametr)
+void DGLE_API Render(void *pParametr)
 {
 	pFont->Draw2D(0, 0, "Hello, World!");
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	if ( GetEngine("DGLE2.dll", pEngineCore) )
+	if ( GetEngine("DGLE.dll", pEngineCore) )
 	{
 		pEngineCore->InitializeEngine(NULL, "My First App");
 		pEngineCore->AddProcedure(EPT_INIT, &Init);
@@ -88,7 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		FreeEngine();
 	}
 	else
-		MessageBoxA(NULL, "Couldn't load \"DGLE2.dll\"!", "My First App", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+		MessageBoxA(NULL, "Couldn't load \"DGLE.dll\"!", "My First App", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 	
 	return 0;
 }
@@ -96,9 +97,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 You can find more examples in the *"src/examples"* folder. Also for other supported languages.
 
-You can find build instructions [here](DGLE2/blob/master/docs/HowToBuild.txt).
+You can find build instructions [here](DGLE/blob/master/docs/HowToBuild.txt).
 
-Also if you want to participate in the project development process you must read and understand [Development Rules](DGLE2/blob/master/docs/DevelopmentRules.txt).
+Also if you want to participate in the project development process you must read and understand [Development Rules](DGLE/blob/master/docs/DevelopmentRules.txt).
 
 ## Documentation
 
@@ -110,9 +111,14 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 
 ## Latest SDK version
 
-Compiled and ready to use latest cross platform SDK always could be found [here](https://github.com/megaDRONe86/DGLE2/downloads). 
+Compiled and ready to use latest cross platform SDK always could be found [here](https://github.com/megaDRONe86/DGLE/downloads). 
 
-See [ChangeLog](DGLE2/blob/master/ChangeLog.txt) for full list of changes.
+See [ChangeLog](DGLE/blob/master/ChangeLog.txt) for full list of changes.
+
+## What means abbreviation "DGLE"?
+
+This abbreviation is some kind of legacy and it is a long story...
+Now officially this means: "Dynamite Groovy Lightweight Engine" that is more correct, concerning to the spirit of the project.
 
 ## Credits
 

@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		29.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -28,7 +28,7 @@ class CRender: public CInstancedObj, public IRender
 
 	void _SetPerspectiveMatrix(uint width, uint height);
 
-	static void DGLE2_API _s_ConListFeatures(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConListFeatures(void *pParametr, const char *pcParam);
 
 public:
 
@@ -42,18 +42,18 @@ public:
 	void EndRender();
 	void OnResize(uint uiWidth, uint uiHeight);
 
-	DGLE2_RESULT DGLE2_API SetClearColor(const TColor4 &stColor);
-	DGLE2_RESULT DGLE2_API Unbind(E_ENG_OBJ_TYPE eType);
-	DGLE2_RESULT DGLE2_API EnableScissor(const TRectF &stArea);	
-	DGLE2_RESULT DGLE2_API DisableScissor();
-	DGLE2_RESULT DGLE2_API SetRenderTarget(ITexture* pTargetTex);
-	DGLE2_RESULT DGLE2_API ScreenshotBMP(const char* pFileName);
-	DGLE2_RESULT DGLE2_API CreatePostProcess(IPostprocess *&pPP);
+	DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor);
+	DGLE_RESULT DGLE_API Unbind(E_ENG_OBJ_TYPE eType);
+	DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea);	
+	DGLE_RESULT DGLE_API DisableScissor();
+	DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex);
+	DGLE_RESULT DGLE_API ScreenshotBMP(const char* pFileName);
+	DGLE_RESULT DGLE_API CreatePostProcess(IPostprocess *&pPP);
 
-	DGLE2_RESULT DGLE2_API GetRender2D(IRender2D *&prRender2D);
-	DGLE2_RESULT DGLE2_API GetRender3D(IRender3D *&prRender3D);
+	DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D);
+	DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D);
 
-	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
-	IDGLE2_BASE_IMPLEMENTATION1(IRender, IEngineSubSystem)
+	IDGLE_BASE_IMPLEMENTATION1(IRender, IEngineSubSystem)
 };

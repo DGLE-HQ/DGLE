@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		04.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -47,7 +47,7 @@ class CSound: private CBaseSound, public ISound
 	bool _bInited;
 	uint32 _ui32BufferSize;
 
-	static void DGLE2_API _s_StreamToDeviceCallback(void *pParametr, uint8 *pBufferData);
+	static void DGLE_API _s_StreamToDeviceCallback(void *pParametr, uint8 *pBufferData);
 	void _Render(TSoundFrame *frames, uint uiFramesCount);
 
 public:
@@ -55,17 +55,17 @@ public:
 	CSound(uint uiInstIdx);
 	~CSound();
 
-	DGLE2_RESULT DGLE2_API SetMasterVolume(uint uiVolume);
-	DGLE2_RESULT DGLE2_API PauseAllChannels(bool bPaused);
-	DGLE2_RESULT DGLE2_API StopAllChannels();
-	DGLE2_RESULT DGLE2_API SetMaxChannelsCount(uint uiCount);
-	DGLE2_RESULT DGLE2_API SetListnerPosition(const TPoint3 &stCoords);
-	DGLE2_RESULT DGLE2_API GetListnerPosition(TPoint3 &stCoords);
-	DGLE2_RESULT DGLE2_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp);
-	DGLE2_RESULT DGLE2_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp);
-	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
+	DGLE_RESULT DGLE_API SetMasterVolume(uint uiVolume);
+	DGLE_RESULT DGLE_API PauseAllChannels(bool bPaused);
+	DGLE_RESULT DGLE_API StopAllChannels();
+	DGLE_RESULT DGLE_API SetMaxChannelsCount(uint uiCount);
+	DGLE_RESULT DGLE_API SetListnerPosition(const TPoint3 &stCoords);
+	DGLE_RESULT DGLE_API GetListnerPosition(TPoint3 &stCoords);
+	DGLE_RESULT DGLE_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp);
+	DGLE_RESULT DGLE_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
 
-	IDGLE2_BASE_IMPLEMENTATION1(ISound, IEngineSubSystem)
+	IDGLE_BASE_IMPLEMENTATION1(ISound, IEngineSubSystem)
 };
 
 #undef SND_CLAMP

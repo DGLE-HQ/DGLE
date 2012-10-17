@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		26.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "MainWindow.h"
@@ -21,7 +21,7 @@ _bIsLooping(false)
 CMainWindow::~CMainWindow()
 {
 	if (_hInst && ((InstIdx()==0 || EngineInstance(0)->pclCore == NULL) &&
-		UnregisterClass("DGLE2WindowClass", _hInst)==FALSE))
+		UnregisterClass("DGLEWindowClass", _hInst)==FALSE))
 	{
 		_hInst = NULL;
 		LOG("Can't unregister window class.",LT_ERROR);
@@ -62,7 +62,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 	return (int) st_msg.wParam;
 }
 
-void DGLE2_API CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
+void DGLE_API CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CMainWindow, "No parametrs expected.");
@@ -70,7 +70,7 @@ void DGLE2_API CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 		::PostMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, NULL, NULL);
 }
 
-LRESULT DGLE2_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	CMainWindow *this_ptr = (CMainWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
@@ -111,7 +111,7 @@ LRESULT DGLE2_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-DGLE2_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	_hWnd				= tHandle;
 	_pDelMainLoop		= pDelMainLoop;
@@ -128,7 +128,7 @@ DGLE2_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRes
 	wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground  = (HBRUSH)(0);
 	wcex.lpszMenuName   = NULL;
-	wcex.lpszClassName  = "DGLE2WindowClass";
+	wcex.lpszClassName  = "DGLEWindowClass";
 	wcex.hIconSm        = LoadIcon(hModule, MAKEINTRESOURCE(IDI_ICON1));
 
 	bool need_register = true;
@@ -136,7 +136,7 @@ DGLE2_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRes
 	if (InstIdx()!=0)
 	{
 		WNDCLASSEX tmp;
-		need_register = GetClassInfoEx(_hInst, "DGLE2WindowClass", &tmp) == FALSE;
+		need_register = GetClassInfoEx(_hInst, "DGLEWindowClass", &tmp) == FALSE;
 	}
 
 	if (need_register && RegisterClassEx(&wcex) == FALSE)
@@ -148,7 +148,7 @@ DGLE2_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRes
 	if (_hWnd)
 		return E_INVALIDARG;
 
-	_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "DGLE2WindowClass", "DGLE2 Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 320, 240, NULL, NULL, _hInst, NULL);
+	_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "DGLEWindowClass", "DGLE Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 320, 240, NULL, NULL, _hInst, NULL);
 
 	if (!_hWnd)
 	{
@@ -172,7 +172,7 @@ DGLE2_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRes
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
+DGLE_RESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -184,21 +184,21 @@ DGLE2_RESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
+DGLE_RESULT CMainWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 {
 	eType = WAT_FULL_ACCESS;
 
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE_RESULT CMainWindow::GetWindowHandle(TWinHandle &stHandle)
 {
 	stHandle = _hWnd;
 
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::GetDrawContext(HDC &hDC)
+DGLE_RESULT CMainWindow::GetDrawContext(HDC &hDC)
 {
 	if (!_hDC)
 		return E_FAIL;
@@ -208,7 +208,7 @@ DGLE2_RESULT CMainWindow::GetDrawContext(HDC &hDC)
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
+DGLE_RESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -240,7 +240,7 @@ DGLE2_RESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::ScreenToClient(int &iX, int &iY)
+DGLE_RESULT CMainWindow::ScreenToClient(int &iX, int &iY)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -254,7 +254,7 @@ DGLE2_RESULT CMainWindow::ScreenToClient(int &iX, int &iY)
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::SetCaption(const char *pcTxt)
+DGLE_RESULT CMainWindow::SetCaption(const char *pcTxt)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -264,7 +264,7 @@ DGLE2_RESULT CMainWindow::SetCaption(const char *pcTxt)
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::Minimize()
+DGLE_RESULT CMainWindow::Minimize()
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -274,12 +274,12 @@ DGLE2_RESULT CMainWindow::Minimize()
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::BeginMainLoop()
+DGLE_RESULT CMainWindow::BeginMainLoop()
 {
 	return _wWinMain(GetModuleHandle(NULL)) != -1 ? S_OK : E_FAIL;
 }
 
-DGLE2_RESULT CMainWindow::KillWindow()
+DGLE_RESULT CMainWindow::KillWindow()
 {
 	if (_hDC && !ReleaseDC(_hWnd,_hDC))
 		LOG("Failed to release Device Context.",LT_ERROR);
@@ -293,7 +293,7 @@ DGLE2_RESULT CMainWindow::KillWindow()
 	return S_OK;
 }
 
-DGLE2_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -305,7 +305,7 @@ DGLE2_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFoc
 	if (builtin_fscreen)
 		return S_OK;
 
-	DGLE2_RESULT res = S_OK;
+	DGLE_RESULT res = S_OK;
 
 	if (_bFScreen && !stWind.bFullScreen)
 		if (ChangeDisplaySettings(NULL, 0) != DISP_CHANGE_SUCCESSFUL)
@@ -405,7 +405,7 @@ DGLE2_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFoc
 	return res;
 }
 
-DGLE2_RESULT CMainWindow::Free()
+DGLE_RESULT CMainWindow::Free()
 {
 	delete this;
 	return S_OK;

@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		25.02.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "HookedWindow.h"
@@ -77,7 +77,7 @@ LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam
 		return CallWindowProc(this_ptr->_stOldWindowProc, hWnd, msg, wParam, lParam);
 }
 
-DGLE2_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	if(_stOldWindowProc || _stOldRootWindowProc)
 		return E_FAIL;
@@ -145,7 +145,7 @@ DGLE2_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitR
 	}
 }
 
-DGLE2_RESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
+DGLE_RESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -157,21 +157,21 @@ DGLE2_RESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
+DGLE_RESULT CHookedWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 {
 	eType = WAT_RESTRICTED_ACCESS;
 
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE_RESULT CHookedWindow::GetWindowHandle(TWinHandle &stHandle)
 {
 	stHandle = _hWnd;
 
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
+DGLE_RESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
 {
 	if (!_hDC)
 		return E_FAIL;
@@ -181,7 +181,7 @@ DGLE2_RESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
+DGLE_RESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -213,7 +213,7 @@ DGLE2_RESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeig
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
+DGLE_RESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -227,22 +227,22 @@ DGLE2_RESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE_RESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
 	return E_NOTIMPL;
 }
 
-DGLE2_RESULT CHookedWindow::SetCaption(const char *pcTxt)
+DGLE_RESULT CHookedWindow::SetCaption(const char *pcTxt)
 {
 	return E_NOTIMPL;
 }
 
-DGLE2_RESULT CHookedWindow::Minimize()
+DGLE_RESULT CHookedWindow::Minimize()
 {
 	return E_NOTIMPL;
 }
 
-DGLE2_RESULT CHookedWindow::BeginMainLoop()
+DGLE_RESULT CHookedWindow::BeginMainLoop()
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -288,7 +288,7 @@ void CHookedWindow::_KillWindow()
 	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
 }
 
-DGLE2_RESULT CHookedWindow::KillWindow()
+DGLE_RESULT CHookedWindow::KillWindow()
 {
 	if (_hDC && !ReleaseDC(_hWnd, _hDC))
 	{
@@ -299,13 +299,13 @@ DGLE2_RESULT CHookedWindow::KillWindow()
 	return S_OK;
 }
 
-DGLE2_RESULT CHookedWindow::Free()
+DGLE_RESULT CHookedWindow::Free()
 {
 	delete this;
 	return S_OK;
 }
 
-void DGLE2_API CHookedWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
+void DGLE_API CHookedWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam)!=0)
 		CON(CHookedWindow, "No parametrs expected.");

@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		16.09.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "Font.h"
@@ -25,13 +25,13 @@ CBitmapFont::~CBitmapFont()
 	_pTex->Free();
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::GetTexture(ITexture *&prTexture)
+DGLE_RESULT DGLE_API CBitmapFont::GetTexture(ITexture *&prTexture)
 {
 	prTexture = _pTex;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight)
+DGLE_RESULT DGLE_API CBitmapFont::GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight)
 {
 	if (strlen(pcTxt) == 0) 
 		return S_FALSE;
@@ -47,26 +47,26 @@ DGLE2_RESULT DGLE2_API CBitmapFont::GetTextDimensions(const char *pcTxt, uint &u
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::SetScale(const float &fScale)
+DGLE_RESULT DGLE_API CBitmapFont::SetScale(const float &fScale)
 {
 	_fScale = fScale;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::GetScale(float &fScale)
+DGLE_RESULT DGLE_API CBitmapFont::GetScale(float &fScale)
 {
 	fScale = _fScale;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::Draw3D(const char *pcTxt)
+DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 {
 	size_t length = strlen(pcTxt);
 	
 	if (length == 0)
 		return S_FALSE;
 
-	DGLE2_RESULT hr;
+	DGLE_RESULT hr;
 
 	uint strwidth, strheight;
 	if (FAILED(hr = GetTextDimensions(pcTxt, strwidth, strheight)))
@@ -121,12 +121,12 @@ DGLE2_RESULT DGLE2_API CBitmapFont::Draw3D(const char *pcTxt)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor)
+DGLE_RESULT DGLE_API CBitmapFont::Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor)
 {
 	return Draw2D((float)iX, (float)iY, pcTxt, stColor, 0.f, false);
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors)
+DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors)
 {
 	uint length = strlen(pcTxt);
 
@@ -279,7 +279,7 @@ DGLE2_RESULT DGLE2_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::Free()
+DGLE_RESULT DGLE_API CBitmapFont::Free()
 {
 	bool can_delete;
 	
@@ -294,13 +294,13 @@ DGLE2_RESULT DGLE2_API CBitmapFont::Free()
 		return S_FALSE;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::GetType(E_ENG_OBJ_TYPE &eObjType)
+DGLE_RESULT DGLE_API CBitmapFont::GetType(E_ENG_OBJ_TYPE &eObjType)
 {
 	eObjType = EOT_BITMAP_FONT;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CBitmapFont::GetUnknownType(uint &uiObjUnknownType)
+DGLE_RESULT DGLE_API CBitmapFont::GetUnknownType(uint &uiObjUnknownType)
 {
 	uiObjUnknownType = -1;
 	return S_FALSE;

@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		22.01.2010 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "HDFileSystem.h"
@@ -34,7 +34,7 @@ CHDFileIterator::~CHDFileIterator()
 		LOG("Can't close find handle.",LT_ERROR);
 }
 
-DGLE2_RESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
+DGLE_RESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -55,7 +55,7 @@ DGLE2_RESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 	}
 }
 
-DGLE2_RESULT CHDFileIterator::Next()
+DGLE_RESULT CHDFileIterator::Next()
 {
 	WIN32_FIND_DATAA find_file;
 
@@ -68,7 +68,7 @@ DGLE2_RESULT CHDFileIterator::Next()
 	return S_FALSE;
 }
 
-DGLE2_RESULT DGLE2_API CHDFileIterator::Free()
+DGLE_RESULT DGLE_API CHDFileIterator::Free()
 {
 	delete this;
 	return S_OK;
@@ -76,7 +76,7 @@ DGLE2_RESULT DGLE2_API CHDFileIterator::Free()
 
 //CHDFileSystem//
 
-DGLE2_RESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
+DGLE_RESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	prFile = NULL;
 
@@ -90,7 +90,7 @@ DGLE2_RESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAG
 	return _is_open ? S_OK : S_FALSE;
 }
 
-DGLE2_RESULT CHDFileSystem::DeleteFile(const char *pcName)
+DGLE_RESULT CHDFileSystem::DeleteFile(const char *pcName)
 {
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 		return RemoveDirectoryA(pcName) == 0 ? S_FALSE : S_OK;
@@ -98,7 +98,7 @@ DGLE2_RESULT CHDFileSystem::DeleteFile(const char *pcName)
 	return ::DeleteFile(pcName) == 0 ? S_FALSE : S_OK;
 }
 
-DGLE2_RESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
+DGLE_RESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 	{
@@ -112,7 +112,7 @@ DGLE2_RESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
 	return S_OK;
 }
 
-DGLE2_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
+DGLE_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
 	WIN32_FIND_DATAA find_file;
 
@@ -129,7 +129,7 @@ DGLE2_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileI
 	return S_FALSE;
 }
 
-DGLE2_RESULT DGLE2_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
 	char res[] = "Not supported for this realisation.";
 

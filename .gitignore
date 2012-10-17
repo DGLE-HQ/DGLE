@@ -5,19 +5,19 @@ docs/api_help/
 
 # Windows
 desktop.ini
-DGLE2.dll
+DGLE.dll
 bin/win/tests/*.exe
 bin/win/x64/tests/*.exe
 bin/win/examples/*.exe
 bin/win/x64/examples/*.exe
 bin/win/plugins/*.dplug
 bin/win/x64/plugins/*.dplug
-bin/win/tools/*.exe
-bin/win/tools/*.dll
-bin/win/tools/*.o
-bin/win/tools/*.c
-bin/win/x64/tools/*.exe
-bin/win/x64/tools/*.dll
+bin/win/toolset/*.exe
+bin/win/toolset/*.dll
+bin/win/toolset/*.o
+bin/win/toolset/*.c
+bin/win/x64/toolset/*.exe
+bin/win/x64/toolset/*.dll
 
 # Visual Studio
 *.suo
@@ -61,7 +61,7 @@ __history/
 *.map
 
 # MacOS
-Icon*
+Icon?
 .DS_Store
 
 # XCode

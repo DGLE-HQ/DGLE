@@ -2,9 +2,9 @@
 \author		Andrey Korotkov aka DRON
 \date		03.10.2012 (c)Andrey Korotkov
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "BaseSound.h"
@@ -116,7 +116,7 @@ bool CBaseSound::_InitDevice(uint id)
 	return true;
 }
 
-bool CBaseSound::OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint32 &ui32BufferSize, void (DGLE2_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr)
+bool CBaseSound::OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint32 &ui32BufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr)
 {
 	if (_hWaveOut || !pStreamToDeviceCallback)
 		return false;
@@ -211,7 +211,7 @@ void CBaseSound::_PrintDevList()
 	Console()->Write(output.c_str());
 }
 
-void DGLE2_API CBaseSound::_s_PrintDevList(void *pParametr, const char *pcParam)
+void DGLE_API CBaseSound::_s_PrintDevList(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CBaseSound, "No parametrs expected.");
@@ -220,7 +220,7 @@ void DGLE2_API CBaseSound::_s_PrintDevList(void *pParametr, const char *pcParam)
 
 }
 
-void DGLE2_API CBaseSound::_s_PrintDevId(void *pParametr, const char *pcParam)
+void DGLE_API CBaseSound::_s_PrintDevId(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CBaseSound, "No parametrs expected.");
@@ -232,7 +232,7 @@ void DGLE2_API CBaseSound::_s_PrintDevId(void *pParametr, const char *pcParam)
 	}
 }
 
-void DGLE2_API CBaseSound::_s_ForceDevice(void *pParametr, const char *pcParam)
+void DGLE_API CBaseSound::_s_ForceDevice(void *pParametr, const char *pcParam)
 {
 	string param(pcParam);
 

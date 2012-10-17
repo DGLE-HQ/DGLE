@@ -9,16 +9,16 @@
 
 ===============================================================================
 
-0.3.0 beta (19.08.2012)
+Version: 2:0.3.0 Release date: 22.10.2012
 
 -----------------------
 
 Initial release to GitHub and also fresh project start. Major engine reengineering.
 
 [!+!] Multi render support and totally new rendering subsystem.
+[!+!] Cross platform basic sound subsystem based on custom software mixer.
 [!*!] Total engine reengineering, a lot of stuff was made from scratch.
 [!*!] Isolation of platform depended code.
-[ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
 [ + ] BeginBatch/EndBatch IRender2D methods for custom batchs. Also added CullBoundingBox method.
 [ + ] Helper methods Draw2DSimple and Draw2DRect for UBitmapFont interface.
 [ + ] GetResourceByFileName method of interface IResourceManager.
@@ -27,6 +27,7 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] Interface IUserCallback allows to register callback classes in engine more simple.
 [ + ] Added joysticks and gamepads support.
 [ + ] Brand new GTK# GUI components for engine toolset.
+[ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
 [ - ] Some old stuff (like plugins for browsers) was dropped off.
 [ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
 [ - ] ICF_BLOCK_WINKEYS flag from method Configure of IInput interface.

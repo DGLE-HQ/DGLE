@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		17.09.2011 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -37,7 +37,7 @@ struct TEvent
 // CCore //
 
 class CCore: public CInstancedObj, public IEngineCore
-#ifdef DGLE2_USE_COM
+#ifdef DGLE_USE_COM
 , public IEngineCoreWrapper
 #endif
 {
@@ -140,16 +140,16 @@ class CCore: public CInstancedObj, public IEngineCore
 	TEngWindow			_stWndToApply;
 	bool				_bNeedApplyNewWnd;
 
-	static void DGLE2_API _s_MainLoop(void *pParametr);
-	static void DGLE2_API _s_OnTimer(void *pParametr);
-	static void DGLE2_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
+	static void DGLE_API _s_MainLoop(void *pParametr);
+	static void DGLE_API _s_OnTimer(void *pParametr);
+	static void DGLE_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
 
-	static void DGLE2_API _s_ConAutoPause(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_ConPrintVersion(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_ConFeatures(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_ConListPlugs(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_ConChangeMode(void *pParametr, const char *pcParam);	
-	static void DGLE2_API _s_InstIdx(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConAutoPause(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConPrintVersion(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConFeatures(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConListPlugs(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConChangeMode(void *pParametr, const char *pcParam);	
+	static void DGLE_API _s_InstIdx(void *pParametr, const char *pcParam);
 
 public:
 
@@ -171,73 +171,73 @@ public:
 
 	void	ToogleSuspendEngine(bool bSuspend);
 
-	DGLE2_RESULT DGLE2_API LoadSplashPicture(const char *pcBmpFileName);
-	DGLE2_RESULT DGLE2_API AddPluginToInitList(const char *pcFileName);
+	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName);
+	DGLE_RESULT DGLE_API AddPluginToInitList(const char *pcFileName);
 
-	DGLE2_RESULT DGLE2_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags);
-	DGLE2_RESULT DGLE2_API SetProcessInterval(uint uiProcessInterval);
-	DGLE2_RESULT DGLE2_API StartEngine();
-	DGLE2_RESULT DGLE2_API QuitEngine();
+	DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags);
+	DGLE_RESULT DGLE_API SetProcessInterval(uint uiProcessInterval);
+	DGLE_RESULT DGLE_API StartEngine();
+	DGLE_RESULT DGLE_API QuitEngine();
 
-	DGLE2_RESULT DGLE2_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin);
-	DGLE2_RESULT DGLE2_API DisconnectPlugin(IPlugin *pPlugin);
-	DGLE2_RESULT DGLE2_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin);
+	DGLE_RESULT DGLE_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin);
+	DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin);
+	DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin);
 
-	DGLE2_RESULT DGLE2_API AddUserCallback(IUserCallback *pUserCallback);
-	DGLE2_RESULT DGLE2_API RemoveUserCallback(IUserCallback *pUserCallback);
+	DGLE_RESULT DGLE_API AddUserCallback(IUserCallback *pUserCallback);
+	DGLE_RESULT DGLE_API RemoveUserCallback(IUserCallback *pUserCallback);
 
-	DGLE2_RESULT DGLE2_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr);
-	DGLE2_RESULT DGLE2_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr);
+	DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr);
+	DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr);
 
-	DGLE2_RESULT DGLE2_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
-	DGLE2_RESULT DGLE2_API AddEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
-	DGLE2_RESULT DGLE2_API RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
+	DGLE_RESULT DGLE_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
+	DGLE_RESULT DGLE_API AddEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
+	DGLE_RESULT DGLE_API RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
 
-	DGLE2_RESULT DGLE2_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
+	DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
 
-	DGLE2_RESULT DGLE2_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor);
-	DGLE2_RESULT DGLE2_API GetInstanceIdx(uint &uiIdx);
-	DGLE2_RESULT DGLE2_API GetTimer(uint64 &uiTick);
-	DGLE2_RESULT DGLE2_API GetSystemInfo(TSystemInfo &stSysInfo);
-	DGLE2_RESULT DGLE2_API GetCurrentWin(TEngWindow &stWin);
-	DGLE2_RESULT DGLE2_API GetFPS(uint &uiFPS);
-	DGLE2_RESULT DGLE2_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime);
-	DGLE2_RESULT DGLE2_API GetHandle(TWinHandle &tHandle);
+	DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor);
+	DGLE_RESULT DGLE_API GetInstanceIdx(uint &uiIdx);
+	DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick);
+	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo);
+	DGLE_RESULT DGLE_API GetCurrentWin(TEngWindow &stWin);
+	DGLE_RESULT DGLE_API GetFPS(uint &uiFPS);
+	DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime);
+	DGLE_RESULT DGLE_API GetHandle(TWinHandle &tHandle);
 
-	DGLE2_RESULT DGLE2_API ChangeWinMode(const TEngWindow &stNewWin);
-	DGLE2_RESULT DGLE2_API AllowPause(bool bAllow);
+	DGLE_RESULT DGLE_API ChangeWinMode(const TEngWindow &stNewWin);
+	DGLE_RESULT DGLE_API AllowPause(bool bAllow);
 
-	DGLE2_RESULT DGLE2_API AddToLog(const char *pcTxt);
-	DGLE2_RESULT DGLE2_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+	DGLE_RESULT DGLE_API AddToLog(const char *pcTxt);
+	DGLE_RESULT DGLE_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
-	DGLE2_RESULT DGLE2_API ConsoleVisible(bool bIsVisible);
-	DGLE2_RESULT DGLE2_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
-	DGLE2_RESULT DGLE2_API ConsoleExec(const char* pcCommandTxt);
-	DGLE2_RESULT DGLE2_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
-	DGLE2_RESULT DGLE2_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr);
-	DGLE2_RESULT DGLE2_API ConsoleUnregCom(const char* pcCommandName);
+	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible);
+	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
+	DGLE_RESULT DGLE_API ConsoleExec(const char* pcCommandTxt);
+	DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
+	DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr);
+	DGLE_RESULT DGLE_API ConsoleUnregCom(const char* pcCommandName);
 
-	DGLE2_RESULT DGLE2_API GetVersion(char* pcBuffer, uint uiBufferSize);
+	DGLE_RESULT DGLE_API GetVersion(char* pcBuffer, uint uiBufferSize);
 
-#ifndef DGLE2_USE_COM
+#ifndef DGLE_USE_COM
 
-	IDGLE2_BASE_IMPLEMENTATION(IEngineCore)
+	IDGLE_BASE_IMPLEMENTATION(IEngineCore)
 
 #else
 
-	DGLE2_RESULT DGLE2_API SetWindowAPI(IMainWindow *pMainWindow)
+	DGLE_RESULT DGLE_API SetWindowAPI(IMainWindow *pMainWindow)
 	{
 		_pMainWindow = pMainWindow;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API TranslateMessage(const TWinMessage &stWinMsg)
+	DGLE_RESULT DGLE_API TranslateMessage(const TWinMessage &stWinMsg)
 	{
 		_clDelMProc.Invoke(stWinMsg);
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API KillEngine()
+	DGLE_RESULT DGLE_API KillEngine()
 	{
 		_bDoExit = true;
 		_MainLoop();
@@ -246,13 +246,13 @@ public:
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetGUID(GUID &guid)
+	DGLE_RESULT DGLE_API GetGUID(GUID &guid)
 	{
 		guid = IID_IEngineCore;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
+	DGLE_RESULT DGLE_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
 	{
 		*ppvObject = NULL;
 		
@@ -273,9 +273,9 @@ public:
 		return S_OK;
 	}
 	
-	ULONG DGLE2_API AddRef(){return 1;}
-	ULONG DGLE2_API Release(){return 1;}
+	ULONG DGLE_API AddRef(){return 1;}
+	ULONG DGLE_API Release(){return 1;}
 
-#endif//DGLE2_USE_COM
+#endif//DGLE_USE_COM
 
 };

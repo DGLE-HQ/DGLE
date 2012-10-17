@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		07.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "ConsoleWindow.h"
@@ -25,7 +25,7 @@ extern HMODULE hModule;
 LOGFONT LF = {12, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, "Lucida Console"};
 
 CConsoleWindow::CConsoleWindow():
-_strOnCreate("DGLE2 Console created..."),
+_strOnCreate("DGLE Console created..."),
 _iPrevLineSize(22),
 _bIsLooping(false),
 _bToPrevLineActive(false),
@@ -35,7 +35,7 @@ _pOldEditProc(NULL), _bVisible(false),
 _pConWindowEvent(NULL), _pConsole(NULL)
 {}
 
-DGLE2_RESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole)
+DGLE_RESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole)
 {
 	_pConWindowEvent = pConWindowEvent;
 	_pConsole = pConsole;
@@ -52,7 +52,7 @@ DGLE2_RESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE2_API *p
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::Visible(bool bVisible)
+DGLE_RESULT CConsoleWindow::Visible(bool bVisible)
 {
 	if (!bVisible)
 		ShowWindow(_hWnd, SW_HIDE);
@@ -75,7 +75,7 @@ DGLE2_RESULT CConsoleWindow::Visible(bool bVisible)
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::SetSizeAndPos(int iX, int iY, int iWidth, int iHeight)
+DGLE_RESULT CConsoleWindow::SetSizeAndPos(int iX, int iY, int iWidth, int iHeight)
 {
 	_iX = iX;
 	_iY = iY;
@@ -87,7 +87,7 @@ DGLE2_RESULT CConsoleWindow::SetSizeAndPos(int iX, int iY, int iWidth, int iHeig
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight)
+DGLE_RESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight)
 {
 	iX = _iX;
 	iY = _iY;
@@ -97,27 +97,27 @@ DGLE2_RESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &i
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::GetWindowHandle(TWinHandle &tHandle)
+DGLE_RESULT CConsoleWindow::GetWindowHandle(TWinHandle &tHandle)
 {
 	tHandle = _hWnd;
 
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::GetThreadId(uint32 &ui32Id)
+DGLE_RESULT CConsoleWindow::GetThreadId(uint32 &ui32Id)
 {
 	ui32Id = _threadId;
 
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
+DGLE_RESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 {
 	int cur_l = GetWindowTextLength(_hMemo);
 	
 	if (cur_l + strlen(pcTxt) + 4 >= _sc_uiMaxConsoleTxtLength)
 	{
-		SetWindowText(_hMemo, "DGLE2 Console cleared...");
+		SetWindowText(_hMemo, "DGLE Console cleared...");
 		cur_l = GetWindowTextLength(_hMemo);
 	}
 	
@@ -145,14 +145,14 @@ DGLE2_RESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::GetEditTxt(char *pcTxt, uint uiBufferSize)
+DGLE_RESULT CConsoleWindow::GetEditTxt(char *pcTxt, uint uiBufferSize)
 {
 	GetWindowText(_hEdit, pcTxt, uiBufferSize);
 
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
+DGLE_RESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
 {
 	SetWindowText(_hEdit, pcTxt);
 	SendMessage(_hEdit, WM_KEYDOWN, 35, 0);
@@ -160,7 +160,7 @@ DGLE2_RESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
+DGLE_RESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
 {
 	if (!pcTxt)
 	{
@@ -171,14 +171,14 @@ DGLE2_RESULT CConsoleWindow::GetConsoleTxt(char *pcTxt, uint &uiBufferSize)
 	return uiBufferSize - 1 == GetWindowText(_hMemo, pcTxt, uiBufferSize) ? S_FALSE : S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::Clear()
+DGLE_RESULT CConsoleWindow::Clear()
 {
-	SetWindowText(_hMemo, "DGLE2 Console cleared...");
+	SetWindowText(_hMemo, "DGLE Console cleared...");
 
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::ResetSizeAndPos()
+DGLE_RESULT CConsoleWindow::ResetSizeAndPos()
 {
 	uint dt_w, dt_h;
 	GetDisplaySize(dt_w, dt_h);
@@ -200,7 +200,7 @@ DGLE2_RESULT CConsoleWindow::ResetSizeAndPos()
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::EnterThreadSafeSec()
+DGLE_RESULT CConsoleWindow::EnterThreadSafeSec()
 {
 	if (_hThreadHandle)
 		EnterCriticalSection(&_cs);
@@ -208,7 +208,7 @@ DGLE2_RESULT CConsoleWindow::EnterThreadSafeSec()
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::LeaveThreadSafeSec()
+DGLE_RESULT CConsoleWindow::LeaveThreadSafeSec()
 {
 	if (_hThreadHandle)
 		LeaveCriticalSection(&_cs);
@@ -216,7 +216,7 @@ DGLE2_RESULT CConsoleWindow::LeaveThreadSafeSec()
 	return S_OK;
 }
 
-DGLE2_RESULT CConsoleWindow::Free()
+DGLE_RESULT CConsoleWindow::Free()
 {
 	if (_hThreadHandle)
 	{
@@ -234,7 +234,7 @@ DGLE2_RESULT CConsoleWindow::Free()
 	}
 
 	if (_hWnd && FALSE != DestroyWindow(_hWnd))
-		UnregisterClass("DGLE2ConsoleClass", _hInst);
+		UnregisterClass("DGLEConsoleClass", _hInst);
 
 	delete this;
 
@@ -256,29 +256,29 @@ int WINAPI CConsoleWindow::_WinMain(HINSTANCE hInstance)
 	wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground  = (HBRUSH)(COLOR_GRAYTEXT);
 	wcex.lpszMenuName   = NULL;
-	wcex.lpszClassName  = "DGLE2ConsoleClass";
+	wcex.lpszClassName  = "DGLEConsoleClass";
 	wcex.hIconSm        = LoadIcon(hModule, MAKEINTRESOURCE(IDI_ICON1));
 	
-	if (FindAtom("DGLE2ConsoleClass") == NULL && !RegisterClassEx(&wcex))
+	if (FindAtom("DGLEConsoleClass") == NULL && !RegisterClassEx(&wcex))
 	{
-		MessageBox(NULL, "Failed to register console class!", "DGLE2 Console", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+		MessageBox(NULL, "Failed to register console class!", "DGLE Console", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 		return E_FAIL;
 	}
 
-	_hWnd = CreateWindowEx( WS_EX_TOOLWINDOW | WS_EX_TOPMOST, "DGLE2ConsoleClass", "DGLE2 Console", 
+	_hWnd = CreateWindowEx( WS_EX_TOOLWINDOW | WS_EX_TOPMOST, "DGLEConsoleClass", "DGLE Console", 
 							WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_SIZEBOX,
 							CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 							NULL, NULL, hInstance, NULL);
 
 	if (!_hWnd)
 	{
-		MessageBox(NULL, "Failed to create console window!", "DGLE2 Console", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+		MessageBox(NULL, "Failed to create console window!", "DGLE Console", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 		return E_FAIL;
 	}
 
 	SetWindowLongPtr(_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-	_hMemo = CreateWindow(	"EDIT", "DGLE2 Console created...", 
+	_hMemo = CreateWindow(	"EDIT", "DGLE Console created...", 
 							WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | 
 							ES_MULTILINE | ES_READONLY, 
 							0, 0, 0, 0, _hWnd, 0, 0, NULL );
@@ -443,7 +443,7 @@ DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
 		}
 
 	if (FALSE != DestroyWindow(this_ptr->_hWnd))
-		UnregisterClass("DGLE2ConsoleClass", this_ptr->_hInst);
+		UnregisterClass("DGLEConsoleClass", this_ptr->_hInst);
 
 	this_ptr->_hWnd = NULL;
 

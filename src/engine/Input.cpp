@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		22.09.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "Input.h"
@@ -235,7 +235,7 @@ void CInput::_MessageProc(const TWinMessage &stMsg)
 	}
 }
 
-DGLE2_RESULT DGLE2_API CInput::Configure(E_INPUT_CONFIGURATION_FLAGS eParams)
+DGLE_RESULT DGLE_API CInput::Configure(E_INPUT_CONFIGURATION_FLAGS eParams)
 {
 	_bExclusive	= (eParams & ICF_EXCLUSIVE) != 0;
 
@@ -256,25 +256,25 @@ DGLE2_RESULT DGLE2_API CInput::Configure(E_INPUT_CONFIGURATION_FLAGS eParams)
 	return _bCurBeyond && !_bExclusive ? S_FALSE : S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetMouseStates(TMouseStates &stMs)
+DGLE_RESULT DGLE_API CInput::GetMouseStates(TMouseStates &stMs)
 {
 	stMs = _stMsts;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetKey(E_KEYBOARD_KEY_CODES eKey, bool &bPressed)
+DGLE_RESULT DGLE_API CInput::GetKey(E_KEYBOARD_KEY_CODES eKey, bool &bPressed)
 {
 	bPressed = _abKeys[eKey];
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAsciiCode)
+DGLE_RESULT DGLE_API CInput::GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAsciiCode)
 {
 	cAsciiCode = EngKeyToASCIIKey(eKey);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
+DGLE_RESULT DGLE_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
 {
 	_pcBuffer		= cBuffer;
 	_uiBufSize		= uiBufferSize;
@@ -285,13 +285,13 @@ DGLE2_RESULT DGLE2_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::EndTextInput()
+DGLE_RESULT DGLE_API CInput::EndTextInput()
 {
 	_bIsTxtInput = false;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetJoysticksCount(uint &uiCount)
+DGLE_RESULT DGLE_API CInput::GetJoysticksCount(uint &uiCount)
 {
 	if (!IsJoystickImplemented())
 	{
@@ -305,7 +305,7 @@ DGLE2_RESULT DGLE2_API CInput::GetJoysticksCount(uint &uiCount)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CInput::GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount)
 {
 	if (pcName)
 		strcpy(pcName, "");
@@ -339,7 +339,7 @@ DGLE2_RESULT DGLE2_API CInput::GetJoystickName(uint uiJoyId, char *pcName, uint 
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates)
+DGLE_RESULT DGLE_API CInput::GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates)
 {
 	if (!IsJoystickImplemented())
 	{
@@ -352,23 +352,23 @@ DGLE2_RESULT DGLE2_API CInput::GetJoystickStates(uint uiJoyId, TJoystickStates &
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CInput::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
+DGLE_RESULT DGLE_API CInput::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
 {
 	eSubsysType = ESS_INPUT;
 	return S_OK;
 }
 
-void DGLE2_API CInput::_s_MessageProc(void *pParametr, const TWinMessage &stMsg)
+void DGLE_API CInput::_s_MessageProc(void *pParametr, const TWinMessage &stMsg)
 {
 	PTHIS(CInput)->_MessageProc(stMsg);
 }
 
-void DGLE2_API CInput::_s_Loop(void *pParametr)
+void DGLE_API CInput::_s_Loop(void *pParametr)
 {
 	PTHIS(CInput)->_Loop();
 }
 
-void DGLE2_API CInput::_s_Update(void *pParametr)
+void DGLE_API CInput::_s_Update(void *pParametr)
 {
 	PTHIS(CInput)->_Update();
 }

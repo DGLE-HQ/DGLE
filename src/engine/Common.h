@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		xx.xx.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #ifndef _COMMONENG_H
@@ -14,13 +14,13 @@ See "DGLE2.h" for more details.
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "DGLE2.h"
+#include "DGLE.h"
 
 #define USE_GLEW_HEADER
 #define OPENGL_LEGACY_BASE_OBJECTS
-#include "DGLE2_CoreRenderer.h"
+#include "DGLE_CoreRenderer.h"
 
-using namespace DGLE2;
+using namespace DGLE;
 
 // Platform specific //
 
@@ -114,7 +114,7 @@ public:
 #	ifndef _DEBUG
 //Uncomment define below to use PDB files based exception filter and get call stack on fatals
 //#	define PDB_DEBUG
-#		if defined(DGLE2_USE_COM) && !defined(NO_DIRECTX)
+#		if defined(DGLE_USE_COM) && !defined(NO_DIRECTX)
 #			define DXDIAG_VIDEO_INFO
 #		endif
 #	endif
@@ -123,7 +123,7 @@ public:
 
 // Defines //
 
-#define DGLE2_VERSION (string(_DGLE2_VER_" (")+string(__TIMESTAMP__)+string(")")).c_str()
+#define DGLE_VERSION (string(_DGLE_VER_" (")+string(__TIMESTAMP__)+string(")")).c_str()
 
 #ifdef _DEBUG
 
@@ -164,14 +164,14 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 #define OUTPUT_HR_MESSAGE(message, hr, type) \
 {\
 	/* termination 0 counded in _countof()*/\
-	char str[_countof(message ". hr: ") + numeric_limits<DGLE2_RESULT>::digits10] = message ". hr: ";\
+	char str[_countof(message ". hr: ") + numeric_limits<DGLE_RESULT>::digits10] = message ". hr: ";\
 	_itoa(hr, str + _countof(message ". hr: ") - 1, 10);\
 	LOG(str, type);\
 }
 
 /*
 template<class Interface, typename Type, typename ReturnType = Type>
-struct CComGetWrapper: public binary_function<Interface *, DGLE2_RESULT (DGLE2_API Interface::*)(Type &), ReturnType>
+struct CComGetWrapper: public binary_function<Interface *, DGLE_RESULT (DGLE_API Interface::*)(Type &), ReturnType>
 {
 	result_type operator ()(first_argument_type object, second_argument_type method) const
 	{

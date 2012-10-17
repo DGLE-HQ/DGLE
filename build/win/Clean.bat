@@ -12,21 +12,21 @@ set SRC_PATH=.\..\..\src
 
 :: Engine
 
-del .\engine\DGLE2.APS
+del .\engine\DGLE.APS
 call :removeCPPJunk "" ".\engine"
 
 :: Tests
 
 call :removeCPPJunk "tests" ".\tests\dev"
 
-:: Tools
+:: Toolset
 
-del /A:H .\..\common\tools\*.docstates.suo
-del /A:A .\..\common\tools\*.suo
-del .\..\common\tools\*.userprefs
+del /A:H .\..\common\toolset\*.docstates.suo
+del /A:A .\..\common\toolset\*.suo
+del .\..\common\toolset\*.userprefs
 
-call :removeCSharpJunk "tools" "tools\gui_widgets"
-call :removeCSharpJunk "tools" "tools\template"
+call :removeCSharpJunk "toolset" "toolset\gui_widgets"
+call :removeCSharpJunk "toolset" "toolset\template"
 
 :: Function will clear all temporary Visual Studio files for C++ project.
 :removeCPPJunk

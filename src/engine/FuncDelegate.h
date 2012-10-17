@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		07.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -14,7 +14,7 @@ See "DGLE2.h" for more details.
 #	pragma warning(disable : 4355) //this used in member init. list
 #endif
 
-#include <DGLE2.h>
+#include <DGLE.h>
 #include <exception>
 #include <string>
 
@@ -48,12 +48,12 @@ catch(...)\
 
 #endif
 
-namespace DGLE2
+namespace DGLE
 {
 
-typedef void	(DGLE2_API *TPProc)(void *pParametr),
-				(DGLE2_API *TPEventProc)(void *pParametr, IBaseEvent *pEvent),
-				(DGLE2_API *TPMsgProc)(void *pParametr, const TWinMessage &stMsg);
+typedef void	(DGLE_API *TPProc)(void *pParametr),
+				(DGLE_API *TPEventProc)(void *pParametr, IBaseEvent *pEvent),
+				(DGLE_API *TPMsgProc)(void *pParametr, const TWinMessage &stMsg);
 
 template<typename F>
 class CFunctorImpl;

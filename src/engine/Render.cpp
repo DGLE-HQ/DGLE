@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		29.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "Render.h"
@@ -151,13 +151,13 @@ void CRender::OnResize(uint uiWidth, uint uiHeight)
 	_pCoreRenderer->SetMatrix(MatrixIdentity());
 }
 
-DGLE2_RESULT DGLE2_API CRender::SetClearColor(const TColor4 &stColor)
+DGLE_RESULT DGLE_API CRender::SetClearColor(const TColor4 &stColor)
 {
 	_pCoreRenderer->SetClearColor(stColor);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
+DGLE_RESULT DGLE_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
 {
 	switch (eType)
 	{
@@ -184,7 +184,7 @@ DGLE2_RESULT DGLE2_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::EnableScissor(const TRectF &stArea)
+DGLE_RESULT DGLE_API CRender::EnableScissor(const TRectF &stArea)
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
@@ -194,7 +194,7 @@ DGLE2_RESULT DGLE2_API CRender::EnableScissor(const TRectF &stArea)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::DisableScissor()
+DGLE_RESULT DGLE_API CRender::DisableScissor()
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
@@ -203,42 +203,42 @@ DGLE2_RESULT DGLE2_API CRender::DisableScissor()
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::SetRenderTarget(ITexture* pTargetTex)
+DGLE_RESULT DGLE_API CRender::SetRenderTarget(ITexture* pTargetTex)
 {
 	//ToDo
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::ScreenshotBMP(const char* pFileName)
+DGLE_RESULT DGLE_API CRender::ScreenshotBMP(const char* pFileName)
 {
 	//ToDo
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::CreatePostProcess(IPostprocess *&pPP)
+DGLE_RESULT DGLE_API CRender::CreatePostProcess(IPostprocess *&pPP)
 {
 	//ToDo
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::GetRender2D(IRender2D *&prRender2D)
+DGLE_RESULT DGLE_API CRender::GetRender2D(IRender2D *&prRender2D)
 {
 	prRender2D = _pRender2D;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::GetRender3D(IRender3D *&prRender3D)
+DGLE_RESULT DGLE_API CRender::GetRender3D(IRender3D *&prRender3D)
 {
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
+DGLE_RESULT DGLE_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 {
 	eSubSystemType = ESS_RENDER;
 	return S_OK;
 }
 
-void DGLE2_API CRender::_s_ConListFeatures(void *pParametr, const char *pcParam)
+void DGLE_API CRender::_s_ConListFeatures(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CRender, "No parametrs expected.");

@@ -2,9 +2,9 @@
 \author		Sivkov Ilya
 \date		23.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "DCPFile.h"
@@ -19,7 +19,7 @@ CInstancedObj(uiInstIdx), _ui32SeekPos(0)
 	_ui32Size = ui32Size;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+DGLE_RESULT DGLE_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {	
 	uiRead = uiCount > _ui32Size - _ui32SeekPos ? _ui32Size - _ui32SeekPos : uiCount;
 
@@ -30,12 +30,12 @@ DGLE2_RESULT DGLE2_API CDCPFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+DGLE_RESULT DGLE_API CDCPFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	return E_NOTIMPL;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+DGLE_RESULT DGLE_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
 	switch(eWay)
 	{
@@ -49,13 +49,13 @@ DGLE2_RESULT DGLE2_API CDCPFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::GetSize(uint32 &ui32Size)
+DGLE_RESULT DGLE_API CDCPFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = _ui32Size;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::IsOpen(bool &bOpened)
+DGLE_RESULT DGLE_API CDCPFile::IsOpen(bool &bOpened)
 {
 	if (_pBuffer)
 		bOpened = true;
@@ -65,7 +65,7 @@ DGLE2_RESULT DGLE2_API CDCPFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::GetName(char *pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CDCPFile::GetName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -85,7 +85,7 @@ DGLE2_RESULT DGLE2_API CDCPFile::GetName(char *pcName, uint &uiCharsCount)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::GetPath(char *pcPath, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CDCPFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
 	if (!pcPath)
 	{
@@ -105,7 +105,7 @@ DGLE2_RESULT DGLE2_API CDCPFile::GetPath(char *pcPath, uint &uiCharsCount)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFile::Free()
+DGLE_RESULT DGLE_API CDCPFile::Free()
 {
 	delete[] _pBuffer;
 	delete this;

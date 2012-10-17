@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		09.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "SplashWindow.h"
@@ -19,7 +19,7 @@ CInstancedObj(uiInstIdx),
 _hWnd(NULL), _hOwnerWndHwnd(NULL), _hBmp(NULL)
 {}
 
-DGLE2_RESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileName)
+DGLE_RESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileName)
 {
 	_bInSeparateThread = bSeparateThread;
 
@@ -40,7 +40,7 @@ DGLE2_RESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFi
 		return _CreateWindow() ? S_OK : E_ABORT;
 }
 
-DGLE2_RESULT CSplashWindow::Free()
+DGLE_RESULT CSplashWindow::Free()
 {
 	delete[] _pcBmpFile;
 
@@ -57,7 +57,7 @@ DGLE2_RESULT CSplashWindow::Free()
 	return S_OK;
 }
 
-DGLE2_RESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
+DGLE_RESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
 {
 	_hOwnerWndHwnd = tOwnerHwnd;
 	return S_OK;

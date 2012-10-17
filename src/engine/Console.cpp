@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		07.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "Console.h"
@@ -28,7 +28,7 @@ public:
 
 	CEvConsoleWrite(const string &txt, bool toPrev):_txt(txt), _bToPrev(toPrev) {}
 
-	DGLE2_RESULT DGLE2_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine)
+	DGLE_RESULT DGLE_API GetText(char *pcTxt, uint &uiCharsCount, bool &bToPrevLine)
 	{
 		bToPrevLine = _bToPrev;
 
@@ -50,19 +50,19 @@ public:
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_CONSOLE_WRITE;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;
 	}
 
-	IDGLE2_BASE_IMPLEMENTATION(IEvConsoleWrite)
+	IDGLE_BASE_IMPLEMENTATION(IEvConsoleWrite)
 };
 
 CConsole::CConsole(uint uiInsIdx, bool bInSeparateThread):
@@ -338,7 +338,7 @@ bool CConsole::UnRegCom(const char *pcName)
 	return false;
 }
 
-void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare)
+void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare)
 {
 	TConEntry t;
 	t.pcName = new char[strlen(pcName) + 1];
@@ -355,7 +355,7 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_AP
 	sort(_commands.begin(), _commands.end());
 }
 
-void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare) 
+void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare) 
 {
 	TConEntry t;
 	t.pcName = new char[strlen(pcName) + 1];
@@ -489,7 +489,7 @@ void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 	_pConsoleWindow->OutputTxt(txt.c_str(), bToPrevLine);
 }
 
-void DGLE2_API CConsole::_s_Hide(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Hide(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -497,7 +497,7 @@ void DGLE2_API CConsole::_s_Hide(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->Visible(false);
 }
 
-void DGLE2_API CConsole::_s_Show(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Show(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -505,7 +505,7 @@ void DGLE2_API CConsole::_s_Show(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->Visible(true);
 }
 
-void DGLE2_API CConsole::_s_Clear(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Clear(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -513,12 +513,12 @@ void DGLE2_API CConsole::_s_Clear(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->_pConsoleWindow->Clear();
 }
 
-void DGLE2_API CConsole::_s_Save(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Save(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_Save(string(pcParam));
 }
 
-void DGLE2_API CConsole::_s_Terminate(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Terminate(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -526,17 +526,17 @@ void DGLE2_API CConsole::_s_Terminate(void *pParametr, const char *pcParam)
 		Terminate();
 }
 
-void DGLE2_API CConsole::_s_SetPos(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_SetPos(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_SetPos(pcParam);
 }
 
-void DGLE2_API CConsole::_s_SetSize(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_SetSize(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_SetSize(pcParam);
 }
 
-void DGLE2_API CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -544,7 +544,7 @@ void DGLE2_API CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->_pConsoleWindow->ResetSizeAndPos();
 }
 
-void DGLE2_API CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		PTHIS(CConsole)->Write("No parametrs expected.");
@@ -552,12 +552,12 @@ void DGLE2_API CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
 		PTHIS(CConsole)->_Cmdlist();
 }
 
-void DGLE2_API CConsole::_s_Help(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Help(void *pParametr, const char *pcParam)
 {
 	PTHIS(CConsole)->_Help(pcParam);
 }
 
-void DGLE2_API CConsole::_s_OnConWindowEvent(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand)
+void DGLE_API CConsole::_s_OnConWindowEvent(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand)
 {
 	switch (eEventType)
 	{

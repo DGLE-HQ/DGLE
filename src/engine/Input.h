@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		17.09.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -38,27 +38,27 @@ class CInput: private CBaseInput, public IInput
 	void		 _Loop();
 	void		 _Update();
 
-	static void DGLE2_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
-	static void DGLE2_API _s_Update(void *pParametr);
-	static void DGLE2_API _s_Loop(void *pParametr);
+	static void DGLE_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
+	static void DGLE_API _s_Update(void *pParametr);
+	static void DGLE_API _s_Loop(void *pParametr);
 
 public:
 
 	CInput(uint uiInstIdx);
 	~CInput();
 
-	DGLE2_RESULT DGLE2_API Configure(E_INPUT_CONFIGURATION_FLAGS eParams);
-	DGLE2_RESULT DGLE2_API GetMouseStates(TMouseStates &stMs);
-	DGLE2_RESULT DGLE2_API GetKey(E_KEYBOARD_KEY_CODES eKey, bool &bPressed);
-	DGLE2_RESULT DGLE2_API GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAsciiCode);
-	DGLE2_RESULT DGLE2_API BeginTextInput(char *cBuffer, uint uiBufferSize);
-	DGLE2_RESULT DGLE2_API EndTextInput();
-	DGLE2_RESULT DGLE2_API GetJoysticksCount(uint &uiCount);
-	DGLE2_RESULT DGLE2_API GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount);
-	DGLE2_RESULT DGLE2_API GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates);
-	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
+	DGLE_RESULT DGLE_API Configure(E_INPUT_CONFIGURATION_FLAGS eParams);
+	DGLE_RESULT DGLE_API GetMouseStates(TMouseStates &stMs);
+	DGLE_RESULT DGLE_API GetKey(E_KEYBOARD_KEY_CODES eKey, bool &bPressed);
+	DGLE_RESULT DGLE_API GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAsciiCode);
+	DGLE_RESULT DGLE_API BeginTextInput(char *cBuffer, uint uiBufferSize);
+	DGLE_RESULT DGLE_API EndTextInput();
+	DGLE_RESULT DGLE_API GetJoysticksCount(uint &uiCount);
+	DGLE_RESULT DGLE_API GetJoystickName(uint uiJoyId, char *pcName, uint &uiCharsCount);
+	DGLE_RESULT DGLE_API GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
 
-	IDGLE2_BASE_IMPLEMENTATION1(IInput, IEngineSubSystem)
+	IDGLE_BASE_IMPLEMENTATION1(IInput, IEngineSubSystem)
 };
 
 #endif

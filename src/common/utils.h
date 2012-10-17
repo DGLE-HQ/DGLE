@@ -2,19 +2,19 @@
 \author		Korotkov Andrey aka DRON
 \date		07.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <DGLE2.h>
+#include <DGLE.h>
 #include <string>
 
-using namespace DGLE2;
+using namespace DGLE;
 
 std::string ToLowerCase(const std::string &inString);
 std::string ToUpperCase(const std::string &inString);

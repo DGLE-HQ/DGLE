@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		07.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -34,7 +34,7 @@ class CConsoleWindow : public IConsoleWindow
 	
 	CConsole		   *_pConsole;
 
-	void (DGLE2_API *_pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand); 
+	void (DGLE_API *_pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand); 
 
 	void _Realign();
 	int WINAPI _WinMain(HINSTANCE hInstance);	
@@ -47,20 +47,20 @@ public:
 
 	CConsoleWindow();
 
-	DGLE2_RESULT InitWindow(bool bSeparateThread, void (DGLE2_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole);
-	DGLE2_RESULT Visible(bool bVisible);
-	DGLE2_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
-	DGLE2_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
-	DGLE2_RESULT GetWindowHandle(TWinHandle &tHandle);
-	DGLE2_RESULT GetThreadId(uint32 &ui32Id);
-	DGLE2_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
-	DGLE2_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize);
-	DGLE2_RESULT SetEditTxt(const char *pcTxt);
-	DGLE2_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize);
-	DGLE2_RESULT Clear();
-	DGLE2_RESULT ResetSizeAndPos();
-	DGLE2_RESULT EnterThreadSafeSec();
-	DGLE2_RESULT LeaveThreadSafeSec();
-	DGLE2_RESULT Free();
+	DGLE_RESULT InitWindow(bool bSeparateThread, void (DGLE_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole);
+	DGLE_RESULT Visible(bool bVisible);
+	DGLE_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
+	DGLE_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
+	DGLE_RESULT GetWindowHandle(TWinHandle &tHandle);
+	DGLE_RESULT GetThreadId(uint32 &ui32Id);
+	DGLE_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
+	DGLE_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize);
+	DGLE_RESULT SetEditTxt(const char *pcTxt);
+	DGLE_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize);
+	DGLE_RESULT Clear();
+	DGLE_RESULT ResetSizeAndPos();
+	DGLE_RESULT EnterThreadSafeSec();
+	DGLE_RESULT LeaveThreadSafeSec();
+	DGLE_RESULT Free();
 
 };

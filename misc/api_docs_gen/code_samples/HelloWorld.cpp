@@ -1,14 +1,14 @@
-#include "DGLE2.h"
+#include "DGLE.h"
 
-using namespace DGLE2;
+using namespace DGLE;
 
-ENG_DYNAMIC_FUNC
+DGLE_DYNAMIC_FUNC
 
 IEngineCore	*pEngineCore = NULL;
 IBitmapFont	*pFont = NULL;
 IRender2D	*pRender2D = NULL;
 
-void DGLE2_API Init(void *pParametr)
+void DGLE_API Init(void *pParametr)
 {
 	IResourceManager *resMan;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)resMan);
@@ -20,14 +20,14 @@ void DGLE2_API Init(void *pParametr)
 	resMan->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj *&)pFont);
 }
 
-void DGLE2_API Render(void *pParametr)
+void DGLE_API Render(void *pParametr)
 {
 	pFont->Draw2D(0, 0, "Hello, World!");
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	if ( GetEngine("DGLE2.dll", pEngineCore) )
+	if ( GetEngine("DGLE.dll", pEngineCore) )
 	{
 		pEngineCore->InitializeEngine(NULL, "My First App");
 		pEngineCore->AddProcedure(EPT_INIT, &Init);
@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		FreeEngine();
 	}
 	else
-		MessageBoxA(NULL, "Couldn't load \"DGLE2.dll\"!", "My First App", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+		MessageBoxA(NULL, "Couldn't load \"DGLE.dll\"!", "My First App", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 	
 	return 0;
 }

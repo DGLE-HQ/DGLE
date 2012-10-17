@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		17.09.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "..\..\Common.h"
@@ -26,7 +26,7 @@ using namespace std;
 
 extern HMODULE hModule;
 
-namespace DGLE2
+namespace DGLE
 {
 
 LARGE_INTEGER	perfFreq;
@@ -337,7 +337,7 @@ struct TTimer
 
 vector<TTimer> timers;
 
-void DGLE2_API TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+void DGLE_API TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	for (size_t i = 0; i < timers.size(); ++i)
 		if (timers[i].uiId == idEvent)

@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		17.09.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "Core.h"
@@ -33,19 +33,19 @@ public:
 	
 	CBaseEvent(E_EVENT_TYPE eEvType):_eEvType(eEvType){}
 
-	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = _eEvType;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;
 	}
 
-	IDGLE2_BASE_IMPLEMENTATION(IBaseEvent)
+	IDGLE_BASE_IMPLEMENTATION(IBaseEvent)
 };
 
 class CEvBeforeInit : public IEvBeforeInit
@@ -61,33 +61,33 @@ public:
 		_peInitFlags	= peInitFlags;
 	}
 
-	DGLE2_RESULT DGLE2_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
+	DGLE_RESULT DGLE_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
 	{
 		(*_pstWindowParam)= stWindowParam;
 		(*_peInitFlags)	= eInitFlags;
 		return S_OK;
 	}
 	
-	DGLE2_RESULT DGLE2_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
+	DGLE_RESULT DGLE_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
 	{
 		stWindowParam = (*_pstWindowParam);
 		eInitFlags	  = (*_peInitFlags); 	
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_BEFORE_INIT;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;
 	}
 
-	IDGLE2_BASE_IMPLEMENTATION(IEvBeforeInit)
+	IDGLE_BASE_IMPLEMENTATION(IEvBeforeInit)
 };
 
 class CEvWinMessage : public IEvWinMessage
@@ -98,25 +98,25 @@ public:
 
 	CEvWinMessage(const TWinMessage &stMessage):_stMessage(stMessage){}
 
-	DGLE2_RESULT DGLE2_API GetWinMessage(TWinMessage &stWinMsg)
+	DGLE_RESULT DGLE_API GetWinMessage(TWinMessage &stWinMsg)
 	{
 		stWinMsg = _stMessage;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_WIN_MESSAGE;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;
 	}
 
-	IDGLE2_BASE_IMPLEMENTATION(IEvWinMessage)
+	IDGLE_BASE_IMPLEMENTATION(IEvWinMessage)
 };
 
 class CEvGetSubSystem : public IEvGetSubSystem
@@ -133,31 +133,31 @@ public:
 		_ppEngSS = &pEngSS;
 	}
 
-	DGLE2_RESULT DGLE2_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem)
+	DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem)
 	{
 		eSubSystem = _eSSType;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API OverrideSubSystem(IEngineSubSystem *prSubSystem)
+	DGLE_RESULT DGLE_API OverrideSubSystem(IEngineSubSystem *prSubSystem)
 	{
 		_ppEngSS = &prSubSystem;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_GET_SSYSTEM;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;
 	}
 
-	IDGLE2_BASE_IMPLEMENTATION(IEvGetSubSystem)
+	IDGLE_BASE_IMPLEMENTATION(IEvGetSubSystem)
 };
 
 class CEvFatalMessage : public IEvFatalMessage
@@ -174,7 +174,7 @@ public:
 	bool DoHalt() {return !_bNoHalt;}
 	bool DoShowMessage() {return !_bNoMessage;}
 
-	DGLE2_RESULT DGLE2_API GetMessageTxt(char *pcTxt, uint &uiCharsCount)
+	DGLE_RESULT DGLE_API GetMessageTxt(char *pcTxt, uint &uiCharsCount)
 	{
 		if (!pcTxt)
 		{
@@ -194,37 +194,37 @@ public:
 		return S_OK;
 	}
 	
-	DGLE2_RESULT DGLE2_API FreezeEngine(bool bFreeze)
+	DGLE_RESULT DGLE_API FreezeEngine(bool bFreeze)
 	{
 		_pCore->ToogleSuspendEngine(bFreeze);
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API ForceNoMessage()
+	DGLE_RESULT DGLE_API ForceNoMessage()
 	{
 		_bNoMessage = true;
 		return S_OK;
 	}
 		
-	DGLE2_RESULT DGLE2_API ForceIgnoreError()
+	DGLE_RESULT DGLE_API ForceIgnoreError()
 	{
 		_bNoHalt = true;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetEventType(E_EVENT_TYPE &eEvType)
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_ENGINE_FATAL_MESSAGE;
 		return S_OK;
 	}
 
-	DGLE2_RESULT DGLE2_API GetUnknownEventType(uint &uiUnknEvType)
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
 	{
 		uiUnknEvType = -1;
 		return S_FALSE;
 	}
 
-	IDGLE2_BASE_IMPLEMENTATION(IEvFatalMessage)
+	IDGLE_BASE_IMPLEMENTATION(IEvFatalMessage)
 };
 
 //Engine Core//
@@ -260,8 +260,8 @@ _clDelOnFPSTimer(uiInstIdx)
 		TSysTimeAndDate time;
 		GetLocalTimaAndDate(time);
 
-		_clLogFile << "DGLE2 Engine Log File" << endl;
-		_clLogFile << "Version: "<< DGLE2_VERSION << endl;
+		_clLogFile << "DGLE Engine Log File" << endl;
+		_clLogFile << "Version: "<< DGLE_VERSION << endl;
 		_clLogFile << "Visit http://dgle.dronprogs.org/ for more information." << endl;
 		_clLogFile << "Log Started at " << time.ui16Day << "." << time.ui16Month << "." << time.ui16Year << "." << endl;
 	}
@@ -315,7 +315,7 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 									_pSplashWindow = NULL;
 								}
 
-								ShowModalUserAlert(pcTxt, "DGLE2 Fatal Error!");
+								ShowModalUserAlert(pcTxt, "DGLE Fatal Error!");
 							}
 
 							if (((CEvFatalMessage*)ev_fatal_msg)->DoHalt())
@@ -729,7 +729,7 @@ void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 	)
 }
 
-DGLE2_RESULT DGLE2_API CCore::RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor)
+DGLE_RESULT DGLE_API CCore::RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor)
 {
 	if (!_bInDrawProfilers)
 		return S_FALSE;
@@ -755,7 +755,7 @@ DGLE2_RESULT DGLE2_API CCore::RenderProfilerTxt(const char *pcTxt, const TColor4
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
+DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
 {
 	if (_access(pcFileName, 0) != -1)
 		return _LoadPlugin(string(pcFileName),prPlugin) ? S_OK : E_ABORT;
@@ -767,12 +767,12 @@ DGLE2_RESULT DGLE2_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&pr
 	}
 }
 
-DGLE2_RESULT DGLE2_API CCore::DisconnectPlugin(IPlugin *pPlugin)
+DGLE_RESULT DGLE_API CCore::DisconnectPlugin(IPlugin *pPlugin)
 {
 	return _UnloadPlugin(pPlugin) ? S_OK : E_INVALIDARG;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlugin)
+DGLE_RESULT DGLE_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlugin)
 {
 	for (size_t i = 0; i < _clPlugins.size(); ++i)
 	{
@@ -796,9 +796,9 @@ bool CCore::_UnloadPlugin(IPlugin *pPlugin)
 			TPluginInfo info;
 			_clPlugins[i].pPlugin->GetPluginInfo(info);
 
-			void (DGLE2_API *pFreePlugin)(IPlugin *plugin) = NULL;
+			void (DGLE_API *pFreePlugin)(IPlugin *plugin) = NULL;
 
-			pFreePlugin = reinterpret_cast<void (DGLE2_API *)(IPlugin *)>(GetProcAddress(_clPlugins[i].tLib,("FreePlugin")));
+			pFreePlugin = reinterpret_cast<void (DGLE_API *)(IPlugin *)>(GetProcAddress(_clPlugins[i].tLib,("FreePlugin")));
 
 			if (pFreePlugin)
 				(*pFreePlugin)(_clPlugins[i].pPlugin);
@@ -830,12 +830,12 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 		return false;
 	}
 
-	void (DGLE2_API *pInitPlugin)(IEngineCore *engineCore, IPlugin *&plugin) = NULL;
-	pInitPlugin = reinterpret_cast<void (DGLE2_API *)(IEngineCore *, IPlugin *&)>(GetFuncAddress(tmp.tLib, "InitPlugin"));
+	void (DGLE_API *pInitPlugin)(IEngineCore *engineCore, IPlugin *&plugin) = NULL;
+	pInitPlugin = reinterpret_cast<void (DGLE_API *)(IEngineCore *, IPlugin *&)>(GetFuncAddress(tmp.tLib, "InitPlugin"));
 
 	if (!pInitPlugin)
 	{
-		LOG("Library \""+clFileName+"\" is not a valid DGLE2 plugin.", LT_ERROR);
+		LOG("Library \""+clFileName+"\" is not a valid DGLE plugin.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
 		return false;
 	}
@@ -846,7 +846,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	tmp.pPlugin->GetPluginInfo(info);
 
-	if (info.btPluginSDKVersion != _DGLE2_PLUGIN_SDK_VER_)
+	if (info.btPluginSDKVersion != _DGLE_PLUGIN_SDK_VER_)
 	{
 		LOG("Plugin \""+clFileName+"\" SDK version differs from engine version.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
@@ -876,7 +876,7 @@ void CCore::_PrintPluginsInfo()
 	Console()->Write(tmp.c_str());
 }
 
-DGLE2_RESULT DGLE2_API CCore::LoadSplashPicture(const char *pcBmpFileName)
+DGLE_RESULT DGLE_API CCore::LoadSplashPicture(const char *pcBmpFileName)
 {
 	if (_bInitedFlag)
 		return S_FALSE;
@@ -888,7 +888,7 @@ DGLE2_RESULT DGLE2_API CCore::LoadSplashPicture(const char *pcBmpFileName)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AddPluginToInitList(const char *pcFileName)
+DGLE_RESULT DGLE_API CCore::AddPluginToInitList(const char *pcFileName)
 {
 	if (_bInitedFlag)
 		return S_FALSE;
@@ -898,7 +898,7 @@ DGLE2_RESULT DGLE2_API CCore::AddPluginToInitList(const char *pcFileName)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags)
+DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags)
 {
 	if (!_bInitedFlag)
 	{
@@ -945,7 +945,7 @@ DGLE2_RESULT DGLE2_API CCore::InitializeEngine(TWinHandle tHandle, const char* p
 		}
 		else
 		{
-			string ext_fnames[] = {eng_path + "DGLE2_EXT.dplug", eng_path + "plugins\\DGLE2_EXT.dplug"};
+			string ext_fnames[] = {eng_path + "DGLE_EXT.dplug", eng_path + "plugins\\DGLE_EXT.dplug"};
 
 			for (int i = 0; i < sizeof(ext_fnames)/sizeof(ext_fnames[0]); ++i)
 				if (_access(ext_fnames[i].c_str(), 0) != -1)
@@ -1166,25 +1166,25 @@ void CCore::ToogleSuspendEngine(bool bSuspend)
 	_clDelMProc.AllowInvoke(!bSuspend);
 }
 
-DGLE2_RESULT DGLE2_API CCore::SetProcessInterval(uint uiProcessInterval)
+DGLE_RESULT DGLE_API CCore::SetProcessInterval(uint uiProcessInterval)
 {
 	_uiProcessInterval = uiProcessInterval;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetSystemInfo(TSystemInfo &stSysInfo)
+DGLE_RESULT DGLE_API CCore::GetSystemInfo(TSystemInfo &stSysInfo)
 {
 	stSysInfo = _stSysInfo;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetCurrentWin(TEngWindow &stWin)
+DGLE_RESULT DGLE_API CCore::GetCurrentWin(TEngWindow &stWin)
 {
 	stWin = _stWin;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
+DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 {
 	TEngWindow wnd = stNewWin;
 
@@ -1230,7 +1230,7 @@ DGLE2_RESULT DGLE2_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::StartEngine()
+DGLE_RESULT DGLE_API CCore::StartEngine()
 {
 	if (_bStartedFlag)
 		return S_FALSE;
@@ -1265,14 +1265,14 @@ DGLE2_RESULT DGLE2_API CCore::StartEngine()
 
 	_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
-	DGLE2_RESULT hr = _pMainWindow->BeginMainLoop();
+	DGLE_RESULT hr = _pMainWindow->BeginMainLoop();
 
 	_bStartedFlag = SUCCEEDED(hr);
 
 	return hr;
 }
 
-DGLE2_RESULT DGLE2_API CCore::QuitEngine()
+DGLE_RESULT DGLE_API CCore::QuitEngine()
 {
 	if (_bQuitFlag)
 	{
@@ -1295,38 +1295,38 @@ DGLE2_RESULT DGLE2_API CCore::QuitEngine()
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AllowPause(bool bAllow)
+DGLE_RESULT DGLE_API CCore::AllowPause(bool bAllow)
 {
 	_iAllowPause = bAllow;
 	_s_ConAutoPause((void*)this, "");
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetFPS(uint &uiFPS)
+DGLE_RESULT DGLE_API CCore::GetFPS(uint &uiFPS)
 {
 	uiFPS = _uiLastFPS;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetLastUpdateDeltaTime(uint64 &ui64DeltaTime)
+DGLE_RESULT DGLE_API CCore::GetLastUpdateDeltaTime(uint64 &ui64DeltaTime)
 {
 	ui64DeltaTime = _ui64LastUpdateDeltaTime;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetInstanceIdx(uint &uiIdx)
+DGLE_RESULT DGLE_API CCore::GetInstanceIdx(uint &uiIdx)
 {
 	uiIdx = InstIdx();
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetTimer(uint64 &uiTick)
+DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &uiTick)
 {
 	uiTick = GetPerfTimer()/1000;
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
+DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {
 	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
 	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
@@ -1345,7 +1345,7 @@ DGLE2_RESULT DGLE2_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEv
 	return S_FALSE;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AddEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
+DGLE_RESULT DGLE_API CCore::AddEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
 {
 	if (eEventType == ET_BEFORE_INIT && _bInitedFlag)//Means that engine already inited and event will never happend
 		return S_FALSE;
@@ -1368,7 +1368,7 @@ DGLE2_RESULT DGLE2_API CCore::AddEventListner(E_EVENT_TYPE eEventType, void (DGL
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE2_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
+DGLE_RESULT DGLE_API CCore::RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
 {
 	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)
@@ -1380,7 +1380,7 @@ DGLE2_RESULT DGLE2_API CCore::RemoveEventListner(E_EVENT_TYPE eEventType, void (
 	return E_INVALIDARG;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AddUserCallback(IUserCallback *pUserCallback)
+DGLE_RESULT DGLE_API CCore::AddUserCallback(IUserCallback *pUserCallback)
 {
 	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
 		if (_clUserCallbacks[i] == pUserCallback)
@@ -1391,7 +1391,7 @@ DGLE2_RESULT DGLE2_API CCore::AddUserCallback(IUserCallback *pUserCallback)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::RemoveUserCallback(IUserCallback *pUserCallback)
+DGLE_RESULT DGLE_API CCore::RemoveUserCallback(IUserCallback *pUserCallback)
 {
 	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
 		if (_clUserCallbacks[i] == pUserCallback)
@@ -1403,7 +1403,7 @@ DGLE2_RESULT DGLE2_API CCore::RemoveUserCallback(IUserCallback *pUserCallback)
 	return S_FALSE;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr)
+DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr)
 {
 	switch(eProcType)
 	{
@@ -1430,7 +1430,7 @@ DGLE2_RESULT DGLE2_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, vo
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE2_API *pProc)(void *pParametr), void *pParametr)
+DGLE_RESULT DGLE_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr)
 {
 	switch(eProcType)
 	{
@@ -1452,24 +1452,24 @@ DGLE2_RESULT DGLE2_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType,
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AddToLog(const char *pcTxt)
+DGLE_RESULT DGLE_API CCore::AddToLog(const char *pcTxt)
 {
 	_LogWrite(pcTxt);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
+DGLE_RESULT DGLE_API CCore::AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
 {
 	_LogWriteEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 	return S_OK;
 }
 
-void DGLE2_API CCore::_s_InstIdx(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_InstIdx(void *pParametr, const char *pcParam)
 {
 	CON(CCore, (string("Instance Index is ") + IntToStr(PTHIS(CCore)->InstIdx()) + ".").c_str());
 }
 
-void DGLE2_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 
@@ -1480,9 +1480,9 @@ void DGLE2_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 		"* Release build.\n"
 #endif		
 		+
-		"* Engine SDK version: " + IntToStr(_DGLE2_SDK_VER_) + ".\n" +
-		"* Plugin SDK version: " + IntToStr(_DGLE2_PLUGIN_SDK_VER_) + ".\n" +
-#ifdef DGLE2_STATIC
+		"* Engine SDK version: " + IntToStr(_DGLE_SDK_VER_) + ".\n" +
+		"* Plugin SDK version: " + IntToStr(_DGLE_PLUGIN_SDK_VER_) + ".\n" +
+#ifdef DGLE_STATIC
 		"* Static library build.\n"
 #endif
 #ifdef PLATFORM_WINDOWS
@@ -1498,7 +1498,7 @@ void DGLE2_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 #ifdef PDB_DEBUG
 		"* Unhandled Exceptions Filter with support of PDB files.\n"
 #endif
-#ifdef DGLE2_USE_COM
+#ifdef DGLE_USE_COM
 		"* Support of Microsoft COM technology for engine interfaces.\n"
 #endif
 #ifdef PLATFORM_WINDOWS
@@ -1531,21 +1531,21 @@ void DGLE2_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 		CON(CCore, res.c_str());
 }
 
-void DGLE2_API CCore::_s_ConPrintVersion(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConPrintVersion(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CCore, "No parametrs expected.");
 	else 
-		CON(CCore, (string("Engine version: ")+string(DGLE2_VERSION)).c_str());
+		CON(CCore, (string("Engine version: ")+string(DGLE_VERSION)).c_str());
 }
 
-void DGLE2_API CCore::_s_ConAutoPause(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConAutoPause(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CCore, "No parametrs expected.");
 }
 
-void DGLE2_API CCore::_s_ConListPlugs(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConListPlugs(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
 		CON(CCore, "No parametrs expected.");
@@ -1553,7 +1553,7 @@ void DGLE2_API CCore::_s_ConListPlugs(void *pParametr, const char *pcParam)
 		PTHIS(CCore)->_PrintPluginsInfo();
 }
 
-void DGLE2_API CCore::_s_ConChangeMode(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConChangeMode(void *pParametr, const char *pcParam)
 {
 	if (strlen(pcParam) == 0)
 		CON(CCore, "Parametrs expected.");
@@ -1577,43 +1577,43 @@ void DGLE2_API CCore::_s_ConChangeMode(void *pParametr, const char *pcParam)
 	}
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetHandle(TWinHandle &tHandle)
+DGLE_RESULT DGLE_API CCore::GetHandle(TWinHandle &tHandle)
 {
 	_pMainWindow->GetWindowHandle(tHandle);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConsoleVisible(bool bIsVisible)
+DGLE_RESULT DGLE_API CCore::ConsoleVisible(bool bIsVisible)
 {
 	Console()->Visible(bIsVisible);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine)
+DGLE_RESULT DGLE_API CCore::ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine)
 {
 	Console()->Write(string(pcTxt), bWriteToPreviousLine);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConsoleExec(const char *pcCommandTxt)
+DGLE_RESULT DGLE_API CCore::ConsoleExec(const char *pcCommandTxt)
 {
 	Console()->Exec(pcCommandTxt);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
+DGLE_RESULT DGLE_API CCore::ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
 {
 	Console()->RegComProc(pcCommandName, pcCommandHelp, pProc, pParametr);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
+DGLE_RESULT DGLE_API CCore::ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
 {
 	Console()->RegComValue(pcCommandName, pcCommandHelp, piValue, iMinValue, iMaxValue, pProc, pParametr);
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::ConsoleUnregCom(const char *pcCommandName)
+DGLE_RESULT DGLE_API CCore::ConsoleUnregCom(const char *pcCommandName)
 {
 	if (Console()->UnRegCom(pcCommandName))
 		return S_OK;
@@ -1621,17 +1621,17 @@ DGLE2_RESULT DGLE2_API CCore::ConsoleUnregCom(const char *pcCommandName)
 		return S_FALSE;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetVersion(char* pcBuffer, uint uiBufferSize)
+DGLE_RESULT DGLE_API CCore::GetVersion(char* pcBuffer, uint uiBufferSize)
 {
-	if(uiBufferSize < strlen(DGLE2_VERSION))
+	if(uiBufferSize < strlen(DGLE_VERSION))
 		return E_INVALIDARG;
 
-	strcpy(pcBuffer, DGLE2_VERSION);
+	strcpy(pcBuffer, DGLE_VERSION);
 
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem)
+DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem)
 {
 	prSubSystem = NULL;
 
@@ -1676,17 +1676,17 @@ DGLE2_RESULT DGLE2_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngi
 	return S_OK;
 }
 
-void DGLE2_API CCore::_s_OnTimer(void *pParametr)
+void DGLE_API CCore::_s_OnTimer(void *pParametr)
 {
 	PTHIS(CCore)->_OnTimer();
 }
 
-void DGLE2_API CCore::_s_MainLoop(void *pParametr)
+void DGLE_API CCore::_s_MainLoop(void *pParametr)
 {
 	PTHIS(CCore)->_MainLoop();
 }
 
-void DGLE2_API CCore::_s_MessageProc(void *pParametr, const TWinMessage &stMsg)
+void DGLE_API CCore::_s_MessageProc(void *pParametr, const TWinMessage &stMsg)
 {
 	PTHIS(CCore)->_MessageProc(stMsg);
 }

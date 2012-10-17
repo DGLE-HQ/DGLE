@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		21.02.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "Common.h"
@@ -39,9 +39,9 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 
 extern bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
 {
-	if (ubtSDKVer != _DGLE2_SDK_VER_)
+	if (ubtSDKVer != _DGLE_SDK_VER_)
 	{
-		ShowModalUserAlert("Engine library version differs from header version!", "DGLE2");
+		ShowModalUserAlert("Engine library version differs from header version!", "DGLE");
 		return false;
 	}
 
@@ -61,7 +61,7 @@ extern bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS 
 	return true;
 }
 
-extern bool CALLBACK FreeEngine(DGLE2::IEngineCore *pEngineCore)
+extern bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
 {
 	if (!pEngineCore)
 		return false;

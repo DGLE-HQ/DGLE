@@ -5,27 +5,27 @@
 //																																//
 //==============================================================================================================================//
 
-#include <DGLE2.h>
+#include <DGLE.h>
 #include <string>
 
-using namespace DGLE2;
+DGLE_DYNAMIC_FUNC
 
-ENG_DYNAMIC_FUNC
+using namespace DGLE;
 
 #if defined(PLATFORM_WINDOWS)
 
-#ifdef _DEBUG // for debug builds paths are configured for debugging from DGLE2 project
+#ifdef _DEBUG // for debug builds paths are configured for debugging from DGLE project
 #	ifdef _WIN64
-#		define DLL_PATH			"..\\..\\..\\bin\\win\\x64\\DGLE2.dll"
-#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\x64\\plugins\\DGLE2_EXT.dplug"
+#		define DLL_PATH			"..\\..\\..\\bin\\win\\x64\\DGLE.dll"
+#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\x64\\plugins\\DGLE_EXT.dplug"
 #	else
-#		define DLL_PATH			"..\\..\\..\\bin\\win\\DGLE2.dll"
-#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\plugins\\DGLE2_EXT.dplug"
+#		define DLL_PATH			"..\\..\\..\\bin\\win\\DGLE.dll"
+#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\plugins\\DGLE_EXT.dplug"
 #	endif
 #	define RESOURCE_PATH		"..\\..\\..\\resources\\"
 #else // for release build paths are configured to run executeble itself
-#	define DLL_PATH				"..\\DGLE2.dll"
-#	define EXT_PLUG_PATH		"..\\plugins\\DGLE2_EXT.dplug"
+#	define DLL_PATH				"..\\DGLE.dll"
+#	define EXT_PLUG_PATH		"..\\plugins\\DGLE_EXT.dplug"
 #	ifdef _WIN64
 #		define RESOURCE_PATH	"..\\..\\..\\..\\resources\\"
 #	else
@@ -48,7 +48,7 @@ uint uiCounter = 0;
 
 ITexture *pTex = NULL;
 
-void DGLE2_API Init(void *pParametr)
+void DGLE_API Init(void *pParametr)
 {
 	pEngineCore->GetSubSystem(ESS_INPUT, (IEngineSubSystem *&)pInput);
 
@@ -61,11 +61,11 @@ void DGLE2_API Init(void *pParametr)
 	pr->GetRender2D(pRender2D);
 }
 
-void DGLE2_API Free(void *pParametr)
+void DGLE_API Free(void *pParametr)
 {
 }
 
-void DGLE2_API Update(void *pParametr)
+void DGLE_API Update(void *pParametr)
 {
 	bool b_prsd;
 
@@ -77,7 +77,7 @@ void DGLE2_API Update(void *pParametr)
 	++uiCounter;
 }
 
-void DGLE2_API Render(void *pParametr)
+void DGLE_API Render(void *pParametr)
 {
 	uint w, h;
 	pTex->GetDimensions(w, h);

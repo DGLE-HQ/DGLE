@@ -8,13 +8,14 @@
 	b)	You can create subfolders and files only in "src/examples/<your example name>", "src/plugins/<your plugin name>",
 		"include/<your language bindings>" and "resources/examples/<your example name>" folders. Project files also could
 		be created in "build/<your platform>/examples/<your example name>" or "build/<your platform>/plugins/<your plugin name>"
-		folders if needed.
+		folders if needed. If you need to create folder in some other place (for example for the new tool) you must contact the
+		project leader to discuss folder location with him.
 	c)	All *.txt files must be named in CamelCase style.
 	d)	All resource and other miscellaneous files are named in lower-case with "_" word separator.
 	e)	All examples "src/examples/" and common "src/common" source files are named in lower-case with "_" word separator.
 	f)	All engine and plugin sources are named in CamelCase style. Solutions and projects are named in CamelCase as well.
-		The only exceptions are some engine headers like "DGLE2_Types.h", "DGLE2_CoreRenderer.h", "DGLE2_EXT.h", etc. This
-		exception spreads only upon system headers started with "DGLE2".
+		The only exceptions are some engine headers like "DGLE_Types.h", "DGLE_CoreRenderer.h", "DGLE_EXT.h", etc. This
+		exception spreads only upon system headers started with "DGLE".
 	g)	All binaries are named in CamelCase style.
 	
 2.	Use only "#pragma once" to solve include collisions of headers, never use other methods.
@@ -88,7 +89,7 @@
 		\-------------------------------/
 	
 	b)	Project uses its own data types becuse they are platform independent. And you must use them too. You could
-		find all of them in the "include/cpp/DGLE2_Types.h". Here is most common types:
+		find all of them in the "include/cpp/DGLE_Types.h". Here is most common types:
 	
 		/-------------------------------------------------------\
 		| short int			|	int16		|
@@ -117,9 +118,9 @@
 		\author		< your full name > aka < your nickname >
 		\date		< last major modification date dd.mm.yyyy > (c)Korotkov Andrey
 		
-		This file is a part of DGLE2 project and is distributed
+		This file is a part of DGLE project and is distributed
 		under the terms of the GNU Lesser General Public License.
-		See "DGLE2.h" for more details.
+		See "DGLE.h" for more details.
 		*/
 		
 		It is not necessary to paste this header into examples, tools or your custom plugins, only in core project source code.
@@ -155,7 +156,7 @@
 #define _MY_GAME_H
 
 #include "DGLE.h"
-using namespace DGLE2;
+using namespace DGLE;
 
 #define GAME_SPEED 10
 

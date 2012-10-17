@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		30.04.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #ifndef _RESOURCEMANAGER_H
@@ -24,7 +24,7 @@ struct TFileFormat
 	std::string discr;
 	E_ENG_OBJ_TYPE type;
 	void *pParametr;
-	bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 };
 
 struct TDefaultRes
@@ -71,7 +71,7 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	CSSampleDummy			*_pDefSSmpDummy;
 	CMusicDummy				*_pDefMusicDummy;
 	
-	inline DGLE2_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngBaseObj *&prObj, uint uiLoadFlags);
+	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngBaseObj *&prObj, uint uiLoadFlags);
 	inline uint _GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
 	inline uint8 _GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format);
 	uint _GenerateDecompressedTextureData(const uint8 *pDataIn, uint8 *&prDataOut, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_TEXTURE_CREATION_FLAGS &eCreationFlags);
@@ -92,14 +92,14 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 
 	void _ProfilerEventHandler() const;
 
-	static void DGLE2_API _s_ConListFileFormats(void *pParametr, const char *pcParam);
-	static bool DGLE2_API _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE2_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
-	static bool DGLE2_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
-	static bool DGLE2_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE2_API _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE2_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static void DGLE2_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
+	static void DGLE_API _s_ConListFileFormats(void *pParametr, const char *pcParam);
+	static bool DGLE_API _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
+	static bool DGLE_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
+	static bool DGLE_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static void DGLE_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
 
 public:
 
@@ -109,30 +109,30 @@ public:
 	inline IBitmapFont* pISystemFont(){return (IBitmapFont*)_pDefBmpFnt;}
 	void FreeAllResources();
 
-	DGLE2_RESULT DGLE2_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
-	DGLE2_RESULT DGLE2_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse);
-	DGLE2_RESULT DGLE2_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
+	DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
+	DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse);
+	DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
 	
-	DGLE2_RESULT DGLE2_API RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE2_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr);
-	DGLE2_RESULT DGLE2_API UnregisterFileFormat(const char* pcExtension);
-	DGLE2_RESULT DGLE2_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
-	DGLE2_RESULT DGLE2_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
-	DGLE2_RESULT DGLE2_API GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount);
-	DGLE2_RESULT DGLE2_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount);
-	DGLE2_RESULT DGLE2_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType);
+	DGLE_RESULT DGLE_API RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr);
+	DGLE_RESULT DGLE_API UnregisterFileFormat(const char* pcExtension);
+	DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
+	DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
+	DGLE_RESULT DGLE_API GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount);
+	DGLE_RESULT DGLE_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount);
+	DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType);
 	
-	DGLE2_RESULT DGLE2_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj);
-	DGLE2_RESULT DGLE2_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
+	DGLE_RESULT DGLE_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj);
+	DGLE_RESULT DGLE_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
 	
-	DGLE2_RESULT DGLE2_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags);
-	DGLE2_RESULT DGLE2_API Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags);
+	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags);
+	DGLE_RESULT DGLE_API Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags);
 	
-	DGLE2_RESULT DGLE2_API FreeResource(IEngBaseObj *&prObj);
-	DGLE2_RESULT DGLE2_API AddResource(const char *pcName, IEngBaseObj *pObj);
-	DGLE2_RESULT DGLE2_API RemoveResource(IEngBaseObj *pObj, bool &bCanDelete);
+	DGLE_RESULT DGLE_API FreeResource(IEngBaseObj *&prObj);
+	DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngBaseObj *pObj);
+	DGLE_RESULT DGLE_API RemoveResource(IEngBaseObj *pObj, bool &bCanDelete);
 
-	DGLE2_RESULT DGLE2_API GetType(E_ENGINE_SUB_SYSTEM &eSubSysType);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSysType);
 
-	IDGLE2_BASE_IMPLEMENTATION1(IResourceManager, IEngineSubSystem)
+	IDGLE_BASE_IMPLEMENTATION1(IResourceManager, IEngineSubSystem)
 };
 #endif //_RESOURCEMANAGER_H

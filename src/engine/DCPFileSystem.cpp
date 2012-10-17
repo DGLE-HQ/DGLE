@@ -2,9 +2,9 @@
 \author		Sivkov Ilya
 \date		23.04.2012 (c)Andrey Korotkov
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "DCPFileSystem.h"
@@ -79,12 +79,12 @@ bool CDCPFileSystem::_ReadFileInfo()
 	return true;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileSystem::DeleteFile(const char *pcName)
+DGLE_RESULT DGLE_API CDCPFileSystem::DeleteFile(const char *pcName)
 {
 	return E_NOTIMPL;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
+DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	if (eFlags & FSOF_WRITE || eFlags & FSOF_TRUNC)
 	{
@@ -193,7 +193,7 @@ uint32 CDCPFileSystem::_GetTableNumber(const std::string &strName) const
 	return -1;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
+DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	string pack_name = string(pcName);
 
@@ -216,7 +216,7 @@ DGLE2_RESULT DGLE2_API CDCPFileSystem::FileExists(const char *pcName, bool &bExi
 	return S_OK;	
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
+DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
 	string pack_name = string(pcMask);
 
@@ -261,7 +261,7 @@ DGLE2_RESULT DGLE2_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFl
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
 	if (!pcResult)
 		uiCharsCount = 1;
@@ -314,7 +314,7 @@ CInstancedObj(uiInstIdx), _clNameList(clNameList)
 	_clNameListIter = _clNameList.begin();
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint &uiCharsCount)
+DGLE_RESULT DGLE_API CDCPFileIterator::FileName(char *pcName, DGLE::uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -337,7 +337,7 @@ DGLE2_RESULT DGLE2_API CDCPFileIterator::FileName(char *pcName, DGLE2::uint &uiC
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileIterator::Next()
+DGLE_RESULT DGLE_API CDCPFileIterator::Next()
 {
 	if (++_clNameListIter == _clNameList.end())
 		return S_FALSE;
@@ -345,7 +345,7 @@ DGLE2_RESULT DGLE2_API CDCPFileIterator::Next()
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CDCPFileIterator::Free()
+DGLE_RESULT DGLE_API CDCPFileIterator::Free()
 {
 	delete this;
 	return S_OK;

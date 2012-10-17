@@ -2,9 +2,9 @@
 \author		Andrey Korotkov aka DRON
 \date		17.09.2012 (c)Andrey Korotkov
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -37,7 +37,7 @@ class CBaseInput : public CInstancedObj, public CPlatformBaseInput
 	uint32 _AxisValue(uint32 Value, uint Min, uint Max);
 
 	void _PrintJoysList();
-	static void DGLE2_API _s_PrintJoysList(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_PrintJoysList(void *pParametr, const char *pcParam);
 
 #endif
 

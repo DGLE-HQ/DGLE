@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\engine\ResourceManager.cpp" />
+    <ClCompile Include="..\..\..\src\engine\BufFile.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\DCPFile.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\DCPFileSystem.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\MainFS.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Render2D.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Render.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\CoreRendererGL.cpp">
+      <Filter>Render\CoreRenderGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\StateManagerGL.cpp">
+      <Filter>Render\CoreRenderGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Font.cpp">
+      <Filter>Render\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Texture.cpp">
+      <Filter>Render\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\common\utils.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\common\deps\glew\glew.c">
+      <Filter>Common\Dependencies\glew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\common\deps\minilzo\minilzo.c">
+      <Filter>Common\Dependencies\minilzo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\BaseRendererGL.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\PlatformUtils.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\UnhandledExceptionsFilter.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\ConsoleWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\HookedWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\MainWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\SplashWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\HDFile.cpp">
+      <Filter>Platform\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\HDFileSystem.cpp">
+      <Filter>Platform\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\ResFile.cpp">
+      <Filter>Platform\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Main.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\win\BaseInput.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\win\BaseSound.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Input.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Sound.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Console.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Core.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\engine\Common.h" />
+    <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />
+    <ClInclude Include="..\..\..\src\engine\BufFile.h">
+      <Filter>FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\DCPFile.h">
+      <Filter>FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\DCPFileSystem.h">
+      <Filter>FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\MainFS.h">
+      <Filter>FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Render2D.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Render.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\CoreRendererGL.h">
+      <Filter>Render\CoreRenderGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\StateManagerGL.h">
+      <Filter>Render\CoreRenderGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Font.h">
+      <Filter>Render\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Texture.h">
+      <Filter>Render\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\cpp\DGLE.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\cpp\DGLE_CoreRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\cpp\DGLE_Types.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\utils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\deps\glew\gl\glew.h">
+      <Filter>Common\Dependencies\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\deps\glew\gl\wglew.h">
+      <Filter>Common\Dependencies\glew</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\deps\minilzo\lzoconf.h">
+      <Filter>Common\Dependencies\minilzo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\deps\minilzo\lzodefs.h">
+      <Filter>Common\Dependencies\minilzo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\deps\minilzo\minilzo.h">
+      <Filter>Common\Dependencies\minilzo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\PlatformAPI.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\BaseRendererGL.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\ConsoleWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\HookedWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\MainWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\SplashWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\HDFile.h">
+      <Filter>Platform\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\HDFileSystem.h">
+      <Filter>Platform\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\ResFile.h">
+      <Filter>Platform\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\BaseInput.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\win\BaseSound.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Input.h" />
+    <ClInclude Include="..\..\..\src\engine\Sound.h" />
+    <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
+    <ClInclude Include="..\..\..\src\engine\Console.h" />
+    <ClInclude Include="..\..\..\src\engine\Core.h" />
+    <ClInclude Include="..\..\..\src\common\deps\deelx\deelx.h">
+      <Filter>Common\Dependencies\deelx</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{08b39e59-6f27-4316-bb6f-d65ce714a56b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\FileSystem">
+      <UniqueIdentifier>{75e56206-6e92-41fd-a1e4-bf6375e0e941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{e6dd4549-b4d5-4a6b-82df-77df4efc888c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileSystem">
+      <UniqueIdentifier>{4b32d279-7866-479f-bf6a-b4c5dd2833f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{a933042b-b8fb-4930-a3ec-a388fe27d73a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render\Objects">
+      <UniqueIdentifier>{0d989f90-0e5f-4658-ae19-62168c7afe8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render\CoreRenderGL">
+      <UniqueIdentifier>{caf9f967-1dc7-4cf7-ae29-119094485910}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{27e5b6f5-c166-435d-bbad-fccf862719b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{f865e113-c19f-4902-9a02-9fb7f312e5c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{230ba6ea-94b4-4612-8216-4031dada81ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Dependencies">
+      <UniqueIdentifier>{84595acf-ac23-4f73-a0e0-d86bfae425f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Dependencies\glew">
+      <UniqueIdentifier>{52e7df8b-16d8-49ee-890c-0d3c16b05ff3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Dependencies\deelx">
+      <UniqueIdentifier>{f3204efa-ce0c-45ed-bec2-921453dd3ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Dependencies\minilzo">
+      <UniqueIdentifier>{300f8b2a-9aa7-4dc5-9a7f-1b2d29503cb6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DGLE2.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="FONT1.BIN">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="Logo.bmp">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="LogoMini.bmp">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DGLE.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

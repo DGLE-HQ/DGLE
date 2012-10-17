@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		24.02.2011 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "..\Common.h"
@@ -29,7 +29,7 @@ bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, si
 static LPTOP_LEVEL_EXCEPTION_FILTER m_previousFilter = NULL;
 static string str_info = "";
 
-void DGLE2_API con_dump(void *pParametr, const char *pcParam)
+void DGLE_API con_dump(void *pParametr, const char *pcParam)
 {
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 
@@ -47,7 +47,7 @@ void DGLE2_API con_dump(void *pParametr, const char *pcParam)
 			std::fstream dfile;
 			dfile.setf(std::ios_base::right,std::ios_base::adjustfield);
 			dfile.open("crash_dump.txt", std::ios::out|std::ios::trunc);
-			dfile << "**DGLE2 Crash Dump**\n";
+			dfile << "**DGLE Crash Dump**\n";
 			dfile << str_info.c_str();
 			dfile.close();
 			p_console->Write("Crash dump saved to \"crash_dump.txt\".");

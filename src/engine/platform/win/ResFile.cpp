@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		22.01.2010 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #include "ResFile.h"
@@ -40,7 +40,7 @@ CResFile::~CResFile()
 	}
 }
 
-DGLE2_RESULT CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+DGLE_RESULT CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {
 	memcpy(pBuffer, (uint8 *)_pData + _ui32Pos, uiCount);
 
@@ -51,12 +51,12 @@ DGLE2_RESULT CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	return S_OK;
 }
 
-DGLE2_RESULT CResFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+DGLE_RESULT CResFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	return E_NOTIMPL;
 }
 
-DGLE2_RESULT CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+DGLE_RESULT CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
 	switch(eWay)
 	{
@@ -76,19 +76,19 @@ DGLE2_RESULT CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uin
 	return S_OK;
 }
 
-DGLE2_RESULT CResFile::GetSize(uint32 &ui32Size)
+DGLE_RESULT CResFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = _ui32Size;
 	return S_OK;
 }
 
-DGLE2_RESULT CResFile::IsOpen(bool &bOpened)
+DGLE_RESULT CResFile::IsOpen(bool &bOpened)
 {
 	bOpened = _bOpened;
 	return S_OK;
 }
 
-DGLE2_RESULT CResFile::GetName(char *pcName, uint &uiCharsCount)
+DGLE_RESULT CResFile::GetName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -108,7 +108,7 @@ DGLE2_RESULT CResFile::GetName(char *pcName, uint &uiCharsCount)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CResFile::GetPath(char *pcPath, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CResFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
 	if (!pcPath)
 	{
@@ -128,7 +128,7 @@ DGLE2_RESULT DGLE2_API CResFile::GetPath(char *pcPath, uint &uiCharsCount)
 	return S_OK;
 }
 
-DGLE2_RESULT DGLE2_API CResFile::Free()
+DGLE_RESULT DGLE_API CResFile::Free()
 {
 	delete this;
 	return S_OK;

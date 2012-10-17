@@ -2,9 +2,9 @@
 \author		Korotkov Andrey aka DRON
 \date		07.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 
 #pragma once
@@ -21,7 +21,7 @@ struct TConEntry
 			 iMaxValue;
 	bool	 bNeedCritical;
 
-	void(DGLE2_API *pProc)(void *pParametr, const char *pcParam);
+	void(DGLE_API *pProc)(void *pParametr, const char *pcParam);
 
 	bool operator < (const TConEntry &entry) const
 	{
@@ -50,18 +50,18 @@ class CConsole
 	void _Cmdlist();
 	void _Help(const char* pcParam);
 	
-	static void DGLE2_API _s_Hide(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_Show(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_Save(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_Clear(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_Terminate(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_SetPos(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_SetSize(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_ResetPos(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_Cmdlist(void *pParametr, const char *pcParam);
-	static void DGLE2_API _s_Help(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Hide(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Show(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Save(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Clear(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Terminate(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_SetPos(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_SetSize(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ResetPos(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Cmdlist(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Help(void *pParametr, const char *pcParam);
 
-	static void DGLE2_API _s_OnConWindowEvent(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand);
+	static void DGLE_API _s_OnConWindowEvent(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand);
 
 public:
 
@@ -73,8 +73,8 @@ public:
 	uint32 GetThreadId();
 	void  Write(const std::string &strTxt, bool bToPrevLine = false);
 	void  Exec(const char *pcCommand);
-	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare = true); 
-	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE2_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL, bool bShare = true);
+	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare = true); 
+	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL, bool bShare = true);
 	bool  UnRegCom(const char *pcName);
 	bool  EnterCrSection();
 	void  LeaveCrSection();
