@@ -4,10 +4,10 @@
 clear
 
 # Rebuild solution
-xbuild ./../../common/toolset/Toolset.sln
+xbuild ./../../common/tools/Tools.sln
 
 # Go to bin destination
-cd ./../../../bin/win/toolset
+cd ./../../../bin/win/tools
 
 # Get current directory
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

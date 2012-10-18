@@ -5,7 +5,7 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../../../../bin/win/toolset/GuiWidgets.dll" internal="true" />
+    <widget-library name="../../../../bin/win/tools/GuiWidgets.dll" internal="true" />
   </import>
   <widget class="Gtk.Bin" id="GuiWidgets.TitleBox" design-size="347 24">
     <property name="MemberName" />

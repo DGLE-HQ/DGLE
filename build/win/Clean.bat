@@ -19,14 +19,14 @@ call :removeCPPJunk "" ".\engine"
 
 call :removeCPPJunk "tests" ".\tests\dev"
 
-:: Toolset
+:: tools
 
-del /A:H .\..\common\toolset\*.docstates.suo
-del /A:A .\..\common\toolset\*.suo
-del .\..\common\toolset\*.userprefs
+del /A:H .\..\common\tools\*.docstates.suo
+del /A:A .\..\common\tools\*.suo
+del .\..\common\tools\*.userprefs
 
-call :removeCSharpJunk "toolset" "toolset\gui_widgets"
-call :removeCSharpJunk "toolset" "toolset\template"
+call :removeCSharpJunk "tools" "tools\gui_widgets"
+call :removeCSharpJunk "tools" "tools\template"
 
 :: Function will clear all temporary Visual Studio files for C++ project.
 :removeCPPJunk

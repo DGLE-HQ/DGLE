@@ -15,10 +15,10 @@ namespace GuiWidgets
 	public static class ThemingHelper
 	{
 		private static Assembly _s_exe_assembly = Assembly.GetExecutingAssembly ();
-		public static string default_theme_path = @"./../../../resources/toolset/style/gtkrc";
-		public static string default_min_btn_path = @".\..\..\..\resources\toolset\style\Title\minimize_button_normal.png";
-		public static string default_max_btn_path = @".\..\..\..\resources\toolset\style\Title\maximize_button_normal.png";
-		public static string default_close_btn_path = @".\..\..\..\resources\toolset\style\Title\close_button_normal.png";
+		public static string default_theme_path = @"./../../../resources/tools/style/gtkrc";
+		public static string default_min_btn_path = @".\..\..\..\resources\tools\style\Title\minimize_button_normal.png";
+		public static string default_max_btn_path = @".\..\..\..\resources\tools\style\Title\maximize_button_normal.png";
+		public static string default_close_btn_path = @".\..\..\..\resources\tools\style\Title\close_button_normal.png";
 
 		public static void LoadTheme ()
 		{

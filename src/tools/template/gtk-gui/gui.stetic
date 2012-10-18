@@ -6,8 +6,8 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../../../../bin/win/toolset/GuiWidgets.dll" />
-    <widget-library name="../../../../bin/win/toolset/Template.exe" internal="true" />
+    <widget-library name="../../../../bin/win/tools/GuiWidgets.dll" />
+    <widget-library name="../../../../bin/win/tools/Template.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="601 481">
     <action-group name="Default">

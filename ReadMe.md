@@ -4,15 +4,22 @@
 
 [DGLE](http://dgle.dronprogs.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
+### Project mission
 The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology, capable of building any 2D/3D
 games, real-time visualizations, scientific applications etc. It should be easy to make great projects only by using editors and scripts or go deeper and use
 your programming skills of your favorite language to create really exciting projects. Users can also add new formats and functionality by creating new plugins
 for engine and share them with others over the web or just get plugins already made by others. When project is complete it can be easily build for every popular
 platform.
 
+### What means abbreviation DGLE?
+This abbreviation is some kind of legacy and it is a long story...
+Now officially this means: *Dynamite Groovy Lightweight Engine* that is more correct, concerning to the spirit of the project.
+Sometimes engine is named *DGLEngine* or *DGLE engine*, both variants are also correct.
+
+### More information
 See [gallery](http://dgle.dronprogs.org/dgle_gallery) for screenshots of projects based on this engine.
 
-Visit [official website](http://dgle.dronprogs.org) for more details on this project and also plugins, articles, tutorials, samples and forum.
+Visit [official website](http://dgle.dronprogs.org) for more details on this project and also plugins, articles, tutorials, examples and forum.
 
 ## Features
 
@@ -114,11 +121,6 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 Compiled and ready to use latest cross platform SDK always could be found [here](https://github.com/megaDRONe86/DGLE/downloads). 
 
 See [ChangeLog](DGLE/blob/master/ChangeLog.txt) for full list of changes.
-
-## What means abbreviation "DGLE"?
-
-This abbreviation is some kind of legacy and it is a long story...
-Now officially this means: "Dynamite Groovy Lightweight Engine" that is more correct, concerning to the spirit of the project.
 
 ## Credits
 
