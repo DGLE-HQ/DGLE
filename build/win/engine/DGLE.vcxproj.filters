@@ -35,11 +35,11 @@
     <ClCompile Include="..\..\..\src\common\utils.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\common\deps\glew\glew.c">
-      <Filter>Common\Dependencies\glew</Filter>
+    <ClCompile Include="..\..\..\deps\glew\glew.c">
+      <Filter>Dependencies\glew</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\common\deps\minilzo\minilzo.c">
-      <Filter>Common\Dependencies\minilzo</Filter>
+    <ClCompile Include="..\..\..\deps\minilzo\minilzo.c">
+      <Filter>Dependencies\minilzo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\engine\platform\win\BaseRendererGL.cpp">
       <Filter>Platform</Filter>
@@ -131,20 +131,20 @@
     <ClInclude Include="..\..\..\src\common\utils.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\common\deps\glew\gl\glew.h">
-      <Filter>Common\Dependencies\glew</Filter>
+    <ClInclude Include="..\..\..\deps\glew\gl\glew.h">
+      <Filter>Dependencies\glew</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\common\deps\glew\gl\wglew.h">
-      <Filter>Common\Dependencies\glew</Filter>
+    <ClInclude Include="..\..\..\deps\glew\gl\wglew.h">
+      <Filter>Dependencies\glew</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\common\deps\minilzo\lzoconf.h">
-      <Filter>Common\Dependencies\minilzo</Filter>
+    <ClInclude Include="..\..\..\deps\minilzo\lzoconf.h">
+      <Filter>Dependencies\minilzo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\common\deps\minilzo\lzodefs.h">
-      <Filter>Common\Dependencies\minilzo</Filter>
+    <ClInclude Include="..\..\..\deps\minilzo\lzodefs.h">
+      <Filter>Dependencies\minilzo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\common\deps\minilzo\minilzo.h">
-      <Filter>Common\Dependencies\minilzo</Filter>
+    <ClInclude Include="..\..\..\deps\minilzo\minilzo.h">
+      <Filter>Dependencies\minilzo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\platform\PlatformAPI.h">
       <Filter>Platform</Filter>
@@ -184,8 +184,8 @@
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Console.h" />
     <ClInclude Include="..\..\..\src\engine\Core.h" />
-    <ClInclude Include="..\..\..\src\common\deps\deelx\deelx.h">
-      <Filter>Common\Dependencies\deelx</Filter>
+    <ClInclude Include="..\..\..\deps\deelx\deelx.h">
+      <Filter>Dependencies\deelx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -219,16 +219,16 @@
     <Filter Include="Common">
       <UniqueIdentifier>{230ba6ea-94b4-4612-8216-4031dada81ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Dependencies">
+    <Filter Include="Dependencies">
       <UniqueIdentifier>{84595acf-ac23-4f73-a0e0-d86bfae425f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Dependencies\glew">
+    <Filter Include="Dependencies\glew">
       <UniqueIdentifier>{52e7df8b-16d8-49ee-890c-0d3c16b05ff3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Dependencies\deelx">
+    <Filter Include="Dependencies\deelx">
       <UniqueIdentifier>{f3204efa-ce0c-45ed-bec2-921453dd3ba3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Dependencies\minilzo">
+    <Filter Include="Dependencies\minilzo">
       <UniqueIdentifier>{300f8b2a-9aa7-4dc5-9a7f-1b2d29503cb6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

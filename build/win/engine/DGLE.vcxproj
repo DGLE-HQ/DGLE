@@ -92,7 +92,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\src\common\deps\glew;..\..\..\src\common\deps\minilzo;..\..\..\src\common\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\src\common\deps\glew;..\..\..\src\common\deps\minilzo;..\..\..\src\common\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\..\src\common\deps\glew;..\..\..\src\common\deps\minilzo;..\..\..\src\common\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\..\src\common\deps\glew;..\..\..\src\common\deps\minilzo;..\..\..\src\common\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,8 +153,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\common\deps\glew\glew.c" />
-    <ClCompile Include="..\..\..\src\common\deps\minilzo\minilzo.c" />
+    <ClCompile Include="..\..\..\deps\glew\glew.c" />
+    <ClCompile Include="..\..\..\deps\minilzo\minilzo.c" />
     <ClCompile Include="..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\src\engine\BufFile.cpp" />
     <ClCompile Include="..\..\..\src\engine\Console.cpp" />
@@ -189,12 +189,12 @@
     <ClInclude Include="..\..\..\include\cpp\DGLE.h" />
     <ClInclude Include="..\..\..\include\cpp\DGLE_CoreRenderer.h" />
     <ClInclude Include="..\..\..\include\cpp\DGLE_Types.h" />
-    <ClInclude Include="..\..\..\src\common\deps\deelx\deelx.h" />
-    <ClInclude Include="..\..\..\src\common\deps\glew\gl\glew.h" />
-    <ClInclude Include="..\..\..\src\common\deps\glew\gl\wglew.h" />
-    <ClInclude Include="..\..\..\src\common\deps\minilzo\lzoconf.h" />
-    <ClInclude Include="..\..\..\src\common\deps\minilzo\lzodefs.h" />
-    <ClInclude Include="..\..\..\src\common\deps\minilzo\minilzo.h" />
+    <ClInclude Include="..\..\..\deps\deelx\deelx.h" />
+    <ClInclude Include="..\..\..\deps\glew\gl\glew.h" />
+    <ClInclude Include="..\..\..\deps\glew\gl\wglew.h" />
+    <ClInclude Include="..\..\..\deps\minilzo\lzoconf.h" />
+    <ClInclude Include="..\..\..\deps\minilzo\lzodefs.h" />
+    <ClInclude Include="..\..\..\deps\minilzo\minilzo.h" />
     <ClInclude Include="..\..\..\src\common\utils.h" />
     <ClInclude Include="..\..\..\src\engine\BufFile.h" />
     <ClInclude Include="..\..\..\src\engine\Common.h" />

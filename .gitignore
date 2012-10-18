@@ -1,7 +1,4 @@
-# Engine specific
-SyncToy_*
-log.txt
-docs/api_help/
+# Operation systems
 
 # Windows
 desktop.ini
@@ -12,12 +9,23 @@ bin/win/examples/*.exe
 bin/win/x64/examples/*.exe
 bin/win/plugins/*.dplug
 bin/win/x64/plugins/*.dplug
-bin/win/toolset/*.exe
-bin/win/toolset/*.dll
-bin/win/toolset/*.o
-bin/win/toolset/*.c
-bin/win/x64/toolset/*.exe
-bin/win/x64/toolset/*.dll
+bin/win/tools/*.exe
+bin/win/tools/*.dll
+bin/win/tools/*.o
+bin/win/tools/*.c
+bin/win/x64/tools/*.exe
+bin/win/x64/tools/*.dll
+
+# MacOS X
+Icon?
+.DS_Store
+
+# Misc
+SyncToy_*
+log.txt
+docs/api_help/
+
+# IDEs and languages
 
 # Visual Studio
 *.suo
@@ -25,60 +33,13 @@ bin/win/x64/toolset/*.dll
 *.sln.docstates
 [Dd]ebug/
 [Rr]elease/
-*_i.c
-*_p.c
 *.ilk
 *.lib
 *.exp
-*.meta
-*.obj
-*.pch
 *.pdb
-*.pgc
-*.pgd
-*.rsp
-*.sbr
-*.tlb
-*.tli
-*.tlh
-*.tmp
-*.vspscc
-*.vssscc
-.builds
 ipch/
 *.aps
-*.ncb
-*.opensdf
 *.sdf
 
-# Delphi
-*.dcu
-*.~*~
-*.local
-*.identcache
-__history/
-*.drc
-*.map
-
-# MacOS
-Icon?
-.DS_Store
-
-# XCode
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-*.xcworkspace
-!default.xcworkspace
-xcuserdata
-profile
-*.moved-aside
-DerivedData
-
-#Monodevelop
+# Monodevelop
 *.userprefs
