@@ -8,8 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DGLE", "DGLE.vcxproj", "{FB
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevTest", "..\tests\dev\DevTest.vcxproj", "{232D048F-EDA8-4C60-89B2-278EABE44AC8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FC5DD185-2474-4D61-8084-84AA034B07E4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -36,8 +34,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{232D048F-EDA8-4C60-89B2-278EABE44AC8} = {FC5DD185-2474-4D61-8084-84AA034B07E4}
 	EndGlobalSection
 EndGlobal

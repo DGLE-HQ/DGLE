@@ -12,70 +12,114 @@ set SRC_PATH=.\..\..\src
 
 :: Engine
 
+call :removeBinJunkCPP ""
+
 del .\engine\DGLE.APS
-call :removeCPPJunk "" ".\engine"
+call :removeSlnJunkCPP ".\engine"
+
+call :removeProjJunkCPP ".\engine"
+
+:: Plugins
+
+call :removeBinJunkCPP "plugins"
+
+call :removeSlnJunkCPP ".\plugins"
+
+call :removeProjJunkCPP ".\plugins\template"
+call :removeProjJunkCPP ".\plugins\ext"
 
 :: Tests
 
-call :removeCPPJunk "tests" ".\tests\dev"
+call :removeBinJunkCPP "tests"
+call :removeProjJunkCPP ".\tests\dev"
 
-:: tools
+:: Tools
 
-del /A:H .\..\common\tools\*.docstates.suo
-del /A:A .\..\common\tools\*.suo
-del .\..\common\tools\*.userprefs
+call :removeBinJunkCSharp "tools"
 
-call :removeCSharpJunk "tools" "tools\gui_widgets"
-call :removeCSharpJunk "tools" "tools\template"
+call :removeSlnJunkCSharp ".\..\common\tools"
 
-:: Function will clear all temporary Visual Studio files for C++ project.
-:removeCPPJunk
+call :removeProjJunkCSharp "tools\gui_widgets"
+call :removeProjJunkCSharp "tools\template"
 
-set arg1=%1
-set arg2=%2
+:: Functions will clear all temporary Visual Studio files for C++ project.
 
-del %BIN_WIN_32_PATH%\%arg1%\*.pdb
-del %BIN_WIN_32_PATH%\%arg1%\*.exp
-del %BIN_WIN_32_PATH%\%arg1%\*.lib
-del %BIN_WIN_32_PATH%\%arg1%\*.ilk
-del %BIN_WIN_32_PATH%\%arg1%\log.txt
+:removeBinJunkCPP
 
-del %BIN_WIN_64_PATH%\%arg1%\*.pdb
-del %BIN_WIN_64_PATH%\%arg1%\*.exp
-del %BIN_WIN_64_PATH%\%arg1%\*.lib
-del %BIN_WIN_64_PATH%\%arg1%\*.ilk
-del %BIN_WIN_64_PATH%\%arg1%\log.txt
+set arg=%1
 
-del %arg2%\*.sdf
-del /A:H %arg2%\*.docstates.suo
-del /A:A %arg2%\*.suo
-del %arg2%\*.user
-del %arg2%\log.txt
-rd /s /q %arg2%\ipch
-rd /s /q %arg2%\Debug
-rd /s /q %arg2%\Release
-rd /s /q %arg2%\x64\Debug
-rd /s /q %arg2%\x64\Release
-rd %arg2%\x64
+del %BIN_WIN_32_PATH%\%arg%\*.pdb
+del %BIN_WIN_32_PATH%\%arg%\*.exp
+del %BIN_WIN_32_PATH%\%arg%\*.lib
+del %BIN_WIN_32_PATH%\%arg%\*.ilk
+del %BIN_WIN_32_PATH%\%arg%\log.txt
+
+del %BIN_WIN_64_PATH%\%arg%\*.pdb
+del %BIN_WIN_64_PATH%\%arg%\*.exp
+del %BIN_WIN_64_PATH%\%arg%\*.lib
+del %BIN_WIN_64_PATH%\%arg%\*.ilk
+del %BIN_WIN_64_PATH%\%arg%\log.txt
+
+goto :eof
+
+:removeSlnJunkCPP
+
+set arg=%1
+
+del %arg%\*.sdf
+del /A:H %arg%\*.docstates.suo
+del /A:A %arg%\*.suo
+del %arg%\log.txt
+rd /s /q %arg%\ipch
+
+goto :eof
+
+:removeProjJunkCPP
+
+set arg=%1
+
+del %arg%\*.user
+del %arg%\log.txt
+rd /s /q %arg%\Debug
+rd /s /q %arg%\Release
+rd /s /q %arg%\x64\Debug
+rd /s /q %arg%\x64\Release
+rd %arg%\x64
 
 goto :eof
 
 :: Function will clear all temporary files for C# project.
-:removeCSharpJunk
 
-set arg1=%1
-set arg2=%2
+:removeBinJunkCSharp
 
-del %BIN_WIN_32_PATH%\%arg1%\*.pdb
-del %BIN_WIN_32_PATH%\%arg1%\*.vshost.exe
-del %BIN_WIN_32_PATH%\%arg1%\*.manifest
-del %BIN_WIN_32_PATH%\%arg1%\log.txt
+set arg=%1
 
-del %BIN_WIN_64_PATH%\%arg1%\*.pdb
-del %BIN_WIN_64_PATH%\%arg1%\*.vshost.exe
-del %BIN_WIN_64_PATH%\%arg1%\*.manifest
-del %BIN_WIN_64_PATH%\%arg1%\log.txt
+del %BIN_WIN_32_PATH%\%arg%\*.pdb
+del %BIN_WIN_32_PATH%\%arg%\*.vshost.exe
+del %BIN_WIN_32_PATH%\%arg%\*.manifest
+del %BIN_WIN_32_PATH%\%arg%\log.txt
 
-rd /s /q %SRC_PATH%\%arg2%\obj
+del %BIN_WIN_64_PATH%\%arg%\*.pdb
+del %BIN_WIN_64_PATH%\%arg%\*.vshost.exe
+del %BIN_WIN_64_PATH%\%arg%\*.manifest
+del %BIN_WIN_64_PATH%\%arg%\log.txt
+
+goto :eof
+
+:removeSlnJunkCSharp
+
+set arg=%1
+
+del /A:H %arg%\*.docstates.suo
+del /A:A %arg%\*.suo
+del %arg%\*.userprefs
+
+goto :eof
+
+:removeProjJunkCSharp
+
+set arg=%1
+
+rd /s /q %SRC_PATH%\%arg%\obj
 
 goto :eof

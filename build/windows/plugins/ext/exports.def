@@ -1,0 +1,5 @@
+NAME	"Ext.dll"
+
+EXPORTS
+	InitPlugin			PRIVATE
+	FreePlugin			PRIVATE

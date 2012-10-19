@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\common\utils.h" />
+    <ClInclude Include="..\..\..\..\include\cpp\DGLE.h">
+      <Filter>DGLE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\cpp\DGLE_Types.h">
+      <Filter>DGLE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\plugins\ext\Common.h" />
+    <ClInclude Include="..\..\..\..\src\plugins\ext\PluginCore.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
+    <ClCompile Include="..\..\..\..\src\plugins\ext\Main.cpp" />
+    <ClCompile Include="..\..\..\..\src\plugins\ext\PluginCore.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DGLE">
+      <UniqueIdentifier>{254d08b0-f430-4816-81ee-94b483e78dfe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+  </ItemGroup>
+</Project>

@@ -85,6 +85,8 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	bool _LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eFlags);
 
 	bool _LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt);
+	
+	bool _LoadSoundWAV(IFile *pFile, ISoundSample *&rpSSample);
 	bool _LoadMusicMCI(IFile *pFile, IMusic *&prMusic);
 
 	bool _CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags);
@@ -99,6 +101,7 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	static bool DGLE_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool DGLE_API _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool DGLE_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static void DGLE_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
 
 public:

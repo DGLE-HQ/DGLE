@@ -1,0 +1,5 @@
+NAME	"Template.dll"
+
+EXPORTS
+	InitPlugin			PRIVATE
+	FreePlugin			PRIVATE

@@ -166,7 +166,7 @@ void* GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName);
 bool ReleaseDynamicLib(TDynLibHandle tHandle);
 void ShowModalUserAlert(const char *pcTxt, const char *pcCaption);
 void GetEngineFilePath(std::string &strPath);
-bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs, bool bInnerFolders);
+bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs);
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 void Terminate();
 

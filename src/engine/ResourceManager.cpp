@@ -133,6 +133,7 @@ _iProfilerState(0)
 	
 	if (Core()->SoundEnabled())
 	{
+		RegisterFileFormat("wav", EOT_SOUND_SAMPLE, "WAVe (PCM) uncompressed sound files.", &_s_LoadSoundWAV, (void*)this);
 		RegisterFileFormat("mp3", EOT_MUSIC, "MPeg-layer 3 music files.", &_s_LoadMusicMCI, (void*)this);
 		RegisterFileFormat("mid", EOT_MUSIC, "Musical Instrument Digital Interface music files.", &_s_LoadMusicMCI, (void*)this);
 	}
@@ -1392,6 +1393,118 @@ bool CResourceManager::_LoadMusicMCI(IFile *pFile, IMusic *&prMusic)
 	return true;
 }
 
+bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&rpSSample)
+{
+	uint32 ui32_file_size = 0;
+	uint ui_read = 0;
+
+	pFile->GetSize(ui32_file_size);
+
+	char *file_buff = new char[ui32_file_size];
+	pFile->Read(file_buff, ui32_file_size, ui_read);
+
+	if (ui_read != ui32_file_size)
+	{
+		LOG("Can't read wav file data.", LT_ERROR);
+		delete[] file_buff;
+		return false;
+	}
+
+	istrstream cl_stream(file_buff, ui32_file_size);
+
+	uint32 ui32_dw_riff = 0;		
+
+	cl_stream.read((char*) &ui32_dw_riff, 4);
+
+	if (ui32_dw_riff != MAKEFOURCC('R','I','F','F'))
+	{
+		LOG("Can't find chunk \"RIFF\".", LT_ERROR);
+		delete[] file_buff;
+		return false;
+	}
+
+	cl_stream.ignore(4);
+
+	uint32 ui32_dw_wave = 0, ui32_dw_format = 0;
+	int32 i32_l_size_fmt = 0;
+
+	cl_stream.read((char*)&ui32_dw_wave, 4);
+
+	if (ui32_dw_wave != MAKEFOURCC('W','A','V','E'))
+	{
+		LOG("Can't find chunk \"WAVE\".", LT_ERROR);
+		delete[] file_buff;
+		return false;
+	}
+
+	cl_stream.read((char*)&ui32_dw_format, 4);
+
+	if (ui32_dw_format != MAKEFOURCC('f','m','t',' '))
+	{
+		LOG("Can't find chunk \"fmt\".", LT_ERROR);
+		delete[] file_buff;
+		return false;
+	}
+
+	cl_stream.read((char*)&i32_l_size_fmt, 4);
+
+	if (i32_l_size_fmt == 0)
+	{
+		LOG("Can't find size of audio-information.", LT_ERROR);
+		delete[] file_buff;
+		return false;
+	}
+/*
+	TSndData *p_s_data = new TSndData();
+	p_s_data->stWaveFormat = WAVEFORMATEX();
+	cl_stream.read((char*)&p_s_data->stWaveFormat,16);
+	
+	cl_stream.ignore(i32_l_size_fmt - 16);		
+	
+	if (p_s_data->stWaveFormat.wFormatTag != 1)
+	{
+		LOG("File is compressed.", LT_ERROR);
+		delete[] file_buff;
+		delete p_s_data;
+		return false;
+	}
+*/
+	uint32 ui32_dw_next_chunk = 0;
+
+	cl_stream.read((char*)&ui32_dw_next_chunk, 4);
+
+	if (ui32_dw_next_chunk == MAKEFOURCC('f','a','c','t'))		
+	{
+		uint32 ui32_dw_size_fact = 0;						
+		cl_stream.read((char*)&ui32_dw_size_fact, 4);				
+		cl_stream.ignore(ui32_dw_size_fact);					
+		cl_stream.read((char*)&ui32_dw_next_chunk, 4);				
+	}												
+
+	if (ui32_dw_next_chunk != MAKEFOURCC('d','a','t','a'))		
+	{
+		LOG("Can't find chunk \"data\".", LT_ERROR);
+		delete[] file_buff;
+		//delete p_s_data;
+		return false;
+	}
+/*
+	p_s_data->ui32DataSize = 0;
+	cl_stream.read((char*)&p_s_data->ui32DataSize, 4);			
+	p_s_data->pcData = new char[p_s_data->ui32DataSize];
+	cl_stream.read(p_s_data->pcData, p_s_data->ui32DataSize);				
+
+	delete[] file_buff;
+
+	CSSampleDX *pSSample = new CSSampleDX(InstIdx(), this);
+
+	pSSample->_pData = p_s_data;
+
+	rpSSample = (ISoundSample*)pSSample;
+*/
+	return true;
+}
+
 bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
@@ -1437,6 +1550,14 @@ bool DGLE_API CResourceManager::_s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prOb
 	IMusic *pm = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadMusicMCI(pFile, pm);
 	if(ret) prObj = (IEngBaseObj *&)pm;
+	return ret;
+}
+
+bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+{
+	ISoundSample *ps = NULL;
+	bool ret = PTHIS(CResourceManager)->_LoadSoundWAV(pFile, ps);
+	if(ret) prObj = (IEngBaseObj *&)ps;
 	return ret;
 }
 

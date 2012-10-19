@@ -478,10 +478,10 @@ namespace DGLE
 		EIF_DEFAULT				= 0x00000000,	/**< Use default settings. */
 		EIF_CATCH_UNHANDLED		= 0x00000001,	/**< All user callbacks will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
 		EIF_FORCE_NO_SOUND		= 0x00000002,	/**< Sound subsystem will not be initialized. */
-		EIF_LOAD_ALL_PLUGINS	= 0x00000004,	/**< Engine will try to connect any found *.dplug files near it and in all inner folders. \note DGLE_EXT.dplug is connected automatically without this flag as well. */
+		EIF_LOAD_ALL_PLUGINS	= 0x00000004,	/**< Engine will try to connect any found plugin files found in "plugins" folder near it. \note Ext plugin is connected automatically without this flag as well. */
 		EIF_FORCE_LIMIT_FPS		= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine process interval(uiProcessInterval). \note Recommended for casual games and desktop applications. */
 		EIF_FORCE_16_BIT_COLOR	= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
-		EIF_DISABLE_SMART_TIMING= 0x00000040,	/**< In some cases engine may call EPT_PROCESS several times at once to reduce lags. This flag will disable this feature. */
+		EIF_DISABLE_SMART_TIMING= 0x00000040,	/**< In some cases engine may call EPT_UPDATE several times at once to reduce lags. This flag will disable this feature. */
 		EIF_NO_SPLASH			= 0x10000000	/**< This flag will disable engine splash screen. Splash screen is displayed to the user while engine prepare itself and while user initialization procedure is being processed. \note Turning off splash screen is not recommended because the user could be confused while being waiting application execution. */
 	};
 

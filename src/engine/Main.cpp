@@ -37,7 +37,7 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	EngineInstances[uiInstIdx].pclCore->AddToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
-extern bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
+bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
 {
 	if (ubtSDKVer != _DGLE_SDK_VER_)
 	{
@@ -61,7 +61,7 @@ extern bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS 
 	return true;
 }
 
-extern bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
+bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
 {
 	if (!pEngineCore)
 		return false;

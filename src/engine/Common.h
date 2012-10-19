@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
-#ifndef _COMMONENG_H
-#define _COMMONENG_H
+#pragma once
 
 #if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
@@ -27,6 +26,8 @@ using namespace DGLE;
 #ifdef PLATFORM_WINDOWS
 
 typedef HMODULE TDynLibHandle;
+
+#define PLUGIN_FILE_EXTENSION ".dll"
 
 #if defined(_MSC_VER)
 //#	pragma warning(disable : 4996) //deprication of unsecure strcpy and other such functions.
@@ -210,5 +211,3 @@ public:\
 	}\
 }\
 */
-
-#endif //_COMMONENG_H

@@ -410,7 +410,7 @@ void GetEngineFilePath(std::string &strPath)
 	strPath = GetFilePath(eng_file_name) + "\\";
 }
 
-bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames, bool bInnerFolders)
+bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames)
 {
 	char* part;
 	char tmp[MAX_PATH];
@@ -421,7 +421,7 @@ bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames, boo
 
 	if (GetFullPathNameA(pcMask, MAX_PATH, tmp, &part) == 0) return false;
 
-	wfd.dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
+	wfd.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
 
 	if (!((hSearch = FindFirstFileA(tmp, &wfd)) == INVALID_HANDLE_VALUE))
 		do
@@ -429,26 +429,13 @@ bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames, boo
 			if (!strncmp(wfd.cFileName, ".", 1) || !strncmp(wfd.cFileName, "..", 2))
 				continue;
 
-			if ((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && bInnerFolders)
-			{					
-				char next[MAX_PATH];
-				if (GetFullPathNameA(pcMask, MAX_PATH, next, &part) == 0) return false;
-				strcpy(part, wfd.cFileName);
-				strcat(next, "\\");
-				strcat(next, "*.*");
+			string fullname(tmp);
 
-				FindFilesInDir(next, fileNames, true);					
-			}
-			else
-			{
-				string fullname(tmp);
+			int pos = (int)fullname.find_last_of("\\");
 
-				int pos = (int)fullname.find_last_of("\\");
-
-				fullname = fullname.substr(0, pos + 1);
-				fullname += string(wfd.cFileName);
-				fileNames.push_back(fullname);
-			}
+			fullname = fullname.substr(0, pos + 1);
+			fullname += string(wfd.cFileName);
+			fileNames.push_back(fullname);
 		}
 		while (FindNextFileA(hSearch, &wfd));
 

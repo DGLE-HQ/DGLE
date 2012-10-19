@@ -937,17 +937,17 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 
 		string eng_path;
 		GetEngineFilePath(eng_path);
-
+		
 		if (_eInitFlags & EIF_LOAD_ALL_PLUGINS)
 		{
-			if (!FindFilesInDir((eng_path + "*.dplug").c_str(), _clPluginInitList, true))
+			if (!FindFilesInDir((eng_path + "plugins\\*"PLUGIN_FILE_EXTENSION).c_str(), _clPluginInitList))
 				LOG("Plugin search routine fails.", LT_ERROR);
 		}
 		else
 		{
-			string ext_fnames[] = {eng_path + "DGLE_EXT.dplug", eng_path + "plugins\\DGLE_EXT.dplug"};
+			string ext_fnames[] = {eng_path + "Ext"PLUGIN_FILE_EXTENSION, eng_path + "plugins\\Ext"PLUGIN_FILE_EXTENSION};
 
-			for (int i = 0; i < sizeof(ext_fnames)/sizeof(ext_fnames[0]); ++i)
+			for (int i = 0; i < _countof(ext_fnames); ++i)
 				if (_access(ext_fnames[i].c_str(), 0) != -1)
 				{
 					_clPluginInitList.push_back(ext_fnames[i]);
@@ -988,12 +988,11 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		if (!_clPluginInitList.empty())
 		{
 			for (size_t i = 0; i < _clPluginInitList.size(); ++i)
-				for (size_t j = i; j < _clPluginInitList.size(); ++j)
+				for (size_t j = i + 1; j < _clPluginInitList.size(); ++j)
 					if (ToUpperCase(GetOnlyFileName(_clPluginInitList[i].c_str())) == ToUpperCase(GetOnlyFileName(_clPluginInitList[j].c_str())))
 					{
 						_clPluginInitList.erase(_clPluginInitList.begin() + j);
 						LOG("Found duplicated plugin \"" + GetOnlyFileName(_clPluginInitList[i].c_str()) + "\" in plugins initialization list.", LT_WARNING);
-						break;
 					}
 
 			for (size_t i = 0; i < _clPluginInitList.size(); ++i)

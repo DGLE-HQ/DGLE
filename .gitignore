@@ -7,8 +7,8 @@ bin/windows/tests/*.exe
 bin/windows/x64/tests/*.exe
 bin/windows/examples/*.exe
 bin/windows/x64/examples/*.exe
-bin/windows/plugins/*.dplug
-bin/windows/x64/plugins/*.dplug
+bin/windows/plugins/*.dll
+bin/windows/x64/plugins/*.dll
 bin/windows/tools/*.exe
 bin/windows/tools/*.dll
 bin/windows/tools/*.o

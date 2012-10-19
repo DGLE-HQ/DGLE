@@ -12,6 +12,7 @@ See "DGLE.h" for more details.
 #include <cctype>
 #include <algorithm>
 
+using namespace DGLE;
 using namespace std;
 
 string ToLowerCase(const string &inString)
@@ -415,7 +416,7 @@ uint8 ASCIIKeyToEngKey(const uchar key)
 	}	
 }
 
-uint32 GetCRC32(uint8 *pData, uint32 ui32Size)
+uint32 GetCRC32(const uint8 *pData, uint32 ui32Size)
 {
 	if (pData == NULL || ui32Size == 0)
 		return 0;
