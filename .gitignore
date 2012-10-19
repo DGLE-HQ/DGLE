@@ -3,18 +3,18 @@
 # Windows
 desktop.ini
 DGLE.dll
-bin/win/tests/*.exe
-bin/win/x64/tests/*.exe
-bin/win/examples/*.exe
-bin/win/x64/examples/*.exe
-bin/win/plugins/*.dplug
-bin/win/x64/plugins/*.dplug
-bin/win/tools/*.exe
-bin/win/tools/*.dll
-bin/win/tools/*.o
-bin/win/tools/*.c
-bin/win/x64/tools/*.exe
-bin/win/x64/tools/*.dll
+bin/windows/tests/*.exe
+bin/windows/x64/tests/*.exe
+bin/windows/examples/*.exe
+bin/windows/x64/examples/*.exe
+bin/windows/plugins/*.dplug
+bin/windows/x64/plugins/*.dplug
+bin/windows/tools/*.exe
+bin/windows/tools/*.dll
+bin/windows/tools/*.o
+bin/windows/tools/*.c
+bin/windows/x64/tools/*.exe
+bin/windows/x64/tools/*.dll
 
 # MacOS X
 Icon?

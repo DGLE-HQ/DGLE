@@ -66,25 +66,25 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\..\bin\win\</OutDir>
+    <OutDir>..\..\..\bin\windows\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\..\bin\win\x64\</OutDir>
+    <OutDir>..\..\..\bin\windows\x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\..\bin\win\</OutDir>
+    <OutDir>..\..\..\bin\windows\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\..\bin\win\x64\</OutDir>
+    <OutDir>..\..\..\bin\windows\x64\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -92,7 +92,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,18 +166,18 @@
     <ClCompile Include="..\..\..\src\engine\Input.cpp" />
     <ClCompile Include="..\..\..\src\engine\Main.cpp" />
     <ClCompile Include="..\..\..\src\engine\MainFS.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\BaseInput.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\BaseRendererGL.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\BaseSound.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\ConsoleWindow.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\HDFile.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\HDFileSystem.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\HookedWindow.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\MainWindow.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\PlatformUtils.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\ResFile.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\SplashWindow.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\win\UnhandledExceptionsFilter.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\BaseInput.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\BaseRendererGL.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\BaseSound.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\ConsoleWindow.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\HDFile.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\HDFileSystem.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\HookedWindow.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\MainWindow.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\PlatformUtils.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\ResFile.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\SplashWindow.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\UnhandledExceptionsFilter.cpp" />
     <ClCompile Include="..\..\..\src\engine\Render.cpp" />
     <ClCompile Include="..\..\..\src\engine\Render2D.cpp" />
     <ClCompile Include="..\..\..\src\engine\ResourceManager.cpp" />
@@ -208,16 +208,16 @@
     <ClInclude Include="..\..\..\src\engine\Input.h" />
     <ClInclude Include="..\..\..\src\engine\MainFS.h" />
     <ClInclude Include="..\..\..\src\engine\platform\PlatformAPI.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\BaseInput.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\BaseRendererGL.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\BaseSound.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\ConsoleWindow.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\HDFile.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\HDFileSystem.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\HookedWindow.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\MainWindow.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\ResFile.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\win\SplashWindow.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\BaseInput.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\BaseRendererGL.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\BaseSound.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\ConsoleWindow.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\HDFile.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\HDFileSystem.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\HookedWindow.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\MainWindow.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\ResFile.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\SplashWindow.h" />
     <ClInclude Include="..\..\..\src\engine\Render.h" />
     <ClInclude Include="..\..\..\src\engine\Render2D.h" />
     <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />

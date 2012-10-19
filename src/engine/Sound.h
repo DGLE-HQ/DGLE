@@ -14,7 +14,7 @@ See "DGLE.h" for more details.
 #ifndef NO_BUILTIN_SOUND
 
 #ifdef PLATFORM_WINDOWS
-#	include "platform\win\BaseSound.h"
+#	include "platform\windows\BaseSound.h"
 #endif
 
 #define SND_CLAMP(x) (x < -0x8000 ? -0x8000 : (x > 0x7FFF ? 0x7FFF : x))

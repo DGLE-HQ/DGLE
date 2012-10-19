@@ -16,11 +16,11 @@ using namespace DGLE;
 
 #ifdef _DEBUG // for debug builds paths are configured for debugging from DGLE project
 #	ifdef _WIN64
-#		define DLL_PATH			"..\\..\\..\\bin\\win\\x64\\DGLE.dll"
-#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\x64\\plugins\\DGLE_EXT.dplug"
+#		define DLL_PATH			"..\\..\\..\\bin\\windows\\x64\\DGLE.dll"
+#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\windows\\x64\\plugins\\DGLE_EXT.dplug"
 #	else
-#		define DLL_PATH			"..\\..\\..\\bin\\win\\DGLE.dll"
-#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\win\\plugins\\DGLE_EXT.dplug"
+#		define DLL_PATH			"..\\..\\..\\bin\\windows\\DGLE.dll"
+#		define EXT_PLUG_PATH	"..\\..\\..\\bin\\windows\\plugins\\DGLE_EXT.dplug"
 #	endif
 #	define RESOURCE_PATH		"..\\..\\..\\resources\\"
 #else // for release build paths are configured to run executeble itself

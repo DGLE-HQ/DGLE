@@ -10,7 +10,7 @@ See "DGLE.h" for more details.
 #include "Console.h"
 
 #ifdef PLATFORM_WINDOWS
-#include "platform\win\ConsoleWindow.h"
+#include "platform\windows\ConsoleWindow.h"
 #endif
 
 using namespace std;

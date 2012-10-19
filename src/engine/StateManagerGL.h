@@ -13,7 +13,7 @@ See "DGLE.h" for more details.
 
 #ifndef NO_BUILTIN_RENDERER
 
-#include "platform\win\BaseRendererGL.h"
+#include "platform\windows\BaseRendererGL.h"
 
 struct TProfileData
 {

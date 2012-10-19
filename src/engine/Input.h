@@ -14,7 +14,7 @@ See "DGLE.h" for more details.
 #ifndef NO_BUILTIN_INPUT
 
 #ifdef PLATFORM_WINDOWS
-#	include "platform\win\BaseInput.h"
+#	include "platform\windows\BaseInput.h"
 #endif
 
 class CInput: private CBaseInput, public IInput

@@ -8,7 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "ConsoleWindow.h"
-#include "..\..\..\..\build\win\engine\resource.h"
+#include "..\..\..\..\build\windows\engine\resource.h"
 
 using namespace std;
 

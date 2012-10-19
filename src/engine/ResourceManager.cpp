@@ -21,7 +21,7 @@ See "DGLE.h" for more details.
 //#include "MultiMesh.h"
 
 #ifdef PLATFORM_WINDOWS
-#include "..\..\build\win\engine\resource.h"
+#include "..\..\build\windows\engine\resource.h"
 #endif
 
 using namespace std;

@@ -7,7 +7,7 @@ clear
 xbuild ./../../common/tools/Tools.sln
 
 # Go to bin destination
-cd ./../../../bin/win/tools
+cd ./../../../bin/windows/tools
 
 # Get current directory
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

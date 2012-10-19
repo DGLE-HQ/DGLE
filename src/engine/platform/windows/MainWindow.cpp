@@ -8,7 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "MainWindow.h"
-#include "..\..\..\..\build\win\engine\resource.h"
+#include "..\..\..\..\build\windows\engine\resource.h"
 
 extern HMODULE hModule;
 

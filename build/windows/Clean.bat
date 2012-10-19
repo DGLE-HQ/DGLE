@@ -2,8 +2,8 @@
 
 :: Global paths
 
-set BIN_WIN_32_PATH=.\..\..\bin\win
-set BIN_WIN_64_PATH=.\..\..\bin\win\x64
+set BIN_WIN_32_PATH=.\..\..\bin\windows
+set BIN_WIN_64_PATH=.\..\..\bin\windows\x64
 set SRC_PATH=.\..\..\src
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::

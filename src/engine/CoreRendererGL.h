@@ -14,7 +14,7 @@ See "DGLE.h" for more details.
 #ifndef NO_BUILTIN_RENDERER
 
 #ifdef PLATFORM_WINDOWS
-#	include "platform\win\BaseRendererGL.h"
+#	include "platform\windows\BaseRendererGL.h"
 #endif
 
 #include "StateManagerGL.h"
