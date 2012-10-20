@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template", "..\..\..\src\tools\template\Template.csproj", "{21FE4ECC-BA49-433C-92F8-226F376FABE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiWidgets", "..\..\..\src\tools\gui_widgets\GuiWidgets.csproj", "{C408B0C5-2931-414E-AE47-A4F109992E37}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gui", "..\..\..\src\tools\gui\Gui.csproj", "{C408B0C5-2931-414E-AE47-A4F109992E37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontTool", "..\..\..\src\tools\font_tool\FontTool.csproj", "{35391DDE-4EEB-4113-8E9E-435723E0996A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{21FE4ECC-BA49-433C-92F8-226F376FABE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21FE4ECC-BA49-433C-92F8-226F376FABE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21FE4ECC-BA49-433C-92F8-226F376FABE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C408B0C5-2931-414E-AE47-A4F109992E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C408B0C5-2931-414E-AE47-A4F109992E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C408B0C5-2931-414E-AE47-A4F109992E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -22,10 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		BaseDirectory = ..\..\..\src\tools
-		StartupItem = ..\..\..\src\tools\template\Template.csproj
+		StartupItem = ..\..\..\src\tools\font_tool\FontTool.csproj
 		Policies = $0
 		$0.StandardHeader = $1
-		$1.Text = @\\author\t\t${AuthorName}\n\\date\t\t${Day}.${Month}.${Year} (c) ${CopyrightHolder}\n\nThis file is a part of DGLE2 project and is distributed\nunder the terms of the GNU Lesser General Public License.\nSee "DGLE2.h" for more details.
+		$1.Text = @\\author\t\t${AuthorName}\n\\date\t\t${Day}.${Month}.${Year} (c)${CopyrightHolder}\n\nThis file is a part of DGLE2 project and is distributed\nunder the terms of the GNU Lesser General Public License.\nSee "DGLE2.h" for more details.
 		$1.IncludeInNewFiles = True
 		$0.NameConventionPolicy = $2
 		$2.Rules = $3
@@ -178,6 +184,6 @@ Global
 		$0.DotNetNamingPolicy = $29
 		$29.DirectoryNamespaceAssociation = None
 		$29.ResourceNamePolicy = FileFormatDefault
-		outputpath = ..\..\..\bin\win\tools
+		outputpath = ..\..\..\bin\windows\tools
 	EndGlobalSection
 EndGlobal

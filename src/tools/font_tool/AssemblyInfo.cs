@@ -1,6 +1,6 @@
 /**
 \author		Shestakov Mikhail aka MIKE
-\date		20.9.2012 (c)Korotkov Andrey
+\date		14.10.2012 (c)Andrey Korotkov
 
 This file is a part of DGLE2 project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -12,11 +12,11 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("ToolTemplate")]
-[assembly: AssemblyDescription("DGLE2 Tool Template App")]
+[assembly: AssemblyTitle("FontTool")]
+[assembly: AssemblyDescription("DGLE2 Font Tool App")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DGLE2ToolTemplateApp")]
+[assembly: AssemblyProduct("DGLE2FontToolApp")]
 [assembly: AssemblyCopyright("MIKE")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

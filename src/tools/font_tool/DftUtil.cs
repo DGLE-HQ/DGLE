@@ -1,0 +1,225 @@
+/**
+\author		Shestakov Mikhail aka MIKE
+\date		14.10.2012 (c)Andrey Korotkov
+
+This file is a part of DGLE2 project and is distributed
+under the terms of the GNU Lesser General Public License.
+See "DGLE2.h" for more details.
+*/
+using System;
+using System.Text;
+using System.IO;
+
+namespace FontTool
+{
+	public class DftUtil
+	{
+		private const int WIDTH = 512;//4096;
+		private const int HEIGHT = 8192*2;//4096
+		private const int PADDING = 2;
+
+		private char[] alphabet;
+		private Pango.Rectangle[] boxes = new Pango.Rectangle[224];
+
+
+
+		public DftUtil ()
+		{
+			byte[] encoded = new byte[224];
+			for (int k = 32; k < 256; k++)
+				encoded[k - 32] = (byte)k;
+			
+			// cp1251
+			encoded = Encoding.Convert(Encoding.GetEncoding(1251), Encoding.Unicode, encoded);
+			alphabet = Encoding.Unicode.GetChars(encoded);
+		}
+
+		public void Save (string filename, FontService fontService)
+		{
+			Gdk.Pixbuf pixbuf = BuildImage (fontService);
+
+			//pixbuf.Save (String.Format("{0}.bmp", filename), "bmp");
+
+			BinaryWriter file =
+				new BinaryWriter(File.Create(String.Format("{0}.dft", filename)), Encoding.ASCII);
+
+			TFontHeader header = new TFontHeader(1, pixbuf.Width, pixbuf.Height);
+
+			// extensions doesn;t work on mono2
+			DFTExtensions.Write(file, header);
+			DFTExtensions.Write(file, boxes);
+			DFTExtensions.Write(file, pixbuf);
+
+			file.Close();
+			
+			// manual dispose
+			(pixbuf as IDisposable).Dispose ();
+		}
+
+		public void DrawLayout (Gdk.Drawable drawable, Gdk.GC gc, FontService fontService)
+		{
+			Gdk.Pixbuf pixbuf = BuildImage(fontService);
+
+			int w = -1, h = -1;
+			drawable.GetSize(out w, out h);
+
+			pixbuf.RenderToDrawable(drawable, gc, 0, 0, 0, 0, w, h, Gdk.RgbDither.Normal, 0, 0);
+
+			// manual dispose
+			(pixbuf as IDisposable).Dispose ();
+		}
+
+		public Gdk.Pixbuf BuildImage (FontService fontService)
+		{
+			Cairo.ImageSurface image = new Cairo.ImageSurface (Cairo.Format.ARGB32, WIDTH, HEIGHT);
+			Cairo.Context ctx = new Cairo.Context (image);
+			
+			Pango.Layout layout = Pango.CairoHelper.CreateLayout (ctx);
+			fontService.AssignLayout (layout);
+			
+			// fill background
+			ctx.Save ();
+			ctx.Color = new Cairo.Color (0.0, 0.0, 0.0, 1.0);
+			ctx.Paint ();
+			ctx.Restore ();
+			
+			int charCode = 0;
+			int maxHeight = 0;
+			Cairo.Point pos = new Cairo.Point (PADDING, PADDING);
+			while ((!fontService.OnlyEnglish && charCode < 224) || 
+			       (fontService.OnlyEnglish && charCode < (224 - 66))) {
+				
+				
+				Pango.Rectangle te = DrawText (ctx, layout, pos, alphabet[charCode].ToString());
+				boxes[charCode] = te;
+				
+				pos.X = te.X + te.Width + fontService.Spacing + PADDING;
+				maxHeight = Math.Max (maxHeight, te.Height);
+				
+				/*
+				int irem;
+				// 14 = 224 / max_devider_of_224
+				Math.DivRem (charCode, 14, out irem);
+				if (charCode != 0 && irem == 0) {
+					pos.X = PADDING;
+					pos.Y = te.Y + maxHeight + PADDING;
+				}
+				*/
+
+				// next line
+				if (pos.X + te.Width + fontService.Spacing + PADDING > image.Width) {
+					pos.X = PADDING;
+					pos.Y = te.Y + maxHeight + PADDING;
+				}
+
+				charCode++;
+			}
+			
+			int cropHeight = NextP2 (boxes[charCode - 1].Y + boxes[charCode - 1].Height - 1);
+			// 14 = 224 / max_devider_of_224
+			/*
+			int cropWidth = NextP2 ((boxes[charCode - 1].Width + fontService.Spacing + PADDING) * 14 - 1);
+			*/
+
+			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (
+				image.Data, true, 8, 
+				//cropWidth,
+				image.Width, 
+				cropHeight,
+				image.Stride);			
+			
+			// manual dispose
+			(image as IDisposable).Dispose ();
+			(layout as IDisposable).Dispose ();
+			(ctx.Target as IDisposable).Dispose ();
+			(ctx as IDisposable).Dispose ();
+
+			return pixbuf;
+		}
+
+		private Pango.Rectangle DrawText (Cairo.Context ctx, Pango.Layout layout, Cairo.Point p, string text)
+		{
+			ctx.Save ();
+
+			layout.SetText (text);
+
+			ctx.MoveTo (p.X, p.Y);
+			ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
+			ctx.Antialias = Cairo.Antialias.Gray;
+			ctx.Operator = Cairo.Operator.Source;
+			Pango.CairoHelper.ShowLayout (ctx, layout);
+			
+			Pango.Rectangle unused = Pango.Rectangle.Zero;
+			Pango.Rectangle te = Pango.Rectangle.Zero;
+			layout.GetPixelExtents (out unused, out te);
+			
+			ctx.Restore ();
+
+			te.X += p.X;
+			te.Y += p.Y;
+
+			return te;
+		}
+
+		public static int NextP2 (int a)
+		{
+			int rval = 1;
+			while (rval < a)
+				rval <<= 1;
+			return rval;
+		}
+	}
+
+	public struct TFontHeader
+	{
+		public byte BitDepth;
+		public int Width, Height;
+		public TFontHeader(byte bitDepth, int width, int height)
+		{
+			this.BitDepth = bitDepth;
+			this.Width = width;
+			this.Height = height;
+		}
+	}
+
+	public static class DFTExtensions
+	{
+		public static void Write(BinaryWriter file, TFontHeader header)
+		{            
+			// "DFT 1.1"
+			file.Write(new char[] { 'D', 'F', 'T', ' ', '1', '.', '1' });
+			file.Write(header.BitDepth);
+			file.Write(header.Width);
+			file.Write(header.Height);
+		}
+		
+		public static void Write(BinaryWriter file, Pango.Rectangle box)
+		{
+			file.Write(box.X);
+			file.Write(box.Y);
+			file.Write(box.Width);
+			file.Write(box.Height);
+		}
+		
+		public static void Write(BinaryWriter file, Pango.Rectangle[] boxes)
+		{
+			foreach (Pango.Rectangle box in boxes) Write(file, box);
+		}
+		
+		public static void Write (BinaryWriter file, Gdk.Pixbuf pixbuf)
+		{
+			byte[] buf = pixbuf.SaveToBuffer ("bmp");
+			// skip header
+			for (int i = 54; i < buf.Length; i += 3) {
+				byte r, g, b;
+				r = buf[i + 0];
+				g = buf[i + 1];
+				b = buf[i + 2];
+				
+				byte data = (byte)(((int)r + (int)g + (int)b) / 3);
+				file.Write (data);
+			}
+		}
+	}
+}
+
