@@ -11,7 +11,7 @@ your programming skills of your favorite language to create really exciting proj
 for engine and share them with others over the web or just get plugins already made by others. When project is complete it can be easily build for every popular
 platform.
 
-### What means abbreviation DGLE?
+### What does DGLE abbreviation means?
 This abbreviation is some kind of legacy and it is a long story...
 Now officially this means: *Dynamite Groovy Lightweight Engine* that is more correct, concerning to the spirit of the project.
 Sometimes engine is named *DGLEngine* or *DGLE engine*, both variants are also correct.
