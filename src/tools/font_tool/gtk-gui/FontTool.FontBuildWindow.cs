@@ -86,7 +86,6 @@ namespace FontTool
 			// Container child hbox3.Gtk.Box+BoxChild
 			this.eWidth = new global::Gtk.Entry ();
 			this.eWidth.WidthRequest = 60;
-			this.eWidth.CanFocus = true;
 			this.eWidth.Name = "eWidth";
 			this.eWidth.IsEditable = false;
 			this.eWidth.InvisibleChar = '●';
@@ -107,9 +106,8 @@ namespace FontTool
 			// Container child hbox3.Gtk.Box+BoxChild
 			this.eHeight = new global::Gtk.Entry ();
 			this.eHeight.WidthRequest = 60;
-			this.eHeight.CanFocus = true;
 			this.eHeight.Name = "eHeight";
-			this.eHeight.IsEditable = true;
+			this.eHeight.IsEditable = false;
 			this.eHeight.InvisibleChar = '●';
 			this.hbox3.Add (this.eHeight);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eHeight]));

@@ -1,7 +1,7 @@
 
 # Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
 
-gtk-color-scheme = "fg_color:#f5f5f5\nbg_color:#888a85\nbase_color:#babdb6\ntext_color:#000\nselected_bg_color:#f57900\nselected_fg_color:#fff\ntooltip_bg_color:#F5F5B5\ntooltip_fg_color:#000"
+gtk-color-scheme = "fg_color:#f5f5f5\nbg_color:#888a85\nbase_color:#babdb6\ntext_color:#000\nselected_bg_color:#e77817\nselected_fg_color:#fff\ntooltip_bg_color:#f5f5f5\ntooltip_fg_color:#e77817"
 
 style "clearlooks-default" {
 	xthickness = 1
@@ -26,6 +26,14 @@ style "clearlooks-default" {
 	GtkScale::trough-side-details = 1
 
 	GtkScrollbar::min-slider-length = 30
+	GtkScrollbar::has_backward_stepper = 0
+	GtkScrollbar::has_forward_stepper = 0
+	GtkScrollbar::has_secondary_backward_stepper = 0
+	GtkScrollbar::has_secondary_forward_stepper = 0
+	GtkScrollbar::slider_width = 6
+	GtkScrollbar::stepper_size = 6
+	GtkScrollbar::stepper_spacing = 0
+	
 	GtkMenuBar::internal-padding = 0
 	GtkExpander::expander-size = 16
 	GtkToolbar::internal-padding = 1
@@ -41,7 +49,7 @@ style "clearlooks-default" {
 	# Without this, gecko will fill in the background of the entry.
 	GtkEntry::honors-transparent-bg-hint = 1
 
-	GtkEntry::progress-border = { 2, 2, 2, 2 }
+	GtkEntry::progress-border = { 0, 0, 0, 0 }
 
 	####################
 	# Color Definitions
@@ -72,12 +80,15 @@ style "clearlooks-default" {
 
 	engine "clearlooks" {
 		colorize_scrollbar = TRUE
-		reliefstyle = 1
-		menubarstyle = 2
-		toolbarstyle = 1
-		animation = FALSE
-		radius = 3.0
-		style = GUMMY
+		reliefstyle = 0 # 0 = flat, 1 = inset, 2 = shadow
+		menubarstyle = 0 # 0 = flat, 1 = sunken, 2 = flat gradient
+		toolbarstyle = 0 # 0 = flat, 1 = enable effects
+		animation = FALSE # TRUE = animated progress bars
+		radius = 0.0
+		#progressbarstyle = 1       # 0 = candy bar, 1 = flat
+		contrast = 1.0
+		style = GUMMY #CLASSIC | GUMMY | GLOSSY
+		
 
 		# Set a hint to disable backward compatibility fallbacks.
 		hint = "use-hints"
@@ -164,13 +175,20 @@ style "clearlooks-notebook_bg" {
 	bg[NORMAL]        = shade (1.02, @bg_color)
 }
 
+
 style "clearlooks-button" {
 	xthickness = 3
 	ythickness = 3
 
-	bg[NORMAL]        = shade (1.04, @bg_color)
-	bg[PRELIGHT]      = shade (1.06, @bg_color)
-	bg[ACTIVE]        = shade (0.85, @bg_color)
+	bg[NORMAL] 		= @bg_color
+	bg[PRELIGHT] 	= shade (1.1, @selected_bg_color)
+	bg[ACTIVE] 		= shade (1.30, @selected_bg_color)
+}
+
+style "clearlooks-button-system" = "clearlooks-button" {
+	bg[NORMAL] = "#000"
+	bg[PRELIGHT] = "#000"
+	bg[ACTIVE] = "#000"
 }
 
 # The color is changed by the notebook_bg style, this style
@@ -199,6 +217,10 @@ style "clearlooks-comboboxentry" {
 
 style "clearlooks-menubar" {
 
+	bg[NORMAL] = "#000"
+	bg[PRELIGHT] = @selected_bg_color
+	fg[NORMAL] = "#fff"
+	
 	engine "clearlooks" {
 		hint = "menubar"
 	}
@@ -256,7 +278,7 @@ style "clearlooks-progressbar" {
 
 	engine "clearlooks" {
 		# Explicitly set the radius for the progress bars inside menu items.
-		radius = 3.0
+		radius = 0.0
 
 		hint = "progressbar"
 	}
@@ -361,6 +383,9 @@ widget_class "*<GtkNotebook>*<GtkViewport>" style "clearlooks-notebook_bg"
 widget_class "*<GtkNotebook>*<GtkScrolledWindow>" style "clearlooks-notebook_bg"
 
 widget_class "*<GtkButton>" style "clearlooks-button"
+widget "*.btnClose" style "clearlooks-button-system"
+widget "*.btnMaximize" style "clearlooks-button-system"
+widget "*.btnMinimize" style "clearlooks-button-system"
 widget_class "*<GtkNotebook>" style "clearlooks-notebook"
 widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
 

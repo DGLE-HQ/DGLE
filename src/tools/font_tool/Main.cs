@@ -15,6 +15,8 @@ namespace FontTool
 	{
 		public static void Main(string[] args)
 		{
+			Gui.ThemeHelper.ApplyCustomTheme (args);
+
 			Application.Init ("FontTool", ref args);
 			FontStyleWindow win = new FontStyleWindow();
 			win.Show();

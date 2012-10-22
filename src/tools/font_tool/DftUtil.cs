@@ -14,8 +14,8 @@ namespace FontTool
 {
 	public class DftUtil
 	{
-		private const int WIDTH = 512;//4096;
-		private const int HEIGHT = 8192*2;//4096
+		private const int WIDTH = 512;
+		private const int HEIGHT = 8192*2;
 		private const int PADDING = 2;
 
 		private char[] alphabet;
@@ -88,42 +88,28 @@ namespace FontTool
 			Cairo.Point pos = new Cairo.Point (PADDING, PADDING);
 			while ((!fontService.OnlyEnglish && charCode < 224) || 
 			       (fontService.OnlyEnglish && charCode < (224 - 66))) {
-				
-				
-				Pango.Rectangle te = DrawText (ctx, layout, pos, alphabet[charCode].ToString());
-				boxes[charCode] = te;
-				
-				pos.X = te.X + te.Width + fontService.Spacing + PADDING;
-				maxHeight = Math.Max (maxHeight, te.Height);
-				
-				/*
-				int irem;
-				// 14 = 224 / max_devider_of_224
-				Math.DivRem (charCode, 14, out irem);
-				if (charCode != 0 && irem == 0) {
-					pos.X = PADDING;
-					pos.Y = te.Y + maxHeight + PADDING;
-				}
-				*/
+
+				layout.SetText (alphabet[charCode].ToString());
+
+				Pango.Rectangle te = GetTextExtents (layout, pos);
 
 				// next line
 				if (pos.X + te.Width + fontService.Spacing + PADDING > image.Width) {
 					pos.X = PADDING;
 					pos.Y = te.Y + maxHeight + PADDING;
 				}
+				te = DrawText (ctx, layout, pos);
+				boxes[charCode] = te;
+				
+				pos.X = te.X + te.Width + fontService.Spacing + PADDING;
+				maxHeight = Math.Max (maxHeight, te.Height);
 
 				charCode++;
 			}
 			
 			int cropHeight = NextP2 (boxes[charCode - 1].Y + boxes[charCode - 1].Height - 1);
-			// 14 = 224 / max_devider_of_224
-			/*
-			int cropWidth = NextP2 ((boxes[charCode - 1].Width + fontService.Spacing + PADDING) * 14 - 1);
-			*/
-
 			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (
-				image.Data, true, 8, 
-				//cropWidth,
+				image.Data, true, 8,
 				image.Width, 
 				cropHeight,
 				image.Stride);			
@@ -137,23 +123,29 @@ namespace FontTool
 			return pixbuf;
 		}
 
-		private Pango.Rectangle DrawText (Cairo.Context ctx, Pango.Layout layout, Cairo.Point p, string text)
+		private Pango.Rectangle DrawText (Cairo.Context ctx, Pango.Layout layout, Cairo.Point p)
 		{
 			ctx.Save ();
 
-			layout.SetText (text);
+
 
 			ctx.MoveTo (p.X, p.Y);
 			ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
 			ctx.Antialias = Cairo.Antialias.Gray;
 			ctx.Operator = Cairo.Operator.Source;
+
 			Pango.CairoHelper.ShowLayout (ctx, layout);
-			
+
+			ctx.Restore ();
+
+			return GetTextExtents(layout, p);
+		}
+
+		private Pango.Rectangle GetTextExtents (Pango.Layout layout, Cairo.Point p)
+		{
 			Pango.Rectangle unused = Pango.Rectangle.Zero;
 			Pango.Rectangle te = Pango.Rectangle.Zero;
 			layout.GetPixelExtents (out unused, out te);
-			
-			ctx.Restore ();
 
 			te.X += p.X;
 			te.Y += p.Y;

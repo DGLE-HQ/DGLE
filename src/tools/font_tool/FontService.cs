@@ -134,36 +134,55 @@ namespace FontTool
 				
 					AssignLayout (layout);
 					layout.SetText (text);
-					
+
+					// dest size
+					int width, height;
+					drawable.GetSize (out width, out height);
+
 					// set pos
-					Pango.Rectangle unused, te;
-					layout.GetPixelExtents (out unused, out te);
-					{
-						int w, h;
-						drawable.GetSize (out w, out h);
-						te.X = (w - te.Width) / 2;
-						te.Y = (h - te.Height) / 2;
+					Pango.Rectangle te = Pango.Rectangle.Zero;
+					if (text.Length > 0) {
+						Pango.Rectangle unused;
+						layout.GetPixelExtents (out unused, out te);
+						te.X = (width - te.Width) / 2;
+						te.Y = (height - te.Height) / 2;
 					}
 					
 					// fill background
 					ctx.Save ();
-					ctx.Color = new Cairo.Color (0.0, 0.0, 0.0, 1.0);
+					//ctx.Color = new Cairo.Color (0.0, 0.0, 0.0, 1.0);
+					ctx.Color = new Cairo.Color (1.0, 1.0, 1.0, 1.0);
 					ctx.Paint ();
+					ctx.Restore ();
+
+					ctx.Save ();
+					int boxSize = 20, padding = 0;
+					Cairo.Color clr1 = Gui.CairoExtensions.RgbToColor(0xE77817);
+					clr1.A = 0.5;
+					Cairo.Color clr2 = new Cairo.Color(0.0, 0.0, 0.0, 0.5);
+					for (int i = 0; i < width; i++) {
+						for (int j = 0; j < height; j++) {
+							ctx.Rectangle (i * (boxSize + padding), j * (boxSize + padding), boxSize, boxSize);
+							if ((i + j) % 2 == 0)
+								ctx.SetSourceRGBA (clr1.R, clr1.G, clr1.B, clr1.A);
+							else
+								ctx.SetSourceRGBA (clr2.R, clr2.G, clr2.B, clr2.A);
+							ctx.Fill();
+						}
+					}	
 					ctx.Restore ();
 					
 					// show text
-					ctx.Save ();
-					ctx.MoveTo (te.X, te.Y);
-					ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
-					ctx.Antialias = Cairo.Antialias.Gray;
-					ctx.Operator = Cairo.Operator.Source;
-					Pango.CairoHelper.ShowLayout (ctx, layout);
-					ctx.Restore ();
-					
-					// manual dispose
-					//(layout as IDisposable).Dispose ();
-					//(ctx.Target as IDisposable).Dispose();
-					//(ctx as IDisposable).Dispose();
+					if (text.Length > 0) {
+						ctx.Save ();
+						ctx.MoveTo (te.X, te.Y);
+						//ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
+						ctx.Color = new Cairo.Color(0.0, 0.0, 0.0, 1.0);
+						ctx.Antialias = Cairo.Antialias.Gray;
+						ctx.Operator = Cairo.Operator.Source;
+						Pango.CairoHelper.ShowLayout (ctx, layout);
+						ctx.Restore ();
+					}
 				}
 			}
 		}

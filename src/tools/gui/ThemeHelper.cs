@@ -9,25 +9,44 @@ See "DGLE2.h" for more details.
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Gui
 {
 	public static class ThemeHelper
 	{
-		public static string lightId = "Gui.light_gtkrc";
-		public static string darkId = "Gui.dark_gtkrc";
 
-		public static string minimizeBtnId = "Gui.minimize_button.png";
-		public static string maximizeBtnId = "Gui.maximize_button.png";
-		public static string closeBtnId = "Gui.close_button.png";
+		private static string lightId = "Gui.resources.light_gtkrc";
+		private static string darkId = "Gui.resources.dark_gtkrc";
 
-		static ThemeHelper ()
+		internal static string minimizeBtnId = "Gui.resources.minimize_button.png";
+		internal static string maximizeBtnId = "Gui.resources.maximize_button.png";
+		internal static string closeBtnId = "Gui.resources.close_button.png";
+
+		private static Dictionary<string, string> stylesTypes = GetStylesTypes ();
+		// static initialization doesn't work on .net 2.0
+		private static Dictionary<string, string> GetStylesTypes ()
 		{
-			ApplyCustomTheme (lightId);
+			Dictionary<string, string> styles = new Dictionary<string, string>();
+			styles.Add ("light", lightId);
+			styles.Add ("dark", darkId);
+			
+			return styles;
 		}
 
-		private static void ApplyCustomTheme(string resourceId)
+		public static void ApplyCustomTheme(string[] args)
 		{
+			if (args.Length > 0) {
+				Gui.ThemeHelper.ApplyCustomTheme (args[0]);
+			} else {
+				Gui.ThemeHelper.ApplyCustomTheme (Gui.ThemeHelper.lightId);
+			}
+		}
+
+		public static void ApplyCustomTheme(string styleType)
+		{
+			string resourceId = GetResourceId (styleType);
+
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			Stream gtkrcStream = null;
 			
@@ -42,6 +61,13 @@ namespace Gui
 				if (null != gtkrcStream)
 					gtkrcStream.Close ();
 			}
+		}
+
+		private static string GetResourceId (string styleType)
+		{
+			string resourceId;
+			stylesTypes.TryGetValue (styleType, out resourceId);
+			return resourceId ?? lightId;
 		}
 	}
 }

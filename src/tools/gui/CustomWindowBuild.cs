@@ -71,8 +71,11 @@ namespace Gui
 			this.hboxTitleBar.PackStart (this.btnClose, false, false, 0);
 
 			this.btnMinimize.Image = new Gtk.Image(Assembly.GetExecutingAssembly(), ThemeHelper.minimizeBtnId);
+			this.btnMinimize.SetAlignment(0.5f, 0.5f);
 			this.btnMaximize.Image = new Gtk.Image(Assembly.GetExecutingAssembly(), ThemeHelper.maximizeBtnId);
+			this.btnMaximize.SetAlignment(0.5f, 0.5f);
 			this.btnClose.Image = new Gtk.Image(Assembly.GetExecutingAssembly(), ThemeHelper.closeBtnId);
+			this.btnClose.SetAlignment(0.5f, 0.5f);
 
 		}
 	}

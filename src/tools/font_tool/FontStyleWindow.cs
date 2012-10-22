@@ -14,6 +14,11 @@ namespace FontTool
 		Gui.CustomWindow// use custom theme
 	{
 
+		public static string[] authors = new string[]
+		{
+			"Shestakov Mikhail aka MIKE"
+		};
+
 		private Gtk.ListStore fontListStore;
 		private FontTool.FontService fontService;
 
@@ -40,6 +45,11 @@ namespace FontTool
 				Gtk.Application.Quit ();
 			};
 
+			this.AboutAction.Activated += delegate(object sender, EventArgs e) {
+				new Gui.AboutWindow(this, authors).Show();
+			};
+
+			/*
 			this.CustomStyleAction.Activated += delegate(object sender, EventArgs e) {
 				if (this.CustomStyleAction.Active) {
 					base.Decorated = false;
@@ -51,6 +61,7 @@ namespace FontTool
 					base.Decorated = true;
 				}
 			};
+			*/
 
 			fontService = new FontTool.FontService ();
 			BuildFontFamilyTree ();

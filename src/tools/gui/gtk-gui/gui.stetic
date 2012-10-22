@@ -5,6 +5,58 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../../../../bin/win/tools/Gui.dll" internal="true" />
+    <widget-library name="../../../../bin/windows/tools/Gui.dll" internal="true" />
   </import>
+  <widget class="Gtk.Window" id="Gui.AboutWindow" design-size="300 200">
+    <property name="MemberName" />
+    <property name="WidthRequest">300</property>
+    <property name="HeightRequest">200</property>
+    <property name="Visible">False</property>
+    <property name="Title" translatable="yes">About</property>
+    <property name="Modal">True</property>
+    <property name="Resizable">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <property name="BorderWidth">6</property>
+        <child>
+          <widget class="Gtk.Image" id="imageLogo">
+            <property name="MemberName" />
+            <property name="Pixbuf">file:..\..\..\misc\dgle2_logo.png</property>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.TextView" id="textviewAbout">
+                <property name="MemberName" />
+                <property name="Sensitive">False</property>
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <property name="Editable">False</property>
+                <property name="CursorVisible">False</property>
+                <property name="AcceptsTab">False</property>
+                <property name="Text" translatable="yes">About</property>
+                <property name="Justification">Center</property>
+                <property name="PixelsAboveLines">6</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
 </stetic-interface>

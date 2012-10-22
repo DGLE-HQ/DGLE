@@ -42,43 +42,112 @@ namespace FontTool
 			// Widget FontTool.FontStyleWindow
 			this.UIManager = new global::Gtk.UIManager ();
 			global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup ("Default");
-			this.FileAction = new global::Gtk.Action ("FileAction", global::Mono.Unix.Catalog.GetString ("File"), null, null);
+			this.FileAction = new global::Gtk.Action (
+				"FileAction",
+				global::Mono.Unix.Catalog.GetString("File"),
+				null,
+				null
+			);
 			this.FileAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("File");
 			w1.Add (this.FileAction, null);
-			this.SaveAction = new global::Gtk.Action ("SaveAction", global::Mono.Unix.Catalog.GetString ("Save"), null, null);
+			this.SaveAction = new global::Gtk.Action (
+				"SaveAction",
+				global::Mono.Unix.Catalog.GetString("Save"),
+				null,
+				null
+			);
 			this.SaveAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Save");
 			w1.Add (this.SaveAction, null);
-			this.CloseAction = new global::Gtk.Action ("CloseAction", global::Mono.Unix.Catalog.GetString ("Close"), null, null);
+			this.CloseAction = new global::Gtk.Action (
+				"CloseAction",
+				global::Mono.Unix.Catalog.GetString("Close"),
+				null,
+				null
+			);
 			this.CloseAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Close");
 			w1.Add (this.CloseAction, null);
-			this.SettingsAction = new global::Gtk.Action ("SettingsAction", global::Mono.Unix.Catalog.GetString ("Settings"), null, null);
+			this.SettingsAction = new global::Gtk.Action (
+				"SettingsAction",
+				global::Mono.Unix.Catalog.GetString("Settings"),
+				null,
+				null
+			);
 			this.SettingsAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Settings");
 			w1.Add (this.SettingsAction, null);
-			this.FontAction = new global::Gtk.Action ("FontAction", global::Mono.Unix.Catalog.GetString ("Font"), null, null);
+			this.FontAction = new global::Gtk.Action (
+				"FontAction",
+				global::Mono.Unix.Catalog.GetString("Font"),
+				null,
+				null
+			);
 			this.FontAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Font");
 			w1.Add (this.FontAction, null);
-			this.WindowStyleAction = new global::Gtk.Action ("WindowStyleAction", global::Mono.Unix.Catalog.GetString ("Window style"), null, null);
+			this.WindowStyleAction = new global::Gtk.Action (
+				"WindowStyleAction",
+				global::Mono.Unix.Catalog.GetString("Window style"),
+				null,
+				null
+			);
+			this.WindowStyleAction.Sensitive = false;
 			this.WindowStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Window style");
+			this.WindowStyleAction.Visible = false;
 			w1.Add (this.WindowStyleAction, null);
-			this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
+			this.HelpAction = new global::Gtk.Action (
+				"HelpAction",
+				global::Mono.Unix.Catalog.GetString("Help"),
+				null,
+				null
+			);
 			this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
 			w1.Add (this.HelpAction, null);
-			this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
+			this.AboutAction = new global::Gtk.Action (
+				"AboutAction",
+				global::Mono.Unix.Catalog.GetString("About"),
+				null,
+				null
+			);
 			this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 			w1.Add (this.AboutAction, null);
-			this.CustomStyleAction = new global::Gtk.RadioAction ("CustomStyleAction", global::Mono.Unix.Catalog.GetString ("DGLE2"), null, null, 0);
+			this.CustomStyleAction = new global::Gtk.RadioAction (
+				"CustomStyleAction",
+				global::Mono.Unix.Catalog.GetString("DGLE2"),
+				null,
+				null,
+				0
+			);
 			this.CustomStyleAction.Group = new global::GLib.SList (global::System.IntPtr.Zero);
+			this.CustomStyleAction.Sensitive = false;
 			this.CustomStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("DGLE2");
+			this.CustomStyleAction.Visible = false;
 			w1.Add (this.CustomStyleAction, null);
-			this.PlatformStyleAction = new global::Gtk.RadioAction ("PlatformStyleAction", global::Mono.Unix.Catalog.GetString ("Platform"), null, null, 0);
+			this.PlatformStyleAction = new global::Gtk.RadioAction (
+				"PlatformStyleAction",
+				global::Mono.Unix.Catalog.GetString("Platform"),
+				null,
+				null,
+				0
+			);
 			this.PlatformStyleAction.Group = this.CustomStyleAction.Group;
 			this.PlatformStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Platform");
 			w1.Add (this.PlatformStyleAction, null);
-			this.DecoratedCustomStyleAction = new global::Gtk.RadioAction ("DecoratedCustomStyleAction", global::Mono.Unix.Catalog.GetString ("Decorated DGLE2"), null, null, 0);
+			this.DecoratedCustomStyleAction = new global::Gtk.RadioAction (
+				"DecoratedCustomStyleAction",
+				global::Mono.Unix.Catalog.GetString("Decorated DGLE2"),
+				null,
+				null,
+				0
+			);
 			this.DecoratedCustomStyleAction.Group = this.CustomStyleAction.Group;
+			this.DecoratedCustomStyleAction.Sensitive = false;
 			this.DecoratedCustomStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Decorated DGLE2");
+			this.DecoratedCustomStyleAction.Visible = false;
 			w1.Add (this.DecoratedCustomStyleAction, null);
-			this.OnlyEnglishAction = new global::Gtk.ToggleAction ("OnlyEnglishAction", global::Mono.Unix.Catalog.GetString ("Only English"), null, null);
+			this.OnlyEnglishAction = new global::Gtk.ToggleAction (
+				"OnlyEnglishAction",
+				global::Mono.Unix.Catalog.GetString("Only English"),
+				null,
+				null
+			);
 			this.OnlyEnglishAction.Active = true;
 			this.OnlyEnglishAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Only English");
 			w1.Add (this.OnlyEnglishAction, null);
@@ -96,7 +165,7 @@ namespace FontTool
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='SaveAction' action='SaveAction'/><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='SettingsAction' action='SettingsAction'><menu name='FontAction' action='FontAction'><menuitem name='OnlyEnglishAction' action='OnlyEnglishAction'/></menu><menu name='WindowStyleAction' action='WindowStyleAction'><menuitem name='CustomStyleAction' action='CustomStyleAction'/><menuitem name='DecoratedCustomStyleAction' action='DecoratedCustomStyleAction'/></menu></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
+			this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='SaveAction' action='SaveAction'/><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='SettingsAction' action='SettingsAction'><menu name='FontAction' action='FontAction'><menuitem name='OnlyEnglishAction' action='OnlyEnglishAction'/></menu></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 			this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 			this.menubar1.Name = "menubar1";
 			this.vbox1.Add (this.menubar1);
@@ -240,14 +309,14 @@ namespace FontTool
 			w14.XOptions = ((global::Gtk.AttachOptions)(4));
 			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.sbSize = new global::Gtk.SpinButton (4D, 72D, 1D);
+			this.sbSize = new global::Gtk.SpinButton (4, 72, 1);
 			this.sbSize.WidthRequest = 80;
 			this.sbSize.CanFocus = true;
 			this.sbSize.Name = "sbSize";
-			this.sbSize.Adjustment.PageIncrement = 10D;
-			this.sbSize.ClimbRate = 1D;
+			this.sbSize.Adjustment.PageIncrement = 10;
+			this.sbSize.ClimbRate = 1;
 			this.sbSize.Numeric = true;
-			this.sbSize.Value = 12D;
+			this.sbSize.Value = 12;
 			this.table1.Add (this.sbSize);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1 [this.sbSize]));
 			w15.LeftAttach = ((uint)(1));
@@ -255,12 +324,12 @@ namespace FontTool
 			w15.XOptions = ((global::Gtk.AttachOptions)(4));
 			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.sbStretch = new global::Gtk.SpinButton (0D, 72D, 1D);
+			this.sbStretch = new global::Gtk.SpinButton (0, 72, 1);
 			this.sbStretch.WidthRequest = 80;
 			this.sbStretch.CanFocus = true;
 			this.sbStretch.Name = "sbStretch";
-			this.sbStretch.Adjustment.PageIncrement = 10D;
-			this.sbStretch.ClimbRate = 1D;
+			this.sbStretch.Adjustment.PageIncrement = 10;
+			this.sbStretch.ClimbRate = 1;
 			this.sbStretch.Numeric = true;
 			this.table1.Add (this.sbStretch);
 			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table1 [this.sbStretch]));

@@ -21,8 +21,6 @@ namespace Gui
 			IsX11 = !IsMac && System.Environment.OSVersion.Platform == PlatformID.Unix;
 		}
 		
-		static Gdk.Keymap keymap = Gdk.Keymap.Default;
-
 		// for mono 2.0 compatibility
 		private static bool isMac;
 		public static bool IsMac { get { return isMac; } private set { isMac = value; } }

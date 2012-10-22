@@ -34,15 +34,15 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="Mono.Posix" />
+    <Reference Include="Mono.Cairo" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Private>False</Private>
     </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cairo, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -56,26 +56,21 @@
     <Compile Include="GdkEventAny.cs" />
     <Compile Include="ThemeHelper.cs" />
     <Compile Include="PlatformUtils.cs" />
+    <Compile Include="AboutWindow.cs" />
+    <Compile Include="gtk-gui\Gui.AboutWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\..\..\resources\tools\style\light_gtkrc">
-      <Link>light_gtkrc</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\..\resources\tools\style\dark_gtkrc">
-      <Link>dark_gtkrc</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\..\resources\tools\style\close_button.png">
-      <Link>close_button.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\..\resources\tools\style\maximize_button.png">
-      <Link>maximize_button.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\..\resources\tools\style\minimize_button.png">
-      <Link>minimize_button.png</Link>
-    </EmbeddedResource>
+    <EmbeddedResource Include="resources\close_button.png" />
+    <EmbeddedResource Include="resources\dark_gtkrc" />
+    <EmbeddedResource Include="resources\light_gtkrc" />
+    <EmbeddedResource Include="resources\maximize_button.png" />
+    <EmbeddedResource Include="resources\minimize_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="resources\" />
   </ItemGroup>
 </Project>

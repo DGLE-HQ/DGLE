@@ -6,8 +6,8 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../../../../bin/win/tools/Gui.dll" />
-    <widget-library name="../../../../bin/win/tools/FontTool.exe" internal="true" />
+    <widget-library name="../../../../bin/windows/tools/Gui.dll" />
+    <widget-library name="../../../../bin/windows/tools/FontTool.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="FontTool.FontStyleWindow" design-size="500 500">
     <action-group name="Default">
@@ -39,7 +39,9 @@
       <action id="WindowStyleAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Window style</property>
+        <property name="Sensitive">False</property>
         <property name="ShortLabel" translatable="yes">Window style</property>
+        <property name="Visible">False</property>
       </action>
       <action id="HelpAction">
         <property name="Type">Action</property>
@@ -54,7 +56,9 @@
       <action id="CustomStyleAction">
         <property name="Type">Radio</property>
         <property name="Label" translatable="yes">DGLE2</property>
+        <property name="Sensitive">False</property>
         <property name="ShortLabel" translatable="yes">DGLE2</property>
+        <property name="Visible">False</property>
         <property name="DrawAsRadio">False</property>
         <property name="Active">True</property>
         <property name="Value">0</property>
@@ -72,7 +76,9 @@
       <action id="DecoratedCustomStyleAction">
         <property name="Type">Radio</property>
         <property name="Label" translatable="yes">Decorated DGLE2</property>
+        <property name="Sensitive">False</property>
         <property name="ShortLabel" translatable="yes">Decorated DGLE2</property>
+        <property name="Visible">False</property>
         <property name="DrawAsRadio">False</property>
         <property name="Active">False</property>
         <property name="Value">0</property>
@@ -109,10 +115,6 @@
               <node type="Menu" action="SettingsAction">
                 <node type="Menu" action="FontAction">
                   <node type="Menuitem" action="OnlyEnglishAction" />
-                </node>
-                <node type="Menu" action="WindowStyleAction">
-                  <node type="Menuitem" action="CustomStyleAction" />
-                  <node type="Menuitem" action="DecoratedCustomStyleAction" />
                 </node>
               </node>
               <node type="Menu" action="HelpAction">
@@ -173,7 +175,7 @@
                   </widget>
                   <packing>
                     <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
+                    <property name="AutoSize">False</property>
                   </packing>
                 </child>
                 <child>
@@ -495,7 +497,6 @@
               <widget class="Gtk.Entry" id="eWidth">
                 <property name="MemberName" />
                 <property name="WidthRequest">60</property>
-                <property name="CanFocus">True</property>
                 <property name="IsEditable">False</property>
                 <property name="InvisibleChar">●</property>
               </widget>
@@ -522,8 +523,7 @@
               <widget class="Gtk.Entry" id="eHeight">
                 <property name="MemberName" />
                 <property name="WidthRequest">60</property>
-                <property name="CanFocus">True</property>
-                <property name="IsEditable">True</property>
+                <property name="IsEditable">False</property>
                 <property name="InvisibleChar">●</property>
               </widget>
               <packing>

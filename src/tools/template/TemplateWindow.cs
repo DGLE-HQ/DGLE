@@ -13,6 +13,11 @@ namespace Template
 	public partial class TemplateWindow :
 		Gui.CustomWindow// use custom decoration
 	{
+		public static string[] authors = new string[]
+		{
+			"Shestakov Mikhail aka MIKE"
+		};
+
 		public TemplateWindow() : 
 				base(Gtk.WindowType.Toplevel)
 		{
@@ -33,6 +38,9 @@ namespace Template
 			};
 			this.CloseAction.Activated += delegate(object sender, EventArgs e) {
 				Gtk.Application.Quit ();
+			};
+			this.AboutAction.Activated += delegate(object sender, EventArgs e) {
+				new Gui.AboutWindow(this, authors).Show();
 			};
 		}
 

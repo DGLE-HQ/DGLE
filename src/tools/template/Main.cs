@@ -13,8 +13,10 @@ namespace Template
 {
 	class MainClass
 	{
-		public static void Main (string[] args)
+		public static void Main(string[] args)
 		{
+			Gui.ThemeHelper.ApplyCustomTheme (args);
+
 			Application.Init ("Template", ref args);
 			TemplateWindow win = new TemplateWindow();
 			win.Show();

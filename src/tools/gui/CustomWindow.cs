@@ -12,45 +12,6 @@ namespace Gui
 {
 	public partial class CustomWindow : Gtk.Window
 	{
-		[GLib.Property ("MinimizeImage")]
-		public Gtk.Widget MinimizeImage
-		{
-			get
-			{
-				return this.btnMinimize.Image;
-			}
-			set
-			{
-				this.btnMinimize.Image = value;
-			}
-		}
-		
-		[GLib.Property ("MaximizeImage")]
-		public Gtk.Widget MaximizeImage
-		{
-			get
-			{
-				return this.btnMaximize.Image;
-			}
-			set
-			{
-				this.btnMaximize.Image = value;
-			}
-		}
-		
-		[GLib.Property ("CloseImage")]
-		public Gtk.Widget CloseImage
-		{
-			get
-			{
-				return this.btnClose.Image;
-			}
-			set
-			{
-				this.btnClose.Image = value;
-			}
-		}
-
 		[GLib.Property ("FrameBorderWidth")]
 		public int FrameBorderWidth {
 			get {
@@ -76,6 +37,7 @@ namespace Gui
 
 				base.Decorated = value;
 				ShowTitleBar = !base.Decorated;
+				this.vboxWindow.BorderWidth = base.Decorated ? 0 : (uint) frameBorderWidth / 2;
 			}
 		}
 
@@ -144,6 +106,7 @@ namespace Gui
 		// absolute
 		private Gdk.Point lastMousePos = Gdk.Point.Zero;
 		private Gdk.Size lastWindowSize = Gdk.Size.Empty;
+		private Gdk.Point lastWindowPos = Gdk.Point.Zero;
 		private SizingSide.SizingSideType sizingSide = SizingSide.SizingSideType.E_NONE;
 
 		private Gdk.Color bgColor = Gdk.Color.Zero;
@@ -189,7 +152,8 @@ namespace Gui
 			this.evntboxTitleBar.MotionNotifyEvent += HandleMotionNotifyEventTitleBar;
 			this.evntboxTitleBar.ButtonPressEvent += HandleButtonPressEventTitleBar;
 			this.evntboxTitleBar.ButtonReleaseEvent += HandleButtonReleaseEventTitleBar;
-			
+
+			this.vboxWindow.BorderWidth = (uint) frameBorderWidth / 2;
 			//this.vboxClient.BorderWidth = (uint) frameBorderWidth;
 			this.hboxTitleBar.BorderWidth = (uint) frameBorderWidth;
 			this.labelCaption.Xpad = frameBorderWidth;
@@ -216,15 +180,15 @@ namespace Gui
 		{
 			bgColor = this.Style.Background(Gtk.StateType.Selected);
 			fgColor = this.Style.Foreground(Gtk.StateType.Selected);
-			bgColor = new Gdk.Color (0, 0, 0);
-			fgColor = new Gdk.Color (255, 255, 255);
+			Gdk.Color blackColor = new Gdk.Color (0, 0, 0);
+			//fgColor = new Gdk.Color (255, 255, 255);
 
-			this.evntboxTitleBar.ModifyBg(Gtk.StateType.Normal, bgColor);
+			this.evntboxTitleBar.ModifyBg(Gtk.StateType.Normal, blackColor);
 			this.labelCaption.ModifyFg(Gtk.StateType.Normal, fgColor);
 
-			this.btnMinimize.ModifyBg(Gtk.StateType.Normal, bgColor);
-			this.btnMaximize.ModifyBg(Gtk.StateType.Normal, bgColor);
-			this.btnClose.ModifyBg(Gtk.StateType.Normal, bgColor);
+			this.btnMinimize.ModifyBg(Gtk.StateType.Normal, blackColor);
+			this.btnMaximize.ModifyBg(Gtk.StateType.Normal, blackColor);
+			this.btnClose.ModifyBg(Gtk.StateType.Normal, blackColor);
 		}
 
 		protected override bool OnExposeEvent (Gdk.EventExpose evnt)
@@ -312,11 +276,12 @@ namespace Gui
 					isMoving = true;
 					lastMousePos.X = (int)args.Event.XRoot;
 					lastMousePos.Y = (int)args.Event.YRoot;
+					base.GdkWindow.GetPosition(out lastWindowPos.X, out lastWindowPos.Y);
 				}
 			}
 			
 			// maximize
-			if (args.Event.Type == Gdk.EventType.TwoButtonPress &&
+			if (base.Resizable && args.Event.Type == Gdk.EventType.TwoButtonPress &&
 				args.Event.Button == 1) {
 				if (base.GdkWindow.State == Gdk.WindowState.Maximized) {
 					base.GdkWindow.Unmaximize();
@@ -330,24 +295,24 @@ namespace Gui
 			}
 		}
 		
-		private void HandleMotionNotifyEventTitleBar (object o, Gtk.MotionNotifyEventArgs args)
+		private void HandleMotionNotifyEventTitleBar(object o, Gtk.MotionNotifyEventArgs args)
 		{
 			if (!isMoving)
 				return;
 			
 			Gdk.Point curMousePos = Gdk.Point.Zero;
-			curMousePos.X = (int) args.Event.XRoot;
-			curMousePos.Y = (int) args.Event.YRoot;
+			curMousePos.X = (int)args.Event.XRoot;
+			curMousePos.Y = (int)args.Event.YRoot;
 			
-			Gdk.Point windowPos = Gdk.Point.Zero;
-			GdkWindow.GetPosition (out windowPos.X, out windowPos.Y);
+			Gdk.Point curWindowPos = Gdk.Point.Zero;
+			base.GdkWindow.GetPosition(out curWindowPos.X, out curWindowPos.Y);
 			
-			windowPos.X += curMousePos.X - lastMousePos.X;
-			windowPos.Y += curMousePos.Y - lastMousePos.Y;
-			lastMousePos.X = curMousePos.X;
-			lastMousePos.Y = curMousePos.Y;
+			curWindowPos.X = lastWindowPos.X + curMousePos.X - lastMousePos.X;
+			curWindowPos.Y = lastWindowPos.Y + curMousePos.Y - lastMousePos.Y;
+			//lastMousePos.X = curMousePos.X;
+			//lastMousePos.Y = curMousePos.Y;
 			
-			base.GdkWindow.Move (windowPos.X, windowPos.Y);
+			base.GdkWindow.Move(curWindowPos.X, curWindowPos.Y);
 		}
 		#endregion TitleBarEvents
 

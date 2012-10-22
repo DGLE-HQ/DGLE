@@ -39,8 +39,9 @@ call :removeBinJunkCSharp "tools"
 
 call :removeSlnJunkCSharp ".\..\common\tools"
 
-call :removeProjJunkCSharp "tools\gui_widgets"
+call :removeProjJunkCSharp "tools\gui"
 call :removeProjJunkCSharp "tools\template"
+call :removeProjJunkCSharp "tools\font_tool"
 
 :: Functions will clear all temporary Visual Studio files for C++ project.
 
