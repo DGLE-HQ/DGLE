@@ -271,6 +271,16 @@ CCore::~CCore()
 {
 	if (!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_NO_LOG_FILE))
 	{
+		Console()->UnRegCom("core_allow_pause");
+		Console()->UnRegCom("core_fps_in_caption");
+		Console()->UnRegCom("core_profiler");
+		Console()->UnRegCom("core_allow_profilers");
+		Console()->UnRegCom("core_version");
+		Console()->UnRegCom("core_features");
+		Console()->UnRegCom("core_list_plugins");
+		Console()->UnRegCom("core_instidx");
+		Console()->UnRegCom("core_set_mode");
+
 		if (!_bDoExit)
 			_LogWrite("***Abnormal Engine Termination***");
 
@@ -477,8 +487,12 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		_bPause = false;	
 
-		_pMainWindow->SetCaption(_pcApplicationCaption);
-		
+		if (_iAllowPause)
+		{
+			_pMainWindow->SetCaption(_pcApplicationCaption);
+			if (_pSound != NULL) _pSound->MasterPause(false);
+		}
+
 		if (_bWasFScreen && !_bNeedApplyNewWnd)
 		{
 			_stWndToApply.bFullScreen = true;
@@ -496,8 +510,11 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 		_bPause = true;
 
 		if (_iAllowPause)
+		{
 			_pMainWindow->SetCaption((string(_pcApplicationCaption)+string(" [Paused]")).c_str());
-		
+			if (_pSound != NULL) _pSound->MasterPause(true);
+		}
+
 		if (_stWin.bFullScreen && !_bNeedApplyNewWnd)
 		{
 			_bWasFScreen = true;
@@ -598,112 +615,111 @@ void CCore::_MainLoop()
 
 	bool flag = false;
 
-	if (Console()->EnterCrSection())
-	{
-		uint cycles_cnt = (uint)(time_delta/_uiProcessInterval);
+	Console()->EnterThreadSafeSection();
+
+	uint cycles_cnt = (uint)(time_delta/_uiProcessInterval);
 		
-		if ((_eInitFlags & EIF_DISABLE_SMART_TIMING) && cycles_cnt > 1)
-			cycles_cnt = 1;
-		else
-			if (cycles_cnt > _sc_MaxProcessCycles)
-				cycles_cnt = _sc_MaxProcessCycles;
+	if ((_eInitFlags & EIF_DISABLE_SMART_TIMING) && cycles_cnt > 1)
+		cycles_cnt = 1;
+	else
+		if (cycles_cnt > _sc_MaxProcessCycles)
+			cycles_cnt = _sc_MaxProcessCycles;
 
-		_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiProcessInterval;
+	_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiProcessInterval;
 
-		if (cycles_cnt > 0)
-			_ui64UpdateDelay = GetPerfTimer();
+	if (cycles_cnt > 0)
+		_ui64UpdateDelay = GetPerfTimer();
 
-		for (uint i = 0; i < cycles_cnt; ++i)
+	for (uint i = 0; i < cycles_cnt; ++i)
+	{
+		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
 		{
-			if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
-			{
-				if (i == cycles_cnt - 1)
-					_pRender->pRender2D()->RefreshBatchData();
+			if (i == cycles_cnt - 1)
+				_pRender->pRender2D()->RefreshBatchData();
 				
-				_InvokeUserCallback(EPT_UPDATE);
+			_InvokeUserCallback(EPT_UPDATE);
 
-				_clDelUpdate.Invoke();
+			_clDelUpdate.Invoke();
 
-				++_uiUPSCount;
-			}
-
-			flag = true;
+			++_uiUPSCount;
 		}
 
-		if (flag)
-		{
-			_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
-			_ui64TimeOld = GetPerfTimer()/1000 - time_delta % _uiProcessInterval;
-		}
-
-		_pRender->BeginRender();
-
-		//	_pRender->pRender3D()->Prepare();
-
-		_ui64RenderDelay = GetPerfTimer();
-
-		CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
-
-		_InvokeUserCallback(EPT_RENDER);
-
-		_clDelRender.Invoke();
-
-		CastEvent(ET_AFTER_RENDER, (IBaseEvent*)&CBaseEvent(ET_AFTER_RENDER));
-
-		_ui64RenderDelay = GetPerfTimer() - _ui64RenderDelay;
-
-		//begin of profilers//
-
-		if (_iAllowDrawProfilers == 1)
-		{
-			_pRender->pRender2D()->BeginProfiler2D();
-
-			_bInDrawProfilers = true;
-
-			_uiProfilerCurTxtXOffset	= 0;
-			_uiProfilerCurTxtYOffset	= 0;
-			_uiProfilerCurTxtMaxLength	= 0;
-				
-			if (_iDrawProfiler > 0)
-			{
-				TColor4 col;
-
-				if (_uiLastFPS < 60)
-					col.b = col.g = 0.f;
-					
-				RenderProfilerTxt(("FPS:" + IntToStr(_uiLastFPS)).c_str(), col);
-
-				col = TColor4();
-
-				if (_uiLastUPS < 1000/_uiProcessInterval)
-					col.b = col.g = 0.f;
-					
-				RenderProfilerTxt(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
-
-				if (_iDrawProfiler > 1)
-				{
-					RenderProfilerTxt(("Render  delay:" + UInt64ToStr(_ui64RenderDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
-					RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64UpdateDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
-				}
-			}
-				
-			_pRender->pRender2D()->DrawProfiler();
-
-			CastEvent(ET_ON_PROFILER_DRAW, (IBaseEvent*)&CBaseEvent(ET_ON_PROFILER_DRAW));
-
-			_bInDrawProfilers = false;
-
-			_pRender->pRender2D()->EndProfiler2D();
-		}
-
-		//end of profilers//
-
-		_pRender->EndRender();
-
-		++_uiFPSCount;
-
-		Console()->LeaveCrSection();
+		flag = true;
 	}
+
+	if (flag)
+	{
+		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
+		_ui64TimeOld = GetPerfTimer()/1000 - time_delta % _uiProcessInterval;
+	}
+
+	_pRender->BeginRender();
+
+	//	_pRender->pRender3D()->Prepare();
+
+	_ui64RenderDelay = GetPerfTimer();
+
+	CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
+
+	_InvokeUserCallback(EPT_RENDER);
+
+	_clDelRender.Invoke();
+
+	CastEvent(ET_AFTER_RENDER, (IBaseEvent*)&CBaseEvent(ET_AFTER_RENDER));
+
+	_ui64RenderDelay = GetPerfTimer() - _ui64RenderDelay;
+
+	//begin of profilers//
+
+	if (_iAllowDrawProfilers == 1)
+	{
+		_pRender->pRender2D()->BeginProfiler2D();
+
+		_bInDrawProfilers = true;
+
+		_uiProfilerCurTxtXOffset	= 0;
+		_uiProfilerCurTxtYOffset	= 0;
+		_uiProfilerCurTxtMaxLength	= 0;
+				
+		if (_iDrawProfiler > 0)
+		{
+			TColor4 col;
+
+			if (_uiLastFPS < 60)
+				col.b = col.g = 0.f;
+					
+			RenderProfilerTxt(("FPS:" + IntToStr(_uiLastFPS)).c_str(), col);
+
+			col = TColor4();
+
+			if (_uiLastUPS < 1000/_uiProcessInterval)
+				col.b = col.g = 0.f;
+					
+			RenderProfilerTxt(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
+
+			if (_iDrawProfiler > 1)
+			{
+				RenderProfilerTxt(("Render  delay:" + UInt64ToStr(_ui64RenderDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
+				RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64UpdateDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
+			}
+		}
+				
+		_pRender->pRender2D()->DrawProfiler();
+
+		CastEvent(ET_ON_PROFILER_DRAW, (IBaseEvent*)&CBaseEvent(ET_ON_PROFILER_DRAW));
+
+		_bInDrawProfilers = false;
+
+		_pRender->pRender2D()->EndProfiler2D();
+	}
+
+	//end of profilers//
+
+	_pRender->EndRender();
+
+	++_uiFPSCount;
+
+	Console()->LeaveThreadSafeSection();
 
 	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiProcessInterval || _bPause))*10 +
 				 (int)(_bPause && _iAllowPause)*15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CiclesCount < 4)*5;
@@ -826,7 +842,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 	
 	if (!tmp.tLib)
 	{
-		LOG("Can't load plugin from library \""+clFileName+"\".", LT_ERROR);
+		LOG("Can't load plugin from library \"" + clFileName + "\".", LT_ERROR);
 		return false;
 	}
 
@@ -835,7 +851,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	if (!pInitPlugin)
 	{
-		LOG("Library \""+clFileName+"\" is not a valid DGLE plugin.", LT_ERROR);
+		LOG("Library \"" + clFileName + "\" is not a valid DGLE plugin.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
 		return false;
 	}
@@ -848,7 +864,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	if (info.btPluginSDKVersion != _DGLE_PLUGIN_SDK_VER_)
 	{
-		LOG("Plugin \""+clFileName+"\" SDK version differs from engine version.", LT_ERROR);
+		LOG("Plugin \"" + clFileName + "\" SDK version differs from engine version.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
 		return false;
 	}
@@ -857,8 +873,8 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	prPlugin = tmp.pPlugin;
 
-	LOG("Plugin \""+string(info.cName)+" " + string(info.cVersion) +"\" by \"" + string(info.cVendor) + "\" connected succesfully.",LT_INFO);
-	LOG("Plugin description: \""+string(info.cDiscription)+"\"",LT_INFO);
+	LOG("Plugin \"" + string(info.cName) + " " + string(info.cVersion) +"\" by \"" + string(info.cVendor) + "\" connected succesfully.", LT_INFO);
+	LOG("Plugin description: \"" + string(info.cDiscription) + "\"", LT_INFO);
 
 	return true;
 }
@@ -870,7 +886,7 @@ void CCore::_PrintPluginsInfo()
 	{
 		TPluginInfo info;
 		_clPlugins[i].pPlugin->GetPluginInfo(info);
-		tmp += "- " + string(info.cName)+" " + string(info.cVersion) +" by " + string(info.cVendor) + "\n";
+		tmp += "- " + string(info.cName) + " " + string(info.cVersion) + " by " + string(info.cVendor) + "\n";
 	}
 	tmp += "-----------------------------";
 	Console()->Write(tmp.c_str());
@@ -964,11 +980,11 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		Console()->RegComValue("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, (void*)this);
 		Console()->RegComValue("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additional draw performance graphs.", &_iDrawProfiler, 0, 2, NULL, (void*)this);
 		Console()->RegComValue("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, (void*)this);
-		Console()->RegComProc ("core_version", "Prints engine version.", &_s_ConPrintVersion, (void*)this);
-		Console()->RegComProc ("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, (void*)this);
-		Console()->RegComProc ("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, (void*)this);
-		Console()->RegComProc ("core_instidx", "Prints Instance Index of current engine unit.", &_s_InstIdx, (void*)this);
-		Console()->RegComProc ("core_set_mode", "Changes display mode.\nUsage: \"core_set_mode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\nExample:\"core_set_mode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
+		Console()->RegComProc("core_version", "Prints engine version.", &_s_ConPrintVersion, (void*)this);
+		Console()->RegComProc("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, (void*)this);
+		Console()->RegComProc("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, (void*)this);
+		Console()->RegComProc("core_instidx", "Prints Instance Index of current engine unit.", &_s_InstIdx, (void*)this);
+		Console()->RegComProc("core_set_mode", "Changes display mode.\nUsage: \"core_set_mode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\nExample:\"core_set_mode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
 
 		if (!_pMainWindow)
 		{
@@ -1054,7 +1070,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 							}
 							break;
 						case ESS_SOUND:
-							if (!_bBuiltInInput)
+							if (!_bBuiltInSound)
 							{
 								LOG("Only one Sound plugin could be connected at the same time.", LT_WARNING);
 								_UnloadPlugin(plugin);
@@ -1082,11 +1098,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		if (_bBuiltInRenderer)
 		{
 #ifndef NO_BUILTIN_RENDERER
-
 			LOG("Using builtin OpenGL Legacy renderer.", LT_INFO);
 			_pCoreRenderer = new CCoreRendererGL(InstIdx());
 #else
-			LOG("No Core Renderer plugin connected!", LT_FATAL);
+			LOG("No any Core Renderer plugin connected!", LT_FATAL);
 			return E_INVALIDARG;
 #endif
 		}
@@ -1129,21 +1144,27 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 
 		_pResMan = new CResourceManager(InstIdx());
 
-#ifndef NO_BUILTIN_SOUND
 		if (_bSndEnabled && _bBuiltInSound)
 		{
+#ifndef NO_BUILTIN_SOUND
 			LOG("Using builtin core audio based subsystem.", LT_INFO);
 			_pSound = new CSound(InstIdx());
-		}
+#else
+			LOG("No any Sound plugin connected!", LT_FATAL);
+			return E_INVALIDARG;
 #endif
+		}
 
-#ifndef NO_BUILTIN_INPUT
 		if (_bBuiltInInput)
 		{
+#ifndef NO_BUILTIN_INPUT
 			LOG("Using builtin messages based input subsystem.", LT_INFO);
 			_pInput = new CInput(InstIdx());
-		}
+#else
+			LOG("No any Input plugin connected!", LT_FATAL);
+			return E_INVALIDARG;
 #endif
+		}
 
 		_bInitedFlag = true;
 
@@ -1632,8 +1653,6 @@ DGLE_RESULT DGLE_API CCore::GetVersion(char* pcBuffer, uint uiBufferSize)
 
 DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem)
 {
-	prSubSystem = NULL;
-
 	switch(eSubSystem)
 	{
 		case ESS_CORE_RENDERER:
@@ -1654,14 +1673,20 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 
 		case ESS_INPUT:
 			if(_pInput == NULL)
+			{
+				prSubSystem = NULL;
 				return E_NOTIMPL;
+			}
 			else
 				prSubSystem = (IEngineSubSystem*)_pInput;
 			break;	
 
 		case ESS_SOUND:
 			if(_pSound == NULL)
+			{
+				prSubSystem = NULL;
 				return E_NOTIMPL;
+			}
 			else
 				prSubSystem = (IEngineSubSystem*)_pSound;
 			break;

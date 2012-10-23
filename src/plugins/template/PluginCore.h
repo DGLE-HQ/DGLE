@@ -29,11 +29,11 @@ private:
 	void _MsgProc(const TWinMessage &stMsg);
 	void _ProfilerDraw();
 
-	static void CALLBACK _s_EventHandler(void *pParametr, IBaseEvent *pEvent);
-	static void CALLBACK _s_Render(void *pParametr);
-	static void CALLBACK _s_Update(void *pParametr);
-	static void CALLBACK _s_Init(void *pParametr);
-	static void CALLBACK _s_Free(void *pParametr);
+	static void DGLE_API _s_EventHandler(void *pParametr, IBaseEvent *pEvent);
+	static void DGLE_API _s_Render(void *pParametr);
+	static void DGLE_API _s_Update(void *pParametr);
+	static void DGLE_API _s_Init(void *pParametr);
+	static void DGLE_API _s_Free(void *pParametr);
 
 public:
 

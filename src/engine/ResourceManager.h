@@ -42,7 +42,10 @@ struct TResource
 	TResource(const char *pFullName, IEngBaseObj *pObject):
 	pObj(pObject)
 	{
-		nameHash = GetCRC32((uint8*)pFullName, (uint32)strlen(pFullName)*sizeof(char));
+		if (strlen(pFullName) == 0)
+			nameHash = 0;
+		else
+			nameHash = GetCRC32((uint8*)pFullName, (uint32)strlen(pFullName)*sizeof(char));
 	}
 };
 
@@ -69,7 +72,6 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	CBObjDummy				*_pBObjDummy;
 	CBitmapFontDummy		*_pDefBmFntDummy;
 	CSSampleDummy			*_pDefSSmpDummy;
-	CMusicDummy				*_pDefMusicDummy;
 	
 	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngBaseObj *&prObj, uint uiLoadFlags);
 	inline uint _GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
@@ -86,8 +88,8 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 
 	bool _LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt);
 	
-	bool _LoadSoundWAV(IFile *pFile, ISoundSample *&rpSSample);
-	bool _LoadMusicMCI(IFile *pFile, IMusic *&prMusic);
+	bool _CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize);
+	bool _LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample);
 
 	bool _CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags);
 	bool _LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LOAD_FLAGS eLoadFlags);
@@ -99,7 +101,6 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	static bool DGLE_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
 	static bool DGLE_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
 	static bool DGLE_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool DGLE_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool DGLE_API _s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static void DGLE_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
@@ -115,7 +116,8 @@ public:
 	DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
 	DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse);
 	DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
-	
+	DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResourse);
+
 	DGLE_RESULT DGLE_API RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr);
 	DGLE_RESULT DGLE_API UnregisterFileFormat(const char* pcExtension);
 	DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);

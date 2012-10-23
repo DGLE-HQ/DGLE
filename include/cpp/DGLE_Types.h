@@ -25,28 +25,26 @@ This header is a part of DGLE SDK.
 
 #ifndef PLATFORM_WINDOWS
 
-#define RGB(r,g,b)	((unsigned long int)(((unsigned char)(r)|((unsigned short int)((unsigned char)(g))<<8))|(((unsigned long int)(unsigned char)(b))<<16)))
+//DGLE_RESULT//
 
- //DGLE_RESULT//
+/** Engine interface unique identifier. 
+	Every engine interface must have it's own GUID.
+*/
+struct GUID
+{
+	unsigned long int	Data1;
+	unsigned short int	Data2;
+	unsigned short int	Data3;
+	unsigned char		Data4[8];
+};
 
-	/** Engine interface unique identifier. 
-		Every engine interface must have it's own GUID.
-	*/
-	struct GUID
-	{
-		unsigned long int	Data1;
-		unsigned short int	Data2;
-		unsigned short int	Data3;
-		unsigned char		Data4[8];
-	};
-
-	/** Default return type for all DGLE methods. 
-		Every engine interface method returnes DGLE_RESULT as result.
-		DGLE_RESULT must be one of these types S_OK, S_FALSE, E_FAIL, E_INVALIDARG or E_ABORT.
-		\note Engine suppresses a lot of errors and keeps all things stable, so it is not necessary to check every methods result.
-		\see SUCCEEDED, FAILED, CHECK_RES, PARANOIC_CHECK_RES, S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT
-	*/
-	typedef long int DGLE_RESULT;
+/** Default return type for all DGLE methods. 
+	Every engine interface method returnes DGLE_RESULT as result.
+	DGLE_RESULT must be one of these types S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT or E_NOTIMPL.
+	\note Engine suppresses a lot of errors and keeps all things stable, so it is not necessary to check every methods result.
+	\see SUCCEEDED, FAILED, CHECK_RES, PARANOIC_CHECK_RES, S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT, E_NOTIMPL
+*/
+typedef long int DGLE_RESULT;
 
 //DGLE_RESULT return values//
 
@@ -262,6 +260,8 @@ namespace DGLE
 
 	};
 
+	#define RGBA(r, g, b, a) ((uint32)(((uint8)(r) | ((uint32)((uint8)(g)) << 8)) | (((uint32)(uint8)(b)) << 16) | (((uint32)(uint8)(a)) << 24)))
+
 	/** Describes color in engine. Color is four component based. Each component is float, value can vary from 0.0 to 1.0.*/
 	struct TColor4
 	{
@@ -278,22 +278,19 @@ namespace DGLE
 		typedef const float (&cref)[4];
 
 		inline TColor4():r(1.f), g(1.f), b(1.f), a(1.f){}
-		inline TColor4(uint color, uint8 alpha):
-			r(GetRValue(color)/255.f),
-			g(GetGValue(color)/255.f),
-			b(GetBValue(color)/255.f),
-			a((float)(alpha/255.f))
+
+		inline TColor4(uint32 ui32RGBA):
+			r((float)(ui32RGBA & 0xff) / 0xff),
+			g((float)((ui32RGBA >> 8) & 0xff) / 0xff),
+			b((float)((ui32RGBA >> 16) & 0xff) / 0xff),
+			a((float)((ui32RGBA >> 24) & 0xff) / 0xff)
 		{}
-		inline TColor4(uint uiRGBA):
-			r((float)((uiRGBA >> 24) & 0xff)/0xff),
-			g((float)((uiRGBA >> 16) & 0xff)/0xff),
-			b((float)((uiRGBA >> 8) & 0xff)/0xff),
-			a((float)(uiRGBA & 0xff)/0xff)
-		{}
+
 		inline TColor4(uint8 ubR, uint8 ubG, uint8 ubB, uint8 ubA)
 		{
 			SetColorB(ubR, ubG, ubB, ubA);
 		}
+		
 		inline TColor4(cref rgba)
 		{
 			memcpy(TColor4::rgba, rgba, sizeof rgba);
@@ -314,9 +311,14 @@ namespace DGLE
 			return RGB(255*r, 255*g, 255*b);
 		}
 
+		inline uint32 ColorRGBA()
+		{
+			return RGBA(255*r, 255*g, 255*b, 255*a);
+		}
+
 		inline operator uint32()
 		{
-			return RGB(255*r, 255*g, 255*b);
+			return RGBA(255*r, 255*g, 255*b, 255*a);
 		}
 
 		inline operator ref()
@@ -329,6 +331,8 @@ namespace DGLE
 			return rgba;
 		}
 	};
+
+	typedef TColor4 TColor;
 
 	/** Describes point coordinates in 2D space. */
 	struct TPoint2
@@ -858,28 +862,28 @@ namespace DGLE
 		{
 			TMatrix product;
 
-			product._2D[0][0] = this->_2D[0][0] * right._2D[0][0] + this->_2D[0][1] * right._2D[1][0] + this->_2D[0][2] * right._2D[2][0] + this->_2D[0][3] * right._2D[3][0];
-			product._2D[1][0] = this->_2D[1][0] * right._2D[0][0] + this->_2D[1][1] * right._2D[1][0] + this->_2D[1][2] * right._2D[2][0] + this->_2D[1][3] * right._2D[3][0];
-			product._2D[2][0] = this->_2D[2][0] * right._2D[0][0] + this->_2D[2][1] * right._2D[1][0] + this->_2D[2][2] * right._2D[2][0] + this->_2D[2][3] * right._2D[3][0];
-			product._2D[3][0] = this->_2D[3][0] * right._2D[0][0] + this->_2D[3][1] * right._2D[1][0] + this->_2D[3][2] * right._2D[2][0] + this->_2D[3][3] * right._2D[3][0];
-			product._2D[0][1] = this->_2D[0][0] * right._2D[0][1] + this->_2D[0][1] * right._2D[1][1] + this->_2D[0][2] * right._2D[2][1] + this->_2D[0][3] * right._2D[3][1];
-			product._2D[1][1] = this->_2D[1][0] * right._2D[0][1] + this->_2D[1][1] * right._2D[1][1] + this->_2D[1][2] * right._2D[2][1] + this->_2D[1][3] * right._2D[3][1];
-			product._2D[2][1] = this->_2D[2][0] * right._2D[0][1] + this->_2D[2][1] * right._2D[1][1] + this->_2D[2][2] * right._2D[2][1] + this->_2D[2][3] * right._2D[3][1];
-			product._2D[3][1] = this->_2D[3][0] * right._2D[0][1] + this->_2D[3][1] * right._2D[1][1] + this->_2D[3][2] * right._2D[2][1] + this->_2D[3][3] * right._2D[3][1];
-			product._2D[0][2] = this->_2D[0][0] * right._2D[0][2] + this->_2D[0][1] * right._2D[1][2] + this->_2D[0][2] * right._2D[2][2] + this->_2D[0][3] * right._2D[3][2];
-			product._2D[1][2] = this->_2D[1][0] * right._2D[0][2] + this->_2D[1][1] * right._2D[1][2] + this->_2D[1][2] * right._2D[2][2] + this->_2D[1][3] * right._2D[3][2];
-			product._2D[2][2] = this->_2D[2][0] * right._2D[0][2] + this->_2D[2][1] * right._2D[1][2] + this->_2D[2][2] * right._2D[2][2] + this->_2D[2][3] * right._2D[3][2];
-			product._2D[3][2] = this->_2D[3][0] * right._2D[0][2] + this->_2D[3][1] * right._2D[1][2] + this->_2D[3][2] * right._2D[2][2] + this->_2D[3][3] * right._2D[3][2];
-			product._2D[0][3] = this->_2D[0][0] * right._2D[0][3] + this->_2D[0][1] * right._2D[1][3] + this->_2D[0][2] * right._2D[2][3] + this->_2D[0][3] * right._2D[3][3];
-			product._2D[1][3] = this->_2D[1][0] * right._2D[0][3] + this->_2D[1][1] * right._2D[1][3] + this->_2D[1][2] * right._2D[2][3] + this->_2D[1][3] * right._2D[3][3];
-			product._2D[2][3] = this->_2D[2][0] * right._2D[0][3] + this->_2D[2][1] * right._2D[1][3] + this->_2D[2][2] * right._2D[2][3] + this->_2D[2][3] * right._2D[3][3];
-			product._2D[3][3] = this->_2D[3][0] * right._2D[0][3] + this->_2D[3][1] * right._2D[1][3] + this->_2D[3][2] * right._2D[2][3] + this->_2D[3][3] * right._2D[3][3];
+			product._2D[0][0] = _2D[0][0] * right._2D[0][0] + _2D[0][1] * right._2D[1][0] + _2D[0][2] * right._2D[2][0] + _2D[0][3] * right._2D[3][0];
+			product._2D[1][0] = _2D[1][0] * right._2D[0][0] + _2D[1][1] * right._2D[1][0] + _2D[1][2] * right._2D[2][0] + _2D[1][3] * right._2D[3][0];
+			product._2D[2][0] = _2D[2][0] * right._2D[0][0] + _2D[2][1] * right._2D[1][0] + _2D[2][2] * right._2D[2][0] + _2D[2][3] * right._2D[3][0];
+			product._2D[3][0] = _2D[3][0] * right._2D[0][0] + _2D[3][1] * right._2D[1][0] + _2D[3][2] * right._2D[2][0] + _2D[3][3] * right._2D[3][0];
+			product._2D[0][1] = _2D[0][0] * right._2D[0][1] + _2D[0][1] * right._2D[1][1] + _2D[0][2] * right._2D[2][1] + _2D[0][3] * right._2D[3][1];
+			product._2D[1][1] = _2D[1][0] * right._2D[0][1] + _2D[1][1] * right._2D[1][1] + _2D[1][2] * right._2D[2][1] + _2D[1][3] * right._2D[3][1];
+			product._2D[2][1] = _2D[2][0] * right._2D[0][1] + _2D[2][1] * right._2D[1][1] + _2D[2][2] * right._2D[2][1] + _2D[2][3] * right._2D[3][1];
+			product._2D[3][1] = _2D[3][0] * right._2D[0][1] + _2D[3][1] * right._2D[1][1] + _2D[3][2] * right._2D[2][1] + _2D[3][3] * right._2D[3][1];
+			product._2D[0][2] = _2D[0][0] * right._2D[0][2] + _2D[0][1] * right._2D[1][2] + _2D[0][2] * right._2D[2][2] + _2D[0][3] * right._2D[3][2];
+			product._2D[1][2] = _2D[1][0] * right._2D[0][2] + _2D[1][1] * right._2D[1][2] + _2D[1][2] * right._2D[2][2] + _2D[1][3] * right._2D[3][2];
+			product._2D[2][2] = _2D[2][0] * right._2D[0][2] + _2D[2][1] * right._2D[1][2] + _2D[2][2] * right._2D[2][2] + _2D[2][3] * right._2D[3][2];
+			product._2D[3][2] = _2D[3][0] * right._2D[0][2] + _2D[3][1] * right._2D[1][2] + _2D[3][2] * right._2D[2][2] + _2D[3][3] * right._2D[3][2];
+			product._2D[0][3] = _2D[0][0] * right._2D[0][3] + _2D[0][1] * right._2D[1][3] + _2D[0][2] * right._2D[2][3] + _2D[0][3] * right._2D[3][3];
+			product._2D[1][3] = _2D[1][0] * right._2D[0][3] + _2D[1][1] * right._2D[1][3] + _2D[1][2] * right._2D[2][3] + _2D[1][3] * right._2D[3][3];
+			product._2D[2][3] = _2D[2][0] * right._2D[0][3] + _2D[2][1] * right._2D[1][3] + _2D[2][2] * right._2D[2][3] + _2D[2][3] * right._2D[3][3];
+			product._2D[3][3] = _2D[3][0] * right._2D[0][3] + _2D[3][1] * right._2D[1][3] + _2D[3][2] * right._2D[2][3] + _2D[3][3] * right._2D[3][3];
 
 			return product;
 		}
 	};
 	
-	typedef TMatrix TMatrix4, TMatrix4x4, TMat4;
+	typedef TMatrix TMat4, TMatrix4, TMatrix4x4;
 
 	// Matrix helper functions //
 
@@ -904,12 +908,14 @@ namespace DGLE
 			stMatrix._2D[3][0], stMatrix._2D[3][1], stMatrix._2D[3][2], stMatrix._2D[3][3], 0, 0, 0, 1
 		};
 		float *rows[4] = { mat[0], mat[1], mat[2], mat[3] };
-		uint8 i, r;
-		for (i = 0; i < 4; i++)
+		int i, r;
+		
+		for (i = 0; i < 4; ++i)
 		{
 			uint8 row_num = i;
 			float major = fabs(rows[i][i]);
-			for (r = i+1; r < 4; r++)
+			
+			for (r = i + 1; r < 4; ++r)
 			{
 				float cur_ABS = fabs(rows[r][i]);
 				if (cur_ABS > major)
@@ -918,25 +924,29 @@ namespace DGLE
 					row_num=r;
 				}
 			}
+
 			if (row_num != i)
 			{
 				(int &)rows[i]			^= (int)rows[row_num];
 				(int &)rows[row_num]	^= (int)rows[i];
 				(int &)rows[i]			^= (int)rows[row_num];
 			}
-			for (r = i+1; r < 4; r++)
+			
+			for (r = i + 1; r < 4; ++r)
 			{
 				float factor=rows[r][i] / rows[i][i];
-				for(uint8 c = i; c < 8; c++)
+				for (int c = i; c < 8; ++c)
 					rows[r][c] -= factor * rows[i][c];
 			}
 		}
-		for (i = 3; i > 0; i--)
-			for (r = 0; r < i; r++) {
+		for (i = 3; i > 0; --i)
+			for (r = 0; r < i; ++r) 
+			{
 				float factor=rows[r][i] / rows[i][i];
-				for (int c = 4; c < 8; c++)
+				for (int c = 4; c < 8; ++c)
 					rows[r][c] -= factor * rows[i][c];
 			}
+
 		return TMatrix(
 			rows[0][4] / rows[0][0], rows[0][5] / rows[0][0], rows[0][6] / rows[0][0], rows[0][7] / rows[0][0],
 			rows[1][4] / rows[1][1], rows[1][5] / rows[1][1], rows[1][6] / rows[1][1], rows[1][7] / rows[1][1],

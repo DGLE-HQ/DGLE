@@ -27,6 +27,10 @@ _pBuffersData(NULL), _pStreamToDeviceCallback(NULL)
 
 CBaseSound::~CBaseSound()
 {
+	Console()->UnRegCom("snd_list_devices");
+	Console()->UnRegCom("snd_device_id");
+	Console()->UnRegCom("snd_force_device");
+
 	if (_hWaveOut)
 			LOG("Audio device hasn't been closed before quit.", LT_ERROR);
 }
@@ -93,21 +97,21 @@ bool CBaseSound::_InitDevice(uint id)
 	
 	_bDeviceClosingFlag = false;
 
-	_ui32BufferSize = (_sc_ui8Latency * _stWaveFormat.nSamplesPerSec * (_stWaveFormat.wBitsPerSample / 8) / 1000) * _stWaveFormat.nChannels;
-	
+	_uiBufferSize = _sc_ui8Latency * (_stWaveFormat.nSamplesPerSec / 1000) * (_stWaveFormat.wBitsPerSample / 8) * _stWaveFormat.nChannels;
+
 	memset(_stWaveBuffers, 0, sizeof(WAVEHDR) * 2);
 	
-	_pBuffersData = new uint8[_ui32BufferSize * 2];
-	memset(_pBuffersData, 0, _ui32BufferSize * 2);
+	_pBuffersData = new uint8[_uiBufferSize * 2];
+	memset(_pBuffersData, 0, _uiBufferSize * 2);
 
 
-	_stWaveBuffers[0].dwBufferLength = _ui32BufferSize;
+	_stWaveBuffers[0].dwBufferLength = _uiBufferSize;
 	_stWaveBuffers[0].lpData = (LPSTR)_pBuffersData;
 	
 	_s_WaveCallback(_hWaveOut, WOM_DONE, (DWORD)this, &_stWaveBuffers[0], 0);
 	
-	_stWaveBuffers[1].dwBufferLength = _ui32BufferSize;
-	_stWaveBuffers[1].lpData = (LPSTR)&_pBuffersData[_ui32BufferSize];
+	_stWaveBuffers[1].dwBufferLength = _uiBufferSize;
+	_stWaveBuffers[1].lpData = (LPSTR)&_pBuffersData[_uiBufferSize];
 
 	_s_WaveCallback(_hWaveOut, WOM_DONE, (DWORD)this, &_stWaveBuffers[1], 0);
 
@@ -116,13 +120,13 @@ bool CBaseSound::_InitDevice(uint id)
 	return true;
 }
 
-bool CBaseSound::OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint32 &ui32BufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr)
+bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr)
 {
 	if (_hWaveOut || !pStreamToDeviceCallback)
 		return false;
 
 	_stWaveFormat.nChannels = bStereo ? 2 : 1;
-	_stWaveFormat.nSamplesPerSec = uiFrequency;
+	_stWaveFormat.nSamplesPerSec = uiSamplesPerSec;
 	_stWaveFormat.wBitsPerSample = uiBitsPerSample;
 	_stWaveFormat.nBlockAlign = _stWaveFormat.wBitsPerSample / 8 * _stWaveFormat.nChannels;
 	_stWaveFormat.nAvgBytesPerSec = _stWaveFormat.nSamplesPerSec * _stWaveFormat.nBlockAlign;
@@ -154,7 +158,7 @@ bool CBaseSound::OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo
 
 	_pStreamToDeviceCallback = pStreamToDeviceCallback;
 	_pParametr = pParametr;
-	ui32BufferSize = _ui32BufferSize;
+	uiBufferSize = _uiBufferSize;
 
 	return true;
 }
@@ -192,6 +196,16 @@ void CBaseSound::CloseDevice()
 	}
 
 	DeleteCriticalSection(&_cs);
+}
+
+void CBaseSound::EnterThreadSafeSection()
+{
+	EnterCriticalSection(&_cs);
+}
+
+void CBaseSound::LeaveThreadSafeSection()
+{
+	LeaveCriticalSection(&_cs);
 }
 
 void CBaseSound::_PrintDevList()

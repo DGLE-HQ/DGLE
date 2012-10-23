@@ -21,7 +21,7 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 	HWAVEOUT _hWaveOut;
 	WAVEFORMATEX _stWaveFormat;
 	WAVEHDR _stWaveBuffers[2];
-	uint32 _ui32BufferSize;
+	uint _uiBufferSize;
 	uint8 *_pBuffersData;
 	void (DGLE_API *_pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData);
 	void *_pParametr;
@@ -41,8 +41,10 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 
 public:
 
-	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint32 &ui32BufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
+	bool OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
 	void CloseDevice();
+	void EnterThreadSafeSection();
+	void LeaveThreadSafeSection();
 
 	CBaseSound(uint uiInstIdx);
 	~CBaseSound();

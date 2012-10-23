@@ -16,7 +16,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 {
 	_pCoreRenderer = Core()->pCoreRenderer();
 
-	Console()->RegComProc("rndr_list_features", "Prints list of features supported by this Core Renderer implementation.", &_s_ConListFeatures, (void*)this);
+	Console()->RegComProc("rnd_list_features", "Prints list of features supported by current Core Renderer implementation.", &_s_ConListFeatures, (void*)this);
 
 	bool b_supported;
 
@@ -97,7 +97,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 		if (_strMetricsList[i] == '\t')
 			_strMetricsList[i] = ' ';
 
-	SetClearColor(TColor4(0x64646400));
+	SetClearColor(TColor4(0x00646464));
 
 	_pRender2D = new CRender2D(InstIdx());
 
@@ -107,6 +107,8 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 CRender::~CRender()
 {
 	delete _pRender2D;
+
+	Console()->UnRegCom("rnd_list_features");
 
 	LOG("Render subsystem finalized.", LT_INFO);
 }

@@ -68,16 +68,16 @@ public:
 CConsole::CConsole(uint uiInsIdx, bool bInSeparateThread):
 _uiInsIdx(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 {
-	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, (void*)this, false);
-	RegComProc("help", "Don't be stupid! :)", &_s_Help, this, false);
-	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, (void*)this, false);
-	RegComProc("clear", "Clears all text in console.", &_s_Clear, (void*)this, false);
-	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, (void*)this, false);
-	RegComProc("con_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, (void*)this, false);
-	RegComProc("con_show", "Shows console window, if is hidden.", &_s_Show, (void*)this, false);
-	RegComProc("con_hide", "Hides console window.", &_s_Hide, (void*)this, false);
-	RegComProc("con_pos", "Changes console window position.\nUsage: \"con_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this, false);
-	RegComProc("con_size", "Changes console window size.\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, (void*)this, false);
+	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, (void*)this);
+	RegComProc("help", "Don't be stupid! :)", &_s_Help, this);
+	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, (void*)this);
+	RegComProc("clear", "Clears all text in console.", &_s_Clear, (void*)this);
+	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, (void*)this);
+	RegComProc("con_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, (void*)this);
+	RegComProc("con_show", "Shows console window, if is hidden.", &_s_Show, (void*)this);
+	RegComProc("con_hide", "Hides console window.", &_s_Hide, (void*)this);
+	RegComProc("con_pos", "Changes console window position.\nUsage: \"con_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this);
+	RegComProc("con_size", "Changes console window size.\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, (void*)this);
 
 	_pConsoleWindow = new CConsoleWindow();
 	_pConsoleWindow->InitWindow(bInSeparateThread, &_s_OnConWindowEvent, this);
@@ -182,14 +182,14 @@ void CConsole::_Save(const string &strFileName)
 	file.close();
 }
 
-bool CConsole::EnterCrSection()
+void CConsole::EnterThreadSafeSection()
 {
-	return _pConsoleWindow->EnterThreadSafeSec() == S_OK ? true : false;
+	_pConsoleWindow->EnterThreadSafeSection();
 }
 
-void CConsole::LeaveCrSection()
+void CConsole::LeaveThreadSafeSection()
 {
-	_pConsoleWindow->LeaveThreadSafeSec();
+	_pConsoleWindow->LeaveThreadSafeSection();
 }
 
 void CConsole::_OnCmdPrev()
@@ -208,9 +208,11 @@ void CConsole::_OnCmdNext()
 	_iPrevMarker++;
 
 	if ((uint)_iPrevMarker >= _prevCommands.size())
+	{
 		_iPrevMarker = _prevCommands.size() - 1;
-
-	if ((uint)_iPrevMarker < _prevCommands.size())
+		_pConsoleWindow->SetEditTxt("");
+	}
+	else
 		_pConsoleWindow->SetEditTxt(_prevCommands[_iPrevMarker].c_str());
 }
 
@@ -237,13 +239,11 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 		{
 			if (_commands[i].piValue == NULL)
 			{
-				if (_commands[i].bNeedCritical) 
-					_pConsoleWindow->EnterThreadSafeSec();
+				_pConsoleWindow->EnterThreadSafeSection();
 
 				(*_commands[i].pProc)(_commands[i].pParametr, par.c_str());
 				
-				if (_commands[i].bNeedCritical) 
-					_pConsoleWindow->LeaveThreadSafeSec();
+				_pConsoleWindow->LeaveThreadSafeSection();
 			}
 			else
 			{
@@ -263,16 +263,14 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 							Write(string("Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
 						else
 						{
-							if (_commands[i].bNeedCritical) 
-								_pConsoleWindow->EnterThreadSafeSec();
+							_pConsoleWindow->EnterThreadSafeSection();
 						
 							*_commands[i].piValue = t;
 						
 							if (_commands[i].pProc != NULL)
 								(*_commands[i].pProc)(_commands[i].pParametr, par.c_str());
 
-							if (_commands[i].bNeedCritical) 
-								_pConsoleWindow->LeaveThreadSafeSec();
+							_pConsoleWindow->LeaveThreadSafeSection();
 
 							Write(string(ToUpperCase(com) + " is set to " + IntToStr(t) + ".").c_str());
 						}
@@ -324,51 +322,59 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 
 bool CConsole::UnRegCom(const char *pcName)
 {
-	if (_commands.size() > 0)
-		for (size_t i = 0; i < _commands.size(); ++i)
-			if (string(_commands[i].pcName) == string(pcName))
-			{
-				delete[] _commands[i].pcName;
-				delete[] _commands[i].pcHelp;
-				_commands.erase(_commands.begin()+i);
-				sort(_commands.begin(), _commands.end());
-				return true;
-			}
+	for (size_t i = 0; i < _commands.size(); ++i)
+		if (strcmp(_commands[i].pcName, pcName) == 0)
+		{
+			delete[] _commands[i].pcName;
+			delete[] _commands[i].pcHelp;
+			
+			_commands.erase(_commands.begin() + i);
+			
+			return true;
+		}
 
 	return false;
 }
 
-void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare)
+void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
 {
 	TConEntry t;
+	
 	t.pcName = new char[strlen(pcName) + 1];
 	strcpy(t.pcName, pcName);
+	
 	t.pcHelp = new char[strlen(pcHelp) + 1];
 	strcpy(t.pcHelp, pcHelp);
-	t.pProc			= pProc;
-	t.piValue		= NULL;
-	t.iMaxValue		= 0;
-	t.iMinValue		= 0;
-	t.pParametr		= pParametr;
-	t.bNeedCritical	= bShare;
+	
+	t.pProc	= pProc;
+	t.piValue = NULL;
+	t.iMaxValue	= 0;
+	t.iMinValue	= 0;
+	t.pParametr	= pParametr;
+	
 	_commands.push_back(t);
+	
 	sort(_commands.begin(), _commands.end());
 }
 
-void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare) 
+void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr) 
 {
 	TConEntry t;
+	
 	t.pcName = new char[strlen(pcName) + 1];
 	strcpy(t.pcName, pcName);
+	
 	t.pcHelp = new char[strlen(pcHelp) + 1];
 	strcpy(t.pcHelp, pcHelp);
-	t.pProc			= pProc;
-	t.piValue		= piValue;
-	t.iMaxValue		= iMax;
-	t.iMinValue		= iMin;
-	t.pParametr		= pParametr;
-	t.bNeedCritical	= bShare;
+	
+	t.pProc	= pProc;
+	t.piValue = piValue;
+	t.iMaxValue	= iMax;
+	t.iMinValue	= iMin;
+	t.pParametr	= pParametr;
+	
 	_commands.push_back(t);	
+	
 	sort(_commands.begin(), _commands.end());
 }
 

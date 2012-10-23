@@ -156,19 +156,22 @@ public:
 	CCore(uint uiInstIdx, bool bForceSingleThreaded);
 	~CCore();
 
-	inline  ICoreRenderer* pCoreRenderer() const {return _pCoreRenderer;}
 	inline	CRender* pRender() const {return _pRender;}
 	inline	CMainFS* pMainFS() const {return _pMainFS;}
 	inline	CResourceManager* pResMan() const {return _pResMan;}
+
+	inline  ICoreRenderer* pCoreRenderer() const {return _pCoreRenderer;}
 	inline  IMainWindow* pMainWindow() const {return _pMainWindow;}
-	
+	inline	ISound* pSound() const {return _pSound;}
+	inline	IInput* pInput() const {return _pInput;}
+
 	inline	E_ENGINE_INIT_FLAGS InitFlags() const {return _eInitFlags;}
 	inline	TMsgProcDelegate* pDMessageProc() {return &_clDelMProc;}
 	inline	TProcDelegate* pDMLoopProc() {return &_clDelMLoop;}
 	inline	TProcDelegate* pDFPSTimerProc() {return &_clDelOnFPSTimer;}
 	inline	TEngWindow* EngWindow() {return &_stWin;}
+	
 	inline	bool SoundEnabled() const {return _bSndEnabled;}
-
 	void	ToogleSuspendEngine(bool bSuspend);
 
 	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName);
@@ -252,7 +255,7 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
+	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
 	{
 		*ppvObject = NULL;
 		
@@ -273,8 +276,8 @@ public:
 		return S_OK;
 	}
 	
-	ULONG DGLE_API AddRef(){return 1;}
-	ULONG DGLE_API Release(){return 1;}
+	ULONG CALLBACK AddRef(){return 1;}
+	ULONG CALLBACK Release(){return 1;}
 
 #endif//DGLE_USE_COM
 

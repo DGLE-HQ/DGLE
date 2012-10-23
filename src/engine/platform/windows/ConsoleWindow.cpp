@@ -200,7 +200,7 @@ DGLE_RESULT CConsoleWindow::ResetSizeAndPos()
 	return S_OK;
 }
 
-DGLE_RESULT CConsoleWindow::EnterThreadSafeSec()
+DGLE_RESULT CConsoleWindow::EnterThreadSafeSection()
 {
 	if (_hThreadHandle)
 		EnterCriticalSection(&_cs);
@@ -208,7 +208,7 @@ DGLE_RESULT CConsoleWindow::EnterThreadSafeSec()
 	return S_OK;
 }
 
-DGLE_RESULT CConsoleWindow::LeaveThreadSafeSec()
+DGLE_RESULT CConsoleWindow::LeaveThreadSafeSection()
 {
 	if (_hThreadHandle)
 		LeaveCriticalSection(&_cs);

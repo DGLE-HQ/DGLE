@@ -33,7 +33,11 @@ typedef HMODULE TDynLibHandle;
 //#	pragma warning(disable : 4996) //deprication of unsecure strcpy and other such functions.
 #endif
 
-#endif //PLATFORM_WINDOWS
+#else //PLATFORM_WINDOWS
+
+#define MAKEFOURCC(ch0, ch1, ch2, ch3) ((uint32)(uchar)(ch0) | ((uint32)(uchar)(ch1) << 8) | ((uint32)(uchar)(ch2) << 16) | ((uint32)(uchar)(ch3) << 24))
+
+#endif
 
 // Standart includes //
 

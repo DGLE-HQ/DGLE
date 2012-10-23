@@ -477,15 +477,13 @@ public:
 //CCoreRendererGL
 
 CCoreRendererGL::CCoreRendererGL(uint uiInstIdx):
+_stInitResults(false),
 CBaseRendererGL(uiInstIdx), _clPassThroughStateMan(uiInstIdx), _pCachedStateMan(NULL), _iProfilerState(0),
 _bStateFilterEnabled(true), _uiUnfilteredDrawSetups(0), _uiOverallDrawSetups(0), _uiOverallDrawCalls(0),
 _uiOverallTrianglesCount(0), _pCurBindedBuffer(NULL), _pLastDrawnBuffer(NULL),
 _bVerticesBufferBindedFlag(false), _bIndexesBufferBindedFlag(false),
 _uiDrawCount(-1)
-{
-	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
-	Console()->RegComValue("crgl_profiler", "Displays CoreRendererGL subsystems profiler.", &_iProfilerState, 0, 2);
-}
+{}
 
 DGLE_RESULT DGLE_API CCoreRendererGL::Prepare(TCRendererInitResult &stResults)
 {
@@ -494,6 +492,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Prepare(TCRendererInitResult &stResults)
 
 DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
 {
+	if (_stInitResults)
+		return E_ABORT;
+
 	LOG("Initializing Core Renderer...", LT_INFO);
 
 	stResults = CBaseRendererGL::Initialize();
@@ -591,6 +592,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults
 
 	Core()->AddEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
+	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
+	Console()->RegComValue("crgl_profiler", "Displays Core Renderer OpenGL subsystems profiler.", &_iProfilerState, 0, 2);
+
+	_stInitResults = stResults;
+
 	LOG("Core Renderer initialized.", LT_INFO);
 
 	return S_OK;
@@ -598,6 +604,12 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults
 
 DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 {
+	if (!_stInitResults)
+		return E_ABORT;
+
+	Console()->UnRegCom("crgl_print_exts_list");
+	Console()->UnRegCom("crgl_profiler");
+
 	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	delete _pCachedStateMan;

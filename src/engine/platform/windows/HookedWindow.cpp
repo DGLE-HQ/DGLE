@@ -268,6 +268,8 @@ void CHookedWindow::_KillWindow()
 
 	LogWrite(InstIdx(), "**Exiting main loop**", LT_INFO, __FILE__, __LINE__);
 
+	Console()->UnRegCom("quit");
+
 	_pDelMessageProc->Invoke(TWinMessage(WMT_CLOSE));
 	_pDelMessageProc->Invoke(TWinMessage(WMT_DESTROY));
 

@@ -59,8 +59,8 @@ public:
 	DGLE_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize);
 	DGLE_RESULT Clear();
 	DGLE_RESULT ResetSizeAndPos();
-	DGLE_RESULT EnterThreadSafeSec();
-	DGLE_RESULT LeaveThreadSafeSec();
+	DGLE_RESULT EnterThreadSafeSection();
+	DGLE_RESULT LeaveThreadSafeSection();
 	DGLE_RESULT Free();
 
 };

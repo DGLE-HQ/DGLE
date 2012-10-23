@@ -14,19 +14,20 @@ using namespace std;
 CMainFS::CMainFS(uint uiInstIdx):
 CInstancedObj(uiInstIdx)
 {
-	Console()->RegComProc("mnfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
+	Console()->RegComProc("mfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
 
 	_pHddFS = new CHDFileSystem(InstIdx());
 	_pDCPFS = new CDCPFileSystem(InstIdx(), this);
 
 	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem*)_pHddFS, &_s_FSDeleteDGLE_API, this);
-	RegisterVirtualFileSystem("dcp","Dgle Compiled Package(DCP) file archives.",(IFileSystem*)_pDCPFS, &_s_FSDeleteDGLE_API, this);
+	RegisterVirtualFileSystem("dcp", "Dgle Compiled Package(DCP) file archives.", (IFileSystem*)_pDCPFS, &_s_FSDeleteDGLE_API, this);
 	
 	LOG("Filesystem Subsystem initialized.", LT_INFO);
 }
 
 CMainFS::~CMainFS()
 {
+	Console()->UnRegCom("mfs_list_virtual_fs");
 	LOG("Filesystem Subsystem finalized.", LT_INFO);
 }
 

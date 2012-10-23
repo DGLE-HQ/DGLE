@@ -20,7 +20,7 @@ _bIsLooping(false)
 
 CMainWindow::~CMainWindow()
 {
-	if (_hInst && ((InstIdx()==0 || EngineInstance(0)->pclCore == NULL) &&
+	if (_hInst && ((InstIdx() == 0 || EngineInstance(0)->pclCore == NULL) &&
 		UnregisterClass("DGLEWindowClass", _hInst)==FALSE))
 	{
 		_hInst = NULL;
@@ -56,6 +56,8 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 			_pDelMainLoop->Invoke();
 
 	LOG("**Exiting main loop**", LT_INFO);
+
+	Console()->UnRegCom("quit");
 
 	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
 
@@ -165,7 +167,7 @@ DGLE_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResu
 		return E_FAIL;
 	}
 
-	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this, false);
+	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this);
 
 	LOG("Window created successfully.",LT_INFO);
 

@@ -19,7 +19,6 @@ struct TConEntry
 	int		*piValue;
 	int		 iMinValue,
 			 iMaxValue;
-	bool	 bNeedCritical;
 
 	void(DGLE_API *pProc)(void *pParametr, const char *pcParam);
 
@@ -73,10 +72,10 @@ public:
 	uint32 GetThreadId();
 	void  Write(const std::string &strTxt, bool bToPrevLine = false);
 	void  Exec(const char *pcCommand);
-	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr, bool bShare = true); 
-	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL, bool bShare = true);
+	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
+	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL);
 	bool  UnRegCom(const char *pcName);
-	bool  EnterCrSection();
-	void  LeaveCrSection();
+	void  EnterThreadSafeSection();
+	void  LeaveThreadSafeSection();
 	void  ResetWinPos();
 };

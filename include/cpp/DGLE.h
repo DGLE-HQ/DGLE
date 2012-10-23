@@ -242,7 +242,6 @@ namespace DGLE
 		EOT_BITMAP_FONT,		/**< Bitmap font. \see IBitmapFont */ 
 		EOT_PARTICLE_EFFECT,	/**< Particle effect. \see IParticleEffect*/ 
 		EOT_SOUND_SAMPLE,		/**< Sound sample \see ISoundSample */ 
-		EOT_MUSIC,				/**< Music. \see IMusic*/ 
 		EOT_SPRITE,				/**< Sprite. \see ISprite */ 
 		EOT_GUI_FORMS			/**< Collection of user interface forms. \see IGUIForms */ 
 	};
@@ -572,6 +571,7 @@ namespace DGLE
 	class ITexture;
 	class IMaterial;
 	class IMesh;
+	class ISoundSample;
 
 	enum E_TEXTURE_DATA_FORMAT
 	{
@@ -648,6 +648,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResourse = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResourse = false) = 0;
 	
 		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterFileFormat(const char *pcExtension) = 0;
@@ -1098,6 +1099,8 @@ namespace DGLE
 
 //Sound SubSystem interfaces//
 
+	class ISoundChannel;
+
 	// {054C07EE-2724-42f2-AC2B-E81FCF5B4ADA}
 	static const GUID IID_ISound = 
 	{ 0x54c07ee, 0x2724, 0x42f2, { 0xac, 0x2b, 0xe8, 0x1f, 0xcf, 0x5b, 0x4a, 0xda } };
@@ -1106,28 +1109,16 @@ namespace DGLE
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API SetMasterVolume(uint uiVolume) = 0;
-		virtual DGLE_RESULT DGLE_API PauseAllChannels(bool bPaused) = 0;
+		virtual DGLE_RESULT DGLE_API MasterPause(bool bPaused) = 0;
 		virtual DGLE_RESULT DGLE_API StopAllChannels() = 0;
-		virtual DGLE_RESULT DGLE_API SetMaxChannelsCount(uint uiCount) = 0;
-		virtual DGLE_RESULT DGLE_API SetListnerPosition(const TPoint3 &stCoords) = 0;
-		virtual DGLE_RESULT DGLE_API GetListnerPosition(TPoint3 &stCoords) = 0;
-		virtual DGLE_RESULT DGLE_API SetListnerOrientation(const TVector3 &stDir, const TVector3 &stUp) = 0;
-		virtual DGLE_RESULT DGLE_API GetListnerOrientation(TVector3 &stDir, TVector3 &stUp) = 0;
+		virtual DGLE_RESULT DGLE_API GetMaxChannelsCount(uint &uiCount) = 0;
+		virtual DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount) = 0;
+		virtual DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData) = 0;	
+		virtual DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize) = 0; //Data not copied!
+		virtual DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr) = 0;
 	};
 
 	//SoundSample interface//
-
-	enum E_SOUND_CHANNEL_EFFECTS
-	{
-		SCE_NONE		= 0x00000000,
-		SCE_CHORUS 		= 0x00000001,
-		SCE_COMPRESSOR 	= 0x00000002,
-		SCE_DISTORTION 	= 0x00000004,
-		SCE_ECHO 		= 0x00000008,
-		SCE_FLANGER 	= 0x00000010,
-		SCE_GARGLE 		= 0x00000020,
-		SCE_REVERB 		= 0x00000040
-	};
 
 	// {DE6F7CDD-8262-445c-8D20-68E3324D99A6}
 	static const GUID IID_ISoundChannel = 
@@ -1136,28 +1127,27 @@ namespace DGLE
 	class ISoundChannel : public IDGLE_Base
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API PlayOrPause() = 0;
+		virtual DGLE_RESULT DGLE_API Play(bool bLooped) = 0;
+		virtual DGLE_RESULT DGLE_API Pause() = 0;
 		virtual DGLE_RESULT DGLE_API Stop() = 0;
 		virtual DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying) = 0;
 		virtual DGLE_RESULT DGLE_API SetVolume(uint uiVolume) = 0; //from 0 to 100
 		virtual DGLE_RESULT DGLE_API GetVolume(uint &uiVolume) = 0;
 		virtual DGLE_RESULT DGLE_API SetPan(int iPan) = 0; //from -100 to 100
 		virtual DGLE_RESULT DGLE_API GetPan(int &iPan) = 0;
-		virtual DGLE_RESULT DGLE_API SetFrequency(uint32 uiFreq) = 0;//from 10 to 10000
-		virtual DGLE_RESULT DGLE_API GetFrequency(uint32 &uiFreq) = 0;
-		virtual DGLE_RESULT DGLE_API SetPosition(const TPoint3 &stCoords) = 0;
-		virtual DGLE_RESULT DGLE_API GetPosition(TPoint3 &stCoords) = 0;
-		virtual DGLE_RESULT DGLE_API SetEffects(E_SOUND_CHANNEL_EFFECTS eFlags) = 0;
+		virtual DGLE_RESULT DGLE_API SetSpeed(int iSpeed) = 0;//in percents
+		virtual DGLE_RESULT DGLE_API GetSpeed(int &iSpeed) = 0;
+		virtual DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos) = 0;
+		virtual DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos) = 0;
+		virtual DGLE_RESULT DGLE_API GetLength(uint &uiLength) = 0;
+		virtual DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable) = 0;
 		virtual DGLE_RESULT DGLE_API Unaquire() = 0;
 	};
 	
 	enum E_SOUND_SAMPLE_PARAMS
 	{
-		SSP_NONE			= 0x00000000,
-		SSP_LOOP			= 0x00000001,
-		SSP_CONTROL_3D		= 0x00000002,
-		SSP_ALLOW_EFFECTS	= 0x00000004
-
+		SSP_NONE	= 0x00000000,
+		SSP_LOOPED	= 0x00000001
 	};
 
 	// {30DD8C94-D3FA-40cf-9C49-649211424919}
@@ -1169,26 +1159,6 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API Play() = 0;
 		virtual DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on nul
-	};
-
-	//Music interface//
-
-	// {81F1E67B-3FEB-4ab1-9AD2-D27C4E662164}
-	static const GUID IID_IMusic = 
-	{ 0x81f1e67b, 0x3feb, 0x4ab1, { 0x9a, 0xd2, 0xd2, 0x7c, 0x4e, 0x66, 0x21, 0x64 } };
-
-	class IMusic : public IEngBaseObj
-	{
-	public:
-		virtual DGLE_RESULT DGLE_API Play(bool bLooped = true) = 0;
-		virtual DGLE_RESULT DGLE_API Pause(bool bPaused) = 0;
-		virtual DGLE_RESULT DGLE_API Stop() = 0;
-		virtual DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying) = 0;
-		virtual DGLE_RESULT DGLE_API SetVolume(uint uiVolume) = 0;
-		virtual DGLE_RESULT DGLE_API GetVolume(uint &uiVolume) = 0;
-		virtual DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos) = 0;
-		virtual DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos) = 0;
-		virtual DGLE_RESULT DGLE_API GetLength(uint &uiLength) = 0;
 	};
 
 //FileSystem interfaces//

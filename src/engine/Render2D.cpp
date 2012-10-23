@@ -37,12 +37,15 @@ _uiBufferSize(34)// never less than 34
 	_pCoreRenderer = Core()->pCoreRenderer();
 	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
 
-	Console()->RegComValue("rndr_profiler", "Displays render 2D subsystems profiler.", &_iProfilerState, 0, 2);
-	Console()->RegComValue("rndr_drawbboxes", "Displays bounding boxes of 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
+	Console()->RegComValue("rnd2d_profiler", "Displays Render 2D subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComValue("rnd2d_drawbboxes", "Displays bounding boxes of all 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
 }
 
 CRender2D::~CRender2D()
 {
+	Console()->UnRegCom("rnd2d_profiler");
+	Console()->UnRegCom("rnd2d_drawbboxes");
+
 	delete[] _pBuffer;
 
 	for (size_t i = 0; i < _pBatchBuffers.size(); ++i)
@@ -91,30 +94,21 @@ void CRender2D::DrawProfiler()
 {
 	if (_iProfilerState > 0)
 	{
-		uint 
-			objs_count  = _iObjsDrawnCount,
-			buffs_count = (uint)_pBatchBuffers.size(),
-			buffs_in_use= _batchBufferCurCounter,
-			effective_b = _batchBuffersNotModefiedPerFrameCounter,
-			batches_cnt	= _batchsCount,
-			max_b_size	= _batchMaxSize,
-			min_b_size	= _batchMinSize;
-		uint64
-			draw_ticks  = _ui64DrawAverallDelay;
-
 		Core()->RenderProfilerTxt("======Render2D Profiler=====", TColor4());
-		Core()->RenderProfilerTxt(("Objects on screen :" + IntToStr(objs_count)).c_str(), TColor4());
-		Core()->RenderProfilerTxt(("Batches per frame :" + UIntToStr(batches_cnt)).c_str(), batches_cnt > _sc_uiMaxBatchsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
-		Core()->RenderProfilerTxt(("Render delay      :" + UInt64ToStr(draw_ticks/1000) + "." + IntToStr(draw_ticks%1000) + " ms.").c_str(), TColor4());
+		Core()->RenderProfilerTxt(("Objects on screen :" + IntToStr(_iObjsDrawnCount)).c_str(), TColor4());
+		Core()->RenderProfilerTxt(("Batches per frame :" + UIntToStr(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
+		Core()->RenderProfilerTxt(("Render delay      :" + UInt64ToStr(_ui64DrawAverallDelay / 1000) + "." + UIntToStr(_ui64DrawAverallDelay % 1000) + " ms.").c_str(), TColor4());
 
 		if (_iProfilerState > 1)
 		{
+			uint  buffs_count = (uint)_pBatchBuffers.size();
+
 			Core()->RenderProfilerTxt("--------Batch Render--------", TColor4());
 			Core()->RenderProfilerTxt(("Buffers count  :" + UIntToStr(buffs_count)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Buffers in use :" + UIntToStr(buffs_in_use)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Effective calls:" + UIntToStr(effective_b)).c_str(), !_batchNeedToRefreshBatches && effective_b != buffs_in_use ? TColor4(255, 0, 0, 255) : TColor4());
-			Core()->RenderProfilerTxt(("Max. batch size:" + UIntToStr(max_b_size)).c_str(), TColor4());
-			Core()->RenderProfilerTxt(("Min. batch size:" + UIntToStr(min_b_size == (numeric_limits<uint>::max)() ? 0 : min_b_size)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Buffers in use :" + UIntToStr(_batchBufferCurCounter)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Effective calls:" + UIntToStr(_batchBuffersNotModefiedPerFrameCounter)).c_str(), !_batchNeedToRefreshBatches && _batchBuffersNotModefiedPerFrameCounter != _batchBufferCurCounter ? TColor4(255, 0, 0, 255) : TColor4());
+			Core()->RenderProfilerTxt(("Max. batch size:" + UIntToStr(_batchMaxSize)).c_str(), TColor4());
+			Core()->RenderProfilerTxt(("Min. batch size:" + UIntToStr(_batchMinSize == (numeric_limits<uint>::max)() ? 0 : _batchMinSize)).c_str(), TColor4());
 			Core()->RenderProfilerTxt("----------------------------", TColor4());
 		}
 	}

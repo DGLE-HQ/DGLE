@@ -58,13 +58,17 @@ CInstancedObj(uiInstIdx)
 			LOG("Joystick with id:" + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"", LT_INFO);
 	}
 
-	Console()->RegComProc("inpt_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
+	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
 
 #endif
 }
 
 CBaseInput::~CBaseInput()
 {
+#ifndef NO_JOYSTICKS
+	Console()->UnRegCom("input_list_joys");
+#endif
+
 	if (_hCurNone && 0 == DestroyCursor(_hCurNone))
 		LOG("Can't destroy blank cursor.", LT_WARNING);
 }

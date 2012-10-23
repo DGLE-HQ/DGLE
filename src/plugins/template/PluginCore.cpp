@@ -68,12 +68,12 @@ void CPluginCore::_ProfilerDraw()
 
 	//ToDo: Put your code here.
 
-	_pEngineCore->RenderProfilerTxt("===== Plugin Template =====");
+	_pEngineCore->RenderProfilerTxt("======Plugin Template=======");
 	_pEngineCore->RenderProfilerTxt("Everything is Ok!");
-	_pEngineCore->RenderProfilerTxt("===========================");
+	_pEngineCore->RenderProfilerTxt("============================");
 }
 
-HRESULT CALLBACK CPluginCore::GetPluginInfo(TPluginInfo &stInfo)
+DGLE_RESULT DGLE_API CPluginCore::GetPluginInfo(TPluginInfo &stInfo)
 {
 	strcpy(stInfo.cName, PLUGIN_NAME);
 	strcpy(stInfo.cVersion, PLUGIN_VERSION);
@@ -84,7 +84,7 @@ HRESULT CALLBACK CPluginCore::GetPluginInfo(TPluginInfo &stInfo)
 	return S_OK;
 }
 
-HRESULT CALLBACK CPluginCore::GetPluginInterfaceName(char* pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CPluginCore::GetPluginInterfaceName(char* pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -104,29 +104,29 @@ HRESULT CALLBACK CPluginCore::GetPluginInterfaceName(char* pcName, uint &uiChars
 	return S_OK;
 }
 
-void CALLBACK CPluginCore::_s_Render(void *pParametr)
+void DGLE_API CPluginCore::_s_Render(void *pParametr)
 {
    ((CPluginCore *)pParametr)->_Render();
 }
 
-void CALLBACK CPluginCore::_s_Update(void *pParametr)
+void DGLE_API CPluginCore::_s_Update(void *pParametr)
 {
 	uint64 dt;
 	((CPluginCore *)pParametr)->_pEngineCore->GetLastUpdateDeltaTime(dt);
 	((CPluginCore *)pParametr)->_Update(dt);
 }
 
-void CALLBACK CPluginCore::_s_Init(void *pParametr)
+void DGLE_API CPluginCore::_s_Init(void *pParametr)
 {
 	((CPluginCore *)pParametr)->_Init();
 }
 
-void CALLBACK CPluginCore::_s_Free(void *pParametr)
+void DGLE_API CPluginCore::_s_Free(void *pParametr)
 {
 	((CPluginCore *)pParametr)->_Free();
 }
 
-void CALLBACK CPluginCore::_s_EventHandler(void *pParametr, IBaseEvent *pEvent)
+void DGLE_API CPluginCore::_s_EventHandler(void *pParametr, IBaseEvent *pEvent)
 {
 	E_EVENT_TYPE ev_type;
 	TWinMessage msg;

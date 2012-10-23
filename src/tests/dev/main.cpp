@@ -90,11 +90,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngWindow(SCREEN_X, SCREEN_Y, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, EIF_LOAD_ALL_PLUGINS)))
 		{
+			pEngineCore->ConsoleVisible(true);
 			pEngineCore->ConsoleExec("core_fps_in_caption 1");
+			
 			pEngineCore->AddProcedure(EPT_INIT, &Init);
 			pEngineCore->AddProcedure(EPT_FREE, &Free);
 			pEngineCore->AddProcedure(EPT_UPDATE, &Update);
 			pEngineCore->AddProcedure(EPT_RENDER, &Render);
+			
 			pEngineCore->StartEngine();
 		}
 

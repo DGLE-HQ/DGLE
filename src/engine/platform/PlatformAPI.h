@@ -85,8 +85,8 @@ public:
 	virtual DGLE_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize) = 0;
 	virtual DGLE_RESULT Clear() = 0;
 	virtual DGLE_RESULT ResetSizeAndPos() = 0;
-	virtual DGLE_RESULT EnterThreadSafeSec() = 0;
-	virtual DGLE_RESULT LeaveThreadSafeSec() = 0;
+	virtual DGLE_RESULT EnterThreadSafeSection() = 0;
+	virtual DGLE_RESULT LeaveThreadSafeSection() = 0;
 	virtual DGLE_RESULT Free() = 0;
 };
 
@@ -118,8 +118,10 @@ public:
 class CPlatformBaseSound
 {
 public:
-	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint32 &ui32BufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
+	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
 	void CloseDevice();
+	void EnterThreadSafeSection();
+	void LeaveThreadSafeSection();
 };
 
 class CPlatformBaseInput

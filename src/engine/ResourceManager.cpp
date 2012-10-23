@@ -34,29 +34,31 @@ using namespace std;
 class CBObjDummy: public IEngBaseObj
 {
 public:
-	DGLE_RESULT DGLE_API Free(){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_UNKNOWN;return S_OK;}
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = 0; return S_OK;}
+	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_UNKNOWN; return S_OK;}
+	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = 0; return S_OK;}
 
 	IDGLE_BASE_IMPLEMENTATION(IEngBaseObj)
 };
 
-class CSSoundChannelDummy : public ISoundChannel
+class CSoundChannelDummy : public ISoundChannel
 {
 public:
-	DGLE_RESULT DGLE_API PlayOrPause(){return S_FALSE;}
-	DGLE_RESULT DGLE_API Stop(){return S_FALSE;}
-	DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying){bIsPlaying = false; return S_FALSE;}
-	DGLE_RESULT DGLE_API SetVolume(uint uiVolume){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume = 0; return S_FALSE;}
-	DGLE_RESULT DGLE_API SetPan(int iPan){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetPan(int &iPan){iPan = 0; return S_FALSE;}
-	DGLE_RESULT DGLE_API SetFrequency(uint32 uiFreq){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetFrequency(uint32 &uiFreq){uiFreq = 0;return S_FALSE;}
-	DGLE_RESULT DGLE_API SetPosition(const TPoint3 &stCoords){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetPosition(TPoint3 &stCoords){stCoords = TPoint3();return S_FALSE;}
-	DGLE_RESULT DGLE_API SetEffects(E_SOUND_CHANNEL_EFFECTS eFlags){return S_FALSE;}
-	DGLE_RESULT DGLE_API Unaquire(){delete this; return S_FALSE;}
+	DGLE_RESULT DGLE_API Play(bool bLooped){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Pause(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Stop(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying){bIsPlaying = false; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetVolume(uint uiVolume){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetPan(int iPan){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetPan(int &iPan){iPan = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetSpeed(int iSpeed){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetSpeed(int &iSpeed){iSpeed = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos){uiPos = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetLength(uint &uiLength){uiLength = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable){bStreamable = false; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Unaquire(){delete this; return S_OK;}
 
 	IDGLE_BASE_IMPLEMENTATION(ISoundChannel)
 };
@@ -64,55 +66,125 @@ public:
 class CSSampleDummy: public ISoundSample
 {
 public:
-	DGLE_RESULT DGLE_API Play() {return S_FALSE;}
-	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags) {pSndChnl = (ISoundChannel*)new CSSoundChannelDummy; return S_FALSE;}
+	DGLE_RESULT DGLE_API Play(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags){pSndChnl = (ISoundChannel*)new CSoundChannelDummy; return E_NOTIMPL;}
 	
-	DGLE_RESULT DGLE_API Free(){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE;return S_OK;}
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
+	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE; return S_OK;}
+	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = -1; return S_FALSE;}
 
 	IDGLE_BASE_IMPLEMENTATION1(ISoundSample, IEngBaseObj)
-};
-
-class CMusicDummy: public IMusic
-{
-public:
-	DGLE_RESULT DGLE_API Play(bool bLooped){return S_FALSE;}
-	DGLE_RESULT DGLE_API Pause(bool bPaused){return S_FALSE;}
-	DGLE_RESULT DGLE_API Stop(){return S_FALSE;}
-	DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying){bIsPlaying=false;return S_FALSE;}
-	DGLE_RESULT DGLE_API SetVolume(uint uiVolume){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume=0;return S_FALSE;}
-	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos){uiPos=0;return S_FALSE;}
-	DGLE_RESULT DGLE_API GetLength(uint &uiLength){uiLength=0;return S_FALSE;}
-
-	DGLE_RESULT DGLE_API Free(){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_MUSIC;return S_OK;}
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
-
-	IDGLE_BASE_IMPLEMENTATION1(IMusic, IEngBaseObj)
 };
 
 class CBitmapFontDummy: public IBitmapFont
 {
 public:
-	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture){prTexture = NULL; return S_FALSE;}
-	DGLE_RESULT DGLE_API SetScale(const float &fScale){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetScale(float &fScale){fScale = 1.f; return S_FALSE;}
-	DGLE_RESULT DGLE_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight){uiWidth = 0; uiHeight = 0; return S_FALSE;}
-	DGLE_RESULT DGLE_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor){return S_FALSE;}
-	DGLE_RESULT DGLE_API Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor){return S_FALSE;}
-	DGLE_RESULT DGLE_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors){return S_FALSE;}
-	DGLE_RESULT DGLE_API Draw3D(const char *pcTxt){return S_FALSE;}
-	DGLE_RESULT DGLE_API Free(){return S_FALSE;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT;return S_OK;}
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) { uiObjUnknownType = -1; return S_FALSE;}
+	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture){prTexture = NULL; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetScale(const float &fScale){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetScale(float &fScale){fScale = 1.f; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight){uiWidth = 0; uiHeight = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Draw3D(const char *pcTxt){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT; return S_OK;}
+	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
 
 	IDGLE_BASE_IMPLEMENTATION1(IBitmapFont, IEngBaseObj)
 };
 
-// CResource Manager //
+//CSoundSample//
+
+class CSoundSample: public ISoundSample
+{
+	CResourceManager *_pResMan;
+	ISound *_pSound;
+	uint _uiSamplesPerSec;
+	uint _uiBitsPerSample;
+	bool _bStereo;
+	const uint8 *_pData;
+	uint32 _ui32DataSize;
+
+public:
+
+	CSoundSample(CResourceManager *pResMan, ISound *pSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
+	_pResMan(pResMan), _pSound(pSound), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(uiBitsPerSample),
+	_bStereo(bStereo), _pData(pData), _ui32DataSize(ui32DataSize)
+	{}
+
+	~CSoundSample()
+	{
+		_pSound->ReleaseChannelsByData(_pData);
+		delete[] _pData;
+	}
+
+	DGLE_RESULT DGLE_API Play()
+	{
+		if (!_pSound)
+			return E_ABORT;
+
+		ISoundChannel *p_chnl;
+		
+		DGLE_RESULT res = _pSound->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+
+		if (SUCCEEDED(res))
+		{
+			p_chnl->Play(false);
+			p_chnl->Unaquire();
+		}
+
+		return res;
+	}
+	
+	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags)
+	{
+		if (!_pSound)
+		{
+			pSndChnl = NULL;
+			return E_ABORT;
+		}
+
+		DGLE_RESULT res = _pSound->CreateChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+
+		if (SUCCEEDED(res))
+			pSndChnl->Play((bool)(eFlags & SSP_LOOPED));
+
+		return res;
+	}
+	
+	DGLE_RESULT DGLE_API Free()
+	{
+		bool can_delete;
+
+		_pResMan->RemoveResource(this, can_delete);
+
+		if (can_delete)
+		{
+			delete this;
+			return S_OK;
+		}
+		else
+			return S_FALSE;
+	}
+	
+	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType)
+	{
+		eObjType = EOT_SOUND_SAMPLE;
+		return S_OK;
+	}
+	
+	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType)
+	{
+		uiObjUnknownType = -1;
+		return S_FALSE;
+	}
+
+	IDGLE_BASE_IMPLEMENTATION1(ISoundSample, IEngBaseObj)
+};
+
+
+//CResource Manager//
 
 CResourceManager::CResourceManager(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
@@ -132,21 +204,15 @@ _iProfilerState(0)
 	RegisterFileFormat("dft", EOT_BITMAP_FONT, "Dgle FonT bitmap 2D fonts.", &_s_LoadFontDFT, (void*)this);
 	
 	if (Core()->SoundEnabled())
-	{
 		RegisterFileFormat("wav", EOT_SOUND_SAMPLE, "WAVe (PCM) uncompressed sound files.", &_s_LoadSoundWAV, (void*)this);
-		RegisterFileFormat("mp3", EOT_MUSIC, "MPeg-layer 3 music files.", &_s_LoadMusicMCI, (void*)this);
-		RegisterFileFormat("mid", EOT_MUSIC, "Musical Instrument Digital Interface music files.", &_s_LoadMusicMCI, (void*)this);
-	}
 
 	//Create dummies
 
 	_pBObjDummy	= new CBObjDummy();
 	_pDefBmFntDummy	= new CBitmapFontDummy();
 	_pDefSSmpDummy	= new CSSampleDummy();
-	_pDefMusicDummy	= new CMusicDummy();
 
 	RegisterDefaultResource(EOT_SOUND_SAMPLE, (IEngBaseObj*)_pDefSSmpDummy);
-	RegisterDefaultResource(EOT_MUSIC, (IEngBaseObj*)_pDefMusicDummy);
 
 	//Create default texture
 
@@ -238,6 +304,9 @@ _iProfilerState(0)
 
 CResourceManager::~CResourceManager()
 {
+	Console()->UnRegCom("rman_stats");
+	Console()->UnRegCom("rman_list_file_formats");
+
 	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	LOG("Resource Manager Subsystem finalized.",LT_INFO);
@@ -257,7 +326,6 @@ void CResourceManager::FreeAllResources()
 
 	delete _pDefBmFntDummy;
 	delete _pDefSSmpDummy;
-	delete _pDefMusicDummy;
 	delete _pBObjDummy;
 }
 
@@ -344,6 +412,11 @@ DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjTyp
 
 DGLE_RESULT DGLE_API CResourceManager::GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj)
 {
+	prObj = NULL;
+
+	if (!pcFileName || strlen(pcFileName) == 0)
+		return E_INVALIDARG;
+
 	uint32 hash = GetCRC32((uint8*)pcFileName, (uint32)strlen(pcFileName)*sizeof(char));
 
 	for (size_t i = 0; i < _resList.size(); ++i)
@@ -559,7 +632,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, u
 
 	i_cur_w = (int)uiWidth, i_cur_h = (int)uiHeight;
 
-	prDataOut = new uint8[data_size]; //утечка
+	prDataOut = new uint8[data_size];
 
 	if (eAlignment == CRDA_ALIGNED_BY_4)
 		cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
@@ -752,7 +825,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 {
 	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == string(pcExtension) && _clFileFormats[i].type == eObjType)
-			LOG(string("File format with extension \"")+string(pcExtension)+"\" was overrided.",LT_WARNING);
+			LOG("File format with extension \"" + string(pcExtension) + "\" was overrided.", LT_WARNING);
 
 	TFileFormat tff;
 
@@ -1157,7 +1230,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 
 	if (ftype[4] != '3' || ftype[5] != '.' || ftype[6] != '0')
 	{
-		LOG("Incorrect DMD mesh version.",LT_ERROR);
+		LOG("Incorrect DMD mesh version.", LT_ERROR);
 		return false;
 	}
 
@@ -1287,9 +1360,9 @@ void CResourceManager::_ProfilerEventHandler() const
 			case EOT_BITMAP_FONT: s = "Bitmap Font:"; break;
 			case EOT_PARTICLE_EFFECT: s = "Particle Effect:"; break;
 			case EOT_SOUND_SAMPLE: s = "Sound Sample:"; break;
-			case EOT_MUSIC: s = "Music:"; break;
 			case EOT_SPRITE: s = "Sprite:"; break;
 			case EOT_GUI_FORMS: s = "GUI Forms:"; break;
+			default: s = "Other/Unknown:";
 			}
 
 			s += UIntToStr(cnt[i]);
@@ -1318,7 +1391,7 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 
 	if(ftype[4] != '1' || ftype[5] != '.' || ftype[6] != '1')
 	{
-		LOG("Incorrect font version.",LT_ERROR);
+		LOG("Incorrect font version.", LT_ERROR);
 		return false;
 	}
 
@@ -1374,134 +1447,138 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 	return true;
 }
 
-bool CResourceManager::_LoadMusicMCI(IFile *pFile, IMusic *&prMusic)
+bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize)
 {
-	/*
-	CMusicMCI *p_music = NULL;
-
-	try
-	{
-		p_music = new CMusicMCI(InstIdx(), pFile);
-		prMusic = (IMusic*)p_music;
-	}
-	catch (DGLE_RESULT hr)
-	{
-		prMusic = NULL;
+	if (!pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 		return false;
-	}
-	*/
+
+	uint8 * p_data = new uint8[ui32DataSize];
+	memcpy(p_data, pData, ui32DataSize);
+
+	prSndSample = (ISoundSample*)(new CSoundSample(this, Core()->pSound(), uiSamplesPerSec, uiBitsPerSample, bStereo, p_data, ui32DataSize));
+	
 	return true;
 }
 
-bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&rpSSample)
+DGLE_RESULT DGLE_API CResourceManager::CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResourse)
 {
-	uint32 ui32_file_size = 0;
-	uint ui_read = 0;
+	DGLE_RESULT result = _CreateSound(prSndSample, uiSamplesPerSec, uiBitsPerSample, bStereo, pData, ui32DataSize) ? S_OK : E_FAIL;
 
-	pFile->GetSize(ui32_file_size);
-
-	char *file_buff = new char[ui32_file_size];
-	pFile->Read(file_buff, ui32_file_size, ui_read);
-
-	if (ui_read != ui32_file_size)
+	if (bAddResourse)
 	{
-		LOG("Can't read wav file data.", LT_ERROR);
-		delete[] file_buff;
-		return false;
+		if (result == S_OK) 
+			_resList.push_back(TResource(pcName, (IEngBaseObj*)prSndSample));
+		else
+			LOG("Error creating sound with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
 
-	istrstream cl_stream(file_buff, ui32_file_size);
+	return result;
+}
 
-	uint32 ui32_dw_riff = 0;		
+bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
+{
+	const uint16 c_wave_format_pcm = 1;
 
-	cl_stream.read((char*) &ui32_dw_riff, 4);
+#pragma pack(push, 1)
+	struct TWaveFormatEx
+	{
+		uint16	ui16FormatTag;
+		uint16	ui16Channels;
+		uint	uiSamplesPerSec;
+		uint	uiAvgBytesPerSec;
+		uint16	ui16BlockAlign;
+		uint16	ui16BitsPerSample;
+	};
+#pragma pack(pop)
 
-	if (ui32_dw_riff != MAKEFOURCC('R','I','F','F'))
+	uint ui_read;
+	uint32 ui32_tmp, ui32_pos;		
+
+	pFile->Read(&ui32_tmp, sizeof(uint32), ui_read);
+
+	if (ui32_tmp != MAKEFOURCC('R','I','F','F'))
 	{
 		LOG("Can't find chunk \"RIFF\".", LT_ERROR);
-		delete[] file_buff;
 		return false;
 	}
 
-	cl_stream.ignore(4);
+	pFile->Seek(4, FSSF_CURRENT, ui32_pos);
 
-	uint32 ui32_dw_wave = 0, ui32_dw_format = 0;
-	int32 i32_l_size_fmt = 0;
+	pFile->Read(&ui32_tmp, sizeof(uint32), ui_read);
 
-	cl_stream.read((char*)&ui32_dw_wave, 4);
-
-	if (ui32_dw_wave != MAKEFOURCC('W','A','V','E'))
+	if (ui32_tmp != MAKEFOURCC('W','A','V','E'))
 	{
 		LOG("Can't find chunk \"WAVE\".", LT_ERROR);
-		delete[] file_buff;
 		return false;
 	}
 
-	cl_stream.read((char*)&ui32_dw_format, 4);
+	pFile->Read(&ui32_tmp, sizeof(uint32), ui_read);
 
-	if (ui32_dw_format != MAKEFOURCC('f','m','t',' '))
+	if (ui32_tmp != MAKEFOURCC('f','m','t',' '))
 	{
 		LOG("Can't find chunk \"fmt\".", LT_ERROR);
-		delete[] file_buff;
 		return false;
 	}
 
-	cl_stream.read((char*)&i32_l_size_fmt, 4);
+	int32 i32_l_size_fmt;
+
+	pFile->Read(&i32_l_size_fmt, sizeof(int32), ui_read);
 
 	if (i32_l_size_fmt == 0)
 	{
 		LOG("Can't find size of audio-information.", LT_ERROR);
-		delete[] file_buff;
 		return false;
 	}
-/*
-	TSndData *p_s_data = new TSndData();
-	p_s_data->stWaveFormat = WAVEFORMATEX();
-	cl_stream.read((char*)&p_s_data->stWaveFormat,16);
+
+	TWaveFormatEx st_format;
+
+	pFile->Read(&st_format, sizeof(TWaveFormatEx), ui_read);
 	
-	cl_stream.ignore(i32_l_size_fmt - 16);		
-	
-	if (p_s_data->stWaveFormat.wFormatTag != 1)
+	if ((st_format.ui16Channels != 1 || st_format.ui16Channels != 2) && (st_format.ui16BitsPerSample != 8 && st_format.ui16BitsPerSample != 16) || (st_format.uiSamplesPerSec != 22050 && st_format.uiSamplesPerSec != 44100))
 	{
-		LOG("File is compressed.", LT_ERROR);
-		delete[] file_buff;
-		delete p_s_data;
+		LOG("Unsupported sound data format. Only 8 or 16 bits per sample with 22050 or 44100 frequency formats are supported.", LT_ERROR);
 		return false;
 	}
-*/
-	uint32 ui32_dw_next_chunk = 0;
 
-	cl_stream.read((char*)&ui32_dw_next_chunk, 4);
-
-	if (ui32_dw_next_chunk == MAKEFOURCC('f','a','c','t'))		
+	pFile->Seek(i32_l_size_fmt - sizeof(TWaveFormatEx), FSSF_CURRENT, ui32_pos);
+	
+	if (st_format.ui16FormatTag != c_wave_format_pcm)
 	{
-		uint32 ui32_dw_size_fact = 0;						
-		cl_stream.read((char*)&ui32_dw_size_fact, 4);				
-		cl_stream.ignore(ui32_dw_size_fact);					
-		cl_stream.read((char*)&ui32_dw_next_chunk, 4);				
+		LOG("Compressed files are not supported.", LT_ERROR);
+		return false;
+	}
+
+	pFile->Read(&ui32_tmp, sizeof(uint32), ui_read);
+
+	if (ui32_tmp == MAKEFOURCC('f','a','c','t'))
+	{
+		uint32 ui32_dw_size_fact;
+		pFile->Read(&ui32_dw_size_fact, sizeof(uint32), ui_read);
+		pFile->Seek(ui32_dw_size_fact, FSSF_CURRENT, ui32_pos);
+		pFile->Read(&ui32_tmp, sizeof(uint32), ui_read);
 	}												
 
-	if (ui32_dw_next_chunk != MAKEFOURCC('d','a','t','a'))		
+	if (ui32_tmp != MAKEFOURCC('d','a','t','a'))		
 	{
 		LOG("Can't find chunk \"data\".", LT_ERROR);
-		delete[] file_buff;
-		//delete p_s_data;
 		return false;
 	}
-/*
-	p_s_data->ui32DataSize = 0;
-	cl_stream.read((char*)&p_s_data->ui32DataSize, 4);			
-	p_s_data->pcData = new char[p_s_data->ui32DataSize];
-	cl_stream.read(p_s_data->pcData, p_s_data->ui32DataSize);				
 
-	delete[] file_buff;
+	pFile->Read(&ui32_tmp, sizeof(uint32), ui_read);			
+	
+	uint8 *p_data= new uint8[ui32_tmp];
+	
+	pFile->Read(p_data, ui32_tmp, ui_read);
 
-	CSSampleDX *pSSample = new CSSampleDX(InstIdx(), this);
+	if (ui_read != ui32_tmp)
+	{
+		LOG("Failed to read \"data\" chunk.", LT_ERROR);
+		delete[] p_data;
+		return false;
+	}
 
-	pSSample->_pData = p_s_data;
+	prSSample = (ISoundSample*)(new CSoundSample(this, Core()->pSound(), st_format.uiSamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
 
-	rpSSample = (ISoundSample*)pSSample;
-*/
 	return true;
 }
 
@@ -1545,14 +1622,6 @@ bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadMusicMCI(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
-{
-	IMusic *pm = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadMusicMCI(pFile, pm);
-	if(ret) prObj = (IEngBaseObj *&)pm;
-	return ret;
-}
-
 bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ISoundSample *ps = NULL;
@@ -1575,7 +1644,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uin
 		if (result == S_OK) 
 			_resList.push_back(TResource(pcName, (IEngBaseObj*)prTex));
 		else
-			LOG("Error creating texture.", LT_ERROR);
+			LOG("Error creating texture with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
 
 	return result;
@@ -1596,7 +1665,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 		if (result == S_OK) 
 			_resList.push_back(TResource(pcName, (IEngBaseObj*)prMesh));
 		else
-			LOG("Error creating mesh.", LT_ERROR);
+			LOG("Error creating mesh with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
 
 	return result;
@@ -1676,7 +1745,7 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	if (uiFFIdx == -1)
 	{
 		Console()->Write("Use \"rman_list_reged_fformats\" console command to list supported file formats.");
-		LOG("Resource Manager can't load file \"" + string(pcFileName) + "\" because of unknown file extension \"" + ToUpperCase(GetFileExt(pcFileName))+"\".", LT_FATAL);
+		LOG("Resource Manager can't load file \"" + string(pcFileName) + "\" because of unknown file extension \"" + ToUpperCase(GetFileExt(pcFileName)) + "\".", LT_FATAL);
 		return E_FAIL;
 	}
 
