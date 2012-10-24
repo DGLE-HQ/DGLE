@@ -1135,8 +1135,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetVolume(uint &uiVolume) = 0;
 		virtual DGLE_RESULT DGLE_API SetPan(int iPan) = 0; //from -100 to 100
 		virtual DGLE_RESULT DGLE_API GetPan(int &iPan) = 0;
-		virtual DGLE_RESULT DGLE_API SetSpeed(int iSpeed) = 0;//in percents
-		virtual DGLE_RESULT DGLE_API GetSpeed(int &iSpeed) = 0;
+		virtual DGLE_RESULT DGLE_API SetSpeed(uint uiSpeed) = 0;//in percents
+		virtual DGLE_RESULT DGLE_API GetSpeed(uint &uiSpeed) = 0;
 		virtual DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos) = 0;
 		virtual DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos) = 0;
 		virtual DGLE_RESULT DGLE_API GetLength(uint &uiLength) = 0;

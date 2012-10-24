@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.10.2012 (c)Korotkov Andrey
+\date		24.10.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -21,19 +21,21 @@ struct TSoundFrame
 {
 	int16 i16L, i16R;
 
-	TSoundFrame(int16 l, int16 r, float vol)
-	{
-		i16L = int16((float)l * vol);
-		i16R = int16((float)r * vol);
-	}
-	
-	TSoundFrame(int16 mono, float pan, float vol) 
+	TSoundFrame() : i16L(0), i16R(0) {}
+
+	inline void SetMono(int16 mono, float pan, float vol) 
 	{
 		i16L = (int16)((float)mono * min(1.f, 1.f - pan) * vol);
 		i16R = (int16)((float)mono * min(1.f, pan + 1.f) * vol);
 	}
 
-	inline int16 Clamp(int val)
+	inline void SetStereo(const int16 *data, float vol) 
+	{
+		i16L = int16((float)data[0] * vol);
+		i16R = int16((float)data[1] * vol);
+	}
+
+	inline int16 Clamp(int val) const
 	{
 		return (val < -0x8000 ? -0x8000 : (val > 0x7FFF ? 0x7FFF : (int16)val));
 	}
@@ -57,23 +59,27 @@ class CChannel : public ISoundChannel
 {
 	CBaseSound *_pSnd;
 
-	uint _uiSamplesPerSec, _uiBitsPerSample;
-	bool _bStereo, _bStreamable;
+	const uint _c_uiSamplesPerSec, _c_uiBitsPerSample;
+	const bool _c_bStereo, _c_bStreamable;
 	const uint8 *_c_pData;
-	uint32 _ui32DataSize, _ui32ReaderPos, _ui32FrameCnt;
-	uint _uiLength;
+	const uint32 _c_ui32DataSize;
+	const uint _c_uiDataPerFrame;
+	uint32 _ui32ReaderPos;
+	float _fFrameCnt;
+	const uint _c_uiLength;
 	bool _bAquired;
 	float _fVol, _fPan, _fSpeed;
+	const float _c_fBaseSpeed;
 	bool _bLooped;
 	E_SOUND_CHANNEL_STATE _eState;
 
 	void (DGLE_API *_pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize);
 	void *_pParametr;
-	uint _uiBufferSize;
+	const uint _c_uiBufferSize;
 
 	TSoundFrame _frame;
 
-	inline uint _DataPosToMsec(uint32 pos);
+	inline uint _DataPosToMsec(uint32 pos) const;
 
 public:
 
@@ -84,12 +90,12 @@ public:
 	CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, uint uiBufferSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr);
 	~CChannel();
 
-	inline bool IsActive();
-	inline bool IsDone();
-	inline bool IsLooped();
-	inline bool IsAquired();
-	inline bool CmprDataPtr(const uint8 *pData);
-	inline uint MsecLeftToPlay();
+	inline bool IsActive() const;
+	inline bool IsDone() const;
+	inline bool IsLooped() const;
+	inline bool IsAquired() const;
+	inline bool CmprDataPtr(const uint8 *pData) const;
+	inline uint MsecLeftToPlay() const;
 	inline void StreamData();
 	__forceinline const TSoundFrame & NextFrame(float masterVol);
 
@@ -103,8 +109,8 @@ public:
 	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume);
 	DGLE_RESULT DGLE_API SetPan(int iPan);
 	DGLE_RESULT DGLE_API GetPan(int &iPan);
-	DGLE_RESULT DGLE_API SetSpeed(int iSpeed);
-	DGLE_RESULT DGLE_API GetSpeed(int &iSpeed);
+	DGLE_RESULT DGLE_API SetSpeed(uint uiSpeed);
+	DGLE_RESULT DGLE_API GetSpeed(uint &uiSpeed);
 	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos);
 	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos);
 	DGLE_RESULT DGLE_API GetLength(uint &uiLength);

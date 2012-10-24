@@ -52,8 +52,8 @@ public:
 	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume = 0; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API SetPan(int iPan){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetPan(int &iPan){iPan = 0; return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API SetSpeed(int iSpeed){return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API GetSpeed(int &iSpeed){iSpeed = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetSpeed(uint uiSpeed){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetSpeed(uint &uiSpeed){uiSpeed = 0; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos){uiPos = 0; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetLength(uint &uiLength){uiLength = 0; return E_NOTIMPL;}
