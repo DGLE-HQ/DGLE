@@ -65,7 +65,6 @@ public:
 	DGLE_RESULT DGLE_API DeleteFile(const char *pcName);
 	DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists);
 	DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator);
-	DGLE_RESULT DGLE_API SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount);
 
 	IDGLE_BASE_IMPLEMENTATION(IFileSystem);
 };

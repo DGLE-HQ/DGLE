@@ -160,6 +160,26 @@ namespace DGLE
 			\return Always returnes DGLE_types.h::S_OK.
 		 */		
 		virtual DGLE_RESULT DGLE_API GetGUID(GUID &guid) = 0;
+		/** Executes some command using its index or bitmask. Commands are specific for concrete interface. All commands should be described in documentation.
+			\param[in] uiCmd Command index or some bitmask. These values must be gotten from documentation.
+			\param[in, out] stVar Variant with additional command parameters and for storing command result.
+			\return E_NOTIMPL indicates that interface has not got any commands.
+		*/
+		virtual DGLE_RESULT DGLE_API ExecCmd(uint uiCmd, TVariant &stVar) = 0;
+		/** Executes some text command and returns result as string. Commands are specific for concrete interface. All commands should be described in documentation.
+			\param[in] pcCommand Pointer to allocated string with command.
+			\param[out] pcResult Pointer to allocated string to accept command result.
+			\param[in, out] uiCharsCount Count of the chars in allocated result string.
+			\return E_INVALIDARG must be returned if allocated string is too small. E_NOTIMPL indicates that interface has not got any commands.
+			\note If pcCommand is NULL then uiCharsCount will contain recommended by plugin result string length, large enough to accept any result value.
+		*/
+		virtual DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
+		/** Executes some text command and returns result as variant. Commands are specific for concrete interface. All commands should be described in documentation.
+			\param[in] pcCommand Pointer to allocated string with command.
+			\param[in, out] stVar Variant with additional command parameters and for storing command result.
+			\return E_NOTIMPL indicates that interface has not got any commands.
+		*/
+		virtual DGLE_RESULT DGLE_API ExecCmdVar(const char *pcCommand, TVariant &stVar) = 0;
 	};
 
 //Engine SubSystem interface//
@@ -206,7 +226,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetPluginInfo(TPluginInfo &stInfo) = 0;
 		/** Returns the name of interface which plugin implements or empty string if it implements nothing.
 			\param[out] pcName Pointer to allocated string.
-			\param[in] uiCharsCount Count of the chars in allocated string.
+			\param[in, out] uiCharsCount Count of the chars in allocated string.
 			\return E_INVALIDARG must be returned if allocated string is too small.
 			\note If pcName is NULL then uiCharsCount will contain length of the text to allocate.
 		*/
@@ -1246,7 +1266,6 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DeleteFile(const char *pcName) = 0; //Если передан только путь то удалит папку
 		virtual DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists) = 0;//если передан только путь, то проверяет существование папки
 		virtual DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
-		virtual DGLE_RESULT DGLE_API SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
 	};
 
 	enum E_GET_ENGINE_FLAGS
@@ -1356,87 +1375,73 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 
 //Implementation macroses//
 
-/** \def IDGLE_BASE_IMPLEMENTATION(interface_name) Macros inserts realisation of IDGLE_Base interface into class body.
-	Can be used with interfaces inherited from IDGLE_Base.
-	\param[in] interface_name Name of the interface inheritance from IDGLE_Base.
-	\note It also inserts IUnknown implementation for Windows builds.
-	\see IUNKNOWN_IMPLEMENTATION
-*/
+#ifdef DGLE_USE_COM
 
-/** \def IDGLE_BASE_IMPLEMENTATION1(interface1_name, interface2_name) Same is IDGLE_BASE_IMPLEMENTATION but for inheritance chain with two interfaces.
-	Can be used with interfaces inherited from IDGLE_Base and some other interface.
-	\param[in] interface1_name Name of the last interface in the inheritance chain.
-	\param[in] interface2_name Name of the second interface in the inheritance chain.
-	\see IDGLE_BASE_IMPLEMENTATION
-*/
-
-/** \def IUNKNOWN_IMPLEMENTATION(interface_name) Macros inserts realisation of IUnknown interface into class body.
-	\param[in] interface_name Name of the interface inheritance from IUnknown.
-	\note For non Windows builds inserts nothing.
-*/
-
-#ifndef DGLE_USE_COM
-
-#define IDGLE_BASE_IMPLEMENTATION(interface_name) DGLE_RESULT DGLE_API GetGUID(GUID &guid) { guid = IID_##interface_name; return S_OK; }
-#define IDGLE_BASE_IMPLEMENTATION1(interface1_name, interface2_name) IDGLE_BASE_IMPLEMENTATION(interface1_name)
-#define IUNKNOWN_IMPLEMENTATION(interface_name)
-
-#else//DGLE_USE_COM
-
-#define IDGLE_BASE_IMPLEMENTATION(interface_name) \
-	HRESULT CALLBACK GetGUID(GUID &guid)\
-	{\
-		guid = IID_##interface_name;\
-		return S_OK;\
-	}\
+#define IUNKNOWN_IMPL(interface_name) \
 	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
 	{\
 		*ppvObject = NULL;\
-		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0) \
-		*ppvObject = static_cast<IUnknown *>(this);\
-		else if(::memcmp(&riid,&IID_##interface_name,sizeof(GUID)) == 0) \
-		*ppvObject = static_cast<interface_name *>(this);\
-		else return E_NOINTERFACE;\
-		return S_OK;\
-	}\
-	ULONG CALLBACK AddRef(){return 1;}\
-	ULONG CALLBACK Release(){return 1;}
-
-#define IDGLE_BASE_IMPLEMENTATION1(interface1_name, interface2_name) \
-	HRESULT CALLBACK GetGUID(GUID &guid)\
-	{\
-		guid = IID_##interface1_name;\
-		return S_OK;\
-	}\
-	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
-	{\
-		*ppvObject = NULL;\
-		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0) \
-		*ppvObject = static_cast<IUnknown *>(this);\
-		else if(::memcmp(&riid,&IID_##interface1_name,sizeof(GUID)) == 0) \
-		*ppvObject = static_cast<interface1_name *>(this);\
-		else if(::memcmp(&riid,&IID_##interface2_name,sizeof(GUID)) == 0) \
-		*ppvObject = static_cast<interface2_name *>(this);\
-		else return E_NOINTERFACE;\
-		return S_OK;\
-	}\
-	ULONG CALLBACK AddRef(){return 1;}\
-	ULONG CALLBACK Release(){return 1;}
-
-#define IUNKNOWN_IMPLEMENTATION(interface_name) \
-	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
-	{\
-		*ppvObject = NULL;\
-		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0)\
-		*ppvObject = static_cast<IUnknown *>(this);\
-		else if(::memcmp(&riid,&__uuidof(interface_name),sizeof(GUID)) == 0)\
-		{*ppvObject = static_cast<interface_name *>(this); AddRef();}\
-		else return E_NOINTERFACE;\
+		if (memcmp(&riid, &__uuidof(IUnknown), sizeof(GUID)) == 0)\
+			*ppvObject = static_cast<IUnknown *>(this);\
+		else\
+			if(memcmp(&riid, &IID_##interface_name, sizeof(GUID)) == 0)\
+				*ppvObject = static_cast<interface_name *>(this);\
+			else\
+				return E_NOINTERFACE;\
 		return S_OK;\
 	}\
 	ULONG CALLBACK AddRef() { return 1; }\
 	ULONG CALLBACK Release() { return 1; }
 
+#else//DGLE_USE_COM
+
+#define IUNKNOWN_IMPL(interface_name)
+
 #endif
+
+#define IDGLE_BASE_DUMMY_COMMANDS_IMPL \
+	DGLE_RESULT DGLE_API ExecCmd(uint uiCmd, TVariant &stVar)\
+	{\
+		stVar.Clear();\
+		return E_NOTIMPL;\
+	}\
+	DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount)\
+	{\
+		if (!pcCommand)\
+		{\
+			uiCharsCount = 1;\
+			return S_OK;\
+		}\
+		if (uiCharsCount < 1)\
+			return E_INVALIDARG;\
+		else\
+		{\
+			uiCharsCount = 0;\
+			strcpy(pcResult, "");\
+			return E_NOTIMPL;\
+		}\
+	}\
+	DGLE_RESULT DGLE_API ExecCmdVar(const char *pcCommand, TVariant &stVar)\
+	{\
+		stVar.Clear();\
+		return E_NOTIMPL;\
+	}
+
+#define IDGLE_BASE_GUID_IMPL(interface_name) \
+	DGLE_RESULT DGLE_API GetGUID(GUID &guid)\
+	{\
+		guid = IID_##interface_name;\
+		return S_OK;\
+	}\
+
+/** \def IDGLE_BASE_IMPLEMENTATION(interface_name) Macros inserts realisation of IDGLE_Base interface into class body.
+	Can be used with interfaces inherited from IDGLE_Base.
+	\param[in] interface_name Name of the interface inheritance from IDGLE_Base.
+	\note It also inserts IUnknown implementation for Windows builds with COM support turned on.
+*/
+#define IDGLE_BASE_IMPLEMENTATION(interface_name) \
+	IDGLE_BASE_DUMMY_COMMANDS_IMPL\
+	IDGLE_BASE_GUID_IMPL(interface_name)\
+	IUNKNOWN_IMPL(interface_name)
 
 #endif//DGLE_HEADER

@@ -3,6 +3,8 @@
  Otherwise your pull request will be guaranteed rejected.
 ===============================================================================
 
+=================================== Common ====================================
+
 1.	About structure and naming of folders and files.
 	a)	All folders names are lower-case. Words are separated by "_". Never use upper-case characters.
 	b)	You can create subfolders and files only in "src/examples/<your example name>", "src/plugins/<your plugin name>",
@@ -18,13 +20,15 @@
 		exception spreads only upon system headers started with "DGLE".
 	g)	All binaries are named in CamelCase style.
 	
-2.	Use only "#pragma once" to solve include collisions of headers, never use other methods.
+==================================== C++ ======================================
+
+1.	Use only "#pragma once" to solve include collisions of headers, never use other methods.
 	
-3.	Functions and methods naming.
+2.	Functions and methods naming.
 	a)	All functions and public methods are named in CamelCase style.
 	b)	All private class methods begins with symbol "_".
 	
-4.	Naming of classes, structures, types and enums.
+3.	Naming of classes, structures, types and enums.
 	a)	All class names begins with symbol "C" followed by CamelCase styled name ex. "CMyGame".
 	b)	Rules for structs and typedefs are the same as for classes except the first symbol is "T".
 	c)	Enums have upper-case names with symbol "_" as word separator. First two symbols of the name must be "E_".
@@ -40,14 +44,14 @@
 			BM_ENABLED_UPDATE_EVERY_TICK
 		};
 	
-5.	Variables naming rules.
+4.	Variables naming rules.
 	a)	Global variables, public class members and function arguments are named in lowerCamelCase style. For example: bool isGameStarted;
 	b)	Private class members are named as public but first character is "_".
 	c)	Local variables must have lower-case names with "_" as separator. Example: bool is_game_started;
 
 	Note: For bools first word better to be a verb like "do", "is", "has" and so on...
 	
-6.	Variables prefixes and data types.
+5.	Variables prefixes and data types.
 	a)	We use Hungarian Notation especially for pointers and strings. It is highly recommended to use
 		this notation almost everywhere in project. There are type and special prefixes. Prefixes could be combined.
 		See tables and code sample at the bottom of the file for better understanding.
@@ -111,7 +115,7 @@
 		|    .......................    |  ...................  |
 		\-------------------------------------------------------/
 		
-7.	Comments and auto documentation.
+6.	Comments and auto documentation.
 	a) Every header or cpp file of engine or plugin must starts with this header:
 	
 		/**
@@ -127,26 +131,37 @@
 	b)	All source code in "include/" folder must be commented the way to be later auto documented by doxygen. See engine headers as the example.
 	c)	Use only english language in comments.
 	
-8.	Macroses naming rule is simple. Use upper-case characters separated by "_".
+7.	Macroses naming rule is simple. Use upper-case characters separated by "_".
 
-9.	a)	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "+=", "-=", "*=", "/=", "|=", "&=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
+8.	a)	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "+=", "-=", "*=", "/=", "|=", "&=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
 		In functions calls "(" and ")" as well as unar "+", "–", "*", "&" should NOT be separated by spaces.
 		Note: Some exceptions for this rule could be done for templates.
 	b)	One tab is equal to four spaces.
 
-10.	Write constant safe code. Use "const" not only for constant variables but also for constant class methods, references and pointers. It's often better to use "mutable" but
+9.	Write constant safe code. Use "const" not only for constant variables but also for constant class methods, references and pointers. It's often better to use "mutable" but
 	leave class method constant.
 
-11.	In classes private members must go first, then goes private methods and then goes all public methods. Try not to use public members and friend classes.
+10.	In classes private members must go first, then goes private methods and then goes all public methods. Try not to use public members and friend classes.
 	
-12.	If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
+11.	If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
 	to make right decision concerning the style and principles of code around.
 	
-================================ Code Sample ==================================
+===================================== C# ======================================
 
- Here is a code sample written according to described rules.
+By default you should use rules from C++ section, but there are some important exceptions!
+
+1. All classes, class metods, enums, structures and functions must be named in CamelCase style.
+2. All global variables and class members must be named in lowerCamelCase style.
+3. Local variables must have lower-case names with "_" as separator.
+4. Never use Hungarian Notation!
+	
+=============================== Code Samples ==================================
+
+ Here are code samples written according to described rules.
  
 ===============================================================================
+
+==================================== C++ ======================================
 
 -----------------
 |   MyGame.h	|

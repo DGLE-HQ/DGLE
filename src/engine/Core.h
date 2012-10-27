@@ -249,11 +249,9 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API GetGUID(GUID &guid)
-	{
-		guid = IID_IEngineCore;
-		return S_OK;
-	}
+	IDGLE_BASE_DUMMY_COMMANDS_IMPL
+
+	IDGLE_BASE_GUID_IMPL(IEngineCore)
 
 	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
 	{
@@ -276,8 +274,15 @@ public:
 		return S_OK;
 	}
 	
-	ULONG CALLBACK AddRef(){return 1;}
-	ULONG CALLBACK Release(){return 1;}
+	ULONG CALLBACK AddRef()
+	{
+		return 1;
+	}
+	
+	ULONG CALLBACK Release()
+	{
+		return 1;
+	}
 
 #endif//DGLE_USE_COM
 

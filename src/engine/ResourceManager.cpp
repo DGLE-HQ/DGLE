@@ -73,7 +73,7 @@ public:
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION1(ISoundSample, IEngBaseObj)
+	IDGLE_BASE_IMPLEMENTATION(ISoundSample)
 };
 
 class CBitmapFontDummy: public IBitmapFont
@@ -91,7 +91,7 @@ public:
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION1(IBitmapFont, IEngBaseObj)
+	IDGLE_BASE_IMPLEMENTATION(IBitmapFont)
 };
 
 //CSoundSample//
@@ -180,7 +180,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION1(ISoundSample, IEngBaseObj)
+	IDGLE_BASE_IMPLEMENTATION(ISoundSample)
 };
 
 

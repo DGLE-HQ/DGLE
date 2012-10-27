@@ -60,5 +60,5 @@ public:
 
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
-	IDGLE_BASE_IMPLEMENTATION1(IMainFileSystem, IEngineSubSystem)
+	IDGLE_BASE_IMPLEMENTATION(IMainFileSystem)
 };

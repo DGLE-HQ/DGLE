@@ -41,6 +41,7 @@ ipch/
 *.aps
 *.sdf
 
-# Monodevelop
+# Monodevelop and C#
 *.userprefs
 *.mdb
+*.exe.manifest

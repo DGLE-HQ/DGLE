@@ -138,6 +138,6 @@ public:
 
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSysType);
 
-	IDGLE_BASE_IMPLEMENTATION1(IResourceManager, IEngineSubSystem)
+	IDGLE_BASE_IMPLEMENTATION(IResourceManager)
 };
 #endif //_RESOURCEMANAGER_H

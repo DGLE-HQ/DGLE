@@ -114,6 +114,129 @@ namespace DGLE
 #pragma pack( push, 1 )
 #endif
 
+	//variant//
+
+	typedef struct
+	{
+	private:
+
+		enum E_DGLE_VARIANT_TYPE
+		{
+			DVT_UNKNOWN = 0,
+			DVT_INT,
+			DVT_FLOAT,
+			DVT_BOOL,
+			DVT_POINTER,
+			DVT_DATA
+		};
+		
+		E_DGLE_VARIANT_TYPE _type;
+		int _i;
+		float _f;
+		void* _p;
+
+	public:
+
+		inline void Clear()
+		{
+			_type = DVT_UNKNOWN;
+			_i = 0;
+			_f = 0.f;
+			_p = NULL;
+		}
+
+		inline void SetInt(int iVal)
+		{
+			Clear();
+			_type = DVT_INT;
+			_i = iVal;
+		}
+
+		inline void SetFloat(float fVal)
+		{
+			Clear();
+			_type = DVT_FLOAT;
+			_f = fVal;
+		}
+
+		inline void SetBool(bool bVal)
+		{
+			Clear();
+			_type = DVT_BOOL;
+			_i = bVal ? 1 : 0;
+		}
+
+		inline void SetPointer(void *pointer)
+		{
+			Clear();
+			_type = DVT_POINTER;
+			_p = pointer;
+		}
+
+		inline void SetData(uint8 *pData, uint uiDataSize)
+		{
+			Clear();
+			_type = DVT_DATA;
+			_p = (void *)pData;
+			_i = (int)uiDataSize;
+		}
+
+		inline int AsInt() const
+		{
+			if (_type != VT_INT)
+				return 0;
+			else
+				return _i;
+		}
+
+		inline float AsFloat() const
+		{
+			if (_type != DVT_FLOAT)
+				return 0.f;
+			else
+				return _f;
+		}
+
+		inline bool AsBool() const
+		{
+			if (_type != DVT_BOOL)
+				return false;
+			else
+				return _i == 1;
+		}
+
+		inline void* AsPointer() const
+		{
+			if (_type != DVT_POINTER)
+				return NULL;
+			else
+				return _p;
+		}
+
+		inline void GetData(uint8 *pData, uint &uiDataSize) const
+		{
+			if (_type != DVT_DATA)
+			{
+				pData = NULL;
+				uiDataSize = 0;
+			}
+			else
+			{
+				pData = (uint8 *)_p;
+				uiDataSize = (uint)_i;
+			}
+		}
+
+		inline operator int() { return _i; }
+
+		inline operator float() { return _f; }
+
+		inline operator bool() { return _i == 1; }
+
+		inline operator void * () { return _p; }
+
+	} TVariant;
+
 //Platform depended types//
 
 #ifdef PLATFORM_WINDOWS

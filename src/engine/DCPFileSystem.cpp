@@ -261,14 +261,6 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CDCPFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
-{
-	if (!pcResult)
-		uiCharsCount = 1;
-
-	return E_NOTIMPL;
-}
-
 void CDCPFileSystem::_ReplaceChInStr(string &outStr, const string &findCh, const string &repCh)
 {
 	uint posCh = 0;

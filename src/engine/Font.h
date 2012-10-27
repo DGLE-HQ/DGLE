@@ -56,5 +56,5 @@ public:
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType);
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType);
 
-	IDGLE_BASE_IMPLEMENTATION1(IBitmapFont, IEngBaseObj)
+	IDGLE_BASE_IMPLEMENTATION(IBitmapFont)
 };

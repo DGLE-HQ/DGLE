@@ -52,7 +52,7 @@ public:
 		return S_OK;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION1(IOpenGLBufferContainer, IBaseRenderObjectContainer)
+	IDGLE_BASE_IMPLEMENTATION(IOpenGLBufferContainer)
 };
 
 //CCoreGeometryBuffer
@@ -268,7 +268,7 @@ public:
 		return S_OK;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION1(IOpenGLTextureContainer, IBaseRenderObjectContainer)
+	IDGLE_BASE_IMPLEMENTATION(IOpenGLTextureContainer)
 };
 
 //CCoreTexture

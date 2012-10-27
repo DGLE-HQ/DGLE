@@ -97,6 +97,7 @@ DGLE_RESULT DGLE_API CBufFile::GetPath(char *pcPath, uint &uiCharsCount)
 		return S_OK;
 	}
 
+	uiCharsCount = 0;
 	strcpy(pcPath, "");
 	
 	return S_OK;

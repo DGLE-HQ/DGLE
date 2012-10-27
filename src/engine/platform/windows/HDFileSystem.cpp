@@ -128,26 +128,3 @@ DGLE_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIt
 
 	return S_FALSE;
 }
-
-DGLE_RESULT DGLE_API CHDFileSystem::SendCommand(const char *pcCommand, char *pcResult, uint &uiCharsCount)
-{
-	char res[] = "Not supported for this realisation.";
-
-	if (!pcCommand)
-	{
-		uiCharsCount = strlen(res) + 1;
-		return S_OK;
-	}
-
-	if (strlen(res) < uiCharsCount)
-	{
-		strcpy(pcResult, res);
-		return E_NOTIMPL;
-	}
-	else
-	{
-		uiCharsCount = strlen(res) + 1;
-		strcpy(pcResult, "");
-		return E_INVALIDARG;
-	}
-}
