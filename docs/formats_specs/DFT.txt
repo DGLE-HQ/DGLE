@@ -1,0 +1,32 @@
+================================= Description =================================
+
+DFT 1.1 [D]gle [F]on[T] binary format specification.
+
+================================ Specification ================================
+
+[BYTE * 7 | FormatTxt][BYTE * 9 | Header][BYTE * 4 * 224 | CharactersCoords][ _ | TextureData]
+
+================================= Data Blocks =================================
+
+#FormatTxt#
+[CHAR * 7] String must be "DFT 1.1", without terminating null symbol.
+
+#Header#
+[BYTE | BytesPerPx] Bytes per pixel, could be 1 (only alpha) or 4 (RGBA).
+[UINT32 | TexWidth] Texture width in pixels.
+[UINT32 | TexHeight] Texture height in pixels.
+
+#CharactersCoords#
+[[
+[UINT32] Top left characters conner X coordinate.
+[UINT32] Top left characters conner Y coordinate.
+[UINT32] Width of character in pixels.
+[UINT32] Height of character in pixels.
+] * 224] 
+Describes characters texture coordinates in pixel absolute to the texture size.
+Data array index is ASCII code for the character starting from 32, thats why there are 224 characters instead of 256.
+
+[Texture data chunk]
+[BYTE * BytesPerPx * TexWidth * TexHeight] Raw pixels data for the font texture.
+
+===============================================================================

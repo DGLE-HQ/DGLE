@@ -192,6 +192,30 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 	LOG(str, type);\
 }
 
+#define IENGBASEOBJ_IMPLEMENTATION(object_type) \
+	DGLE_RESULT DGLE_API Free()\
+	{\
+		bool can_delete;\
+		Core()->pResMan()->RemoveResource(this, can_delete);\
+		if (can_delete)\
+		{\
+			delete this;\
+			return S_OK;\
+		}\
+		else\
+			return S_FALSE;\
+	}\
+	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType)\
+	{\
+		eObjType = object_type;\
+		return S_OK;\
+	}\
+	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType)\
+	{\
+		uiObjUnknownType = -1;\
+		return S_FALSE;\
+	}
+
 /*
 template<class Interface, typename Type, typename ReturnType = Type>
 struct CComGetWrapper: public binary_function<Interface *, DGLE_RESULT (DGLE_API Interface::*)(Type &), ReturnType>

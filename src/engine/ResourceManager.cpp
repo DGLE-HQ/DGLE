@@ -96,10 +96,8 @@ public:
 
 //CSoundSample//
 
-class CSoundSample: public ISoundSample
+class CSoundSample: public CInstancedObj, public ISoundSample
 {
-	CResourceManager *_pResMan;
-	ISound *_pSound;
 	uint _uiSamplesPerSec;
 	uint _uiBitsPerSample;
 	bool _bStereo;
@@ -108,25 +106,25 @@ class CSoundSample: public ISoundSample
 
 public:
 
-	CSoundSample(CResourceManager *pResMan, ISound *pSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
-	_pResMan(pResMan), _pSound(pSound), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(uiBitsPerSample),
+	CSoundSample(uint uiInstIdx, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
+	CInstancedObj(uiInstIdx), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(uiBitsPerSample),
 	_bStereo(bStereo), _pData(pData), _ui32DataSize(ui32DataSize)
 	{}
 
 	~CSoundSample()
 	{
-		_pSound->ReleaseChannelsByData(_pData);
+		Core()->pSound()->ReleaseChannelsByData(_pData);
 		delete[] _pData;
 	}
 
 	DGLE_RESULT DGLE_API Play()
 	{
-		if (!_pSound)
+		if (!Core()->pSound())
 			return E_ABORT;
 
 		ISoundChannel *p_chnl;
 		
-		DGLE_RESULT res = _pSound->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+		DGLE_RESULT res = Core()->pSound()->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
 
 		if (SUCCEEDED(res))
 		{
@@ -139,13 +137,13 @@ public:
 	
 	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags)
 	{
-		if (!_pSound)
+		if (!Core()->pSound())
 		{
 			pSndChnl = NULL;
 			return E_ABORT;
 		}
 
-		DGLE_RESULT res = _pSound->CreateChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+		DGLE_RESULT res = Core()->pSound()->CreateChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
 
 		if (SUCCEEDED(res))
 			pSndChnl->Play((bool)(eFlags & SSP_LOOPED));
@@ -153,33 +151,7 @@ public:
 		return res;
 	}
 	
-	DGLE_RESULT DGLE_API Free()
-	{
-		bool can_delete;
-
-		_pResMan->RemoveResource(this, can_delete);
-
-		if (can_delete)
-		{
-			delete this;
-			return S_OK;
-		}
-		else
-			return S_FALSE;
-	}
-	
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType)
-	{
-		eObjType = EOT_SOUND_SAMPLE;
-		return S_OK;
-	}
-	
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType)
-	{
-		uiObjUnknownType = -1;
-		return S_FALSE;
-	}
-
+	IENGBASEOBJ_IMPLEMENTATION(EOT_SOUND_SAMPLE)
 	IDGLE_BASE_IMPLEMENTATION(ISoundSample)
 };
 
@@ -1399,13 +1371,13 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 
 	pFile->Read(&header, sizeof(CBitmapFont::TFontHeader), ui_read);
 
-	uint ui_data_size = header.iTexWidth*header.iTexHeight*header.ubBitdepth;
+	uint ui_data_size = header.texWidth * header.texHeight * header.bitDepth;
 	
 	uint8 *p_data = new uint8[ui_data_size];
 
 	CBitmapFont::TCharBox chars[224];
 
-	pFile->Read(chars, 224*sizeof(CBitmapFont::TCharBox), ui_read);
+	pFile->Read(chars, 224 * sizeof(CBitmapFont::TCharBox), ui_read);
 	
 	pFile->Read(p_data, ui_data_size, ui_read);
 
@@ -1418,7 +1390,7 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 
 	E_TEXTURE_DATA_FORMAT format;
 
-	switch (header.ubBitdepth)
+	switch (header.bitDepth)
 	{
 	case 1: format = TDF_ALPHA8; break;
 	case 4: format = TDF_RGBA8; break;
@@ -1430,7 +1402,7 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 
 	ITexture *p_tex;
 
-	if (!_CreateTexture((ITexture*&)p_tex, p_data, header.iTexWidth, header.iTexHeight, format, TCF_DEFAULT, (E_TEXTURE_LOAD_FLAGS)(TLF_GENERATE_MIPMAPS | TLF_FILTERING_ANISOTROPIC | TLF_ANISOTROPY_4X | TLF_COORDS_REPEAT)))
+	if (!_CreateTexture((ITexture*&)p_tex, p_data, header.texWidth, header.texHeight, format, TCF_DEFAULT, (E_TEXTURE_LOAD_FLAGS)(TLF_GENERATE_MIPMAPS | TLF_FILTERING_ANISOTROPIC | TLF_ANISOTROPY_4X | TLF_COORDS_REPEAT)))
 	{
 		LOG("Error(s) while loading font texture.", LT_ERROR);
 		delete[] p_data;
@@ -1455,7 +1427,7 @@ bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPe
 	uint8 * p_data = new uint8[ui32DataSize];
 	memcpy(p_data, pData, ui32DataSize);
 
-	prSndSample = (ISoundSample*)(new CSoundSample(this, Core()->pSound(), uiSamplesPerSec, uiBitsPerSample, bStereo, p_data, ui32DataSize));
+	prSndSample = (ISoundSample*)(new CSoundSample(InstIdx(), uiSamplesPerSec, uiBitsPerSample, bStereo, p_data, ui32DataSize));
 	
 	return true;
 }
@@ -1577,7 +1549,7 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 		return false;
 	}
 
-	prSSample = (ISoundSample*)(new CSoundSample(this, Core()->pSound(), st_format.uiSamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
+	prSSample = (ISoundSample*)(new CSoundSample(InstIdx(), st_format.uiSamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
 
 	return true;
 }

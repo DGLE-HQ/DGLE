@@ -1,0 +1,30 @@
+================================= Description =================================
+
+DCP 1.0 [D]gle [C]ompiled [P]ackage format specification.
+
+================================ Specification ================================
+
+[BYTE * 7 | FormatTxt][ _ | CompressedData][ _ | FilesInfo][BYTE * 4 | MetaData]
+
+================================= Data Blocks =================================
+
+#FormatTxt#
+[CHAR * 7] String must be "DCP 1.0", without terminating null symbol.
+
+#CompressedData#
+[BYTE * DataSize] Compressed raw package data using LZO algorithm.
+
+#FilesInfo#
+[[
+[UINT32] File name hash using CRC32 algorithm.
+[UINT32] Uncompressed file size.
+[UINT32] Compressed file size.
+[UINT32] Offset of file data start in bytes relative to CompressedData chunk.
+[CHAR * 256] Full file name including path.
+] * FilesCount]
+
+#MetaData#
+[UINT32 | DataSize] Size of CompressedData chunk in bytes.
+[UINT32 | FilesCount] Count of files in package.
+
+===============================================================================

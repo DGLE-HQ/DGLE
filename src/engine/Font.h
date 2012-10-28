@@ -10,6 +10,7 @@ See "DGLE.h" for more details.
 #pragma once
 
 #include "Common.h"
+#include "ResourceManager.h"
 
 class CBitmapFont: public CInstancedObj, public IBitmapFont
 {
@@ -17,14 +18,14 @@ public:
 #pragma pack(push, 1)
 	struct TCharBox
 	{
-		uint32 iX, iY, iW, iH;
+		uint32 x, y, w, h;
 	};
 	
 	struct TFontHeader
 	{
-		uint8	ubBitdepth;
-		uint32	iTexWidth,
-				iTexHeight;
+		uint8	bitDepth;
+		uint32	texWidth,
+				texHeight;
 	};
 #pragma pack(pop)
 
@@ -52,9 +53,6 @@ public:
 	DGLE_RESULT DGLE_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors);
 	DGLE_RESULT DGLE_API Draw3D(const char *pcTxt);
 	
-	DGLE_RESULT DGLE_API Free();
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType);
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType);
-
+	IENGBASEOBJ_IMPLEMENTATION(EOT_BITMAP_FONT)
 	IDGLE_BASE_IMPLEMENTATION(IBitmapFont)
 };

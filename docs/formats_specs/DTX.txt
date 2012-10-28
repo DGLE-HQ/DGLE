@@ -1,0 +1,25 @@
+================================= Description =================================
+
+DTX 1.0 [D]gle [T]e[X]tures binary format specification.
+
+================================ Specification ================================
+
+[BYTE * 7 | FormatTxt][BYTE * 18 | Header][ _ | DataChunk]
+
+================================= Data Blocks =================================
+
+#FormatTxt#
+[CHAR * 7] String must be "DTX 1.0", without terminating null symbol.
+
+#Header#
+[UINT32 | TexturesCount] Number of textures in file.
+[BYTE] Format type: BGR - 0, BGRA - 1, DXT1 - 2, DXT5 - 3.
+[UINT32] Texture width in pixels.
+[UINT32] Texture height in pixels.
+[BOOL] Are mipmaps presented for texture.
+[UINT32 | DataSize] Single texture data size in bytes including mipmaps.
+
+#DataChunk#
+[BYTE * DataSize * TexturesCount] Raw pixels data for all textures and its mipmaps.
+
+===============================================================================

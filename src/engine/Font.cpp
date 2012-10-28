@@ -8,7 +8,6 @@ See "DGLE.h" for more details.
 */
 
 #include "Font.h"
-#include "ResourceManager.h"
 #include "Render.h"
 #include "Render2D.h"
 
@@ -37,10 +36,10 @@ DGLE_RESULT DGLE_API CBitmapFont::GetTextDimensions(const char *pcTxt, uint &uiW
 		return S_FALSE;
 
 	float t_width = 0.f; 
-	uiHeight = (uint)(_astChars[0].iH*_fScale);
+	uiHeight = (uint)(_astChars[0].h * _fScale);
 
 	for (uint i = 0; i < strlen(pcTxt); ++i)
-		t_width += _astChars[static_cast<uchar>(pcTxt[i])-32].iW * _fScale;
+		t_width += _astChars[static_cast<uchar>(pcTxt[i]) - 32].w * _fScale;
 
 	uiWidth = (uint)t_width;
 
@@ -92,10 +91,10 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 	{
 		const uchar ch = static_cast<const uchar>(pcTxt[i]) - 32;
 		const int
-			&curb_x = _astChars[ch].iX,
-			&curb_y = _astChars[ch].iY,
-			&curb_w = _astChars[ch].iW,
-			&curb_h = _astChars[ch].iH;
+			&curb_x = _astChars[ch].x,
+			&curb_y = _astChars[ch].y,
+			&curb_w = _astChars[ch].w,
+			&curb_h = _astChars[ch].h;
 
 		_pBuffer[i*12] = x + curb_w * _fScale; _pBuffer[i*12 + 1] = y;
 		_pBuffer[i*12 + 2] = x + curb_w * _fScale; _pBuffer[i*12 + 3] = y + curb_h * _fScale;
@@ -214,10 +213,10 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 		const uchar ch = static_cast<const uchar>(pcTxt[i]) - 32;
 		
 		const int
-			&curb_x = _astChars[ch].iX,
-			&curb_y = _astChars[ch].iY,
-			&curb_w = _astChars[ch].iW,
-			&curb_h = _astChars[ch].iH;
+			&curb_x = _astChars[ch].x,
+			&curb_y = _astChars[ch].y,
+			&curb_w = _astChars[ch].w,
+			&curb_h = _astChars[ch].h;
 		
 		const uint idx = i*24;
 
@@ -277,31 +276,4 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 	Core()->pRender()->pRender2D()->SetColorMix(prev_color);
 
 	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CBitmapFont::Free()
-{
-	bool can_delete;
-	
-	Core()->pResMan()->RemoveResource(this, can_delete);
-	
-	if (can_delete)
-	{
-		delete this;
-		return S_OK;
-	}
-	else
-		return S_FALSE;
-}
-
-DGLE_RESULT DGLE_API CBitmapFont::GetType(E_ENG_OBJ_TYPE &eObjType)
-{
-	eObjType = EOT_BITMAP_FONT;
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CBitmapFont::GetUnknownType(uint &uiObjUnknownType)
-{
-	uiObjUnknownType = -1;
-	return S_FALSE;
 }

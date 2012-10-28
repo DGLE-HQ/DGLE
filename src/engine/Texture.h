@@ -10,6 +10,7 @@ See "DGLE.h" for more details.
 #pragma once
 
 #include "Common.h"
+#include "ResourceManager.h"
 
 class CRender2D;
 
@@ -38,9 +39,6 @@ public:
 	
 	DGLE_RESULT DGLE_API Bind(uint uiMTextureLayer);
 
-	DGLE_RESULT DGLE_API Free();
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType);
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType);
-
+	IENGBASEOBJ_IMPLEMENTATION(EOT_TEXTURE)
 	IDGLE_BASE_IMPLEMENTATION(ITexture)
 };

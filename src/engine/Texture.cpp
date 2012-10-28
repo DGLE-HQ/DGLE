@@ -8,7 +8,6 @@ See "DGLE.h" for more details.
 */
 
 #include "Texture.h"
-#include "ResourceManager.h"
 #include "Render.h"
 #include "Render2D.h"
 
@@ -106,31 +105,4 @@ DGLE_RESULT DGLE_API CTexture::Bind(uint uiMTextureLayer)
 {
 	Core()->pCoreRenderer()->BindTexture(_pCoreTexture);
 	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CTexture::Free()
-{
-	bool can_delete;
-
-	Core()->pResMan()->RemoveResource(this, can_delete);
-
-	if (can_delete)
-	{
-		delete this;
-		return S_OK;
-	}
-	else
-		return S_FALSE;
-}
-
-DGLE_RESULT DGLE_API CTexture::GetType(E_ENG_OBJ_TYPE &eObjType)
-{
-	eObjType = EOT_TEXTURE;
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CTexture::GetUnknownType(uint &uiObjUnknownType)
-{
-	uiObjUnknownType = -1;
-	return S_FALSE;
 }
