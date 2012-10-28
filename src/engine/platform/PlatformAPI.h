@@ -19,16 +19,16 @@ namespace DGLE
 
 enum E_WINDOW_ACCESS_TYPE
 {
-	WAT_FULL_ACCESS = 0,	/**< Indicates that engine owns window. */
-	WAT_RESTRICTED_ACCESS,	/**< Indicates that engine is rendering to some window control of some other window. */
-	WAT_NO_ACCESS			/**< Indicates that engine is working with some control without handle or that is not hookable. */
+	WAT_FULL_ACCESS = 0,
+	WAT_RESTRICTED_ACCESS,
+	WAT_NO_ACCESS
 };
 
 // {0D3C63FA-D14B-4190-BFB6-92F611506171}
 static const GUID IID_IMainWindow = 
 { 0xd3c63fa, 0xd14b, 0x4190, { 0xbf, 0xb6, 0x92, 0xf6, 0x11, 0x50, 0x61, 0x71 } };
 
-class IMainWindow
+class IMainWindow : public IDGLE_Base
 {
 public:
 	virtual DGLE_RESULT InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) = 0;
@@ -47,13 +47,13 @@ public:
 };
 
 // {FB6FAC15-B60F-4F96-98A3-93465429750F}
-static const GUID IID_ISpalshWindow = 
+static const GUID IID_ISplashWindow = 
 { 0xfb6fac15, 0xb60f, 0x4f96, { 0x98, 0xa3, 0x93, 0x46, 0x54, 0x29, 0x75, 0xf } };
 
-class ISplashWindow
+class ISplashWindow : public IDGLE_Base
 {
 public:
-	virtual DGLE_RESULT InitWindow(bool bSeparateThread, const char *pcBmpFileName) = 0;
+	virtual DGLE_RESULT InitWindow(const char *pcBmpFileName) = 0;
 	virtual DGLE_RESULT SetOwnerWindow(TWinHandle tOwnerHwnd) = 0;
 	virtual DGLE_RESULT Free() = 0;
 };
@@ -70,7 +70,7 @@ enum E_CONSOLE_WINDOW_EVENT
 static const GUID IID_IConsoleWindow = 
 { 0x67b449f3, 0xcff6, 0x4778, { 0x82, 0x32, 0xb8, 0x10, 0x84, 0x52, 0x7a, 0x51 } };
 
-class IConsoleWindow
+class IConsoleWindow : public IDGLE_Base
 {
 public:
 	virtual DGLE_RESULT InitWindow(bool bSeparateThread, void (DGLE_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole) = 0;

@@ -43,11 +43,11 @@ namespace DGLE
 		CRDF_GEOMETRY_BUFFER
 	};
 
-    public enum E_TEXTURE_TYPE
-    {
-        TT_2D = 0,
-        TT_3D
-    };
+	public enum E_TEXTURE_TYPE
+	{
+		TT_2D = 0,
+		TT_3D
+	};
 
 
 	public enum E_MATRIX_TYPE
@@ -171,10 +171,10 @@ namespace DGLE
 		E_BLEND_OPERATION	eOpAlpha;
 		*/
 		public TBlendStateDesc(byte dummy)
-        {
-		    bEnable = false;
-            eSrcFactor = E_BLEND_FACTOR.BF_SRC_ALPHA;
-            eDestFactor = E_BLEND_FACTOR.BF_ONE_MINUS_SRC_ALPHA;
+		{
+			bEnable = false;
+			eSrcFactor = E_BLEND_FACTOR.BF_SRC_ALPHA;
+			eDestFactor = E_BLEND_FACTOR.BF_ONE_MINUS_SRC_ALPHA;
 		}
 	};
 
@@ -202,11 +202,11 @@ namespace DGLE
 		TStencilFaceDesc stFrontFace, stBackFace;
 		*/
 
-        public TDepthStencilDesc(byte dummy)
-        {
-		    bDepthTestEnable = true;
-            bWriteToDepthBuffer = true;
-            eDepthFunc = E_COMPARISON_FUNC.CF_LESS_EQUAL;
+		public TDepthStencilDesc(byte dummy)
+		{
+			bDepthTestEnable = true;
+			bWriteToDepthBuffer = true;
+			eDepthFunc = E_COMPARISON_FUNC.CF_LESS_EQUAL;
 		}
 	};
 
@@ -232,23 +232,23 @@ namespace DGLE
 		bool	bDepthClipEnable;
 		*/
 
-        public TRasterizerStateDesc(byte dummy)
-        {
+		public TRasterizerStateDesc(byte dummy)
+		{
 		bWireframe = false;
-            eCullMode = E_POLYGON_CULL_MODE.PCM_NONE;
-            bFrontCounterClockwise = true;
-            bScissorEnable = false;
+			eCullMode = E_POLYGON_CULL_MODE.PCM_NONE;
+			bFrontCounterClockwise = true;
+			bScissorEnable = false;
 
 		bAlphaTestEnable = false;
-            eAlphaTestFunc = E_COMPARISON_FUNC.CF_GREATER;
-            fAlphaTestRefValue = 0.25f;
-        }
+			eAlphaTestFunc = E_COMPARISON_FUNC.CF_GREATER;
+			fAlphaTestRefValue = 0.25f;
+		}
 	};
 
 	public struct TDrawDataDesc
 	{
-        //Pointer?
-        [MarshalAs(UnmanagedType.LPArray)] byte[] pData; //Must be start of the vertex data. 2 or 3 floats
+		//Pointer?
+		[MarshalAs(UnmanagedType.LPArray)] byte[] pData; //Must be start of the vertex data. 2 or 3 floats
 
 		uint uiVertexStride;
 		bool bVertexCoord2;
@@ -262,44 +262,44 @@ namespace DGLE
 		uint uiColorOffset; //4 floats
 		uint uiColorStride;
 
-        //Pointer?
-        [MarshalAs(UnmanagedType.LPArray)] byte[] pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
+		//Pointer?
+		[MarshalAs(UnmanagedType.LPArray)] byte[] pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
 		bool bIndexBuffer32;
 
 		//ToDo: Add VertexAttribPointers.
 
 
-        const int minus1 = 0; // -1 should be, but uint doesn't allow -1 
+		const int minus1 = 0; // -1 should be, but uint doesn't allow -1 
 
 
-        public TDrawDataDesc(byte dummy)
-        {
-		    pData = null; 
-            uiVertexStride = 0; 
-            bVertexCoord2 = false;
-		    uiNormalOffset = minus1; 
-            uiNormalStride = 0;
-		    uiTexCoordOffset = minus1; 
-            uiTexCoordStride = 0;
-		    uiColorOffset = minus1; 
-            uiColorStride = 0;
-		    pIndexBuffer = null; 
-            bIndexBuffer32 = false;
+		public TDrawDataDesc(byte dummy)
+		{
+			pData = null; 
+			uiVertexStride = 0; 
+			bVertexCoord2 = false;
+			uiNormalOffset = minus1; 
+			uiNormalStride = 0;
+			uiTexCoordOffset = minus1; 
+			uiTexCoordStride = 0;
+			uiColorOffset = minus1; 
+			uiColorStride = 0;
+			pIndexBuffer = null; 
+			bIndexBuffer32 = false;
 		}
 
 		public TDrawDataDesc([MarshalAs(UnmanagedType.LPArray)] byte[] pDataPointer, uint uiTexCoordDataOffset = minus1, bool bTwoCoordPerVertex = true)
-        {
-		    pData = pDataPointer; 
-            uiVertexStride = 0; 
-            bVertexCoord2 = bTwoCoordPerVertex;
-		    uiNormalOffset = minus1; 
-            uiNormalStride = 0;
-		    uiTexCoordOffset = uiTexCoordDataOffset; 
-            uiTexCoordStride = 0;
-		    uiColorOffset = minus1; 
-            uiColorStride = 0;
-		    pIndexBuffer = null; 
-            bIndexBuffer32 = false;
+		{
+			pData = pDataPointer; 
+			uiVertexStride = 0; 
+			bVertexCoord2 = bTwoCoordPerVertex;
+			uiNormalOffset = minus1; 
+			uiNormalStride = 0;
+			uiTexCoordOffset = uiTexCoordDataOffset; 
+			uiTexCoordStride = 0;
+			uiColorOffset = minus1; 
+			uiColorStride = 0;
+			pIndexBuffer = null; 
+			bIndexBuffer32 = false;
 		}
 	};
 /*
@@ -309,14 +309,14 @@ namespace DGLE
 */
 
 
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("5C5C5973-D826-42ED-B641-A84DDDAAE2A3")]
-    public interface IBaseRenderObjectContainer : IDGLE_Base
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+	Guid("5C5C5973-D826-42ED-B641-A84DDDAAE2A3")]
+	public interface IBaseRenderObjectContainer : IDGLE_Base
 	{
-        #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
-        #endregion
-	    void GetObjectType(out E_ENG_OBJ_TYPE eType);
+		#region IDGLE_Base
+		new void GetGUID(ref Guid guid);
+		#endregion
+		void GetObjectType(out E_ENG_OBJ_TYPE eType);
 	};
 
 /*
@@ -332,23 +332,23 @@ namespace DGLE
  // --------------GLuint not found in openGL.cs, here in openGL interfaces uint used instead-----------------
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("7264D8D2-C3AF-4ED3-91D1-90E02BE6A4EE")]
-    public interface IOpenGLTextureContainer : IBaseRenderObjectContainer
+	Guid("7264D8D2-C3AF-4ED3-91D1-90E02BE6A4EE")]
+	public interface IOpenGLTextureContainer : IBaseRenderObjectContainer
 	{
-        #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
-        #endregion
-	    void  GetTexture(out uint texture);
+		#region IDGLE_Base
+		new void GetGUID(ref Guid guid);
+		#endregion
+		void  GetTexture(out uint texture);
 	};
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("152B744F-7C1B-414F-BEC1-CD40A308E5DF")]
-    public interface IOpenGLBufferContainer : IBaseRenderObjectContainer
+	Guid("152B744F-7C1B-414F-BEC1-CD40A308E5DF")]
+	public interface IOpenGLBufferContainer : IBaseRenderObjectContainer
 	{
-        #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
-        #endregion
-	    void GetVertexBufferObject(out uint vbo);
+		#region IDGLE_Base
+		new void GetGUID(ref Guid guid);
+		#endregion
+		void GetVertexBufferObject(out uint vbo);
 		void GetIndexBufferObject(out uint vbo);
 	};
 
@@ -357,39 +357,39 @@ namespace DGLE
 	// {8BFF07F9-2A8E-41D0-8505-3128C1B8160A}
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("8BFF07F9-2A8E-41D0-8505-3128C1B8160A")]
-    public interface ICoreTexture : IDGLE_Base
+	Guid("8BFF07F9-2A8E-41D0-8505-3128C1B8160A")]
+	public interface ICoreTexture : IDGLE_Base
 	{
-        #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
-        #endregion
-	    void GetSize(out uint width, uint height);
-        void GetDepth(out uint depth);
+		#region IDGLE_Base
+		new void GetGUID(ref Guid guid);
+		#endregion
+		void GetSize(out uint width, uint height);
+		void GetDepth(out uint depth);
 		void GetType(out E_TEXTURE_TYPE eType);
 
 		void GetFormat(out E_TEXTURE_DATA_FORMAT eFormat);
 		void GetLoadFlags(out E_TEXTURE_LOAD_FLAGS eLoadFlags);
 		void GetPixelData([MarshalAs(UnmanagedType.LPArray)] out byte[] pData, uint uiDataSize, uint uiLodLevel);
 		void SetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiLodLevel);
-        void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat);
-        void  GetBaseObject(out IBaseRenderObjectContainer prObj);
+		void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat);
+		void  GetBaseObject(out IBaseRenderObjectContainer prObj);
 		void  Free();
 	};
 
 
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("9A77DCFF-9E4B-4716-9BBB-A316BF217F7A")]
-    public interface ICoreGeometryBuffer : IDGLE_Base
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+	Guid("9A77DCFF-9E4B-4716-9BBB-A316BF217F7A")]
+	public interface ICoreGeometryBuffer : IDGLE_Base
 	{
-        #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
-        #endregion
+		#region IDGLE_Base
+		new void GetGUID(ref Guid guid);
+		#endregion
 		void GetGeometryData(out TDrawDataDesc stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize);
 		void SetGeometryData(ref TDrawDataDesc stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize);
-        void Reallocate(ref TDrawDataDesc stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode);
+		void Reallocate(ref TDrawDataDesc stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode);
 		void GetBufferDimensions(out uint uiVerticesDataSize, out uint uiVerticesCount, out uint uiIndexesDataSize, out uint uiIndexesCount);
 		void GetBufferDrawDataDesc(out TDrawDataDesc stDesc);
-        void GetBufferDrawMode(out E_CORE_RENDERER_DRAW_MODE eMode);
+		void GetBufferDrawMode(out E_CORE_RENDERER_DRAW_MODE eMode);
 		void GetBufferType(out E_CORE_RENDERER_BUFFER_TYPE eType);
 		void GetBaseObject(out IBaseRenderObjectContainer prObj);
 		void Free();
@@ -397,15 +397,15 @@ namespace DGLE
 
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("C3B687A1-57B0-4E21-BE4C-4D92F3FAB311")]
-    public interface ICoreRenderer : IEngineSubSystem
+	Guid("C3B687A1-57B0-4E21-BE4C-4D92F3FAB311")]
+	public interface ICoreRenderer : IEngineSubSystem
 	{
-        #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
-        #endregion	
-        //Must not be called by user
+		#region IDGLE_Base
+		new void GetGUID(ref Guid guid);
+		#endregion	
+		//Must not be called by user
 
-        // here bool is TCRendererInitResult
+		// here bool is TCRendererInitResult
 		void Prepare(ref bool stResults);
 		void Initialize(ref bool stResults);
 		void Finalize();

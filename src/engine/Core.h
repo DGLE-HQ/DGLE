@@ -153,7 +153,7 @@ class CCore: public CInstancedObj, public IEngineCore
 
 public:
 
-	CCore(uint uiInstIdx, bool bForceSingleThreaded);
+	CCore(uint uiInstIdx);
 	~CCore();
 
 	inline	CRender* pRender() const {return _pRender;}

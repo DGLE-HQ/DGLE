@@ -229,7 +229,7 @@ public:
 
 //Engine Core//
 
-CCore::CCore(uint uiInstIdx, bool bForceSingleThreaded):
+CCore::CCore(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _pMainWindow(NULL), _uiFPSTimer(0),
 _iLogWarningsCount(0), _LogErrorsCount(0),
@@ -304,42 +304,55 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 	
 	switch (eType)
 	{
-		 case LT_WARNING:	msg="[WARNING] " + string(pcTxt); ++_iLogWarningsCount; break;
-		 case LT_ERROR:		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")"; ++_LogErrorsCount; break;
-		 case LT_FATAL:		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")"; ++_LogErrorsCount;
-							_LogWrite(msg.c_str(), true);		 
+	case LT_WARNING:
+		msg="[WARNING] " + string(pcTxt);
+		++_iLogWarningsCount;
+		break;
+	
+	case LT_ERROR:
+		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")";
+		++_LogErrorsCount;
+		break;
+	
+	case LT_FATAL:
+		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")";
+		++_LogErrorsCount;
+		
+		_LogWrite(msg.c_str(), true);		 
 							
-							CEvFatalMessage *ev_fatal_msg;
+		CEvFatalMessage *ev_fatal_msg;
 							
-							ev_fatal_msg = new CEvFatalMessage(msg, this);
+		ev_fatal_msg = new CEvFatalMessage(msg, this);
 
-							CastEvent(ET_ON_ENGINE_FATAL_MESSAGE, (IBaseEvent*)ev_fatal_msg);
+		CastEvent(ET_ON_ENGINE_FATAL_MESSAGE, (IBaseEvent*)ev_fatal_msg);
 
-							if (((CEvFatalMessage*)ev_fatal_msg)->DoShowMessage())
-							{
-								Console()->Visible(true);
+		if (((CEvFatalMessage*)ev_fatal_msg)->DoShowMessage())
+		{
+			Console()->Visible(true);
 								
-								if (_pSplashWindow)
-								{
-									_pSplashWindow->Free();
-									_pSplashWindow = NULL;
-								}
+			if (_pSplashWindow)
+			{
+				_pSplashWindow->Free();
+				_pSplashWindow = NULL;
+			}
 
-								ShowModalUserAlert(pcTxt, "DGLE Fatal Error!");
-							}
+			ShowModalUserAlert(pcTxt, "DGLE Fatal Error!");
+		}
 
-							if (((CEvFatalMessage*)ev_fatal_msg)->DoHalt())
-							{
-								delete ev_fatal_msg;
-								delete this;
-								TerminateProcess(GetCurrentProcess(), 2);
-							}
-							else
-								delete ev_fatal_msg;
+		if (((CEvFatalMessage*)ev_fatal_msg)->DoHalt())
+		{
+			delete ev_fatal_msg;
+			delete this;
+			TerminateProcess(GetCurrentProcess(), 2);
+		}
+		else
+			delete ev_fatal_msg;
 
-							break;
+		break;
 
-		 default: msg = pcTxt; break;
+	default:
+		msg = pcTxt;
+		break;
 	}
 	
 	if (eType != LT_FATAL)
@@ -939,7 +952,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		if (do_spl)
 		{
 			_pSplashWindow = new CSplashWindow(InstIdx());
-			_pSplashWindow->InitWindow(!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_SINGLE_THREAD), _pcCustomSplash);
+			_pSplashWindow->InitWindow(_pcCustomSplash);
 		}
 
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 

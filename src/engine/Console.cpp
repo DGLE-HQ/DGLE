@@ -65,8 +65,8 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(IEvConsoleWrite)
 };
 
-CConsole::CConsole(uint uiInsIdx, bool bInSeparateThread):
-_uiInsIdx(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
+CConsole::CConsole(uint uiInsIdx):
+CInstancedObj(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 {
 	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, (void*)this);
 	RegComProc("help", "Don't be stupid! :)", &_s_Help, this);
@@ -80,7 +80,7 @@ _uiInsIdx(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 	RegComProc("con_size", "Changes console window size.\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, (void*)this);
 
 	_pConsoleWindow = new CConsoleWindow();
-	_pConsoleWindow->InitWindow(bInSeparateThread, &_s_OnConWindowEvent, this);
+	_pConsoleWindow->InitWindow(!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_SINGLE_THREAD), &_s_OnConWindowEvent, this);
 }
 
 CConsole::~CConsole()
@@ -480,10 +480,8 @@ void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 {
 	string txt(strTxt);
 
-	CCore *p_core = EngineInstance(_uiInsIdx)->pclCore;
-
-	if (p_core)
-		p_core->CastEvent(ET_ON_CONSOLE_WRITE, &CEvConsoleWrite(txt, bToPrevLine));
+	if (Core())
+		Core()->CastEvent(ET_ON_CONSOLE_WRITE, &CEvConsoleWrite(txt, bToPrevLine));
 
 	for (size_t i = 0; i < txt.size(); ++i)
 		if (txt[i] == '\n')

@@ -33,6 +33,16 @@ call :removeProjJunkCPP ".\plugins\ext"
 call :removeBinJunkCPP "tests"
 call :removeProjJunkCPP ".\tests\dev"
 
+call :removeBinJunkCSharp "tests"
+call :removeProjJunkCSharp "tests\csharp"
+
+:: CSharp assemblies
+
+del .\..\..\include\csharp\*.pdb
+
+call :removeSlnJunkCSharp ".\..\common\csharp_assembly"
+call :removeProjJunkCSharp "engine\csharp_assembly"
+
 :: Tools
 
 call :removeBinJunkCSharp "tools"

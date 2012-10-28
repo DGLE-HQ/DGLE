@@ -87,6 +87,12 @@ bool CBaseSound::_InitDevice(uint id)
 	if (_hWaveOut)
 		return false;
 
+	if (EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_SINGLE_THREAD)
+	{
+		LOG("This sound realisation works only in multithreading mode.", LT_WARNING);
+		return false;
+	}
+
 	if (MMSYSERR_NOERROR != waveOutOpen(&_hWaveOut, id, &_stWaveFormat, (DWORD_PTR)&_s_WaveCallback, (DWORD_PTR)this, CALLBACK_FUNCTION))
 	{
 		LOG("Failed to open audio device.", LT_ERROR);
@@ -165,47 +171,49 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 
 void CBaseSound::CloseDevice()
 {
-	if (_hWaveOut)
-	{
-		_bDeviceClosingFlag = true;
+	if (!_hWaveOut)
+		return;
+
+	_bDeviceClosingFlag = true;
 		
-		EnterCriticalSection(&_cs);
+	EnterCriticalSection(&_cs);
 	
-		DWORD tick = GetTickCount();
-		while (!(_stWaveBuffers[0].dwFlags & WHDR_DONE && _stWaveBuffers[1].dwFlags & WHDR_DONE) && GetTickCount() - tick < 500) Sleep(0);
+	DWORD tick = GetTickCount();
+	while (!(_stWaveBuffers[0].dwFlags & WHDR_DONE && _stWaveBuffers[1].dwFlags & WHDR_DONE) && GetTickCount() - tick < 500) Sleep(0);
 
-		bool flag = _stWaveBuffers[0].dwFlags & WHDR_DONE && _stWaveBuffers[1].dwFlags & WHDR_DONE;
+	bool flag = _stWaveBuffers[0].dwFlags & WHDR_DONE && _stWaveBuffers[1].dwFlags & WHDR_DONE;
 
-		waveOutUnprepareHeader(_hWaveOut, &_stWaveBuffers[0], sizeof(WAVEHDR));
-		waveOutUnprepareHeader(_hWaveOut, &_stWaveBuffers[1], sizeof(WAVEHDR));
+	waveOutUnprepareHeader(_hWaveOut, &_stWaveBuffers[0], sizeof(WAVEHDR));
+	waveOutUnprepareHeader(_hWaveOut, &_stWaveBuffers[1], sizeof(WAVEHDR));
 
-		if (flag)
-			waveOutReset(_hWaveOut);
+	if (flag)
+		waveOutReset(_hWaveOut);
 	
-		if (MMSYSERR_NOERROR != waveOutClose(_hWaveOut))
-			LOG("Failed to close audio device properly.", LT_ERROR);
-		else
-			LOG("Audio device closed properly.", LT_INFO);
-	
-		delete[] _pBuffersData;
-	
-		_hWaveOut = NULL;
-		_pBuffersData = NULL;
-
-		LeaveCriticalSection(&_cs);
-	}
+	LeaveCriticalSection(&_cs);
 
 	DeleteCriticalSection(&_cs);
+
+	if (MMSYSERR_NOERROR != waveOutClose(_hWaveOut))
+		LOG("Failed to close audio device properly.", LT_ERROR);
+	else
+		LOG("Audio device closed properly.", LT_INFO);
+	
+	delete[] _pBuffersData;
+	
+	_hWaveOut = NULL;
+	_pBuffersData = NULL;
 }
 
 void CBaseSound::EnterThreadSafeSection()
 {
-	EnterCriticalSection(&_cs);
+	if (_hWaveOut)
+		EnterCriticalSection(&_cs);
 }
 
 void CBaseSound::LeaveThreadSafeSection()
 {
-	LeaveCriticalSection(&_cs);
+	if (_hWaveOut)
+		LeaveCriticalSection(&_cs);
 }
 
 void CBaseSound::_PrintDevList()

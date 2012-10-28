@@ -51,4 +51,5 @@ public:
 	DGLE_RESULT KillWindow();
 	DGLE_RESULT Free();
 
+	IDGLE_BASE_IMPLEMENTATION(IMainWindow)
 };

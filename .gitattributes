@@ -14,6 +14,7 @@
 *.cpp	text
 *.h		text
 *.txt	text
+*.cs	text
 
 # Standard to msysgit
 *.doc	diff=astextplain

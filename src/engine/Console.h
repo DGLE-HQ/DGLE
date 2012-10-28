@@ -30,10 +30,8 @@ struct TConEntry
 
 };
 
-class CConsole
+class CConsole : public CInstancedObj
 {
-	uint _uiInsIdx;
-
 	IConsoleWindow *_pConsoleWindow;
 	std::vector<TConEntry>	_commands;
 	std::vector<std::string> _prevCommands;
@@ -64,7 +62,7 @@ class CConsole
 
 public:
 
-	CConsole(uint uiInsIdx, bool bInSeparateThread);	 
+	CConsole(uint uiInsIdx);	 
 	~CConsole();
 
 	void  Visible(bool bVisible);

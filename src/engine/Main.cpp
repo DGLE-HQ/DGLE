@@ -50,8 +50,8 @@ bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags,
 	size_t cur_id = EngineInstances.size() - 1;
 
 	EngineInstances[cur_id].eGetEngFlags = eFlags;
-	EngineInstances[cur_id].pclConsole = new CConsole((uint)cur_id, !(eFlags & GEF_FORCE_SINGLE_THREAD));
-	EngineInstances[cur_id].pclCore = new CCore((uint)cur_id, eFlags & GEF_FORCE_SINGLE_THREAD);
+	EngineInstances[cur_id].pclConsole = new CConsole(cur_id);
+	EngineInstances[cur_id].pclCore = new CCore(cur_id);
 
 	if (eFlags & GEF_FORCE_QUIT)
 		bTerminate = true;

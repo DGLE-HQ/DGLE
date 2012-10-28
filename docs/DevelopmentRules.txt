@@ -151,9 +151,10 @@
 By default you should use rules from C++ section, but there are some important exceptions!
 
 1. All classes, class metods, enums, structures and functions must be named in CamelCase style.
-2. All global variables and class members must be named in lowerCamelCase style.
-3. Local variables must have lower-case names with "_" as separator.
-4. Never use Hungarian Notation!
+2. All global and local variables as well as class members must be named in lowerCamelCase style.
+3. Try not to use Hungarian Notation it is obsolete for modern programming languages.
+	
+Note that engine C# assemblies have the same code style as C++, we do so not to confuse engine users.
 	
 =============================== Code Samples ==================================
 

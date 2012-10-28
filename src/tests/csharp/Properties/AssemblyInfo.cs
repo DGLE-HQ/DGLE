@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DGLESharp")]
-[assembly: AssemblyDescription("Assembly wrapper upon DGLE for .Net/Mono languages.")]
+[assembly: AssemblyTitle("CSharpTest")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Andrey Korotkov")]
-[assembly: AssemblyProduct("DGLESharp")]
-[assembly: AssemblyCopyright("Copyright © Andrey Korotkov 2012")]
-[assembly: AssemblyTrademark("DGLE")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("CSharpTest")]
+[assembly: AssemblyCopyright("Copyright © Andrey korotkov 2012")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("fa86b860-bd45-4c5e-9e15-5399170c7990")]
+[assembly: Guid("85a05221-f7d7-4d7a-94af-5f44623f3d41")]
 
 // Version information for an assembly consists of the following four values:
 //

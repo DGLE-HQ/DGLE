@@ -19,9 +19,9 @@ CInstancedObj(uiInstIdx),
 _hWnd(NULL), _hOwnerWndHwnd(NULL), _hBmp(NULL)
 {}
 
-DGLE_RESULT CSplashWindow::InitWindow(bool bSeparateThread, const char *pcBmpFileName)
+DGLE_RESULT CSplashWindow::InitWindow(const char *pcBmpFileName)
 {
-	_bInSeparateThread = bSeparateThread;
+	_bInSeparateThread = !(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_SINGLE_THREAD);
 
 	_pcBmpFile = new char [strlen(pcBmpFileName) + 1];
 	strcpy(_pcBmpFile, pcBmpFileName);

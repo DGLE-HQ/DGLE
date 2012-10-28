@@ -30,7 +30,10 @@ typedef HMODULE TDynLibHandle;
 #define PLUGIN_FILE_EXTENSION ".dll"
 
 #if defined(_MSC_VER)
-//#	pragma warning(disable : 4996) //deprication of unsecure strcpy and other such functions.
+#	ifdef _WIN64
+//#		pragma warning(disable : 4267)
+//#		pragma warning(disable : 4244)
+#	endif
 #endif
 
 #else //PLATFORM_WINDOWS
@@ -86,12 +89,27 @@ TEngInstance* EngineInstance(uint uiInstIdx);
 class CInstancedObj
 {
 	const uint _uiInstIdx;
+
 protected:
+
 	CInstancedObj(uint uiInstIdx):_uiInstIdx(uiInstIdx){}
+
 public:
-	inline uint InstIdx()const{return _uiInstIdx;}
-	inline CConsole* Console()const{return EngineInstance(_uiInstIdx)->pclConsole;}
-	inline CCore* Core()const{return EngineInstance(_uiInstIdx)->pclCore;}
+
+	inline uint InstIdx() const 
+	{
+		return _uiInstIdx;
+	}
+	
+	inline CConsole* Console() const 
+	{
+		return EngineInstance(_uiInstIdx)->pclConsole;
+	}
+
+	inline CCore* Core() const 
+	{
+		return EngineInstance(_uiInstIdx)->pclCore;
+	}
 };
 
 #include "Core.h"

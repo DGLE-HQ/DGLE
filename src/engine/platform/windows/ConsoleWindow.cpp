@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		07.10.2012 (c)Korotkov Andrey
+\date		28.10.2012 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -155,7 +155,7 @@ DGLE_RESULT CConsoleWindow::GetEditTxt(char *pcTxt, uint uiBufferSize)
 DGLE_RESULT CConsoleWindow::SetEditTxt(const char *pcTxt)
 {
 	SetWindowText(_hEdit, pcTxt);
-	SendMessage(_hEdit, WM_KEYDOWN, 35, 0);
+	SendMessage(_hEdit, WM_KEYDOWN, 35 /*end*/, 0);
 
 	return S_OK;
 }
@@ -325,39 +325,39 @@ LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wPar
 
 	switch(message) 
 	{
-		case WM_MOVE:
-			this_ptr->_iX = LOWORD(lParam);
-			this_ptr->_iY = HIWORD(lParam);
-			break;
+	case WM_MOVE:
+		this_ptr->_iX = LOWORD(lParam);
+		this_ptr->_iY = HIWORD(lParam);
+		break;
 
-		case WM_SHOWWINDOW:
-			 this_ptr->_bVisible = (wParam == TRUE);
-			 SetFocus(this_ptr->_hEdit);
-			 break;
+	case WM_SHOWWINDOW:
+		this_ptr->_bVisible = (wParam == TRUE);
+		SetFocus(this_ptr->_hEdit);
+		break;
 
-		case WM_CLOSE:
-			 ShowWindow(this_ptr->_hWnd, SW_HIDE );
-			 break;
+	case WM_CLOSE:
+		ShowWindow(this_ptr->_hWnd, SW_HIDE );
+		break;
 
-		case WM_SIZE:
-			this_ptr->_iWidth = LOWORD(lParam);
-			this_ptr->_iHeight = HIWORD(lParam);
-			this_ptr->_Realign();
-			break;
+	case WM_SIZE:
+		this_ptr->_iWidth = LOWORD(lParam);
+		this_ptr->_iHeight = HIWORD(lParam);
+		this_ptr->_Realign();
+		break;
 
-		case WM_DESTROY:
-			DeleteObject(this_ptr->_hFont);
-			break;
+	case WM_DESTROY:
+		DeleteObject(this_ptr->_hFont);
+		break;
 
-		case WM_GETMINMAXINFO:
-			POINT pt;
-			pt.x = C_WND_MIN_WIDTH;
-			pt.y = C_WND_MIN_HEIGHT;
-			((MINMAXINFO*)lParam)->ptMinTrackSize = pt;
-			break;
+	case WM_GETMINMAXINFO:
+		POINT pt;
+		pt.x = C_WND_MIN_WIDTH;
+		pt.y = C_WND_MIN_HEIGHT;
+		((MINMAXINFO*)lParam)->ptMinTrackSize = pt;
+		break;
 
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	return 0;
@@ -372,48 +372,55 @@ LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM 
 
 	switch(message) 
 	{
-		case WM_KEYUP:
+	case WM_KEYUP:
+		switch(wParam)
+		{
+			case 192: //tilda
+				this_ptr->Visible(false);
+				SetWindowText(this_ptr->_hEdit, "");
+				break;
 
-			switch(wParam)
-			{
-				case 192: //tilda
-					this_ptr->Visible(false);
-					SetWindowText(this_ptr->_hEdit, "");
-					break;
+			case 38: //up			
+				this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_PREVIOUS_COMMAND, "");
+				break;
 
-				case 38: //up			
-					this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_PREVIOUS_COMMAND, "");
-					break;
+			case 40: //down				
+				this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_NEXT_COMMAND, "");
+				break;
+		}
+		break;
 
-				case 40: //down				
-					this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_NEXT_COMMAND, "");
-					break;
-
-				case 9: //tab
-					if (GetWindowTextLength(this_ptr->_hEdit) > 0)
-					{
-						GetWindowText(this_ptr->_hEdit, tmp, _sc_uiTmpBufferSize);
-						this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_COMPLETE_COMMAND, tmp);
-					}
-					break;
-			}
-
+	case WM_CHAR:
+		if (wParam == 96 /*tilda*/)
 			break;
 
-		case WM_CHAR:
-			
-			if (wParam == 13 /*return*/ && GetWindowTextLength(this_ptr->_hEdit) > 0)
+		if (GetWindowTextLength(this_ptr->_hEdit) > 0)
+		{
+			if (wParam == 9 /*tab*/)
 			{
 				GetWindowText(this_ptr->_hEdit, tmp, _sc_uiTmpBufferSize);
-				SetWindowText(this_ptr->_hEdit, NULL);
-				
-				this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_EXECUTE_COMMAND, tmp);
-				
+				this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_COMPLETE_COMMAND, tmp);
+
 				break;
 			}
+			else
+				if (wParam == 13 /*return*/)
+				{
+					GetWindowText(this_ptr->_hEdit, tmp, _sc_uiTmpBufferSize);
+					SetWindowText(this_ptr->_hEdit, NULL);
+				
+					this_ptr->_pConWindowEvent(this_ptr->_pConsole, CWE_EXECUTE_COMMAND, tmp);
+				
+					break;
+				}
+		}
 
-		default:
-			return CallWindowProc((WNDPROC)this_ptr->_pOldEditProc, hWnd, message, wParam, lParam);
+	case WM_KEYDOWN:
+		if (wParam == 38 /*up*/ || wParam == 40 /*down*/)
+			break;
+
+	default:
+		return CallWindowProc((WNDPROC)this_ptr->_pOldEditProc, hWnd, message, wParam, lParam);
 	}
 
    return 0;

@@ -164,6 +164,7 @@ namespace DGLE
 			\param[in] uiCmd Command index or some bitmask. These values must be gotten from documentation.
 			\param[in, out] stVar Variant with additional command parameters and for storing command result.
 			\return E_NOTIMPL indicates that interface has not got any commands.
+			\note If command returns any TVariant with allocated data inside then command with index -1 should delete any allocated memory inside interface.
 		*/
 		virtual DGLE_RESULT DGLE_API ExecCmd(uint uiCmd, TVariant &stVar) = 0;
 		/** Executes some text command and returns result as string. Commands are specific for concrete interface. All commands should be described in documentation.
