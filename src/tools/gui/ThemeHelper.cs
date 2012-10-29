@@ -34,7 +34,12 @@ namespace Gui
 			return styles;
 		}
 
-		public static void ApplyCustomTheme(string[] args)
+		static ThemeHelper ()
+		{
+			CopyEngineForWindows ();
+		}
+
+		public static void ApplyCustomTheme (string[] args)
 		{
 			if (args.Length > 0) {
 				Gui.ThemeHelper.ApplyCustomTheme (args[0]);
@@ -68,6 +73,15 @@ namespace Gui
 			string resourceId;
 			stylesTypes.TryGetValue (styleType, out resourceId);
 			return resourceId ?? lightId;
+		}
+
+		private static void CopyEngineForWindows ()
+		{
+			if (PlatformUtils.IsWindows) {
+				if (Gtk.Rc.FindModuleInPath ("libclearlooks.dll") == null) {
+					File.Copy(@".\libclearlooks.dll", Gtk.Rc.ModuleDir + @"\libclearlooks.dll");
+				}
+			}
 		}
 	}
 }

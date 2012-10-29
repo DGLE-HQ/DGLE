@@ -22,10 +22,8 @@ namespace Gui
 		{
 			this.Build();
 
-			base.Parent = parent;
 			base.TransientFor = parent;
 			base.SetPosition(Gtk.WindowPosition.CenterOnParent);
-
 			base.Decorated = parent.Decorated;
 
 			Assembly assembly = Assembly.GetEntryAssembly();

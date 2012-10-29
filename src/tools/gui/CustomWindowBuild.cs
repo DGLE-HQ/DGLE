@@ -40,11 +40,14 @@ namespace Gui
 			
 			this.hboxTitleBar = new Gtk.HBox ();
 			this.hboxTitleBar.Name = "hboxTitleBar";
+			this.hboxTitleBar.Spacing = 2;
+			this.hboxTitleBar.BorderWidth = 4;
 			this.evntboxTitleBar.Add (this.hboxTitleBar);
 			
 			this.labelCaption = new Gtk.Label ();
 			this.labelCaption.Name = "labelCaption";
 			this.labelCaption.Xalign = 0f;
+			this.labelCaption.Xpad = 4;
 			this.labelCaption.LabelProp = Mono.Unix.Catalog.GetString ("Title");
 			this.labelCaption.SingleLineMode = true;
 			this.hboxTitleBar.PackStart (this.labelCaption, true, true, 0);

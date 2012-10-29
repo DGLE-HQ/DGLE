@@ -1,11 +1,14 @@
+/**
+\author		Shestakov Mikhail aka MIKE
+\date		26.10.2012 (c)Korotkov Andrey
+
+This file is a part of DGLE2 project and is distributed
+under the terms of the GNU Lesser General Public License.
+See "DGLE2.h" for more details.
+*/
+
 # Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
-
-gtk-color-scheme = "fg_color:#262729\nbg_color:#fafafa\nbase_color:#fafafa\ntext_color:#262729\nselected_bg_color:#e77817\nselected_fg_color:#fff\ntooltip_bg_color:#fafafa\ntooltip_fg_color:#e77817"
-
-#gtk-icon-sizes = "gtk-menu=13,13:gtk-small-toolbar=16,16:gtk-large-toolbar=24,24:gtk-dnd=32,32"
-#gtk-toolbar-icon-size = small-toolbar
-#gtk-button-images = 0
-
+gtk-color-scheme = "fg_color:#262729\nbg_color:#fafafa\nbase_color:#fafafa\ntext_color:#262729\nselected_bg_color:#e77817\nselected_fg_color:#fff\ntooltip_bg_color:#fafafa\ntooltip_fg_color:#e77817\nsystem_bg_color:#383431\nsystem_fg_color:#fff"
 
 style "clearlooks-default" {
 	xthickness = 1
@@ -16,16 +19,10 @@ style "clearlooks-default" {
 	#######################
 	GtkButton::child-displacement-x = 1
 	GtkButton::child-displacement-y = 1
-	GtkButton::default-border = { 0, 0, 0, 0 }
-    #GtkButton::default_spacing        = 0
-    #GtkButton::focus-line-width       = 6
-	#GtkButton::focus-padding          = 0
-    #GtkButton::default-outside-border 	= {3, 3, 3, 3}
-    #GtkButton::inner-border 			= {3, 3, 3, 3}
-	
+	GtkButton::default-border = { 0, 0, 0, 0 }	
 
 	GtkCheckButton::indicator-size = 14
-
+	
 	GtkPaned::handle-size = 6
 
 	GtkRange::trough-border = 0
@@ -52,7 +49,7 @@ style "clearlooks-default" {
 
 	GtkMenu::horizontal-padding = 0
 	GtkMenu::vertical-padding = 0
-
+	
 	WnckTasklist::fade-overlay-rect = 0
 	# The following line hints to gecko (and possibly other appliations)
 	# that the entry should be drawn transparently on the canvas.
@@ -105,6 +102,16 @@ style "clearlooks-default" {
 	}
 }
 
+style "clearlooks-system" {
+	bg[NORMAL] = @system_bg_color
+	bg[PRELIGHT] = @selected_bg_color
+	fg[NORMAL] = @system_fg_color
+}
+
+style "clearlooks-border" {
+	bg[NORMAL] = @selected_bg_color
+}
+
 style "clearlooks-wide" {
 	xthickness = 2
 	ythickness = 2
@@ -128,7 +135,10 @@ style "clearlooks-entry" {
 }
 
 style "clearlooks-spinbutton" {
-
+	bg[PRELIGHT]      = @selected_bg_color
+	bg[SELECTED]      = @selected_bg_color
+	bg[ACTIVE]        = @selected_bg_color
+	
 	engine "clearlooks" {
 		hint = "spinbutton"
 	}
@@ -181,9 +191,7 @@ style "clearlooks-vscrollbar" {
 }
 
 style "clearlooks-notebook_bg" {
-
 	#bg[NORMAL]        = shade (1.02, @bg_color)
-	bg[NORMAL]        = shade (0.97, @bg_color)
 }
 
 style "clearlooks-button" {
@@ -196,9 +204,13 @@ style "clearlooks-button" {
 }
 
 style "clearlooks-button-system" = "clearlooks-button" {
-	bg[NORMAL] = "#000"
-	bg[PRELIGHT] = "#000"
-	bg[ACTIVE] = "#000"
+	xthickness = 0
+	ythickness = 0
+	
+	bg[NORMAL] = @system_bg_color
+	
+	GtkButton::child-displacement-x = 0
+	GtkButton::child-displacement-y = 0
 }
 
 # The color is changed by the notebook_bg style, this style
@@ -225,11 +237,7 @@ style "clearlooks-comboboxentry" {
 	}
 }
 
-style "clearlooks-menubar" {
-	
-	bg[NORMAL] = "#000"
-	bg[PRELIGHT] = @selected_bg_color
-	fg[NORMAL] = "#fff"
+style "clearlooks-menubar" = "clearlooks-system" {
 	
 	engine "clearlooks" {
 		hint = "menubar"
@@ -413,6 +421,10 @@ widget_class "*.<GtkTreeView>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCTree>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkList>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
+
+widget "*.evntboxTitleBar" style "clearlooks-system"
+widget "*.labelCaption" style "clearlooks-system"
+widget "*.vboxWindow" style "clearlooks-border"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

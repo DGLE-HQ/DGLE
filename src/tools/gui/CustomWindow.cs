@@ -19,37 +19,29 @@ namespace Gui
 			}
 			set {
 				frameBorderWidth = value;
-				base.BorderWidth = (uint) frameBorderWidth;
+				frameBorderMargin = frameBorderWidth > 2 ? 0 : 2;
 			}
 		}
 
 		[GLib.Property ("decorated")]
 		new public bool Decorated
 		{
-			get
-			{
-				return base.Decorated;
-			}
-			set
-			{
+			get { return base.Decorated; }
+			set {
 				if (base.Decorated == value)
 					return;
 
 				base.Decorated = value;
 				ShowTitleBar = !base.Decorated;
-				this.vboxWindow.BorderWidth = base.Decorated ? 0 : (uint) frameBorderWidth / 2;
+				this.vboxWindow.BorderWidth = base.Decorated ? 0 : (uint) frameBorderWidth;
 			}
 		}
 
 		[GLib.Property ("title")]
 		new public string Title
 		{
-			get
-			{
-				return base.Title;
-			}
-			set
-			{
+			get { return base.Title; }
+			set {
 				base.Title = value;
 				this.labelCaption.Text = value;
 			}
@@ -59,12 +51,8 @@ namespace Gui
 		[GLib.Property ("resizable")]
 		new public bool Resizable
 		{
-			get
-			{
-				return base.Resizable;
-			}
-			set
-			{
+			get { return base.Resizable; }
+			set {
 				base.Resizable = value;
 				ShowMaximizeBtn = base.Resizable;
 				ShowMinimizeBtn = base.Resizable;
@@ -100,7 +88,8 @@ namespace Gui
 			}
 		}
 
-		private int frameBorderWidth = 4;
+		private int frameBorderWidth = 2;
+		private int frameBorderMargin = 2;
 		private bool isMoving = false;
 		private bool isSizing = false;
 		// absolute
@@ -108,10 +97,6 @@ namespace Gui
 		private Gdk.Size lastWindowSize = Gdk.Size.Empty;
 		private Gdk.Point lastWindowPos = Gdk.Point.Zero;
 		private SizingSide.SizingSideType sizingSide = SizingSide.SizingSideType.E_NONE;
-
-		private Gdk.Color bgColor = Gdk.Color.Zero;
-		private Gdk.Color fgColor = Gdk.Color.Zero;
-
 
 		public CustomWindow () : base(Gtk.WindowType.Toplevel)
 		{
@@ -132,8 +117,6 @@ namespace Gui
 		{
 			CustomBuild();
 
-			this.StyleSet += HandleStyleSet;
-
 			base.AddEvents((int) (
 				Gdk.EventMask.PointerMotionMask | 
 				Gdk.EventMask.ButtonPressMask | 
@@ -153,42 +136,23 @@ namespace Gui
 			this.evntboxTitleBar.ButtonPressEvent += HandleButtonPressEventTitleBar;
 			this.evntboxTitleBar.ButtonReleaseEvent += HandleButtonReleaseEventTitleBar;
 
-			this.vboxWindow.BorderWidth = (uint) frameBorderWidth / 2;
-			//this.vboxClient.BorderWidth = (uint) frameBorderWidth;
-			this.hboxTitleBar.BorderWidth = (uint) frameBorderWidth;
-			this.labelCaption.Xpad = frameBorderWidth;
-			
 			this.btnMinimize.Clicked += HandleClickedBtnMinimize;
 			this.btnMaximize.Clicked += HandleClickedBtnMaximize;
 			this.btnClose.Clicked += HandleClickedBtnClose;
 			
 			this.Add (this.vboxWindow);
 			this.Hide ();
-
 		}
 
 		protected override void OnAdded (Gtk.Widget widget)
 		{
-			if (widget.Equals(this.vboxWindow))
+			if (widget.Equals (this.vboxWindow)) {
 				base.OnAdded (widget);
+				return;
+			}
 			
 			this.vboxClient.PackStart (widget, true, true, 0);
 			widget.Show();
-		}
-
-		private void HandleStyleSet (object o, Gtk.StyleSetArgs args)
-		{
-			bgColor = this.Style.Background(Gtk.StateType.Selected);
-			fgColor = this.Style.Foreground(Gtk.StateType.Selected);
-			Gdk.Color blackColor = new Gdk.Color (0, 0, 0);
-			//fgColor = new Gdk.Color (255, 255, 255);
-
-			this.evntboxTitleBar.ModifyBg(Gtk.StateType.Normal, blackColor);
-			this.labelCaption.ModifyFg(Gtk.StateType.Normal, fgColor);
-
-			this.btnMinimize.ModifyBg(Gtk.StateType.Normal, blackColor);
-			this.btnMaximize.ModifyBg(Gtk.StateType.Normal, blackColor);
-			this.btnClose.ModifyBg(Gtk.StateType.Normal, blackColor);
 		}
 
 		protected override bool OnExposeEvent (Gdk.EventExpose evnt)
@@ -196,12 +160,16 @@ namespace Gui
 			bool bres = base.OnExposeEvent (evnt);
 			
 			if (!base.Decorated) {
-				using (Cairo.Context cr = Gdk.CairoHelper.Create (this.GdkWindow)) {
-					cr.LineWidth = frameBorderWidth;
-					cr.Color = CairoExtensions.GdkColorToCairoColor (bgColor);
-					cr.Rectangle (Allocation.X, Allocation.Y, Allocation.Width, Allocation.Height);
-					cr.Stroke ();
-				}
+				Gdk.GC gc = this.vboxWindow.Style.BackgroundGC(Gtk.StateType.Normal);
+				gc.SetLineAttributes (FrameBorderWidth, Gdk.LineStyle.Solid, Gdk.CapStyle.Butt, Gdk.JoinStyle.Miter);
+				base.GdkWindow.DrawRectangle (
+					gc, 
+					false,
+					Allocation.X + FrameBorderWidth / 2, 
+					Allocation.Y + FrameBorderWidth / 2,
+					Allocation.Width - FrameBorderWidth, 
+					Allocation.Height - FrameBorderWidth
+				);
 			}
 			
 			return bres;
@@ -309,8 +277,6 @@ namespace Gui
 			
 			curWindowPos.X = lastWindowPos.X + curMousePos.X - lastMousePos.X;
 			curWindowPos.Y = lastWindowPos.Y + curMousePos.Y - lastMousePos.Y;
-			//lastMousePos.X = curMousePos.X;
-			//lastMousePos.Y = curMousePos.Y;
 			
 			base.GdkWindow.Move(curWindowPos.X, curWindowPos.Y);
 		}
@@ -332,14 +298,14 @@ namespace Gui
 			if (!isSizing) {
 
 				sizingSide = SizingSide.SizingSideType.E_NONE;
-				if (evnt.X < Allocation.X + frameBorderWidth)
+				if (evnt.X < Allocation.X + frameBorderWidth + frameBorderMargin)
 					sizingSide |= SizingSide.SizingSideType.E_LEFT_SIDE;
-				else if (evnt.X >= Allocation.X + Allocation.Width - frameBorderWidth)
+				else if (evnt.X >= Allocation.X + Allocation.Width - frameBorderWidth - frameBorderMargin)
 					sizingSide |= SizingSide.SizingSideType.E_RIGHT_SIDE;
 				
-				if (evnt.Y < Allocation.Y + frameBorderWidth)
+				if (evnt.Y < Allocation.Y + frameBorderWidth + frameBorderMargin)
 					sizingSide |= SizingSide.SizingSideType.E_TOP_SIDE;
-				else if (evnt.Y >= Allocation.Y + Allocation.Height - frameBorderWidth)
+				else if (evnt.Y >= Allocation.Y + Allocation.Height - frameBorderWidth - frameBorderMargin)
 					sizingSide |= SizingSide.SizingSideType.E_BOTTOM_SIDE;
 
 			} else {

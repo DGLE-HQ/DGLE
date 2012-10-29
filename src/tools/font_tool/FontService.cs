@@ -18,12 +18,8 @@ namespace FontTool
 
 		private Pango.FontFamily family;
 		public Pango.FontFamily Family {
-			get {
-				return family;
-			}
-			set {
-				family = value;
-			}
+			get { return family; }
+			set { family = value; }
 		}
 
 		// in pt
@@ -43,12 +39,8 @@ namespace FontTool
 		// Default is Normal
 		private int weight = 400;
 		public int Weight {
-			get {
-				return weight;
-			}
-			set {
-				weight = value;
-			}
+			get { return weight; }
+			set { weight = value; }
 		}
 
 		// in pt
@@ -150,16 +142,9 @@ namespace FontTool
 					
 					// fill background
 					ctx.Save ();
-					//ctx.Color = new Cairo.Color (0.0, 0.0, 0.0, 1.0);
-					ctx.Color = new Cairo.Color (1.0, 1.0, 1.0, 1.0);
-					ctx.Paint ();
-					ctx.Restore ();
-
-					ctx.Save ();
 					int boxSize = 20, padding = 0;
 					Cairo.Color clr1 = Gui.CairoExtensions.RgbToColor(0xE77817);
-					clr1.A = 0.5;
-					Cairo.Color clr2 = new Cairo.Color(0.0, 0.0, 0.0, 0.5);
+					Cairo.Color clr2 = Gui.CairoExtensions.RgbToColor(0x383431);
 					for (int i = 0; i < width; i++) {
 						for (int j = 0; j < height; j++) {
 							ctx.Rectangle (i * (boxSize + padding), j * (boxSize + padding), boxSize, boxSize);
@@ -176,8 +161,7 @@ namespace FontTool
 					if (text.Length > 0) {
 						ctx.Save ();
 						ctx.MoveTo (te.X, te.Y);
-						//ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
-						ctx.Color = new Cairo.Color(0.0, 0.0, 0.0, 1.0);
+						ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
 						ctx.Antialias = Cairo.Antialias.Gray;
 						ctx.Operator = Cairo.Operator.Source;
 						Pango.CairoHelper.ShowLayout (ctx, layout);

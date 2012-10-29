@@ -59,4 +59,160 @@
       </widget>
     </child>
   </widget>
+  <widget class="Gtk.Window" id="Gui.CustomFileChooserDialog" design-size="500 400">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <property name="Title" translatable="yes">CustomFileChooserDialog</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="Decorated">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vboxFileChooser">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <property name="BorderWidth">6</property>
+        <child>
+          <widget class="Gtk.FileChooserWidget" id="fileChooser">
+            <property name="MemberName" />
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hboxButtons">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Button" id="btnCancel">
+                <property name="MemberName" />
+                <property name="WidthRequest">100</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Cancel</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="btnOk">
+                <property name="MemberName" />
+                <property name="WidthRequest">100</property>
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Ok</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="Gui.CustomMessageDialog" design-size="300 200">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <property name="Title" translatable="yes">CustomMessageDialog</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="Resizable">False</property>
+    <property name="Decorated">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vboxMsgDlg">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <property name="BorderWidth">6</property>
+        <child>
+          <widget class="Gtk.HBox" id="hboxDetail">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Image" id="imageType">
+                <property name="MemberName" />
+                <property name="Pixbuf">stock:gtk-dialog-error Dialog</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+                <property name="Expand">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="lText">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">label1</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HButtonBox" id="hbtnboxAction">
+            <property name="MemberName" />
+            <property name="Size">2</property>
+            <child>
+              <widget class="Gtk.Button" id="btn1">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Ok</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="btn2">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Cancel</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
 </stetic-interface>

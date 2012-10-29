@@ -11,6 +11,14 @@ using Gtk;
 
 namespace FontTool
 {
+	internal static class About
+	{
+		internal static string[] Authors = new string[]
+		{
+			"Shestakov Mikhail aka MIKE"
+		};
+	}
+
 	class MainClass
 	{
 		public static void Main(string[] args)

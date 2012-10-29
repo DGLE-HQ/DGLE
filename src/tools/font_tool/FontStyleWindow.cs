@@ -13,55 +13,40 @@ namespace FontTool
 	public partial class FontStyleWindow :
 		Gui.CustomWindow// use custom theme
 	{
-
-		public static string[] authors = new string[]
-		{
-			"Shestakov Mikhail aka MIKE"
-		};
-
 		private Gtk.ListStore fontListStore;
 		private FontTool.FontService fontService;
-
 
 		public FontStyleWindow() : 
 				base (Gtk.WindowType.Toplevel)
 		{
 			this.Build();
-			// force to use custom theme
-			base.Decorated = false;
+
+			this.btnNextPreview.ImagePosition = Gtk.PositionType.Right;
+			this.btnPrevSettings.ImagePosition = Gtk.PositionType.Left;
 
 			this.DeleteEvent += delegate (object o, Gtk.DeleteEventArgs args) {
 				Gtk.Application.Quit ();
 				args.RetVal = true;
 			};
 
-			this.SaveAction.Activated += delegate(object sender, EventArgs e) {
-				FontBuildWindow fbwin = new FontBuildWindow(fontService);
-				fbwin.Decorated = base.Decorated;
-				fbwin.Show();
-			};
+			this.SaveAction.Activated += HandleSaveAction;
 
 			this.CloseAction.Activated += delegate(object sender, EventArgs e) {
 				Gtk.Application.Quit ();
 			};
 
 			this.AboutAction.Activated += delegate(object sender, EventArgs e) {
-				new Gui.AboutWindow(this, authors).Show();
+				new Gui.AboutWindow (this, About.Authors).Show ();
 			};
 
-			/*
-			this.CustomStyleAction.Activated += delegate(object sender, EventArgs e) {
-				if (this.CustomStyleAction.Active) {
-					base.Decorated = false;
-				}
+			this.btnNextPreview.Clicked += delegate(object sender, EventArgs e) {
+				notebookFont.NextPage ();
+				BuildPreview ();
 			};
-
-			this.DecoratedCustomStyleAction.Activated += delegate(object sender, EventArgs e) {
-				if (this.DecoratedCustomStyleAction.Active) {
-					base.Decorated = true;
-				}
+			
+			this.btnPrevSettings.Clicked += delegate(object sender, EventArgs e) {
+				notebookFont.PrevPage ();
 			};
-			*/
 
 			fontService = new FontTool.FontService ();
 			BuildFontFamilyTree ();
@@ -69,32 +54,22 @@ namespace FontTool
 
 			this.fontService.OnlyEnglish = this.OnlyEnglishAction.Active;
 		}
-		
+
 		private void BuildFontFamilyTree()
 		{
-			// Create a column
-			Gtk.TreeViewColumn fontNameColumn = new Gtk.TreeViewColumn ();
-			fontNameColumn.Title = "Font";			
-			
-			// Create the text cell that will display content
-			Gtk.CellRendererText fontNameCell = new Gtk.CellRendererText ();
-			
-			// Add the cell to the column
-			fontNameColumn.PackStart (fontNameCell, false);
-			
-			// Add the columns to the TreeView
-			treeFont.AppendColumn (fontNameColumn);
-			
-			// Create a model
-			this.fontListStore = new Gtk.ListStore (typeof(string), typeof(Pango.FontFamily));
-			
-			// Assign the model to the TreeView
+			fontListStore = new Gtk.ListStore (typeof(string), typeof(Pango.FontFamily));
 			treeFont.Model = fontListStore;
-			
-			fontNameColumn.SetCellDataFunc(fontNameCell, new Gtk.TreeCellDataFunc (RenderCellFamilyName));
-			
+			treeFont.HeadersVisible = false;
 			treeFont.Selection.Changed += HandleSelectionFontFamily;
-			
+
+			Gtk.TreeViewColumn fontNameColumn = new Gtk.TreeViewColumn ();
+			Gtk.CellRendererText fontNameCell = new Gtk.CellRendererText ();
+			fontNameColumn.Title = "Font";
+			fontNameColumn.PackStart (fontNameCell, false);
+			fontNameColumn.SetCellDataFunc(fontNameCell, new Gtk.TreeCellDataFunc (RenderCellFamilyName));
+
+			treeFont.AppendColumn (fontNameColumn);
+
 			LoadFonts();
 		}
 		
@@ -142,10 +117,22 @@ namespace FontTool
 			
 			this.OnlyEnglishAction.Toggled += delegate(object sender, EventArgs e) {
 				fontService.OnlyEnglish = ((Gtk.ToggleAction) sender).Active;
+				if (notebookFont.Page >= notebookFont.PageNum (fontPreviewImage) )
+					BuildPreview ();
 			};
 		}
+
+		private void BuildPreview ()
+		{
+			fontPreviewImage.BuildPreview (fontService);
+			lImageSize.Text = String.Format ("{0} x {1}", 
+			                                 fontPreviewImage.PreviewSize.Width, 
+			                                 fontPreviewImage.PreviewSize.Height);
+			lFileSize.Text = String.Format ("{0} KB", 
+			                                 fontPreviewImage.FileSize / 1024);
+		}
 		
-		protected void HandleSelectionFontFamily (object sender, EventArgs e)
+		private void HandleSelectionFontFamily (object sender, EventArgs e)
 		{
 			Gtk.TreeSelection selection = (sender as Gtk.TreeSelection);
 			
@@ -158,7 +145,7 @@ namespace FontTool
 			}
 		}
 		
-		protected void RenderCellFamilyName (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		private void RenderCellFamilyName (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
 		{
 			Pango.FontFamily family = model.GetValue (iter, 1) as Pango.FontFamily;
 			(cell as Gtk.CellRendererText).Text = family.Name;
@@ -170,7 +157,7 @@ namespace FontTool
 			(cell as Gtk.CellRendererText).FontDesc = desc;
 		}
 		
-		protected void LoadFonts ()
+		private void LoadFonts ()
 		{
 			fontListStore.Clear();
 			
@@ -180,8 +167,51 @@ namespace FontTool
 			fontListStore.SetSortColumnId(0, Gtk.SortType.Ascending);
 			
 			Gtk.TreeIter iter;
-			if (fontListStore.GetIterFirst(out iter))
-				fontService.Family = fontListStore.GetValue(iter, 1) as Pango.FontFamily;
+			if (fontListStore.GetIterFirst (out iter))
+				treeFont.Selection.SelectIter (iter);
+		}
+
+		private void HandleSaveAction (object sender, EventArgs e)
+		{
+			Gui.CustomFileChooserDialog dlg = 
+				new Gui.CustomFileChooserDialog (this, "Save", Gtk.FileChooserAction.Save);
+			
+			dlg.FileChooser.SelectMultiple = false;
+			
+			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+				filter.Name = "DGLE2 Bitmap Fonts";
+				filter.AddMimeType ("font/dft");
+				filter.AddPattern ("*.dft");
+				dlg.FileChooser.AddFilter (filter);
+			}
+			
+			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+				filter.Name = "All";
+				filter.AddPattern ("*.*");
+				dlg.FileChooser.AddFilter (filter);
+			}
+			
+			dlg.FileChooser.CurrentName = 
+				String.Format(@"{0}_{1}", fontService.Family.Name, fontService.Size);
+			
+			dlg.Ok += delegate {
+				if (null == dlg.FileChooser.Filename || dlg.FileChooser.Filename.Length == 0) {
+					new Gui.CustomMessageDialog (
+						dlg, Gtk.MessageType.Info, 
+						Gtk.ButtonsType.Ok, 
+						"Set file name").Show ();
+				} else {
+					string fileName = System.IO.Path.GetFullPath (dlg.FileChooser.Filename);
+					fontPreviewImage.DftUtil.Save (fileName, fontService);
+					dlg.Destroy ();
+				}
+			};
+
+			dlg.Cancel += delegate {
+				dlg.Destroy ();
+			};
+
+			dlg.Show ();
 		}
 	}
 }

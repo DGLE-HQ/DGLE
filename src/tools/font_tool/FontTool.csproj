@@ -30,6 +30,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -53,10 +54,9 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FontStyleWindow.cs" />
     <Compile Include="gtk-gui\FontTool.FontStyleWindow.cs" />
-    <Compile Include="FontBuildWindow.cs" />
     <Compile Include="FontService.cs" />
-    <Compile Include="gtk-gui\FontTool.FontBuildWindow.cs" />
     <Compile Include="DftUtil.cs" />
+    <Compile Include="FontPreviewWidget.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -14,14 +14,13 @@ namespace FontTool
 {
 	public class DftUtil
 	{
+		public static string HEADER = "DFT 1.1";
 		private const int WIDTH = 512;
 		private const int HEIGHT = 8192*2;
 		private const int PADDING = 2;
 
 		private char[] alphabet;
 		private Pango.Rectangle[] boxes = new Pango.Rectangle[224];
-
-
 
 		public DftUtil ()
 		{
@@ -54,6 +53,16 @@ namespace FontTool
 			
 			// manual dispose
 			(pixbuf as IDisposable).Dispose ();
+		}
+
+		public long CalcFileSize (Gdk.Pixbuf pixbuf)
+		{
+			long fileSize = 0L;
+			fileSize += 1 + sizeof(Int32) * 2;
+			fileSize += sizeof (Int32) * 4 * boxes.Length;
+			fileSize += pixbuf.Width * pixbuf.Height;
+
+			return fileSize;
 		}
 
 		public void DrawLayout (Gdk.Drawable drawable, Gdk.GC gc, FontService fontService)
@@ -127,8 +136,6 @@ namespace FontTool
 		{
 			ctx.Save ();
 
-
-
 			ctx.MoveTo (p.X, p.Y);
 			ctx.Color = new Cairo.Color(1.0, 1.0, 1.0, 1.0);
 			ctx.Antialias = Cairo.Antialias.Gray;
@@ -165,7 +172,7 @@ namespace FontTool
 	public struct TFontHeader
 	{
 		public byte BitDepth;
-		public int Width, Height;
+		public Int32 Width, Height;
 		public TFontHeader(byte bitDepth, int width, int height)
 		{
 			this.BitDepth = bitDepth;
@@ -179,7 +186,7 @@ namespace FontTool
 		public static void Write(BinaryWriter file, TFontHeader header)
 		{            
 			// "DFT 1.1"
-			file.Write(new char[] { 'D', 'F', 'T', ' ', '1', '.', '1' });
+			file.Write(DftUtil.HEADER.ToCharArray ());
 			file.Write(header.BitDepth);
 			file.Write(header.Width);
 			file.Write(header.Height);
@@ -187,10 +194,10 @@ namespace FontTool
 		
 		public static void Write(BinaryWriter file, Pango.Rectangle box)
 		{
-			file.Write(box.X);
-			file.Write(box.Y);
-			file.Write(box.Width);
-			file.Write(box.Height);
+			file.Write((Int32) box.X);
+			file.Write((Int32) box.Y);
+			file.Write((Int32) box.Width);
+			file.Write((Int32) box.Height);
 		}
 		
 		public static void Write(BinaryWriter file, Pango.Rectangle[] boxes)

@@ -45,71 +45,29 @@ namespace Template
 			// Widget Template.TemplateWindow
 			this.UIManager = new global::Gtk.UIManager ();
 			global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup ("Default");
-			this.FileAction = new global::Gtk.Action (
-				"FileAction",
-				global::Mono.Unix.Catalog.GetString("File"),
-				null,
-				null
-			);
+			this.FileAction = new global::Gtk.Action ("FileAction", global::Mono.Unix.Catalog.GetString ("File"), null, null);
 			this.FileAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("File");
 			w1.Add (this.FileAction, null);
-			this.CloseAction = new global::Gtk.Action (
-				"CloseAction",
-				global::Mono.Unix.Catalog.GetString("Close"),
-				null,
-				null
-			);
+			this.CloseAction = new global::Gtk.Action ("CloseAction", global::Mono.Unix.Catalog.GetString ("Close"), null, null);
 			this.CloseAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Close");
 			w1.Add (this.CloseAction, null);
-			this.HelpAction = new global::Gtk.Action (
-				"HelpAction",
-				global::Mono.Unix.Catalog.GetString("Help"),
-				null,
-				null
-			);
+			this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
 			this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
 			w1.Add (this.HelpAction, null);
-			this.AboutAction = new global::Gtk.Action (
-				"AboutAction",
-				global::Mono.Unix.Catalog.GetString("About"),
-				null,
-				null
-			);
+			this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
 			this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 			w1.Add (this.AboutAction, null);
-			this.SettingsAction = new global::Gtk.Action (
-				"SettingsAction",
-				global::Mono.Unix.Catalog.GetString("Settings"),
-				null,
-				null
-			);
+			this.SettingsAction = new global::Gtk.Action ("SettingsAction", global::Mono.Unix.Catalog.GetString ("Settings"), null, null);
 			this.SettingsAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Settings");
 			w1.Add (this.SettingsAction, null);
-			this.WindowStyleAction = new global::Gtk.Action (
-				"WindowStyleAction",
-				global::Mono.Unix.Catalog.GetString("Window style"),
-				null,
-				null
-			);
+			this.WindowStyleAction = new global::Gtk.Action ("WindowStyleAction", global::Mono.Unix.Catalog.GetString ("Window style"), null, null);
 			this.WindowStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Style");
 			w1.Add (this.WindowStyleAction, null);
-			this.CustomStyleAction = new global::Gtk.RadioAction (
-				"CustomStyleAction",
-				global::Mono.Unix.Catalog.GetString("DGLE"),
-				null,
-				null,
-				0
-			);
+			this.CustomStyleAction = new global::Gtk.RadioAction ("CustomStyleAction", global::Mono.Unix.Catalog.GetString ("DGLE"), null, null, 0);
 			this.CustomStyleAction.Group = new global::GLib.SList (global::System.IntPtr.Zero);
 			this.CustomStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("DGLE");
 			w1.Add (this.CustomStyleAction, null);
-			this.PlatformStyleAction = new global::Gtk.RadioAction (
-				"PlatformStyleAction",
-				global::Mono.Unix.Catalog.GetString("Platform"),
-				null,
-				null,
-				0
-			);
+			this.PlatformStyleAction = new global::Gtk.RadioAction ("PlatformStyleAction", global::Mono.Unix.Catalog.GetString ("Platform"), null, null, 0);
 			this.PlatformStyleAction.Group = this.CustomStyleAction.Group;
 			this.PlatformStyleAction.Sensitive = false;
 			this.PlatformStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Platform");
@@ -118,24 +76,12 @@ namespace Template
 			this.PlatformStyleAction.VisibleVertical = false;
 			this.PlatformStyleAction.VisibleOverflown = false;
 			w1.Add (this.PlatformStyleAction, null);
-			this.DecoratedCustomStyleAction = new global::Gtk.RadioAction (
-				"DecoratedCustomStyleAction",
-				global::Mono.Unix.Catalog.GetString("Decorated DGLE"),
-				null,
-				null,
-				0
-			);
-			this.DecoratedCustomStyleAction.Group = this.CustomStyleAction.Group;
+			this.DecoratedCustomStyleAction = new global::Gtk.RadioAction ("DecoratedCustomStyleAction", global::Mono.Unix.Catalog.GetString ("Decorated DGLE"), null, null, 0);
+			this.DecoratedCustomStyleAction.Group = this.PlatformStyleAction.Group;
 			this.DecoratedCustomStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Decorated DGLE");
 			w1.Add (this.DecoratedCustomStyleAction, null);
-			this.PlatformStyleAction1 = new global::Gtk.RadioAction (
-				"PlatformStyleAction1",
-				global::Mono.Unix.Catalog.GetString("Platform"),
-				null,
-				null,
-				0
-			);
-			this.PlatformStyleAction1.Group = this.DecoratedCustomStyleAction.Group;
+			this.PlatformStyleAction1 = new global::Gtk.RadioAction ("PlatformStyleAction1", global::Mono.Unix.Catalog.GetString ("Platform"), null, null, 0);
+			this.PlatformStyleAction1.Group = this.PlatformStyleAction.Group;
 			this.PlatformStyleAction1.Sensitive = false;
 			this.PlatformStyleAction1.ShortLabel = global::Mono.Unix.Catalog.GetString ("Platform");
 			this.PlatformStyleAction1.Visible = false;
@@ -150,7 +96,7 @@ namespace Template
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='SettingsAction' action='SettingsAction'><menu name='WindowStyleAction' action='WindowStyleAction'><menuitem name='CustomStyleAction' action='CustomStyleAction'/><menuitem name='DecoratedCustomStyleAction' action='DecoratedCustomStyleAction'/></menu></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
+			this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='SettingsAction' action='SettingsAction'><menu name='WindowStyleAction' action='WindowStyleAction'><menuitem name='CustomStyleAction' action='CustomStyleAction'/><menuitem name='DecoratedCustomStyleAction' action='DecoratedCustomStyleAction'/></menu></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 			this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 			this.menubar1.Name = "menubar1";
 			this.vbox1.Add (this.menubar1);
@@ -258,7 +204,7 @@ namespace Template
 			// Container child table1.Gtk.Table+TableChild
 			this.progressbar1 = new global::Gtk.ProgressBar ();
 			this.progressbar1.Name = "progressbar1";
-			this.progressbar1.Fraction = 0.5;
+			this.progressbar1.Fraction = 0.5D;
 			this.table1.Add (this.progressbar1);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1 [this.progressbar1]));
 			w11.TopAttach = ((uint)(3));
@@ -268,11 +214,11 @@ namespace Template
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.spinbutton1 = new global::Gtk.SpinButton (0, 100, 1);
+			this.spinbutton1 = new global::Gtk.SpinButton (0D, 100D, 1D);
 			this.spinbutton1.CanFocus = true;
 			this.spinbutton1.Name = "spinbutton1";
-			this.spinbutton1.Adjustment.PageIncrement = 10;
-			this.spinbutton1.ClimbRate = 1;
+			this.spinbutton1.Adjustment.PageIncrement = 10D;
+			this.spinbutton1.ClimbRate = 1D;
 			this.spinbutton1.Numeric = true;
 			this.table1.Add (this.spinbutton1);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1 [this.spinbutton1]));
