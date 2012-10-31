@@ -40,7 +40,7 @@ CResFile::~CResFile()
 	}
 }
 
-DGLE_RESULT CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+DGLE_RESULT DGLE_API CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {
 	memcpy(pBuffer, (uint8 *)_pData + _ui32Pos, uiCount);
 
@@ -51,12 +51,12 @@ DGLE_RESULT CResFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	return S_OK;
 }
 
-DGLE_RESULT CResFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+DGLE_RESULT DGLE_API CResFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	return E_NOTIMPL;
 }
 
-DGLE_RESULT CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+DGLE_RESULT DGLE_API CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
 	switch(eWay)
 	{
@@ -76,19 +76,19 @@ DGLE_RESULT CResFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint
 	return S_OK;
 }
 
-DGLE_RESULT CResFile::GetSize(uint32 &ui32Size)
+DGLE_RESULT DGLE_API CResFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = _ui32Size;
 	return S_OK;
 }
 
-DGLE_RESULT CResFile::IsOpen(bool &bOpened)
+DGLE_RESULT DGLE_API CResFile::IsOpen(bool &bOpened)
 {
 	bOpened = _bOpened;
 	return S_OK;
 }
 
-DGLE_RESULT CResFile::GetName(char *pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CResFile::GetName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{

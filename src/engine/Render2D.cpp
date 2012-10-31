@@ -38,13 +38,13 @@ _uiBufferSize(34)// never less than 34
 	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
 
 	Console()->RegComValue("rnd2d_profiler", "Displays Render 2D subsystems profiler.", &_iProfilerState, 0, 2);
-	Console()->RegComValue("rnd2d_drawbboxes", "Displays bounding boxes of all 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
+	Console()->RegComValue("rnd2d_draw_bboxes", "Displays bounding boxes of all 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
 }
 
 CRender2D::~CRender2D()
 {
 	Console()->UnRegCom("rnd2d_profiler");
-	Console()->UnRegCom("rnd2d_drawbboxes");
+	Console()->UnRegCom("rnd2d_draw_bboxes");
 
 	delete[] _pBuffer;
 
@@ -1767,7 +1767,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	uint width = 0, height = 0;
 
@@ -1777,7 +1777,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawSpriteS(ITexture *pTexture, const TPoint2 &s
 	return DrawTexture(pTexture, stCoords, stDimensions, TRectF(0.f, 0.f, (float)width, (float)height), fAngle, eFlags);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;
@@ -1795,12 +1795,12 @@ DGLE_RESULT DGLE_API CRender2D::DrawSpriteA(ITexture *pTexture, const TPoint2 &s
 		fAngle, eFlags);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTexCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;
 
-	return DrawTexture(pTexture, stCoords, stDimensions, stRect, fAngle, eFlags);
+	return DrawTexture(pTexture, stCoords, stDimensions, stTexCropRect, fAngle, eFlags);
 }
 
 __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TPoint2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)

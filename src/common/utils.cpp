@@ -26,7 +26,7 @@ string ToUpperCase(const string &inString)
 {
 	string res(inString);
 	transform(inString.begin(), inString.end(), res.begin(), std::toupper);
-	return inString;
+	return res;
 }
 
 int StrToInt(const string &str)
@@ -135,7 +135,7 @@ string GetFilePath(const char *name)
 	if (path[path.length() - 1] == '\\' || path[path.length() - 1] == '/') 
 		path.erase(path.length() - 1);
 
-	size_t pos = path.find_last_of("\\/");
+	string::size_type pos = path.find_last_of("\\/");
 	
 	if (pos != string::npos)
 	{
@@ -156,7 +156,7 @@ string GetFileName(const char *name)
 	if (path[path.length() - 1] == '\\' || path[path.length() - 1] == '/')
 		path.erase(path.length() - 1);
 	
-	size_t pos = path.find_last_of("\\/");
+	string::size_type pos = path.find_last_of("\\/");
 	
 	if (pos != string::npos)
 		path.erase(0, pos + 1);
@@ -167,7 +167,7 @@ string GetFileName(const char *name)
 string GetFileExt(const char *name)
 {
 	string path(name);
-	size_t pos = path.find_last_of('.');
+	string::size_type pos = path.find_last_of('.');
 	path.erase(0, pos + 1);
 	return path;
 }
@@ -175,7 +175,7 @@ string GetFileExt(const char *name)
 string GetOnlyFileName(const char *name)
 {
 	string path(GetFileName(name));
-	size_t pos = path.find_last_of('.');
+	string::size_type pos = path.find_last_of('.');
 	if (pos != string::npos)
 		path.erase(pos);
 	return path;

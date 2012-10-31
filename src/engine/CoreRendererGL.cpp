@@ -547,11 +547,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_iMaxTexResolution);
 
 	if (GLEW_EXT_texture_filter_anisotropic) 
-	{
 		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &_iMaxAnisotropy);
-	}
-
-	glGetIntegerv(GL_MAX_LIGHTS, &_iMaxLight);
 
 	if (GLEW_ARB_multitexture) 
 	{
@@ -567,22 +563,13 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults
 
 	_pStateMan = _pCachedStateMan = new CStateManager<true>(InstIdx(), _iMaxTexUnits);
 
-	glClearDepth(1.0);
+	_pStateMan->glEnable(GL_TEXTURE_2D); // Let it be always enabled for the zero texturing layer.
 
-	glShadeModel(GL_SMOOTH);
-
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glHint(GL_FOG_HINT, GL_NICEST);
-	
-	glEnable(GL_POINT_SMOOTH);
-
-	if (_iMaxTexUnits > 1)
-		_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB);
-
-	_pStateMan->glEnable(GL_TEXTURE_2D);
-	_pStateMan->glEnable(GL_NORMALIZE);
+	// ToDo: Switch off for programmable pipeline.
+	glGetIntegerv(GL_MAX_LIGHTS, &_iMaxLight);
 	_pStateMan->glEnable(GL_COLOR_MATERIAL);
-	_pStateMan->glDisable(GL_LIGHTING);
+	_pStateMan->glEnable(GL_NORMALIZE);
+	//
 
 	_stCurrentState.clActivatedTexUnits.resize(_iMaxTexUnits);
 
@@ -1330,11 +1317,16 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CO
 
 DGLE_RESULT DGLE_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 {
-	if (!pBuffer && GLEW_ARB_vertex_buffer_object)
+	if (!pBuffer)
 	{
-		_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-		_pStateMan->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		if (GLEW_ARB_vertex_buffer_object)
+		{
+			_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+			_pStateMan->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		}
+
 		_pCurBindedBuffer = NULL;
+		
 		return S_FALSE;
 	}
 
@@ -1458,7 +1450,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTex
 	if (pTex == NULL && !_stCurrentState.clActivatedTexUnits[uiTextureLayer])
 		return S_OK;
 
-	if (_iMaxTexUnits > 1)
+	if (_iMaxTexUnits != 1)
 		_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB + uiTextureLayer);
 	
 	if (pTex == NULL)
@@ -1549,6 +1541,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetRasterizerState(TRasterizerStateDesc &s
 DGLE_RESULT DGLE_API CCoreRendererGL::Present()
 {
 	CBaseRendererGL::Present();
+
 	_uiUnfilteredDrawSetups = 0;
 	_uiOverallDrawSetups = 0;
 	_uiOverallDrawCalls = 0;

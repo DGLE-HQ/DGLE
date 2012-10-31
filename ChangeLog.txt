@@ -27,7 +27,11 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] Interface IUserCallback allows to register callback classes in engine more simple.
 [ + ] Added joysticks and gamepads support.
 [ + ] Brand new GTK# GUI components for engine toolset.
+[ + ] Brand new FontTool for engine fonts generation.
+[ + ] Added console commands for DCP virtual filesystem. Ability to manage packages. Console commands starts with dcp_*.
+[ + ] Added some functions for fundamental engine interface IDGLE_Base to give more flexibility to extend interfaces via extra commands.
 [ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
+[ * ] Renamed DrawSprite* methods of IRender2D interface.
 [ - ] Some old stuff (like plugins for browsers) was dropped off.
 [ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
 [ - ] ICF_BLOCK_WINKEYS flag from method Configure of IInput interface.

@@ -11,15 +11,15 @@ See "DGLE.h" for more details.
 
 #include "..\Common.h"
 
-class CHDFileIterator: public CInstancedObj, public IFileIterator
+class CHDDFileIterator: public CInstancedObj, public IFileIterator
 {
 	char	_acName[MAX_PATH];
 	HANDLE	_fileHandle;
 
 public:
 	
-	CHDFileIterator(uint uiInstIdx, const char *pcName, HANDLE fileHandle);
-	~CHDFileIterator();
+	CHDDFileIterator(uint uiInstIdx, const char *pcName, HANDLE fileHandle);
+	~CHDDFileIterator();
 
 	DGLE_RESULT DGLE_API FileName(char *pcName, uint &uiCharsCount);
 	DGLE_RESULT DGLE_API Next();
@@ -28,10 +28,10 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(IFileIterator)
 };
 
-class CHDFileSystem: public CInstancedObj, public IFileSystem
+class CHDDFileSystem: public CInstancedObj, public IFileSystem
 {
 public:
-	CHDFileSystem(uint uiInstIdx):CInstancedObj(uiInstIdx){}
+	CHDDFileSystem(uint uiInstIdx);
 
 	DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile);	
 	DGLE_RESULT DGLE_API DeleteFile(const char *pcName);

@@ -524,11 +524,22 @@ inline void CTextureState::glBindTexture(GLenum target, GLuint texture)
 		++_profileData.glBindTextureProfileData.unfilteredCallCount;
 		::glBindTexture(target, cur_texture.texture = texture);
 		
-		if (texture == 0 && _textureUnit != GL_TEXTURE0_ARB && _textures[_textureUnit - GL_TEXTURE0_ARB].enabled)
+		if (!GLEW_ARB_shading_language_100 && _textureUnit != GL_TEXTURE0_ARB)
 		{
-			_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = false;
-			::glDisable(GL_TEXTURE_2D);
+			if (texture != 0 && !_textures[_textureUnit - GL_TEXTURE0_ARB].enabled)
+			{
+				_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = true;
+				::glEnable(GL_TEXTURE_2D);
+			}
+			else
+				if (texture == 0 && _textures[_textureUnit - GL_TEXTURE0_ARB].enabled)
+				{
+					_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = false;
+					::glDisable(GL_TEXTURE_2D);
+				}
 		}
+		else
+			_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = texture != 0;
 	}
 }
 
@@ -540,30 +551,7 @@ inline void CTextureState::glActiveTextureARB(GLenum texture)
 	{
 		++_profileData.glActiveTextureARBProfileData.unfilteredCallCount;
 		::glActiveTextureARB(_textureUnit = texture);
-		
-		if (!_textures[_textureUnit - GL_TEXTURE0_ARB].enabled)
-		{
-			_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = true;
-			::glEnable(GL_TEXTURE_2D);
-		}
 	}
-}
-
-inline void CTextureState::UnbindAll()
-{
-	for (size_t i = 0; i < _textures.size(); ++i)
-		if (_textures[i].enabled)
-		{
-			if (_textures.size() > 1)
-				glActiveTextureARB(GL_TEXTURE0_ARB + (GLenum)i);
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-			::glDisable(GL_TEXTURE_2D);
-			_textures[i] .enabled= false;
-		}
-
-	if (_textures.size() > 1)
-		glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 
 inline void CTextureState::Set(const CTextureState &previous)
@@ -573,15 +561,14 @@ inline void CTextureState::Set(const CTextureState &previous)
 		if (_textures[i].texture == ~0 || (_textures[i].enabled == previous._textures[i].enabled && _textures[i].texture == previous._textures[i].texture))
 			continue;
 
-		if (!_textures[i].enabled)
+		glActiveTextureARB(GL_TEXTURE0_ARB + i);
+
+		if (!GLEW_ARB_shading_language_100 && i != 0)
 		{
-			glActiveTextureARB(GL_TEXTURE0_ARB + i);
-			::glDisable(GL_TEXTURE_2D);
-		}
-		else
-		{
-			glActiveTextureARB(GL_TEXTURE0_ARB + i);
-			::glEnable(GL_TEXTURE_2D);
+			if (_textures[i].enabled)
+				::glEnable(GL_TEXTURE_2D);
+			else
+				::glDisable(GL_TEXTURE_2D);
 		}
 
 		::glBindTexture(GL_TEXTURE_2D, _textures[i].texture);
@@ -702,6 +689,9 @@ void CStateManager<false>::glBindTexture(GLenum target, GLuint texture)
 void CStateManager<false>::glActiveTextureARB(GLenum texture)
 {
 	::glActiveTextureARB(texture);
+	
+	// This is not very good solution but for compatibility with cached state manager.
+	if (!GLEW_ARB_shading_language_100 && texture != GL_TEXTURE0_ARB) ::glEnable(GL_TEXTURE_2D);
 }
 
 void CStateManager<false>::glUseProgramObjectARB(GLhandleARB programObj)

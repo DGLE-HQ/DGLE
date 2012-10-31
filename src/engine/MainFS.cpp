@@ -16,11 +16,11 @@ CInstancedObj(uiInstIdx)
 {
 	Console()->RegComProc("mfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
 
-	_pHddFS = new CHDFileSystem(InstIdx());
-	_pDCPFS = new CDCPFileSystem(InstIdx(), this);
+	_pHDDFS = new CHDDFileSystem(InstIdx());
+	_pDCPFS = new CDCPFileSystem(InstIdx());
 
-	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem*)_pHddFS, &_s_FSDeleteDGLE_API, this);
-	RegisterVirtualFileSystem("dcp", "Dgle Compiled Package(DCP) file archives.", (IFileSystem*)_pDCPFS, &_s_FSDeleteDGLE_API, this);
+	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem*)_pHDDFS, &_s_FSDeleteCallback, this);
+	RegisterVirtualFileSystem("dcp", "Dgle Compiled Package(DCP) file archives.", (IFileSystem*)_pDCPFS, &_s_FSDeleteCallback, this);
 	
 	LOG("Filesystem Subsystem initialized.", LT_INFO);
 }
@@ -33,14 +33,14 @@ CMainFS::~CMainFS()
 
 void CMainFS::UnregisterAndFreeAll()
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
+	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		_clVFileSystems[i].pdc(_clVFileSystems[i].param, _clVFileSystems[i].fs);
 
 	_clVFileSystems.clear();
 	_strVFSsDescs.clear();
 }
 
-DGLE_RESULT DGLE_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExtension)
+DGLE_RESULT DGLE_API CMainFS::UnregisterVirtualFileSystem(const char *pcVFSExtension)
 {
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
@@ -53,7 +53,7 @@ DGLE_RESULT DGLE_API CMainFS::UnregisterVirtualFileSystem(const char* pcVFSExten
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CMainFS::GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CMainFS::GetRegisteredVirtualFileSystems(char *pcTxt, uint &uiCharsCount)
 {
 	string exts;
 
@@ -87,25 +87,25 @@ void DGLE_API CMainFS::_s_ConListVFS(void *pParametr, const char *pcParam)
 		CON(CMainFS, string("---Supported VFile Systems---\n" + PTHIS(CMainFS)->_strVFSsDescs + "-----------------------------").c_str());
 }
 
-void DGLE_API CMainFS::_s_FSDeleteDGLE_API(void *pParametr, IFileSystem *pVFS)
+void DGLE_API CMainFS::_s_FSDeleteCallback(void *pParametr, IFileSystem *pVFS)
 {
-	if (PTHIS(CMainFS)->_pHddFS == pVFS)
-		delete PTHIS(CMainFS)->_pHddFS;
+	if (PTHIS(CMainFS)->_pHDDFS == pVFS)
+		delete PTHIS(CMainFS)->_pHDDFS;
 
 	if (PTHIS(CMainFS)->_pDCPFS == pVFS)
 		delete PTHIS(CMainFS)->_pDCPFS;
 }
 
-DGLE_RESULT DGLE_API CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
+DGLE_RESULT DGLE_API CMainFS::LoadFile(const char *pcFileName, IFile *&prFile)
 {
 	prFile = NULL;
 
 	IFileSystem *p_fs = NULL;
 
 	if (string(pcFileName).find("|") == string::npos)
-		p_fs = (IFileSystem*)_pHddFS;
+		p_fs = (IFileSystem*)_pHDDFS;
 	else
-		for (size_t i = 0; i<_clVFileSystems.size(); ++i)
+		for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 			if ((ToUpperCase(string(pcFileName)).find("." + ToUpperCase(_clVFileSystems[i].ext) + "|") != string::npos))
 			{
 				p_fs = _clVFileSystems[i].fs;
@@ -114,7 +114,7 @@ DGLE_RESULT DGLE_API CMainFS::LoadFile(const char* pcFileName, IFile *&prFile)
 
 	if (!p_fs)
 	{
-		LOG("Failed to find virtual file system to open file \"" + string(pcFileName) + "\".",LT_ERROR);
+		LOG("Failed to find virtual file system to open file \"" + string(pcFileName) + "\".", LT_ERROR);
 		return E_INVALIDARG;
 	}
 
@@ -138,7 +138,7 @@ DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, I
 		return S_OK;
 	}
 
-	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
+	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
 			prVFS = _clVFileSystems[i].fs;
@@ -150,9 +150,9 @@ DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, I
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystemDescription(const char *pcVFSExtension, char *pcTxt, uint &uiCharsCount)
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
+	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
 		{
 			if (!pcTxt)
@@ -178,16 +178,16 @@ DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystemDescription(const char* pcVFSE
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CMainFS::RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteDGLE_API)(void *pParametr, IFileSystem *pVFS), void *pParametr)
+DGLE_RESULT DGLE_API CMainFS::RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr)
 {
-	for (size_t i = 0; i<_clVFileSystems.size(); ++i)
+	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == string(pcVFSExtension))
 		{
 			LOG("Virtual file system with extension \"" + string(pcVFSExtension) + "\" already registered.", LT_WARNING);
 			return E_INVALIDARG;
 		}
 	
-	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteDGLE_API, pParametr));
+	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteCallback, pParametr));
 
 	_strVFSsDescs += string("- " + ToUpperCase(string(pcVFSExtension)) + " " + string(pcDiscription) + "\n");
 

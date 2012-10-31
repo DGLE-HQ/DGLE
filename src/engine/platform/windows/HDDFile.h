@@ -1,6 +1,6 @@
 /**
-\author		Sivkov Ilya
-\date		23.04.2012 (c)Korotkov Andrey
+\author		Korotkov Andrey aka DRON
+\date		22.01.2010 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,17 +9,20 @@ See "DGLE.h" for more details.
 
 #pragma once
 
-#include "Common.h"
+#include "..\Common.h"
 
-class CDCPFile : public CInstancedObj, public IFile
+class CInstancedObj;
+
+class CHDDFile: public CInstancedObj, public IFile
 {
-	uint8	*_pBuffer;
-	uint32	_ui32Size;
-	uint32	_ui32SeekPos;
-	char	_acName[MAX_PATH], _acPath[MAX_PATH];
-	
+	int		_iFile;
+	char	_acName[MAX_PATH],
+			_acPath[MAX_PATH];
+
 public:
-	CDCPFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, uint8 *pBuffer, uint32 ui32Size);
+
+	CHDDFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags = FSOF_READ);
+	~CHDDFile();
 
 	DGLE_RESULT DGLE_API Read(void *pBuffer, uint uiCount, uint &uiRead);
 	DGLE_RESULT DGLE_API Write(const void *pBuffer, uint uiCount, uint &uiWritten);
@@ -30,5 +33,5 @@ public:
 	DGLE_RESULT DGLE_API GetPath(char *pcPath, uint &uiCharsCount);
 	DGLE_RESULT DGLE_API Free();
 
-	IDGLE_BASE_IMPLEMENTATION(IFile);
+	IDGLE_BASE_IMPLEMENTATION(IFile)
 };

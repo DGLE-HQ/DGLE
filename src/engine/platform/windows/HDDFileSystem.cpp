@@ -7,14 +7,14 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
-#include "HDFileSystem.h"
-#include "HDFile.h"
+#include "HDDFileSystem.h"
+#include "HDDFile.h"
 
 #include <sys\stat.h>
 
-//CHDFileIterator//
+// CHDDFileIterator //
 
-CHDFileIterator::CHDFileIterator(uint uiInstIdx, const char* pcName, HANDLE fileHandle):
+CHDDFileIterator::CHDDFileIterator(uint uiInstIdx, const char* pcName, HANDLE fileHandle):
 CInstancedObj(uiInstIdx)
 {	
 	if (strlen(pcName) <= MAX_PATH)
@@ -28,13 +28,13 @@ CInstancedObj(uiInstIdx)
 	_fileHandle = fileHandle;
 }
 
-CHDFileIterator::~CHDFileIterator()
+CHDDFileIterator::~CHDDFileIterator()
 {
 	if (FindClose(_fileHandle) == 0)
 		LOG("Can't close find handle.",LT_ERROR);
 }
 
-DGLE_RESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CHDDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -55,7 +55,7 @@ DGLE_RESULT CHDFileIterator::FileName(char *pcName, uint &uiCharsCount)
 	}
 }
 
-DGLE_RESULT CHDFileIterator::Next()
+DGLE_RESULT DGLE_API CHDDFileIterator::Next()
 {
 	WIN32_FIND_DATAA find_file;
 
@@ -68,29 +68,33 @@ DGLE_RESULT CHDFileIterator::Next()
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CHDFileIterator::Free()
+DGLE_RESULT DGLE_API CHDDFileIterator::Free()
 {
 	delete this;
 	return S_OK;
 }
 
-//CHDFileSystem//
+// CHDDFileSystem //
 
-DGLE_RESULT CHDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
+CHDDFileSystem::CHDDFileSystem(uint uiInstIdx):
+CInstancedObj(uiInstIdx)
+{}
+
+DGLE_RESULT DGLE_API CHDDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	prFile = NULL;
 
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 		return CreateDirectoryA(pcName, NULL) == 0 ? S_FALSE : S_OK;
 
-	prFile = new CHDFile(InstIdx(), pcName, eFlags);
+	prFile = new CHDDFile(InstIdx(), pcName, eFlags);
 	bool _is_open;
 	prFile->IsOpen(_is_open);
 	
 	return _is_open ? S_OK : S_FALSE;
 }
 
-DGLE_RESULT CHDFileSystem::DeleteFile(const char *pcName)
+DGLE_RESULT DGLE_API CHDDFileSystem::DeleteFile(const char *pcName)
 {
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 		return RemoveDirectoryA(pcName) == 0 ? S_FALSE : S_OK;
@@ -98,7 +102,7 @@ DGLE_RESULT CHDFileSystem::DeleteFile(const char *pcName)
 	return ::DeleteFile(pcName) == 0 ? S_FALSE : S_OK;
 }
 
-DGLE_RESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
+DGLE_RESULT DGLE_API CHDDFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	if (pcName[strlen(pcName)-1] == '\\') //if directory
 	{
@@ -112,7 +116,7 @@ DGLE_RESULT CHDFileSystem::FileExists(const char *pcName, bool &bExists)
 	return S_OK;
 }
 
-DGLE_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
+DGLE_RESULT DGLE_API CHDDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
 	WIN32_FIND_DATAA find_file;
 
@@ -120,7 +124,7 @@ DGLE_RESULT CHDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIt
 
 	if (fhandle != INVALID_HANDLE_VALUE)
 	{
-		prIterator = new CHDFileIterator(InstIdx(), find_file.cFileName, fhandle);
+		prIterator = new CHDDFileIterator(InstIdx(), find_file.cFileName, fhandle);
 		return S_OK;
 	}
 

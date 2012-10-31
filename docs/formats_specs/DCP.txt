@@ -20,7 +20,7 @@ DCP 1.0 [D]gle [C]ompiled [P]ackage format specification.
 [UINT32] Uncompressed file size.
 [UINT32] Compressed file size.
 [UINT32] Offset of file data start in bytes relative to CompressedData chunk.
-[CHAR * 256] Full file name including path.
+[CHAR * 256] Full file name including path. Use backslash as separator "\".
 ] * FilesCount]
 
 #MetaData#

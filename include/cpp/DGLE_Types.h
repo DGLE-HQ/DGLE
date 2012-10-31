@@ -116,20 +116,20 @@ namespace DGLE
 
 	//variant//
 
+	enum E_DGLE_VARIANT_TYPE
+	{
+		DVT_UNKNOWN = 0,
+		DVT_INT,
+		DVT_FLOAT,
+		DVT_BOOL,
+		DVT_POINTER,
+		DVT_DATA
+	};
+
 	typedef struct
 	{
 	private:
 
-		enum E_DGLE_VARIANT_TYPE
-		{
-			DVT_UNKNOWN = 0,
-			DVT_INT,
-			DVT_FLOAT,
-			DVT_BOOL,
-			DVT_POINTER,
-			DVT_DATA
-		};
-		
 		E_DGLE_VARIANT_TYPE _type;
 		int _i;
 		float _f;
@@ -226,6 +226,8 @@ namespace DGLE
 				uiDataSize = (uint)_i;
 			}
 		}
+
+		inline E_DGLE_VARIANT_TYPE GetType() const { return _type; }
 
 		inline operator int() { return _i; }
 

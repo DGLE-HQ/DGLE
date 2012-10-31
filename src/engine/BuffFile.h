@@ -1,6 +1,6 @@
 /**
 \author		Kotlyarov Semen aka Kimer
-\date		16.03.2011 (c)Andrey Korotkov
+\date		29.10.2012 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -11,16 +11,17 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CBufFile: public IFile
+class CBuffFile: public IFile
 {
-	char		_acName[MAX_PATH];
+	std::string _strFileName;
 	uint32		_ui32Pos,
 				_ui32Size;
 	uint8		*_pData;
+	bool		_bDelData;
 
 public:
 
-	CBufFile(uint8 *pData, uint32 ui32DataSize);
+	CBuffFile(uint8 *pData, uint32 ui32DataSize, bool bDelData = true, const std::string &strFileName = "");
 
 	DGLE_RESULT DGLE_API Read(void *pBuffer, uint uiCount, uint &uiRead);
 	DGLE_RESULT DGLE_API Write(const void *pBuffer, uint uiCount, uint &uiWritten);

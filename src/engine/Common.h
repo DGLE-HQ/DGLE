@@ -38,6 +38,7 @@ typedef HMODULE TDynLibHandle;
 
 #else //PLATFORM_WINDOWS
 
+#define MAX_PATH 260
 #define MAKEFOURCC(ch0, ch1, ch2, ch3) ((uint32)(uchar)(ch0) | ((uint32)(uchar)(ch1) << 8) | ((uint32)(uchar)(ch2) << 16) | ((uint32)(uchar)(ch3) << 24))
 
 #endif

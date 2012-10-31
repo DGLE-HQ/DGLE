@@ -322,7 +322,6 @@ public:
 	inline void glBindTexture(GLenum target, GLuint texture);
 	inline void glActiveTextureARB(GLenum texture);
 	
-	inline void UnbindAll();
 	inline void Set(const CTextureState &previous);
 
 	inline CTextureState &operator =(const CTextureState &right)

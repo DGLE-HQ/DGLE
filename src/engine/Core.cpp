@@ -791,7 +791,7 @@ DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPl
 	else
 	{
 		prPlugin = NULL;
-		LOG("Plugin file \""+string(pcFileName)+"\" doesn't exists.", LT_ERROR);
+		LOG("Plugin file \"" + string(pcFileName) + "\" doesn't exists.", LT_ERROR);
 		return S_FALSE;
 	}
 }
@@ -933,7 +933,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 	{
 		_eInitFlags = eInitFlags;
 
-		LOG("Initializing Engine...",LT_INFO);
+		LOG("Initializing Engine...", LT_INFO);
 
 		if (!PlatformInit())
 		{

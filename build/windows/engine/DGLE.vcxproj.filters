@@ -2,12 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\..\..\src\engine\ResourceManager.cpp" />
-    <ClCompile Include="..\..\..\src\engine\BufFile.cpp">
-      <Filter>FileSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\engine\DCPFile.cpp">
-      <Filter>FileSystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\engine\DCPFileSystem.cpp">
       <Filter>FileSystem</Filter>
     </ClCompile>
@@ -62,12 +56,6 @@
     <ClCompile Include="..\..\..\src\engine\platform\windows\SplashWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\engine\platform\windows\HDFile.cpp">
-      <Filter>Platform\FileSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\engine\platform\windows\HDFileSystem.cpp">
-      <Filter>Platform\FileSystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\engine\platform\windows\ResFile.cpp">
       <Filter>Platform\FileSystem</Filter>
     </ClCompile>
@@ -82,16 +70,19 @@
     <ClCompile Include="..\..\..\src\engine\Sound.cpp" />
     <ClCompile Include="..\..\..\src\engine\Console.cpp" />
     <ClCompile Include="..\..\..\src\engine\Core.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFile.cpp">
+      <Filter>Platform\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFileSystem.cpp">
+      <Filter>Platform\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\BuffFile.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
     <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />
-    <ClInclude Include="..\..\..\src\engine\BufFile.h">
-      <Filter>FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\engine\DCPFile.h">
-      <Filter>FileSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\engine\DCPFileSystem.h">
       <Filter>FileSystem</Filter>
     </ClInclude>
@@ -164,12 +155,6 @@
     <ClInclude Include="..\..\..\src\engine\platform\windows\SplashWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\engine\platform\windows\HDFile.h">
-      <Filter>Platform\FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\engine\platform\windows\HDFileSystem.h">
-      <Filter>Platform\FileSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\engine\platform\windows\ResFile.h">
       <Filter>Platform\FileSystem</Filter>
     </ClInclude>
@@ -186,6 +171,15 @@
     <ClInclude Include="..\..\..\src\engine\Core.h" />
     <ClInclude Include="..\..\..\deps\deelx\deelx.h">
       <Filter>Dependencies\deelx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFile.h">
+      <Filter>Platform\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFileSystem.h">
+      <Filter>Platform\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\BuffFile.h">
+      <Filter>FileSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

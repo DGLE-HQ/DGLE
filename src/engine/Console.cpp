@@ -16,7 +16,7 @@ See "DGLE.h" for more details.
 using namespace std;
 
 #define CON_SPLIT_TWO_PARAMS(params)\
-	size_t pos = params.find_first_of(' ');\
+	string::size_type pos = params.find_first_of(' ');\
 	string par1(params.substr(0, pos)), par2(params.substr(pos + 1, params.size() - pos - 1));
 
 class CEvConsoleWrite : public IEvConsoleWrite
@@ -69,7 +69,7 @@ CConsole::CConsole(uint uiInsIdx):
 CInstancedObj(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 {
 	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, (void*)this);
-	RegComProc("help", "Don't be stupid! :)", &_s_Help, this);
+	RegComProc("help", "", &_s_Help, this);
 	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, (void*)this);
 	RegComProc("clear", "Clears all text in console.", &_s_Clear, (void*)this);
 	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, (void*)this);
@@ -102,10 +102,11 @@ void CConsole::_Help(const char* pcParam)
 
 	if (par == "" || par == "help")
 	{
-		Write("Print \"cmdlist\" for list of available console commands.");
-		Write("Print \"help <command>\" for specific command help.");
-		Write("Press \"Tab\" key for command autocompletion.");
-		Write("Press \"Up arrow\" key for previous command.");
+		Write(	"Print \"cmdlist\" for list of available console commands.\n"
+				"Print \"help <command>\" for specific command help.\n"
+				"Press \"Tab\" key for command autocompletion.\n"
+				"Press \"Up arrow\" key for previous command.\n"
+				"Press \"Down arrow\" key for next command.");
 	} 
 	else
 	{
@@ -194,7 +195,7 @@ void CConsole::LeaveThreadSafeSection()
 
 void CConsole::_OnCmdPrev()
 {
-	_iPrevMarker--;
+	--_iPrevMarker;
 
 	if (_iPrevMarker < 0)
 		_iPrevMarker = 0;
@@ -205,7 +206,7 @@ void CConsole::_OnCmdPrev()
 
 void CConsole::_OnCmdNext()
 {
-	_iPrevMarker++;
+	++_iPrevMarker;
 
 	if ((uint)_iPrevMarker >= _prevCommands.size())
 	{
@@ -218,49 +219,45 @@ void CConsole::_OnCmdNext()
 
 bool CConsole::_ProcessConCmd(const std::string &command)
 {
-	string cur(ToLowerCase(command)), com, par;
+	string cmd, param;
 	
-	bool done = false, rparam = false;
-
-	for (uint i = 0; i < cur.length(); ++i)
-	 if (cur[i] == ' ' && !rparam) 
-		 done = true;
-	 else
-		 if (!done) 
-			 com += cur[i]; 
-		 else 
-		 {
-			 rparam = true; 
-			 par += cur[i];
-		 }
+	string::size_type pos = command.find_first_of(' ');
+		
+	if (pos != string::npos)
+	{
+		param = command.substr(pos + 1, command.size() - pos - 1);
+		cmd = command.substr(0, pos);
+	}
+	else
+		cmd = command;
 	
 	for (size_t i = 0; i < _commands.size(); ++i)
-		if (com == string(_commands[i].pcName))
+		if (cmd == _commands[i].pcName)
 		{
 			if (_commands[i].piValue == NULL)
 			{
 				_pConsoleWindow->EnterThreadSafeSection();
 
-				(*_commands[i].pProc)(_commands[i].pParametr, par.c_str());
+				(*_commands[i].pProc)(_commands[i].pParametr, param.c_str());
 				
 				_pConsoleWindow->LeaveThreadSafeSection();
 			}
 			else
 			{
-				if (par == "")
+				if (param.empty())
 				{
-					Write(string(ToUpperCase(com) + " current value is " + IntToStr(*_commands[i].piValue) + " .").c_str());
-					Write(string("Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
+					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_commands[i].piValue) + " .\n"
+						"Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
 				}
 				else
 				{
-					int t = StrToInt(par);
+					int t = StrToInt(param);
 
-					if (t == 0 && par != "0")
-						Write(string("\"" + par + "\" is not a valid integer value.").c_str());
+					if (t == 0 && param != "0")
+						Write(("\"" + param + "\" is not a valid integer value.").c_str());
 					else
 						if (t < _commands[i].iMinValue || t > _commands[i].iMaxValue)
-							Write(string("Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
+							Write(("Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
 						else
 						{
 							_pConsoleWindow->EnterThreadSafeSection();
@@ -268,11 +265,11 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 							*_commands[i].piValue = t;
 						
 							if (_commands[i].pProc != NULL)
-								(*_commands[i].pProc)(_commands[i].pParametr, par.c_str());
+								(*_commands[i].pProc)(_commands[i].pParametr, param.c_str());
 
 							_pConsoleWindow->LeaveThreadSafeSection();
 
-							Write(string(ToUpperCase(com) + " is set to " + IntToStr(t) + ".").c_str());
+							Write((ToUpperCase(cmd) + " is set to " + IntToStr(t) + ".").c_str());
 						}
 				}
 			}

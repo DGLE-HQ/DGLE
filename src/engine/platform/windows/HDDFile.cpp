@@ -7,14 +7,14 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
-#include "HDFile.h"
+#include "HDDFile.h"
 
 #include <fcntl.h>
 #include <sys\stat.h>
 
 using namespace std;
 
-CHDFile::CHDFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags):
+CHDDFile::CHDDFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags):
 CInstancedObj(uiInstIdx),
 _iFile(-1)
 {
@@ -58,44 +58,45 @@ _iFile(-1)
 		LOG(string("Can't open file \"") + pcName + "\".", LT_ERROR);
 }
 
-CHDFile::~CHDFile()
+CHDDFile::~CHDDFile()
 {
 	if (_close(_iFile) != 0)
 		LOG(string("Can't close file \"") + _acName + "\".", LT_ERROR);
 }
 
-DGLE_RESULT CHDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
+DGLE_RESULT DGLE_API CHDDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {
 	uiRead = _read(_iFile, pBuffer, uiCount);
 	return S_OK;
 }
 
-DGLE_RESULT CHDFile::Write(const void* pBuffer, uint uiCount, uint &uiWritten)
+DGLE_RESULT DGLE_API CHDDFile::Write(const void* pBuffer, uint uiCount, uint &uiWritten)
 {
 	uiWritten = _write(_iFile, pBuffer, uiCount);
 	return S_OK;
 }
 
-DGLE_RESULT CHDFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+DGLE_RESULT DGLE_API CHDDFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
+	//ToDo: Check if SEEK_END seek goes forward or backward? Should go backward for positive values.
 	_lseek(_iFile, ui32Offset, (eWay == FSSF_BEGIN ? SEEK_SET : (eWay == FSSF_CURRENT ? SEEK_CUR : SEEK_END)));
 	ui32Position = (uint32)(_tell(_iFile));
 	return S_OK;
 }
 
-DGLE_RESULT CHDFile::GetSize(uint32 &ui32Size)
+DGLE_RESULT DGLE_API CHDDFile::GetSize(uint32 &ui32Size)
 {
 	ui32Size = (uint32)(_filelength(_iFile));
 	return S_OK;
 }
 
-DGLE_RESULT CHDFile::IsOpen(bool &bOpened)
+DGLE_RESULT DGLE_API CHDDFile::IsOpen(bool &bOpened)
 {
 	bOpened = _iFile > 0;
 	return S_OK;
 }
 
-DGLE_RESULT CHDFile::GetName(char* pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CHDDFile::GetName(char* pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
@@ -115,7 +116,7 @@ DGLE_RESULT CHDFile::GetName(char* pcName, uint &uiCharsCount)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CHDFile::GetPath(char *pcPath, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CHDDFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
 	if (!pcPath)
 	{
@@ -135,7 +136,7 @@ DGLE_RESULT DGLE_API CHDFile::GetPath(char *pcPath, uint &uiCharsCount)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CHDFile::Free()
+DGLE_RESULT DGLE_API CHDDFile::Free()
 {
 	delete this;
 	return S_OK;

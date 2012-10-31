@@ -171,8 +171,8 @@ namespace DGLE
 			\param[in] pcCommand Pointer to allocated string with command.
 			\param[out] pcResult Pointer to allocated string to accept command result.
 			\param[in, out] uiCharsCount Count of the chars in allocated result string.
-			\return E_INVALIDARG must be returned if allocated string is too small. E_NOTIMPL indicates that interface has not got any commands.
-			\note If pcCommand is NULL then uiCharsCount will contain recommended by plugin result string length, large enough to accept any result value.
+			\return E_INVALIDARG must be returned if allocated string is too small, uiCharsCount will contain required string length. E_NOTIMPL indicates that interface has not got any commands.
+			\note If pcResult for command is NULL then uiCharsCount will contain recommended result string length and command should not be executed.
 		*/
 		virtual DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
 		/** Executes some text command and returns result as variant. Commands are specific for concrete interface. All commands should be described in documentation.
@@ -801,10 +801,10 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
-		// 2D Sprites		
-		virtual DGLE_RESULT DGLE_API DrawSpriteS(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawSpriteA(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawSpriteC(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		// 2D Sprites
+		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTexCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		// Extra
 		virtual DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
@@ -1409,6 +1409,8 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 	DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount)\
 	{\
 		if (!pcCommand)\
+			return E_INVALIDARG;\
+		if (!pcResult)\
 		{\
 			uiCharsCount = 1;\
 			return S_OK;\

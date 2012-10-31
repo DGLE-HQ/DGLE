@@ -16,10 +16,10 @@ extern HMODULE hModule;
 
 #define C_WND_X 20
 #define C_WND_Y -10
-#define C_WND_WIDTH  400
-#define C_WND_HEIGHT 200
-#define C_WND_MIN_WIDTH  200
-#define C_WND_MIN_HEIGHT 80
+#define C_WND_WIDTH  450
+#define C_WND_HEIGHT 250
+#define C_WND_MIN_WIDTH  300
+#define C_WND_MIN_HEIGHT 115
 #define C_WND_EDIT_HEIGHT 16
 
 LOGFONT LF = {12, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, "Lucida Console"};
