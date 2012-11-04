@@ -4,7 +4,7 @@ namespace Gui
 {
 	public partial class CustomFileChooserDialog
 	{
-		private global::Gtk.VBox vboxFileChooser;
+		private global::Gtk.Table table1;
 		private global::Gtk.FileChooserWidget fileChooser;
 		private global::Gtk.HBox hboxButtons;
 		private global::Gtk.Button btnCancel;
@@ -16,21 +16,25 @@ namespace Gui
 			// Widget Gui.CustomFileChooserDialog
 			this.Name = "Gui.CustomFileChooserDialog";
 			this.Title = global::Mono.Unix.Catalog.GetString ("CustomFileChooserDialog");
+			this.TypeHint = ((global::Gdk.WindowTypeHint)(1));
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Modal = true;
+			this.DefaultWidth = 640;
+			this.DefaultHeight = 480;
 			this.Decorated = false;
 			// Container child Gui.CustomFileChooserDialog.Gtk.Container+ContainerChild
-			this.vboxFileChooser = new global::Gtk.VBox ();
-			this.vboxFileChooser.Name = "vboxFileChooser";
-			this.vboxFileChooser.Spacing = 6;
-			this.vboxFileChooser.BorderWidth = ((uint)(6));
-			// Container child vboxFileChooser.Gtk.Box+BoxChild
-			this.fileChooser = new global::Gtk.FileChooserWidget (((global::Gtk.FileChooserAction)(0)));
+			this.table1 = new global::Gtk.Table (((uint)(2)), ((uint)(1)), false);
+			this.table1.Name = "table1";
+			this.table1.RowSpacing = ((uint)(6));
+			this.table1.ColumnSpacing = ((uint)(6));
+			this.table1.BorderWidth = ((uint)(6));
+			// Container child table1.Gtk.Table+TableChild
+			this.fileChooser = new global::Gtk.FileChooserWidget (((global::Gtk.FileChooserAction)(1)));
 			this.fileChooser.Name = "fileChooser";
-			this.vboxFileChooser.Add (this.fileChooser);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vboxFileChooser [this.fileChooser]));
-			w1.Position = 0;
-			// Container child vboxFileChooser.Gtk.Box+BoxChild
+			this.table1.Add (this.fileChooser);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1 [this.fileChooser]));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.hboxButtons = new global::Gtk.HBox ();
 			this.hboxButtons.Name = "hboxButtons";
 			this.hboxButtons.Spacing = 6;
@@ -60,17 +64,15 @@ namespace Gui
 			w3.Position = 1;
 			w3.Expand = false;
 			w3.Fill = false;
-			this.vboxFileChooser.Add (this.hboxButtons);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vboxFileChooser [this.hboxButtons]));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
-			this.Add (this.vboxFileChooser);
+			this.table1.Add (this.hboxButtons);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1 [this.hboxButtons]));
+			w4.TopAttach = ((uint)(1));
+			w4.BottomAttach = ((uint)(2));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.Add (this.table1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 500;
-			this.DefaultHeight = 400;
 			this.Hide ();
 		}
 	}

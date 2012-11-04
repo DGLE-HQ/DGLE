@@ -8,6 +8,7 @@ See "DGLE2.h" for more details.
 */
 using System;
 using Gtk;
+using System.Collections.Generic;
 
 namespace Template
 {
@@ -24,6 +25,8 @@ namespace Template
 	{
 		public static void Main(string[] args)
 		{
+			if (!Gui.ThemeHelper.CheckGtk ())
+				return;
 			Gui.ThemeHelper.ApplyCustomTheme (args);
 
 			Application.Init ("Template", ref args);

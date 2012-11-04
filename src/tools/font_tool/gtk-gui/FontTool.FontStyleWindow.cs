@@ -108,14 +108,15 @@ namespace FontTool
 			this.CanDefault = true;
 			this.Name = "FontTool.FontStyleWindow";
 			this.Title = global::Mono.Unix.Catalog.GetString ("FontTool");
-			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
+			this.TypeHint = ((global::Gdk.WindowTypeHint)(1));
+			this.WindowPosition = ((global::Gtk.WindowPosition)(1));
 			this.Resizable = false;
 			this.Decorated = false;
 			// Container child FontTool.FontStyleWindow.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox ();
 			this.vbox1.Name = "vbox1";
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='SaveAction' action='SaveAction'/><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='SettingsAction' action='SettingsAction'><menu name='FontAction' action='FontAction'><menuitem name='OnlyEnglishAction' action='OnlyEnglishAction'/></menu></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
+			this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='SaveAction' action='SaveAction'/><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='SettingsAction' action='SettingsAction'><menuitem name='OnlyEnglishAction' action='OnlyEnglishAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 			this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 			this.menubar1.Name = "menubar1";
 			this.vbox1.Add (this.menubar1);

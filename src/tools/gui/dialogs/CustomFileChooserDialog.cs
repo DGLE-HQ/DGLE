@@ -55,6 +55,18 @@ namespace Gui
 			this.fileChooser.Action = action;
 			this.btnOk.Label = action.ToString ();
 
+			// hack for correct expand file chooser
+			Gtk.Expander expander = GetFileChooserExpander (this.fileChooser);
+			if (expander != null) {
+				base.AllowGrow = expander.Expanded;
+				expander.Activated += delegate(object sender, EventArgs e) {
+					base.AllowGrow = expander.Expanded;
+					if (expander.Expanded) {
+						base.Resize (base.DefaultWidth, base.DefaultHeight);
+					}
+				};
+			}
+
 			this.btnOk.Clicked += OnOk;
 			this.btnCancel.Clicked += OnCancel;
 
@@ -62,6 +74,23 @@ namespace Gui
 				this.btnCancel.Click ();
 			};
 		}
+
+		private Gtk.Expander GetFileChooserExpander (Gtk.Container parent)
+		{
+			if (parent is Gtk.Expander)
+				return parent as Gtk.Expander;
+
+			foreach (Gtk.Widget child in parent.AllChildren) {
+				if (child is Gtk.Container) {
+					Gtk.Container container = child as Gtk.Container; 
+					Gtk.Expander expander = GetFileChooserExpander(container); 
+					if (expander != null)
+						return expander;
+				}
+			}
+
+			return null;
+		} 
 	}
 }
 

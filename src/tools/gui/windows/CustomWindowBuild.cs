@@ -52,26 +52,32 @@ namespace Gui
 			this.labelCaption.SingleLineMode = true;
 			this.hboxTitleBar.PackStart (this.labelCaption, true, true, 0);
 			
-			this.btnMinimize = new Gtk.Button ();
-			this.btnMinimize.Name = "btnMinimize";
-			this.btnMinimize.WidthRequest = 22;
-			this.btnMinimize.HeightRequest = 22;
-			this.btnMinimize.CanFocus = false;
-			this.hboxTitleBar.PackStart (this.btnMinimize, false, false, 0);
-			
-			this.btnMaximize = new Gtk.Button ();
-			this.btnMaximize.Name = "btnMaximize";
-			this.btnMaximize.WidthRequest = 22;
-			this.btnMaximize.HeightRequest = 22;
-			this.btnMaximize.CanFocus = false;
-			this.hboxTitleBar.PackStart (this.btnMaximize, false, false, 0);
-			
 			this.btnClose = new Gtk.Button ();
 			this.btnClose.Name = "btnClose";
 			this.btnClose.WidthRequest = 22;
 			this.btnClose.HeightRequest = 22;
 			this.btnClose.CanFocus = false;
-			this.hboxTitleBar.PackStart (this.btnClose, false, false, 0);
+			this.hboxTitleBar.PackEnd (this.btnClose, false, false, 0);
+			Gtk.Box.BoxChild boxChild0 = ((Gtk.Box.BoxChild)(this.hboxTitleBar [this.btnClose]));
+			boxChild0.Position = 0;
+
+			this.btnMaximize = new Gtk.Button ();
+			this.btnMaximize.Name = "btnMaximize";
+			this.btnMaximize.WidthRequest = 22;
+			this.btnMaximize.HeightRequest = 22;
+			this.btnMaximize.CanFocus = false;
+			this.hboxTitleBar.PackEnd (this.btnMaximize, false, false, 0);
+			Gtk.Box.BoxChild boxChild1 = ((Gtk.Box.BoxChild)(this.hboxTitleBar [this.btnMaximize]));
+			boxChild1.Position = 1;
+			
+			this.btnMinimize = new Gtk.Button ();
+			this.btnMinimize.Name = "btnMinimize";
+			this.btnMinimize.WidthRequest = 22;
+			this.btnMinimize.HeightRequest = 22;
+			this.btnMinimize.CanFocus = false;
+			this.hboxTitleBar.PackEnd (this.btnMinimize, false, false, 0);
+			Gtk.Box.BoxChild boxChild2 = ((Gtk.Box.BoxChild)(this.hboxTitleBar [this.btnMinimize]));
+			boxChild2.Position = 2;
 
 			this.btnMinimize.Image = new Gtk.Image(Assembly.GetExecutingAssembly(), ThemeHelper.minimizeBtnId);
 			this.btnMinimize.SetAlignment(0.5f, 0.5f);

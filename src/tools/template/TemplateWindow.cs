@@ -17,7 +17,9 @@ namespace Template
 				base(Gtk.WindowType.Toplevel)
 		{
 			this.Build();
-			base.Decorated = false;
+
+			this.CustomStyleAction.Active = !base.Decorated;
+			this.DecoratedCustomStyleAction.Active = base.Decorated;
 
 			this.DeleteEvent += HandleDeleteEvent;
 

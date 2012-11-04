@@ -10,21 +10,43 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using Mono.Options;
 
 namespace Gui
 {
 	public static class ThemeHelper
 	{
+		public static bool ForceDecoration {
+			get {
+				return forceDecoration;
+			}
+			private set {
+				forceDecoration = value;
+			}
+		}
 
-		private static string lightId = "Gui.resources.light_gtkrc";
-		private static string darkId = "Gui.resources.dark_gtkrc";
+		public static string Style {
+			get {
+				return style;
+			}
+			private set {
+				style = value;
+				ApplyCustomTheme ();
+			}
+		}
 
-		internal static string minimizeBtnId = "Gui.resources.minimize_button.png";
-		internal static string maximizeBtnId = "Gui.resources.maximize_button.png";
-		internal static string closeBtnId = "Gui.resources.close_button.png";
+		private static readonly string lightId = "Gui.resources.light_gtkrc";
+		private static readonly  string darkId = "Gui.resources.dark_gtkrc";
 
-		private static Dictionary<string, string> stylesTypes = GetStylesTypes ();
-		// static initialization doesn't work on .net 2.0
+		internal static readonly string minimizeBtnId = "Gui.resources.minimize_button.png";
+		internal static readonly string maximizeBtnId = "Gui.resources.maximize_button.png";
+		internal static readonly string closeBtnId = "Gui.resources.close_button.png";
+
+		private static string style = "light";
+		private static bool forceDecoration = false;
+
+		private static readonly Dictionary<string, string> stylesTypes = GetStylesTypes();
+
 		private static Dictionary<string, string> GetStylesTypes ()
 		{
 			Dictionary<string, string> styles = new Dictionary<string, string>();
@@ -34,23 +56,33 @@ namespace Gui
 			return styles;
 		}
 
-		static ThemeHelper ()
-		{
-			CopyEngineForWindows ();
-		}
-
 		public static void ApplyCustomTheme (string[] args)
 		{
-			if (args.Length > 0) {
-				Gui.ThemeHelper.ApplyCustomTheme (args[0]);
-			} else {
-				Gui.ThemeHelper.ApplyCustomTheme (Gui.ThemeHelper.lightId);
+			bool applied = false;
+			try {
+				OptionSet options = new OptionSet ()
+				.Add ("s|style=", "theme style", delegate(string value) {
+					Style = value;
+					applied = true;
+				})
+				.Add ("d|decorated", "force to decorate with window manager", delegate(string value) {
+					ForceDecoration = true;
+				});
+				options.Parse (args);
+			} catch {
 			}
+			if (!applied)
+				ApplyCustomTheme ();
 		}
 
-		public static void ApplyCustomTheme(string styleType)
+		private static void ApplyCustomTheme ()
 		{
-			string resourceId = GetResourceId (styleType);
+			if (style == "default") {
+				ForceDecoration = true;
+				return;
+			}
+
+			string resourceId = GetResourceId (style);
 
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			Stream gtkrcStream = null;
@@ -75,13 +107,28 @@ namespace Gui
 			return resourceId ?? lightId;
 		}
 
-		private static void CopyEngineForWindows ()
+		public static bool CheckGtk ()
 		{
 			if (PlatformUtils.IsWindows) {
 				if (Gtk.Rc.FindModuleInPath ("libclearlooks.dll") == null) {
-					File.Copy(@".\libclearlooks.dll", Gtk.Rc.ModuleDir + @"\libclearlooks.dll");
+					try {
+						File.Copy(@".\libclearlooks.dll", Gtk.Rc.ModuleDir + @"\libclearlooks.dll");
+					} catch {
+						Gtk.Application.Init();
+						new Gtk.MessageDialog (
+							null,
+							Gtk.DialogFlags.Modal,
+							Gtk.MessageType.Warning,
+							Gtk.ButtonsType.Close,
+							"Please, run {0} as Administrator.",
+							Assembly.GetEntryAssembly().GetName().Name
+							).Run();
+						Gtk.Application.Quit ();
+						return false;
+					}
 				}
 			}
+			return true;
 		}
 	}
 }

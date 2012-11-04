@@ -26,7 +26,7 @@ namespace Gui
 			E_BOTTOM_RIGHT_CONER = 10
 		}
 		
-		public static Dictionary<SizingSideType, Gdk.CursorType> CursorTypeMaps = GetCurstorTypeMaps ();
+		public static readonly Dictionary<SizingSideType, Gdk.CursorType> CursorTypeMaps = GetCurstorTypeMaps ();
 		// static initialization doesn't work on .net 2.0
 		private static Dictionary<SizingSideType, Gdk.CursorType> GetCurstorTypeMaps ()
 		{

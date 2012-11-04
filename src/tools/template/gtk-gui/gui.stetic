@@ -88,6 +88,7 @@
     <property name="MemberName" />
     <property name="Title" translatable="yes">Young, strong and crazy!</property>
     <property name="WindowPosition">Center</property>
+    <property name="Decorated">False</property>
     <child>
       <widget class="Gtk.VBox" id="vbox1">
         <property name="MemberName" />
@@ -95,7 +96,7 @@
         <child>
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
-            <node name="__gtksharp_128_Stetic_Editor_ActionMenuBar" type="Menubar">
+            <node name="menubar1" type="Menubar">
               <node type="Menu" action="FileAction">
                 <node type="Menuitem" action="CloseAction" />
               </node>

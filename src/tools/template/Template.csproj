@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
+    <Commandlineparameters>--decorated</Commandlineparameters>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

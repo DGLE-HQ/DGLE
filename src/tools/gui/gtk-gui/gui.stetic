@@ -13,6 +13,7 @@
     <property name="HeightRequest">200</property>
     <property name="Visible">False</property>
     <property name="Title" translatable="yes">About</property>
+    <property name="TypeHint">Dialog</property>
     <property name="Modal">True</property>
     <property name="Resizable">False</property>
     <child>
@@ -59,25 +60,37 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="Gui.CustomFileChooserDialog" design-size="500 400">
+  <widget class="Gtk.Window" id="Gui.CustomFileChooserDialog" design-size="724 480">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <property name="Title" translatable="yes">CustomFileChooserDialog</property>
+    <property name="TypeHint">Dialog</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Modal">True</property>
+    <property name="DefaultWidth">640</property>
+    <property name="DefaultHeight">480</property>
     <property name="Decorated">False</property>
     <child>
-      <widget class="Gtk.VBox" id="vboxFileChooser">
+      <widget class="Gtk.Table" id="table1">
         <property name="MemberName" />
-        <property name="Spacing">6</property>
+        <property name="NRows">2</property>
+        <property name="RowSpacing">6</property>
+        <property name="ColumnSpacing">6</property>
         <property name="BorderWidth">6</property>
         <child>
           <widget class="Gtk.FileChooserWidget" id="fileChooser">
             <property name="MemberName" />
+            <property name="Action">Save</property>
           </widget>
           <packing>
-            <property name="Position">0</property>
             <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">True</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
           </packing>
         </child>
         <child>
@@ -120,10 +133,16 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
+            <property name="TopAttach">1</property>
+            <property name="BottomAttach">2</property>
+            <property name="AutoSize">False</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">True</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
           </packing>
         </child>
       </widget>

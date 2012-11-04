@@ -23,6 +23,8 @@ namespace FontTool
 	{
 		public static void Main(string[] args)
 		{
+			if (!Gui.ThemeHelper.CheckGtk ())
+				return;
 			Gui.ThemeHelper.ApplyCustomTheme (args);
 
 			Application.Init ("FontTool", ref args);

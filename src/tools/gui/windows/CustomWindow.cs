@@ -28,14 +28,51 @@ namespace Gui
 		{
 			get { return base.Decorated; }
 			set {
-				if (base.Decorated == value)
-					return;
+				if (Gui.ThemeHelper.ForceDecoration)
+					base.Decorated = true;
+				else 
+					base.Decorated = value;
 
-				base.Decorated = value;
 				ShowTitleBar = !base.Decorated;
 				this.vboxWindow.BorderWidth = base.Decorated ? 0 : (uint) frameBorderWidth;
 			}
 		}
+
+		//[GLib.Property ("type-hint")]
+		new public Gdk.WindowTypeHint TypeHint
+		{
+			get { return base.TypeHint; }
+			set {
+				base.TypeHint = value;
+				switch(base.TypeHint) {
+				case Gdk.WindowTypeHint.Normal:
+					ShowTitleBar = true;
+					ShowMinimizeBtn = true;
+					ShowMaximizeBtn = true;
+					ShowCloseBtn = true;
+					break;
+				case Gdk.WindowTypeHint.Dialog:
+					ShowTitleBar = true;
+					ShowMinimizeBtn = false;
+					ShowMaximizeBtn = false;
+					ShowCloseBtn = true;
+					break;
+				case Gdk.WindowTypeHint.Utility:
+					ShowTitleBar = true;
+					ShowMinimizeBtn = false;
+					ShowMaximizeBtn = false;
+					ShowCloseBtn = true;
+					break;
+				default:
+					ShowTitleBar = false;
+					ShowMinimizeBtn = false;
+					ShowMaximizeBtn = false;
+					ShowCloseBtn = false;
+					break;
+				}
+			}
+		}
+
 
 		[GLib.Property ("title")]
 		new public string Title
@@ -55,7 +92,6 @@ namespace Gui
 			set {
 				base.Resizable = value;
 				ShowMaximizeBtn = base.Resizable;
-				ShowMinimizeBtn = base.Resizable;
 			}
 		}
 
@@ -77,6 +113,8 @@ namespace Gui
 				this.btnMinimize.Visible = value;
 				this.btnMinimize.ChildVisible = value;
 				this.btnMinimize.Sensitive = value;
+				Gtk.Box.BoxChild boxChild = ((Gtk.Box.BoxChild)(this.hboxTitleBar [this.btnMinimize]));
+				boxChild.Position = this.btnMinimize.Visible ? 2 : 5;
 			}
 		}
 
@@ -85,6 +123,18 @@ namespace Gui
 				this.btnMaximize.Visible = value;
 				this.btnMaximize.ChildVisible = value;
 				this.btnMaximize.Sensitive = value;
+				Gtk.Box.BoxChild boxChild = ((Gtk.Box.BoxChild)(this.hboxTitleBar [this.btnMaximize]));
+				boxChild.Position = this.btnMaximize.Visible ? 1 : 4;
+			}
+		}
+
+		private bool ShowCloseBtn {
+			set {
+				this.btnClose.Visible = value;
+				this.btnClose.ChildVisible = value;
+				this.btnClose.Sensitive = value;
+				Gtk.Box.BoxChild boxChild = ((Gtk.Box.BoxChild)(this.hboxTitleBar [this.btnClose]));
+				boxChild.Position = this.btnClose.Visible ? 0 : 3;
 			}
 		}
 
@@ -116,6 +166,8 @@ namespace Gui
 		private void CustomInit()
 		{
 			CustomBuild();
+			if (ThemeHelper.ForceDecoration)
+				Decorated = true;
 
 			base.AddEvents((int) (
 				Gdk.EventMask.PointerMotionMask | 
@@ -139,7 +191,7 @@ namespace Gui
 			this.btnMinimize.Clicked += HandleClickedBtnMinimize;
 			this.btnMaximize.Clicked += HandleClickedBtnMaximize;
 			this.btnClose.Clicked += HandleClickedBtnClose;
-			
+
 			this.Add (this.vboxWindow);
 			this.Hide ();
 		}

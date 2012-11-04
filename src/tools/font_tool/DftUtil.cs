@@ -14,7 +14,7 @@ namespace FontTool
 {
 	public class DftUtil
 	{
-		public static string HEADER = "DFT 1.1";
+		public static readonly string HEADER = "DFT 1.1";
 		private const int WIDTH = 512;
 		private const int HEIGHT = 8192*2;
 		private const int PADDING = 2;

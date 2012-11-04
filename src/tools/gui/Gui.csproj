@@ -49,19 +49,20 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="CairoExtensions.cs" />
-    <Compile Include="CustomWindow.cs" />
-    <Compile Include="CustomWindowBuild.cs" />
     <Compile Include="SizingSideType.cs" />
     <Compile Include="GdkEventAny.cs" />
     <Compile Include="ThemeHelper.cs" />
-    <Compile Include="PlatformUtils.cs" />
-    <Compile Include="AboutWindow.cs" />
     <Compile Include="gtk-gui\Gui.AboutWindow.cs" />
-    <Compile Include="CustomFileChooserDialog.cs" />
     <Compile Include="gtk-gui\Gui.CustomFileChooserDialog.cs" />
-    <Compile Include="CustomMessageDialog.cs" />
     <Compile Include="gtk-gui\Gui.CustomMessageDialog.cs" />
+    <Compile Include="addins\Options.cs" />
+    <Compile Include="extensions\CairoExtensions.cs" />
+    <Compile Include="windows\AboutWindow.cs" />
+    <Compile Include="windows\CustomWindow.cs" />
+    <Compile Include="windows\CustomWindowBuild.cs" />
+    <Compile Include="utils\PlatformUtils.cs" />
+    <Compile Include="dialogs\CustomMessageDialog.cs" />
+    <Compile Include="dialogs\CustomFileChooserDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -76,5 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources\" />
+    <Folder Include="addins\" />
+    <Folder Include="extensions\" />
+    <Folder Include="windows\" />
+    <Folder Include="utils\" />
+    <Folder Include="dialogs\" />
   </ItemGroup>
 </Project>

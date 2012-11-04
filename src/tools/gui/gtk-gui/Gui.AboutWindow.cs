@@ -17,6 +17,7 @@ namespace Gui
 			this.HeightRequest = 200;
 			this.Name = "Gui.AboutWindow";
 			this.Title = global::Mono.Unix.Catalog.GetString ("About");
+			this.TypeHint = ((global::Gdk.WindowTypeHint)(1));
 			this.Modal = true;
 			this.Resizable = false;
 			// Container child Gui.AboutWindow.Gtk.Container+ContainerChild

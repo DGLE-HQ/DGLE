@@ -12,9 +12,9 @@ namespace FontTool
 {
 	public class FontService
 	{
-		public static int FONT_DEFAULT_SIZE = 12;
-		public static int FONT_MAX_SIZE = 72;
-		public static int FONT_MIN_SIZE = 4;
+		public static readonly int FONT_DEFAULT_SIZE = 12;
+		public static readonly int FONT_MAX_SIZE = 72;
+		public static readonly int FONT_MIN_SIZE = 4;
 
 		private Pango.FontFamily family;
 		public Pango.FontFamily Family {
