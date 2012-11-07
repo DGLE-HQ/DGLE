@@ -92,7 +92,7 @@
 		| extern	|	e_	|
 		\-------------------------------/
 	
-	b)	Project uses its own data types becuse they are platform independent. And you must use them too. You could
+	b)	Project uses its own data types because they are platform independent. And you must use them too. You could
 		find all of them in the "include/cpp/DGLE_Types.h". Here is most common types:
 	
 		/-------------------------------------------------------\
@@ -131,10 +131,10 @@
 	b)	All source code in "include/" folder must be commented the way to be later auto documented by doxygen. See engine headers as the example.
 	c)	Use only english language in comments.
 	
-7.	Macroses naming rule is simple. Use upper-case characters separated by "_".
+7.	Macros naming rule is simple. Use upper-case characters separated by "_".
 
 8.	a)	It's recommended to use spaces around "(", ")", "[", "]", "+", "–", "*", "/", "=", "+=", "-=", "*=", "/=", "|=", "&=", "==", "!=", "&", "&&", "|", "||", "^", "<", ">", "?", ":", "if", "for", "while".
-		In functions calls "(" and ")" as well as unar "+", "–", "*", "&" should NOT be separated by spaces.
+		In functions calls "(" and ")" as well as unary "+", "–", "*", "&" should NOT be separated by spaces.
 		Note: Some exceptions for this rule could be done for templates.
 	b)	One tab is equal to four spaces.
 
@@ -143,16 +143,17 @@
 
 10.	In classes private members must go first, then goes private methods and then goes all public methods. Try not to use public members and friend classes.
 	
-11.	If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
+11.	If you are not sure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
 	to make right decision concerning the style and principles of code around.
 	
 ===================================== C# ======================================
 
 By default you should use rules from C++ section, but there are some important exceptions!
 
-1. All classes, class metods, enums, structures and functions must be named in CamelCase style.
+1. All classes, class methods, enums, structures and functions must be named in CamelCase style.
 2. All global and local variables as well as class members must be named in lowerCamelCase style.
-3. Try not to use Hungarian Notation it is obsolete for modern programming languages.
+3. Any class members which are static readonly or const must have upper-case names with symbol "_" as word separator.
+4. Do not use Hungarian Notation it is obsolete for modern programming languages.
 	
 Note that engine C# assemblies have the same code style as C++, we do so not to confuse engine users.
 	
