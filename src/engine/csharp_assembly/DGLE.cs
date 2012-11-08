@@ -268,6 +268,7 @@ namespace DGLE
 	public delegate void DSubscriber(IntPtr pParam);
 	public delegate void DListenerProc(IntPtr pParam, ref IBaseEvent pEvent);
 	public delegate void DFSDeleteCallback(IntPtr pParam, ref IFileSystem pVFS);
+    public delegate void DStreamCallback(IntPtr pParam, UInt32 ui32DataPos, IntPtr pBufferData, uint uiBufferSize); // is it ok ? // phomm
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
 	Guid("111BB884-2BA6-4e84-95A5-5E4700309CBA")]
@@ -542,10 +543,10 @@ namespace DGLE
 		void DrawPolygon(ITexture pTexture, ref TVertex2 pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
 	
 		// 2D Sprites		
-		void DrawSpriteS(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, float fAngle, E_EFFECT2D_FLAGS flags);
-		void DrawSpriteA(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, UInt32 uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
-		void DrawSpriteC(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, ref TRectF stRect, float fAngle, E_EFFECT2D_FLAGS eFlags);
-
+		void DrawTexture(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, float fAngle, E_EFFECT2D_FLAGS flags);
+		void DrawTexCropped(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, ref TRectF stRect, float fAngle, E_EFFECT2D_FLAGS eFlags);
+		void DrawSprite(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, UInt32 uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
+		
 		// Extra
 		void DrawTriangles(ITexture pTexture, ref TVertex2 pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
 		void DrawMesh(IMesh pMesh, ITexture pTexture, ref TPoint2 stCoords, ref TPoint3 stDimensions, ref TPoint3 stAxis, float fAngle, [MarshalAs(UnmanagedType.U1)]bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);
@@ -918,10 +919,8 @@ namespace DGLE
 		void GetFreeChannelsCount(out uint uiCount);
 		void ReleaseChannelsByData([MarshalAs(UnmanagedType.LPArray)] byte[] pData);	
 		void CreateChannel(out ISoundChannel prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 ui32DataSize); //Data not copied!
-
-// can't implement delegate for func // phomm
-
-		//void CreateStreamableChannel(out ISoundChannel prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, UInt32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr);
+        // is this translation ok ? // phomm        
+        void CreateStreamableChannel(out ISoundChannel prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, UInt32 ui32DataSize, [MarshalAs(UnmanagedType.FunctionPtr)] DStreamCallback pStreamCallback, IntPtr pParam); 
 
 	};
 

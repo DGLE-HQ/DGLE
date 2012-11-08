@@ -7,6 +7,133 @@ using System.Reflection;
 
 namespace DGLE
 {
+    	//variant//
+
+	public enum E_DGLE_VARIANT_TYPE
+	{
+		DVT_UNKNOWN = 0,
+		DVT_INT,
+		DVT_FLOAT,
+		DVT_BOOL,
+		DVT_POINTER,
+		DVT_DATA
+	};
+
+	public struct TVariant
+	{
+	
+
+		private E_DGLE_VARIANT_TYPE _type;
+		private int _i;
+		private float _f;
+        private IntPtr? _p; // it is nullable for all operations to be ok, is nullable ok ? // phomm
+
+		public void Clear()
+		{
+			_type = E_DGLE_VARIANT_TYPE.DVT_UNKNOWN;
+			_i = 0;
+			_f = 0.0f;
+			_p = null; 
+		}
+
+		public void SetInt(int iVal)
+		{
+			Clear();
+			_type = E_DGLE_VARIANT_TYPE.DVT_INT;
+			_i = iVal;
+		}
+
+		public void SetFloat(float fVal)
+		{
+			Clear();
+			_type = E_DGLE_VARIANT_TYPE.DVT_FLOAT;
+			_f = fVal;
+		}
+
+		public void SetBool(bool bVal)
+		{
+			Clear();
+			_type = E_DGLE_VARIANT_TYPE.DVT_BOOL;
+			_i = bVal ? 1 : 0;
+		}
+
+		public void SetPointer(IntPtr pointer)
+		{
+			Clear();
+			_type = E_DGLE_VARIANT_TYPE.DVT_POINTER;
+			_p = pointer;
+		}
+
+		public void SetData(/*[MarshalAs(UnmanagedType.LPArray)] byte[]*/ IntPtr pData, uint uiDataSize)
+		{
+			Clear();
+			_type = E_DGLE_VARIANT_TYPE.DVT_DATA;
+			_p = (IntPtr)pData;
+			_i = (int)uiDataSize;
+		}
+
+		public int AsInt() 
+		{
+			if (_type != E_DGLE_VARIANT_TYPE.DVT_INT)
+				return 0;
+			else
+				return _i;
+		}
+
+		public float AsFloat() 
+		{
+			if (_type != E_DGLE_VARIANT_TYPE.DVT_FLOAT)
+				return 0.0f;
+			else
+				return _f;
+		}
+
+		public bool AsBool() 
+		{
+			if (_type != E_DGLE_VARIANT_TYPE.DVT_BOOL)
+				return false;
+			else
+				return _i == 1;
+		}
+
+		public IntPtr? AsPointer() 
+		{
+			if (_type != E_DGLE_VARIANT_TYPE.DVT_POINTER)
+				return null;
+			else
+				return _p;
+		}
+
+		public void GetData(/*[MarshalAs(UnmanagedType.LPArray)] byte[]*/ IntPtr? pData, out uint uiDataSize) 
+		{
+			if (_type != E_DGLE_VARIANT_TYPE.DVT_DATA)
+			{
+				pData = null;
+				uiDataSize = 0;
+			}
+			else
+			{
+				pData = _p;
+				uiDataSize = (uint)_i;
+			}
+		}
+
+		public E_DGLE_VARIANT_TYPE GetType() 
+        { 
+            return _type;
+        }
+
+        public static implicit operator int(TVariant v) { return v._i; }
+
+        public static implicit operator float(TVariant v) { return v._f; }
+
+        public static implicit operator bool(TVariant v) { return v._i == 1; }
+
+        public static implicit operator IntPtr?(TVariant v) { return v._p; }
+
+	} 
+
+
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct TWinMessage

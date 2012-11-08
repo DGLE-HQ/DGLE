@@ -671,7 +671,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResourse = false) = 0;
 	
-		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterFileFormat(const char *pcExtension) = 0;
 		virtual DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
@@ -1195,7 +1195,7 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API LoadFile(const char* pcFileName, IFile *&prFile) = 0;// c:\data.zip|img.jpg
 		virtual DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension/*NULL to get HDD file system*/, IFileSystem *&prVFS) = 0;
-		virtual DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteDGLE_API)(void *pParametr, IFileSystem *pVFS), void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDescription, IFileSystem *pVFS, void (DGLE_API *pDeleteDGLE_API)(void *pParametr, IFileSystem *pVFS), void *pParametr = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char* pcVFSExtension) = 0;
 		virtual DGLE_RESULT DGLE_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount) = 0;
@@ -1263,9 +1263,9 @@ namespace DGLE
 	class IFileSystem : public IDGLE_Base
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) = 0;	//если передан только путь "C:\MyFolder\" то создаст папку
-		virtual DGLE_RESULT DGLE_API DeleteFile(const char *pcName) = 0; //≈сли передан только путь то удалит папку
-		virtual DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists) = 0;//если передан только путь, то провер€ет существование папки
+		virtual DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) = 0;	// if only filepath is passed, i.e. "C:\MyFolder\" then it creates directory
+		virtual DGLE_RESULT DGLE_API DeleteFile(const char *pcName) = 0; // if only filepath is passed, then it deletes directory
+		virtual DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists) = 0;// if only filepath is passed, then it verifies existence of directory
 		virtual DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) = 0;
 	};
 
