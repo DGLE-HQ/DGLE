@@ -21,7 +21,8 @@ namespace DGLE
 
 //Engine Base interface//
 
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+	Guid("DFB1F52B-D906-4108-AD6F-3144E224688A")]
 	public interface IDGLE_Base
 	{
 		void GetGUID(ref Guid guid);

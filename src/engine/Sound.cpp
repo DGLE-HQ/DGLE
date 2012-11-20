@@ -34,7 +34,7 @@ public:
 	DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable){bStreamable = false; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API Unaquire(){delete this; return S_OK;}
 
-	IDGLE_BASE_IMPLEMENTATION(ISoundChannel)
+	IDGLE_BASE_IMPLEMENTATION(ISoundChannel, INTERFACE_IMPL_END)
 };
 
 // CChannel //

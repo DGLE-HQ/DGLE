@@ -224,7 +224,7 @@ public:
 
 #ifndef DGLE_USE_COM
 
-	IDGLE_BASE_IMPLEMENTATION(IEngineCore)
+	IDGLE_BASE_IMPLEMENTATION(IEngineCore, INTERFACE_IMPL_END)
 
 #else
 
@@ -256,20 +256,23 @@ public:
 	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
 	{
 		*ppvObject = NULL;
-		
-		if(::memcmp(&riid,&__uuidof(IUnknown),sizeof(GUID)) == 0) 
+
+		if(::memcmp(&riid, &__uuidof(IUnknown), sizeof(GUID)) == 0) 
 			*ppvObject = static_cast<IUnknown *>(this);
 		else 
-			if(::memcmp(&riid,&IID_IEngineCore,sizeof(GUID)) == 0) 
-				*ppvObject = static_cast<IEngineCore *>(this);
+			if(::memcmp(&riid,&IID_IDGLE_Base, sizeof(GUID)) == 0) 
+				*ppvObject = static_cast<IDGLE_Base *>(this);
 			else
-				if(::memcmp(&riid,&IID_IEngineCoreWrapper,sizeof(GUID)) == 0) 
-					*ppvObject = static_cast<IEngineCoreWrapper *>(this);
+				if(::memcmp(&riid, &IID_IEngineCore, sizeof(GUID)) == 0) 
+					*ppvObject = static_cast<IEngineCore *>(this);
 				else
-					if(::memcmp(&riid,&IID_IMainWindow,sizeof(GUID)) == 0) 
-						*ppvObject = static_cast<IMainWindow *>(_pMainWindow);
+					if(::memcmp(&riid, &IID_IEngineCoreWrapper, sizeof(GUID)) == 0) 
+						*ppvObject = static_cast<IEngineCoreWrapper *>(this);
 					else
-						return E_NOINTERFACE;
+						if(::memcmp(&riid, &IID_IMainWindow, sizeof(GUID)) == 0) 
+							*ppvObject = static_cast<IMainWindow *>(_pMainWindow);
+						else
+							return E_NOINTERFACE;
 		
 		return S_OK;
 	}

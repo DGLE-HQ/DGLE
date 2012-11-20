@@ -272,10 +272,10 @@ type
   DGLE_RESULT = HRESULT;
 
 	IDGLE_Base = interface(IUnknown)
-	['{4D1BFC28-0CE1-408d-94B4-069D8BA36105}']
+	['{DFB1F52B-D906-4108-AD6F-3144E224688A}']
 
 		function GetGUID(out stGuid : TGUID): DGLE_RESULT; stdcall;
-   	function ExecCmd(uiCmd: Cardinal; out stVar: TVariant): DGLE_RESULT; stdcall;
+		function ExecCmd(uiCmd: Cardinal; out stVar: TVariant): DGLE_RESULT; stdcall;
 		function ExecCmdStr(const pcCommand: pAnsiChar; pcResult: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall;
 		function ExecCmdVar(pcCommand: pAnsiChar; out stVar: TVariant): DGLE_RESULT; stdcall;
 

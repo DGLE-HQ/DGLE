@@ -131,62 +131,64 @@ namespace DGLE
 	private:
 
 		E_DGLE_VARIANT_TYPE _type;
-		int _i;
-		float _f;
-		void* _p;
+		uint8 _data[8];
 
 	public:
 
 		inline void Clear()
 		{
 			_type = DVT_UNKNOWN;
-			_i = 0;
-			_f = 0.f;
-			_p = NULL;
+			memset(_data, 0, 8 * sizeof(uint8));
 		}
 
 		inline void SetInt(int iVal)
 		{
 			Clear();
 			_type = DVT_INT;
-			_i = iVal;
+			memcpy(_data, &iVal, sizeof(int));
 		}
 
 		inline void SetFloat(float fVal)
 		{
 			Clear();
 			_type = DVT_FLOAT;
-			_f = fVal;
+			memcpy(_data, &fVal, sizeof(float));
 		}
 
 		inline void SetBool(bool bVal)
 		{
 			Clear();
 			_type = DVT_BOOL;
-			_i = bVal ? 1 : 0;
+			_data[0] = bVal ? 1 : 0;
 		}
 
 		inline void SetPointer(void *pointer)
 		{
 			Clear();
 			_type = DVT_POINTER;
-			_p = pointer;
+			uint p = (uint)pointer;
+			memcpy(_data, &p, sizeof(uint));
 		}
 
 		inline void SetData(uint8 *pData, uint uiDataSize)
 		{
 			Clear();
 			_type = DVT_DATA;
-			_p = (void *)pData;
-			_i = (int)uiDataSize;
+			uint p = (uint)pData;
+			memcpy(_data, &p, sizeof(uint));
+			memcpy(&_data[sizeof(uint)], &uiDataSize, sizeof(uint));
 		}
 
 		inline int AsInt() const
 		{
-			if (_type != DVT_INT)
+			if (_type != VT_INT)
 				return 0;
 			else
-				return _i;
+			{
+				int val;
+				memcpy(&val, _data, sizeof(int));
+				return val;
+			}
 		}
 
 		inline float AsFloat() const
@@ -194,7 +196,11 @@ namespace DGLE
 			if (_type != DVT_FLOAT)
 				return 0.f;
 			else
-				return _f;
+			{
+				float val;
+				memcpy(&val, _data, sizeof(float));
+				return val;
+			}
 		}
 
 		inline bool AsBool() const
@@ -202,7 +208,7 @@ namespace DGLE
 			if (_type != DVT_BOOL)
 				return false;
 			else
-				return _i == 1;
+				return _data[0] == 1;
 		}
 
 		inline void* AsPointer() const
@@ -210,7 +216,11 @@ namespace DGLE
 			if (_type != DVT_POINTER)
 				return NULL;
 			else
-				return _p;
+			{
+				uint val;
+				memcpy(&val, _data, sizeof(uint));
+				return (void *)val;
+			}
 		}
 
 		inline void GetData(uint8 *pData, uint &uiDataSize) const
@@ -222,20 +232,14 @@ namespace DGLE
 			}
 			else
 			{
-				pData = (uint8 *)_p;
-				uiDataSize = (uint)_i;
+				uint val;
+				memcpy(&val, _data, sizeof(uint));
+				pData = (uint8 *)val;
+				memcpy(&uiDataSize, &_data[sizeof(uint)], sizeof(uint));
 			}
 		}
 
 		inline E_DGLE_VARIANT_TYPE GetType() const { return _type; }
-
-		inline operator int() { return _i; }
-
-		inline operator float() { return _f; }
-
-		inline operator bool() { return _i == 1; }
-
-		inline operator void * () { return _p; }
 
 	} TVariant;
 
@@ -356,13 +360,13 @@ namespace DGLE
 	 */
 	struct TSystemInfo
 	{	
-		char cOSName[128];			/**< String with operating system description. */
-		char cCPUName[128];			/**< String with CPU description. */
+		char cOSName[128];			/**< String with operating system discription. */
+		char cCPUName[128];			/**< String with CPU discription. */
 		uint uiCPUCount;			/**< Number of CPUs on host system. */
 		uint uiCPUFreq;				/**< Real CPU frequency in MHz. */
 		uint uiRAMTotal;			/**< Ammount of RAM in system in megabytes. */
 		uint uiRAMAvailable;		/**< Ammount of free RAM in system on engine start in megabytes. */
-		char cVideocardName[128];	/**< String with primary videocard description. */
+		char cVideocardName[128];	/**< String with primary videocard discription. */
 		uint uiVideocardCount;		/**< Number of videocards in system. */
 		uint uiVideocardRAM;		/**< Ammount of video RAM in system in megabytes. */
 	};
@@ -372,15 +376,15 @@ namespace DGLE
 	 */
 	struct TPluginInfo
 	{
-		uint8 btPluginSDKVersion;	/**< Version of SDK with wich plugin was build. \warning This value MUST BE set to "_DGLE_PLUGIN_SDK_VER_"! */
+		uint8 ui8PluginSDKVersion;	/**< Version of SDK with wich plugin was build. \warning This value MUST BE set to "_DGLE_PLUGIN_SDK_VER_"! */
 		char  cName[128];		 	/**< String with plugin name. */
 		char  cVersion[64];		 	/**< String with plugin version. */
 		char  cVendor[128];		 	/**< String with name of vendor(developer). */
-		char  cDescription[256]; 	/**< String with plugin description. */
+		char  cDiscription[256]; 	/**< String with plugin discription. */
 		
 		TPluginInfo()
 		{
-			btPluginSDKVersion = _DGLE_PLUGIN_SDK_VER_;
+			ui8PluginSDKVersion = _DGLE_PLUGIN_SDK_VER_;
 		}
 
 	};

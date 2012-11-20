@@ -91,7 +91,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -105,7 +105,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -140,7 +140,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;GLEW_NO_GLU;WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;DGLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\..\..\deps\glew;..\..\..\deps\minilzo;..\..\..\deps\deelx;..\..\..\src\common;..\..\..\src\engine\platform;..\..\..\include\cpp;..\..\..\src\engine\platform\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -169,6 +169,7 @@
     <ClCompile Include="..\..\..\src\engine\platform\windows\BaseRendererGL.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\BaseSound.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\ConsoleWindow.cpp" />
+    <ClCompile Include="..\..\..\src\engine\platform\windows\DummyWindow.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFile.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFileSystem.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\HookedWindow.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="..\..\..\src\engine\platform\windows\BaseRendererGL.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\BaseSound.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\ConsoleWindow.h" />
+    <ClInclude Include="..\..\..\src\engine\platform\windows\DummyWindow.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFile.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFileSystem.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\HookedWindow.h" />

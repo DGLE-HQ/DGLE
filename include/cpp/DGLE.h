@@ -142,6 +142,10 @@ namespace DGLE
 
 //Engine Base interface//
 
+	// {DFB1F52B-D906-4108-AD6F-3144E224688A}
+	static const GUID IID_IDGLE_Base = 
+	{ 0xdfb1f52b, 0xd906, 0x4108, { 0xad, 0x6f, 0x31, 0x44, 0xe2, 0x24, 0x68, 0x8a } };
+
 	/** Engine base fundamental interface.
 		Any engine interface must be derived from this interface.
 		\attention On Windows platform IDGLE_Base is derived from IUnknown for more flexibility and compatibility,
@@ -502,6 +506,7 @@ namespace DGLE
 		EIF_FORCE_LIMIT_FPS		= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine process interval(uiProcessInterval). \note Recommended for casual games and desktop applications. */
 		EIF_FORCE_16_BIT_COLOR	= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
 		EIF_DISABLE_SMART_TIMING= 0x00000040,	/**< In some cases engine may call EPT_UPDATE several times at once to reduce lags. This flag will disable this feature. */
+		EIF_FORCE_NO_WINDOW		= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. */
 		EIF_NO_SPLASH			= 0x10000000	/**< This flag will disable engine splash screen. Splash screen is displayed to the user while engine prepare itself and while user initialization procedure is being processed. \note Turning off splash screen is not recommended because the user could be confused while being waiting application execution. */
 	};
 
@@ -1378,17 +1383,22 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 
 #ifdef DGLE_USE_COM
 
-#define IUNKNOWN_IMPL(interface_name) \
+#define INTERFACE_IMPL(interface_name, next) \
+	if(memcmp(&riid, &IID_##interface_name, sizeof(GUID)) == 0)\
+		*ppvObject = static_cast<interface_name *>(this);\
+	else\
+		next
+
+#define INTERFACE_IMPL_END return E_NOINTERFACE;
+
+#define IUNKNOWN_IMPL(interface_impl_list) \
 	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)\
 	{\
 		*ppvObject = NULL;\
 		if (memcmp(&riid, &__uuidof(IUnknown), sizeof(GUID)) == 0)\
 			*ppvObject = static_cast<IUnknown *>(this);\
 		else\
-			if(memcmp(&riid, &IID_##interface_name, sizeof(GUID)) == 0)\
-				*ppvObject = static_cast<interface_name *>(this);\
-			else\
-				return E_NOINTERFACE;\
+			interface_impl_list\
 		return S_OK;\
 	}\
 	ULONG CALLBACK AddRef() { return 1; }\
@@ -1396,7 +1406,9 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 
 #else//DGLE_USE_COM
 
-#define IUNKNOWN_IMPL(interface_name)
+#define INTERFACE_IMPL(interface_name, next)
+#define INTERFACE_IMPL_END
+#define IUNKNOWN_IMPL(interface_impl_list)
 
 #endif
 
@@ -1439,12 +1451,13 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 
 /** \def IDGLE_BASE_IMPLEMENTATION(interface_name) Macros inserts realisation of IDGLE_Base interface into class body.
 	Can be used with interfaces inherited from IDGLE_Base.
-	\param[in] interface_name Name of the interface inheritance from IDGLE_Base.
+	\param[in] interface_name Name of the last interface in inheritance chain from IDGLE_Base.
+	\param[in] interface_impl_list List of all other interfaces names of inheritance chain. List is generated via define INTERFACE_IMPL.
 	\note It also inserts IUnknown implementation for Windows builds with COM support turned on.
 */
-#define IDGLE_BASE_IMPLEMENTATION(interface_name) \
+#define IDGLE_BASE_IMPLEMENTATION(interface_name, interface_impl_list) \
 	IDGLE_BASE_DUMMY_COMMANDS_IMPL\
 	IDGLE_BASE_GUID_IMPL(interface_name)\
-	IUNKNOWN_IMPL(interface_name)
+	IUNKNOWN_IMPL(INTERFACE_IMPL(IDGLE_Base, INTERFACE_IMPL(interface_name, interface_impl_list)))
 
 #endif//DGLE_HEADER

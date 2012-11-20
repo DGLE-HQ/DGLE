@@ -353,7 +353,7 @@ inline void CRender2D::_BatchFlush()
 		}
 
 		uint tmp;
-		p_buffer->GetBufferDemensions(tmp, size, tmp, tmp);
+		p_buffer->GetBufferDimensions(tmp, size, tmp, tmp);
 
 		_pCoreRenderer->DrawBuffer(p_buffer);
 	}

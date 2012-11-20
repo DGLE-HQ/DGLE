@@ -32,5 +32,5 @@ public:
 	DGLE_RESULT SetOwnerWindow(TWinHandle tOwnerHwnd);
 	DGLE_RESULT Free();
 
-	IDGLE_BASE_IMPLEMENTATION(ISplashWindow)
+	IDGLE_BASE_IMPLEMENTATION(ISplashWindow, INTERFACE_IMPL_END)
 };

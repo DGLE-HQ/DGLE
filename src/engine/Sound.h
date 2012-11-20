@@ -117,7 +117,7 @@ public:
 	DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable);
 	DGLE_RESULT DGLE_API Unaquire();
 
-	IDGLE_BASE_IMPLEMENTATION(ISoundChannel)
+	IDGLE_BASE_IMPLEMENTATION(ISoundChannel, INTERFACE_IMPL_END)
 };
 
 class CSound: private CBaseSound, public ISound
@@ -158,7 +158,7 @@ public:
 	DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr);
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
 
-	IDGLE_BASE_IMPLEMENTATION(ISound)
+	IDGLE_BASE_IMPLEMENTATION(ISound, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };
 
 #endif

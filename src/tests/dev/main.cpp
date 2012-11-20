@@ -80,7 +80,7 @@ void DGLE_API Update(void *pParametr)
 void DGLE_API Render(void *pParametr)
 {
 	uint w, h;
-	pTex->GetDimension(w, h);
+	pTex->GetDimensions(w, h);
 	pTex->Draw2DSimple((SCREEN_X - w)/2, (SCREEN_Y - w)/2);
 }
 

@@ -5,7 +5,7 @@
 [DGLE](http://dgle.dronprogs.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
 ### Project mission
-The goal of the project is to provide developers with flexible & extendable cross platform easy-to-learn professional technology, capable of building any 2D/3D
+The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology, capable of building any 2D/3D
 games, real-time visualizations, scientific applications etc. It should be easy to make great projects only by using editors and scripts or go deeper and use
 your programming skills of your favorite language to create really exciting projects. Users can also add new formats and functionality by creating new plugins
 for engine and share them with others over the web or just get plugins already made by others. When project is complete it can be easily build for every popular
@@ -34,9 +34,9 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 
 ## Supported Platforms
 
-* Windows (XP and later)
+* Windows Desktop (XP and later) and RT.
 * Linux (Ubuntu and almost any distributive)
-* MacOS (10.6 and later)
+* Mac OS X (10.6 and later)
 * iOS (4.3 and later)
 * Android (2.3 and later)
 

@@ -52,7 +52,7 @@ public:
 		return S_OK;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IOpenGLBufferContainer)
+	IDGLE_BASE_IMPLEMENTATION(IOpenGLBufferContainer, INTERFACE_IMPL(IBaseRenderObjectContainer, INTERFACE_IMPL_END))
 };
 
 //CCoreGeometryBuffer
@@ -197,7 +197,7 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API GetBufferDemensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount)
+	DGLE_RESULT DGLE_API GetBufferDimensions(uint &uiVerticesDataSize, uint &uiVerticesCount, uint &uiIndexesDataSize, uint &uiIndexesCount)
 	{
 		uiVerticesDataSize = _uiVerticesDataSize;
 		uiVerticesCount = _uiVerticesCount;
@@ -236,7 +236,7 @@ public:
 		return S_OK;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(ICoreGeometryBuffer)
+	IDGLE_BASE_IMPLEMENTATION(ICoreGeometryBuffer, INTERFACE_IMPL_END)
 };
 
 //COpenGLTexture
@@ -268,7 +268,7 @@ public:
 		return S_OK;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IOpenGLTextureContainer)
+	IDGLE_BASE_IMPLEMENTATION(IOpenGLTextureContainer, INTERFACE_IMPL(IBaseRenderObjectContainer, INTERFACE_IMPL_END))
 };
 
 //CCoreTexture
@@ -471,7 +471,7 @@ public:
 		return S_OK;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(ICoreTexture)
+	IDGLE_BASE_IMPLEMENTATION(ICoreTexture, INTERFACE_IMPL_END)
 };
 
 //CCoreRendererGL

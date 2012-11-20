@@ -58,7 +58,7 @@ public:
 	DGLE_RESULT DGLE_API GetJoystickStates(uint uiJoyId, TJoystickStates &stJoyStates);
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
 
-	IDGLE_BASE_IMPLEMENTATION(IInput)
+	IDGLE_BASE_IMPLEMENTATION(IInput, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };
 
 #endif

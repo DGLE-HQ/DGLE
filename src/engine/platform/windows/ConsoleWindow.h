@@ -63,5 +63,5 @@ public:
 	DGLE_RESULT LeaveThreadSafeSection();
 	DGLE_RESULT Free();
 
-	IDGLE_BASE_IMPLEMENTATION(IConsoleWindow)
+	IDGLE_BASE_IMPLEMENTATION(IConsoleWindow, INTERFACE_IMPL_END)
 };

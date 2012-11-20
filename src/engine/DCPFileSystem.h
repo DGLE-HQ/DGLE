@@ -26,7 +26,7 @@ public:
 	DGLE_RESULT DGLE_API Next();
 	DGLE_RESULT DGLE_API Free();
 
-	IDGLE_BASE_IMPLEMENTATION(IFileIterator);	
+	IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END);	
 };
 
 #pragma pack( push, 1 )
@@ -98,5 +98,5 @@ public:
 	DGLE_RESULT DGLE_API ExecCmdVar(const char *pcCommand, TVariant &stVar);
 
 	IDGLE_BASE_GUID_IMPL(IFileSystem)
-	IUNKNOWN_IMPL(IFileSystem)
+	IUNKNOWN_IMPL(INTERFACE_IMPL(IDGLE_Base, INTERFACE_IMPL(IFileSystem, INTERFACE_IMPL_END)))
 };

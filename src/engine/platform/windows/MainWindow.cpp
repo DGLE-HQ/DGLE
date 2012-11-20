@@ -13,7 +13,7 @@ See "DGLE.h" for more details.
 extern HMODULE hModule;
 
 CMainWindow::CMainWindow(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _hWnd(NULL),
+CInstancedObj(uiInstIdx), _hWnd(NULL), _hDC(NULL),
 _hInst(GetModuleHandle(NULL)), _bFScreen(false),
 _bIsLooping(false)
 {}
@@ -24,10 +24,10 @@ CMainWindow::~CMainWindow()
 		UnregisterClass("DGLEWindowClass", _hInst)==FALSE))
 	{
 		_hInst = NULL;
-		LOG("Can't unregister window class.",LT_ERROR);
+		LOG("Can't unregister window class.", LT_ERROR);
 	}
 	else
-		LOG("Window closed properly.",LT_INFO);	
+		LOG("Window closed properly.", LT_INFO);	
 }
 
 int CMainWindow::_wWinMain(HINSTANCE hInstance)
@@ -155,7 +155,7 @@ DGLE_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResu
 	if (!_hWnd)
 	{
 		_hWnd = NULL;
-		LOG("Failed to create window.",LT_FATAL);
+		LOG("Failed to create window.", LT_FATAL);
 		return E_FAIL;
 	}
 
@@ -163,13 +163,13 @@ DGLE_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResu
 
 	if (!(_hDC = GetDC(_hWnd)))
 	{
-		LOG("Can't get window Draw Context.",LT_FATAL);
+		LOG("Can't get window Draw Context.", LT_FATAL);
 		return E_FAIL;
 	}
 
 	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this);
 
-	LOG("Window created successfully.",LT_INFO);
+	LOG("Window created successfully.", LT_INFO);
 
 	return S_OK;
 }
@@ -284,11 +284,11 @@ DGLE_RESULT CMainWindow::BeginMainLoop()
 DGLE_RESULT CMainWindow::KillWindow()
 {
 	if (_hDC && !ReleaseDC(_hWnd,_hDC))
-		LOG("Failed to release Device Context.",LT_ERROR);
+		LOG("Failed to release Device Context.", LT_ERROR);
 
 	if (DestroyWindow(_hWnd) == FALSE)
 	{
-		LOG("Can't destroy window.",LT_ERROR);
+		LOG("Can't destroy window.", LT_ERROR);
 		return S_FALSE;
 	}
 

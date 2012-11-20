@@ -62,7 +62,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvConsoleWrite)
+	IDGLE_BASE_IMPLEMENTATION(IEvConsoleWrite, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 CConsole::CConsole(uint uiInsIdx):

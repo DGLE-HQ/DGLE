@@ -38,7 +38,7 @@ public:
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_UNKNOWN; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = 0; return S_OK;}
 
-	IDGLE_BASE_IMPLEMENTATION(IEngBaseObj)
+	IDGLE_BASE_IMPLEMENTATION(IEngBaseObj, INTERFACE_IMPL_END)
 };
 
 class CSoundChannelDummy : public ISoundChannel
@@ -60,7 +60,7 @@ public:
 	DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable){bStreamable = false; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API Unaquire(){delete this; return S_OK;}
 
-	IDGLE_BASE_IMPLEMENTATION(ISoundChannel)
+	IDGLE_BASE_IMPLEMENTATION(ISoundChannel, INTERFACE_IMPL_END)
 };
 
 class CSSampleDummy: public ISoundSample
@@ -73,7 +73,7 @@ public:
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION(ISoundSample)
+	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
 };
 
 class CBitmapFontDummy: public IBitmapFont
@@ -91,7 +91,7 @@ public:
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION(IBitmapFont)
+	IDGLE_BASE_IMPLEMENTATION(IBitmapFont, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
 };
 
 //CSoundSample//
@@ -152,7 +152,7 @@ public:
 	}
 	
 	IENGBASEOBJ_IMPLEMENTATION(EOT_SOUND_SAMPLE)
-	IDGLE_BASE_IMPLEMENTATION(ISoundSample)
+	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
 };
 
 

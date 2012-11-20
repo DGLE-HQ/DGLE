@@ -145,6 +145,6 @@ public:
 	DGLE_RESULT DGLE_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4);
 	DGLE_RESULT DGLE_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4);
 
-	IDGLE_BASE_IMPLEMENTATION(IRender2D)
+	IDGLE_BASE_IMPLEMENTATION(IRender2D, INTERFACE_IMPL_END)
 
 };

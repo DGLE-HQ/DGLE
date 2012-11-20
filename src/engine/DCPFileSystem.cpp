@@ -665,7 +665,7 @@ void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParametr, const char *pcParam
 				
 				PTHIS(CDCPFileSystem)->ExecCmdVar((cmd + " " + param).c_str(), var);
 				
-				if (!var)
+				if (!var.AsBool())
 				{
 					if (PTHIS(CDCPFileSystem)->_pPackager)
 					{

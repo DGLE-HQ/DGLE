@@ -43,5 +43,5 @@ public:
 	DGLE_RESULT DGLE_API GetPluginInfo(TPluginInfo &stInfo);
 	DGLE_RESULT DGLE_API GetPluginInterfaceName(char* pcName, uint &uiCharsCount);
 
-	IDGLE_BASE_IMPLEMENTATION(IPlugin)
+	IDGLE_BASE_IMPLEMENTATION(IPlugin, INTERFACE_IMPL_END)
 };

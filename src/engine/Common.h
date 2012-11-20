@@ -9,10 +9,6 @@ See "DGLE.h" for more details.
 
 #pragma once
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "DGLE.h"
 
 #define USE_GLEW_HEADER

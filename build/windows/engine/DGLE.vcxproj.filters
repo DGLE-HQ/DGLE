@@ -79,6 +79,9 @@
     <ClCompile Include="..\..\..\src\engine\BuffFile.cpp">
       <Filter>FileSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\platform\windows\DummyWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
@@ -180,6 +183,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\BuffFile.h">
       <Filter>FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\platform\windows\DummyWindow.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

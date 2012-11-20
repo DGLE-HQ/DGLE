@@ -10,15 +10,354 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\src\plugins\ext\Common.h" />
     <ClInclude Include="..\..\..\..\src\plugins\ext\PluginCore.h" />
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jconfig.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jdct.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jerror.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jinclude.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jmemsys.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jmorecfg.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jpegint.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jpeglib.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\jpeglib\jversion.h">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\png.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\pngconf.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\pngdebug.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\pnginfo.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\pnglibconf.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\pngpriv.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\pnglib\pngstruct.h">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\crc32.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\crypt.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\deflate.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\gzguts.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\inffast.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\inffixed.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\inflate.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\inftrees.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\ioapi.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\trees.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\unzip.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\zconf.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\zip.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\zlib.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\zlib\zutil.h">
+      <Filter>Dependencies\zlib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\ext\Main.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\ext\PluginCore.cpp" />
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jaricom.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcapimin.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcapistd.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcarith.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jccoefct.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jccolor.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcdctmgr.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jchuff.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcinit.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcmainct.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcmarker.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcmaster.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcomapi.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcparam.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcprepct.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jcsample.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jctrans.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdapimin.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdapistd.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdarith.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdatadst.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdatasrc.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdcoefct.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdcolor.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jddctmgr.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdhuff.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdinput.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdmainct.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdmarker.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdmaster.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdmerge.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdpostct.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdsample.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jdtrans.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jerror.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jfdctflt.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jfdctfst.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jfdctint.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jidctflt.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jidctfst.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jidctint.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jmemmgr.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jmemnobs.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jquant1.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jquant2.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\jpeglib\jutils.c">
+      <Filter>Dependencies\jpeglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\png.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngerror.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngget.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngmem.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngpread.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngrio.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngrtran.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngrutil.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngset.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngtrans.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngwio.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngwrite.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngwtran.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngwutil.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\adler32.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\compress.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\crc32.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\deflate.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\gzclose.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\gzlib.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\gzread.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\gzwrite.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\infback.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\inffast.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\inflate.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\inftrees.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\ioapi.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\trees.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\uncompr.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\unzip.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\zip.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\zlib\zutil.c">
+      <Filter>Dependencies\zlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DGLE">
       <UniqueIdentifier>{254d08b0-f430-4816-81ee-94b483e78dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{57d6a0d4-8f72-47c8-ad17-b1c30bc3ef52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\jpeglib">
+      <UniqueIdentifier>{6375ae66-5d5d-489f-8a2d-67f2b96009a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\zlib">
+      <UniqueIdentifier>{1b118dbb-ab87-4964-bec7-15547f1014a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\pnglib">
+      <UniqueIdentifier>{8dd014d8-fd6d-4f0d-a015-932efe3d8ad9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

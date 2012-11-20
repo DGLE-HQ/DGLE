@@ -25,7 +25,7 @@ public:
 	DGLE_RESULT DGLE_API Next();
 	DGLE_RESULT DGLE_API Free();
 
-	IDGLE_BASE_IMPLEMENTATION(IFileIterator)
+	IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END)
 };
 
 class CHDDFileSystem: public CInstancedObj, public IFileSystem
@@ -38,5 +38,5 @@ public:
 	DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists);
 	DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator);
 
-	IDGLE_BASE_IMPLEMENTATION(IFileSystem)
+	IDGLE_BASE_IMPLEMENTATION(IFileSystem, INTERFACE_IMPL_END)
 };

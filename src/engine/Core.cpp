@@ -10,6 +10,7 @@ See "DGLE.h" for more details.
 #include "Core.h"
 #include "MainWindow.h"
 #include "HookedWindow.h"
+#include "DummyWindow.h"
 #include "SplashWindow.h"
 #include "MainFS.h"
 #include "ResourceManager.h"
@@ -45,7 +46,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IBaseEvent)
+	IDGLE_BASE_IMPLEMENTATION(IBaseEvent, INTERFACE_IMPL_END)
 };
 
 class CEvBeforeInit : public IEvBeforeInit
@@ -87,7 +88,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvBeforeInit)
+	IDGLE_BASE_IMPLEMENTATION(IEvBeforeInit, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 class CEvWinMessage : public IEvWinMessage
@@ -116,7 +117,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvWinMessage)
+	IDGLE_BASE_IMPLEMENTATION(IEvWinMessage, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 class CEvGetSubSystem : public IEvGetSubSystem
@@ -157,7 +158,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvGetSubSystem)
+	IDGLE_BASE_IMPLEMENTATION(IEvGetSubSystem, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 class CEvFatalMessage : public IEvFatalMessage
@@ -224,7 +225,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvFatalMessage)
+	IDGLE_BASE_IMPLEMENTATION(IEvFatalMessage, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 //Engine Core//
@@ -875,7 +876,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	tmp.pPlugin->GetPluginInfo(info);
 
-	if (info.btPluginSDKVersion != _DGLE_PLUGIN_SDK_VER_)
+	if (info.ui8PluginSDKVersion != _DGLE_PLUGIN_SDK_VER_)
 	{
 		LOG("Plugin \"" + clFileName + "\" SDK version differs from engine version.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
@@ -1000,15 +1001,18 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		Console()->RegComProc("core_set_mode", "Changes display mode.\nUsage: \"core_set_mode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\nExample:\"core_set_mode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
 
 		if (!_pMainWindow)
-		{
-			if (tHandle == NULL)
-				_pMainWindow = new CMainWindow(InstIdx());
+			if (_eInitFlags & EIF_FORCE_NO_WINDOW)
+				_pMainWindow = new CDummyWindow(InstIdx());
 			else
 			{
-				_pMainWindow = new CHookedWindow(InstIdx());
-				_iAllowPause = 0;
+				if (tHandle == NULL)
+					_pMainWindow = new CMainWindow(InstIdx());
+				else
+				{
+					_pMainWindow = new CHookedWindow(InstIdx());
+					_iAllowPause = 0;
+				}
 			}
-		}
 
 		_clDelOnFPSTimer.Add(&_s_OnTimer, (void*)this);
 		_clDelMLoop.Add(&_s_MainLoop, (void*)this);
@@ -1313,6 +1317,7 @@ DGLE_RESULT DGLE_API CCore::QuitEngine()
 		return E_FAIL;
 	}
 
+
 	E_WINDOW_ACCESS_TYPE e_access;
 	_pMainWindow->GetWindowAccessType(e_access);
 
@@ -1324,6 +1329,9 @@ DGLE_RESULT DGLE_API CCore::QuitEngine()
 
 	_bDoExit = true;
 	_bQuitFlag = true;
+
+	if (_eInitFlags & EIF_FORCE_NO_WINDOW)
+		_pMainWindow->KillWindow();
 
 	return S_OK;
 }
