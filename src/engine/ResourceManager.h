@@ -36,16 +36,24 @@ struct TDefaultRes
 
 struct TResource
 {
+	char *pcName;
 	uint32 nameHash;
 	IEngBaseObj *pObj;
 	
-	TResource(const char *pFullName, IEngBaseObj *pObject):
+	TResource(const char *pcFullName, IEngBaseObj *pObject):
 	pObj(pObject)
 	{
-		if (strlen(pFullName) == 0)
+		if (strlen(pcFullName) == 0)
+		{
+			pcName = NULL;
 			nameHash = 0;
+		}
 		else
-			nameHash = GetCRC32((uint8*)pFullName, (uint32)strlen(pFullName)*sizeof(char));
+		{
+			pcName = new char[strlen(pcFullName) + 1];
+			strcpy(pcName, pcFullName);
+			nameHash = GetCRC32((uint8*)pcFullName, (uint32)strlen(pcFullName) * sizeof(char));
+		}
 	}
 };
 
@@ -53,6 +61,10 @@ struct TResource
 
 class CResourceManager : public CInstancedObj, public IResourceManager
 {
+	// Don't forget to change this value and method when enum E_ENG_OBJ_TYPE is being changed.
+	static const uint _sc_EngObjTypeCount = EOT_GUI_FORMS + 1;
+	static void _s_GetObjTypeName(E_ENG_OBJ_TYPE type, std::string &name);
+
 	TWinHandle				_stWnd;
 	int						_iProfilerState;
 
@@ -95,8 +107,10 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	bool _LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LOAD_FLAGS eLoadFlags);
 
 	void _ProfilerEventHandler() const;
+	void _ListResources() const;
 
 	static void DGLE_API _s_ConListFileFormats(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConListResources(void *pParametr, const char *pcParam);
 	static bool DGLE_API _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
 	static bool DGLE_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
 	static bool DGLE_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 

@@ -234,6 +234,7 @@
     <ClCompile Include="..\..\..\..\deps\pnglib\pngget.c" />
     <ClCompile Include="..\..\..\..\deps\pnglib\pngmem.c" />
     <ClCompile Include="..\..\..\..\deps\pnglib\pngpread.c" />
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngread.c" />
     <ClCompile Include="..\..\..\..\deps\pnglib\pngrio.c" />
     <ClCompile Include="..\..\..\..\deps\pnglib\pngrtran.c" />
     <ClCompile Include="..\..\..\..\deps\pnglib\pngrutil.c" />

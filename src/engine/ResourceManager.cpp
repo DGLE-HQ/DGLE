@@ -168,6 +168,7 @@ _iProfilerState(0)
 
 	Console()->RegComValue("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
 	Console()->RegComProc("rman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, (void*)this);
+	Console()->RegComProc("rman_list_resources", "Lists all loaded resources.", &_s_ConListResources, (void*)this);
 
 	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, (void*)this);
 	RegisterFileFormat("tga", EOT_TEXTURE, "truevision TarGA images.", &_s_LoadTextureTGA, (void*)this);
@@ -278,7 +279,8 @@ CResourceManager::~CResourceManager()
 {
 	Console()->UnRegCom("rman_stats");
 	Console()->UnRegCom("rman_list_file_formats");
-
+	Console()->UnRegCom("rman_list_resources");
+	
 	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	LOG("Resource Manager Subsystem finalized.",LT_INFO);
@@ -289,7 +291,10 @@ void CResourceManager::FreeAllResources()
 	_clFileFormats.clear();
 
 	while (!_resList.empty())
+	{
+		delete[] _resList.begin()->pcName;
 		_resList.begin()->pObj->Free();
+	}
 
 	//delete ((CMesh*)_pDefMesh);
 	//delete (CBaseMaterial*)_pDefMaterial;
@@ -341,6 +346,14 @@ void DGLE_API CResourceManager::_s_ConListFileFormats(void *pParametr, const cha
 		CON(CResourceManager, "No parametrs expected.");
 	else 
 		CON(CResourceManager, string("---Supported File Formats---\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
+}
+
+void DGLE_API CResourceManager::_s_ConListResources(void *pParametr, const char *pcParam)
+{
+	if (strlen(pcParam) != 0)
+		CON(CResourceManager, "No parametrs expected.");
+	else 
+		PTHIS(CResourceManager)->_ListResources();
 }
 
 DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount)
@@ -756,10 +769,17 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint
 
 	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_MIPMAP_GENERATION, b_feature_supported);
 
-	if (!b_feature_supported && eLoadFlags & TLF_GENERATE_MIPMAPS)
+	if (!b_feature_supported && eLoadFlags & TLF_GENERATE_MIPMAPS && !(eCreationFlags & TCF_MIPMAPS_PRESENTED))
 	{
 		uint8 *p_out_dat = NULL;
 		
+		if (b_is_compressed)
+		{
+			_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreationFlags);
+			b_is_compressed = false;
+			need_delete_data_in = true;
+		}
+
 		int ret = _GenerateMipMapData(p_data_in, uiWidth, uiHeight, p_out_dat, eDataFormat, eCreationFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
 
 		(int &)eCreationFlags |= TCF_MIPMAPS_PRESENTED;
@@ -1292,6 +1312,24 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 	return ret;*/return true;
 }
 
+void CResourceManager::_s_GetObjTypeName(E_ENG_OBJ_TYPE type, string &name)
+{
+	switch (type)
+	{
+	case EOT_UNKNOWN: name = "Unknown"; break;
+	case EOT_TEXTURE: name = "Texture"; break;
+	case EOT_MATERIAL: name = "Material"; break;
+	case EOT_MESH: name = "Mesh"; break;
+	case EOT_MODEL: name = "Model"; break;
+	case EOT_BITMAP_FONT: name = "Bitmap Font"; break;
+	case EOT_PARTICLE_EFFECT: name = "Particle Effect"; break;
+	case EOT_SOUND_SAMPLE: name = "Sound Sample"; break;
+	case EOT_SPRITE: name = "Sprite"; break;
+	case EOT_GUI_FORMS: name = "GUI Forms"; break;
+	default: name = "Other/Unknown";
+	}
+}
+
 void CResourceManager::_ProfilerEventHandler() const
 {
 	if (_iProfilerState == 0)
@@ -1305,9 +1343,8 @@ void CResourceManager::_ProfilerEventHandler() const
 
 	if (_iProfilerState > 1)
 	{
-		const uint c_size = EOT_GUI_FORMS + 1;
-		uint cnt[c_size];
-		memset(cnt, 0, c_size*sizeof(uint));
+		uint cnt[_sc_EngObjTypeCount];
+		memset(cnt, 0, _sc_EngObjTypeCount * sizeof(uint));
 
 		for (size_t i = 0; i < _resList.size(); ++i)
 		{
@@ -1318,26 +1355,13 @@ void CResourceManager::_ProfilerEventHandler() const
 
 		Core()->RenderProfilerTxt("---- Resource Statistic ----", color);
 
-		for (int i = 0; i < c_size; ++i)
+		for (int i = 0; i < _sc_EngObjTypeCount; ++i)
 		{
 			string s;
 			
-			switch (i)
-			{
-			case EOT_UNKNOWN: s = "Unknown:"; break;
-			case EOT_TEXTURE: s = "Texture:"; break;
-			case EOT_MATERIAL: s = "Material:"; break;
-			case EOT_MESH: s = "Mesh:"; break;
-			case EOT_MODEL: s = "Model:"; break;
-			case EOT_BITMAP_FONT: s = "Bitmap Font:"; break;
-			case EOT_PARTICLE_EFFECT: s = "Particle Effect:"; break;
-			case EOT_SOUND_SAMPLE: s = "Sound Sample:"; break;
-			case EOT_SPRITE: s = "Sprite:"; break;
-			case EOT_GUI_FORMS: s = "GUI Forms:"; break;
-			default: s = "Other/Unknown:";
-			}
+			_s_GetObjTypeName((E_ENG_OBJ_TYPE)i, s);
 
-			s += UIntToStr(cnt[i]);
+			s += ':' + UIntToStr(cnt[i]);
 
 			Core()->RenderProfilerTxt(s.c_str(), color);
 		}
@@ -1345,6 +1369,25 @@ void CResourceManager::_ProfilerEventHandler() const
 		Core()->RenderProfilerTxt("----------------------------", color);
 	}
 
+}
+
+void CResourceManager::_ListResources() const
+{
+	string res;
+
+	for (size_t i = 0; i < _resList.size(); ++i)
+	{
+		E_ENG_OBJ_TYPE type;
+		_resList[i].pObj->GetType(type);
+		string name;
+		_s_GetObjTypeName(type, name);
+		res += string(_resList[i].pcName) + "[" + name + "]\n";
+	}
+
+	if(!res.empty())
+		res.erase(res.size() - 1, res.size() - 1);
+
+	Console()->Write(res);
 }
 
 bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)

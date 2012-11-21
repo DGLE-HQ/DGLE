@@ -26,4 +26,4 @@ using namespace DGLE;
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
-#define LOG(txt, type) LogWrite(_uiInstIdx, std::string(txt).c_str(), type, __FILE__, __LINE__)
+#define LOG(txt, type) LogWrite(_uiInstIdx, std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)

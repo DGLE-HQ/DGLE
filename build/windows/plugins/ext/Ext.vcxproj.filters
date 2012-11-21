@@ -342,6 +342,9 @@
     <ClCompile Include="..\..\..\..\deps\zlib\zutil.c">
       <Filter>Dependencies\zlib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\pnglib\pngread.c">
+      <Filter>Dependencies\pnglib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DGLE">

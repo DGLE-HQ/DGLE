@@ -824,21 +824,18 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			switch(tex_format)
 			{
 			case GL_BGR:
-			case GL_RGB:				
+			case GL_RGB:
 				tex_internal_format = GL_COMPRESSED_RGB_ARB;
 				eDataFormat = TDF_DXT1;
 				break;
 			case GL_BGRA:
-			case GL_RGBA:				
+			case GL_RGBA:
 				tex_internal_format = GL_COMPRESSED_RGBA_ARB;
 				eDataFormat = TDF_DXT5;
 				break;
 			case GL_ALPHA:
 				tex_internal_format = GL_COMPRESSED_ALPHA_ARB;
-				eDataFormat = TDF_DXT5; 
-				//ToDo: Not shure of this. Need testing!
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalformat);
-				//glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE_ARB, &compressed_size);
+				eDataFormat = TDF_ALPHA8;
 				break;
 			default:
 				ret = S_FALSE;
@@ -1580,11 +1577,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 		break;
 	case CRDF_PROGRAMMABLE_PIPELINE : bIsSupported = _bIsGLSLSupported == GL_TRUE; break;
 	case CRSF_BGRA_DATA_FORMAT : bIsSupported = GLEW_EXT_bgra == GL_TRUE; break;
-	case CRSF_TEXTURE_COMPRESSION : bIsSupported = false; /*GLEW_ARB_texture_compression == GL_TRUE;*/ break;
+	case CRSF_TEXTURE_COMPRESSION : bIsSupported = GLEW_ARB_texture_compression == GL_TRUE; break;
 	case CRSF_NON_POWER_OF_TWO_TEXTURES : bIsSupported = GLEW_ARB_texture_non_power_of_two == GL_TRUE; break;
 	case CRSF_DEPTH_TEXTURES : bIsSupported = GLEW_ARB_depth_texture == GL_TRUE; break;
 	case CRSF_TEXTURE_ANISOTROPY : bIsSupported = GLEW_EXT_texture_filter_anisotropic == GL_TRUE; break;
-	case CRSF_TEXTURE_MIPMAP_GENERATION : bIsSupported = false;/*GLEW_SGIS_generate_mipmap == GL_TRUE || GLEW_ARB_framebuffer_object == GL_TRUE;*/ break;
+	case CRSF_TEXTURE_MIPMAP_GENERATION : bIsSupported = GLEW_SGIS_generate_mipmap == GL_TRUE || GLEW_ARB_framebuffer_object == GL_TRUE; break;
 	case CRDF_TEXTURE_MIRRORED_REPEAT : bIsSupported = GLEW_VERSION_1_4 == GL_TRUE; break;
 	case CRDF_TEXTURE_MIRROR_CLAMP : bIsSupported = GLEW_EXT_texture_mirror_clamp == GL_TRUE; break;
 	case CRDF_GEOMETRY_BUFFER : bIsSupported = GLEW_ARB_vertex_buffer_object == GL_TRUE; break;

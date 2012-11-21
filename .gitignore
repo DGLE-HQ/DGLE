@@ -46,6 +46,7 @@ docs/api_help/
 ipch/
 *.aps
 *.sdf
+*.opensdf
 
 # Monodevelop and C#
 *.userprefs
