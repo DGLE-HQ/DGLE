@@ -188,6 +188,7 @@ struct TJpegErrorMgr
 {
 	struct jpeg_error_mgr pub;
 	jmp_buf setBufferJump;
+	CPluginCore *pPluginCore;
 };
 
 void CPluginCore::_s_JPGInitSrc(j_decompress_ptr cinfo)
@@ -223,7 +224,7 @@ void CPluginCore::_s_OutputMessage(j_common_ptr cinfo)
 {
 	char temp[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message)(cinfo, temp);
-	LogWrite(-1, ("JPG fatal error: " + string(temp) + ".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
+	LogWrite(((TJpegErrorMgr*)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \"" + string(temp) + "\".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
 }
 
 bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eParams)
@@ -244,6 +245,8 @@ bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 
 	jpeg_decompress_struct cinfo;
 	TJpegErrorMgr jerr;
+	
+	jerr.pPluginCore = this;
 
 	cinfo.err = jpeg_std_error(&jerr.pub);
 	cinfo.err->error_exit = _s_ErrorExit;

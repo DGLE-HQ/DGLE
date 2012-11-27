@@ -887,7 +887,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	prPlugin = tmp.pPlugin;
 
-	LOG("Plugin \"" + string(info.cName) + " " + string(info.cVersion) +"\" by \"" + string(info.cVendor) + "\" connected succesfully.", LT_INFO);
+	LOG("Plugin \"" + string(info.cName) + "\" " + string(info.cVersion) +" by \"" + string(info.cVendor) + "\" connected succesfully.", LT_INFO);
 	LOG("Plugin description: \"" + string(info.cDiscription) + "\"", LT_INFO);
 
 	return true;
