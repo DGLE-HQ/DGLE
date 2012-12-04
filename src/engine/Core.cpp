@@ -1292,7 +1292,7 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 	_uiFPSCount			= 0;
 	_ui64FPSSumm		= 0;
 	_ui64CiclesCount	= 0;
-	_ui64TimeOld		= GetPerfTimer()/1000 - _uiProcessInterval;
+	_ui64TimeOld		= GetPerfTimer() / 1000 - _uiProcessInterval;
 
 	if (_pSplashWindow) 
 		_pSplashWindow->Free();

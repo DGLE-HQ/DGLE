@@ -39,6 +39,7 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 * Mac OS X (10.6 and later)
 * iOS (4.3 and later)
 * Android (2.3 and later)
+* Adobe Flash (11 and later)
 
 ## Supported Programming Languages
 

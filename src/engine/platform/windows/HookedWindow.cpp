@@ -229,7 +229,7 @@ DGLE_RESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 
 DGLE_RESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
 {
-	return E_NOTIMPL;
+	return S_FALSE;
 }
 
 DGLE_RESULT CHookedWindow::SetCaption(const char *pcTxt)

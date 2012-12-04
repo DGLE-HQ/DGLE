@@ -86,6 +86,8 @@ DGLE_RESULT CDummyWindow::ScreenToClient(int &iX, int &iY)
 	if (!_hWnd)
 		return E_FAIL;
 
+	iX = iY = 0;
+
 	return E_NOTIMPL;
 }
 
@@ -101,7 +103,7 @@ DGLE_RESULT CDummyWindow::Minimize()
 
 DGLE_RESULT CDummyWindow::BeginMainLoop()
 {
-	return E_NOTIMPL;
+	return S_FALSE;
 }
 
 DGLE_RESULT CDummyWindow::KillWindow()
@@ -125,7 +127,7 @@ DGLE_RESULT CDummyWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFoc
 	if (!_hWnd)
 		return E_FAIL;
 
-	return E_NOTIMPL;
+	return S_FALSE;
 }
 
 DGLE_RESULT CDummyWindow::Free()
