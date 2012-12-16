@@ -2,10 +2,13 @@
 \author		Shestakov Mikhail aka MIKE
 \date		26.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
+
+# Disable PC Speaker beeping
+gtk-error-bell = 0
 
 # Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
 gtk-color-scheme = "fg_color:#f5f5f5\nbg_color:#888a85\nbase_color:#babdb6\ntext_color:#000\nselected_bg_color:#e77817\nselected_fg_color:#fff\ntooltip_bg_color:#f5f5f5\ntooltip_fg_color:#e77817\nsystem_bg_color:#383431\nsystem_fg_color:#fff"

@@ -48,7 +48,10 @@
                 <property name="AcceptsTab">False</property>
                 <property name="Text" translatable="yes">About</property>
                 <property name="Justification">Center</property>
+                <property name="WrapMode">Word</property>
                 <property name="PixelsAboveLines">6</property>
+                <property name="LeftMargin">6</property>
+                <property name="RightMargin">6</property>
               </widget>
             </child>
           </widget>
@@ -197,7 +200,7 @@
             <property name="MemberName" />
             <property name="Size">2</property>
             <child>
-              <widget class="Gtk.Button" id="btn1">
+              <widget class="Gtk.Button" id="btnPositive">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
@@ -210,7 +213,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="btn2">
+              <widget class="Gtk.Button" id="btnNegative">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>

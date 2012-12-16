@@ -5,11 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{21FE4ECC-BA49-433C-92F8-226F376FABE0}</ProjectGuid>
+    <ProjectGuid>{874F5AD4-9567-4745-B064-2ED934CB63C2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Template</RootNamespace>
-    <AssemblyName>Template</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <RootNamespace>DCPPacker</RootNamespace>
+    <AssemblyName>DCPPacker</AssemblyName>
     <ApplicationIcon>..\..\..\misc\lamp.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,25 +33,46 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="Mono.Posix" />
+    <Reference Include="DGLESharp">
+      <HintPath>..\..\..\include\csharp\DGLESharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources\folder.png" />
+    <EmbeddedResource Include="resources\page_white.png" />
+    <EmbeddedResource Include="resources\folder_add.png" />
+    <EmbeddedResource Include="resources\page_white_add.png" />
+    <EmbeddedResource Include="resources\folder_delete.png" />
+    <EmbeddedResource Include="resources\page_white_copy.png" />
+    <EmbeddedResource Include="resources\page_white_delete.png" />
+    <EmbeddedResource Include="resources\page_white_zip.png" />
+    <EmbeddedResource Include="resources\page_white_stack.png" />
+    <EmbeddedResource Include="resources\package.png" />
+    <EmbeddedResource Include="resources\package_add.png" />
+    <EmbeddedResource Include="resources\package_delete.png" />
+    <EmbeddedResource Include="resources\disk.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="MainWindow.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="TemplateWindow.cs" />
-    <Compile Include="gtk-gui\Template.TemplateWindow.cs" />
+    <Compile Include="gtk-gui\DCPPacker.MainWindow.cs" />
+    <Compile Include="DCP.cs" />
+    <Compile Include="TreeViewExtensions.cs" />
+    <Compile Include="TreeStoreExtensions.cs" />
+    <Compile Include="MarshalUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -60,5 +80,8 @@
       <Project>{C408B0C5-2931-414E-AE47-A4F109992E37}</Project>
       <Name>Gui</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="resources\" />
   </ItemGroup>
 </Project>

@@ -2,9 +2,9 @@
 \author		Shestakov Mikhail aka MIKE
 \date		28.10.2012 (c)Andrey Korotkov
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 using System;
 
@@ -18,51 +18,52 @@ namespace Gui
 			}
 		}
 
-		public event EventHandler Ok
+		public event EventHandler Ok;
+		public event EventHandler Cancel;
+
+		protected virtual void OnOk(object sender, EventArgs e)
 		{
-			add { this.btnOk.Clicked += value; }
-			remove { this.btnOk.Clicked -= value; }
+			if (fileChooser.Filename == null || fileChooser.Filename.Length == 0)
+				return;
+
+			this.Hide();
+			if (Ok != null)
+				Ok(sender, e);
 		}
 
-		public event EventHandler Cancel
+		protected virtual void OnCancel(object sender, EventArgs e)
 		{
-			add { this.btnCancel.Clicked += value; }
-			remove { this.btnCancel.Clicked -= value; }
+			this.Hide();
+			if (Cancel != null)
+				Cancel(sender, e);
 		}
 
-		protected virtual void OnOk (object sender, EventArgs e)
-		{
-		}
-
-		protected virtual void OnCancel (object sender, EventArgs e)
+		public CustomFileChooserDialog(Gtk.Window parent) : 
+			this(parent, "Open", Gtk.FileChooserAction.Open)
 		{
 		}
 
-		public CustomFileChooserDialog (Gtk.Window parent) : this (parent, "Open", Gtk.FileChooserAction.Open)
-		{
-		}
-
-		public CustomFileChooserDialog (Gtk.Window parent, string title, Gtk.FileChooserAction action) : 
+		public CustomFileChooserDialog(Gtk.Window parent, string title, Gtk.FileChooserAction action) : 
 			base(Gtk.WindowType.Toplevel)
 		{
-			this.Build ();
+			this.Build();
 
 			base.TransientFor = parent;
-			base.SetPosition (Gtk.WindowPosition.CenterOnParent);
+			base.SetPosition(Gtk.WindowPosition.CenterOnParent);
 			base.Decorated = parent.Decorated;
 
 			base.Title = title;
 			this.fileChooser.Action = action;
-			this.btnOk.Label = action.ToString ();
+			this.btnOk.Label = action.ToString();
 
 			// hack for correct expand file chooser
-			Gtk.Expander expander = GetFileChooserExpander (this.fileChooser);
+			Gtk.Expander expander = GetFileChooserExpander(this.fileChooser);
 			if (expander != null) {
 				base.AllowGrow = expander.Expanded;
 				expander.Activated += delegate(object sender, EventArgs e) {
 					base.AllowGrow = expander.Expanded;
 					if (expander.Expanded) {
-						base.Resize (base.DefaultWidth, base.DefaultHeight);
+						base.Resize(base.DefaultWidth, base.DefaultHeight);
 					}
 				};
 			}
@@ -71,11 +72,11 @@ namespace Gui
 			this.btnCancel.Clicked += OnCancel;
 
 			this.DeleteEvent += delegate(object o, Gtk.DeleteEventArgs args) {
-				this.btnCancel.Click ();
+				this.btnCancel.Click();
 			};
 		}
 
-		private Gtk.Expander GetFileChooserExpander (Gtk.Container parent)
+		private Gtk.Expander GetFileChooserExpander(Gtk.Container parent)
 		{
 			if (parent is Gtk.Expander)
 				return parent as Gtk.Expander;

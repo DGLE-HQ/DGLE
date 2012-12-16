@@ -1,10 +1,10 @@
 /**
-\author		MIKE
-\date		22.10.2012 (c)MIKE
+\author		Shestakov Mikhail aka MIKE
+\date		22.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 using System;
 using System.Reflection;
@@ -13,11 +13,13 @@ namespace Gui
 {
 	public partial class AboutWindow : CustomWindow
 	{
-		public AboutWindow(Gtk.Window parent, string[] authors) : this(parent, authors, "")
+
+		public AboutWindow(Gtk.Window parent, string[] authors) : 
+			this(parent, authors, new string[] {}, Gdk.Size.Empty)
 		{
 		}
 
-		public AboutWindow(Gtk.Window parent, string[] authors, string text) : 
+		public AboutWindow(Gtk.Window parent, string[] authors, string[] lines, Gdk.Size size) : 
 			base(Gtk.WindowType.Toplevel)
 		{
 			this.Build();
@@ -25,6 +27,8 @@ namespace Gui
 			base.TransientFor = parent;
 			base.SetPosition(Gtk.WindowPosition.CenterOnParent);
 			base.Decorated = parent.Decorated;
+			if (!size.IsEmpty)
+				base.SetSizeRequest(size.Width, size.Height);
 
 			Assembly assembly = Assembly.GetEntryAssembly();
 			AssemblyName assemblyName = assembly.GetName();
@@ -34,11 +38,13 @@ namespace Gui
 			                           assemblyName.Version.Major,
 			                           assemblyName.Version.Minor);
 
-			this.textviewAbout.Buffer.Text += "*Authors*\n";
+			this.textviewAbout.Buffer.Text += "\n*Authors*\n";
 			foreach(string author in authors) {
 				this.textviewAbout.Buffer.Text += String.Format("{0}\n", author);
 			}
-			this.textviewAbout.Buffer.Text += text;
+			foreach(string line in lines) {
+				this.textviewAbout.Buffer.Text += String.Format("{0}\n", line);
+			}
 		}
 	}
 }

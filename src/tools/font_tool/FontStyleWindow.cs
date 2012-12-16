@@ -2,9 +2,9 @@
 \author		Shestakov Mikhail aka MIKE
 \date		14.10.2012 (c)Andrey Korotkov
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 using System;
 
@@ -195,16 +195,9 @@ namespace FontTool
 				String.Format(@"{0}_{1}", fontService.Family.Name, fontService.Size);
 			
 			dlg.Ok += delegate {
-				if (null == dlg.FileChooser.Filename || dlg.FileChooser.Filename.Length == 0) {
-					new Gui.CustomMessageDialog (
-						dlg, Gtk.MessageType.Info, 
-						Gtk.ButtonsType.Ok, 
-						"Set file name").Show ();
-				} else {
-					string fileName = System.IO.Path.GetFullPath (dlg.FileChooser.Filename);
-					fontPreviewImage.DftUtil.Save (fileName, fontService);
-					dlg.Destroy ();
-				}
+				string fileName = System.IO.Path.GetFullPath (dlg.FileChooser.Filename);
+				fontPreviewImage.DftUtil.Save (fileName, fontService);
+				dlg.Destroy ();
 			};
 
 			dlg.Cancel += delegate {

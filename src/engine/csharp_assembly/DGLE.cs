@@ -26,10 +26,9 @@ namespace DGLE
 	public interface IDGLE_Base
 	{
 		void GetGUID(ref Guid guid);
-		//TODO
-		void ExecCmd();
-		void ExecCmdStr();
-		void ExecCmdVar();
+        void ExecCmd(uint uiCmd, ref TVariant stVar);
+        void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
 	}
 
 //Engine SubSystem interface//
@@ -48,13 +47,12 @@ namespace DGLE
 	Guid("C682F875-E0BD-4af9-B79C-E209850025F8")]
 	public interface IEngineSubSystem : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		//TODO
-		new void ExecCmd();
-		new void ExecCmdStr();
-		new void ExecCmdVar();
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
 	};
@@ -65,12 +63,15 @@ namespace DGLE
 	Guid("B94E0E40-8885-41dd-8BC5-4CD663AE5709")]
 	public interface IPlugin : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void GetPluginInfo(out TPluginInfo stInfo);
-		void GetPluginInterfaceName(IntPtr pcName, out UInt32 uiCharsCount);
+		void GetPluginInterfaceName(IntPtr pcName, out uint uiCharsCount);
 	};
 
 
@@ -82,9 +83,17 @@ namespace DGLE
 	/** Base interface of any engine core subsystem plugin. */
 	public interface ISubSystemPlugin : IPlugin
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
+
+        #region IPlugin
+        new void GetPluginInfo(out TPluginInfo stInfo);
+        new void GetPluginInterfaceName(IntPtr pcName, out uint uiCharsCount);
+        #endregion
 
 		void GetSubSystemInterface(out IEngineSubSystem prSubSystem);
 	};
@@ -111,9 +120,12 @@ namespace DGLE
 	Guid("C010239A-6457-40f5-87EF-FAA3156CE6E2")]
 	public interface IEngBaseObj : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void Free();
 		void GetType(out E_ENG_OBJ_TYPE eEngObjType);
@@ -139,9 +151,12 @@ namespace DGLE
 	Guid("6DFEF982-AADF-42e9-A369-378BDB31404A")]
 	public interface IBaseEvent : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void GetEventType(out E_EVENT_TYPE eEvType);
 		void GetUnknownEventType(out uint uiUnknEvType);
@@ -151,14 +166,17 @@ namespace DGLE
 	Guid("EB735739-3D12-4522-B6D7-EEE3225DF934")]
 	public interface IEvBeforeInit :  IBaseEvent
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IBaseEvent
-		new void GetEventType(out E_EVENT_TYPE eEvType);
-		new void GetUnknownEventType(out uint uiUnknEvType);
-		#endregion
+        #region IBaseEvent
+        new void GetEventType(out E_EVENT_TYPE eEvType);
+        new void GetUnknownEventType(out uint uiUnknEvType);
+        #endregion
 
 		void SetEngParams(ref TEngWindow stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags);
 		void GetEngParams(out TEngWindow stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags);
@@ -168,14 +186,18 @@ namespace DGLE
 	Guid("9E35969A-B0D4-4E5A-A89B-1A5AAD057028")]
 	public interface IEvConsoleWrite : IBaseEvent
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IBaseEvent
-		new void GetEventType(out E_EVENT_TYPE eEvType);
-		new void GetUnknownEventType(out uint uiUnknEvType);
-		#endregion
+        #region IBaseEvent
+        new void GetEventType(out E_EVENT_TYPE eEvType);
+        new void GetUnknownEventType(out uint uiUnknEvType);
+        #endregion
+
 		void GetText(IntPtr pcTxt, out uint uiCharsCount, [MarshalAs(UnmanagedType.U1)] bool bToPrevLine);
 	};
 
@@ -184,6 +206,18 @@ namespace DGLE
 	Guid("DAA4E3BC-C958-4def-B603-F63EEC908226")]
 	public interface IEvFatalMessage : IBaseEvent
 	{
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
+
+        #region IBaseEvent
+        new void GetEventType(out E_EVENT_TYPE eEvType);
+        new void GetUnknownEventType(out uint uiUnknEvType);
+        #endregion
+
 		void GetMessageTxt(IntPtr pcTxt, out uint uiCharsCount);
 		void FreezeEngine([MarshalAs(UnmanagedType.U1)] bool bFreeze);
 		void ForceNoMessage();
@@ -195,14 +229,17 @@ namespace DGLE
 	Guid("8D718E48-581D-4cbb-9C40-C04998106F8D")]
 	public interface IEvWinMessage : IBaseEvent
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IBaseEvent
-		new void GetEventType(out E_EVENT_TYPE eEvType);
-		new void GetUnknownEventType(out uint uiUnknEvType);
-		#endregion
+        #region IBaseEvent
+        new void GetEventType(out E_EVENT_TYPE eEvType);
+        new void GetUnknownEventType(out uint uiUnknEvType);
+        #endregion
 
 		void GetWinMessage(out TWinMessage stWinMsg);
 	};
@@ -211,13 +248,16 @@ namespace DGLE
 	Guid("2B6D2547-716E-490c-B1F1-422CB428738F")]
 	public interface IEvGetSubSystem : IBaseEvent
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		#region IBaseEvent
-		new void GetEventType(out E_EVENT_TYPE eEvType);
-		new void GetUnknownEventType(out uint uiUnknEvType);
+        new void GetEventType(out E_EVENT_TYPE eEvType);
+        new void GetUnknownEventType(out uint uiUnknEvType);
 		#endregion
 
 		void GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem);
@@ -229,7 +269,14 @@ namespace DGLE
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
 	Guid("371B1338-BB25-4B8C-BD6A-BCDF241CC52C")]
 	public interface IUserCallback : IDGLE_Base
-	{	
+	{
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
+
 		void Initialize();
 		void Free();
 		void Update(UInt64 ui64DeltaTime);
@@ -263,6 +310,7 @@ namespace DGLE
 		EIF_FORCE_LIMIT_FPS		= 0x00000010,
 		EIF_FORCE_16_BIT_COLOR	= 0x00000020,
 		EIF_DISABLE_SMART_TIMING= 0x00000040,
+        EIF_FORCE_NO_WINDOW		= 0x00000100,
 		EIF_FORCE_NO_SPLASH     = 0x10000000
 	};
 
@@ -275,13 +323,12 @@ namespace DGLE
 	Guid("111BB884-2BA6-4e84-95A5-5E4700309CBA")]
 	public interface IEngineCore : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		//TODO
-		new void ExecCmd();
-		new void ExecCmdStr();
-		new void ExecCmdVar();
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void LoadSplashPicture([MarshalAs(UnmanagedType.LPStr)] string pcBmpFileName);	
 		void AddPluginToInitList([MarshalAs(UnmanagedType.LPStr)] string pcFileName);	
@@ -295,9 +342,8 @@ namespace DGLE
 		void DisconnectPlugin(IPlugin pPlugin);
 		void GetPlugin([MarshalAs(UnmanagedType.LPStr)] string pcPluginName, out IPlugin prPlugin);
 
-		//TODO
-		void AddUserCallback();
-		void RemoveUserCallback();
+        void AddUserCallback(IUserCallback pUserCallback);
+        void RemoveUserCallback(IUserCallback pUserCallback);
 
 		void AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc, IntPtr pParam);
 		void RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc, IntPtr pParam);
@@ -309,11 +355,11 @@ namespace DGLE
 		void GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, out IEngineSubSystem prSubSystem);
 
 		void RenderProfilerTxt([MarshalAs(UnmanagedType.LPStr)] string pcTxt, ref TColor4 stColor);
-		void GetInstanceIdx(out UInt32 uiIdx);
+		void GetInstanceIdx(out uint uiIdx);
 		void GetTimer(out UInt64 uiTick);
 		void GetSystemInfo(out TSystemInfo stSysInfo);
 		void GetCurrentWin(out TEngWindow stWin);
-		void GetFPS(out UInt32 uiFPS);
+		void GetFPS(out uint uiFPS);
 		void GetLastUpdateDeltaTime(out UInt64 ui64DeltaTime);
 		void GetHandle(out IntPtr stHandle);
 
@@ -321,13 +367,13 @@ namespace DGLE
 		void AllowPause([MarshalAs(UnmanagedType.U1)] bool bAllow);
 
 		void AddToLog([MarshalAs(UnmanagedType.LPStr)] string pcTxt);
-		void AddToLogEx([MarshalAs(UnmanagedType.LPStr)] string pcTxt, E_LOG_TYPE eType, [MarshalAs(UnmanagedType.LPStr)] string pcSrcFileName, Int32 iSrcLineNumber);
+		void AddToLogEx([MarshalAs(UnmanagedType.LPStr)] string pcTxt, E_LOG_TYPE eType, [MarshalAs(UnmanagedType.LPStr)] string pcSrcFileName, int iSrcLineNumber);
 
 		void ConsoleVisible([MarshalAs(UnmanagedType.U1)] bool bIsVisible);
 		void ConsoleWrite([MarshalAs(UnmanagedType.LPStr)] string pcTxt,[MarshalAs(UnmanagedType.U1)] bool bWriteToPreviousLine);
 		void ConsoleExec([MarshalAs(UnmanagedType.LPStr)] string pcCommandTxt);
 		void ConsoleRegComProc([MarshalAs(UnmanagedType.LPStr)] string pcCommandName, [MarshalAs(UnmanagedType.LPStr)] string pcCommandHelp, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc);
-		void ConsoleRegComValue([MarshalAs(UnmanagedType.LPStr)] string pcCommandName, [MarshalAs(UnmanagedType.LPStr)] string pcCommandHelp, ref Int32 piValue, Int32 iMinValue, Int32 iMaxValue, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc);
+		void ConsoleRegComValue([MarshalAs(UnmanagedType.LPStr)] string pcCommandName, [MarshalAs(UnmanagedType.LPStr)] string pcCommandHelp, ref int piValue, int iMinValue, int iMaxValue, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc);
 		void ConsoleUnregCom([MarshalAs(UnmanagedType.LPStr)] string pcCommandName);
 		
 		void GetVersion(IntPtr pcBuffer, uint uiBufferSize);	
@@ -403,38 +449,41 @@ namespace DGLE
 		RES_LOAD_DEFAULT            = 0x00000000
 	};
 
-	public delegate bool DLoadProc(ref IFile pFile, ref IEngBaseObj prObj, UInt32 uiLoadFlags);
+	public delegate bool DLoadProc(ref IFile pFile, ref IEngBaseObj prObj, uint uiLoadFlags);
 	
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
 	Guid("139505B6-5EFC-4f02-A5E8-18CD1FBD69E3")]
 	public interface IResourceManager : IEngineSubSystem
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngineSubSystem
-		new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
-		#endregion
+        #region IEngineSubSystem
+        new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
+        #endregion
 
-		void CreateTexture(out ITexture prTex, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 uiWidth, UInt32 uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = true);
-		void CreateMaterial(out IMaterial prMaterial, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = true);
-		void CreateMesh(out IMesh prMesh, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 uiDataSize, UInt32 uiNumVerts, UInt32 uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = true);
+        void CreateTexture(out ITexture prTex, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = false);
+		void CreateMaterial(out IMaterial prMaterial, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = false);
+        void CreateMesh(out IMesh prMesh, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = false);
 		void CreateSound(out ISoundSample prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 ui32DataSize, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResourse = false);
 
-		void RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj pObj);
+        void RegisterFileFormat([MarshalAs(UnmanagedType.LPStr)] string pcExtension, E_ENG_OBJ_TYPE eObjType, [MarshalAs(UnmanagedType.LPStr)] string pcDescription, [MarshalAs(UnmanagedType.FunctionPtr)] DLoadProc pLoadProc);
+        void UnregisterFileFormat([MarshalAs(UnmanagedType.LPStr)] string pcExtension);
+        void RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj pObj);
 		void UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj pObj);
-		void RegisterFileFormat([MarshalAs(UnmanagedType.LPStr)] string pcExtension, E_ENG_OBJ_TYPE eObjType, [MarshalAs(UnmanagedType.LPStr)] string pcDescription, [MarshalAs(UnmanagedType.FunctionPtr)] DLoadProc pLoadProc);
-		void UnregisterFileFormat([MarshalAs(UnmanagedType.LPStr)] string pcExtension);
-		void GetRegisteredExtensions(IntPtr pcTxt, out UInt32 uiCharsCount);
-		void GetExtensionDescription([MarshalAs(UnmanagedType.LPStr)] string pcExtension, IntPtr pcTxt, out UInt32 uiCharsCount);
+        void GetRegisteredExtensions(IntPtr pcTxt, out uint uiCharsCount);
+        void GetExtensionDescription([MarshalAs(UnmanagedType.LPStr)] string pcExtension, IntPtr pcTxt, out uint uiCharsCount);
 		void GetExtensionType([MarshalAs(UnmanagedType.LPStr)] string pcExtension, out E_ENG_OBJ_TYPE eType);
 
 		void GetResourceByFileName([MarshalAs(UnmanagedType.LPStr)] string pcName, out IEngBaseObj prObj);
 		void GetDefaultResource(E_ENG_OBJ_TYPE eObjType, out IEngBaseObj prObj);
 
-		void Load([MarshalAs(UnmanagedType.LPStr)] string pcFileName, out IEngBaseObj prObj, UInt32 uiLoadFlags);
-		void Load2(IFile pFile, out IEngBaseObj prObj, UInt32 uiLoadFlags);
+        void Load([MarshalAs(UnmanagedType.LPStr)] string pcFileName, out IEngBaseObj prObj, uint uiLoadFlags);
+        void Load2(IFile pFile, out IEngBaseObj prObj, uint uiLoadFlags);
 
 		void FreeResource(ref IEngBaseObj pEngObj);
 		void AddResource([MarshalAs(UnmanagedType.LPStr)] string pcFileName, IEngBaseObj pObj);
@@ -455,12 +504,15 @@ namespace DGLE
 	Guid("EA03C661-A334-4225-B5DB-4C45452CCC41")]
 	public interface IRender : IEngineSubSystem
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		#region IEngineSubSystem
-		new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
+        new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
 		#endregion
 
 		void SetClearColor(ref TColor4 stColor);
@@ -480,24 +532,26 @@ namespace DGLE
 	//Flags for Primitives
 	public enum E_PRIMITIVE2D_FLAGS
 	{
-		PF_DEFAULT          = 0x00000000,
-		PF_FILL             = 0x00000001,
-		PF_SMOOTH           = 0x00000002,
-		PF_VCA              = 0x00000004
+        PF_DEFAULT          = 0x00000000,
+        PF_LINE             = 0x00000000,
+        PF_FILL             = 0x00000001,
+        PF_VERTICES_COLOR   = 0x00000002
 	};
 
 	//Flags for Effects
 	public enum E_EFFECT2D_FLAGS
 	{
-		EF_DEFAULT          = 0x00000000,
-		EF_BLEND            = 0x00000001,
-		EF_FLIPX            = 0x00000002,
-		EF_FLIPY            = 0x00000004,
-		EF_COLORMIX         = 0x00000008,
-		EF_SCALE            = 0x00000010,
-		EF_VERTICES_OFFSET  = 0x00000020,
-		EF_VERTICES_COLOR   = 0x00000040,
-		EF_ROTATEPT         = 0x00000080
+        EF_DEFAULT          = 0x00000000,
+        EF_NONE             = 0x00000001,
+        EF_ALPHA_TEST       = 0x00000002,
+        EF_BLEND            = 0x00000004,
+        EF_FLIPX            = 0x00000008,
+        EF_FLIPY            = 0x00000010,
+        EF_COLORMIX         = 0x00000020,
+        EF_SCALE            = 0x00000040,
+        EF_VERTICES_OFFSET  = 0x00000080,
+        EF_VERTICES_COLOR   = 0x00000100,
+        EF_ROTATEPT         = 0x00000200
 	};
 
 	//Flags for Effects Blend mode
@@ -513,19 +567,22 @@ namespace DGLE
 
 	public enum E_BATCH_MODE2D
 	{
-		BM_AUTO = 0,
-		BM_DISABLED,
-		BM_ENABLED_UEP,//update batches every process tick
-		BM_ENABLED_UER //update batches every render frame
+        BM_AUTO = 0,
+        BM_DISABLED,
+        BM_ENABLED_UPDATE_EVERY_TICK,
+        BM_ENABLED_UPDATE_EVERY_FRAME
 	};
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
 	Guid("F5F3257A-F8B8-4d91-BA67-451167A8D63F")]
 	public interface IRender2D : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void Begin2D();
 		void End2D();
@@ -574,9 +631,12 @@ namespace DGLE
 	Guid("5275F43A-4FF9-48b2-B88E-B2F842461AB3")]
 	public interface IRender3D : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void SetPerspective(float fFovAngle, float fZNear, float fZFar);
 
@@ -619,9 +679,12 @@ namespace DGLE
 	Guid("EB73AC84-A465-4554-994D-8BED29744C9D")]
 	public interface ILight: IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void SetEnabled([MarshalAs(UnmanagedType.U1)]bool bEnabled);
 		void SetDiffuseColor(ref TColor4 stColor);
@@ -657,15 +720,18 @@ namespace DGLE
 	Guid("85BDDBC2-F126-4cae-946D-7D6B079E5CCE")]
 	public interface ITexture : IEngBaseObj
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngBaseObj
-		new void Free();
-		new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
-		new void GetUnknownType(out uint uiObjUnknownType);
-		#endregion        
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
+        #endregion
 
 		void GetDimensions(out UInt32 irWidth, out UInt32 irHeight);
 		void SetFrameSize(UInt32 uiFrameWidth, UInt32 uiFrameHeight);        
@@ -710,15 +776,18 @@ namespace DGLE
 	Guid("B6506749-BB41-423d-B6C0-982081EF63F9")]
 	public interface IMaterial: IEngBaseObj
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngBaseObj
-		new void Free();
-		new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
-		new void GetUnknownType(out uint uiObjUnknownType);
-		#endregion   
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
+        #endregion
 
 		void SetAmbientColor(ref TColor4 stColor);
 		void SetDiffuseColor(ref TColor4 stColor);
@@ -761,15 +830,18 @@ namespace DGLE
 	Guid("0B03E8D7-23A3-4c79-9E82-5BC6E50E1EBA")]
 	public interface IBitmapFont : IEngBaseObj
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngBaseObj
-		new void Free();
-		new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
-		new void GetUnknownType(out uint uiObjUnknownType);
-		#endregion        
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
+        #endregion  
 	
 		void GetTexture(out ITexture prTexture);
 		void SetScale(ref float fScale);
@@ -790,15 +862,18 @@ namespace DGLE
 	Guid("85E360A8-07B3-4f22-AA29-07C7FC7C6893")]
 	public interface IMesh : IEngBaseObj
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngBaseObj
-		new void Free();
-		new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
-		new void GetUnknownType(out uint uiObjUnknownType);
-		#endregion        
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
+        #endregion    
 
 		void Draw();
 		void GetCenter(out TPoint3 stCenter);
@@ -816,7 +891,18 @@ namespace DGLE
 	Guid("1D12C62F-9974-4219-8F12-DA92A4CC259F")]
 	public interface ISkeletonXform: IEngBaseObj
 	{
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
+        #endregion
 	};
 
 	//Model interface//
@@ -826,7 +912,10 @@ namespace DGLE
 	public interface IModel : IEngBaseObj
 	{
 		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
 		#endregion
 
 		#region IEngBaseObj
@@ -848,6 +937,9 @@ namespace DGLE
 	{
 		#region IDGLE_Base
 		new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
 		#endregion
 
 		void Free();
@@ -877,6 +969,9 @@ namespace DGLE
 	{
 		#region IDGLE_Base
 		new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
 		#endregion
 
 		#region IEngineSubSystem
@@ -890,12 +985,12 @@ namespace DGLE
 		void GetKeyPressed(out E_KEYBOARD_KEY_CODES eKey);
 		void GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, [MarshalAs(UnmanagedType.LPStr)] out char cASCIICode);
 
-		void BeginTextInput([MarshalAs(UnmanagedType.LPStr)] string pcBuffer, UInt32 uiBufferSize);
+		void BeginTextInput([MarshalAs(UnmanagedType.LPStr)] string pcBuffer, uint uiBufferSize);
 		void EndTextInput();
 
-		void GetJoystickCount(out UInt32 uiCount);
-		void GetJoystickStates(UInt32 uiJoyId, out TJoystickStates stJoyStates);
-		void GetJButtonPressed(UInt32 uiJoyId, UInt32 uiNumber, [MarshalAs(UnmanagedType.U1)]out bool bPressed); // 128 buttons [num 0..127]	
+        void GetJoystickCount(out uint uiCount);
+        void GetJoystickName(uint uiJoyId, IntPtr pcName, out uint uiCharsCount);
+        void GetJoystickStates(uint uiJoyId, out TJoystickStates stJoyStates);
 	};
 
 //Sound SubSystem interfaces//
@@ -904,13 +999,16 @@ namespace DGLE
 	Guid("054C07EE-2724-42f2-AC2B-E81FCF5B4ADA")]
 	public interface ISound : IEngineSubSystem
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngineSubSystem
-		new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
-		#endregion
+        #region IEngineSubSystem
+        new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
+        #endregion
 
 		/*Dummy*/
 		void SetMasterVolume(UInt32 uiVolume);
@@ -943,9 +1041,12 @@ namespace DGLE
 	Guid("DE6F7CDD-8262-445c-8D20-68E3324D99A6")]
 	public interface ISoundChannel : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void Play(bool bLooped);
 		void Pause();
@@ -974,16 +1075,18 @@ namespace DGLE
 	Guid("30DD8C94-D3FA-40cf-9C49-649211424919")]
 	public interface  ISoundSample : IEngBaseObj
 	{
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
-
-		#region IEngBaseObj
-		new void Free();
-		new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
-		new void GetUnknownType(out uint uiObjUnknownType);
-		#endregion        
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENG_OBJ_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
+        #endregion
 
 		void Play();
 		void PlayEx(out ISoundChannel pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags); //pSndChnl must be checked on nul
@@ -995,20 +1098,23 @@ namespace DGLE
 	Guid("4850286F-4770-4bcf-A90A-33D7BE41E686")]
 	public interface IMainFileSystem : IEngineSubSystem
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		#region IEngineSubSystem
-		new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
-		#endregion
+        #region IEngineSubSystem
+        new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
+        #endregion
 
 		void LoadFile([MarshalAs(UnmanagedType.LPStr)] string pcFileName, out IFile prFile);// c:\data.zip|img.jpg
 		void GetVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, out IFileSystem vfs);		
 		void RegisterVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, [MarshalAs(UnmanagedType.LPStr)] string pcDescription, ref IFileSystem pVFS, [MarshalAs(UnmanagedType.FunctionPtr)] DFSDeleteCallback pProc, IntPtr pParam);
 		void UnregisterVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension);
-		void GetRegisteredVirtualFileSystems(IntPtr pcTxt, out UInt32 uiCharsCount);
-		void GetVirtualFileSystemDescription([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, IntPtr pcTxt, out UInt32 uiCharsCount);
+        void GetRegisteredVirtualFileSystems(IntPtr pcTxt, out uint uiCharsCount);
+        void GetVirtualFileSystemDescription([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, IntPtr pcTxt, out uint uiCharsCount);
 	};
 
 	public enum E_FIND_FLAGS
@@ -1037,17 +1143,20 @@ namespace DGLE
 	Guid("AE6E8AE7-3E5B-4bc4-A512-42E1CF1DF005")]
 	public interface IFile : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
-		void Read(IntPtr pBuffer, UInt32 uiCount, out UInt32 uiRead);
-		void Write(IntPtr pBuffer, UInt32 uiCount, out UInt32 uiWritten);
+		void Read(IntPtr pBuffer, uint uiCount, out UInt32 uiRead);
+        void Write(IntPtr pBuffer, uint uiCount, out uint uiWritten);
 		void Seek(UInt32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG Way, out UInt32 ui32Position);
 		void GetSize(out UInt32 ui32Size);
-		void IsOpen([MarshalAs(UnmanagedType.U1)] out bool bOpened);        
-		void GetName(IntPtr pcName, out UInt32 uiCharsCount);
-		void GetPath(IntPtr pcPath, out UInt32 uiCharsCount);
+		void IsOpen([MarshalAs(UnmanagedType.U1)] out bool bOpened);
+        void GetName(IntPtr pcName, out uint uiCharsCount);
+        void GetPath(IntPtr pcPath, out uint uiCharsCount);
 		void Free();
 	};
 
@@ -1057,9 +1166,12 @@ namespace DGLE
 	Guid("5D73F249-0E74-4cc5-9646-270CB1E22750")]
 	public interface IFileIterator : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void FileName(IntPtr pcName, out uint uiLength);
 		void Next();
@@ -1072,9 +1184,12 @@ namespace DGLE
 	Guid("2DAE578E-9636-4fae-BABB-7D835EEA7518")]
 	public interface IFileSystem : IDGLE_Base
 	{
-		#region IDGLE_Base
-		new void GetGUID(ref Guid guid);
-		#endregion
+        #region IDGLE_Base
+        new void GetGUID(ref Guid guid);
+        new void ExecCmd(uint uiCmd, ref TVariant stVar);
+        new void ExecCmdStr([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        new void ExecCmdVar([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        #endregion
 
 		void OpenFile([MarshalAs(UnmanagedType.LPStr)] string pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, out IFile prFile);	
 		void DeleteFile([MarshalAs(UnmanagedType.LPStr)] string pcName);
@@ -1088,10 +1203,10 @@ namespace DGLE
 	{
 		public enum E_GET_ENGINE_FLAGS
 		{
-		GEF_DEFAULT				= 0x00000000,	
-		GEF_FORCE_SINGLE_THREAD	= 0x00000001,	
-		GEF_FORCE_NO_LOG_FILE	= 0x00000002,
-		GEF_FORCE_QUIT			= 0x00000004
+		    GEF_DEFAULT				= 0x00000000,	
+		    GEF_FORCE_SINGLE_THREAD	= 0x00000001,	
+		    GEF_FORCE_NO_LOG_FILE	= 0x00000002,
+		    GEF_FORCE_QUIT			= 0x00000004
 		};
 
 		delegate void GetEngineDelegate(out IEngineCore pEngineCore, E_GET_ENGINE_FLAGS eFlags, byte ubtSDKVer);

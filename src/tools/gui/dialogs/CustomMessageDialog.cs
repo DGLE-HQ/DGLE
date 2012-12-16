@@ -2,9 +2,9 @@
 \author		Shestakov Mikhail aka MIKE
 \date		29.10.2012 (c)Andrey Korotkov
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 using System;
 
@@ -23,7 +23,7 @@ namespace Gui
 			get { return messageType; }
 			set {
 				messageType = value;
-				SetIcon ();
+				SetIcon();
 			}
 		}
 
@@ -31,83 +31,65 @@ namespace Gui
 			get { return buttonsType; }
 			set {
 				buttonsType = value;
-				SetButtons ();
+				SetButtons();
 			}
 		}
 
-		public event EventHandler Ok
-		{
-			add { this.btn1.Clicked += value; }
-			remove { this.btn1.Clicked -= value; }
-		}
-		
-		public event EventHandler Cancel
-		{
-			add { this.btn2.Clicked += value; }
-			remove { this.btn2.Clicked -= value; }
-		}
-
-		public event EventHandler Close
-		{
-			add { this.btn2.Clicked += value; }
-			remove { this.btn2.Clicked -= value; }
-		}
-
-		public event EventHandler Yes
-		{
-			add { this.btn1.Clicked += value; }
-			remove { this.btn1.Clicked -= value; }
-		}
-
-		public event EventHandler No
-		{
-			add { this.btn2.Clicked += value; }
-			remove { this.btn2.Clicked -= value; }
-		}
+		public event EventHandler Ok;		
+		public event EventHandler Cancel;
+		public event EventHandler Close;
+		public event EventHandler Yes;
+		public event EventHandler No;
 
 		public Gtk.ButtonsType buttonsType;
 		private Gtk.MessageType messageType;
 
-		public CustomMessageDialog (Gtk.Window parent, string format, object[] args) : 
-			this (parent, Gtk.MessageType.Other, Gtk.ButtonsType.Ok, "", String.Format(format, args))
+		public CustomMessageDialog(
+			Gtk.Window parent, 
+			Gtk.MessageType messageType,
+			string format,
+			params object[] args) :
+			this(parent, messageType, Gtk.ButtonsType.Ok, "", String.Format(format, args))
 		{
 		}
 
-		public CustomMessageDialog (Gtk.Window parent, string title, string format, object[] args) : 
-			this (parent, Gtk.MessageType.Other, Gtk.ButtonsType.Ok, title, String.Format(format, args))
-		{
-		}
-
-		public CustomMessageDialog (Gtk.Window parent, string text) : 
-			this (parent, Gtk.MessageType.Other, Gtk.ButtonsType.Ok, "", text)
-		{
-		}
-
-		public CustomMessageDialog (Gtk.Window parent, string title, string text) : 
-			this (parent, Gtk.MessageType.Other, Gtk.ButtonsType.Ok, title, text)
-		{
-		}
-
-		public CustomMessageDialog (
+		public CustomMessageDialog(
 			Gtk.Window parent, 
 			Gtk.MessageType messageType, 
 			Gtk.ButtonsType buttonsType, 
-			string text) :
-			this (parent, messageType, buttonsType, "", text)
+			string format,
+			params object[] args) :
+			this(parent, messageType, buttonsType, "", String.Format(format, args))
 		{
 		}
 
-		public CustomMessageDialog (
+
+		public CustomMessageDialog(
+			Gtk.Window parent, 
+			Gtk.MessageType messageType, 
+			Gtk.ButtonsType buttonsType, 
+			string title,
+			string format,
+			params object[] args) :
+			this(parent, messageType, buttonsType, title, String.Format(format, args))
+		{
+		}
+
+		public CustomMessageDialog(
 			Gtk.Window parent, 
 			Gtk.MessageType messageType, 
 			Gtk.ButtonsType buttonsType, 
 			string title, string text) : base(Gtk.WindowType.Toplevel)
 		{
-			this.Build ();
+			this.Build();
 
-			base.TransientFor = parent;
-			base.SetPosition (Gtk.WindowPosition.CenterOnParent);
-			base.Decorated = parent.Decorated;
+			if (parent != null) {
+				base.TransientFor = parent;
+				base.SetPosition(Gtk.WindowPosition.CenterOnParent);
+				base.Decorated = parent.Decorated;
+			} else {
+				base.SetPosition(Gtk.WindowPosition.Center);
+			}
 			base.KeepAbove = true;
 			
 			base.Title = title;
@@ -115,57 +97,77 @@ namespace Gui
 			MessageType = messageType;
 			ButtonsType = buttonsType;
 
-			this.btn1.Clicked += HandleMessageDialogClicked;
-			this.btn2.Clicked += HandleMessageDialogClicked;
+			this.btnPositive.Clicked += HandlePositiveClicked;
+			this.btnNegative.Clicked += HandleNegativeClicked;
 			this.DeleteEvent += delegate(object o, Gtk.DeleteEventArgs args) {
-				this.btn2.Click ();
+				if (btnNegative.Visible)
+					this.btnNegative.Click();
+				else
+					this.btnPositive.Click();
 			};
 		}
 
-		void HandleMessageDialogClicked (object sender, EventArgs e)
+		void HandlePositiveClicked(object sender, EventArgs e)
 		{
-			this.Hide ();
+			if (Ok != null)
+				Ok(sender, e);
+			if (Yes != null)
+				Yes(sender, e);
+
+			this.Hide();
 		}
 
-		private void SetIcon ()
+		void HandleNegativeClicked(object sender, EventArgs e)
+		{
+			if (Cancel != null)
+				Cancel(sender, e);
+			if (Close != null)
+				Close(sender, e);
+			if (No != null)
+				No(sender, e);
+
+			this.Hide();
+		}
+
+		private void SetIcon()
 		{
 			if ((int)messageType < 0 || (int)messageType >= (int)Gtk.MessageType.Other) {
 				this.imageType.Pixbuf = null;
 			} else {
-				string iconName = String.Format ("gtk-dialog-{0}", messageType.ToString ()).ToLower ();
-				if (null != Gtk.IconTheme.Default.LookupIcon (iconName, ICON_SIZE, Gtk.IconLookupFlags.UseBuiltin))
+				string iconName = String.Format("gtk-dialog-{0}", messageType.ToString()).ToLower();
+				if (null != Gtk.IconTheme.Default.LookupIcon(iconName, ICON_SIZE, Gtk.IconLookupFlags.UseBuiltin))
 					this.imageType.Pixbuf =
-						Gtk.IconTheme.Default.LoadIcon (iconName, ICON_SIZE, Gtk.IconLookupFlags.UseBuiltin);
+						Gtk.IconTheme.Default.LoadIcon(iconName, ICON_SIZE, Gtk.IconLookupFlags.UseBuiltin);
 				else
 					this.imageType.Pixbuf = null;
 			}
 		}
 
-		private void SetButtons ()
+		private void SetButtons()
 		{
-			switch (buttonsType) {
+			switch(buttonsType) {
 			case Gtk.ButtonsType.Ok:
-				btn1.Label = "Ok";
-				btn2.Visible = false;
-				btn2.Sensitive = false;
+				btnPositive.Label = "Ok";
+				btnNegative.Visible = false;
+				btnNegative.Sensitive = false;
 				break;
 			case Gtk.ButtonsType.Close:
-				btn1.Visible = false;
-				btn1.Sensitive = false;
-				btn2.Label = "Close";
+				btnPositive.Visible = false;
+				btnPositive.Sensitive = false;
+				btnNegative.Label = "Close";
 				break;
 			case Gtk.ButtonsType.Cancel:
-				btn1.Visible = false;
-				btn1.Sensitive = false;
-				btn2.Label = "Cancel";
+				btnPositive.Visible = false;
+				btnPositive.Sensitive = false;
+				btnNegative.Label = "Cancel";
 				break;
 			case Gtk.ButtonsType.OkCancel:
-				btn1.Label = "Ok";
-				btn2.Label = "Cancel";
+				btnPositive.Label = "Ok";
+				btnNegative.Label = "Cancel";
 				break;
 			case Gtk.ButtonsType.YesNo:
-				btn1.Label = "Yes";
-				btn2.Label = "No";
+				btnPositive.Label = "Yes";
+				btnNegative.Label = "No";
 				break;
 			default:
 				this.hbtnboxAction.Visible = false;

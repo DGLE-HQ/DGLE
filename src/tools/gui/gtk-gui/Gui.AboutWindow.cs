@@ -48,7 +48,10 @@ namespace Gui
 			this.textviewAbout.CursorVisible = false;
 			this.textviewAbout.AcceptsTab = false;
 			this.textviewAbout.Justification = ((global::Gtk.Justification)(2));
+			this.textviewAbout.WrapMode = ((global::Gtk.WrapMode)(2));
 			this.textviewAbout.PixelsAboveLines = 6;
+			this.textviewAbout.LeftMargin = 6;
+			this.textviewAbout.RightMargin = 6;
 			this.GtkScrolledWindow.Add (this.textviewAbout);
 			this.vbox1.Add (this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.GtkScrolledWindow]));

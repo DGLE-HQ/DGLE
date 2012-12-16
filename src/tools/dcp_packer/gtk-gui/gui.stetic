@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+    <target-gtk-version>2.12</target-gtk-version>
+  </configuration>
+  <import>
+    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <widget-library name="../../../../bin/windows/tools/Gui.dll" />
+    <widget-library name="../../../../bin/windows/tools/DCPPacker.exe" internal="true" />
+  </import>
+  <icon-factory>
+    <icon-set id="page-white-add">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.page_white_add.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="folder-add">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.folder_add.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="page-white-delete">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.page_white_delete.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="page-white-copy">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.page_white_copy.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="folder-delete">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.folder_delete.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="page-white-zip">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.page_white_zip.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="page-white-stack">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.page_white_stack.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="package">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.package.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="package-add">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.package_add.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="package-delete">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.package_delete.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="folder">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.folder.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="disk">
+      <source>
+        <property name="Image">resource:DCPPacker.resources.disk.png</property>
+      </source>
+    </icon-set>
+  </icon-factory>
+  <widget class="Gtk.Window" id="DCPPacker.MainWindow" design-size="522 400">
+    <action-group name="Default">
+      <action id="FileAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">File</property>
+        <property name="ShortLabel" translatable="yes">File</property>
+      </action>
+      <action id="CloseAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Control&gt;q</property>
+        <property name="Label" translatable="yes">Close</property>
+        <property name="ShortLabel" translatable="yes">Close</property>
+        <property name="StockId">package-delete</property>
+      </action>
+      <action id="HelpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Help</property>
+        <property name="ShortLabel" translatable="yes">Help</property>
+      </action>
+      <action id="AboutAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+      </action>
+      <action id="OpenAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">F2</property>
+        <property name="Label" translatable="yes">Open</property>
+        <property name="ShortLabel" translatable="yes">Open</property>
+        <property name="StockId">folder</property>
+      </action>
+      <action id="SaveAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">F3</property>
+        <property name="Label" translatable="yes">Save</property>
+        <property name="ShortLabel" translatable="yes">Save</property>
+        <property name="StockId">disk</property>
+      </action>
+      <action id="NewAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Control&gt;n</property>
+        <property name="Label" translatable="yes">New</property>
+        <property name="ShortLabel" translatable="yes">New</property>
+        <property name="StockId">package</property>
+      </action>
+      <action id="PackAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Pack</property>
+        <property name="ShortLabel" translatable="yes">Pack</property>
+      </action>
+      <action id="AddFilesAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">F4</property>
+        <property name="Label" translatable="yes">Add Files...</property>
+        <property name="ShortLabel" translatable="yes">Add Files...</property>
+        <property name="StockId">page-white-add</property>
+      </action>
+      <action id="RemoveAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">F8</property>
+        <property name="Label" translatable="yes">Remove</property>
+        <property name="ShortLabel" translatable="yes">Remove</property>
+        <property name="StockId">page-white-delete</property>
+      </action>
+      <action id="ExtractAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">F5</property>
+        <property name="Label" translatable="yes">Extract...</property>
+        <property name="ShortLabel" translatable="yes">Extract...</property>
+        <property name="StockId">page-white-copy</property>
+      </action>
+      <action id="ExtractAllAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Shift&gt;F5</property>
+        <property name="Label" translatable="yes">Extract all...</property>
+        <property name="ShortLabel" translatable="yes">Extract all...</property>
+        <property name="StockId">page-white-stack</property>
+      </action>
+      <action id="AddFolderAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">&lt;Shift&gt;F4</property>
+        <property name="Label" translatable="yes">Add Folder...</property>
+        <property name="ShortLabel" translatable="yes">Add Folder...</property>
+        <property name="StockId">folder-add</property>
+      </action>
+      <action id="ExitAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Exit</property>
+        <property name="ShortLabel" translatable="yes">Exit</property>
+      </action>
+      <action id="CreateFolderAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Create Folder</property>
+        <property name="ShortLabel" translatable="yes">Create Folder</property>
+      </action>
+    </action-group>
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">Packer</property>
+    <property name="WindowPosition">Center</property>
+    <property name="Decorated">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <child>
+          <widget class="Gtk.MenuBar" id="mainMenuBar">
+            <property name="MemberName" />
+            <node name="mainMenuBar" type="Menubar">
+              <node type="Menu" action="FileAction">
+                <node type="Menuitem" action="NewAction" />
+                <node type="Menuitem" action="OpenAction" />
+                <node type="Menuitem" action="SaveAction" />
+                <node type="Menuitem" action="CloseAction" />
+                <node type="Menuitem" action="ExitAction" />
+              </node>
+              <node type="Menu" action="PackAction">
+                <node type="Menuitem" action="AddFilesAction" />
+                <node type="Menuitem" action="AddFolderAction" />
+                <node type="Menuitem" action="RemoveAction" />
+                <node type="Menuitem" action="ExtractAction" />
+                <node type="Menuitem" action="ExtractAllAction" />
+              </node>
+              <node type="Menu" action="HelpAction">
+                <node type="Menuitem" action="AboutAction" />
+              </node>
+            </node>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.VBox" id="vbox2">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">6</property>
+            <child>
+              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                <property name="MemberName" />
+                <property name="ShadowType">In</property>
+                <child>
+                  <widget class="Gtk.TreeView" id="packTreeView">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="ShowScrollbars">True</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</stetic-interface>

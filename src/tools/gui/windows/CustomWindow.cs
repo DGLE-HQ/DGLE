@@ -2,9 +2,9 @@
 \author		Shestakov Mikhail aka MIKE
 \date		14.10.2012 (c)Korotkov Andrey
 
-This file is a part of DGLE2 project and is distributed
+This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
-See "DGLE2.h" for more details.
+See "DGLE.h" for more details.
 */
 using System;
 
@@ -20,6 +20,7 @@ namespace Gui
 			set {
 				frameBorderWidth = value;
 				frameBorderMargin = frameBorderWidth > 2 ? 0 : 2;
+				frameBorderMargin = 0;
 			}
 		}
 
@@ -138,10 +139,11 @@ namespace Gui
 			}
 		}
 
-		private int frameBorderWidth = 2;
-		private int frameBorderMargin = 2;
+		private int frameBorderWidth = 0;
+		private int frameBorderMargin = 0;
 		private bool isMoving = false;
 		private bool isSizing = false;
+		private bool isInBorder = false;
 		// absolute
 		private Gdk.Point lastMousePos = Gdk.Point.Zero;
 		private Gdk.Size lastWindowSize = Gdk.Size.Empty;
@@ -166,6 +168,8 @@ namespace Gui
 		private void CustomInit()
 		{
 			CustomBuild();
+			FrameBorderWidth = 3;
+
 			if (ThemeHelper.ForceDecoration)
 				Decorated = true;
 
@@ -174,7 +178,7 @@ namespace Gui
 				Gdk.EventMask.ButtonPressMask | 
 				Gdk.EventMask.ButtonReleaseMask
 				));
-			
+
 			this.evntboxTitleBar.AddEvents ((int) (
 				Gdk.EventMask.PointerMotionMask | 
 				Gdk.EventMask.ButtonPressMask | 
@@ -346,8 +350,7 @@ namespace Gui
 			    !base.Resizable)
 				return base.OnMotionNotifyEvent (evnt);
 
-
-			if (!isSizing) {
+			if (!isSizing && isInBorder) {
 
 				sizingSide = SizingSide.SizingSideType.E_NONE;
 				if (evnt.X < Allocation.X + frameBorderWidth + frameBorderMargin)
@@ -360,7 +363,8 @@ namespace Gui
 				else if (evnt.Y >= Allocation.Y + Allocation.Height - frameBorderWidth - frameBorderMargin)
 					sizingSide |= SizingSide.SizingSideType.E_BOTTOM_SIDE;
 
-			} else {
+			}
+			if (isSizing) {
 
 				Gdk.Point windowPos = Gdk.Point.Zero;
 				GdkWindow.GetPosition (out windowPos.X, out windowPos.Y);
@@ -443,6 +447,22 @@ namespace Gui
 			
 			
 			return base.OnMotionNotifyEvent (evnt);
+		}
+
+		protected override bool OnEnterNotifyEvent(Gdk.EventCrossing evnt)
+		{
+			isInBorder = true;
+			return base.OnEnterNotifyEvent(evnt);
+		}
+
+		protected override bool OnLeaveNotifyEvent(Gdk.EventCrossing evnt)
+		{
+			isInBorder = false;
+			if (!isSizing) {
+				sizingSide = SizingSide.SizingSideType.E_NONE;
+				SelectCursor();
+			}
+			return base.OnLeaveNotifyEvent(evnt);
 		}
 		
 		protected override bool OnButtonPressEvent(Gdk.EventButton evnt)

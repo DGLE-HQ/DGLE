@@ -9,8 +9,8 @@ namespace Gui
 		private global::Gtk.Image imageType;
 		private global::Gtk.Label lText;
 		private global::Gtk.HButtonBox hbtnboxAction;
-		private global::Gtk.Button btn1;
-		private global::Gtk.Button btn2;
+		private global::Gtk.Button btnPositive;
+		private global::Gtk.Button btnNegative;
 		
 		protected virtual void Build ()
 		{
@@ -53,23 +53,23 @@ namespace Gui
 			this.hbtnboxAction = new global::Gtk.HButtonBox ();
 			this.hbtnboxAction.Name = "hbtnboxAction";
 			// Container child hbtnboxAction.Gtk.ButtonBox+ButtonBoxChild
-			this.btn1 = new global::Gtk.Button ();
-			this.btn1.CanFocus = true;
-			this.btn1.Name = "btn1";
-			this.btn1.UseUnderline = true;
-			this.btn1.Label = global::Mono.Unix.Catalog.GetString ("Ok");
-			this.hbtnboxAction.Add (this.btn1);
-			global::Gtk.ButtonBox.ButtonBoxChild w4 = ((global::Gtk.ButtonBox.ButtonBoxChild)(this.hbtnboxAction [this.btn1]));
+			this.btnPositive = new global::Gtk.Button ();
+			this.btnPositive.CanFocus = true;
+			this.btnPositive.Name = "btnPositive";
+			this.btnPositive.UseUnderline = true;
+			this.btnPositive.Label = global::Mono.Unix.Catalog.GetString ("Ok");
+			this.hbtnboxAction.Add (this.btnPositive);
+			global::Gtk.ButtonBox.ButtonBoxChild w4 = ((global::Gtk.ButtonBox.ButtonBoxChild)(this.hbtnboxAction [this.btnPositive]));
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbtnboxAction.Gtk.ButtonBox+ButtonBoxChild
-			this.btn2 = new global::Gtk.Button ();
-			this.btn2.CanFocus = true;
-			this.btn2.Name = "btn2";
-			this.btn2.UseUnderline = true;
-			this.btn2.Label = global::Mono.Unix.Catalog.GetString ("Cancel");
-			this.hbtnboxAction.Add (this.btn2);
-			global::Gtk.ButtonBox.ButtonBoxChild w5 = ((global::Gtk.ButtonBox.ButtonBoxChild)(this.hbtnboxAction [this.btn2]));
+			this.btnNegative = new global::Gtk.Button ();
+			this.btnNegative.CanFocus = true;
+			this.btnNegative.Name = "btnNegative";
+			this.btnNegative.UseUnderline = true;
+			this.btnNegative.Label = global::Mono.Unix.Catalog.GetString ("Cancel");
+			this.hbtnboxAction.Add (this.btnNegative);
+			global::Gtk.ButtonBox.ButtonBoxChild w5 = ((global::Gtk.ButtonBox.ButtonBoxChild)(this.hbtnboxAction [this.btnNegative]));
 			w5.Position = 1;
 			w5.Expand = false;
 			w5.Fill = false;
