@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+    <target-gtk-version>2.12</target-gtk-version>
+  </configuration>
+  <import>
+    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <widget-library name="../../../../bin/windows/tools/ColorPicker.exe" internal="true" />
+  </import>
+  <widget class="Gtk.Window" id="MainWindow" design-size="536 411">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">MainWindow</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <signal name="DeleteEvent" handler="OnDeleteEvent" />
+    <child>
+      <widget class="Gtk.Fixed" id="fixed1">
+        <property name="MemberName" />
+        <property name="HasWindow">False</property>
+        <child>
+          <widget class="ColorPicker.ColorSpectrum" id="colorSpectrum">
+            <property name="MemberName" />
+            <property name="WidthRequest">256</property>
+            <property name="HeightRequest">128</property>
+            <property name="Red">0</property>
+            <property name="Green">0</property>
+            <property name="Blue">0</property>
+          </widget>
+          <packing>
+            <property name="X">255</property>
+            <property name="Y">9</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="ColorPicker.ColorSquare" id="colorSquare">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="HeightRequest">128</property>
+          </widget>
+          <packing>
+            <property name="X">72</property>
+            <property name="Y">9</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HScale" id="redScale">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="CanFocus">True</property>
+            <property name="Upper">255</property>
+            <property name="PageIncrement">10</property>
+            <property name="StepIncrement">1</property>
+            <property name="Value">255</property>
+            <property name="DrawValue">True</property>
+            <property name="Digits">0</property>
+            <property name="ValuePos">Top</property>
+            <signal name="ValueChanged" handler="OnRedScaleValueChanged" />
+          </widget>
+          <packing>
+            <property name="X">85</property>
+            <property name="Y">164</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HScale" id="greenScale">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="CanFocus">True</property>
+            <property name="Upper">255</property>
+            <property name="PageIncrement">10</property>
+            <property name="StepIncrement">1</property>
+            <property name="Value">255</property>
+            <property name="DrawValue">True</property>
+            <property name="Digits">0</property>
+            <property name="ValuePos">Top</property>
+            <signal name="ValueChanged" handler="OnGreenScaleValueChanged" />
+          </widget>
+          <packing>
+            <property name="X">85</property>
+            <property name="Y">213</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HScale" id="blueScale">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="CanFocus">True</property>
+            <property name="Upper">255</property>
+            <property name="PageIncrement">10</property>
+            <property name="StepIncrement">1</property>
+            <property name="Value">255</property>
+            <property name="DrawValue">True</property>
+            <property name="Digits">0</property>
+            <property name="ValuePos">Top</property>
+            <signal name="ValueChanged" handler="OnBlueScaleValueChanged" />
+          </widget>
+          <packing>
+            <property name="X">85</property>
+            <property name="Y">262</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HScale" id="alphaScale">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="CanFocus">True</property>
+            <property name="Upper">255</property>
+            <property name="PageIncrement">10</property>
+            <property name="StepIncrement">1</property>
+            <property name="Value">255</property>
+            <property name="DrawValue">True</property>
+            <property name="Digits">0</property>
+            <property name="ValuePos">Top</property>
+          </widget>
+          <packing>
+            <property name="X">85</property>
+            <property name="Y">311</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label1">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Red</property>
+          </widget>
+          <packing>
+            <property name="X">36</property>
+            <property name="Y">181</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label2">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Green</property>
+          </widget>
+          <packing>
+            <property name="X">30</property>
+            <property name="Y">229</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label3">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Blue</property>
+          </widget>
+          <packing>
+            <property name="X">32</property>
+            <property name="Y">280</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label4">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Alpha</property>
+          </widget>
+          <packing>
+            <property name="X">27</property>
+            <property name="Y">328</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.DrawingArea" id="colorView">
+            <property name="MemberName" />
+            <property name="WidthRequest">60</property>
+            <property name="HeightRequest">60</property>
+          </widget>
+          <packing>
+            <property name="X">284</property>
+            <property name="Y">288</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label5">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Color</property>
+          </widget>
+          <packing>
+            <property name="X">391</property>
+            <property name="Y">305</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Entry" id="colorCode">
+            <property name="MemberName" />
+            <property name="WidthRequest">70</property>
+            <property name="CanFocus">True</property>
+            <property name="Text" translatable="yes">#FFFFFF</property>
+            <property name="IsEditable">True</property>
+            <property name="InvisibleChar">●</property>
+            <signal name="Changed" handler="OnColorCodeChanged" />
+          </widget>
+          <packing>
+            <property name="X">373</property>
+            <property name="Y">330</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="ColorPicker.ColorSaturation" id="colorSaturation">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="HeightRequest">14</property>
+          </widget>
+          <packing>
+            <property name="X">72</property>
+            <property name="Y">146</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="ColorPicker.ColorBrightness" id="colorBrightness">
+            <property name="MemberName" />
+            <property name="WidthRequest">14</property>
+            <property name="HeightRequest">128</property>
+          </widget>
+          <packing>
+            <property name="X">215</property>
+            <property name="Y">9</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="ColorPicker.test" design-size="400 300">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">test</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <child>
+      <placeholder />
+    </child>
+  </widget>
+</stetic-interface>
