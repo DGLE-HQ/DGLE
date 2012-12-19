@@ -11,15 +11,16 @@
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="512 416">
     <action-group name="Default">
-      <action id="HelpAction">
+      <action id="FileAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Help</property>
+        <property name="Label" translatable="yes">File</property>
         <property name="ShortLabel" translatable="yes">LOL</property>
       </action>
-      <action id="AboutAction">
+      <action id="CloseAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">About</property>
+        <property name="Label" translatable="yes">Close</property>
         <property name="ShortLabel" translatable="yes">About</property>
+        <signal name="Activated" handler="OnCloseActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -232,8 +233,8 @@
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
             <node name="__gtksharp_64_Stetic_Editor_ActionMenuBar" type="Menubar">
-              <node type="Menu" action="HelpAction">
-                <node type="Menuitem" action="AboutAction" />
+              <node type="Menu" action="FileAction">
+                <node type="Menuitem" action="CloseAction" />
               </node>
             </node>
           </widget>

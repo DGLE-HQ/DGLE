@@ -31,6 +31,7 @@ public partial class MainWindow :
 		                                          colorSaturation, colorSquare, 
 		                                          colorViewHandler, colorCodeHandler, 
 		                                          colorScalesHandler);
+
 		base.Decorated = false;
 		base.Resizable = false;
 		base.Title = TITLE;
@@ -114,4 +115,8 @@ public partial class MainWindow :
 	{
 		colorViewHandler.Alpha = (ushort)alphaScale.Value;
 	}*/
+	protected void OnCloseActionActivated (object sender, EventArgs e)
+	{
+		Gtk.Application.Quit ();
+	}
 }
