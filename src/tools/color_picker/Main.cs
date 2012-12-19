@@ -13,7 +13,11 @@ namespace color_picker
 	{
 		public static void Main(string[] args)
 		{
-			Application.Init();
+			if (!Gui.ThemeHelper.CheckGtk ())
+				return;
+			Gui.ThemeHelper.ApplyCustomTheme (args);
+
+			Application.Init("ColorPicker", ref args);
 			MainWindow win = new MainWindow();
 			win.Show();
 			Application.Run();

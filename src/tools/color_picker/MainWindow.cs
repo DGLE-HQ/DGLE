@@ -8,17 +8,20 @@ using System;
 using Gtk;
 using ColorPicker;
 
-public partial class MainWindow: Gtk.Window
+public partial class MainWindow : 
+	Gui.CustomWindow
 {
-	private static readonly string DEFAULT_COLOR_CODE = "#FFFFFF";
+	private static readonly string TITLE = "Color Picker", DEFAULT_COLOR_CODE = "#FFFFFF";
 	private ColorView colorViewHandler;
 	private ColorCode colorCodeHandler;
 	private ColorScales colorScalesHandler;
 	private ClickEventHandler clickEventHandler;
 	
-	public MainWindow (): base (Gtk.WindowType.Toplevel)
+	public MainWindow () : 
+		base (Gtk.WindowType.Toplevel)
 	{
-		Build ();
+		this.Build();
+
 		colorViewHandler = new ColorView(colorView, DEFAULT_COLOR_CODE);
 		colorCodeHandler = new ColorCode(colorCode);
 		colorScalesHandler = new ColorScales(redScale, greenScale, 
@@ -28,25 +31,15 @@ public partial class MainWindow: Gtk.Window
 		                                          colorSaturation, colorSquare, 
 		                                          colorViewHandler, colorCodeHandler, 
 		                                          colorScalesHandler);
+		base.Decorated = false;
+		base.Resizable = false;
+		base.Title = TITLE;
 	}
 	
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		Application.Quit ();
 		a.RetVal = true;
-	}
-	
-	protected void OnExposeEvent (object sender, ExposeEventArgs a)
-	{
-		/*Gdk.Window win = this.GdkWindow;
-		Gdk.GC gc = new Gdk.GC(win);
-		gc.RgbFgColor = new Gdk.Color(255,50,50);
-		gc.RgbBgColor = new Gdk.Color(0,0,0);
-		win.DrawLine(gc, 0, 0, 30, 30);*/
-	}
-	
-	protected void OnButtonPressEvent (object sender, Gtk.ButtonPressEventArgs a)
-	{
 	}
 	
 	protected void OnColorCodeChanged (object sender, EventArgs e)
@@ -75,17 +68,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		if(colorScalesHandler.IsRedEventOrigin) {
 			colorViewHandler.Red = (ushort)redScale.Value;
-			colorCodeHandler.SetupCode(colorViewHandler.Color);
-			colorSpectrum.ClickProcessing (colorViewHandler.Red, 
-			                               colorViewHandler.Green,
-			                               colorViewHandler.Blue);
-			colorBrightness.ClickProcessing (colorSpectrum.ArcX, 
-			                                 colorSpectrum.ArcY);
-			colorSaturation.ClickProcessing (colorSpectrum.NativeRed, 
-			                                 colorSpectrum.NativeGreen, 
-			                                 colorSpectrum.NativeBlue);
-			colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
-			                            colorBrightness.SpectrX);
+			updateOnScaleChange();
 		} else {
 			colorScalesHandler.IsRedEventOrigin = true;
 		}
@@ -96,17 +79,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		if(colorScalesHandler.IsGreenEventOrigin) {
 			colorViewHandler.Green = (ushort)greenScale.Value;
-			colorCodeHandler.SetupCode(colorViewHandler.Color);
-			colorSpectrum.ClickProcessing (colorViewHandler.Red, 
-			                               colorViewHandler.Green,
-			                               colorViewHandler.Blue);
-			colorBrightness.ClickProcessing (colorSpectrum.ArcX, 
-			                                 colorSpectrum.ArcY);
-			colorSaturation.ClickProcessing (colorSpectrum.NativeRed, 
-			                                 colorSpectrum.NativeGreen, 
-			                                 colorSpectrum.NativeBlue);
-			colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
-			                            colorBrightness.SpectrX);
+			updateOnScaleChange();
 		} else {
 			colorScalesHandler.IsGreenEventOrigin = true;
 		}
@@ -116,20 +89,25 @@ public partial class MainWindow: Gtk.Window
 	{
 		if(colorScalesHandler.IsBlueEventOrigin) {
 			colorViewHandler.Blue = (ushort)blueScale.Value;
-			colorCodeHandler.SetupCode(colorViewHandler.Color);
-			colorSpectrum.ClickProcessing (colorViewHandler.Red, 
-			                               colorViewHandler.Green,
-			                               colorViewHandler.Blue);
-			colorBrightness.ClickProcessing (colorSpectrum.ArcX, 
-			                                 colorSpectrum.ArcY);
-			colorSaturation.ClickProcessing (colorSpectrum.NativeRed, 
-			                                 colorSpectrum.NativeGreen, 
-			                                 colorSpectrum.NativeBlue);
-			colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
-			                            colorBrightness.SpectrX);
+			updateOnScaleChange();
 		} else {
 			colorScalesHandler.IsBlueEventOrigin = true;
 		}
+	}
+
+	private void updateOnScaleChange()
+	{
+		colorCodeHandler.SetupCode(colorViewHandler.Color);
+		colorSpectrum.ClickProcessing (colorViewHandler.Red, 
+		                               colorViewHandler.Green,
+		                               colorViewHandler.Blue);
+		colorBrightness.ClickProcessing (colorSpectrum.ArcX, 
+		                                 colorSpectrum.ArcY);
+		colorSaturation.ClickProcessing (colorSpectrum.NativeRed, 
+		                                 colorSpectrum.NativeGreen, 
+		                                 colorSpectrum.NativeBlue);
+		colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
+		                            colorBrightness.SpectrX);
 	}
 	
 	/*protected void OnAlphaScaleValueChanged (object sender, EventArgs e)

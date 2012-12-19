@@ -3,9 +3,11 @@
 
 public partial class MainWindow
 {
+	private global::Gtk.UIManager UIManager;
+	private global::Gtk.Action HelpAction;
+	private global::Gtk.Action AboutAction;
 	private global::Gtk.Fixed fixed1;
 	private global::ColorPicker.ColorSpectrum colorSpectrum;
-	private global::ColorPicker.ColorSquare colorSquare;
 	private global::Gtk.HScale redScale;
 	private global::Gtk.HScale greenScale;
 	private global::Gtk.HScale blueScale;
@@ -19,11 +21,23 @@ public partial class MainWindow
 	private global::Gtk.Entry colorCode;
 	private global::ColorPicker.ColorSaturation colorSaturation;
 	private global::ColorPicker.ColorBrightness colorBrightness;
+	private global::ColorPicker.ColorSquare colorSquare;
+	private global::Gtk.MenuBar menubar1;
 	
 	protected virtual void Build ()
 	{
 		global::Stetic.Gui.Initialize (this);
 		// Widget MainWindow
+		this.UIManager = new global::Gtk.UIManager ();
+		global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup ("Default");
+		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
+		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("LOL");
+		w1.Add (this.HelpAction, null);
+		this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
+		this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
+		w1.Add (this.AboutAction, null);
+		this.UIManager.InsertActionGroup (w1, 0);
+		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString ("MainWindow");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
@@ -40,18 +54,9 @@ public partial class MainWindow
 		this.colorSpectrum.Green = ((ushort)(0));
 		this.colorSpectrum.Blue = ((ushort)(0));
 		this.fixed1.Add (this.colorSpectrum);
-		global::Gtk.Fixed.FixedChild w1 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorSpectrum]));
-		w1.X = 255;
-		w1.Y = 9;
-		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.colorSquare = new global::ColorPicker.ColorSquare ();
-		this.colorSquare.WidthRequest = 128;
-		this.colorSquare.HeightRequest = 128;
-		this.colorSquare.Name = "colorSquare";
-		this.fixed1.Add (this.colorSquare);
-		global::Gtk.Fixed.FixedChild w2 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorSquare]));
-		w2.X = 72;
-		w2.Y = 9;
+		global::Gtk.Fixed.FixedChild w2 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorSpectrum]));
+		w2.X = 210;
+		w2.Y = 30;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.redScale = new global::Gtk.HScale (null);
 		this.redScale.WidthRequest = 128;
@@ -66,8 +71,8 @@ public partial class MainWindow
 		this.redScale.ValuePos = ((global::Gtk.PositionType)(2));
 		this.fixed1.Add (this.redScale);
 		global::Gtk.Fixed.FixedChild w3 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.redScale]));
-		w3.X = 85;
-		w3.Y = 164;
+		w3.X = 55;
+		w3.Y = 186;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.greenScale = new global::Gtk.HScale (null);
 		this.greenScale.WidthRequest = 128;
@@ -82,8 +87,8 @@ public partial class MainWindow
 		this.greenScale.ValuePos = ((global::Gtk.PositionType)(2));
 		this.fixed1.Add (this.greenScale);
 		global::Gtk.Fixed.FixedChild w4 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.greenScale]));
-		w4.X = 85;
-		w4.Y = 213;
+		w4.X = 55;
+		w4.Y = 232;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.blueScale = new global::Gtk.HScale (null);
 		this.blueScale.WidthRequest = 128;
@@ -98,8 +103,8 @@ public partial class MainWindow
 		this.blueScale.ValuePos = ((global::Gtk.PositionType)(2));
 		this.fixed1.Add (this.blueScale);
 		global::Gtk.Fixed.FixedChild w5 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.blueScale]));
-		w5.X = 85;
-		w5.Y = 262;
+		w5.X = 55;
+		w5.Y = 281;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.alphaScale = new global::Gtk.HScale (null);
 		this.alphaScale.WidthRequest = 128;
@@ -114,40 +119,40 @@ public partial class MainWindow
 		this.alphaScale.ValuePos = ((global::Gtk.PositionType)(2));
 		this.fixed1.Add (this.alphaScale);
 		global::Gtk.Fixed.FixedChild w6 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.alphaScale]));
-		w6.X = 85;
-		w6.Y = 311;
+		w6.X = 55;
+		w6.Y = 330;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label1 = new global::Gtk.Label ();
 		this.label1.Name = "label1";
 		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("Red");
 		this.fixed1.Add (this.label1);
 		global::Gtk.Fixed.FixedChild w7 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label1]));
-		w7.X = 36;
-		w7.Y = 181;
+		w7.X = 8;
+		w7.Y = 203;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label2 = new global::Gtk.Label ();
 		this.label2.Name = "label2";
 		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("Green");
 		this.fixed1.Add (this.label2);
 		global::Gtk.Fixed.FixedChild w8 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label2]));
-		w8.X = 30;
-		w8.Y = 229;
+		w8.X = 3;
+		w8.Y = 248;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label3 = new global::Gtk.Label ();
 		this.label3.Name = "label3";
 		this.label3.LabelProp = global::Mono.Unix.Catalog.GetString ("Blue");
 		this.fixed1.Add (this.label3);
 		global::Gtk.Fixed.FixedChild w9 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label3]));
-		w9.X = 32;
-		w9.Y = 280;
+		w9.X = 7;
+		w9.Y = 299;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label4 = new global::Gtk.Label ();
 		this.label4.Name = "label4";
 		this.label4.LabelProp = global::Mono.Unix.Catalog.GetString ("Alpha");
 		this.fixed1.Add (this.label4);
 		global::Gtk.Fixed.FixedChild w10 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label4]));
-		w10.X = 27;
-		w10.Y = 328;
+		w10.X = 7;
+		w10.Y = 347;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.colorView = new global::Gtk.DrawingArea ();
 		this.colorView.WidthRequest = 60;
@@ -155,16 +160,16 @@ public partial class MainWindow
 		this.colorView.Name = "colorView";
 		this.fixed1.Add (this.colorView);
 		global::Gtk.Fixed.FixedChild w11 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorView]));
-		w11.X = 284;
-		w11.Y = 288;
+		w11.X = 210;
+		w11.Y = 280;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label5 = new global::Gtk.Label ();
 		this.label5.Name = "label5";
 		this.label5.LabelProp = global::Mono.Unix.Catalog.GetString ("Color");
 		this.fixed1.Add (this.label5);
 		global::Gtk.Fixed.FixedChild w12 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label5]));
-		w12.X = 391;
-		w12.Y = 305;
+		w12.X = 320;
+		w12.Y = 294;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.colorCode = new global::Gtk.Entry ();
 		this.colorCode.WidthRequest = 70;
@@ -175,8 +180,8 @@ public partial class MainWindow
 		this.colorCode.InvisibleChar = '●';
 		this.fixed1.Add (this.colorCode);
 		global::Gtk.Fixed.FixedChild w13 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorCode]));
-		w13.X = 373;
-		w13.Y = 330;
+		w13.X = 300;
+		w13.Y = 315;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.colorSaturation = new global::ColorPicker.ColorSaturation ();
 		this.colorSaturation.WidthRequest = 128;
@@ -184,8 +189,8 @@ public partial class MainWindow
 		this.colorSaturation.Name = "colorSaturation";
 		this.fixed1.Add (this.colorSaturation);
 		global::Gtk.Fixed.FixedChild w14 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorSaturation]));
-		w14.X = 72;
-		w14.Y = 146;
+		w14.X = 8;
+		w14.Y = 168;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.colorBrightness = new global::ColorPicker.ColorBrightness ();
 		this.colorBrightness.WidthRequest = 14;
@@ -193,14 +198,29 @@ public partial class MainWindow
 		this.colorBrightness.Name = "colorBrightness";
 		this.fixed1.Add (this.colorBrightness);
 		global::Gtk.Fixed.FixedChild w15 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorBrightness]));
-		w15.X = 215;
-		w15.Y = 9;
+		w15.X = 142;
+		w15.Y = 30;
+		// Container child fixed1.Gtk.Fixed+FixedChild
+		this.colorSquare = new global::ColorPicker.ColorSquare ();
+		this.colorSquare.WidthRequest = 128;
+		this.colorSquare.HeightRequest = 128;
+		this.colorSquare.Name = "colorSquare";
+		this.fixed1.Add (this.colorSquare);
+		global::Gtk.Fixed.FixedChild w16 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorSquare]));
+		w16.X = 8;
+		w16.Y = 30;
+		// Container child fixed1.Gtk.Fixed+FixedChild
+		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar1\'><menu name=\'HelpAction\' action=\'HelpAction\'><menuite" +
+			"m name=\'AboutAction\' action=\'AboutAction\'/></menu></menubar></ui>");
+		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
+		this.menubar1.Name = "menubar1";
+		this.fixed1.Add (this.menubar1);
 		this.Add (this.fixed1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 536;
-		this.DefaultHeight = 411;
+		this.DefaultWidth = 512;
+		this.DefaultHeight = 416;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.redScale.ValueChanged += new global::System.EventHandler (this.OnRedScaleValueChanged);

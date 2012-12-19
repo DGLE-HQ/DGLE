@@ -36,10 +36,7 @@ namespace ColorPicker
 		
 		public void ClickProcessing (int arcX, int arcY, int spectrX)
 		{
-			this.arcX = arcX;
-			this.arcY = arcY;
-			redrawPanel(spectrX);
-			drawClickArc();
+			clickProcessing(arcX, arcY, spectrX);
 		}
 		
 		protected override bool OnButtonPressEvent (Gdk.EventButton ev)
@@ -84,6 +81,14 @@ namespace ColorPicker
 			this.arcX = arcX;
 			this.arcY = arcY;
 			redrawPanel();
+			drawClickArc();
+		}
+
+		private void clickProcessing (int arcX, int arcY, int spectrX)
+		{
+			this.arcX = arcX;
+			this.arcY = arcY;
+			redrawPanel(spectrX);
 			drawClickArc();
 		}
 		

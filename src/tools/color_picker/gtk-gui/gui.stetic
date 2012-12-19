@@ -7,8 +7,21 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../../../bin/windows/tools/ColorPicker.exe" internal="true" />
+    <widget-library name="../../../../bin/windows/tools/Gui.dll" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="536 411">
+  <widget class="Gtk.Window" id="MainWindow" design-size="512 416">
+    <action-group name="Default">
+      <action id="HelpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Help</property>
+        <property name="ShortLabel" translatable="yes">LOL</property>
+      </action>
+      <action id="AboutAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+      </action>
+    </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -27,19 +40,8 @@
             <property name="Blue">0</property>
           </widget>
           <packing>
-            <property name="X">255</property>
-            <property name="Y">9</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="ColorPicker.ColorSquare" id="colorSquare">
-            <property name="MemberName" />
-            <property name="WidthRequest">128</property>
-            <property name="HeightRequest">128</property>
-          </widget>
-          <packing>
-            <property name="X">72</property>
-            <property name="Y">9</property>
+            <property name="X">210</property>
+            <property name="Y">30</property>
           </packing>
         </child>
         <child>
@@ -57,8 +59,8 @@
             <signal name="ValueChanged" handler="OnRedScaleValueChanged" />
           </widget>
           <packing>
-            <property name="X">85</property>
-            <property name="Y">164</property>
+            <property name="X">55</property>
+            <property name="Y">186</property>
           </packing>
         </child>
         <child>
@@ -76,8 +78,8 @@
             <signal name="ValueChanged" handler="OnGreenScaleValueChanged" />
           </widget>
           <packing>
-            <property name="X">85</property>
-            <property name="Y">213</property>
+            <property name="X">55</property>
+            <property name="Y">232</property>
           </packing>
         </child>
         <child>
@@ -95,8 +97,8 @@
             <signal name="ValueChanged" handler="OnBlueScaleValueChanged" />
           </widget>
           <packing>
-            <property name="X">85</property>
-            <property name="Y">262</property>
+            <property name="X">55</property>
+            <property name="Y">281</property>
           </packing>
         </child>
         <child>
@@ -113,8 +115,8 @@
             <property name="ValuePos">Top</property>
           </widget>
           <packing>
-            <property name="X">85</property>
-            <property name="Y">311</property>
+            <property name="X">55</property>
+            <property name="Y">330</property>
           </packing>
         </child>
         <child>
@@ -123,8 +125,8 @@
             <property name="LabelProp" translatable="yes">Red</property>
           </widget>
           <packing>
-            <property name="X">36</property>
-            <property name="Y">181</property>
+            <property name="X">8</property>
+            <property name="Y">203</property>
           </packing>
         </child>
         <child>
@@ -133,8 +135,8 @@
             <property name="LabelProp" translatable="yes">Green</property>
           </widget>
           <packing>
-            <property name="X">30</property>
-            <property name="Y">229</property>
+            <property name="X">3</property>
+            <property name="Y">248</property>
           </packing>
         </child>
         <child>
@@ -143,8 +145,8 @@
             <property name="LabelProp" translatable="yes">Blue</property>
           </widget>
           <packing>
-            <property name="X">32</property>
-            <property name="Y">280</property>
+            <property name="X">7</property>
+            <property name="Y">299</property>
           </packing>
         </child>
         <child>
@@ -153,8 +155,8 @@
             <property name="LabelProp" translatable="yes">Alpha</property>
           </widget>
           <packing>
-            <property name="X">27</property>
-            <property name="Y">328</property>
+            <property name="X">7</property>
+            <property name="Y">347</property>
           </packing>
         </child>
         <child>
@@ -164,8 +166,8 @@
             <property name="HeightRequest">60</property>
           </widget>
           <packing>
-            <property name="X">284</property>
-            <property name="Y">288</property>
+            <property name="X">210</property>
+            <property name="Y">280</property>
           </packing>
         </child>
         <child>
@@ -174,8 +176,8 @@
             <property name="LabelProp" translatable="yes">Color</property>
           </widget>
           <packing>
-            <property name="X">391</property>
-            <property name="Y">305</property>
+            <property name="X">320</property>
+            <property name="Y">294</property>
           </packing>
         </child>
         <child>
@@ -189,8 +191,8 @@
             <signal name="Changed" handler="OnColorCodeChanged" />
           </widget>
           <packing>
-            <property name="X">373</property>
-            <property name="Y">330</property>
+            <property name="X">300</property>
+            <property name="Y">315</property>
           </packing>
         </child>
         <child>
@@ -200,8 +202,8 @@
             <property name="HeightRequest">14</property>
           </widget>
           <packing>
-            <property name="X">72</property>
-            <property name="Y">146</property>
+            <property name="X">8</property>
+            <property name="Y">168</property>
           </packing>
         </child>
         <child>
@@ -211,9 +213,30 @@
             <property name="HeightRequest">128</property>
           </widget>
           <packing>
-            <property name="X">215</property>
-            <property name="Y">9</property>
+            <property name="X">142</property>
+            <property name="Y">30</property>
           </packing>
+        </child>
+        <child>
+          <widget class="ColorPicker.ColorSquare" id="colorSquare">
+            <property name="MemberName" />
+            <property name="WidthRequest">128</property>
+            <property name="HeightRequest">128</property>
+          </widget>
+          <packing>
+            <property name="X">8</property>
+            <property name="Y">30</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.MenuBar" id="menubar1">
+            <property name="MemberName" />
+            <node name="__gtksharp_64_Stetic_Editor_ActionMenuBar" type="Menubar">
+              <node type="Menu" action="HelpAction">
+                <node type="Menuitem" action="AboutAction" />
+              </node>
+            </node>
+          </widget>
         </child>
       </widget>
     </child>

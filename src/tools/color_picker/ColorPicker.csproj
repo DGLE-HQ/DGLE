@@ -66,4 +66,10 @@
     <Folder Include="drawing_areas\" />
     <Folder Include="element_handlers\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\gui\Gui.csproj">
+      <Project>{C408B0C5-2931-414E-AE47-A4F109992E37}</Project>
+      <Name>Gui</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
