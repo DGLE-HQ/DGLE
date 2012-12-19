@@ -10,7 +10,11 @@ using ColorPicker;
 
 public partial class MainWindow : 
 	Gui.CustomWindow
-{
+{ 
+	private static readonly string[] AUTHOR = new string[]
+	{
+		"Kuzmin Maxim aka eshkin_kot"
+	};
 	private static readonly string TITLE = "Color Picker", DEFAULT_COLOR_CODE = "#FFFFFF";
 	private ColorView colorViewHandler;
 	private ColorCode colorCodeHandler;
@@ -99,6 +103,11 @@ public partial class MainWindow :
 	protected void OnCloseActionActivated (object sender, EventArgs e)
 	{
 		Gtk.Application.Quit ();
+	}
+
+	protected void OnAboutActionActivated (object sender, EventArgs e)
+	{
+		new Gui.AboutWindow(this, AUTHOR).Show();
 	}
 
 	private void updateOnScaleChange()

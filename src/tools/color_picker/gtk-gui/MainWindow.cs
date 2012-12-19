@@ -6,6 +6,9 @@ public partial class MainWindow
 	private global::Gtk.UIManager UIManager;
 	private global::Gtk.Action FileAction;
 	private global::Gtk.Action CloseAction;
+	private global::Gtk.Action Action;
+	private global::Gtk.Action HelpAction;
+	private global::Gtk.Action AboutAction;
 	private global::Gtk.Fixed fixed1;
 	private global::ColorPicker.ColorSpectrum colorSpectrum;
 	private global::Gtk.HScale redScale;
@@ -36,6 +39,14 @@ public partial class MainWindow
 		this.CloseAction = new global::Gtk.Action ("CloseAction", global::Mono.Unix.Catalog.GetString ("Close"), null, null);
 		this.CloseAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 		w1.Add (this.CloseAction, null);
+		this.Action = new global::Gtk.Action ("Action", null, null, null);
+		w1.Add (this.Action, null);
+		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
+		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
+		w1.Add (this.HelpAction, null);
+		this.AboutAction = new global::Gtk.Action ("AboutAction", global::Mono.Unix.Catalog.GetString ("About"), null, null);
+		this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
+		w1.Add (this.AboutAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -210,9 +221,9 @@ public partial class MainWindow
 		w16.X = 8;
 		w16.Y = 30;
 		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar1\'><menu name=\'FileAction\' action=\'FileAction\'><menuite" +
-			"m name=\'CloseAction\' action=\'CloseAction\'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='Action' action='Action'/><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
+		this.menubar1.WidthRequest = 500;
 		this.menubar1.Name = "menubar1";
 		this.fixed1.Add (this.menubar1);
 		this.Add (this.fixed1);
@@ -224,6 +235,7 @@ public partial class MainWindow
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.CloseAction.Activated += new global::System.EventHandler (this.OnCloseActionActivated);
+		this.AboutAction.Activated += new global::System.EventHandler (this.OnAboutActionActivated);
 		this.redScale.ValueChanged += new global::System.EventHandler (this.OnRedScaleValueChanged);
 		this.greenScale.ValueChanged += new global::System.EventHandler (this.OnGreenScaleValueChanged);
 		this.blueScale.ValueChanged += new global::System.EventHandler (this.OnBlueScaleValueChanged);

@@ -22,6 +22,21 @@
         <property name="ShortLabel" translatable="yes">About</property>
         <signal name="Activated" handler="OnCloseActionActivated" />
       </action>
+      <action id="Action">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes" />
+      </action>
+      <action id="HelpAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Help</property>
+        <property name="ShortLabel" translatable="yes">Help</property>
+      </action>
+      <action id="AboutAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+        <signal name="Activated" handler="OnAboutActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -232,22 +247,19 @@
         <child>
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
-            <node name="__gtksharp_64_Stetic_Editor_ActionMenuBar" type="Menubar">
+            <property name="WidthRequest">500</property>
+            <node name="menubar1" type="Menubar">
               <node type="Menu" action="FileAction">
                 <node type="Menuitem" action="CloseAction" />
+              </node>
+              <node type="Menu" action="Action" />
+              <node type="Menu" action="HelpAction">
+                <node type="Menuitem" action="AboutAction" />
               </node>
             </node>
           </widget>
         </child>
       </widget>
-    </child>
-  </widget>
-  <widget class="Gtk.Window" id="ColorPicker.test" design-size="400 300">
-    <property name="MemberName" />
-    <property name="Title" translatable="yes">test</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <child>
-      <placeholder />
     </child>
   </widget>
 </stetic-interface>
