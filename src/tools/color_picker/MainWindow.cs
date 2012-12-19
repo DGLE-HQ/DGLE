@@ -96,6 +96,11 @@ public partial class MainWindow :
 		}
 	}
 
+	protected void OnCloseActionActivated (object sender, EventArgs e)
+	{
+		Gtk.Application.Quit ();
+	}
+
 	private void updateOnScaleChange()
 	{
 		colorCodeHandler.SetupCode(colorViewHandler.Color);
@@ -115,8 +120,4 @@ public partial class MainWindow :
 	{
 		colorViewHandler.Alpha = (ushort)alphaScale.Value;
 	}*/
-	protected void OnCloseActionActivated (object sender, EventArgs e)
-	{
-		Gtk.Application.Quit ();
-	}
 }
