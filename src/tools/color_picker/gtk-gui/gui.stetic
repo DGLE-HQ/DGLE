@@ -22,10 +22,6 @@
         <property name="ShortLabel" translatable="yes">About</property>
         <signal name="Activated" handler="OnCloseActionActivated" />
       </action>
-      <action id="Action">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes" />
-      </action>
       <action id="HelpAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Help</property>
@@ -253,7 +249,6 @@
               <node type="Menu" action="FileAction">
                 <node type="Menuitem" action="CloseAction" />
               </node>
-              <node type="Menu" action="Action" />
               <node type="Menu" action="HelpAction">
                 <node type="Menuitem" action="AboutAction" />
               </node>

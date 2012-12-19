@@ -6,7 +6,6 @@ public partial class MainWindow
 	private global::Gtk.UIManager UIManager;
 	private global::Gtk.Action FileAction;
 	private global::Gtk.Action CloseAction;
-	private global::Gtk.Action Action;
 	private global::Gtk.Action HelpAction;
 	private global::Gtk.Action AboutAction;
 	private global::Gtk.Fixed fixed1;
@@ -40,8 +39,6 @@ public partial class MainWindow
 		this.CloseAction = new global::Gtk.Action ("CloseAction", global::Mono.Unix.Catalog.GetString ("Close"), null, null);
 		this.CloseAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("About");
 		w1.Add (this.CloseAction, null);
-		this.Action = new global::Gtk.Action ("Action", null, null, null);
-		w1.Add (this.Action, null);
 		this.HelpAction = new global::Gtk.Action ("HelpAction", global::Mono.Unix.Catalog.GetString ("Help"), null, null);
 		this.HelpAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Help");
 		w1.Add (this.HelpAction, null);
@@ -222,7 +219,10 @@ public partial class MainWindow
 		w16.X = 8;
 		w16.Y = 30;
 		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='Action' action='Action'/><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar1\'><menu name=\'FileAction\' action=\'FileAction\'><menuite" +
+			"m name=\'CloseAction\' action=\'CloseAction\'/></menu><menu name=\'HelpAction\' action" +
+			"=\'HelpAction\'><menuitem name=\'AboutAction\' action=\'AboutAction\'/></menu></menuba" +
+			"r></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.WidthRequest = 478;
 		this.menubar1.Name = "menubar1";
