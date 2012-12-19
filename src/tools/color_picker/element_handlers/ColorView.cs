@@ -12,19 +12,16 @@ namespace ColorPicker
 {
 	public class ColorView
 	{
+		private static ColorView inst;
 		private Color color = new Gdk.Color();
 		private DrawingArea colorView;
 		private ushort red = 255, green = 255, blue = 255, alpha = 255;
-		/*private Pixbuf pixbuf;
-		private Gdk.Window window;
-		private Gdk.GC gc;*/
-		
+
 		public ColorView (DrawingArea colorView, string colorCode)
 		{
 			this.colorView = colorView;
-			//this.alphaColorView = alphaColorView;
 			setupColor (colorCode);
-			//setupForAlpha();
+			inst = this;
 		}
 		
 		public void SetupColor (String colorCode)
@@ -38,7 +35,6 @@ namespace ColorPicker
 			setupColor(ref this.green, ref color.Green, green);
 			setupColor(ref this.blue, ref color.Blue, blue);
 			updateColor();
-			//updateAlphaColor();
 		}
 		
 		public string Color {
@@ -55,7 +51,6 @@ namespace ColorPicker
 			set {
 				setupColor(ref red, ref color.Red, value);
 				updateColor();
-				//updateAlphaColor();
 			}
 		}
 		
@@ -66,7 +61,6 @@ namespace ColorPicker
 			set {
 				setupColor(ref green, ref color.Green, value);
 				updateColor();
-				//updateAlphaColor();
 			}
 		}
 		
@@ -77,7 +71,6 @@ namespace ColorPicker
 			set {
 				setupColor(ref blue, ref color.Blue, value);
 				updateColor();
-				//updateAlphaColor();
 			}
 		}
 		
@@ -87,7 +80,6 @@ namespace ColorPicker
 			}
 			set {
 				alpha = value;
-				//updateAlphaColor();
 			}
 		}
 		
@@ -97,16 +89,7 @@ namespace ColorPicker
 			setupShortValues();
 			updateColor ();
 		}
-		
-		/*private void setupForAlpha ()
-		{
-			window = alphaColorView.GdkWindow;
-			gc = new Gdk.GC(window);
-			pixbuf = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, 
-			                        alphaColorView.WidthRequest, alphaColorView.HeightRequest);
-			alphaColorView.ModifyBg (Gtk.StateType.Normal, color);
-		}*/
-		
+
 		private void setupColor (ref ushort color, ref ushort refInColor, 
 		                         ushort value)
 		{
@@ -125,13 +108,12 @@ namespace ColorPicker
 		{
 			colorView.ModifyBg (Gtk.StateType.Normal, color);
 		}
-		
-		/*private void updateAlphaColor()
-		{
-			pixbuf.Fill((uint)(((red & 0xff) << 24) + ((green & 0xff) << 16) + ((blue & 0xff) << 8) + 0x02));				
-			window.DrawPixbuf(gc, pixbuf, 0, 0, 0, 0, alphaColorView.WidthRequest, 
-			                  alphaColorView.HeightRequest, 0, 0, 0);
-		}*/
+	
+		public static ColorView Inst {
+			get {
+				return inst;
+			}
+		}
 	}
 }
 

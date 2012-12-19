@@ -60,6 +60,7 @@
     <Compile Include="element_handlers\ColorScales.cs" />
     <Compile Include="element_handlers\ColorView.cs" />
     <Compile Include="SpectrumVerticalPixbuf.cs" />
+    <Compile Include="drawing_areas\AlphaView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

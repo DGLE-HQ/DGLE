@@ -6,10 +6,10 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../../../../bin/windows/tools/ColorPicker.exe" internal="true" />
     <widget-library name="../../../../bin/windows/tools/Gui.dll" />
+    <widget-library name="../../../../bin/windows/tools/ColorPicker.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="512 416">
+  <widget class="Gtk.Window" id="MainWindow" design-size="493 416">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -129,6 +129,7 @@
             <property name="DrawValue">True</property>
             <property name="Digits">0</property>
             <property name="ValuePos">Top</property>
+            <signal name="ValueChanged" handler="OnAlphaScaleValueChanged" />
           </widget>
           <packing>
             <property name="X">55</property>
@@ -247,8 +248,8 @@
         <child>
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
-            <property name="WidthRequest">500</property>
-            <node name="menubar1" type="Menubar">
+            <property name="WidthRequest">478</property>
+            <node name="__gtksharp_64_Stetic_Editor_ActionMenuBar" type="Menubar">
               <node type="Menu" action="FileAction">
                 <node type="Menuitem" action="CloseAction" />
               </node>
@@ -258,6 +259,17 @@
               </node>
             </node>
           </widget>
+        </child>
+        <child>
+          <widget class="ColorPicker.AlphaView" id="alphaView">
+            <property name="MemberName" />
+            <property name="WidthRequest">60</property>
+            <property name="HeightRequest">60</property>
+          </widget>
+          <packing>
+            <property name="X">210</property>
+            <property name="Y">205</property>
+          </packing>
         </child>
       </widget>
     </child>

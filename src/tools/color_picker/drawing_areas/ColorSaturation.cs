@@ -12,6 +12,7 @@ namespace ColorPicker
 	[System.ComponentModel.ToolboxItem(true)]
 	public class ColorSaturation : Gtk.DrawingArea
 	{
+		private static ColorSaturation inst;
 		private static readonly int WIDTH = 128, HEIGHT = 14;
 		private bool firstDraw = true;
 		private Window window;
@@ -28,6 +29,7 @@ namespace ColorPicker
 			copy = new Pixbuf(Gdk.Colorspace.Rgb, false, 8, 1, HEIGHT);
 			panelImage = new Image(ImageType.Normal, Visual, WIDTH, HEIGHT);
 			this.Events = Gdk.EventMask.ButtonPressMask;
+			inst = this;
 		}
 		
 		public void ClickProcessing (ushort red, ushort green, ushort blue)
@@ -157,6 +159,12 @@ namespace ColorPicker
 		public int X {
 			get {
 				return arcX;
+			}
+		}
+
+		public static ColorSaturation Inst {
+			get {
+				return inst;
 			}
 		}
 	}

@@ -18,18 +18,18 @@ namespace ColorPicker
 		private ColorView colorViewHandler;
 		private ColorCode colorCodeHandler;
 		private ColorScales colorScalesHandler;
+		private AlphaView alphaView;
 		
-		public ClickEventHandler (ColorSpectrum colorSpectrum, ColorBrightness colorBrightness,
-		                          ColorSaturation colorSaturation, ColorSquare colorSquare, ColorView colorViewHandler,
-		                          ColorCode colorCodeHandler, ColorScales colorScalesHandler)
+		public ClickEventHandler ()
 		{
-			this.colorSpectrum = colorSpectrum;
-			this.colorBrightness = colorBrightness;
-			this.colorSaturation = colorSaturation;
-			this.colorSquare = colorSquare;
-			this.colorViewHandler = colorViewHandler;
-			this.colorCodeHandler = colorCodeHandler;
-			this.colorScalesHandler = colorScalesHandler;
+			colorSpectrum = ColorSpectrum.Inst;
+			colorBrightness = ColorBrightness.Inst;
+			colorSaturation = ColorSaturation.Inst;
+			colorSquare = ColorSquare.Inst;
+			colorViewHandler = ColorView.Inst;
+			colorCodeHandler = ColorCode.Inst;
+			colorScalesHandler = ColorScales.Inst;
+			alphaView = AlphaView.Inst;
 			inst = this;
 		}
 		
@@ -48,6 +48,9 @@ namespace ColorPicker
 			                                colorSpectrum.Green,
 			                                colorSpectrum.Blue);
 			colorCodeHandler.SetupCode (colorViewHandler.Color);
+			alphaView.ClickProcessing(colorSpectrum.Red, 
+			                          colorSpectrum.Green,
+			                          colorSpectrum.Blue);
 		}
 		
 		public void BrightnessClicked (int y)
@@ -61,6 +64,9 @@ namespace ColorPicker
 			                                colorSpectrum.Green,
 			                                colorSpectrum.Blue);
 			colorCodeHandler.SetupCode (colorViewHandler.Color);
+			alphaView.ClickProcessing(colorSpectrum.Red, 
+			                          colorSpectrum.Green,
+			                          colorSpectrum.Blue);
 		}
 		
 		public void SaturationClicked()
@@ -73,6 +79,9 @@ namespace ColorPicker
 			                                colorSaturation.Green,
 			                                colorSaturation.Blue);
 			colorCodeHandler.SetupCode (colorViewHandler.Color);
+			alphaView.ClickProcessing(colorSaturation.Red, 
+			                          colorSaturation.Green,
+			                          colorSaturation.Blue);
 		}
 		
 		public void SquareClicked()
@@ -89,6 +98,9 @@ namespace ColorPicker
 			                                colorSquare.Green,
 			                                colorSquare.Blue);
 			colorCodeHandler.SetupCode (colorViewHandler.Color);
+			alphaView.ClickProcessing(colorSquare.Red, 
+			                          colorSquare.Green,
+			                          colorSquare.Blue);
 		}
 		
 		public static ClickEventHandler Inst {

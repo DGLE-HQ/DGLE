@@ -12,6 +12,7 @@ namespace ColorPicker
 	[System.ComponentModel.ToolboxItem(true)]
 	public class ColorSquare : Gtk.DrawingArea
 	{
+		private static ColorSquare inst;
 		private static readonly int WIDTH = 128, HEIGHT = 128;
 		private Window window;
 		private Gdk.GC gc;
@@ -27,6 +28,7 @@ namespace ColorPicker
 			area = new Pixbuf (Gdk.Colorspace.Rgb, false, 8, WIDTH, HEIGHT);
 			panelImage = new Image (ImageType.Normal, Visual, WIDTH, HEIGHT);
 			this.Events = Gdk.EventMask.ButtonPressMask;
+			inst = this;
 		}
 		
 		public void ClickProcessing (int arcX, int arcY)
@@ -149,6 +151,12 @@ namespace ColorPicker
 		public int ArcY {
 			get {
 				return arcY;
+			}
+		}
+
+		public static ColorSquare Inst {
+			get {
+				return inst;
 			}
 		}
 	}

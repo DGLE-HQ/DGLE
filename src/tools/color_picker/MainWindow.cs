@@ -31,10 +31,7 @@ public partial class MainWindow :
 		colorScalesHandler = new ColorScales(redScale, greenScale, 
 		                                     blueScale,
 		                                     alphaScale);
-		clickEventHandler = new ClickEventHandler(colorSpectrum, colorBrightness, 
-		                                          colorSaturation, colorSquare, 
-		                                          colorViewHandler, colorCodeHandler, 
-		                                          colorScalesHandler);
+		clickEventHandler = new ClickEventHandler();
 
 		base.Decorated = false;
 		base.Resizable = false;
@@ -64,6 +61,9 @@ public partial class MainWindow :
 			                                 colorSpectrum.NativeBlue);
 			colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
 			                            colorBrightness.SpectrX);
+			alphaView.ClickProcessing(colorViewHandler.Red, 
+			                          colorViewHandler.Green,
+			                          colorViewHandler.Blue);
 		} else {
 			colorCodeHandler.IsItEventOrigin = true;
 		}
@@ -100,6 +100,12 @@ public partial class MainWindow :
 		}
 	}
 
+	protected void OnAlphaScaleValueChanged (object sender, EventArgs e)
+	{
+		alphaView.ClickProcessing((ushort)alphaScale.Value);
+		alphaView.QueueDraw();
+	}
+
 	protected void OnCloseActionActivated (object sender, EventArgs e)
 	{
 		Gtk.Application.Quit ();
@@ -123,6 +129,9 @@ public partial class MainWindow :
 		                                 colorSpectrum.NativeBlue);
 		colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
 		                            colorBrightness.SpectrX);
+		alphaView.ClickProcessing(colorViewHandler.Red, 
+		                          colorViewHandler.Green,
+		                          colorViewHandler.Blue);
 	}
 	
 	/*protected void OnAlphaScaleValueChanged (object sender, EventArgs e)

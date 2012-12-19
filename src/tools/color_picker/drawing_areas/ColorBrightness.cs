@@ -12,6 +12,7 @@ namespace ColorPicker
 	[System.ComponentModel.ToolboxItem(true)]
 	public class ColorBrightness : Gtk.DrawingArea
 	{
+		private static ColorBrightness inst;
 		private static readonly int WIDTH = 14, HEIGHT = 128;
 		private Pixbuf copy;
 		private bool firstDraw = true;
@@ -23,6 +24,7 @@ namespace ColorPicker
 		{
 			copy = new Pixbuf (Colorspace.Rgb, false, 8, 1, HEIGHT);
 			this.Events = Gdk.EventMask.ButtonPressMask;
+			inst = this;
 		}
 		
 		public void ClickProcessing (int x, int y)
@@ -103,6 +105,12 @@ namespace ColorPicker
 		public int Y {
 			get {
 				return arcY;
+			}
+		}
+
+		public static ColorBrightness Inst {
+			get {
+				return inst;
 			}
 		}
 	}

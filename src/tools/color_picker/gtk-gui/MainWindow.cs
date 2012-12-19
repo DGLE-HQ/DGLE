@@ -26,6 +26,7 @@ public partial class MainWindow
 	private global::ColorPicker.ColorBrightness colorBrightness;
 	private global::ColorPicker.ColorSquare colorSquare;
 	private global::Gtk.MenuBar menubar1;
+	private global::ColorPicker.AlphaView alphaView;
 	
 	protected virtual void Build ()
 	{
@@ -223,14 +224,23 @@ public partial class MainWindow
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='CloseAction' action='CloseAction'/></menu><menu name='Action' action='Action'/><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
-		this.menubar1.WidthRequest = 500;
+		this.menubar1.WidthRequest = 478;
 		this.menubar1.Name = "menubar1";
 		this.fixed1.Add (this.menubar1);
+		// Container child fixed1.Gtk.Fixed+FixedChild
+		this.alphaView = new global::ColorPicker.AlphaView ();
+		this.alphaView.WidthRequest = 60;
+		this.alphaView.HeightRequest = 60;
+		this.alphaView.Name = "alphaView";
+		this.fixed1.Add (this.alphaView);
+		global::Gtk.Fixed.FixedChild w18 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.alphaView]));
+		w18.X = 210;
+		w18.Y = 205;
 		this.Add (this.fixed1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 512;
+		this.DefaultWidth = 493;
 		this.DefaultHeight = 416;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
@@ -239,6 +249,7 @@ public partial class MainWindow
 		this.redScale.ValueChanged += new global::System.EventHandler (this.OnRedScaleValueChanged);
 		this.greenScale.ValueChanged += new global::System.EventHandler (this.OnGreenScaleValueChanged);
 		this.blueScale.ValueChanged += new global::System.EventHandler (this.OnBlueScaleValueChanged);
+		this.alphaScale.ValueChanged += new global::System.EventHandler (this.OnAlphaScaleValueChanged);
 		this.colorCode.Changed += new global::System.EventHandler (this.OnColorCodeChanged);
 	}
 }

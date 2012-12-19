@@ -11,6 +11,7 @@ namespace ColorPicker
 {
 	public class ColorScales
 	{
+		private static ColorScales inst;
 		private HScale redScale, greenScale, blueScale, alphaScale;
 		private bool isRedEventOrigin = true, isGreenEventOrigin = true, 
 		isBlueEventOrigin = true;
@@ -22,6 +23,7 @@ namespace ColorPicker
 			this.greenScale = greenScale;
 			this.blueScale = blueScale;
 			this.alphaScale = alphaScale;
+			inst = this;
 		}
 		
 		public void SetupScales (double red, double green, double blue)
@@ -84,6 +86,12 @@ namespace ColorPicker
 			}
 			set {
 				isBlueEventOrigin = value;
+			}
+		}
+
+		public static ColorScales Inst {
+			get {
+				return inst;
 			}
 		}
 	}

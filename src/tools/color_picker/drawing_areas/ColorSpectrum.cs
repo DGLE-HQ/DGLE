@@ -12,6 +12,7 @@ namespace ColorPicker
 	[System.ComponentModel.ToolboxItem(true)]
 	public class ColorSpectrum : Gtk.DrawingArea
 	{
+		private static ColorSpectrum inst;
 		private static readonly int WIDTH = 256, HEIGHT = 128, 
 		HALF_HEIGHT = HEIGHT / 2;
 		private byte[,] redBuf, greenBuf, blueBuf;
@@ -26,6 +27,7 @@ namespace ColorPicker
 		{
 			createPointsArrays();
 			this.Events = Gdk.EventMask.ButtonPressMask;
+			inst = this;
 		}
 		
 		public void ClickProcessing (ushort red, ushort green, ushort blue)
@@ -264,6 +266,12 @@ namespace ColorPicker
 		public int ArcX {
 			get {
 				return arcX;
+			}
+		}
+
+		public static ColorSpectrum Inst {
+			get {
+				return inst;
 			}
 		}
 	}

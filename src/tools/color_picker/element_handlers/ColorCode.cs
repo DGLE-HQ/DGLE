@@ -11,12 +11,14 @@ namespace ColorPicker
 {
 	public class ColorCode
 	{
+		private static ColorCode inst;
 		private Entry colorCode;
 		private bool isItEventOrigin = true;
 		
 		public ColorCode (Entry colorCodeEntry)
 		{
 			this.colorCode = colorCodeEntry;
+			inst = this;
 		}
 		
 		public bool IsItEventOrigin {
@@ -32,6 +34,12 @@ namespace ColorPicker
 		{
 			isItEventOrigin = false;
 			colorCode.Text = code;
+		}
+
+		public static ColorCode Inst {
+			get {
+				return inst;
+			}
 		}
 	}
 }
