@@ -59,6 +59,7 @@ namespace ColorPicker
 				gc = new Gdk.GC(window);
 				pixbuf = new Pixbuf(Gdk.Colorspace.Rgb, true, 8, WIDTH, HEIGHT);
 				pixbuf.Fill(0xffffffff);
+				drawView();
 
 				firstDraw = false;
 			}

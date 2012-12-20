@@ -14,7 +14,7 @@ namespace ColorPicker
 		private static ColorScales inst;
 		private HScale redScale, greenScale, blueScale, alphaScale;
 		private bool isRedEventOrigin = true, isGreenEventOrigin = true, 
-		isBlueEventOrigin = true;
+		isBlueEventOrigin = true, isAlphaEventOrigin = true;
 		
 		public ColorScales (HScale redScale, HScale greenScale, 
 		                    HScale blueScale, HScale alphaScale)
@@ -25,7 +25,7 @@ namespace ColorPicker
 			this.alphaScale = alphaScale;
 			inst = this;
 		}
-		
+
 		public void SetupScales (double red, double green, double blue)
 		{
 			if (redScale.Value != red) {
@@ -43,23 +43,13 @@ namespace ColorPicker
 				blueScale.Value = blue;
 			}
 		}
-		
-		public void SetupRedScale (double red)
+
+		public void SetupAlphaScale(double alpha)
 		{
-			isRedEventOrigin = false;
-			redScale.Value = red;
-		}
-		
-		public void SetupGreenScale (double green)
-		{
-			isGreenEventOrigin = false;
-			greenScale.Value = green;
-		}
-		
-		public void SetupBlueScale (double blue)
-		{
-			isBlueEventOrigin = false;
-			blueScale.Value = blue;
+			if (alphaScale.Value != alpha) {
+				isAlphaEventOrigin = false;
+				alphaScale.Value = alpha;
+			}
 		}
 		
 		public bool IsRedEventOrigin {
@@ -86,6 +76,21 @@ namespace ColorPicker
 			}
 			set {
 				isBlueEventOrigin = value;
+			}
+		}
+
+		public bool IsAlphaEventOrigin {
+			get {
+				return isAlphaEventOrigin;
+			}
+			set {
+				isAlphaEventOrigin = value;
+			}
+		}
+
+		public double Alpha {
+			get {
+				return alphaScale.Value;
 			}
 		}
 

@@ -56,6 +56,7 @@ namespace ColorPicker
 			if (firstDraw) {
 				window = this.GdkWindow;
 				gc = new Gdk.GC (window);
+				clickProcessing(0, HEIGHT - 1, 0);
 				
 				firstDraw = false;
 			} else {

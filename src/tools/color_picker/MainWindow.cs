@@ -18,6 +18,7 @@ public partial class MainWindow :
 	private static readonly string TITLE = "Color Picker", DEFAULT_COLOR_CODE = "#FFFFFF";
 	private ColorView colorViewHandler;
 	private ColorCode colorCodeHandler;
+	private AColorCode alphaColorCodeHandler;
 	private ColorScales colorScalesHandler;
 	private ClickEventHandler clickEventHandler;
 	
@@ -28,6 +29,7 @@ public partial class MainWindow :
 
 		colorViewHandler = new ColorView(colorView, DEFAULT_COLOR_CODE);
 		colorCodeHandler = new ColorCode(colorCode);
+		alphaColorCodeHandler = new AColorCode(aColorCode);
 		colorScalesHandler = new ColorScales(redScale, greenScale, 
 		                                     blueScale,
 		                                     alphaScale);
@@ -47,6 +49,8 @@ public partial class MainWindow :
 	protected void OnColorCodeChanged (object sender, EventArgs e)
 	{
 		if (colorCodeHandler.IsItEventOrigin) {
+			alphaColorCodeHandler.SetupCode(colorCode.Text, 
+			                                (ushort)alphaScale.Value);
 			colorViewHandler.SetupColor (colorCode.Text);
 			colorScalesHandler.SetupScales (colorViewHandler.Red, 
 			                                colorViewHandler.Green,
@@ -103,6 +107,7 @@ public partial class MainWindow :
 	protected void OnAlphaScaleValueChanged (object sender, EventArgs e)
 	{
 		alphaView.ClickProcessing((ushort)alphaScale.Value);
+		alphaColorCodeHandler.SetupCode(colorCode.Text, (ushort)alphaScale.Value);
 		alphaView.QueueDraw();
 	}
 

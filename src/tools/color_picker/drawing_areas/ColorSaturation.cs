@@ -12,8 +12,9 @@ namespace ColorPicker
 	[System.ComponentModel.ToolboxItem(true)]
 	public class ColorSaturation : Gtk.DrawingArea
 	{
+		public static readonly int WIDTH = 128, HEIGHT = 14;
+
 		private static ColorSaturation inst;
-		private static readonly int WIDTH = 128, HEIGHT = 14;
 		private bool firstDraw = true;
 		private Window window;
 		private Gdk.GC gc;
@@ -34,23 +35,12 @@ namespace ColorPicker
 		
 		public void ClickProcessing (ushort red, ushort green, ushort blue)
 		{
-			arcX = 0;
-			
-			if ((red != this.red) || (green != this.green) || (blue != this.blue)) {
-				redrawPanel (red, green, blue);
-			} else {
-				redrawPanel();
-			}
-			drawClickArc();
-			
-			this.red = red;
-			this.green = green;
-			this.blue = blue;
+			clickProcessing(red, green, blue);
 		}
 		
 		public void ClickProcessing (int x)
 		{
-			clickProcessing(X);
+			clickProcessing(x);
 		}
 		
 		protected override bool OnButtonPressEvent (Gdk.EventButton ev)
@@ -67,6 +57,7 @@ namespace ColorPicker
 			if (firstDraw) {
 				window = this.GdkWindow;
 				gc = new Gdk.GC (window);
+				clickProcessing(255, 0, 0);
 				
 				firstDraw = false;
 			} else {
@@ -86,6 +77,22 @@ namespace ColorPicker
 		{
 			requisition.Height = HEIGHT;
 			requisition.Width = WIDTH;
+		}
+
+		private void clickProcessing(ushort red, ushort green, ushort blue)
+		{
+			arcX = 0;
+			
+			if ((red != this.red) || (green != this.green) || (blue != this.blue)) {
+				redrawPanel (red, green, blue);
+			} else {
+				redrawPanel();
+			}
+			drawClickArc();
+			
+			this.red = red;
+			this.green = green;
+			this.blue = blue;
 		}
 		
 		private void clickProcessing (int x)

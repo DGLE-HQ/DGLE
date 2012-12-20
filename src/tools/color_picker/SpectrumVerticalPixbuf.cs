@@ -16,6 +16,7 @@ namespace ColorPicker
 		static SpectrumVerticalPixbuf ()
 		{
 			pixbuf = new Pixbuf(Gdk.Colorspace.Rgb, false, 8, 256, 128);
+			pixbuf.Fill(0xffffff);
 		}
 		
 		public static Pixbuf Pixbuf {

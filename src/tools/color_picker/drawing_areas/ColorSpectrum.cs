@@ -61,7 +61,6 @@ namespace ColorPicker
 			if (!spectrumDrawn) {
 				drawSpectrum();
 				clickProcessing(0, HEIGHT - 1);
-				ClickEventHandler.Inst.SpectrClicked(0, HEIGHT - 1);
 			} else {
 				redrawSpectrum();
 				drawClickArc();

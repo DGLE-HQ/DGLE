@@ -12,8 +12,9 @@ namespace ColorPicker
 	[System.ComponentModel.ToolboxItem(true)]
 	public class ColorBrightness : Gtk.DrawingArea
 	{
+		public static readonly int WIDTH = 14, HEIGHT = 128;
+
 		private static ColorBrightness inst;
-		private static readonly int WIDTH = 14, HEIGHT = 128;
 		private Pixbuf copy;
 		private bool firstDraw = true;
 		private int spectrX, arcY;
@@ -53,7 +54,8 @@ namespace ColorPicker
 			if (firstDraw) {
 				window = this.GdkWindow;
 				gc = new Gdk.GC (window);
-				
+				clickProcessing(HEIGHT - 1);
+
 				firstDraw = false;
 			} else {
 				redrawPanel();
