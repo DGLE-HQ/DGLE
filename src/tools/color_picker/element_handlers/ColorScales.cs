@@ -28,6 +28,16 @@ namespace ColorPicker
 
 		public void SetupScales (double red, double green, double blue)
 		{
+			setupScales(red, green, blue, -1);
+		}
+
+		public void SetupScales (double red, double green, double blue, double alpha)
+		{
+			setupScales(red, green, blue, alpha);
+		}
+
+		private void setupScales(double red, double green, double blue, double alpha)
+		{
 			if (redScale.Value != red) {
 				isRedEventOrigin = false;
 				redScale.Value = red;
@@ -42,11 +52,7 @@ namespace ColorPicker
 				isBlueEventOrigin = false;
 				blueScale.Value = blue;
 			}
-		}
-
-		public void SetupAlphaScale(double alpha)
-		{
-			if (alphaScale.Value != alpha) {
+			if ((alpha != -1) && (alphaScale.Value != alpha)) {
 				isAlphaEventOrigin = false;
 				alphaScale.Value = alpha;
 			}

@@ -13,6 +13,7 @@ namespace ColorPicker
 	public class AlphaView : Gtk.DrawingArea
 	{
 		private static AlphaView inst;
+		private static readonly ushort NO_ALPHA = 256;
 		private static readonly int WIDTH = 60, HEIGHT = 60;
 		private uint color;
 		private Window window;
@@ -33,15 +34,28 @@ namespace ColorPicker
 
 		public void ClickProcessing(ushort red, ushort green, ushort blue)
 		{
-			this.red = red;
-			this.green = green;
-			this.blue = blue;
-			redrawView();
+			clickProcessing(red, green, blue, NO_ALPHA);
+		}
+
+		public void ClickProcessing(ushort red, ushort green, ushort blue, ushort alpha)
+		{
+			clickProcessing(red, green, blue, alpha);
 		}
 
 		public void ClickProcessing(ushort alpha)
 		{
 			this.alpha = alpha;
+			redrawView();
+		}
+
+		private void clickProcessing(ushort red, ushort green, ushort blue, ushort alpha)
+		{
+			this.red = red;
+			this.green = green;
+			this.blue = blue;
+			if (alpha != NO_ALPHA) {
+				this.alpha = alpha;
+			}
 			redrawView();
 		}
 
@@ -58,7 +72,7 @@ namespace ColorPicker
 				window = this.GdkWindow;
 				gc = new Gdk.GC(window);
 				pixbuf = new Pixbuf(Gdk.Colorspace.Rgb, true, 8, WIDTH, HEIGHT);
-				pixbuf.Fill(0xffffffff);
+				pixbuf.Fill(color);
 				drawView();
 
 				firstDraw = false;

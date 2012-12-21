@@ -265,6 +265,7 @@
             <property name="Text" translatable="yes">#FFFFFFFF</property>
             <property name="IsEditable">True</property>
             <property name="InvisibleChar">●</property>
+            <signal name="Changed" handler="OnAColorCodeChanged" />
           </widget>
           <packing>
             <property name="X">356</property>

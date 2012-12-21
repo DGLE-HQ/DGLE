@@ -72,6 +72,38 @@ public partial class MainWindow :
 			colorCodeHandler.IsItEventOrigin = true;
 		}
 	}
+
+	protected void OnAColorCodeChanged(object sender, EventArgs e)
+	{
+		if (alphaColorCodeHandler.IsItEventOrigin) {
+			alphaColorCodeHandler.ParseValue();
+
+			if(alphaColorCodeHandler.ValueIsCorrect) {
+				colorCodeHandler.SetupCode(alphaColorCodeHandler.Color);
+				colorViewHandler.SetupColor (colorCode.Text);
+				colorScalesHandler.SetupScales (colorViewHandler.Red, 
+				                                colorViewHandler.Green,
+				                                colorViewHandler.Blue,
+				                                alphaColorCodeHandler.Alpha);
+				colorSpectrum.ClickProcessing (colorViewHandler.Red, 
+				                               colorViewHandler.Green,
+				                               colorViewHandler.Blue);
+				colorBrightness.ClickProcessing (colorSpectrum.ArcX, 
+				                                 colorSpectrum.ArcY);
+				colorSaturation.ClickProcessing (colorSpectrum.NativeRed, 
+				                                 colorSpectrum.NativeGreen, 
+				                                 colorSpectrum.NativeBlue);
+				colorSquare.ClickProcessing(colorSaturation.X, colorBrightness.Y, 
+				                            colorBrightness.SpectrX);
+				alphaView.ClickProcessing(colorViewHandler.Red, 
+				                          colorViewHandler.Green,
+				                          colorViewHandler.Blue,
+				                          alphaColorCodeHandler.Alpha);
+			}
+		} else {
+			alphaColorCodeHandler.IsItEventOrigin = true;
+		}
+	}
 	
 	protected void OnRedScaleValueChanged (object sender, EventArgs e)
 	{
@@ -104,11 +136,15 @@ public partial class MainWindow :
 		}
 	}
 
-	protected void OnAlphaScaleValueChanged (object sender, EventArgs e)
+	protected void OnAlphaScaleValueChanged(object sender, EventArgs e)
 	{
-		alphaView.ClickProcessing((ushort)alphaScale.Value);
-		alphaColorCodeHandler.SetupCode(colorCode.Text, (ushort)alphaScale.Value);
-		alphaView.QueueDraw();
+		if (colorScalesHandler.IsAlphaEventOrigin) {
+			alphaView.ClickProcessing((ushort)alphaScale.Value);
+			alphaColorCodeHandler.SetupCode(colorCode.Text, (ushort)alphaScale.Value);
+			alphaView.QueueDraw();
+		} else {
+			colorScalesHandler.IsAlphaEventOrigin = true;
+		}
 	}
 
 	protected void OnCloseActionActivated (object sender, EventArgs e)
@@ -124,6 +160,8 @@ public partial class MainWindow :
 	private void updateOnScaleChange()
 	{
 		colorCodeHandler.SetupCode(colorViewHandler.Color);
+		alphaColorCodeHandler.SetupCode(colorViewHandler.Color, 
+		                                (ushort)alphaScale.Value);
 		colorSpectrum.ClickProcessing (colorViewHandler.Red, 
 		                               colorViewHandler.Green,
 		                               colorViewHandler.Blue);

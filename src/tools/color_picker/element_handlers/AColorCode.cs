@@ -13,12 +13,47 @@ namespace ColorPicker
 	{
 		private static AColorCode inst;
 		private Entry aColorCode;
-		private bool isItEventOrigin = true;
+		private bool isItEventOrigin = true, valueIsCorrect = true;
+		private string color;
+		private ushort alpha;
 
 		public AColorCode(Entry aColorCode)
 		{
 			this.aColorCode = aColorCode;
 			inst = this;
+		}
+
+		public void SetupCode(string code, ushort alpha)
+		{
+			isItEventOrigin = false;
+			string alphaChannel = alpha.ToString("X2");
+			aColorCode.Text = code + alphaChannel;
+		}
+
+		public void ParseValue()
+		{
+			if ((aColorCode.Text.Length == 9) && (aColorCode.Text.Substring(0,1) == "#")) {
+				valueIsCorrect = true;
+				string alphaCode = aColorCode.Text.Substring(7, 2);
+
+				try {
+					int alphaInt = 
+						Int32.Parse(alphaCode, System.Globalization.NumberStyles.HexNumber);
+					alpha = (ushort)alphaInt;
+				} catch (Exception) {
+					valueIsCorrect = false;
+				}
+
+				color = aColorCode.Text.Substring(1, 6);
+			} else {
+				valueIsCorrect = false;
+			}			 
+		}
+
+		public static AColorCode Inst {
+			get {
+				return inst;
+			}
 		}
 
 		public bool IsItEventOrigin {
@@ -30,16 +65,21 @@ namespace ColorPicker
 			}
 		}
 
-		public void SetupCode(string code, ushort alpha)
-		{
-			isItEventOrigin = false;
-			string alphaChannel = alpha.ToString("X2");
-			aColorCode.Text = code + alphaChannel;
+		public bool ValueIsCorrect {
+			get {
+				return valueIsCorrect;
+			}
 		}
 
-		public static AColorCode Inst {
+		public ushort Alpha {
 			get {
-				return inst;
+				return alpha;
+			}
+		}
+
+		public string Color {
+			get {
+				return "#" + color;
 			}
 		}
 	}

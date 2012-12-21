@@ -256,5 +256,6 @@ public partial class MainWindow
 		this.blueScale.ValueChanged += new global::System.EventHandler (this.OnBlueScaleValueChanged);
 		this.alphaScale.ValueChanged += new global::System.EventHandler (this.OnAlphaScaleValueChanged);
 		this.colorCode.Changed += new global::System.EventHandler (this.OnColorCodeChanged);
+		this.aColorCode.Changed += new global::System.EventHandler (this.OnAColorCodeChanged);
 	}
 }
