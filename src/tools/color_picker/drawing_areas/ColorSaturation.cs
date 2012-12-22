@@ -15,7 +15,7 @@ namespace ColorPicker
 		public static readonly int WIDTH = 128, HEIGHT = 14;
 
 		private static ColorSaturation inst;
-		private bool firstDraw = true;
+		private bool firstDraw = true, buttonPressed = false;
 		private Window window;
 		private Gdk.GC gc;
 		private ushort red, green, blue;
@@ -29,7 +29,11 @@ namespace ColorPicker
 			column = new Pixbuf(Gdk.Colorspace.Rgb, false, 8, 1, HEIGHT);
 			copy = new Pixbuf(Gdk.Colorspace.Rgb, false, 8, 1, HEIGHT);
 			panelImage = new Image(ImageType.Normal, Visual, WIDTH, HEIGHT);
-			this.Events = Gdk.EventMask.ButtonPressMask;
+
+			this.Events = Gdk.EventMask.ButtonPressMask | 
+				Gdk.EventMask.PointerMotionMask | 
+					Gdk.EventMask.ButtonReleaseMask;
+
 			inst = this;
 		}
 		
@@ -42,12 +46,32 @@ namespace ColorPicker
 		{
 			clickProcessing(x);
 		}
-		
-		protected override bool OnButtonPressEvent (Gdk.EventButton ev)
+
+		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
-			clickProcessing((int)ev.X);
-			ClickEventHandler.Inst.SaturationClicked();
-			return base.OnButtonPressEvent (ev);
+			buttonPressed = true;
+			
+			motionClickProcessing((int)evnt.X);
+			
+			return base.OnButtonPressEvent (evnt);
+		}
+		
+		protected override bool OnButtonReleaseEvent(EventButton evnt)
+		{
+			buttonPressed = false;
+			
+			motionClickProcessing((int)evnt.X);
+			
+			return base.OnButtonReleaseEvent(evnt);
+		}
+		
+		protected override bool OnMotionNotifyEvent(EventMotion evnt)
+		{
+			if (buttonPressed) {
+				motionClickProcessing((int)evnt.X);
+			}
+			
+			return base.OnMotionNotifyEvent(evnt);
 		}
 		
 		protected override bool OnExposeEvent (Gdk.EventExpose ev)
@@ -77,6 +101,14 @@ namespace ColorPicker
 		{
 			requisition.Height = HEIGHT;
 			requisition.Width = WIDTH;
+		}
+
+		private void motionClickProcessing(int x)
+		{
+			if ((x >= 0) && (x < WIDTH)) {
+				clickProcessing(x);
+				ClickEventHandler.Inst.SaturationClicked();
+			}
 		}
 
 		private void clickProcessing(ushort red, ushort green, ushort blue)

@@ -16,7 +16,7 @@ namespace ColorPicker
 		private static readonly int WIDTH = 128, HEIGHT = 128;
 		private Window window;
 		private Gdk.GC gc;
-		private bool firstDraw = true;
+		private bool firstDraw = true, buttonPressed = false;
 		private int arcX, arcY;
 		private Pixbuf originColumn, copy, area;
 		private Image panelImage;
@@ -27,7 +27,11 @@ namespace ColorPicker
 			copy = new Pixbuf (Gdk.Colorspace.Rgb, false, 8, 1, HEIGHT);
 			area = new Pixbuf (Gdk.Colorspace.Rgb, false, 8, WIDTH, HEIGHT);
 			panelImage = new Image (ImageType.Normal, Visual, WIDTH, HEIGHT);
-			this.Events = Gdk.EventMask.ButtonPressMask;
+
+			this.Events = Gdk.EventMask.ButtonPressMask | 
+				Gdk.EventMask.PointerMotionMask | 
+					Gdk.EventMask.ButtonReleaseMask;
+
 			inst = this;
 		}
 		
@@ -40,13 +44,32 @@ namespace ColorPicker
 		{
 			clickProcessing(arcX, arcY, spectrX);
 		}
-		
-		protected override bool OnButtonPressEvent (Gdk.EventButton ev)
+
+		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
-			int x = (int)ev.X, y = (int)ev.Y;
-			clickProcessing(x, y);
-			ClickEventHandler.Inst.SquareClicked();
-			return base.OnButtonPressEvent (ev);
+			buttonPressed = true;
+			
+			motionClickProcessing((int)evnt.X, (int)evnt.Y);
+			
+			return base.OnButtonPressEvent (evnt);
+		}
+		
+		protected override bool OnButtonReleaseEvent(EventButton evnt)
+		{
+			buttonPressed = false;
+			
+			motionClickProcessing((int)evnt.X, (int)evnt.Y);
+			
+			return base.OnButtonReleaseEvent(evnt);
+		}
+		
+		protected override bool OnMotionNotifyEvent(EventMotion evnt)
+		{
+			if (buttonPressed) {
+				motionClickProcessing((int)evnt.X, (int)evnt.Y);
+			}
+			
+			return base.OnMotionNotifyEvent(evnt);
 		}
 		
 		protected override bool OnExposeEvent (Gdk.EventExpose ev)
@@ -76,6 +99,14 @@ namespace ColorPicker
 		{
 			requisition.Height = 50;
 			requisition.Width = 50;
+		}
+
+		private void motionClickProcessing(int x, int y)
+		{
+			if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT)) {
+				clickProcessing(x, y);
+				ClickEventHandler.Inst.SquareClicked();
+			}
 		}
 		
 		private void clickProcessing (int arcX, int arcY)

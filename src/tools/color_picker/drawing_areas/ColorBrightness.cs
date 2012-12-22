@@ -16,7 +16,7 @@ namespace ColorPicker
 
 		private static ColorBrightness inst;
 		private Pixbuf copy;
-		private bool firstDraw = true;
+		private bool firstDraw = true, buttonPressed = false;
 		private int spectrX, arcY;
 		private Window window;
 		private Gdk.GC gc;
@@ -24,7 +24,11 @@ namespace ColorPicker
 		public ColorBrightness ()
 		{
 			copy = new Pixbuf (Colorspace.Rgb, false, 8, 1, HEIGHT);
-			this.Events = Gdk.EventMask.ButtonPressMask;
+
+			this.Events = Gdk.EventMask.ButtonPressMask | 
+				Gdk.EventMask.PointerMotionMask | 
+					Gdk.EventMask.ButtonReleaseMask;
+
 			inst = this;
 		}
 		
@@ -38,13 +42,32 @@ namespace ColorPicker
 		{
 			clickProcessing(y);
 		}
-		
-		protected override bool OnButtonPressEvent (Gdk.EventButton ev)
+
+		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
-			int y = (int)ev.Y;
-			clickProcessing(y);
-			ClickEventHandler.Inst.BrightnessClicked(y);
-			return base.OnButtonPressEvent (ev);
+			buttonPressed = true;
+			
+			motionClickProcessing((int)evnt.Y);
+			
+			return base.OnButtonPressEvent (evnt);
+		}
+		
+		protected override bool OnButtonReleaseEvent(EventButton evnt)
+		{
+			buttonPressed = false;
+			
+			motionClickProcessing((int)evnt.Y);
+			
+			return base.OnButtonReleaseEvent(evnt);
+		}
+		
+		protected override bool OnMotionNotifyEvent(EventMotion evnt)
+		{
+			if (buttonPressed) {
+				motionClickProcessing((int)evnt.Y);
+			}
+			
+			return base.OnMotionNotifyEvent(evnt);
 		}
 		
 		protected override bool OnExposeEvent (Gdk.EventExpose ev)
@@ -74,6 +97,14 @@ namespace ColorPicker
 		{
 			requisition.Height = HEIGHT;
 			requisition.Width = WIDTH;
+		}
+
+		private void motionClickProcessing(int y)
+		{
+			if ((y >= 0) && (y < HEIGHT)) {
+				clickProcessing(y);
+				ClickEventHandler.Inst.BrightnessClicked(y);
+			}
 		}
 		
 		private void clickProcessing (int y)

@@ -18,7 +18,7 @@ namespace ColorPicker
 		private byte[,] redBuf, greenBuf, blueBuf;
 		private ushort red, green, blue, 
 		nativeRed, nativeGreen, nativeBlue;
-		private bool spectrumDrawn = false;
+		private bool spectrumDrawn = false, buttonPressed = false;
 		private Window window;
 		private Gdk.GC gc;
 		private int arcX, arcY, aimX, aimY;
@@ -26,7 +26,9 @@ namespace ColorPicker
 		public ColorSpectrum ()
 		{
 			createPointsArrays();
-			this.Events = Gdk.EventMask.ButtonPressMask;
+			this.Events = Gdk.EventMask.ButtonPressMask | 
+				Gdk.EventMask.PointerMotionMask | 
+					Gdk.EventMask.ButtonReleaseMask;
 			inst = this;
 		}
 		
@@ -46,12 +48,31 @@ namespace ColorPicker
 			clickProcessing(arcX, y);
 		}
 		
-		protected override bool OnButtonPressEvent (Gdk.EventButton ev)
+		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
-			int x = (int)ev.X, y = (int)ev.Y;
-			clickProcessing(x, y);
-			ClickEventHandler.Inst.SpectrClicked(x, y);
-			return base.OnButtonPressEvent (ev);
+			buttonPressed = true;
+
+			motionClickProcessing((int)evnt.X, (int)evnt.Y);
+
+			return base.OnButtonPressEvent (evnt);
+		}
+
+		protected override bool OnButtonReleaseEvent(EventButton evnt)
+		{
+			buttonPressed = false;
+
+			motionClickProcessing((int)evnt.X, (int)evnt.Y);
+
+			return base.OnButtonReleaseEvent(evnt);
+		}
+
+		protected override bool OnMotionNotifyEvent(EventMotion evnt)
+		{
+			if (buttonPressed) {
+				motionClickProcessing((int)evnt.X, (int)evnt.Y);
+			}
+
+			return base.OnMotionNotifyEvent(evnt);
 		}
 		
 		protected override bool OnExposeEvent (Gdk.EventExpose ev)
@@ -78,6 +99,14 @@ namespace ColorPicker
 		{
 			requisition.Width = WIDTH;
 			requisition.Height = HEIGHT;
+		}
+
+		private void motionClickProcessing(int x, int y)
+		{
+			if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT)) {
+				clickProcessing(x, y);
+				ClickEventHandler.Inst.SpectrClicked(x, y);
+			}
 		}
 		
 		private void clickProcessing (int x, int y)
