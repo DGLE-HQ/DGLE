@@ -249,6 +249,7 @@
             <property name="CanFocus">True</property>
             <property name="Text" translatable="yes">#FFFFFF</property>
             <property name="IsEditable">True</property>
+            <property name="MaxLength">7</property>
             <property name="InvisibleChar">●</property>
             <signal name="Changed" handler="OnColorCodeChanged" />
           </widget>
@@ -264,6 +265,7 @@
             <property name="CanFocus">True</property>
             <property name="Text" translatable="yes">#FFFFFFFF</property>
             <property name="IsEditable">True</property>
+            <property name="MaxLength">9</property>
             <property name="InvisibleChar">●</property>
             <signal name="Changed" handler="OnAColorCodeChanged" />
           </widget>

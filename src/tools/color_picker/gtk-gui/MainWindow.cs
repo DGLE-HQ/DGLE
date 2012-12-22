@@ -224,6 +224,7 @@ public partial class MainWindow
 		this.colorCode.Name = "colorCode";
 		this.colorCode.Text = global::Mono.Unix.Catalog.GetString ("#FFFFFF");
 		this.colorCode.IsEditable = true;
+		this.colorCode.MaxLength = 7;
 		this.colorCode.InvisibleChar = '●';
 		this.fixed1.Add (this.colorCode);
 		global::Gtk.Fixed.FixedChild w17 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.colorCode]));
@@ -236,6 +237,7 @@ public partial class MainWindow
 		this.aColorCode.Name = "aColorCode";
 		this.aColorCode.Text = global::Mono.Unix.Catalog.GetString ("#FFFFFFFF");
 		this.aColorCode.IsEditable = true;
+		this.aColorCode.MaxLength = 9;
 		this.aColorCode.InvisibleChar = '●';
 		this.fixed1.Add (this.aColorCode);
 		global::Gtk.Fixed.FixedChild w18 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.aColorCode]));

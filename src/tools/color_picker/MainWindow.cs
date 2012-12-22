@@ -176,9 +176,4 @@ public partial class MainWindow :
 		                          colorViewHandler.Green,
 		                          colorViewHandler.Blue);
 	}
-	
-	/*protected void OnAlphaScaleValueChanged (object sender, EventArgs e)
-	{
-		colorViewHandler.Alpha = (ushort)alphaScale.Value;
-	}*/
 }
