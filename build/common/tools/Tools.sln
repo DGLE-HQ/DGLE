@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontTool", "..\..\..\src\to
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCPPacker", "..\..\..\src\tools\dcp_packer\DCPPacker.csproj", "{874F5AD4-9567-4745-B064-2ED934CB63C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorPicker", "..\..\..\src\tools\color_picker\ColorPicker.csproj", "{2F4D408F-BE6E-4D1D-AA27-3D7EAC449476}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{21FE4ECC-BA49-433C-92F8-226F376FABE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21FE4ECC-BA49-433C-92F8-226F376FABE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21FE4ECC-BA49-433C-92F8-226F376FABE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F4D408F-BE6E-4D1D-AA27-3D7EAC449476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F4D408F-BE6E-4D1D-AA27-3D7EAC449476}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F4D408F-BE6E-4D1D-AA27-3D7EAC449476}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F4D408F-BE6E-4D1D-AA27-3D7EAC449476}.Release|Any CPU.Build.0 = Release|Any CPU
 		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35391DDE-4EEB-4113-8E9E-435723E0996A}.Release|Any CPU.ActiveCfg = Release|Any CPU
