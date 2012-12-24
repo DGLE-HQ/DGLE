@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		20.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		20.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -32,53 +32,68 @@ namespace ColorPicker
 
 		public void ParseValue()
 		{
-			if ((aColorCode.Text.Length == 9) && (aColorCode.Text.Substring(0,1) == "#")) {
+			if ((aColorCode.Text.Length == 9) && (aColorCode.Text.Substring(0,1) == "#")) 
+			{
 				valueIsCorrect = true;
 				string alphaCode = aColorCode.Text.Substring(7, 2);
 
-				try {
+				try 
+				{
 					int alphaInt = 
 						Int32.Parse(alphaCode, System.Globalization.NumberStyles.HexNumber);
 					alpha = (ushort)alphaInt;
-				} catch (Exception) {
+				} 
+				catch (Exception) 
+				{
 					valueIsCorrect = false;
 				}
 
 				color = aColorCode.Text.Substring(1, 6);
-			} else {
-				valueIsCorrect = false;
-			}			 
+			} 
+			else 
+				valueIsCorrect = false;		 
 		}
 
-		public static AColorCode Inst {
-			get {
+		public static AColorCode Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}
 
-		public bool IsItEventOrigin {
-			get {
+		public bool IsItEventOrigin 
+		{
+			get 
+			{
 				return isItEventOrigin;
 			}
-			set {
+			set 
+			{
 				isItEventOrigin = value;
 			}
 		}
 
-		public bool ValueIsCorrect {
-			get {
+		public bool ValueIsCorrect 
+		{
+			get 
+			{
 				return valueIsCorrect;
 			}
 		}
 
-		public ushort Alpha {
-			get {
+		public ushort Alpha 
+		{
+			get 
+			{
 				return alpha;
 			}
 		}
 
-		public string Color {
-			get {
+		public string Color 
+		{
+			get 
+			{
 				return "#" + color;
 			}
 		}

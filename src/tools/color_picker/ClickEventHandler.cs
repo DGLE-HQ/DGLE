@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -115,8 +115,10 @@ namespace ColorPicker
 			                          colorSquare.Blue);
 		}
 		
-		public static ClickEventHandler Inst {
-			get {
+		public static ClickEventHandler Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -38,70 +38,90 @@ namespace ColorPicker
 
 		private void setupScales(double red, double green, double blue, double alpha)
 		{
-			if (redScale.Value != red) {
+			if (redScale.Value != red) 
+			{
 				isRedEventOrigin = false;
 				redScale.Value = red;
 			}
 			
-			if (greenScale.Value != green) {
+			if (greenScale.Value != green) 
+			{
 				isGreenEventOrigin = false;
 				greenScale.Value = green;
 			}
 			
-			if (blueScale.Value != blue) {
+			if (blueScale.Value != blue) 
+			{
 				isBlueEventOrigin = false;
 				blueScale.Value = blue;
 			}
-			if ((alpha != -1) && (alphaScale.Value != alpha)) {
+			if ((alpha != -1) && (alphaScale.Value != alpha)) 
+			{
 				isAlphaEventOrigin = false;
 				alphaScale.Value = alpha;
 			}
 		}
 		
-		public bool IsRedEventOrigin {
-			get {
+		public bool IsRedEventOrigin 
+		{
+			get 
+			{
 				return isRedEventOrigin;
 			}
-			set {
+			set 
+			{
 				isRedEventOrigin = value;
 			}
 		}
 		
-		public bool IsGreenEventOrigin {
-			get {
+		public bool IsGreenEventOrigin 
+		{
+			get 
+			{
 				return isGreenEventOrigin;
 			}
-			set {
+			set 
+			{
 				isGreenEventOrigin = value;
 			}
 		}
 		
-		public bool IsBlueEventOrigin {
-			get {
+		public bool IsBlueEventOrigin 
+		{
+			get 
+			{
 				return isBlueEventOrigin;
 			}
-			set {
+			set 
+			{
 				isBlueEventOrigin = value;
 			}
 		}
 
-		public bool IsAlphaEventOrigin {
-			get {
+		public bool IsAlphaEventOrigin 
+		{
+			get 
+			{
 				return isAlphaEventOrigin;
 			}
-			set {
+			set 
+			{
 				isAlphaEventOrigin = value;
 			}
 		}
 
-		public double Alpha {
-			get {
+		public double Alpha 
+		{
+			get 
+			{
 				return alphaScale.Value;
 			}
 		}
 
-		public static ColorScales Inst {
-			get {
+		public static ColorScales Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

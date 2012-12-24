@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -65,9 +65,8 @@ namespace ColorPicker
 		
 		protected override bool OnMotionNotifyEvent(EventMotion evnt)
 		{
-			if (buttonPressed) {
+			if (buttonPressed)
 				motionClickProcessing((int)evnt.X, (int)evnt.Y);
-			}
 			
 			return base.OnMotionNotifyEvent(evnt);
 		}
@@ -76,13 +75,16 @@ namespace ColorPicker
 		{
 			base.OnExposeEvent (ev);
 			
-			if (firstDraw) {
+			if (firstDraw) 
+			{
 				window = this.GdkWindow;
 				gc = new Gdk.GC (window);
 				clickProcessing(0, HEIGHT - 1, 0);
 				
 				firstDraw = false;
-			} else {
+			} 
+			else 
+			{
 				redrawPanel();
 				drawClickArc();
 			}
@@ -103,7 +105,8 @@ namespace ColorPicker
 
 		private void motionClickProcessing(int x, int y)
 		{
-			if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT)) {
+			if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT)) 
+			{
 				clickProcessing(x, y);
 				ClickEventHandler.Inst.SquareClicked();
 			}
@@ -132,7 +135,8 @@ namespace ColorPicker
 			
 			float allSatr = 1.0f, saturV = allSatr / WIDTH;
 			
-			for (int i = 0; i < WIDTH; i++) {
+			for (int i = 0; i < WIDTH; i++) 
+			{
 				originColumn.SaturateAndPixelate(copy, allSatr, false);
 				copy.CopyArea (0, 0, 1, HEIGHT, area, i, 0);
 				allSatr -= saturV;
@@ -156,38 +160,50 @@ namespace ColorPicker
 			window.DrawArc(gc, false, arcX - 4, arcY - 4, 8, 8, 0, 360 * 64);
 		}
 		
-		public ushort Red {
-			get {
+		public ushort Red 
+		{
+			get 
+			{
 				return (ushort)((panelImage.GetPixel(arcX, arcY) & 0xff0000) >> 16);
 			}
 		}
 		
-		public ushort Green {
-			get {
+		public ushort Green 
+		{
+			get 
+			{
 				return (ushort)((panelImage.GetPixel(arcX, arcY) & 0xff00) >> 8);
 			}
 		}
 		
-		public ushort Blue {
-			get {
+		public ushort Blue 
+		{
+			get 
+			{
 				return (ushort)(panelImage.GetPixel(arcX, arcY) & 0xff);
 			}
 		}
 		
-		public int ArcX {
-			get {
+		public int ArcX 
+		{
+			get 
+			{
 				return arcX;
 			}
 		}
 		
-		public int ArcY {
-			get {
+		public int ArcY 
+		{
+			get 
+			{
 				return arcY;
 			}
 		}
 
-		public static ColorSquare Inst {
-			get {
+		public static ColorSquare Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

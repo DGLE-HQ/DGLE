@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -63,9 +63,8 @@ namespace ColorPicker
 		
 		protected override bool OnMotionNotifyEvent(EventMotion evnt)
 		{
-			if (buttonPressed) {
+			if (buttonPressed) 
 				motionClickProcessing((int)evnt.Y);
-			}
 			
 			return base.OnMotionNotifyEvent(evnt);
 		}
@@ -74,13 +73,16 @@ namespace ColorPicker
 		{
 			base.OnExposeEvent (ev);
 			
-			if (firstDraw) {
+			if (firstDraw) 
+			{
 				window = this.GdkWindow;
 				gc = new Gdk.GC (window);
 				clickProcessing(HEIGHT - 1);
 
 				firstDraw = false;
-			} else {
+			} 
+			else 
+			{
 				redrawPanel();
 				drawClickArc();
 			}
@@ -101,7 +103,8 @@ namespace ColorPicker
 
 		private void motionClickProcessing(int y)
 		{
-			if ((y >= 0) && (y < HEIGHT)) {
+			if ((y >= 0) && (y < HEIGHT)) 
+			{
 				clickProcessing(y);
 				ClickEventHandler.Inst.BrightnessClicked(y);
 			}
@@ -129,20 +132,26 @@ namespace ColorPicker
 			window.DrawArc(gc, false, WIDTH / 2 - 4, arcY - 4, 8, 8, 0, 360 * 64);
 		}
 		
-		public int SpectrX {
-			get {
+		public int SpectrX 
+		{
+			get 
+			{
 				return spectrX;
 			}
 		}
 		
-		public int Y {
-			get {
+		public int Y 
+		{
+			get 
+			{
 				return arcY;
 			}
 		}
 
-		public static ColorBrightness Inst {
-			get {
+		public static ColorBrightness Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

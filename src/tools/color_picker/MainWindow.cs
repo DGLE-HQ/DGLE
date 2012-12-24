@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -48,7 +48,8 @@ public partial class MainWindow :
 	
 	protected void OnColorCodeChanged (object sender, EventArgs e)
 	{
-		if (colorCodeHandler.IsItEventOrigin) {
+		if (colorCodeHandler.IsItEventOrigin) 
+		{
 			alphaColorCodeHandler.SetupCode(colorCode.Text, 
 			                                (ushort)alphaScale.Value);
 			colorViewHandler.SetupColor (colorCode.Text);
@@ -68,17 +69,19 @@ public partial class MainWindow :
 			alphaView.ClickProcessing(colorViewHandler.Red, 
 			                          colorViewHandler.Green,
 			                          colorViewHandler.Blue);
-		} else {
+		} 
+		else 
 			colorCodeHandler.IsItEventOrigin = true;
-		}
 	}
 
 	protected void OnAColorCodeChanged(object sender, EventArgs e)
 	{
-		if (alphaColorCodeHandler.IsItEventOrigin) {
+		if (alphaColorCodeHandler.IsItEventOrigin) 
+		{
 			alphaColorCodeHandler.ParseValue();
 
-			if(alphaColorCodeHandler.ValueIsCorrect) {
+			if(alphaColorCodeHandler.ValueIsCorrect) 
+			{
 				colorCodeHandler.SetupCode(alphaColorCodeHandler.Color);
 				colorViewHandler.SetupColor (colorCode.Text);
 				colorScalesHandler.SetupScales (colorViewHandler.Red, 
@@ -100,51 +103,55 @@ public partial class MainWindow :
 				                          colorViewHandler.Blue,
 				                          alphaColorCodeHandler.Alpha);
 			}
-		} else {
+		} 
+		else 
 			alphaColorCodeHandler.IsItEventOrigin = true;
-		}
 	}
 	
 	protected void OnRedScaleValueChanged (object sender, EventArgs e)
 	{
-		if(colorScalesHandler.IsRedEventOrigin) {
+		if(colorScalesHandler.IsRedEventOrigin) 
+		{
 			colorViewHandler.Red = (ushort)redScale.Value;
 			updateOnScaleChange();
-		} else {
+		} 
+		else
 			colorScalesHandler.IsRedEventOrigin = true;
-		}
 	}
 	
 	
 	protected void OnGreenScaleValueChanged (object sender, EventArgs e)
 	{
-		if(colorScalesHandler.IsGreenEventOrigin) {
+		if(colorScalesHandler.IsGreenEventOrigin) 
+		{
 			colorViewHandler.Green = (ushort)greenScale.Value;
 			updateOnScaleChange();
-		} else {
+		} 
+		else 
 			colorScalesHandler.IsGreenEventOrigin = true;
-		}
 	}
 	
 	protected void OnBlueScaleValueChanged (object sender, EventArgs e)
 	{
-		if(colorScalesHandler.IsBlueEventOrigin) {
+		if(colorScalesHandler.IsBlueEventOrigin) 
+		{
 			colorViewHandler.Blue = (ushort)blueScale.Value;
 			updateOnScaleChange();
-		} else {
+		} 
+		else
 			colorScalesHandler.IsBlueEventOrigin = true;
-		}
 	}
 
 	protected void OnAlphaScaleValueChanged(object sender, EventArgs e)
 	{
-		if (colorScalesHandler.IsAlphaEventOrigin) {
+		if (colorScalesHandler.IsAlphaEventOrigin) 
+		{
 			alphaView.ClickProcessing((ushort)alphaScale.Value);
 			alphaColorCodeHandler.SetupCode(colorCode.Text, (ushort)alphaScale.Value);
 			alphaView.QueueDraw();
-		} else {
+		} 
+		else 
 			colorScalesHandler.IsAlphaEventOrigin = true;
-		}
 	}
 
 	protected void OnCloseActionActivated (object sender, EventArgs e)

@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -21,11 +21,14 @@ namespace ColorPicker
 			inst = this;
 		}
 		
-		public bool IsItEventOrigin {
-			set {
+		public bool IsItEventOrigin 
+		{
+			set 
+			{
 				isItEventOrigin = value;
 			}
-			get {
+			get 
+			{
 				return isItEventOrigin;
 			}
 		}
@@ -36,8 +39,10 @@ namespace ColorPicker
 			colorCode.Text = code;
 		}
 
-		public static ColorCode Inst {
-			get {
+		public static ColorCode Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

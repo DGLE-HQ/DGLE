@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -79,10 +79,13 @@ namespace ColorPicker
 		{
 			base.OnExposeEvent (ev);
 			
-			if (!spectrumDrawn) {
+			if (!spectrumDrawn) 
+			{
 				drawSpectrum();
 				clickProcessing(0, HEIGHT - 1);
-			} else {
+			} 
+			else 
+			{
 				redrawSpectrum();
 				drawClickArc();
 			}
@@ -103,7 +106,8 @@ namespace ColorPicker
 
 		private void motionClickProcessing(int x, int y)
 		{
-			if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT)) {
+			if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT)) 
+			{
 				clickProcessing(x, y);
 				ClickEventHandler.Inst.SpectrClicked(x, y);
 			}
@@ -136,7 +140,8 @@ namespace ColorPicker
 			greenBuf = new byte[WIDTH,HEIGHT];
 			blueBuf = new byte[WIDTH,HEIGHT];
 			
-			for (int i = 0; i < WIDTH; i++) {
+			for (int i = 0; i < WIDTH; i++) 
+			{
 				redV = r / halfHeight;
 				blueV = b / halfHeight;
 				greenV = g / halfHeight;
@@ -150,7 +155,8 @@ namespace ColorPicker
 					greenBuf[i,k] = (byte)greenPath;
 					blueBuf[i,k] = (byte)bluePath;
 					
-					if(k == (int)halfHeight) {
+					if(k == (int)halfHeight) 
+					{
 						redV = (255 - r) / (halfHeight - 1);
 						blueV = (255 - b) / (halfHeight - 1);
 						greenV = (255 - g) / (halfHeight - 1);
@@ -165,7 +171,8 @@ namespace ColorPicker
 				g += dg;
 				b += db;
 				
-				switch(i) {
+				switch(i) 
+				{
 					case 24: r = 255; g = 127; b = 0; break;
 					case 49: r = 255; g = 255; b = 0; dr = -5; dg = 0; break;
 					case 100: r = 0; g = 255; b = 0; dr = 0; db = 5; break;
@@ -183,14 +190,14 @@ namespace ColorPicker
 			window = this.GdkWindow;
 			gc = new Gdk.GC (window);
 			
-			for (int i = 0; i < WIDTH; i++) {
-				for(int k = 0; k < HEIGHT; k++) {
+			for (int i = 0; i < WIDTH; i++) 
+				for(int k = 0; k < HEIGHT; k++) 
+				{
 					gc.RgbFgColor = new Gdk.Color(redBuf[i,k],
 					                              greenBuf[i,k],
 					                              blueBuf[i,k]);
 					window.DrawPoint(gc, i, k);
 				}
-			}
 			
 			SpectrumVerticalPixbuf.Pixbuf = SpectrumVerticalPixbuf.Pixbuf.GetFromDrawable(window, Gdk.Colormap.System, 
 			                                                                              0, 0, 0, 0, WIDTH, HEIGHT);
@@ -216,15 +223,17 @@ namespace ColorPicker
 			tempRedDev, tempGreenDev, tempBlueDev;
 			byte redB = (byte)red, greenB = (byte)green, blueB = (byte)blue;
 			
-			for (int i = 0; i < WIDTH; i++) {
-				for(int k = 0; k < HEIGHT; k++) {
+			for (int i = 0; i < WIDTH; i++) 
+				for(int k = 0; k < HEIGHT; k++) 
+				{
 					tempRedDev = Math.Abs(redBuf[i,k] - redB);
 					tempGreenDev = Math.Abs(greenBuf[i,k] - greenB);
 					tempBlueDev = Math.Abs(blueBuf[i,k] - blueB);
 					
 					if(((tempRedDev <= redDev) && (tempGreenDev <= greenDev) &&
 					    (tempBlueDev <= blueDev)) || (tempRedDev + tempGreenDev + 
-					                              tempBlueDev < allDev)) {
+					                              tempBlueDev < allDev)) 
+					{
 						currX = i;
 						currY = k;
 						
@@ -234,71 +243,91 @@ namespace ColorPicker
 						allDev = redDev + greenDev + blueDev;
 					}
 				}
-			}
 			
 			aimX = currX;
 			aimY = currY;
 		}
 		
-		public ushort Red {
-			get {
+		public ushort Red 
+		{
+			get 
+			{
 				return red;
 			}
-			set {
+			set 
+			{
 				red = value;
 			}
 		}
 		
-		public ushort Green {
-			get {
+		public ushort Green 
+		{
+			get 
+			{
 				return green;
 			}
-			set {
+			set 
+			{
 				green = value;
 			}
 		}
 		
-		public ushort Blue {
-			get {
+		public ushort Blue 
+		{
+			get 
+			{
 				return blue;
 			}
-			set {
+			set 
+			{
 				blue = value;
 			}
 		}
 		
-		public ushort NativeRed {
-			get {
+		public ushort NativeRed 
+		{
+			get 
+			{
 				return nativeRed;
 			}
 		}
 		
-		public ushort NativeGreen {
-			get {
+		public ushort NativeGreen 
+		{
+			get 
+			{
 				return nativeGreen;
 			}
 		}
 		
-		public ushort NativeBlue {
-			get {
+		public ushort NativeBlue 
+		{
+			get 
+			{
 				return nativeBlue;
 			}
 		}
 		
-		public int ArcY {
-			get {
+		public int ArcY 
+		{
+			get 
+			{
 				return arcY;
 			}
 		}
 		
-		public int ArcX {
-			get {
+		public int ArcX 
+		{
+			get 
+			{
 				return arcX;
 			}
 		}
 
-		public static ColorSpectrum Inst {
-			get {
+		public static ColorSpectrum Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

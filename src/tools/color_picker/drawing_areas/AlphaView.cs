@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		19.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		19.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -18,7 +18,7 @@ namespace ColorPicker
 		private uint color;
 		private Window window;
 		private Gdk.GC gc;
-		private Pixbuf pixbuf;
+		private Pixbuf pixBuff;
 		private bool firstDraw = true;
 		private ushort red, green, blue, alpha;
 
@@ -53,9 +53,8 @@ namespace ColorPicker
 			this.red = red;
 			this.green = green;
 			this.blue = blue;
-			if (alpha != NO_ALPHA) {
+			if (alpha != NO_ALPHA) 
 				this.alpha = alpha;
-			}
 			redrawView();
 		}
 
@@ -68,11 +67,12 @@ namespace ColorPicker
 		{
 			base.OnExposeEvent(ev);
 
-			if (firstDraw) {
+			if (firstDraw) 
+			{
 				window = this.GdkWindow;
 				gc = new Gdk.GC(window);
-				pixbuf = new Pixbuf(Gdk.Colorspace.Rgb, true, 8, WIDTH, HEIGHT);
-				pixbuf.Fill(color);
+				pixBuff = new Pixbuf(Gdk.Colorspace.Rgb, true, 8, WIDTH, HEIGHT);
+				pixBuff.Fill(color);
 				drawView();
 
 				firstDraw = false;
@@ -101,19 +101,22 @@ namespace ColorPicker
 			                    ((blue & 0xff) << 8) + 
 			                    (byte)(alpha & 0xff));
 
-			if (color != this.color) {
+			if (color != this.color) 
+			{
 				this.color = color;
-				pixbuf.Fill(this.color);
+				pixBuff.Fill(this.color);
 			}
 		}
 
 		private void drawView()
 		{
-			window.DrawPixbuf(gc, pixbuf, 0, 0, 0, 0, WIDTH, HEIGHT, 0, 0, 0);
+			window.DrawPixbuf(gc, pixBuff, 0, 0, 0, 0, WIDTH, HEIGHT, 0, 0, 0);
 		}
 
-		public static AlphaView Inst {
-			get {
+		public static AlphaView Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}

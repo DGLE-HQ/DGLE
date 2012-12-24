@@ -1,5 +1,5 @@
-// \author		Макс
-// \date		18.12.2012 (c)Макс
+// \author		Kuzmin Maxim aka eshkin_kot
+// \date		18.12.2012 (c)Andrey Korotkov
 //
 // This file is a part of DGLE project and is distributed
 // under the terms of the GNU Lesser General Public License.
@@ -37,48 +37,62 @@ namespace ColorPicker
 			updateColor();
 		}
 		
-		public string Color {
-			get {
+		public string Color 
+		{
+			get 
+			{
 				return "#" + red.ToString("X2") + green.ToString("X2") + 
 					blue.ToString("X2");
 			}
 		}
 		
-		public ushort Red {
-			get {
+		public ushort Red 
+		{
+			get 
+			{
 				return red;
 			}
-			set {
+			set 
+			{
 				setupColor(ref red, ref color.Red, value);
 				updateColor();
 			}
 		}
 		
-		public ushort Green {
-			get {
+		public ushort Green 
+		{
+			get 
+			{
 				return green;
 			}
-			set {
+			set 
+			{
 				setupColor(ref green, ref color.Green, value);
 				updateColor();
 			}
 		}
 		
-		public ushort Blue {
-			get {
+		public ushort Blue 
+		{
+			get
+			{
 				return blue;
 			}
-			set {
+			set 
+			{
 				setupColor(ref blue, ref color.Blue, value);
 				updateColor();
 			}
 		}
 		
-		public ushort Alpha {
-			get {
+		public ushort Alpha 
+		{
+			get 
+			{
 				return alpha;
 			}
-			set {
+			set 
+			{
 				alpha = value;
 			}
 		}
@@ -109,8 +123,10 @@ namespace ColorPicker
 			colorView.ModifyBg (Gtk.StateType.Normal, color);
 		}
 	
-		public static ColorView Inst {
-			get {
+		public static ColorView Inst 
+		{
+			get 
+			{
 				return inst;
 			}
 		}
