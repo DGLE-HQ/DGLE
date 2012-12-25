@@ -289,8 +289,8 @@ CCore::~CCore()
 		_clLogFile << "----" << endl;
 		_clLogFile << "Warning(s): " << _iLogWarningsCount << " Error(s): " << _LogErrorsCount << endl;
 		
-		if (_ui64CiclesCount == 0) _ui64CiclesCount = 1;
-		_clLogFile << "Average FPS: " << (uint64)(_ui64FPSSumm/_ui64CiclesCount) << endl;		
+		if (_ui64CyclesCount == 0) _ui64CyclesCount = 1;
+		_clLogFile << "Average FPS: " << (uint64)(_ui64FPSSumm / _ui64CyclesCount) << endl;		
 
 		_clLogFile << "Log Closed.";
 		_clLogFile.close();
@@ -601,7 +601,7 @@ void CCore::_OnTimer()
 	if (!_bPause)
 	{
 		_ui64FPSSumm  += _uiLastFPS;
-		++_ui64CiclesCount;
+		++_ui64CyclesCount;
 
 		if (_iFPSToCaption == 1)
 			_pMainWindow->SetCaption((string(_pcApplicationCaption) + string(" FPS:") + IntToStr(_uiLastFPS)).c_str());
@@ -624,14 +624,13 @@ void CCore::_MainLoop()
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return;
 
-	uint64 time			= GetPerfTimer()/1000;
-	uint64 time_delta	= time - _ui64TimeOld;
+	uint64 time	= GetPerfTimer() / 1000, time_delta = time - _ui64TimeOld;
 
 	bool flag = false;
 
 	Console()->EnterThreadSafeSection();
 
-	uint cycles_cnt = (uint)(time_delta/_uiProcessInterval);
+	uint cycles_cnt = (uint)(time_delta / _uiProcessInterval);
 		
 	if ((_eInitFlags & EIF_DISABLE_SMART_TIMING) && cycles_cnt > 1)
 		cycles_cnt = 1;
@@ -664,7 +663,7 @@ void CCore::_MainLoop()
 	if (flag)
 	{
 		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
-		_ui64TimeOld = GetPerfTimer()/1000 - time_delta % _uiProcessInterval;
+		_ui64TimeOld = GetPerfTimer() / 1000 - time_delta % _uiProcessInterval;
 	}
 
 	_pRender->BeginRender();
@@ -706,15 +705,15 @@ void CCore::_MainLoop()
 
 			col = TColor4();
 
-			if (_uiLastUPS < 1000/_uiProcessInterval)
+			if (_uiLastUPS < 1000 / _uiProcessInterval)
 				col.b = col.g = 0.f;
 					
 			RenderProfilerTxt(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerTxt(("Render  delay:" + UInt64ToStr(_ui64RenderDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
-				RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64UpdateDelay/1000) + "." + UIntToStr(_ui64RenderDelay%1000) + " ms.").c_str(), TColor4());
+				RenderProfilerTxt(("Render  delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
+				RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
 			}
 		}
 				
@@ -735,8 +734,8 @@ void CCore::_MainLoop()
 
 	Console()->LeaveThreadSafeSection();
 
-	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiProcessInterval || _bPause))*10 +
-				 (int)(_bPause && _iAllowPause)*15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CiclesCount < 4)*5;
+	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiProcessInterval || _bPause)) * 10 +
+				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 5;
 
 	if (sleep > 0)
 		Suspend(sleep);
@@ -888,7 +887,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 	prPlugin = tmp.pPlugin;
 
 	LOG("Plugin \"" + string(info.cName) + "\" " + string(info.cVersion) +" by \"" + string(info.cVendor) + "\" connected succesfully.", LT_INFO);
-	LOG("Plugin description: \"" + string(info.cDiscription) + "\"", LT_INFO);
+	LOG("Plugin description: \"" + string(info.cDescription) + "\"", LT_INFO);
 
 	return true;
 }
@@ -1286,13 +1285,8 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 		LOG("Done.", LT_INFO);
 	}
 
-	_uiLastUPS			= 0;
-	_uiUPSCount			= 0;
-	_uiLastFPS			= 0;
-	_uiFPSCount			= 0;
-	_ui64FPSSumm		= 0;
-	_ui64CiclesCount	= 0;
-	_ui64TimeOld		= GetPerfTimer() / 1000 - _uiProcessInterval;
+	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= _ui64FPSSumm = _ui64CyclesCount = 0;
+	_ui64TimeOld = GetPerfTimer() / 1000 - _uiProcessInterval;
 
 	if (_pSplashWindow) 
 		_pSplashWindow->Free();

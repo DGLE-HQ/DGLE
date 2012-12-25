@@ -385,7 +385,7 @@ void CSound::_ProfilerDraw()
 
 		EnterThreadSafeSection();
 
-		Core()->RenderProfilerTxt(("Mixer delay     :" + UInt64ToStr(_ui64MixDelay / 1000) + "." + UIntToStr(_ui64MixDelay % 1000) + " ms.").c_str(), TColor4());
+		Core()->RenderProfilerTxt(("Mixer delay     :" + UInt64ToStr(_ui64MixDelay / 1000) + "." + UIntToStr(_ui64MixDelay % 1000) + " ms").c_str(), TColor4());
 
 		uint cnt = 0;
 

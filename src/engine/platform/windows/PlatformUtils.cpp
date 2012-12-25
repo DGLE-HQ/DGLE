@@ -735,9 +735,9 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	uint64	ram_free	= stat.ullAvailPhys/(1024*1024),
 			ram_total	= stat.ullTotalPhys/(1024*1024);
 	
-	str = "RAM Total: " + UInt64ToStr(ram_total) + " MB.";
+	str = "RAM Total: " + UInt64ToStr(ram_total) + " MiB";
 	result += str + "\n\t";
-	str = "RAM Available: " + UInt64ToStr(ram_free) + " MB.";
+	str = "RAM Available: " + UInt64ToStr(ram_free) + " MiB";
 	result += str + "\n\t";
 
 	stSysInfo.uiRAMAvailable	= (uint)ram_free;
@@ -918,7 +918,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	if(vram != 0)
 		stSysInfo.uiVideocardRAM = vram;
 
-	result += str + " " + IntToStr(stSysInfo.uiVideocardRAM) + " MB. " + vcard_advanced_str;
+	result += str + " " + IntToStr(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;
 
 	strInfo = result;
 }

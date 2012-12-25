@@ -360,13 +360,13 @@ namespace DGLE
 	 */
 	struct TSystemInfo
 	{	
-		char cOSName[128];			/**< String with operating system discription. */
-		char cCPUName[128];			/**< String with CPU discription. */
+		char cOSName[128];			/**< String with operating system description. */
+		char cCPUName[128];			/**< String with CPU description. */
 		uint uiCPUCount;			/**< Number of CPUs on host system. */
 		uint uiCPUFreq;				/**< Real CPU frequency in MHz. */
 		uint uiRAMTotal;			/**< Ammount of RAM in system in megabytes. */
 		uint uiRAMAvailable;		/**< Ammount of free RAM in system on engine start in megabytes. */
-		char cVideocardName[128];	/**< String with primary videocard discription. */
+		char cVideocardName[128];	/**< String with primary videocard description. */
 		uint uiVideocardCount;		/**< Number of videocards in system. */
 		uint uiVideocardRAM;		/**< Ammount of video RAM in system in megabytes. */
 	};
@@ -380,7 +380,7 @@ namespace DGLE
 		char  cName[128];		 	/**< String with plugin name. */
 		char  cVersion[64];		 	/**< String with plugin version. */
 		char  cVendor[128];		 	/**< String with name of vendor(developer). */
-		char  cDiscription[256]; 	/**< String with plugin discription. */
+		char  cDescription[256]; 	/**< String with plugin description. */
 		
 		TPluginInfo()
 		{

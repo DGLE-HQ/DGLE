@@ -78,7 +78,7 @@ DGLE_RESULT DGLE_API CPluginCore::GetPluginInfo(TPluginInfo &stInfo)
 	strcpy(stInfo.cName, PLUGIN_NAME);
 	strcpy(stInfo.cVersion, PLUGIN_VERSION);
 	strcpy(stInfo.cVendor, PLUGIN_VENDOR);
-	strcpy(stInfo.cDiscription, PLUGIN_DISCRIPTION);
+	strcpy(stInfo.cDescription, PLUGIN_DESCRIPTION);
 	stInfo.ui8PluginSDKVersion = _DGLE_PLUGIN_SDK_VER_;
 	
 	return S_OK;

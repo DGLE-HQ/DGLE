@@ -90,7 +90,7 @@ class CCore: public CInstancedObj, public IEngineCore
 						 _uiLastUPS;
 
 	uint64				 _ui64FPSSumm,
-						 _ui64CiclesCount,
+						 _ui64CyclesCount,
 						 _ui64RenderDelay,
 						 _ui64UpdateDelay,
 						 _ui64LastUpdateDeltaTime;

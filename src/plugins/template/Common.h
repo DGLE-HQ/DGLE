@@ -21,7 +21,7 @@ using namespace DGLE;
 #define PLUGIN_NAME				"Plugin Template"
 #define PLUGIN_VERSION			("1.0 (" + std::string(__DATE__) + ")").c_str()
 #define PLUGIN_VENDOR			"Your Company Name"
-#define PLUGIN_DISCRIPTION		"Just simple template for any DGLE plugin."
+#define PLUGIN_DESCRIPTION		"Just simple template for any DGLE plugin."
 #define PLUGIN_INTERFACE_NAME	"IPlugin"
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
