@@ -1285,7 +1285,8 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 		LOG("Done.", LT_INFO);
 	}
 
-	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= _ui64FPSSumm = _ui64CyclesCount = 0;
+	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= 0;
+	_ui64FPSSumm = _ui64CyclesCount = 0;
 	_ui64TimeOld = GetPerfTimer() / 1000 - _uiProcessInterval;
 
 	if (_pSplashWindow) 

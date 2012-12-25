@@ -709,7 +709,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcR
 		{
 			uiCharsCount = list.size() + 1;
 			strcpy(pcResult, "");
-			return E_INVALIDARG;
+			return pcResult ? E_INVALIDARG : S_OK;
 		}
 
 		strcpy(pcResult, list.c_str());
@@ -728,7 +728,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcR
 			{
 				uiCharsCount = err.size() + 1;
 				strcpy(pcResult, "");
-				return E_INVALIDARG;
+				return pcResult ? E_INVALIDARG : S_OK;
 			}
 
 			strcpy(pcResult, err.c_str());
