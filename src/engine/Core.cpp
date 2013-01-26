@@ -572,7 +572,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			_stWndToApply = _stWin;
 			_stWndToApply.bFullScreen = false;
 			_pMainWindow->Minimize();
-			ChangeWinMode(_stWndToApply);
+			_ChangeWinMode(_stWndToApply, true);
 		}
 
 		break;
@@ -581,11 +581,12 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		if (_bWasFScreen && !_bNeedApplyNewWnd)
 		{
-			_stWndToApply.bFullScreen = true;
-			ChangeWinMode(_stWndToApply);
 			_bWasFScreen = false;
+			_stWndToApply.bFullScreen = true;
+			_ChangeWinMode(_stWndToApply, true);
+			break;
 		}
-		
+
 	case WMT_SIZE:
 
 		_stWin.uiWidth = stMsg.ui32Param1;
@@ -620,7 +621,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			_bFScreenKeyIsPressed = true;
 			_stWndToApply = _stWin;
 			_stWndToApply.bFullScreen = !_stWndToApply.bFullScreen;
-			ChangeWinMode(_stWndToApply);
+			_ChangeWinMode(_stWndToApply, false);
 		}
 
 		if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
@@ -636,7 +637,7 @@ void CCore::_OnTimer()
 {
 	if (_bNeedApplyNewWnd)
 	{
-		ChangeWinMode(_stWndToApply);
+		_ChangeWinMode(_stWndToApply, false);
 		_bNeedApplyNewWnd = false;
 	}
 
@@ -1272,11 +1273,11 @@ DGLE_RESULT DGLE_API CCore::GetCurrentWin(TEngWindow &stWin)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
+DGLE_RESULT CCore::_ChangeWinMode(const TEngWindow &stNewWin, bool bForceNoEvents)
 {
 	TEngWindow wnd = stNewWin;
 
-	if (wnd.bFullScreen != _stWin.bFullScreen)
+	if (!bForceNoEvents && wnd.bFullScreen != _stWin.bFullScreen)
 		CastEvent(ET_ON_FULLSCREEN, (IBaseEvent*)&CEvGoFullScreen(wnd.uiWidth, wnd.uiHeight, wnd.bFullScreen));
 
 	if (SUCCEEDED(_pMainWindow->ConfigureWindow(wnd, !_bWasFScreen && !_bFScreenKeyIsPressed)) && SUCCEEDED(_pCoreRenderer->AdjustMode(wnd)))
@@ -1319,6 +1320,11 @@ DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 	}
 
 	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
+{
+	return _ChangeWinMode(stNewWin, false);
 }
 
 DGLE_RESULT DGLE_API CCore::GetDesktopResolution(uint &uiWidth, uint &uiHeight)

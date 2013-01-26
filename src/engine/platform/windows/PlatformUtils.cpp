@@ -742,12 +742,12 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	delete[] pc_processor_name;
 
 	MEMORYSTATUSEX stat;
-	stat.dwLength = sizeof (stat);
+	stat.dwLength = sizeof(stat);
 	GlobalMemoryStatusEx(&stat);
 
-	uint64	ram_free = (uint64)ceil((double)stat.ullAvailPhys / (1024.0 * 1024.0)),
-			ram_total = (uint64)ceil((double)stat.ullTotalPhys / (1024.0 * 1024.0));
-	
+	uint64	ram_free = (uint64)ceil(stat.ullAvailPhys / 1024.0 / 1024.0),
+			ram_total = (uint64)ceil(stat.ullTotalPhys / 1024.0 / 1024.0);
+
 	str = "RAM Total: " + UInt64ToStr(ram_total) + " MiB";
 	result += str + "\n\t";
 	str = "RAM Available: " + UInt64ToStr(ram_free) + " MiB";
@@ -913,7 +913,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 						hr = instance->Get(_bstr_t("AdapterRAM"), 0, &v, NULL, NULL);
 						
 						if (SUCCEEDED(hr))
-							vram = (uint)ceil((double)V_UI4(&v) / (1024.0 * 1024.0));
+							vram = (uint)ceil(V_UI4(&v) / 1024.0 / 1024.0);
 
 						VariantClear(&v);
 						instance->Release();

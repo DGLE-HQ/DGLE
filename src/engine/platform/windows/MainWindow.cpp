@@ -404,15 +404,15 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocu
 
 		if (top_x < 0) top_x = 0;
 		if (top_y < 0) top_y = 0;
-	}
 
-	if (_bFScreen && !stWind.bFullScreen)
-	{
-		RECT r;
-		r.left = 0; r.top = 0;
-		r.right = desktop_width; r.bottom = desktop_height;
-		InvalidateRect(NULL, &r, TRUE);
-		_bFScreen = false;
+		if (_bFScreen)
+		{
+			RECT r;
+			r.left = 0; r.top = 0;
+			r.right = desktop_width; r.bottom = desktop_height;
+			InvalidateRect(NULL, &r, TRUE);
+			_bFScreen = false;
+		}
 	}
 
 	SetWindowPos(_hWnd, HWND_TOP, top_x, top_y, rc.right - rc.left, rc.bottom - rc.top, SWP_FRAMECHANGED |
