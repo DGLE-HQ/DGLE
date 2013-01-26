@@ -313,7 +313,8 @@ namespace DGLE
 		ET_ON_WIN_MESSAGE,			/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
 		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realisation. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
-		ET_ON_CONSOLE_WRITE			/**< Event occurs when some text is being outputed to the engine console. \see IEvFatalMessage */
+		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputed to the engine console. \see IEvFatalMessage */
+		ET_ON_FULLSCREEN			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
 	};
 
 	// {6DFEF982-AADF-42e9-A369-378BDB31404A}
@@ -450,9 +451,34 @@ namespace DGLE
 		 */
 		virtual DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem) = 0;
 		/** Substitutes engine subsystem by custom one. 
-			\param[int] pSubSystem Pointer to subsystem interface with which retrieving subsystem will be substituted.
+			\param[in] pSubSystem Pointer to subsystem interface with which retrieving subsystem will be substituted.
 		 */		
 		virtual DGLE_RESULT DGLE_API OverrideSubSystem(IEngineSubSystem *pSubSystem) = 0;
+	};
+
+	// {CEC9184C-74D9-4739-BF48-BB800467665B}
+	static const GUID IID_IEvGoFullScreen = 
+	{ 0xcec9184c, 0x74d9, 0x4739, { 0xbf, 0x48, 0xbb, 0x80, 0x4, 0x67, 0x66, 0x5b } };
+
+	/** Event occures when engine is going fullscreen or go back to windowed mode from fullscreen mode.
+		On this event you can adjust display resolution.
+		\note If you want to prevent engine from going fullscreen mode on hotkey combination see EWF_RESTRICT_FSCREEN_HOTKEY flag.
+		\see ET_ON_FULLSCREEN, IBaseEvent, EWF_RESTRICT_FSCREEN_HOTKEY
+	 */
+	class IEvGoFullScreen : public IBaseEvent
+	{
+	public:
+		/** Get display resolution or window size (when switching from fullscreen mode) to be set by engine.
+			\param[out] uiScreenWidth Display resolution width or window width in pixels.
+			\param[out] uiScreenHeight Display resolution height or window height in pixels.
+			\param[out] bGoFullScreen If true engine is switching to fullscreen mode or to windowed mode in other case.
+		 */		
+		virtual DGLE_RESULT DGLE_API GetResolution(uint &uiScreenWidth, uint &uiScreenHeight, bool &bGoFullScreen) = 0;
+		/** Adjust display resolution or window size (when switching from fullscreen mode).
+			\param[in] uiScreenWidth New display resolution width or window width in pixels.
+			\param[in] uiScreenHeight New display resolution height or window height in pixels.
+		*/
+		virtual DGLE_RESULT DGLE_API SetResolution(uint uiScreenWidth, uint uiScreenHeight) = 0;
 	};
 
 //Main Engine System//
@@ -576,6 +602,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetHandle(TWinHandle &tHandle) = 0;
 
 		virtual DGLE_RESULT DGLE_API ChangeWinMode(const TEngWindow &stNewWin) = 0;
+		virtual DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight) = 0;		
 		virtual DGLE_RESULT DGLE_API AllowPause(bool bAllow) = 0;
 
 		virtual DGLE_RESULT DGLE_API AddToLog(const char *pcTxt) = 0;
@@ -588,7 +615,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleUnregCom(const char *pcCommandName) = 0;
 
-		virtual DGLE_RESULT DGLE_API GetVersion(char* pcBuffer, uint uiBufferSize) = 0;	
+		virtual DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) = 0;	
 	};
 
 //Resource Manager SubSystem//
@@ -794,7 +821,10 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API EndBatch() = 0;
 		virtual DGLE_RESULT DGLE_API NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
 		virtual DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
+		virtual DGLE_RESULT DGLE_API CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord) = 0;
+		virtual DGLE_RESULT DGLE_API CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord) = 0;
 		virtual DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f, 1.f)) = 0;
+		virtual DGLE_RESULT DGLE_API ResetCamera() = 0;
 		virtual DGLE_RESULT DGLE_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
 
 		// 2D Primitives
@@ -807,9 +837,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
 		// 2D Sprites
-		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTex(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawTexCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTexSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		// Extra
 		virtual DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;

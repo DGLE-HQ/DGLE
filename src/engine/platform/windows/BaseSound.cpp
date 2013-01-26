@@ -76,7 +76,12 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 			if (res == -1) res = i;
 		}
 
-		_devices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + UIntToStr(i) + " name: \"" + string(caps.szPname) + "\"");
+		string name(caps.szPname);
+
+		if (name.find_first_of('(') != string::npos && name.find_first_of(')') == string::npos)
+			name += "...)";
+
+		_devices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + UIntToStr(i) + " name: \"" + name + "\"");
 	}
 
 	return res;

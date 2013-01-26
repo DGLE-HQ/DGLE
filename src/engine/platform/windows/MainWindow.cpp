@@ -12,6 +12,8 @@ See "DGLE.h" for more details.
 
 extern HMODULE hModule;
 
+#define UPDATE_TIMER_ID 1
+
 CMainWindow::CMainWindow(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _hWnd(NULL), _hDC(NULL),
 _hInst(GetModuleHandle(NULL)), _bFScreen(false),
@@ -76,6 +78,8 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 {
 	CMainWindow *this_ptr = (CMainWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
+	RECT r = {0, 0, 0, 0};
+
 	if (this_ptr)
 	{
 		if (message == WM_DESTROY)
@@ -102,11 +106,29 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				break;
 			}
 
+		case WM_ENTERSIZEMOVE:
+			SetTimer(hWnd, UPDATE_TIMER_ID, USER_TIMER_MINIMUM, NULL);
+			break;
+
+		case WM_EXITSIZEMOVE:
+			KillTimer(hWnd, UPDATE_TIMER_ID);
+			break;
+
+		case WM_SIZING:
+			GetClientRect(hWnd, &r);
+			this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_SIZE, (uint32)r.right, (uint32)r.bottom));
+			break;
+
+		case WM_TIMER:
+			if (wParam == UPDATE_TIMER_ID)
+				this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_REDRAW));
+			break;
+
 		default:
 			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(message, wParam, lParam));
 		}
 
-		if ((message == WM_SYSCOMMAND && ( (wParam == SC_KEYMENU && (lParam >> 16) <= 0) || wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)) || message == WM_CLOSE)
+		if ((message == WM_SYSCOMMAND && ((wParam == SC_KEYMENU && (lParam >> 16) <= 0) || wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)) || message == WM_CLOSE)
 			return 0;
 	}
 
@@ -328,7 +350,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocu
 
 		if (ChangeDisplaySettingsEx(NULL ,&dm_scr_settings, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 		{
-			LOG("Can't set fullscreen mode(" +IntToStr(stWind.uiWidth)+"X"+IntToStr(stWind.uiHeight)+"), switching back to windowed mode.", LT_ERROR);
+			LOG("Can't set fullscreen mode " +IntToStr(stWind.uiWidth)+"X"+IntToStr(stWind.uiHeight)+", switching back to windowed mode.", LT_ERROR);
 			_bFScreen = false;
 			const_cast<TEngWindow *>(&stWind)->bFullScreen = false;
 			res = S_FALSE;
@@ -377,8 +399,8 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocu
 	{
 		GetDisplaySize(desktop_width, desktop_height);
 
-		top_x = (int)(desktop_width - (rc.right - rc.left))/2, 
-		top_y = (int)(desktop_height - (rc.bottom - rc.top))/2;
+		top_x = (int)(desktop_width - (rc.right - rc.left)) / 2, 
+		top_y = (int)(desktop_height - (rc.bottom - rc.top)) / 2;
 
 		if (top_x < 0) top_x = 0;
 		if (top_y < 0) top_y = 0;
@@ -393,15 +415,13 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocu
 		_bFScreen = false;
 	}
 
-	SetWindowPos(_hWnd, HWND_TOP, top_x, top_y, rc.right - rc.left, rc.bottom - rc.top, SWP_FRAMECHANGED | SWP_NOACTIVATE);
-
-	if (IsWindowVisible(_hWnd) == FALSE)
-		ShowWindow(_hWnd, SW_SHOWNA);
+	SetWindowPos(_hWnd, HWND_TOP, top_x, top_y, rc.right - rc.left, rc.bottom - rc.top, SWP_FRAMECHANGED |
+		(IsWindowVisible(_hWnd) == FALSE && IsIconic(_hWnd) == FALSE ? SWP_SHOWWINDOW : SWP_NOACTIVATE));
 
 	if (bSetFocus)
 	{
 		SetForegroundWindow(_hWnd);
-		SetCursorPos(top_x + (rc.right - rc.left)/2, top_y + (rc.bottom - rc.top)/2);
+		SetCursorPos(top_x + (rc.right - rc.left) / 2, top_y + (rc.bottom - rc.top) / 2);
 	}
 
 	return res;

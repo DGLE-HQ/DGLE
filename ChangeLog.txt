@@ -28,8 +28,12 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] Added joysticks and gamepads support.
 [ + ] Brand new GTK# GUI components for engine toolset.
 [ + ] Brand new FontTool for engine fonts generation.
+[ + ] Universal Packer tool which is working with any virtual file system supported by engine.
+[ + ] ColorPicker tool.
 [ + ] Added console commands for DCP virtual filesystem. Ability to manage packages. Console commands starts with dcp_*.
 [ + ] Added some functions for fundamental engine interface IDGLE_Base to give more flexibility to extend interfaces via extra commands.
+[ + ] Methods CoordResCorrectToAbsolute and CoordAbsoluteToResCorrect of interface IRender2D. These methods will help to obtain correct coordinates when resolution correction is turned on.
+[ + ] Added IEvGoFullScreen event to hook engine fullscreen switch and GetDesktopResolution method to get current desktop resolution.
 [ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
 [ * ] Renamed DrawSprite* methods of IRender2D interface.
 [ - ] Some old stuff (like plugins for browsers) was dropped off.

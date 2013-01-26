@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.09.2012 (c)Korotkov Andrey
+\date		20.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -153,17 +153,17 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 		
 		for (int i = 0; i < 4; ++i)
 		{
-			const float	&x = vertices[i*2], &y = vertices[i*2+1];
+			const float	&x = vertices[i * 2], &y = vertices[i * 2 + 1];
 
-			vrtcs[i*2]		= _stCamTransform._2D[0][0] * x + _stCamTransform._2D[1][0] * y + _stCamTransform._2D[3][0];
-			vrtcs[i*2+1]	= _stCamTransform._2D[0][1] * x + _stCamTransform._2D[1][1] * y + _stCamTransform._2D[3][1];		
+			vrtcs[i * 2] = _stCamTransform._2D[0][0] * x + _stCamTransform._2D[1][0] * y + _stCamTransform._2D[3][0];
+			vrtcs[i * 2 + 1] = _stCamTransform._2D[0][1] * x + _stCamTransform._2D[1][1] * y + _stCamTransform._2D[3][1];		
 		}
 
 	}
 	else
-		memcpy(&vrtcs[0], &vertices[0], 8*sizeof(float));
+		memcpy(&vrtcs[0], &vertices[0], 8 * sizeof(float));
 
-	if (_iDoDrawBBoxes == 1)
+	if (_iDoDrawBBoxes == 1 && (_batchMode == BM_DISABLED && !_bInLocalBatchMode))
 	{
 		if (_bCameraWasSet)
 			_pCoreRenderer->SetMatrix(MatrixInverse(_stCamTransform) * _stCamTransform);
@@ -391,8 +391,8 @@ inline void CRender2D::_BatchFlush()
 void CRender2D::_Set2DProjMatrix(uint width, uint height)
 {
 	_pCoreRenderer->SetMatrix(TMatrix(
-		2.f/(float)width, 0.f, 0.f, 0.f,
-		0.f, -2.f/(float)height, 0.f, 0.f,
+		2.f / (float)width, 0.f, 0.f, 0.f,
+		0.f, -2.f / (float)height, 0.f, 0.f,
 		0.f, 0.f, -1.f, 0.f,
 		-1.f, 1.f, 0.f, 1.f
 		), MT_PROJECTION);
@@ -418,20 +418,20 @@ DGLE_RESULT DGLE_API CRender2D::Begin2D()
 
 	if (_iResCorWidth + _iResCorHeight != 0)
 	{
-		if (_iResCorConstProp && fabs((float)_uiPrevViewPortW/(float)_uiPrevViewPortH - _fResCorCoef) > 0.001)
+		if (_iResCorConstProp && fabs((float)_uiPrevViewPortW / (float)_uiPrevViewPortH - _fResCorCoef) > 0.001)
 		{
-			_uiCropW = (int)((float)_uiPrevViewPortH*_fResCorCoef);
+			_uiCropW = (int)((float)_uiPrevViewPortH * _fResCorCoef);
 
 			if (_uiPrevViewPortW > _uiCropW)
 				_uiCropH = _uiPrevViewPortH;
 			else
 			{
-				_uiCropH = (int)((float)_uiPrevViewPortW/_fResCorCoef);
+				_uiCropH = (int)((float)_uiPrevViewPortW / _fResCorCoef);
 				_uiCropW = _uiPrevViewPortW;
 			}
 
-			_uiCropX = (_uiPrevViewPortW - _uiCropW)/2;
-			_uiCropY = (_uiPrevViewPortH - _uiCropH)/2;
+			_uiCropX = (_uiPrevViewPortW - _uiCropW) / 2;
+			_uiCropY = (_uiPrevViewPortH - _uiCropH) / 2;
 
 			_pCoreRenderer->SetViewport(_uiCropX, _uiCropY, _uiCropW, _uiCropH);
 
@@ -524,10 +524,26 @@ void CRender2D::EndFrame()
 
 DGLE_RESULT DGLE_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions)
 {
-	_iResCorWidth		= uiResX;
-	_iResCorHeight		= uiResY;
-	_iResCorConstProp	= bConstaintProportions;
-	_fResCorCoef		= (float)_iResCorWidth/(float)_iResCorHeight;
+	_iResCorWidth = uiResX;
+	_iResCorHeight = uiResY;
+	_iResCorConstProp = bConstaintProportions;
+	_fResCorCoef = (float)_iResCorWidth/(float)_iResCorHeight;
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender2D::CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord)
+{
+	stAbsoluteCoord.x = stLogicCoord.x * ((float)_uiPrevViewPortW - _uiCropX * 2.f) / (float)_uiScreenWidth + (float)_uiCropX;
+	stAbsoluteCoord.y = stLogicCoord.y * ((float)_uiPrevViewPortH - _uiCropY * 2.f) / (float)_uiScreenHeight + (float)_uiCropY;
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender2D::CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord)
+{
+	stLogicCoord.x = (stAbsoluteCoord.x - (float)_uiCropX) * (float)_uiScreenWidth / ((float)_uiPrevViewPortW - _uiCropX * 2.f);
+	stLogicCoord.y = (stAbsoluteCoord.y - (float)_uiCropY) * (float)_uiScreenHeight / ((float)_uiPrevViewPortH - _uiCropY * 2.f);
 
 	return S_OK;
 }
@@ -538,7 +554,7 @@ DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle,
 
 	_BatchFlush();
 
-	if (stCenter.x == 0.f && stCenter.y == 0.f && fAngle == 0.f && stScale.x == 0.f && stScale.y == 0.f)
+	if (stCenter.x == (float)_uiScreenWidth / 2.f && stCenter.y == (float)_uiScreenHeight / 2.f && fAngle == 0.f && stScale.x == 1.f && stScale.y == 1.f)
 	{
 		if (_bCameraWasSet)
 			_pCoreRenderer->SetMatrix(_stPrevCamTransform);
@@ -547,14 +563,15 @@ DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle,
 	}
 	else
 	{
-		_pCoreRenderer->GetMatrix(_stPrevCamTransform);
+		if (!_bCameraWasSet)
+			_pCoreRenderer->GetMatrix(_stPrevCamTransform);
 
 		_stCamScale	= stScale;
 		_stCamTransform = MatrixIdentity();
 	
 		if (fAngle != 0.f || stScale.x != 1.f || stScale.y != 1.f)
 		{
-			_stCamTransform = MatrixTranslate(TVec3((float)_uiScreenWidth/2.f, (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+			_stCamTransform = MatrixTranslate(TVec3((float)_uiScreenWidth / 2.f, (float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
 
 			if (_stCamScale.x != 1.f || _stCamScale.y != 1.f)
 				_stCamTransform = MatrixScale(TVec3(stScale.x, stScale.y, 1.f)) * _stCamTransform;
@@ -562,15 +579,31 @@ DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle,
 			if (fAngle != 0.f)
 				_stCamTransform = MatrixRotate(fAngle, TVec3(0.f, 0.f, 1.f)) * _stCamTransform;
 
-			_stCamTransform = MatrixTranslate(TVec3(-(float)_uiScreenWidth/2.f, -(float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+			_stCamTransform = MatrixTranslate(TVec3(-(float)_uiScreenWidth / 2.f, -(float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
 		}
 
-		_stCamTransform = MatrixTranslate(TVec3(stCenter.x - (float)_uiScreenWidth/2.f, stCenter.y - (float)_uiScreenHeight/2.f, 0.f)) * _stCamTransform;
+		_stCamTransform = MatrixTranslate(TVec3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f)) * _stCamTransform;
 
 		_pCoreRenderer->SetMatrix(_stCamTransform);
 
 		_bCameraWasSet = true;
 	}
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender2D::ResetCamera()
+{
+	IN_2D_GUARD
+
+	if (!_bCameraWasSet)
+		return S_OK;
+
+	_BatchFlush();
+
+	_pCoreRenderer->SetMatrix(_stPrevCamTransform);
+
+	_bCameraWasSet = false;
 
 	return S_OK;
 }
@@ -642,10 +675,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
 	float quad[] = {
-		stCoords.x - uiSize/2.f, stCoords.y - uiSize/2.f,
-		stCoords.x + uiSize/2.f, stCoords.y - uiSize/2.f,
-		stCoords.x + uiSize/2.f, stCoords.y + uiSize/2.f,
-		stCoords.x - uiSize/2.f, stCoords.y + uiSize/2.f
+		stCoords.x - uiSize / 2.f, stCoords.y - uiSize / 2.f,
+		stCoords.x + uiSize / 2.f, stCoords.y - uiSize / 2.f,
+		stCoords.x + uiSize / 2.f, stCoords.y + uiSize / 2.f,
+		stCoords.x - uiSize / 2.f, stCoords.y + uiSize / 2.f
 	};
 
 	if (!BBoxInScreen(quad, false))
@@ -841,8 +874,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &st
 
 		if(eFlags & PF_VERTICES_COLOR)
 		{
-			memcpy(&_pBuffer[10], _astVerticesColors, 16*sizeof(float));
-			desc.uiColorOffset = 8*sizeof(float);
+			memcpy(&_pBuffer[10], _astVerticesColors, 16 * sizeof(float));
+			desc.uiColorOffset = 8 * sizeof(float);
 		}
 
 		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLE_STRIP : CRDM_LINE_STRIP, eFlags & PF_FILL ? 4 : 5);
@@ -900,7 +933,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 			if (eFlags & PF_FILL)
 				_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 			
-			_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(k*(float)M_PI/180.f), stCoords.y + stRadius.y * sinf(k*(float)M_PI/180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+			_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(k * (float)M_PI / 180.f), stCoords.y + stRadius.y * sinf(k * (float)M_PI / 180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 
 			for (uint i = 2; i <= uiQuality; ++i)
 			{
@@ -912,14 +945,14 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 				else
 					_batchAccumulator.push_back(_batchAccumulator[_batchAccumulator.size() - 1]);
 
-				_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(i*k*(float)M_PI/180.f), stCoords.y + stRadius.y * sinf(i*k*(float)M_PI/180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(i * k * (float)M_PI / 180.f), stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 			}
 		}
 	else
 	{
-		if (_uiBufferSize < uiQuality*2 + 4)
+		if (_uiBufferSize < uiQuality * 2 + 4)
 		{
-			_uiBufferSize = uiQuality*2 + 4;
+			_uiBufferSize = uiQuality * 2 + 4;
 			delete[] _pBuffer;
 			_pBuffer = new float[_uiBufferSize];
 		}
@@ -932,11 +965,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 
 		for (uint i = 0; i <= uiQuality; ++i)
 		{
-			_pBuffer[2 + i*2] = stCoords.x + stRadius.x * cosf(i*k*(float)M_PI/180.f);
-			_pBuffer[3 + i*2] = stCoords.y + stRadius.y * sinf(i*k*(float)M_PI/180.f);
+			_pBuffer[2 + i * 2] = stCoords.x + stRadius.x * cosf(i * k * (float)M_PI / 180.f);
+			_pBuffer[3 + i * 2] = stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f);
 		}
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)&_pBuffer[eFlags & PF_FILL ? 0 : 2]), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2]), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
 
 		++_iObjsDrawnCount;
 	}
@@ -1276,28 +1309,28 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVer
 						_batchAccumulator.push_back(pstVertices[tris[tri_idx].index[v]]);
 		else
 		{
-			if (_uiBufferSize < (uint)8*tri_count*3)
+			if (_uiBufferSize < (uint)8 * tri_count * 3)
 			{
-				_uiBufferSize = 8*tri_count*3;
+				_uiBufferSize = 8 * tri_count * 3;
 				delete[] _pBuffer;
 				_pBuffer = new float[_uiBufferSize];
 			}
 
 			for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
 				for (uint8 v = 0; v < 3; ++v)
-					memcpy(&_pBuffer[tri_idx*8*3 + v*8], pstVertices[tris[tri_idx].index[v]].data, sizeof(TVertex2));
+					memcpy(&_pBuffer[tri_idx * 8 * 3 + v * 8], pstVertices[tris[tri_idx].index[v]].data, sizeof(TVertex2));
 
 			TDrawDataDesc desc;
 
-			desc.pData = (uint8*)_pBuffer;
+			desc.pData = (uint8 *)_pBuffer;
 			desc.bVertexCoord2 = true;
-			desc.uiVertexStride = 8*sizeof(float);
-			desc.uiTexCoordOffset = 2*sizeof(float);
-			desc.uiTexCoordStride = 8*sizeof(float);
-			desc.uiColorOffset = 4*sizeof(float);
-			desc.uiColorStride = 8*sizeof(float);
+			desc.uiVertexStride = 8 * sizeof(float);
+			desc.uiTexCoordOffset = 2 * sizeof(float);
+			desc.uiTexCoordStride = 8 * sizeof(float);
+			desc.uiColorOffset = 4 * sizeof(float);
+			desc.uiColorStride = 8 * sizeof(float);
 
-			_pCoreRenderer->Draw(desc, CRDM_TRIANGLES, tri_count*3);
+			_pCoreRenderer->Draw(desc, CRDM_TRIANGLES, tri_count * 3);
 
 			++_iObjsDrawnCount;
 		}
@@ -1316,25 +1349,25 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVer
 			}
 		else
 		{
-			if (_uiBufferSize < (uiVerticesCount + 1)*8)
+			if (_uiBufferSize < (uiVerticesCount + 1) * 8)
 			{
-				_uiBufferSize = (uiVerticesCount + 1)*8;
+				_uiBufferSize = (uiVerticesCount + 1) * 8;
 				delete[] _pBuffer;
 				_pBuffer = new float[_uiBufferSize];
 			}
 
-			memcpy(_pBuffer, pstVertices, uiVerticesCount*sizeof(TVertex2));
-			memcpy(&_pBuffer[uiVerticesCount*8], pstVertices, sizeof(TVertex2));
+			memcpy(_pBuffer, pstVertices, uiVerticesCount * sizeof(TVertex2));
+			memcpy(&_pBuffer[uiVerticesCount * 8], pstVertices, sizeof(TVertex2));
 
 			TDrawDataDesc desc;
 
-			desc.pData = (uint8*)_pBuffer;
+			desc.pData = (uint8 *)_pBuffer;
 			desc.bVertexCoord2 = true;
-			desc.uiVertexStride = 8*sizeof(float);
-			desc.uiTexCoordOffset = 2*sizeof(float);
-			desc.uiTexCoordStride = 8*sizeof(float);
-			desc.uiColorOffset = 4*sizeof(float);
-			desc.uiColorStride = 8*sizeof(float);
+			desc.uiVertexStride = 8 * sizeof(float);
+			desc.uiTexCoordOffset = 2 * sizeof(float);
+			desc.uiTexCoordStride = 8 * sizeof(float);
+			desc.uiColorOffset = 4 * sizeof(float);
+			desc.uiColorStride = 8 * sizeof(float);
 
 			_pCoreRenderer->Draw(desc, CRDM_LINE_STRIP, uiVerticesCount + 1);
 
@@ -1399,12 +1432,13 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstV
 	
 	_2D_IF_BATCH_NO_UPDATE_EXIT
 		else
-			for (uint i = 0; i < uiVerticesCount/3; ++i)
+			for (uint i = 0; i < uiVerticesCount / 3; ++i)
 				for (uint8 j = 0; j < 3; ++j)
 					{
 						if (!(eFlags & PF_FILL) && j > 0)
-							_batchAccumulator.push_back(pstVertices[i*3 + j - 1]);
-						_batchAccumulator.push_back(pstVertices[i*3 + j]);
+							_batchAccumulator.push_back(pstVertices[i * 3 + j - 1]);
+
+						_batchAccumulator.push_back(pstVertices[i * 3 + j]);
 					}
 	else
 	{
@@ -1412,34 +1446,34 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstV
 		
 		if (!(eFlags & PF_FILL))
 		{
-			if (_uiBufferSize < uiVerticesCount*8*2)
+			if (_uiBufferSize < uiVerticesCount * 8 * 2)
 			{
-				_uiBufferSize = uiVerticesCount*8*2;
+				_uiBufferSize = uiVerticesCount * 8 * 2;
 				delete[] _pBuffer;
 				_pBuffer = new float[_uiBufferSize];
 			}
 
 			for (uint i = 0; i < uiVerticesCount; ++i)
 			{
-				memcpy(&_pBuffer[i*8*2], &pstVertices[i], sizeof(TVertex2));
+				memcpy(&_pBuffer[i * 8 * 2], &pstVertices[i], sizeof(TVertex2));
 
-				if (i != 0 && (i + 1)% 3 == 0)
-					memcpy(&_pBuffer[i*8*2 + 8], &pstVertices[i - 2], sizeof(TVertex2));
+				if (i != 0 && (i + 1) % 3 == 0)
+					memcpy(&_pBuffer[i * 8 * 2 + 8], &pstVertices[i - 2], sizeof(TVertex2));
 				else
-					memcpy(&_pBuffer[i*8*2 + 8], &pstVertices[i + 1], sizeof(TVertex2));
+					memcpy(&_pBuffer[i * 8 * 2 + 8], &pstVertices[i + 1], sizeof(TVertex2));
 			}
 
-			desc.pData = (uint8*)_pBuffer;
+			desc.pData = (uint8 *)_pBuffer;
 		}
 		else
-			desc.pData = (uint8*)pstVertices;
+			desc.pData = (uint8 *)pstVertices;
 				
 		desc.bVertexCoord2 = true;
-		desc.uiVertexStride = 8*sizeof(float);
-		desc.uiTexCoordOffset = 2*sizeof(float);
-		desc.uiTexCoordStride = 8*sizeof(float);
-		desc.uiColorOffset = 4*sizeof(float);
-		desc.uiColorStride = 8*sizeof(float);
+		desc.uiVertexStride = 8 * sizeof(float);
+		desc.uiTexCoordOffset = 2 * sizeof(float);
+		desc.uiTexCoordStride = 8 * sizeof(float);
+		desc.uiColorOffset = 4 * sizeof(float);
+		desc.uiColorStride = 8 * sizeof(float);
 
 		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, eFlags & PF_FILL ? uiVerticesCount : uiVerticesCount*2);
 
@@ -1655,9 +1689,9 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 
 			for (uint i = 0; i < uiCount; ++i)
 			{
-				const uint	v_idx = i*v_stride,
-							t_idx = t_offset + i*t_stride,
-							c_idx = c_offset + i*c_stride;
+				const uint	v_idx = i * v_stride,
+							t_idx = t_offset + i * t_stride,
+							c_idx = c_offset + i * c_stride;
 
 				TVertex2 v;
 
@@ -1767,7 +1801,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTex(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	uint width = 0, height = 0;
 
@@ -1777,7 +1811,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTexture(ITexture *pTexture, const TPoint2 &s
 	return DrawTexture(pTexture, stCoords, stDimensions, TRectF(0.f, 0.f, (float)width, (float)height), fAngle, eFlags);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTexSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;
@@ -1839,7 +1873,7 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 	{
 		TMatrix translate, translate_back, rot = MatrixIdentity();
 		
-		const float s = sinf(-angle * (float)M_PI/180.f), c = cosf(-angle * (float)M_PI/180.f);
+		const float s = sinf(-angle * (float)M_PI / 180.f), c = cosf(-angle * (float)M_PI / 180.f);
 
 		rot._2D[0][0] = +c;
 		rot._2D[0][1] = -s;
@@ -2002,12 +2036,12 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 		_pBuffer[14] = _pBuffer[12];
 		_pBuffer[15] = _pBuffer[11];
 
-		TDrawDataDesc desc((uint8 *)_pBuffer, 8*sizeof(float));
+		TDrawDataDesc desc((uint8 *)_pBuffer, 8 * sizeof(float));
 		
 		if (flags & EF_VERTICES_COLOR)
 		{
-			desc.uiColorOffset = 16*sizeof(float);
-			memcpy(&_pBuffer[16], _astVerticesColors, sizeof(TColor4)*4);
+			desc.uiColorOffset = 16 * sizeof(float);
+			memcpy(&_pBuffer[16], _astVerticesColors, 4 * sizeof(TColor4));
 		}
 
 		_pCoreRenderer->Draw(desc, CRDM_TRIANGLE_STRIP, 4);
@@ -2082,9 +2116,9 @@ DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
 
 DGLE_RESULT DGLE_API CRender2D::SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4)
 {
-	_astVerticesOffset[0] = stCoords2;
-	_astVerticesOffset[1] = stCoords3;
-	_astVerticesOffset[2] = stCoords1;
+	_astVerticesOffset[0] = stCoords1;
+	_astVerticesOffset[1] = stCoords2;
+	_astVerticesOffset[2] = stCoords3;
 	_astVerticesOffset[3] = stCoords4;
 
 	return S_OK;

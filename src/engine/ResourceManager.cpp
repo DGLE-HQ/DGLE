@@ -1464,7 +1464,7 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 
 bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize)
 {
-	if (!pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
+	if (!pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 11025 && uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 		return false;
 
 	uint8 * p_data = new uint8[ui32DataSize];
@@ -1549,9 +1549,9 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 
 	pFile->Read(&st_format, sizeof(TWaveFormatEx), ui_read);
 	
-	if ((st_format.ui16Channels != 1 || st_format.ui16Channels != 2) && (st_format.ui16BitsPerSample != 8 && st_format.ui16BitsPerSample != 16) || (st_format.uiSamplesPerSec != 22050 && st_format.uiSamplesPerSec != 44100))
+	if ((st_format.ui16Channels != 1 || st_format.ui16Channels != 2) && (st_format.ui16BitsPerSample != 8 && st_format.ui16BitsPerSample != 16) || (st_format.uiSamplesPerSec != 11025 && st_format.uiSamplesPerSec != 22050 && st_format.uiSamplesPerSec != 44100))
 	{
-		LOG("Unsupported sound data format. Only 8 or 16 bits per sample with 22050 or 44100 frequency formats are supported.", LT_ERROR);
+		LOG("Unsupported sound data format. Only 8 or 16 bits per sample with 11025, 22050 or 44100 frequency formats are supported.", LT_ERROR);
 		return false;
 	}
 

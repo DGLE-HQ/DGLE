@@ -15,39 +15,47 @@ set SRC_PATH=.\..\..\src
 call :removeBinJunkCPP ""
 
 del .\engine\DGLE.APS
-call :removeSlnJunkCPP ".\engine"
+call :removeSlnJunkCPP "engine"
 
-call :removeProjJunkCPP ".\engine"
+call :removeProjJunkCPP "engine"
 
 :: Plugins
 
 call :removeBinJunkCPP "plugins"
 
-call :removeSlnJunkCPP ".\plugins"
+call :removeSlnJunkCPP "plugins"
 
-call :removeProjJunkCPP ".\plugins\template"
-call :removeProjJunkCPP ".\plugins\ext"
+call :removeProjJunkCPP "plugins\template"
+call :removeProjJunkCPP "plugins\ext"
 
 :: Tests
 
 call :removeBinJunkCPP "tests"
-call :removeProjJunkCPP ".\tests\dev"
+call :removeProjJunkCPP "tests\dev"
 
 call :removeBinJunkCSharp "tests"
 call :removeProjJunkCSharp "tests\csharp"
+
+:: Examples
+
+call :removeBinJunkCPP "examples\cpp"
+
+call :removeSlnJunkCPP "examples\cpp"
+
+call :removeProjJunkCPP "examples\cpp\low_level_2d"
 
 :: CSharp assemblies
 
 del .\..\..\include\csharp\*.pdb
 
-call :removeSlnJunkCSharp ".\..\common\csharp_assembly"
+call :removeSlnJunkCSharp "..\common\csharp_assembly"
 call :removeProjJunkCSharp "engine\csharp_assembly"
 
 :: Tools
 
 call :removeBinJunkCSharp "tools"
 
-call :removeSlnJunkCSharp ".\..\common\tools"
+call :removeSlnJunkCSharp "..\common\tools"
 
 call :removeProjJunkCSharp "tools\gui"
 call :removeProjJunkCSharp "tools\template"
@@ -79,11 +87,11 @@ goto :eof
 
 set arg=%1
 
-del %arg%\*.sdf
-del /A:H %arg%\*.docstates.suo
-del /A:A %arg%\*.suo
-del %arg%\log.txt
-rd /s /q %arg%\ipch
+del .\%arg%\*.sdf
+del /A:H .\%arg%\*.docstates.suo
+del /A:A .\%arg%\*.suo
+del .\%arg%\log.txt
+rd /s /q .\%arg%\ipch
 
 goto :eof
 
@@ -91,13 +99,13 @@ goto :eof
 
 set arg=%1
 
-del %arg%\*.user
-del %arg%\log.txt
-rd /s /q %arg%\Debug
-rd /s /q %arg%\Release
-rd /s /q %arg%\x64\Debug
-rd /s /q %arg%\x64\Release
-rd %arg%\x64
+del .\%arg%\*.user
+del .\%arg%\log.txt
+rd /s /q .\%arg%\Debug
+rd /s /q .\%arg%\Release
+rd /s /q .\%arg%\x64\Debug
+rd /s /q .\%arg%\x64\Release
+rd .\%arg%\x64
 
 goto :eof
 
@@ -123,9 +131,9 @@ goto :eof
 
 set arg=%1
 
-del /A:H %arg%\*.docstates.suo
-del /A:A %arg%\*.suo
-del %arg%\*.userprefs
+del /A:H .\%arg%\*.docstates.suo
+del /A:A .\%arg%\*.suo
+del .\%arg%\*.userprefs
 
 goto :eof
 

@@ -97,6 +97,9 @@
 #  endif
 #endif /* Setting PNG_BUILD_DLL if required */
 
+// Added for DGLE plugin build
+#undef PNG_BUILD_DLL
+
 /* See pngconf.h for more details: the builder of the library may set this on
  * the command line to the right thing for the specific compilation system or it
  * may be automagically set above (at present we know of no system where it does

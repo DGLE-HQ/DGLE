@@ -19,6 +19,8 @@ _uiUpdateTimer(-1)
 LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	
+	RECT r = {0, 0, 0, 0};
 
 	if (msg == WM_CLOSE && CallWindowProc(this_ptr->_stOldRootWindowProc, hWnd, msg, wParam, lParam) == 0)
 	{
@@ -46,8 +48,7 @@ LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wP
 			break;
 
 		case WM_SIZING:
-			RECT r;
-			GetWindowRect(this_ptr->_hWnd, &r);
+			GetClientRect(this_ptr->_hWnd, &r);
 			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(WM_SIZING, wParam, (LPARAM)&r));
 			break;
 		}
@@ -250,7 +251,7 @@ DGLE_RESULT CHookedWindow::BeginMainLoop()
 	if (!_stOldWindowProc && !_stOldRootWindowProc)
 		return E_FAIL;
 
-	if (!_bNoMloopHook && (_uiUpdateTimer = CreateTimer(0, _pDelMainLoop), _uiUpdateTimer != -1))
+	if (!_bNoMloopHook && (_uiUpdateTimer = CreateTimer(USER_TIMER_MINIMUM, _pDelMainLoop), _uiUpdateTimer != -1))
 	{
 		LOG("Can't set update timer.", LT_FATAL);
 		return E_ABORT;

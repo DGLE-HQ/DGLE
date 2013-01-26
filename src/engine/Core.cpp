@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.09.2012 (c)Korotkov Andrey
+\date		24.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -226,6 +226,50 @@ public:
 	}
 
 	IDGLE_BASE_IMPLEMENTATION(IEvFatalMessage, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
+};
+
+class CEvGoFullScreen : public IEvGoFullScreen
+{
+	
+	bool _bIsFullScreen;
+	uint &_uiWidth, &_uiHeight;
+
+public:
+
+	CEvGoFullScreen(uint &uiResWidth, uint &uiResHeight, bool bFScreen) :
+	  _uiWidth(uiResWidth), _uiHeight(uiResHeight), _bIsFullScreen(bFScreen)
+	{}
+
+	DGLE_RESULT DGLE_API GetResolution(uint &uiScreenWidth, uint &uiScreenHeight, bool &bGoFullScreen)
+	{
+		uiScreenWidth = _uiWidth;
+		uiScreenHeight = _uiHeight;
+		bGoFullScreen = _bIsFullScreen;
+
+		return S_OK;
+	}
+
+	DGLE_RESULT DGLE_API SetResolution(uint uiScreenWidth, uint uiScreenHeight)
+	{
+		_uiWidth = uiScreenWidth;
+		_uiHeight = uiScreenHeight;
+
+		return S_OK;
+	}
+
+	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
+	{
+		eEvType = ET_ON_FULLSCREEN;
+		return S_OK;
+	}
+
+	DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType)
+	{
+		uiUnknEvType = -1;
+		return S_FALSE;
+	}
+
+	IDGLE_BASE_IMPLEMENTATION(IEvGoFullScreen, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 //Engine Core//
@@ -507,13 +551,6 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			if (_pSound != NULL) _pSound->MasterPause(false);
 		}
 
-		if (_bWasFScreen && !_bNeedApplyNewWnd)
-		{
-			_stWndToApply.bFullScreen = true;
-			ChangeWinMode(_stWndToApply);
-			_bWasFScreen = false;
-		}
-
 		break;
 
 	case WMT_DEACTIVATED:
@@ -541,6 +578,14 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 		break;
 
 	case WMT_RESTORED:
+
+		if (_bWasFScreen && !_bNeedApplyNewWnd)
+		{
+			_stWndToApply.bFullScreen = true;
+			ChangeWinMode(_stWndToApply);
+			_bWasFScreen = false;
+		}
+		
 	case WMT_SIZE:
 
 		_stWin.uiWidth = stMsg.ui32Param1;
@@ -768,17 +813,17 @@ DGLE_RESULT DGLE_API CCore::RenderProfilerTxt(const char *pcTxt, const TColor4 &
 	_pResMan->pISystemFont()->GetTextDimensions(pcTxt,tw,th);
 	_pResMan->pISystemFont()->Draw2D((float)_uiProfilerCurTxtXOffset, (float)_uiProfilerCurTxtYOffset, pcTxt, stColor);
 	
-	_uiProfilerCurTxtYOffset	+= th;
-	_uiProfilerCurTxtMaxLength  = max(_uiProfilerCurTxtMaxLength,tw);
+	_uiProfilerCurTxtYOffset += th;
+	_uiProfilerCurTxtMaxLength = max(_uiProfilerCurTxtMaxLength,tw);
 
 	uint x,y, w, h;
 	_pCoreRenderer->GetViewport(x, y, w, h);
 
 	if (_uiProfilerCurTxtYOffset + th > h) 
 	{
-		_uiProfilerCurTxtXOffset	+= _uiProfilerCurTxtMaxLength;
-		_uiProfilerCurTxtMaxLength	= 0;
-		_uiProfilerCurTxtYOffset	= 0;
+		_uiProfilerCurTxtXOffset += _uiProfilerCurTxtMaxLength;
+		_uiProfilerCurTxtMaxLength = 0;
+		_uiProfilerCurTxtYOffset = 0;
 	}
 
 	return S_OK;
@@ -958,15 +1003,22 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
+		string eng_path, working_path;
+
+		GetEngineFilePath(eng_path);
+		GetCurrentWorkingPath(working_path);
+
+		if (eng_path == working_path)
+			LOG("Working directory is: \"" + working_path + "\".", LT_INFO);
+		else
+			LOG("Engine working directory is: \"" + eng_path + "\".\nApplication working directory is: \"" + working_path + "\".", LT_INFO);
+
 		string system_info;
 		GetSystemInformation(system_info, _stSysInfo);
 		LOG(system_info.c_str(), LT_INFO);
 
 		_bSndEnabled = !(_eInitFlags & EIF_FORCE_NO_SOUND);
 
-		string eng_path;
-		GetEngineFilePath(eng_path);
-		
 		if (_eInitFlags & EIF_LOAD_ALL_PLUGINS)
 		{
 			if (!FindFilesInDir((eng_path + "plugins\\*"PLUGIN_FILE_EXTENSION).c_str(), _clPluginInitList))
@@ -1224,6 +1276,9 @@ DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 {
 	TEngWindow wnd = stNewWin;
 
+	if (wnd.bFullScreen != _stWin.bFullScreen)
+		CastEvent(ET_ON_FULLSCREEN, (IBaseEvent*)&CEvGoFullScreen(wnd.uiWidth, wnd.uiHeight, wnd.bFullScreen));
+
 	if (SUCCEEDED(_pMainWindow->ConfigureWindow(wnd, !_bWasFScreen && !_bFScreenKeyIsPressed)) && SUCCEEDED(_pCoreRenderer->AdjustMode(wnd)))
 	{
 		_stWin = wnd;
@@ -1253,7 +1308,7 @@ DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 
 		LOG(string("Window mode (Viewport: ") + IntToStr(_stWin.uiWidth) + "X" + IntToStr(_stWin.uiHeight) +
 			(_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16 bit" : "") +
-			", WinCtrlAccess: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVSync?", VSync":"") +
+			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVSync?", VSync":"") +
 			(_stWin.eMSampling != MM_NONE ? ", MSAA: " + IntToStr((int)pow(2.f, (int)_stWin.eMSampling)) + "X" : "") +
 			") has been set properly.", LT_INFO);
 	}
@@ -1262,6 +1317,13 @@ DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
 		LOG("Required window mode has not been set due to some errors.", LT_ERROR);
 		return E_ABORT;
 	}
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCore::GetDesktopResolution(uint &uiWidth, uint &uiHeight)
+{
+	GetDisplaySize(uiWidth, uiHeight);
 
 	return S_OK;
 }
@@ -1312,18 +1374,18 @@ DGLE_RESULT DGLE_API CCore::QuitEngine()
 		return E_FAIL;
 	}
 
-
 	E_WINDOW_ACCESS_TYPE e_access;
 	_pMainWindow->GetWindowAccessType(e_access);
 
 	if (e_access != WAT_FULL_ACCESS)
 	{
-		LOG("Direct calling of \"QuitEngine()\" rootine is note allowed when engine doesn't own window, close root window instead.", LT_WARNING);
+		LOG("Direct calling of \"QuitEngine()\" rootine is note allowed when engine doesn't own window, close the root window instead.", LT_WARNING);
 		return S_FALSE;
 	}
 
-	_bDoExit = true;
 	_bQuitFlag = true;
+
+	_pMainWindow->SendMessage(TWinMessage(WMT_CLOSE));
 
 	if (_eInitFlags & EIF_FORCE_NO_WINDOW)
 		_pMainWindow->KillWindow();
@@ -1657,9 +1719,15 @@ DGLE_RESULT DGLE_API CCore::ConsoleUnregCom(const char *pcCommandName)
 		return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CCore::GetVersion(char* pcBuffer, uint uiBufferSize)
+DGLE_RESULT DGLE_API CCore::GetVersion(char *pcBuffer, uint &uiBufferSize)
 {
-	if(uiBufferSize < strlen(DGLE_VERSION))
+	if (!pcBuffer)
+	{
+		uiBufferSize = strlen(DGLE_VERSION) + 1;
+		return S_OK;
+	}
+
+	if (uiBufferSize < strlen(DGLE_VERSION))
 		return E_INVALIDARG;
 
 	strcpy(pcBuffer, DGLE_VERSION);

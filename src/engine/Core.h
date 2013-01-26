@@ -208,6 +208,7 @@ public:
 	DGLE_RESULT DGLE_API GetHandle(TWinHandle &tHandle);
 
 	DGLE_RESULT DGLE_API ChangeWinMode(const TEngWindow &stNewWin);
+	DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight);
 	DGLE_RESULT DGLE_API AllowPause(bool bAllow);
 
 	DGLE_RESULT DGLE_API AddToLog(const char *pcTxt);
@@ -220,7 +221,7 @@ public:
 	DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr);
 	DGLE_RESULT DGLE_API ConsoleUnregCom(const char* pcCommandName);
 
-	DGLE_RESULT DGLE_API GetVersion(char* pcBuffer, uint uiBufferSize);
+	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize);
 
 #ifndef DGLE_USE_COM
 

@@ -169,6 +169,7 @@ bool ReleaseDynamicLib(TDynLibHandle tHandle);
 void ShowModalUserAlert(const char *pcTxt, const char *pcCaption);
 void GetEngineFilePath(std::string &strPath);
 bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs);
+void GetCurrentWorkingPath(std::string &strPath);
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 void Terminate();
 

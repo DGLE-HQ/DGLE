@@ -532,7 +532,7 @@ DGLE_RESULT DGLE_API CSound::ReleaseChannelsByData(const uint8 *pData)
 
 DGLE_RESULT DGLE_API CSound::CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize)
 {
-	if (!_bInited || !pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
+	if (!_bInited || !pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 11025 && uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 	{
 		prSndChnl = new CChannelDummy();
 		return E_INVALIDARG;
@@ -567,7 +567,7 @@ DGLE_RESULT DGLE_API CSound::CreateChannel(ISoundChannel *&prSndChnl, uint uiSam
 
 DGLE_RESULT DGLE_API CSound::CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr)
 {
-	if (!_bInited || !pStreamCallback || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
+	if (!_bInited || !pStreamCallback || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 11025 && uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 	{
 		prSndChnl = new CChannelDummy();
 		return E_INVALIDARG;

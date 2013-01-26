@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.09.2012 (c)Korotkov Andrey
+\date		20.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -109,7 +109,10 @@ public:
 	DGLE_RESULT DGLE_API EndBatch();
 	DGLE_RESULT DGLE_API NeedToUpdateBatchData(bool &bNeedUpdate);
 	DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions); 
+	DGLE_RESULT DGLE_API CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord);
+	DGLE_RESULT DGLE_API CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord);
 	DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale);
+	DGLE_RESULT DGLE_API ResetCamera();
 	DGLE_RESULT DGLE_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull);
 
 	DGLE_RESULT DGLE_API LineWidth(uint uiWidth);
@@ -120,9 +123,9 @@ public:
 	DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
 
-	DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags);
+	DGLE_RESULT DGLE_API DrawTex(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawTexCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle, E_EFFECT2D_FLAGS eFlags);
-	DGLE_RESULT DGLE_API DrawSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
+	DGLE_RESULT DGLE_API DrawTexSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
 
 	DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);

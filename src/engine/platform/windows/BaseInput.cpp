@@ -55,7 +55,7 @@ CInstancedObj(uiInstIdx)
 		LOG("Found " + UIntToStr(_clJoyCaps.size()) + " connected joystick" + (_clJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
 
 		for (size_t i = 0; i < _clJoyCaps.size(); ++i)
-			LOG("Joystick with id:" + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"", LT_INFO);
+			LOG("Joystick with id: " + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"", LT_INFO);
 	}
 
 	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
@@ -79,9 +79,12 @@ void CBaseInput::ShowCursor(bool bVisible)
 		return;
 
 	if (!bVisible)
-		SetClassLong(_hWnd, GCLP_HCURSOR, (LONG)_hCurNone);   
+		SetClassLongPtr(_hWnd, GCLP_HCURSOR, (LONG)_hCurNone);   
 	else
-		SetClassLong(_hWnd, GCLP_HCURSOR, (LONG)LoadCursor(NULL, IDC_ARROW)); 
+	{
+		SetClassLongPtr(_hWnd, GCLP_HCURSOR, (LONG)LoadCursor(NULL, IDC_ARROW));
+		SetCursor(LoadCursor(NULL, IDC_ARROW)); // little hack to force cursor update
+	}
 }
 
 void CBaseInput::GetCursorPos(int &x, int &y)

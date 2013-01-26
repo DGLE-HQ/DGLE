@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.09.2012 (c)Korotkov Andrey
+\date		19.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -21,6 +21,8 @@ See "DGLE.h" for more details.
 #pragma message("Linking with \"comsuppw.lib\" and \"wbemuuid.lib\".")
 #pragma comment(linker, "/defaultlib:comsuppw.lib")
 #pragma comment(linker, "/defaultlib:wbemuuid.lib")
+
+#include <direct.h>
 
 using namespace std;
 
@@ -63,6 +65,7 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		return TWinMessage(WMT_MOVE, ((RECT*)lParam)->left, ((RECT*)lParam)->top, (RECT*)lParam);
 
 	case WM_SIZING:
+		// This message receives window rectangle not client, so this message should be override in window message handler.
 		return TWinMessage(WMT_SIZE, ((RECT*)lParam)->right - ((RECT*)lParam)->left, ((RECT*)lParam)->bottom - ((RECT*)lParam)->top, (RECT*)lParam);
 
 	case WM_SIZE:
@@ -175,7 +178,7 @@ void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM
 		break;
 
 	case WMT_CLOSE:
-		Msg = WM_PAINT;
+		Msg = WM_CLOSE;
 		wParam = 0;
 		lParam = 0;
 		break;
@@ -287,9 +290,9 @@ void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM
 
 void GetDisplaySize(uint &width, uint &height)
 {
-	HDC desktop_dc	= GetDC(GetDesktopWindow());
-	width	= GetDeviceCaps(desktop_dc, HORZRES);
-	height	= GetDeviceCaps(desktop_dc, VERTRES);
+	HDC desktop_dc = GetDC(GetDesktopWindow());
+	width = GetDeviceCaps(desktop_dc, HORZRES);
+	height = GetDeviceCaps(desktop_dc, VERTRES);
 	ReleaseDC(GetDesktopWindow(), desktop_dc);
 }
 
@@ -400,7 +403,7 @@ void ShowModalUserAlert(const char *pcTxt, const char *pcCaption)
 	MessageBoxA(NULL, pcTxt, pcCaption, MB_OK | MB_ICONSTOP | MB_SETFOREGROUND | MB_SYSTEMMODAL);
 }
 
-void GetEngineFilePath(std::string &strPath)
+void GetEngineFilePath(string &strPath)
 {
 	char eng_file_name[MAX_PATH];
 		
@@ -410,7 +413,7 @@ void GetEngineFilePath(std::string &strPath)
 	strPath = GetFilePath(eng_file_name) + "\\";
 }
 
-bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames)
+bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
 {
 	char* part;
 	char tmp[MAX_PATH];
@@ -442,6 +445,22 @@ bool FindFilesInDir(const char* pcMask, std::vector<std::string> &fileNames)
 		FindClose (hSearch);
 
 		return true;
+}
+
+void GetCurrentWorkingPath(string &strPath)
+{
+	strPath.clear();
+	
+	char *buffer = _getcwd(NULL, 0);
+
+	if (buffer)
+	{
+		strPath.assign(buffer);
+		free(buffer);
+		
+		if (strPath[strPath.length() - 1] != '\\')
+			strPath += '\\';
+	}
 }
 
 #ifdef DXDIAG_VIDEO_INFO
@@ -511,6 +530,17 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 							else
 								str += "Server 2008 R2 ";
 						}
+						else
+							if (osvi.dwMinorVersion == 2)
+							{
+								if (osvi.wProductType == VER_NT_WORKSTATION)
+									str += "8 ";
+								else
+									str += "Server 2012 ";
+							}
+							else
+								if (osvi.wProductType == VER_NT_WORKSTATION)
+									str += "Server";
 
 					DWORD os_type;
 					typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
@@ -524,58 +554,38 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 								str += "Unlicensed copy";
 								break;
 							case PRODUCT_ULTIMATE:
+							case PRODUCT_ULTIMATE_N:
+							case PRODUCT_ULTIMATE_E:
 								str += "Ultimate Edition";
 								break;
-							case 0x00000030/*PRODUCT_PROFESSIONAL*/:
+							case PRODUCT_PROFESSIONAL:
+							case PRODUCT_PROFESSIONAL_N:
+							case PRODUCT_PROFESSIONAL_E:
 								str += "Professional";
 								break;
 							case PRODUCT_HOME_PREMIUM:
+							case PRODUCT_HOME_PREMIUM_N:
+							case PRODUCT_HOME_PREMIUM_E:
 								str += "Home Premium Edition";
 								break;
 							case PRODUCT_HOME_BASIC:
+							case PRODUCT_HOME_BASIC_N:
+							case PRODUCT_HOME_BASIC_E:
 								str += "Home Basic Edition";
 								break;
 							case PRODUCT_ENTERPRISE:
+							case PRODUCT_ENTERPRISE_N:
+							case PRODUCT_ENTERPRISE_E:
 								str += "Enterprise Edition";
 								break;
 							case PRODUCT_BUSINESS:
+							case PRODUCT_BUSINESS_N:
 								str += "Business Edition";
 								break;
 							case PRODUCT_STARTER:
+							case PRODUCT_STARTER_N:
+							case PRODUCT_STARTER_E:
 								str += "Starter Edition";
-								break;
-							case PRODUCT_CLUSTER_SERVER:
-								str += "Cluster Server Edition";
-								break;
-							case PRODUCT_DATACENTER_SERVER:
-								str += "Datacenter Edition";
-								break;
-							case PRODUCT_DATACENTER_SERVER_CORE:
-								str += "Datacenter Edition (core installation)";
-								break;
-							case PRODUCT_ENTERPRISE_SERVER:
-								str += "Enterprise Edition";
-								break;
-							case PRODUCT_ENTERPRISE_SERVER_CORE:
-								str += "Enterprise Edition (core installation)";
-								break;
-							case PRODUCT_ENTERPRISE_SERVER_IA64:
-								str += "Enterprise Edition for Itanium-based Systems";
-								break;
-							case PRODUCT_SMALLBUSINESS_SERVER:
-								str += "Small Business Server";
-								break;
-							case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-								str += "Small Business Server Premium Edition";
-								break;
-							case PRODUCT_STANDARD_SERVER:
-								str += "Standard Edition";
-								break;
-							case PRODUCT_STANDARD_SERVER_CORE:
-								str += "Standard Edition (core installation)";
-								break;
-							case PRODUCT_WEB_SERVER:
-								str += "Web Server Edition";
 								break;
 						}
 				}
@@ -618,8 +628,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 									else
 										if (osvi.wSuiteMask & VER_SUITE_STORAGE_SERVER)
 											str += "Storage Server 2003";
-										else
-											if (osvi.wSuiteMask & 0x00008000/*VER_SUITE_WH_SERVER*/)
+										else 
+											if (osvi.wSuiteMask & VER_SUITE_WH_SERVER)
 												str += "Home Server";
 											else
 												if (osvi.wProductType == VER_NT_WORKSTATION)
@@ -645,6 +655,9 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 									}
 
 								}
+								else							
+									if (osvi.wProductType == VER_NT_WORKSTATION)
+										str += "Server";
 					}
 
 				str+= "\" " + (string)osvi.szCSDVersion + " (Build " + IntToStr(osvi.dwBuildNumber) + ")";
@@ -732,16 +745,16 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	stat.dwLength = sizeof (stat);
 	GlobalMemoryStatusEx(&stat);
 
-	uint64	ram_free	= stat.ullAvailPhys/(1024*1024),
-			ram_total	= stat.ullTotalPhys/(1024*1024);
+	uint64	ram_free = (uint64)ceil((double)stat.ullAvailPhys / (1024.0 * 1024.0)),
+			ram_total = (uint64)ceil((double)stat.ullTotalPhys / (1024.0 * 1024.0));
 	
 	str = "RAM Total: " + UInt64ToStr(ram_total) + " MiB";
 	result += str + "\n\t";
 	str = "RAM Available: " + UInt64ToStr(ram_free) + " MiB";
 	result += str + "\n\t";
 
-	stSysInfo.uiRAMAvailable	= (uint)ram_free;
-	stSysInfo.uiRAMTotal		= (uint)ram_total;
+	stSysInfo.uiRAMAvailable = (uint)ram_free;
+	stSysInfo.uiRAMTotal = (uint)ram_total;
 
 	str = "Video device: ";
 
@@ -847,8 +860,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	else
 		str += dd.DeviceString;
 
-	stSysInfo.uiVideocardRAM    = 0;
-	stSysInfo.uiVideocardCount  = 0;
+	stSysInfo.uiVideocardRAM = 0;
+	stSysInfo.uiVideocardCount = 0;
 
 	strcpy(stSysInfo.cVideocardName, dd.DeviceString); 
 
@@ -888,18 +901,19 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 					while (true)
 					{
 						hr = instance_enum->Next(WBEM_INFINITE, 1, &instance, &objectsReturned);
-						if(FAILED(hr))
+						
+						if (FAILED(hr))
 							break;
 
-						if(objectsReturned != 1)
+						if (objectsReturned != 1)
 							break;
 
 						VARIANT v;
 						VariantInit(&v);
 						hr = instance->Get(_bstr_t("AdapterRAM"), 0, &v, NULL, NULL);
 						
-						if(SUCCEEDED(hr))
-							vram = V_UI4(&v)/(1024*1024);
+						if (SUCCEEDED(hr))
+							vram = (uint)ceil((double)V_UI4(&v) / (1024.0 * 1024.0));
 
 						VariantClear(&v);
 						instance->Release();
@@ -912,10 +926,10 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		}
 	}
 
-	if(SUCCEEDED(chr))
+	if (SUCCEEDED(chr))
 		CoUninitialize();
 
-	if(vram != 0)
+	if (vram != 0)
 		stSysInfo.uiVideocardRAM = vram;
 
 	result += str + " " + IntToStr(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;

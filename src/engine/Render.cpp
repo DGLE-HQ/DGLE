@@ -130,17 +130,17 @@ void CRender::EndRender()
 
 void CRender::_SetPerspectiveMatrix(uint width, uint height)
 {
-	float aspect = (float)width/(float)height,
+	float aspect = (float)width / (float)height,
 	top = _fZNear * tanf(_fFovAngle * (float)M_PI / 360.f),
 	bottom = -top,
 	left = bottom * aspect,
 	right = top * aspect;
 
 	_pCoreRenderer->SetMatrix(TMatrix(
-		(2*_fZNear)/(right - left), 0.f, (right + left)/(right - left), 0.f,
-		0.f, (2*_fZNear)/(top - bottom), (top + bottom)/(top - bottom), 0.f,
-		0.f, 0.f, -((_fZFar + _fZNear)/(_fZFar - _fZNear)), -1.f,
-		0.f, 0.f, -((2*_fZFar*_fZNear)/(_fZFar - _fZNear)), 0.f
+		(2 * _fZNear) / (right - left), 0.f, (right + left) / (right - left), 0.f,
+		0.f, (2 * _fZNear) / (top - bottom), (top + bottom) / (top - bottom), 0.f,
+		0.f, 0.f, -((_fZFar + _fZNear) / (_fZFar - _fZNear)), -1.f,
+		0.f, 0.f, -((2*_fZFar*_fZNear) / (_fZFar - _fZNear)), 0.f
 		), MT_PROJECTION);
 }
 

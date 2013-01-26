@@ -57,17 +57,17 @@ DGLE_RESULT DGLE_API CTexture::GetCoreTexture(ICoreTexture *&prCoreTex)
 DGLE_RESULT DGLE_API CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
 {
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		return _pRender2D->DrawTexture((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), 0.f, EF_BLEND);
+		return _pRender2D->DrawTexture((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), 0.f, EF_BLEND);
 	else
-		return _pRender2D->DrawSprite((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), uiFrameIndex, 0.f, EF_BLEND);
+		return _pRender2D->DrawTexSprite((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), uiFrameIndex, 0.f, EF_BLEND);
 }
 
 DGLE_RESULT DGLE_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex)
 {
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		return _pRender2D->DrawTexture((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), fAngle, EF_BLEND);
+		return _pRender2D->DrawTexture((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), fAngle, EF_BLEND);
 	else
-		return _pRender2D->DrawSprite((ITexture*)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), uiFrameIndex, fAngle, EF_BLEND);
+		return _pRender2D->DrawTexSprite((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)uiWidth, (float)uiHeight), uiFrameIndex, fAngle, EF_BLEND);
 }
 
 DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
@@ -75,11 +75,11 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 	_pCoreRenderer->BindTexture(_pCoreTexture);
 
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8*sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
 	else
 	{
-		float	tx = (uiFrameIndex * _uiFrameWidth % _uiWidth)/(float)_uiWidth,
-				ty = (uiFrameIndex * _uiFrameWidth / _uiWidth * _uiFrameHeight)/(float)_uiHeight, 
+		float	tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
+				ty = (uiFrameIndex * _uiFrameWidth / _uiWidth * _uiFrameHeight) / (float)_uiHeight, 
 				tw = _uiFrameWidth/(float)_uiWidth,
 				th = _uiFrameHeight/(float)_uiHeight;
 
@@ -88,7 +88,7 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 		_quad[12] = tx + tw;	_quad[13] = _quad[9];
 		_quad[14] = _quad[12];	_quad[15] = ty;
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_quad, 8*sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
 	}
 
 	return S_OK;
