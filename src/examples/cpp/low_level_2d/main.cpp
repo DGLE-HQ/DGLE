@@ -21,8 +21,8 @@ DGLE_DYNAMIC_FUNC
 #define GAME_VP_HEIGHT	600u
 
 // Screen resolution
-#define SCREEN_WIDTH	1024
-#define SCREEN_HEIGHT	768
+#define SCREEN_WIDTH	1024u
+#define SCREEN_HEIGHT	768u
 
 IEngineCore *pEngineCore = NULL;
 IInput *pInput = NULL;

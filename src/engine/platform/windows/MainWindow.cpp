@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.04.2012 (c)Korotkov Andrey
+\date		27.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -107,10 +107,12 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			}
 
 		case WM_ENTERSIZEMOVE:
+			this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_DEACTIVATED));
 			SetTimer(hWnd, UPDATE_TIMER_ID, USER_TIMER_MINIMUM, NULL);
 			break;
 
 		case WM_EXITSIZEMOVE:
+			this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_ACTIVATED));
 			KillTimer(hWnd, UPDATE_TIMER_ID);
 			break;
 

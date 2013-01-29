@@ -41,8 +41,8 @@ class CCore: public CInstancedObj, public IEngineCore
 , public IEngineCoreWrapper
 #endif
 {
-	static const uint _sc_MaxProcessCycles		= 10;
-	static const uint _sc_AppCaptionMaxLength	= 128;
+	static const uint _sc_MaxUpdateCycles = 10;
+	static const uint _sc_AppCaptionMaxLength = 128;
 
 	TProcDelegate		 _clDelUpdate,
 						 _clDelRender,
@@ -74,7 +74,7 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	TEngWindow			 _stWin;
 
-	uint				 _uiProcessInterval;
+	uint				 _uiUpdateInterval;
 	uint64				 _ui64TimeOld;
 	bool				 _bPause, _bWasFScreen;
 	char				 _pcApplicationCaption[_sc_AppCaptionMaxLength];
@@ -179,8 +179,8 @@ public:
 	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName);
 	DGLE_RESULT DGLE_API AddPluginToInitList(const char *pcFileName);
 
-	DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags);
-	DGLE_RESULT DGLE_API SetProcessInterval(uint uiProcessInterval);
+	DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags);
+	DGLE_RESULT DGLE_API SetUpdateInterval(uint uiUpdateInterval);
 	DGLE_RESULT DGLE_API StartEngine();
 	DGLE_RESULT DGLE_API QuitEngine();
 

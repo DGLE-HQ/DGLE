@@ -65,11 +65,11 @@ DGLE_RESULT CConsoleWindow::Visible(bool bVisible)
 		}
 		ShowWindow(_hWnd, SW_SHOWNA);
 		SetForegroundWindow(_hWnd);
-		SendMessage(_hWnd, WM_PAINT, NULL, NULL);
 		RECT hwrc;
 		GetWindowRect(_hWnd, &hwrc);
-		SetCursorPos(hwrc.left + (hwrc.right - hwrc.left)/2, hwrc.top + (hwrc.bottom - hwrc.top)/2);
+		SetCursorPos(hwrc.left + (hwrc.right - hwrc.left) / 2, hwrc.top + (hwrc.bottom - hwrc.top) / 2);
 		SetFocus(_hEdit);
+		UpdateWindow(_hWnd);
 	}
 
 	return S_OK;
@@ -294,7 +294,7 @@ int WINAPI CConsoleWindow::_WinMain(HINSTANCE hInstance)
 	SendMessage(_hMemo, WM_SETFONT, (WPARAM)_hFont, MAKELPARAM(TRUE,0));
 
 	_hEdit = CreateWindow(	"EDIT", "",
-							WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_LOWERCASE,
+							WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
 							0, 0, 0, 0, _hWnd, 0, 0, NULL);
 	
 	SetWindowLongPtr(_hEdit, GWLP_USERDATA, (LONG_PTR)this);
@@ -414,16 +414,22 @@ LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM 
 					break;
 				}
 		}
+		goto callDefWndPros;
 
 	case WM_KEYDOWN:
 		if (wParam == 38 /*up*/ || wParam == 40 /*down*/)
 			break;
+		else
+			goto callDefWndPros;
 
 	default:
-		return CallWindowProc((WNDPROC)this_ptr->_pOldEditProc, hWnd, message, wParam, lParam);
+		goto callDefWndPros;
 	}
 
-   return 0;
+	return 0;
+
+callDefWndPros:
+	return CallWindowProc((WNDPROC)this_ptr->_pOldEditProc, hWnd, message, wParam, lParam);
 }
 
 DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)

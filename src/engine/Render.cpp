@@ -23,7 +23,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 	_strFeturesList = "Core Renderer supported features\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_FSCREEN_MODE, b_supported);
-	_strFeturesList += std::string("Hardware full screen: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += std::string("Hardware fullscreen: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_STATE_FILTER, b_supported);
 	_strFeturesList += std::string("Builtin state filter: ") + (b_supported ? "Yes" : "No") + "\n\t";

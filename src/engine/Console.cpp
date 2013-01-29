@@ -114,7 +114,7 @@ void CConsole::_Help(const char* pcParam)
 			par.erase(par.length() - 1, 1);
 
 		for (size_t i = 0; i < _commands.size(); ++i)
-		 if (par == string(_commands[i].pcName))
+		 if (ToLowerCase(par) == string(_commands[i].pcName))
 		 {
 			 if (strlen(_commands[i].pcHelp) == 0)
 				Write(string("Help for command \"" + par + "\" is not presented.").c_str());
@@ -134,7 +134,7 @@ void CConsole::Exec(const char* pcCommand)
 
 	Write((">" + command).c_str());
 	
-	_ProcessConCmd(command);
+	_ProcessConCmd(ToLowerCase(command));
 
 	_prevCommands.push_back(command);
 	_iPrevMarker = _prevCommands.size();
@@ -284,18 +284,18 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 
 void CConsole::_OnCmdComplete(const char *pcParam)
 {
-	string cmds = "----\n";
+	string cmds = "----\n", cmd = ToLowerCase(pcParam);
 	int count = 0, idx = 0;
 	
 	for (size_t i = 0; i < _commands.size(); ++i)
 	{	
 		bool flag = true;
 	
-		if (strlen(pcParam) > strlen(_commands[i].pcName))
+		if (cmd.length() > strlen(_commands[i].pcName))
 			flag = false;
 		else
-			for (uint j = 0; j < strlen(pcParam); ++j)
-				if (pcParam[j] != _commands[i].pcName[j])
+			for (uint j = 0; j < cmd.length(); ++j)
+				if (cmd[j] != _commands[i].pcName[j])
 				{
 					flag = false;
 					break;
@@ -319,8 +319,10 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 
 bool CConsole::UnRegCom(const char *pcName)
 {
+	string cmd = ToLowerCase(pcName);
+	
 	for (size_t i = 0; i < _commands.size(); ++i)
-		if (strcmp(_commands[i].pcName, pcName) == 0)
+		if (strcmp(_commands[i].pcName, cmd.c_str()) == 0)
 		{
 			delete[] _commands[i].pcName;
 			delete[] _commands[i].pcHelp;
@@ -338,7 +340,7 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API
 	TConEntry t;
 	
 	t.pcName = new char[strlen(pcName) + 1];
-	strcpy(t.pcName, pcName);
+	strcpy(t.pcName, ToLowerCase(pcName).c_str());
 	
 	t.pcHelp = new char[strlen(pcHelp) + 1];
 	strcpy(t.pcHelp, pcHelp);
@@ -359,7 +361,7 @@ void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue,
 	TConEntry t;
 	
 	t.pcName = new char[strlen(pcName) + 1];
-	strcpy(t.pcName, pcName);
+	strcpy(t.pcName, ToLowerCase(pcName).c_str());
 	
 	t.pcHelp = new char[strlen(pcHelp) + 1];
 	strcpy(t.pcHelp, pcHelp);

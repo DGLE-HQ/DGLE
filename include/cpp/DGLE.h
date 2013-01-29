@@ -529,7 +529,7 @@ namespace DGLE
 		EIF_CATCH_UNHANDLED		= 0x00000001,	/**< All user callbacks will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
 		EIF_FORCE_NO_SOUND		= 0x00000002,	/**< Sound subsystem will not be initialized. */
 		EIF_LOAD_ALL_PLUGINS	= 0x00000004,	/**< Engine will try to connect any found plugin files found in "plugins" folder near it. \note Ext plugin is connected automatically without this flag as well. */
-		EIF_FORCE_LIMIT_FPS		= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine process interval(uiProcessInterval). \note Recommended for casual games and desktop applications. */
+		EIF_FORCE_LIMIT_FPS		= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine update interval(uiUpdateInterval). \note Recommended for casual games and desktop applications. */
 		EIF_FORCE_16_BIT_COLOR	= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
 		EIF_DISABLE_SMART_TIMING= 0x00000040,	/**< In some cases engine may call EPT_UPDATE several times at once to reduce lags. This flag will disable this feature. */
 		EIF_FORCE_NO_WINDOW		= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. */
@@ -563,16 +563,16 @@ namespace DGLE
 		 \param[in] tHandle Handle of some already created window control to render in or NULL in case to let engine create it's own window.
 		 \param[in] pcApplicationName Caption of main engine window.
 		 \param[in] stWindowParam Structure with some window properties.
-		 \param[in] uiProcessInterval Interval in milliseconds between calling of user process routine. \see EPT_PROCESS
+		 \param[in] uiUpdateInterval Interval in milliseconds between calling of user update routine. \see EPT_UPDATE
 		 \param[in] eInitFlags Special engine configuration flags.
 		 */
-		virtual DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam = TEngWindow(), uint uiProcessInterval = 33, E_ENGINE_INIT_FLAGS eInitFlags = EIF_DEFAULT ) = 0;
+		virtual DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam = TEngWindow(), uint uiUpdateInterval = 33, E_ENGINE_INIT_FLAGS eInitFlags = EIF_DEFAULT ) = 0;
 		
-		/** Change interval of calling user process routine after engine has been started. \see EPT_PROCESS
-		 \param[in] uiProcessInterval Interval in milliseconds.
+		/** Change interval of calling user update routine after engine has been started. \see EPT_UPDATE
+		 \param[in] uiUpdateInterval Interval in milliseconds.
 		 \see InitializeEngine
 		 */
-		virtual DGLE_RESULT DGLE_API SetProcessInterval(uint uiProcessInterval) = 0;	
+		virtual DGLE_RESULT DGLE_API SetUpdateInterval(uint uiUpdateInterval) = 0;	
 		virtual DGLE_RESULT DGLE_API StartEngine() = 0;
 		virtual DGLE_RESULT DGLE_API QuitEngine() = 0;
 

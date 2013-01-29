@@ -78,7 +78,8 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 
 		string name(caps.szPname);
 
-		if (name.find_first_of('(') != string::npos && name.find_first_of(')') == string::npos)
+		string::size_type bracket_pos_1 = name.find_last_of('('), bracket_pos_2 = name.find_last_of(')');
+		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 
 		_devices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + UIntToStr(i) + " name: \"" + name + "\"");

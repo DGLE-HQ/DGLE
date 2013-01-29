@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.01.2013 (c)Korotkov Andrey
+\date		27.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -562,7 +562,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 		if (_iAllowPause)
 		{
-			_pMainWindow->SetCaption((string(_pcApplicationCaption)+string(" [Paused]")).c_str());
+			_pMainWindow->SetCaption((string(_pcApplicationCaption) + " [Paused]").c_str());
 			if (_pSound != NULL) _pSound->MasterPause(true);
 		}
 
@@ -676,15 +676,15 @@ void CCore::_MainLoop()
 
 	Console()->EnterThreadSafeSection();
 
-	uint cycles_cnt = (uint)(time_delta / _uiProcessInterval);
+	uint cycles_cnt = (uint)(time_delta / _uiUpdateInterval);
 		
 	if ((_eInitFlags & EIF_DISABLE_SMART_TIMING) && cycles_cnt > 1)
 		cycles_cnt = 1;
 	else
-		if (cycles_cnt > _sc_MaxProcessCycles)
-			cycles_cnt = _sc_MaxProcessCycles;
+		if (cycles_cnt > _sc_MaxUpdateCycles)
+			cycles_cnt = _sc_MaxUpdateCycles;
 
-	_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiProcessInterval;
+	_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiUpdateInterval;
 
 	if (cycles_cnt > 0)
 		_ui64UpdateDelay = GetPerfTimer();
@@ -709,7 +709,7 @@ void CCore::_MainLoop()
 	if (flag)
 	{
 		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
-		_ui64TimeOld = GetPerfTimer() / 1000 - time_delta % _uiProcessInterval;
+		_ui64TimeOld = GetPerfTimer() / 1000 - time_delta % _uiUpdateInterval;
 	}
 
 	_pRender->BeginRender();
@@ -751,15 +751,15 @@ void CCore::_MainLoop()
 
 			col = TColor4();
 
-			if (_uiLastUPS < 1000 / _uiProcessInterval)
+			if (_uiLastUPS < 1000 / _uiUpdateInterval)
 				col.b = col.g = 0.f;
 					
 			RenderProfilerTxt(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerTxt(("Render  delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
-				RenderProfilerTxt(("Process delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
+				RenderProfilerTxt(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
+				RenderProfilerTxt(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
 			}
 		}
 				
@@ -780,7 +780,7 @@ void CCore::_MainLoop()
 
 	Console()->LeaveThreadSafeSection();
 
-	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiProcessInterval || _bPause)) * 10 +
+	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiUpdateInterval || _bPause)) * 10 +
 				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 5;
 
 	if (sleep > 0)
@@ -973,7 +973,7 @@ DGLE_RESULT DGLE_API CCore::AddPluginToInitList(const char *pcFileName)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiProcessInterval, E_ENGINE_INIT_FLAGS eInitFlags)
+DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags)
 {
 	if (!_bInitedFlag)
 	{
@@ -988,7 +988,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		}
 
 		_stWin = stWindowParam;
-		_uiProcessInterval = uiProcessInterval;
+		_uiUpdateInterval = uiUpdateInterval;
 		_bPause = false;
 
 		CastEvent(ET_BEFORE_INIT, (IBaseEvent*)&CEvBeforeInit(&_stWin, &_eInitFlags));
@@ -1255,9 +1255,9 @@ void CCore::ToogleSuspendEngine(bool bSuspend)
 	_clDelMProc.AllowInvoke(!bSuspend);
 }
 
-DGLE_RESULT DGLE_API CCore::SetProcessInterval(uint uiProcessInterval)
+DGLE_RESULT DGLE_API CCore::SetUpdateInterval(uint uiUpdateInterval)
 {
-	_uiProcessInterval = uiProcessInterval;
+	_uiUpdateInterval = uiUpdateInterval;
 	return S_OK;
 }
 
@@ -1355,7 +1355,7 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= 0;
 	_ui64FPSSumm = _ui64CyclesCount = 0;
-	_ui64TimeOld = GetPerfTimer() / 1000 - _uiProcessInterval;
+	_ui64TimeOld = GetPerfTimer() / 1000 - _uiUpdateInterval;
 
 	if (_pSplashWindow) 
 		_pSplashWindow->Free();
