@@ -189,7 +189,7 @@ void DGLE_API Render(void *pParametr)
 
 	pRender2D->DrawTexCropped(pBg, TPoint2(-200.f, 150.f), TPoint2(1399.f, 517.f), TRectF(0.f, 905.f, 1399.f, 517.f), 0.f, EF_BLEND);
 
-	// Draw moveing fog on background
+	// Draw moving fog on background
 
 	pRender2D->SetCamera(TPoint2(cameraPosition.x / 1.2f, cameraPosition.y / 1.2f), cameraAngle, TPoint2(cameraScale, cameraScale));
 
@@ -278,7 +278,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pEngineCore->AddProcedure(EPT_UPDATE, &Update);
 			pEngineCore->AddProcedure(EPT_RENDER, &Render);
 			
-			pEngineCore->AddEventListner(ET_ON_FULLSCREEN, &OnFullScreenEvent);
+			pEngineCore->AddEventListener(ET_ON_FULLSCREEN, &OnFullScreenEvent);
 
 			pEngineCore->StartEngine();
 		}

@@ -17,7 +17,7 @@ This header is a part of DGLE SDK.
 
 - DGLE is a powerful cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 - DGLE is opensource project and free to use (under the terms of license, see below).
-- DGLE is based on widely spread open standarts, formats and APIs such as OpenGL, OpenAL, OpenCL, OGG Vorbis, Lua, Box2D, Bullet physics, Mono, e.t.c..
+- DGLE is based on widely spread open standards, formats and APIs such as OpenGL, OpenAL, OpenCL, OGG Vorbis, Lua, Box2D, Bullet physics, Mono, e.t.c..
 
 \image html Open_Standarts.png
 
@@ -26,7 +26,7 @@ This documentation is also suitable for any supported programming language.
 
 \section	aim_sec The aim of the project
 
-The goal of the project is to provide developers with flexible & extandable cross platform easy-to-learn professional technology,
+The goal of the project is to provide developers with flexible & extendable cross platform easy-to-learn professional technology,
 capable of building any 2D/3D games, real-time visualizations, scientific applications etc. It should be easy to make great projects
 only by using editors and scripts or go deeper and use your programming skills of your favorite language to create really exciting projects.
 Users can also add new formats and functionality by creating new plugins for engine and share them with others over the web or just get
@@ -47,7 +47,7 @@ Simple steps to make your first DGLE application.
 
 Please see "HelloWorld" sample code at the "Examples" tab of this help file.
 
-You can browse ".\src\examples" folder or go to "Examples" tab of this manual for futher information.
+You can browse ".\src\examples" folder or go to "Examples" tab of this manual for further information.
 
 \section license_sec License
 
@@ -74,7 +74,7 @@ Also we would be happy for any donations to support futher project development.
 \section additional_sec Additional help and information
 
 Visit official DGLE engine website http://dgle.dronprogs.org/ for additional information.
-There you can download latest version, gain help, support project or just say your oppinion or ask question at official DGLE forum ( http://forum.dronprogs.org/viewforum.php?f=3 ).
+There you can download latest version, gain help, support project or just say your opinion or ask question at official DGLE forum ( http://forum.dronprogs.org/viewforum.php?f=3 ).
 
 Feel free to write directly to project leader on e-mail dgle@dronprogs.org.
 
@@ -159,9 +159,9 @@ namespace DGLE
 #endif
 	{
 	public:
-		/** Returns uniq identifier of the last interface in the inheritance chain.
-			\param[out] guid Uniq interface identifier.
-			\return Always returnes DGLE_types.h::S_OK.
+		/** Returns unique identifier of the last interface in the inheritance chain.
+			\param[out] guid Unique interface identifier.
+			\return Always returns DGLE_types.h::S_OK.
 		 */		
 		virtual DGLE_RESULT DGLE_API GetGUID(GUID &guid) = 0;
 		/** Executes some command using its index or bitmask. Commands are specific for concrete interface. All commands should be described in documentation.
@@ -210,7 +210,7 @@ namespace DGLE
 	public:
 		/** Returns type of subsystem. 
 			\param[out] eSubSystemType Type of the subsystem to which you may cast this interface pointer.
-			\return Always returnes DGLE_types.h::S_OK.	
+			\return Always returns DGLE_types.h::S_OK.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType) = 0;
 	};
@@ -248,7 +248,7 @@ namespace DGLE
 	class ISubSystemPlugin : public IPlugin
 	{
 	public:
-		/** Returns interface of subsystem realised in this plugin.
+		/** Returns interface of subsystem implemented in this plugin.
 			\param[out] prSubSystem Interface of the subsystem.
 		*/
 		virtual DGLE_RESULT DGLE_API GetSubSystemInterface(IEngineSubSystem *&prSubSystem) = 0;
@@ -288,7 +288,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API Free() = 0;
 		/** Returns type of object. 
 			\param[out] eObjType Type of the object to which you may cast this interface pointer.
-			\return Always returnes DGLE_types.h::S_OK.	
+			\return Always returns DGLE_types.h::S_OK.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType) = 0;
 		/** In case object type is EOT_UNKNOWN, you can use this function to get specific object type id.
@@ -311,9 +311,9 @@ namespace DGLE
 		ET_AFTER_RENDER,			/**< Event occurs after every frame. */ 
 		ET_ON_PROFILER_DRAW,		/**< It is a special event on which you can render some text information on screen. \note If you want to output some statistic or profiling information use this event and special RenderProfilerTxt method. \see IEngineCore::RenderProfilerTxt */ 
 		ET_ON_WIN_MESSAGE,			/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
-		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realisation. \see IEvGetSubSystem */ 
+		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
-		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputed to the engine console. \see IEvFatalMessage */
+		ET_ON_CONSOLE_WRITE			/**< Event occurs when some text is being outputted to the engine console. \see IEvFatalMessage */
 		ET_ON_FULLSCREEN			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
 	};
 
@@ -322,19 +322,19 @@ namespace DGLE
 	{ 0x6dfef982, 0xaadf, 0x42e9, { 0xa3, 0x69, 0x37, 0x8b, 0xdb, 0x31, 0x40, 0x4a } };
 
 	/** Base interface of any engine event. 
-		\see IEngineCore::AddEventListner, IEngineCore::RemoveEventListner
+		\see IEngineCore::AddEventListener, IEngineCore::RemoveEventListener
 	 */
 	class IBaseEvent : public IDGLE_Base
 	{
 	public:
 		/** Returns type of event. 
 			\param[out] eEvType Type of the event. You may cast this interface pointer to special event interface if such exists.
-			\return Always returnes DGLE_types.h::S_OK.	
+			\return Always returns DGLE_types.h::S_OK.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType) = 0;
 		/** In case event type is ET_UNKNOWN, you can use this function to get specific event type id.
 			\param[out] uiUnknEvType Integer with unique event type index. Meaning of these indexes must be provided by the developer of specific event type.
-			\return Returnes DGLE_types.h::S_FALSE if event is not of ET_UNKNOWN type and DGLE_types.h::S_OK otherwise.	
+			\return Returns DGLE_types.h::S_FALSE if event is not of ET_UNKNOWN type and DGLE_types.h::S_OK otherwise.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType) = 0;
 	};
@@ -345,19 +345,19 @@ namespace DGLE
 
 	enum E_ENGINE_INIT_FLAGS;
 
-	/** Event occures just before engine will call its initialization routines.
-		On this event tou can hook engine init parametrs.
+	/** Event occurs just before engine will call its initialization routines.
+		On this event you can hook engine init Parameters.
 		\see ET_BEFORE_INIT, IEngineCore::InitializeEngine, IBaseEvent
 	 */
 	class IEvBeforeInit : public IBaseEvent
 	{
 	public:
-		/** Sets new engine initialization parametrs.
+		/** Sets new engine initialization parameters.
 			\param[in] stWindowParam New engine window structure to replace current.
 			\param[in] eInitFlags New engine initialization flags to replace current.
 		 */
 		virtual DGLE_RESULT DGLE_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
-		/** Retrieves current engine initialization parametrs. 
+		/** Retrieves current engine initialization parameters. 
 			\param[in] stWindowParam Current engine window structure.
 			\param[in] eInitFlags Current engine initialization flags.
 		 */
@@ -377,7 +377,7 @@ namespace DGLE
 		/** Returns console text.
 		 \param[out] pcTxt Pointer to allocated string.
 		 \param[in, out] uiCharsCount Count of the chars in allocated string.
-		 \param[out] bToPrevLine Should text replase previous console line or add new one.
+		 \param[out] bToPrevLine Should text replace previous console line or add new one.
 		 \return E_INVALIDARG must be returned if allocated string is too small.
 		 \note If pcTxt is NULL then uiCharsCount will contain the length of the text to allocate.
 		 */		
@@ -388,7 +388,7 @@ namespace DGLE
 	static const GUID IID_IEvFatalMessage = 
 	{ 0xdaa4e3bc, 0xc958, 0x4def, { 0xb6, 0x3, 0xf6, 0x3e, 0xec, 0x90, 0x82, 0x26 } };
 
-	/** Event occures on engine fatal error.
+	/** Event occurs on engine fatal error.
 		Also application errors such as "Access Violation" are handled by this event if EIF_CATCH_UNHANDLED
 		flag is set in IEngineCore::InitializeEngine initialization flags.
 		By handling this event 
@@ -405,7 +405,7 @@ namespace DGLE
 		 */		
 		virtual DGLE_RESULT DGLE_API GetMessageTxt(char *pcTxt, uint &uiCharsCount) = 0;
 		/** Suspends all engine threads and pauses all engine routines. 
-			\param[in] bFreeze Suspends if true or resumes if fales engine threads and routines.
+			\param[in] bFreeze Suspends if true or resumes if false engine threads and routines.
 		 */
 		virtual DGLE_RESULT DGLE_API FreezeEngine(bool bFreeze) = 0;
 		/** Forces engine not to show error message and console. 
@@ -422,7 +422,7 @@ namespace DGLE
 	static const GUID IID_IEvWinMessage = 
 	{ 0x8d718e48, 0x581d, 0x4cbb, { 0x9c, 0x40, 0xc0, 0x49, 0x98, 0x10, 0x6f, 0x8d } };
 
-	/** Event occures every time when window receives message. 
+	/** Event occurs every time when window receives message. 
 		Use this event to hook window messages.
 		\see ET_ON_WIN_MESSAGE, IBaseEvent
 	 */
@@ -439,8 +439,8 @@ namespace DGLE
 	static const GUID IID_IEvGetSubSystem = 
 	{ 0x2b6d2547, 0x716e, 0x490c, { 0xb1, 0xf1, 0x42, 0x2c, 0xb4, 0x28, 0x73, 0x8f } };
 
-	/** Event occures when someone calls IEngineCore::GetSubSystem method.
-		You can substitute any subsystem by your own realisation on this event.
+	/** Event occurs when someone calls IEngineCore::GetSubSystem method.
+		You can substitute any subsystem by your own realization on this event.
 		\see ET_ON_GET_SSYSTEM, IBaseEvent
 	 */
 	class IEvGetSubSystem : public IBaseEvent
@@ -498,7 +498,7 @@ namespace DGLE
 	};
 
 	/** Type of engine callbacks. 
-		IEngineCore can register calbacks of these types.
+		IEngineCore can register callbacks of these types.
 		\see IEngineCore::AddProcedure, IEngineCore::RemoveProcedure
 	 */
 	enum E_ENGINE_PROCEDURE_TYPE
@@ -506,7 +506,7 @@ namespace DGLE
 		EPT_UPDATE = 0,		/**< Procedure is called periodically(like on timer event). Interval of calling is set on engine initialization. In this procedure you should do any application computes. \see IEngineCore::InitializeEngine */
 		EPT_RENDER,			/**< Procedure is called when engine decides to draw new frame. In this procedure you can call any rendering routines. */
 		EPT_INIT,			/**< Procedure is called before engine will start its main loop. In this procedure you should load all resources needed by your application. */
-		EPT_FREE			/**< Procedure is called before engine quits. In this procedure you should release all resources and free memmory. */
+		EPT_FREE			/**< Procedure is called before engine quits. In this procedure you should release all resources and free memory. */
 	};
 
 	/** Type of engine log message.
@@ -555,7 +555,7 @@ namespace DGLE
 
 		/** Adds plugin to engine initialization list. This means that plugin will be loaded on engine initialization. This is the only correct way to setup Render, Sound, Input or other system plugins.
 		 \param[in] pcFileName File name of the plugin.
-		 \note Standart DGLE_EXT plugin will be connected automatically (if found), so you don't need to add it to initialization list.
+		 \note Standard DGLE_EXT plugin will be connected automatically (if found), so you don't need to add it to initialization list.
 		 */
 		virtual DGLE_RESULT DGLE_API AddPluginToInitList(const char *pcFileName) = 0;	
 
@@ -583,12 +583,12 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API AddUserCallback(IUserCallback *pUserCallback) = 0;
 		virtual DGLE_RESULT DGLE_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
 
-		virtual DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
-		virtual DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter = NULL) = 0;
 
 		virtual DGLE_RESULT DGLE_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
-		virtual DGLE_RESULT DGLE_API AddEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr = NULL) = 0;
-		virtual DGLE_RESULT DGLE_API RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListenerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListenerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter = NULL) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) = 0;
 
@@ -611,8 +611,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine = false) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleExec(const char *pcCommandTxt) = 0;
-		virtual DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr = NULL) = 0; 
-		virtual DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter = NULL) = 0; 
+		virtual DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleUnregCom(const char *pcCommandName) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) = 0;	
@@ -698,12 +698,12 @@ namespace DGLE
 	class IResourceManager : public IEngineSubSystem
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResourse = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResourse = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResourse = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResource = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResource = false) = 0;
 	
-		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterFileFormat(const char *pcExtension) = 0;
 		virtual DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
@@ -820,7 +820,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API BeginBatch(bool bUpdateEveryFrame = false) = 0;
 		virtual DGLE_RESULT DGLE_API EndBatch() = 0;
 		virtual DGLE_RESULT DGLE_API NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
-		virtual DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
+		virtual DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstantProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
 		virtual DGLE_RESULT DGLE_API CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord) = 0;
 		virtual DGLE_RESULT DGLE_API CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord) = 0;
 		virtual DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f, 1.f)) = 0;
@@ -1171,7 +1171,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData) = 0;	
 		virtual DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize) = 0; //Data not copied!
-		virtual DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr) = 0;
+		virtual DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter) = 0;
 	};
 
 	//SoundSample interface//
@@ -1214,7 +1214,7 @@ namespace DGLE
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Play() = 0;
-		virtual DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on nul
+		virtual DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on null
 	};
 
 //FileSystem interfaces//
@@ -1230,7 +1230,7 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API LoadFile(const char* pcFileName, IFile *&prFile) = 0;// c:\data.zip|img.jpg
 		virtual DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension/*NULL to get HDD file system*/, IFileSystem *&prVFS) = 0;
-		virtual DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDescription, IFileSystem *pVFS, void (DGLE_API *pDeleteDGLE_API)(void *pParametr, IFileSystem *pVFS), void *pParametr = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDescription, IFileSystem *pVFS, void (DGLE_API *pDeleteDGLE_API)(void *pParameter, IFileSystem *pVFS), void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char* pcVFSExtension) = 0;
 		virtual DGLE_RESULT DGLE_API GetRegisteredVirtualFileSystems(char* pcTxt, uint &uiCharsCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetVirtualFileSystemDescription(const char* pcVFSExtension, char* pcTxt, uint &uiCharsCount) = 0;
@@ -1318,7 +1318,7 @@ namespace DGLE
 
 /** \def DGLE_EXTERN_FUNC Macros you can insert in any cpp file to use CreateEngine and FreeEngine functions.
 	\note In your main cpp file you must include DGLE_STATIC_FUNC or DGLE_DYNAMIC_FUNC anyway. This macros provides two functions CreateEngine and FreeEngine.
-	\warning If you have more than one instance of engine you must set bFreeLib parametr to true only when releasing the last engine instance.
+	\warning If you have more than one instance of engine you must set bFreeLib Parameter to true only when releasing the last engine instance.
 	\see E_GET_ENGINE_FLAGS
 */
 #define DGLE_EXTERN_FUNC \
@@ -1326,7 +1326,7 @@ extern bool CreateEngine(DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLA
 extern bool FreeEngine(DGLE::IEngineCore *pEngineCore, bool bFreeLib = false);
 
 /** \def DGLE_STATIC_FUNC Macros you must insert in your main cpp file to use CreateEngine and FreeEngine functions.
-	\note This macros is used when engine is linked statically from object file. This macros provides two functions CreateEngine and FreeEngine. Parametr bFreeLib for FreeEngine is not used.
+	\note This macros is used when engine is linked statically from object file. This macros provides two functions CreateEngine and FreeEngine. Parameter bFreeLib for FreeEngine is not used.
 	\see E_GET_ENGINE_FLAGS
 */
 #define DGLE_STATIC_FUNC \
@@ -1334,7 +1334,7 @@ DGLE_EXTERN_FUNC\
 error Static linking is not implemented!
 
 /** \def DGLE_DYNAMIC_FUNC Macros you must insert in your main cpp file to use GetEngine, CreateEngine and FreeEngine functions.
-	\note This macros is used when engine is linked dynamically from lybrary file (ex. DLL for Windows). This macros provides three functions GetEngine, CreateEngine and FreeEngine. First one must be called to load engine from dynamic library.
+	\note This macros is used when engine is linked dynamically from library file (ex. DLL for Windows). This macros provides three functions GetEngine, CreateEngine and FreeEngine. First one must be called to load engine from dynamic library.
 	\see E_GET_ENGINE_FLAGS
 */
 #define DGLE_DYNAMIC_FUNC \
@@ -1479,7 +1479,7 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 		return S_OK;\
 	}\
 
-/** \def IDGLE_BASE_IMPLEMENTATION(interface_name) Macros inserts realisation of IDGLE_Base interface into class body.
+/** \def IDGLE_BASE_IMPLEMENTATION(interface_name) Macros inserts realization of IDGLE_Base interface into class body.
 	Can be used with interfaces inherited from IDGLE_Base.
 	\param[in] interface_name Name of the last interface in inheritance chain from IDGLE_Base.
 	\param[in] interface_impl_list List of all other interfaces names of inheritance chain. List is generated via define INTERFACE_IMPL.

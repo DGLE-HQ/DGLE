@@ -39,7 +39,7 @@ struct GUID
 };
 
 /** Default return type for all DGLE methods. 
-	Every engine interface method returnes DGLE_RESULT as result.
+	Every engine interface method returns DGLE_RESULT as result.
 	DGLE_RESULT must be one of these types S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT or E_NOTIMPL.
 	\note Engine suppresses a lot of errors and keeps all things stable, so it is not necessary to check every methods result.
 	\see SUCCEEDED, FAILED, CHECK_RES, PARANOIC_CHECK_RES, S_OK, S_FALSE, E_FAIL, E_INVALIDARG, E_ABORT, E_NOTIMPL
@@ -48,13 +48,13 @@ typedef long int DGLE_RESULT;
 
 //DGLE_RESULT return values//
 
-/** Return value of DGLE_RESULT type. Method returns S_OK when all of its routines were done succesfully. */
+/** Return value of DGLE_RESULT type. Method returns S_OK when all of its routines were done successfully. */
 #define S_OK			((DGLE_RESULT)0L)
 
-/** Return value of DGLE_RESULT type. Method returns S_FALSE when most of its routines were done succesfully but some minor errors occured. */
+/** Return value of DGLE_RESULT type. Method returns S_FALSE when most of its routines were done successfully but some minor errors occurred. */
 #define S_FALSE			((DGLE_RESULT)1L)
 
-/** Return value of DGLE_RESULT type. Method returns E_FAIL when unspecified error occured. */
+/** Return value of DGLE_RESULT type. Method returns E_FAIL when unspecified error occurred. */
 #define E_FAIL			((DGLE_RESULT)0x80004005L)
 
 /** Return value of DGLE_RESULT type. Method returns E_INVALIDARG when one or more arguments are invalid. */
@@ -63,7 +63,7 @@ typedef long int DGLE_RESULT;
 /** Return value of DGLE_RESULT type. Method returns E_ABORT when operation aborted due to errors of some other function. */
 #define E_ABORT			((DGLE_RESULT)0x80004004L)
 
-/** Return value of DGLE_RESULT type. Method returns E_NOTIMPL when it is empty dummy or this routine is unsupported by realisation. */
+/** Return value of DGLE_RESULT type. Method returns E_NOTIMPL when it is empty dummy or this routine is unsupported by realization. */
 #define E_NOTIMPL		((DGLE_RESULT)0x80004001L)
 
 /** Macros to check DGLE_RESULT value. Returns true if value is S_OK or S_FALSE and false otherwise.
@@ -91,7 +91,7 @@ typedef long int DGLE_RESULT;
 namespace DGLE
 {
 
-//Some standart types redifinition//
+//Some standard types redefinition//
 
 	//signed//
 	typedef short int			int16;
@@ -265,8 +265,8 @@ namespace DGLE
 		WMT_CREATE,		/**< Message indicates that window is being created. Message parameters are not used. */
 		WMT_DESTROY,	/**< Message indicates that window is ready to be destroyed. Message parameters are not used. */
 		WMT_RELEASED,	/**< Message indicates that window was destroyed and released successfully. Message parameters are not used. */
-		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Param1 value is TWinHandle of the whindow which loses focus. */
-		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Param1 value is TWinHandle of the whindow which gets focus. */
+		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Param1 value is TWinHandle of the window which loses focus. */
+		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Param1 value is TWinHandle of the window which gets focus. */
 		WMT_MINIMIZED,	/**< Message indicates that window was minimized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
 		WMT_RESTORED,	/**< Message indicates that window was restored to its normal state. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
 		WMT_MOVE,		/**< Message indicates that window is being moved. Message parameter ui32Param1 stores x coordinate of upper left window corner and ui32Param2 stores y coordinate. \note Under Windows pParam3 points to RECT structure with window size. */
@@ -287,9 +287,9 @@ namespace DGLE
 	{
 		E_WINDOW_MESSAGE_TYPE
 				uiMsgType;	/**< Window message type identifier. */
-		uint32	ui32Param1;	/**< Message first parametr. */
-		uint32	ui32Param2;	/**< Message second parametr. */
-		void	*pParam3;	/**< Message third parametr. Points to specific message data. */
+		uint32	ui32Param1;	/**< Message first parameter. */
+		uint32	ui32Param2;	/**< Message second parameter. */
+		void	*pParam3;	/**< Message third parameter. Points to specific message data. */
 		
 		TWinMessage():uiMsgType(WMT_UNKNOWN), ui32Param1(0), ui32Param2(0), pParam3(NULL){}
 		TWinMessage(E_WINDOW_MESSAGE_TYPE msg, uint32 param1 = 0, uint32 param2 = 0, void *param3 = NULL):uiMsgType(msg), ui32Param1(param1), ui32Param2(param2), pParam3(param3){}
@@ -315,7 +315,7 @@ namespace DGLE
 	{
 		MM_NONE	= 0x00000000,/**< Multisampling is off. */
 		MM_2X	= 0x00000001,/**< 2xMSAA */
-		MM_4X	= 0x00000002,/**< 4xMSAA \note This value is recomended. */
+		MM_4X	= 0x00000002,/**< 4xMSAA \note This value is recommended. */
 		MM_8X	= 0x00000004,/**< 8xMSAA */
 		MM_16X	= 0x00000008 /**< 16xMSAA */
 	};
@@ -364,11 +364,11 @@ namespace DGLE
 		char cCPUName[128];			/**< String with CPU description. */
 		uint uiCPUCount;			/**< Number of CPUs on host system. */
 		uint uiCPUFreq;				/**< Real CPU frequency in MHz. */
-		uint uiRAMTotal;			/**< Ammount of RAM in system in megabytes. */
-		uint uiRAMAvailable;		/**< Ammount of free RAM in system on engine start in megabytes. */
+		uint uiRAMTotal;			/**< Amount of RAM in system in megabytes. */
+		uint uiRAMAvailable;		/**< Amount of free RAM in system on engine start in megabytes. */
 		char cVideocardName[128];	/**< String with primary videocard description. */
 		uint uiVideocardCount;		/**< Number of videocards in system. */
-		uint uiVideocardRAM;		/**< Ammount of video RAM in system in megabytes. */
+		uint uiVideocardRAM;		/**< Amount of video RAM in system in megabytes. */
 	};
 
 	/** Describes engine plugin information. 
@@ -376,7 +376,7 @@ namespace DGLE
 	 */
 	struct TPluginInfo
 	{
-		uint8 ui8PluginSDKVersion;	/**< Version of SDK with wich plugin was build. \warning This value MUST BE set to "_DGLE_PLUGIN_SDK_VER_"! */
+		uint8 ui8PluginSDKVersion;	/**< Version of SDK with which plugin was build. \warning This value MUST BE set to "_DGLE_PLUGIN_SDK_VER_"! */
 		char  cName[128];		 	/**< String with plugin name. */
 		char  cVersion[64];		 	/**< String with plugin version. */
 		char  cVendor[128];		 	/**< String with name of vendor(developer). */
@@ -1026,7 +1026,7 @@ namespace DGLE
 			0.f, 0.f, 0.f, 1.f);
 	}
 
-	/** Returns inverce matrx. */
+	/** Returns inverse matrix. */
 	inline TMatrix MatrixInverse(const TMatrix &stMatrix)
 	{
 		float mat[4][8] =
@@ -1083,7 +1083,7 @@ namespace DGLE
 			rows[3][4] / rows[3][3], rows[3][5] / rows[3][3], rows[3][6] / rows[3][3], rows[3][7] / rows[3][3]);
 	}
 
-	/** Returns transpose matrx. */
+	/** Returns transpose matrix. */
 	inline TMatrix MatrixTranspose(const TMatrix &stMatrix)
 	{
 		return TMatrix(
@@ -1093,7 +1093,7 @@ namespace DGLE
 			stMatrix._2D[0][3], stMatrix._2D[1][3], stMatrix._2D[2][3], stMatrix._2D[3][3]);
 	}
 	
-	/** Returns scaled matrix by given vector. */
+	/** Returns scaled matrix by a given vector. */
 	inline TMatrix MatrixScale(const TVector3 &stVec)
 	{
 		return TMatrix(
@@ -1103,7 +1103,7 @@ namespace DGLE
 			0.f, 0.f, 0.f, 1.f);
 	}
 
-	/** Returns translated matrix by given vector. */
+	/** Returns translated matrix by a given vector. */
 	inline TMatrix MatrixTranslate(const TVector3 &stVec)
 	{
 		return TMatrix(
@@ -1113,14 +1113,14 @@ namespace DGLE
 			stVec.x, stVec.y, stVec.z, 1.f);
 	}
 
-	/** Returns rotated matrix by given axes vector and angle. */
-	inline TMatrix MatrixRotate(float fAngle, TVector3 &stAxes)
+	/** Returns rotated matrix by a given axis vector and angle. */
+	inline TMatrix MatrixRotate(float fAngle, TVector3 &stAxis)
 	{
 		const float
-			axis_norm = sqrt(stAxes.x*stAxes.x + stAxes.y*stAxes.y + stAxes.z*stAxes.z),
-			x = stAxes.x / axis_norm,
-			y = stAxes.y / axis_norm,
-			z = stAxes.z / axis_norm,
+			axis_norm = sqrt(stAxis.x*stAxis.x + stAxis.y*stAxis.y + stAxis.z*stAxis.z),
+			x = stAxis.x / axis_norm,
+			y = stAxis.y / axis_norm,
+			z = stAxis.z / axis_norm,
 			sin_angle = sinf(fAngle*(float)M_PI/180.f),
 			cos_angle = cosf(fAngle*(float)M_PI/180.f);
 		return TMatrix(
@@ -1242,12 +1242,12 @@ namespace DGLE
 	{
 		uint uiBtnsCount;	/**< Count of available joystick buttons. */
 		bool bButtons[32];	/**< Array of joystick buttons states (pressed or not). */
-		int iXAxes;		    /**< X-axis position. Value varies -100 to 100. */
-		int iYAxes;		    /**< Y-axis position. Value varies -100 to 100. */
-		int iZAxes;		    /**< Z-axis position. Value varies -100 to 100. */
-		int iRAxes;			/**< Current position of the rudder or fourth joystick axis. Value varies -100 to 100. */
-		int iUAxes;			/**< Current fifth axis position. Value varies -100 to 100. */
-		int iVAxes;			/**< Current sixth axis position. Value varies -100 to 100. */
+		int iXAxis;		    /**< X-axis position. Value varies -100 to 100. */
+		int iYAxis;		    /**< Y-axis position. Value varies -100 to 100. */
+		int iZAxis;		    /**< Z-axis position. Value varies -100 to 100. */
+		int iRAxis;			/**< Current position of the rudder or fourth joystick axis. Value varies -100 to 100. */
+		int iUAxis;			/**< Current fifth axis position. Value varies -100 to 100. */
+		int iVAxis;			/**< Current sixth axis position. Value varies -100 to 100. */
 		int iPOV;			/**< Point-Of-View direction. */
 	};
 

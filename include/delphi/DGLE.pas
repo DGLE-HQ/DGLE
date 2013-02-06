@@ -15,10 +15,12 @@ interface
 
 {$IFDEF FPC}
   {$MODE DELPHI}
+  {$MACRO ON}
+  {$DEFINE COMPILERVERSION := 12} // assume FPC is like Delphi4
 {$ENDIF}
 
-{$ifndef DGLE_HEADER}
-{$define DGLE_HEADER}
+{$IFNDEF DGLE_HEADER}
+{$DEFINE DGLE_HEADER}
 {$ENDIF}
 
 
@@ -26,18 +28,18 @@ uses Windows, DGLE_types;
 
 const
 		_DGLE_VER_						= '2:0.3.0';
-		_DGLE_SDK_VER_					= 1;
-		_DGLE_PLUGIN_SDK_VER_			= _DGLE_SDK_VER_;
+		_DGLE_SDK_VER_				= 1;
+		_DGLE_PLUGIN_SDK_VER_	= _DGLE_SDK_VER_;
 
 {Engine SubSystem interface flags}
 
     //E_ENGINE_SUB_SYSTEM
 		ESS_RENDER						= 0;
-		ESS_INPUT						= 1;
-		ESS_SOUND						= 2;
-		ESS_RESOURCE_MANAGER					= 3;
-		ESS_FILESYSTEM						= 4;
-		ESS_CORE_RENDERER					= 5;
+		ESS_INPUT						  = 1;
+		ESS_SOUND						  = 2;
+		ESS_RESOURCE_MANAGER	= 3;
+		ESS_FILESYSTEM				= 4;
+		ESS_CORE_RENDERER			= 5;
 
 {Engine Base Object interface flags}
 
@@ -56,50 +58,52 @@ const
 {Events Interfaces flags}
 
     //E_EVENT_TYPE
-		ET_UNKNOWN						= 0;
-		ET_BEFORE_INIT					= 1;
-		ET_BEFORE_RENDER				= 2;
-		ET_AFTER_RENDER					= 3;
-		ET_ON_PROFILER_DRAW				= 4;
-		ET_ON_WIN_MESSAGE				= 5;
-		ET_ON_GET_SSYSTEM				= 6;
-		ET_ON_ENGINE_FATAL_MESSAGE		= 7;
- 		ET_ON_CONSOLE_WRITE			= 8;
+		ET_UNKNOWN						      = 0;
+		ET_BEFORE_INIT				    	= 1;
+		ET_BEFORE_RENDER			    	= 2;
+		ET_AFTER_RENDER				    	= 3;
+		ET_ON_PROFILER_DRAW		    	= 4;
+		ET_ON_WIN_MESSAGE			    	= 5;
+		ET_ON_GET_SSYSTEM			    	= 6;
+		ET_ON_ENGINE_FATAL_MESSAGE  = 7;
+ 		ET_ON_CONSOLE_WRITE		    	= 8;
+    ET_ON_FULLSCREEN            = 9;
 
 
  {Main Engine System flags}
 
 	//E_ENGINE_PROCEDURE_TYPE
-		EPT_UPDATE						= 0;
-		EPT_RENDER						= 1;
+		EPT_UPDATE					= 0;
+		EPT_RENDER					= 1;
 		EPT_INIT 						= 2;
 		EPT_FREE 						= 3;
 
 	//E_LOG_TYPE
 		LT_INFO							= 0;
-		LT_WARNING						= 1;
+		LT_WARNING					= 1;
 		LT_ERROR						= 2;
 		LT_FATAL						= 3;
 
 	//E_ENGINE_INIT_FLAGS
-		EIF_DEFAULT						= $00000000;
+		EIF_DEFAULT						    = $00000000;
 		EIF_CATCH_UNHANDLED				= $00000001;
 		EIF_FORCE_NO_SOUND				= $00000002;
- 		EIF_LOAD_ALL_PLUGINS				= $00000004;
+ 		EIF_LOAD_ALL_PLUGINS			= $00000004;
 		EIF_FORCE_LIMIT_FPS				= $00000010;
-		EIF_FORCE_16_BIT_COLOR				= $00000020;
-		EIF_DISABLE_SMART_TIMING			= $00000040;
-		EIF_NO_SPLASH					= $10000000;
+		EIF_FORCE_16_BIT_COLOR		= $00000020;
+		EIF_DISABLE_SMART_TIMING	= $00000040;
+    EIF_FORCE_NO_WINDOW		    = $00000100;
+		EIF_NO_SPLASH					    = $10000000;
 
 {Resource Manager SubSystem flags}
 
 	// E_TEXTURE_DATA_FORMAT
 	
 		TDF_RGB8 			= 0;
-		TDF_RGBA8 			= 1;
-		TDF_ALPHA8 			= 2;
+		TDF_RGBA8 		= 1;
+		TDF_ALPHA8 		= 2;
 		TDF_BGR8 			= 3;
-		TDF_BGRA8 			= 4;
+		TDF_BGRA8 		= 4;
 		TDF_DXT1 			= 5;
 		TDF_DXT5 			= 6;
 		TDF_DEPTH_COMPONENT24 		= 7;
@@ -107,46 +111,46 @@ const
 
 	//E_TEXTURE_CREATION_FLAGS
 		
-		TCF_DEFAULT				= $00000000;
-		TCF_PIXEL_ALIGNMENT_1			= $00000001;	//use only if your texture input data is not 4 byte aligned
-		TCF_MIPMAPS_PRESENTED			= $00000002;	//all mip levels must be presented
+		TCF_DEFAULT			             	= $00000000;
+		TCF_PIXEL_ALIGNMENT_1			    = $00000001;	//use only if your texture input data is not 4 byte aligned
+		TCF_MIPMAPS_PRESENTED			    = $00000002;	//all mip levels must be presented
 
     //E_TEXTURE_LOAD_FLAGS
-		TLF_FILTERING_NONE				= $00000001;
-		TLF_FILTERING_BILINEAR			= $00000002;
-		TLF_FILTERING_TRILINEAR			= $00000004;
-		TLF_FILTERING_ANISOTROPIC		= $00000008;
+		TLF_FILTERING_NONE		  	   	= $00000001;
+		TLF_FILTERING_BILINEAR		   	= $00000002;
+		TLF_FILTERING_TRILINEAR		   	= $00000004;
+		TLF_FILTERING_ANISOTROPIC	   	= $00000008;
 
-		TLF_DECREASE_QUALITY_MEDIUM		= $00000020;
-		TLX_DECREASE_QUALITY_HIGH		= $00000040;
+		TLF_DECREASE_QUALITY_MEDIUM  	= $00000020;
+		TLX_DECREASE_QUALITY_HIGH	   	= $00000040;
 
-		TLX_COMPRESS					= $00000100;
+		TLX_COMPRESS					        = $00000100;
 
-		TLF_COORDS_REPEAT	 			= $00001000;
-		TLF_COORDS_CLAMP				= $00002000;
-		TLF_COORDS_MIRROR_REPEAT		= $00004000;
-		TLF_COORDS_MIRROR_CLAMP			= $00008000;
+		TLF_COORDS_REPEAT	 		       	= $00001000;
+		TLF_COORDS_CLAMP			       	= $00002000;
+		TLF_COORDS_MIRROR_REPEAT	   	= $00004000;
+		TLF_COORDS_MIRROR_CLAMP		   	= $00008000;
 
-		TLF_GENERATE_MIPMAPS			= $00040000;
+		TLF_GENERATE_MIPMAPS		     	= $00040000;
 
-		TLF_ANISOTROPY_2X				= $00100000;
-		TLF_ANISOTROPY_4X				= $00200000;
-		TLF_ANISOTROPY_8X				= $00400000;
-		TLF_ANISOTROPY_16X				= $00800000;
+		TLF_ANISOTROPY_2X			       	= $00100000;
+		TLF_ANISOTROPY_4X			       	= $00200000;
+		TLF_ANISOTROPY_8X			       	= $00400000;
+		TLF_ANISOTROPY_16X		  	   	= $00800000;
 
 	//E_MESH_CREATION_FLAGS
-		MCF_ONLY_DEFAULT_DATA			= $00000000;//vertex and index arrays must be presented
-		MCF_NORMALS_PRESENTED			= $00000001;
+		MCF_ONLY_DEFAULT_DATA	  	  	= $00000000;//vertex and index arrays must be presented
+		MCF_NORMALS_PRESENTED		    	= $00000001;
 		MCF_TEXTURE_COORDS_PRESENTED	= $00000002;
 		MCF_TANGENT_SPACE_PRESENTED		= $00000004;
-		
-	//E_MESH_LOAD_FLAGS
-		MLF_EDITABLE					= $00000001;
-		MLF_FORCE_NO_VBO				= $00000002;
-		MLF_CALCULATE_TANGENT_SPACE 	= $00000004;
-		MLF_CALCULATE_NORMALS			= $00000008;
 
-    
+	//E_MESH_LOAD_FLAGS
+		MLF_EDITABLE				         	= $00000001;
+		MLF_FORCE_NO_VBO		    	   	= $00000002;
+		MLF_CALCULATE_TANGENT_SPACE   = $00000004;
+		MLF_CALCULATE_NORMALS			    = $00000008;
+
+
 
 	TEXTURE_LOAD_DEFAULT_2D = TLF_FILTERING_BILINEAR	or TLF_COORDS_CLAMP;
 	TEXTURE_LOAD_DEFAULT_3D = TLF_FILTERING_TRILINEAR	or TLF_GENERATE_MIPMAPS or TLF_COORDS_REPEAT;
@@ -156,69 +160,69 @@ const
 {Render SubSystem flags}
 
 	//E_GET_POINT3_FLAG
-		GP3F_FROM_Z_BUFFER				= $00000000;
-		GP3F_FROM_FAR_PLANE				= $00000001;
-		GP3F_FROM_NEAR_PLANE			= $00000002;
+		GP3F_FROM_Z_BUFFER		= $00000000;
+		GP3F_FROM_FAR_PLANE		= $00000001;
+		GP3F_FROM_NEAR_PLANE	= $00000002;
 
 
 {Render2D interface FLAGS}
 
 	//E_PRIMITIVE2D_FLAGS
-		PF_DEFAULT			= $00000000;
-		PF_LINE				= $00000000;
-		PF_FILL				= $00000001;
-		PF_VERTICES_COLOR	= $00000002;
+		PF_DEFAULT	  	     	= $00000000;
+		PF_LINE			         	= $00000000;
+		PF_FILL			         	= $00000001;
+		PF_VERTICES_COLOR    	= $00000002;
 
 
 	//E_EFFECT2D_FLAGS
-		EF_DEFAULT			= $00000000;
-		EF_NONE				= $00000001;
-		EF_ALPHA_TEST		= $00000002;
-		EF_BLEND			= $00000004;
-		EF_FLIPX			= $00000008;
-		EF_FLIPY			= $00000010;
-		EF_COLORMIX			= $00000020;
-		EF_SCALE			= $00000040;
-		EF_VERTICES_OFFSET	= $00000080;
-		EF_VERTICES_COLOR	= $00000100;
-		EF_ROTATEPT			= $00000200;
+		EF_DEFAULT		       	= $00000000;
+		EF_NONE			         	= $00000001;
+		EF_ALPHA_TEST	       	= $00000002;
+		EF_BLEND	  	       	= $00000004;
+		EF_FLIPX		         	= $00000008;
+		EF_FLIPY			        = $00000010;
+		EF_COLORMIX		       	= $00000020;
+		EF_SCALE		         	= $00000040;
+		EF_VERTICES_OFFSET  	= $00000080;
+		EF_VERTICES_COLOR   	= $00000100;
+		EF_ROTATEPT		      	= $00000200;
 
 
 	//E_EFFECT2D_BLENDING_FLAGS
-		EBF_NORMAL						= $00000001;
-		EBF_ADD							= $00000002;
-		EBF_MULT						= $00000004;
-		EBF_BLACK						= $00000008;
-		EBF_WHITE						= $00000010;
-		EBF_MASK						= $00000020;
+		EBF_NORMAL				   	= $00000001;
+		EBF_ADD						  	= $00000002;
+		EBF_MULT					  	= $00000004;
+		EBF_BLACK					  	= $00000008;
+		EBF_WHITE					  	= $00000010;
+		EBF_MASK					  	= $00000020;
 
 	//E_BATCH_MODE2D
- 		BM_AUTO							= 0;
+ 		BM_AUTO						  	= 0;
 		BM_DISABLED						= 1;
-		BM_ENABLED_UPDATE_EVERY_TICK = 2;
+		BM_ENABLED_UPDATE_EVERY_TICK  = 2;
 		BM_ENABLED_UPDATE_EVERY_FRAME = 3;
 
 
 {Render3D interface FLAGS}
 
 	//E_PUSH_STATES_FLAGS
-		PSF_ALL							= $00000000;
+		PSF_ALL						  	= $00000000;
 		PSF_MATRIX						= $00000001;
 		PSF_STATES						= $00000002;
 
 
 	//E_LIGHT_TYPE
-		LT_DIRECTIONAL						= 0;
-		LT_POINT						= 1;
+		LT_DIRECTIONAL			 	= 0;
+		LT_POINT						  = 1;
 
 	//E_TEX_MAPPING
-		TM_STD = 0;
-		TM_OBJ_SPACE = 1;
+		TM_STD                = 0;
+		TM_OBJ_SPACE          = 1;
 
 	//E_NORMAL_TECHNIQUE
-		NT_UNPERTURBED = 0;
-		NT_NORMAL_MAP_3_COMPONENT = 1;
-		NT_HEIGHT_MAP_HW_DIFF = 3;
+		NT_UNPERTURBED             = 0;
+		NT_NORMAL_MAP_3_COMPONENT  = 1;
+		NT_HEIGHT_MAP_HW_DIFF      = 3;
 
 	//E_PARALLAX_TECHNIQUE
 		PT_NONE = 0;
@@ -228,44 +232,32 @@ const
 {Input Subsystem flags}
 
 	//E_INPUT_CONFIGURATION_FLAGS
-		ICF_DEFAULT						= $00000000;
-		ICF_EXCLUSIVE					= $00000001;
-		ICF_HIDE_CURSOR					= $00000002;
-		ICF_CURSOR_BEYOND_SCREEN		= $00000004;
+		ICF_DEFAULT					    	= $00000000;
+		ICF_EXCLUSIVE				    	= $00000001;
+		ICF_HIDE_CURSOR			  		= $00000002;
+		ICF_CURSOR_BEYOND_SCREEN 	= $00000004;
 
 {SoundSample interface}
 
-	//E_SOUND_CHANNEL_EFFECTS	
-		SCE_NONE						= $00000000;
-		SCE_CHORUS 						= $00000001;
-		SCE_COMPRESSOR 					= $00000002;
-		SCE_DISTORTION 					= $00000004;
-		SCE_ECHO 						= $00000008;
-		SCE_FLANGER 					= $00000010;
-		SCE_GARGLE 						= $00000020;
-		SCE_REVERB 						= $00000040;
-
     //E_SOUND_SAMPLE_PARAMS
-		SSP_NONE						= $00000000;
-		SSP_LOOP						= $00000001;
-		SSP_CONTROL_3D					= $00000002;
-		SSP_ALLOW_EFFECTS				= $00000004;
+		SSP_NONE					      	= $00000000;
+		SSP_LOOPED				      	= $00000001;
 
 {FileSystem interfaces flags}
 
 	//E_FIND_FLAGS
-		FF_RECURSIVE					= 1;
+		FF_RECURSIVE			    		= 1;
 
 	//E_FILE_SYSTEM_OPEN_FLAGS
-		FSOF_READ						= $00000001;
-		FSOF_WRITE						= $00000002;
-		FSOF_TRUNC						= $00000004;
-		FSOF_BINARY						= $00000008;
+		FSOF_READ					      	= $00000001;
+		FSOF_WRITE			      		= $00000002;
+		FSOF_TRUNC						    = $00000004;
+		FSOF_BINARY					    	= $00000008;
 
 	//E_FILE_SYSTEM_SEEK_FLAG
-		FSSF_BEGIN						= 0;
-		FSSF_CURRENT					= 1;
-		FSSF_END						= 2;
+		FSSF_BEGIN					    	= 0;
+		FSSF_CURRENT			    		= 1;
+		FSSF_END					      	= 2;
 
 type
 
@@ -275,7 +267,7 @@ type
 	['{DFB1F52B-D906-4108-AD6F-3144E224688A}']
 
 		function GetGUID(out stGuid : TGUID): DGLE_RESULT; stdcall;
-		function ExecCmd(uiCmd: Cardinal; out stVar: TVariant): DGLE_RESULT; stdcall;
+   	function ExecCmd(uiCmd: Cardinal; out stVar: TVariant): DGLE_RESULT; stdcall;
 		function ExecCmdStr(const pcCommand: pAnsiChar; pcResult: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall;
 		function ExecCmdVar(pcCommand: pAnsiChar; out stVar: TVariant): DGLE_RESULT; stdcall;
 
@@ -303,7 +295,7 @@ type
 
 //Engine Subsystem Plugin interface//
 
-	// Base interface of any engine core subsystem plugin. 
+	// Base interface of any engine core subsystem plugin.
 	ISubSystemPlugin = interface(IPlugin)
 	['{27908E31-8D8E-4076-AE33-087A1BE5DCB3}']
 	
@@ -372,6 +364,13 @@ type
 
 	end;
 
+	IEvGoFullScreen = interface(IBaseEvent)
+	['{CEC9184C-74D9-4739-BF48-BB800467665B}']
+
+	  function GetResolution(out uiScreenWidth, uiScreenHeight: Cardinal; out bGoFullScreen: Boolean): DGLE_RESULT; stdcall;
+		function SetResolution(uiScreenWidth, uiScreenHeight: Cardinal): DGLE_RESULT; stdcall;
+	end;
+
 //Main Engine System//
 
 	IUserCallback  = interface(IDGLE_Base)
@@ -379,9 +378,9 @@ type
 		function Initialize(): DGLE_RESULT; stdcall;
 		function Free(): DGLE_RESULT; stdcall;
 		function Update(ui64DeltaTime:
-    {$IF CompilerVersion >= 18}
+    {$IF COMPILERVERSION >= 18}
     UInt64
-    {$else}
+    {$ELSE}
     Int64
     {$IFend}
     ): DGLE_RESULT; stdcall;
@@ -390,19 +389,19 @@ type
 	end;
 
 
-	TProcedure = Procedure(pParametr : Pointer); stdcall;
-	TEventProcedure = Procedure(pParametr : Pointer; const prBaseEvent : IBaseEvent); stdcall;
-	TStringProcedure = Procedure(pParametr : Pointer; const pcParam : PAnsiChar); stdcall;
+	TProcedure = Procedure(pParameter : Pointer); stdcall;
+	TEventProcedure = Procedure(pParameter : Pointer; const prBaseEvent : IBaseEvent); stdcall;
+	TStringProcedure = Procedure(pParameter : Pointer; const pcParam : PAnsiChar); stdcall;
 	IFileSystem = interface;
-	TFSDelProcedure = Procedure(pParametr : Pointer; const prVFS : IFileSystem); stdcall;
+	TFSDelProcedure = Procedure(pParameter : Pointer; const prVFS : IFileSystem); stdcall;
 	
 	IEngineCore = interface(IDGLE_Base)
 	['{111BB884-2BA6-4e84-95A5-5E4700309CBA}']
 
 		function LoadSplashPicture(const pcBmpFileName : PAnsiChar): DGLE_RESULT; stdcall;
 		function AddPluginToInitList(const pcFileName : PAnsiChar): DGLE_RESULT; stdcall;
-		function InitializeEngine(stHandle : TWinHandle; const pcApplicationName : PAnsiChar; const stWindowParam : TEngWindow; uiProcessInterval : Cardinal = 33; eInitFlags :{E_ENGINE_INIT_FLAGS}Integer = EIF_DEFAULT): DGLE_RESULT; stdcall;
-		function SetProcessInterval(uiProcessInterval : Cardinal): DGLE_RESULT; stdcall;	
+		function InitializeEngine(stHandle : TWinHandle; const pcApplicationName : PAnsiChar; const stWindowParam : TEngWindow; uiUpdateInterval : Cardinal = 33; eInitFlags :{E_ENGINE_INIT_FLAGS}Integer = EIF_DEFAULT): DGLE_RESULT; stdcall;
+		function SetUpdateInterval(uiUpdateInterval : Cardinal): DGLE_RESULT; stdcall;	
 		function StartEngine(): DGLE_RESULT; stdcall;
 		function QuitEngine(): DGLE_RESULT; stdcall;
 
@@ -413,38 +412,39 @@ type
     function AddUserCallback(pUserCallback: IUserCallback): DGLE_RESULT; stdcall;
 		function RemoveUserCallback(pUserCallback: IUserCallback): DGLE_RESULT; stdcall;
 
-		function AddProcedure(eProcType :{E_ENGINE_PROCEDURE_TYPE}Integer; pProc : TProcedure; pParametr : Pointer = nil): DGLE_RESULT; stdcall;
-		function RemoveProcedure(eProcType :{E_ENGINE_PROCEDURE_TYPE}Integer; pProc: TProcedure; pParametr : Pointer = nil): DGLE_RESULT; stdcall;
+		function AddProcedure(eProcType :{E_ENGINE_PROCEDURE_TYPE}Integer; pProc : TProcedure; pParameter : Pointer = nil): DGLE_RESULT; stdcall;
+		function RemoveProcedure(eProcType :{E_ENGINE_PROCEDURE_TYPE}Integer; pProc: TProcedure; pParameter : Pointer = nil): DGLE_RESULT; stdcall;
 
 		function CastEvent(eEventType: {E_EVENT_TYPE} Integer; pEvent: IBaseEvent): DGLE_RESULT; stdcall;
-		function AddEventListner(eEventType :{E_EVENT_TYPE}Integer; pListnerProc : TEventProcedure; pParametr : Pointer): DGLE_RESULT; stdcall;
-		function RemoveEventListner(eEventType :{E_EVENT_TYPE}Integer; pListnerProc : TEventProcedure; pParametr : Pointer): DGLE_RESULT; stdcall;
+		function AddEventListener(eEventType :{E_EVENT_TYPE}Integer; pListenerProc : TEventProcedure; pParameter : Pointer): DGLE_RESULT; stdcall;
+		function RemoveEventListener(eEventType :{E_EVENT_TYPE}Integer; pListenerProc : TEventProcedure; pParameter : Pointer): DGLE_RESULT; stdcall;
 		
 		function GetSubsystem( eSubSystem :{E_ENGINE_SUB_SYSTEM}Integer; out prSubSystem : IEngineSubSystem ): DGLE_RESULT; stdcall;
 		
 		function RenderProfilerTxt(const pcTxt : PAnsiChar; const stColor : TColor4): DGLE_RESULT; stdcall;
 		function GetInstanceIdx(out uiIdx : Cardinal): DGLE_RESULT; stdcall;
 		function GetTimer(out uiTick :
-    {$IF CompilerVersion >= 18}
+    {$IF COMPILERVERSION >= 18}
     UInt64
-    {$else}
+    {$ELSE}
     Int64
-    {$IFend}
+    {$IFEND}
     ): DGLE_RESULT; stdcall;
 		function GetSystemInfo(out stSysInfo : TSystemInfo): DGLE_RESULT; stdcall;
 		function GetCurrentWin(out stWin : TEngWindow): DGLE_RESULT; stdcall;
 		function GetFPS(out uiFPS : Cardinal): DGLE_RESULT; stdcall;
     function GetLastUpdateDeltaTime(out ui64DeltaTime:
-    {$IF CompilerVersion >= 18}
+    {$IF COMPILERVERSION >= 18}
     UInt64
-    {$else}
+    {$ELSE}
     Int64
-    {$IFend}
+    {$IFEND}
     ): DGLE_RESULT; stdcall;
 
 		function GetHandle(out stHandle : TWinHandle): DGLE_RESULT; stdcall;
 
 		function ChangeWinMode(const stNewWin : TEngWindow): DGLE_RESULT; stdcall;
+    function GetDesktopResolution(out uiWidth, uiHeight: Cardinal): DGLE_RESULT; stdcall;
 		function AllowPause(bAllow : Boolean): DGLE_RESULT; stdcall;
 
 		function AddToLog(const pcTxt : PAnsiChar): DGLE_RESULT; stdcall;
@@ -453,10 +453,10 @@ type
 		function ConsoleVisible(bIsVisible : Boolean): DGLE_RESULT; stdcall;
 		function ConsoleWrite(const pcTxt : PAnsiChar; bWriteToPreviousLine : Boolean = false): DGLE_RESULT; stdcall;
 		function ConsoleExec(const pcCommandTxt : PAnsiChar): DGLE_RESULT; stdcall;
-		function ConsoleRegComProc(const pcCommandName : PAnsiChar; const pcCommandHelp : PAnsiChar; pProc : TStringProcedure; pParametr : Pointer = nil): DGLE_RESULT; stdcall;
-		function ConsoleRegComValue(const pcCommandName : PAnsiChar; const pcCommandHelp : PAnsiChar; var piValue :Integer; iMinValue : Integer; iMaxValue : Integer; pProc : TStringProcedure; pParametr : Pointer = nil): DGLE_RESULT; stdcall;
+		function ConsoleRegComProc(const pcCommandName : PAnsiChar; const pcCommandHelp : PAnsiChar; pProc : TStringProcedure; pParameter : Pointer = nil): DGLE_RESULT; stdcall;
+		function ConsoleRegComValue(const pcCommandName : PAnsiChar; const pcCommandHelp : PAnsiChar; var piValue :Integer; iMinValue : Integer; iMaxValue : Integer; pProc : TStringProcedure; pParameter : Pointer = nil): DGLE_RESULT; stdcall;
 		function ConsoleUnregCom(const pcCommandName : PAnsiChar): DGLE_RESULT; stdcall;
-		function GetVersion(pcBuffer : PAnsiChar; uiBufferSize : Cardinal): DGLE_RESULT; stdcall; { TODO : add out ? }
+		function GetVersion(pcBuffer : PAnsiChar; out uiBufferSize : Cardinal): DGLE_RESULT; stdcall; { TODO : add out ? }
 
 	end;
 
@@ -466,23 +466,24 @@ type
 	ITexture	= interface;
 	IMesh		= interface;
 	IMaterial	= interface;
-  ISoundSample	= interface;
+  ISoundSample = interface;
+  ISoundChannel = interface;
 
-	TFileLoadProcedure = Procedure(out rpFile : IFile; out prObj : IEngBaseObj; uiLoadFlags : Cardinal; pParametr : Pointer); stdcall;
+	TFileLoadProcedure = Procedure(out rpFile : IFile; out prObj : IEngBaseObj; uiLoadFlags : Cardinal; pParameter : Pointer); stdcall;
 
 	IResourceManager = interface(IEngineSubSystem)
 	['{139505B6-5EFC-4f02-A5E8-18CD1FBD69E3}']
 
 		function CreateTexture(out prTex : ITexture; const pubtData : PByte; uiWidth, uiHeight :Cardinal;
 		  eDataFormat: {E_TEXTURE_DATA_FORMAT} Integer; eCreationFlags: {E_TEXTURE_CREATION_FLAGS} Integer ;
-		  eLoadFlags: {E_TEXTURE_LOAD_FLAGS} Integer; const pcName: PAnsiChar = nil; bAddResourse: Boolean = False): DGLE_RESULT; stdcall;
-		function CreateMaterial(out prMaterial : IMaterial; const pcName: PAnsiChar = nil; bAddResourse: Boolean = False): DGLE_RESULT; stdcall;
+		  eLoadFlags: {E_TEXTURE_LOAD_FLAGS} Integer; const pcName: PAnsiChar = nil; bAddResource: Boolean = False): DGLE_RESULT; stdcall;
+		function CreateMaterial(out prMaterial : IMaterial; const pcName: PAnsiChar = nil; bAddResource: Boolean = False): DGLE_RESULT; stdcall;
 		function CreateMesh(out prMesh : IMesh; const pubtData : PByte; uiDataSize, uiNumVerts, uiNumFaces : Cardinal;
 		  eCreationFlags :{E_MESH_CREATION_FLAGS}Integer; eLoadFlags :{E_MESH_LOAD_FLAGS}Integer; const pcName: PAnsiChar = nil;
-		  bAddResourse: Boolean = False): DGLE_RESULT; stdcall;
-    function CreateSound(out prSndSample: ISoundSample; uiSamplesPerSec, uiBitsPerSample: Cardinal; bStereo:  Boolean; const pData: Pointer; ui32DataSize: Cardinal; const pcName: PAnsiChar; bAddResourse: Boolean  = False): DGLE_RESULT; stdcall;
+		  bAddResource: Boolean = False): DGLE_RESULT; stdcall;
+    function CreateSound(out prSndSample: ISoundSample; uiSamplesPerSec, uiBitsPerSample: Cardinal; bStereo:  Boolean; const pData: Pointer; ui32DataSize: Cardinal; const pcName: PAnsiChar; bAddResource: Boolean  = False): DGLE_RESULT; stdcall;
 
-		function RegisterFileFormat(const pcExtension : PAnsiChar; eObjType :{E_ENG_OBJ_TYPE}Integer; const pcDescription : PAnsiChar; pLoadProc : TFileLoadProcedure; pParametr : Pointer): DGLE_RESULT; stdcall;
+		function RegisterFileFormat(const pcExtension : PAnsiChar; eObjType :{E_ENG_OBJ_TYPE}Integer; const pcDescription : PAnsiChar; pLoadProc : TFileLoadProcedure; pParameter : Pointer): DGLE_RESULT; stdcall;
 		function UnregisterFileFormat(const pcExtension : PAnsiChar): DGLE_RESULT; stdcall;
 		function RegisterDefaultResource(eObjType :{E_ENG_OBJ_TYPE}Integer; pObj : IEngBaseObj): DGLE_RESULT; stdcall;
 		function UnregisterDefaultResource(eObjType :{E_ENG_OBJ_TYPE}Integer; pObj : IEngBaseObj): DGLE_RESULT; stdcall;
@@ -507,7 +508,7 @@ type
 	IRender2D = interface;
 	IRender3D = interface;
 	ILight = interface;
-	IPostprocess = interface;
+	IPostProcess = interface;
   ICoreGeometryBuffer = interface
   end;
 
@@ -524,7 +525,7 @@ type
 		function DisableScissor(): DGLE_RESULT; stdcall;
 		function SetRenderTarget(pTargetTex: ITexture): DGLE_RESULT; stdcall;
 		function ScreenShotBMP(const pFileName : PAnsiChar): DGLE_RESULT; stdcall;
-		function CreatePostProcess(out pPP : IPostprocess): DGLE_RESULT; stdcall;
+		function CreatePostProcess(out pPP : IPostProcess): DGLE_RESULT; stdcall;
 
 		function GetRender2D(out prRender2D : IRender2D): DGLE_RESULT; stdcall;
 		function GetRender3D(out prRender3D : IRender3D): DGLE_RESULT; stdcall;
@@ -544,8 +545,11 @@ type
 		function BeginBatch(bUpdateEveryFrame: Boolean = false): DGLE_RESULT; stdcall;
 		function EndBatch(): DGLE_RESULT; stdcall;
 		function NeedToUpdateBatchData(out bNeedUpdate: Boolean): DGLE_RESULT; stdcall;
-		function SetResolutionCorrection(uiResX, uiResY : Cardinal; bConstaintProportions : Boolean = true): DGLE_RESULT; stdcall; //Set resx and resy to current screen size to turn off correction
+		function SetResolutionCorrection(uiResX, uiResY : Cardinal; bConstantProportions : Boolean = true): DGLE_RESULT; stdcall; //Set resx and resy to current screen size to turn off correction
+    function CoordResCorrectToAbsolute(const stLogicCoord, stAbsoluteCoord: TPoint2): DGLE_RESULT; stdcall;
+		function CoordAbsoluteToResCorrect(const stAbsoluteCoord, stLogicCoord: TPoint2): DGLE_RESULT; stdcall;
 		function SetCamera(const stCenter : TPoint2; fAngle : Single; const stScale : TPoint2): DGLE_RESULT; stdcall;
+    function ResetCamera(): DGLE_RESULT; stdcall;
     function CullBoundingBox(const stBBox: TRectF; fAngle: Single; out bCull: Boolean): DGLE_RESULT; stdcall;
 
 		// 2D Primitives
@@ -558,13 +562,14 @@ type
 		function DrawPolygon(pTexture : ITexture; const pstVertices : PVertex2; uiVerticesCount : Cardinal; eFlags :{E_PRIMITIVE2D_FLAGS}Integer = PF_DEFAULT): DGLE_RESULT; stdcall;
 
 		// 2D Sprites
-		function DrawTexture(pTexture : ITexture; const stCoords,  stDimensions :TPoint2; fAngle : Single = 0.; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
+		function DrawTex(pTexture : ITexture; const stCoords,  stDimensions :TPoint2; fAngle : Single = 0.; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
 		function DrawTexCropped(pTexture : ITexture; const stCoords,  stDimensions :TPoint2; const stRect : TRectf; fAngle : Single = 0.; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
-    function DrawSprite(pTexture : ITexture; const stCoords,  stDimensions :TPoint2; uiFrame : Cardinal; angle : Single = 0.; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
+    function DrawTexSprite(pTexture : ITexture; const stCoords,  stDimensions :TPoint2; uiFrame : Cardinal; angle : Single = 0.; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
 
 		// Extra
 		function DrawTriangles(pTexture : ITexture; const pstVertices : PVertex2; uiVerticesCount : Cardinal;  eFlags :{PR_FLAGS}Integer = PF_DEFAULT): DGLE_RESULT; stdcall;
-		function DrawMesh(pMesh : IMesh; pTexture : ITexture; const stCoords : TPoint2; const stDimensions : TPoint3; const stAxis : TPoint3; fAngle : Single; bClip : Boolean = true; fFovY : Single = 90.0; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
+		function DrawMesh(pMesh : IMesh; pTexture : ITexture; const stCoords : TPoint2; const stDimensions : TPoint3; const stAxis : TPoint3; fAngle : Single; bClip : Boolean = true;
+                  fFovY : Single = 90.0; eFlags :{E_EFFECT2D_FLAGS}Integer = EF_DEFAULT): DGLE_RESULT; stdcall;
 
     //Advanced
 		function Draw(pTexture: ITexture; const stDrawDesc: TDrawDataDesc; {E_CORE_RENDERER_DRAW_MODE} eMode: Integer; uiCount: Cardinal; const stAABB: TRectF; {E_EFFECT2D_FLAGS} eFlags: Integer): DGLE_RESULT; stdcall;
@@ -661,7 +666,7 @@ type
 	ITexture = interface(IEngBaseObj)
 	['{85BDDBC2-F126-4cae-946D-7D6B079E5CCE}']
 
-		function GetDimension(out irWidth, irHeight : Cardinal): DGLE_RESULT; stdcall;
+		function GetDimension(out uiWidth, uiHeight : Cardinal): DGLE_RESULT; stdcall;
 		function SetFrameSize(uiFrameWidth, uiFrameHeight : Cardinal): DGLE_RESULT; stdcall;
 		function GetFrameSize(out uiFrameWidth, uiFrameHeight : Cardinal): DGLE_RESULT; stdcall;
 
@@ -721,7 +726,7 @@ type
 	['{0B03E8D7-23A3-4c79-9E82-5BC6E50E1EBA}']
 
 		function GetTexture(out prTexture : ITexture): DGLE_RESULT; stdcall;
-		function SetScale(const fScale : Single): DGLE_RESULT; stdcall;
+		function SetScale(var fScale : Single): DGLE_RESULT; stdcall;
 		function GetScale(out fScale : Single): DGLE_RESULT; stdcall;
 		function GetTextDimensions(const pcTxt : PAnsiChar; out uiWidth, uiHeight : Cardinal): DGLE_RESULT; stdcall;
 		function Draw2DSimple(iX, iY : Integer; const pcTxt : PAnsiChar; const stColor : TColor4): DGLE_RESULT; stdcall;
@@ -766,7 +771,7 @@ type
 
 	end;
 
-	IPostprocess = interface(IDGLE_Base)
+	IPostProcess = interface(IDGLE_Base)
 	['{DC6E4812-6B06-4de8-9DEF-2A13740BC45E}']
 
 		function Free(): DGLE_RESULT; stdcall;
@@ -788,9 +793,9 @@ type
 
 		function GetMouseStates(out stMStates : TMouseStates): DGLE_RESULT; stdcall;
 		function GetKey(eKeyCode :{E_KEYBOARD_KEY_CODES}Integer; out bPressed : Boolean) : DGLE_RESULT; stdcall;
-		function GetKeyName(eKeyCode :{E_KEYBOARD_KEY_CODES}Integer; cASCIICode : Char): DGLE_RESULT; stdcall;
+		function GetKeyName(eKeyCode :{E_KEYBOARD_KEY_CODES}Integer; out cASCIICode : Char): DGLE_RESULT; stdcall;
 
-		function BeginTextInput({out волде надо убрать}pcBuffer : PAnsiChar; uiBufferSize : Cardinal) : DGLE_RESULT; stdcall;
+		function BeginTextInput(pcBuffer : PAnsiChar; uiBufferSize : Cardinal) : DGLE_RESULT; stdcall;
 		function EndTextInput() : DGLE_RESULT; stdcall;
 
 		function GetJoysticksCount(out uiCount : Cardinal): DGLE_RESULT; stdcall;
@@ -800,19 +805,25 @@ type
 
 	end;
 
+StreamCallbackFunc = function(pParameter: Pointer; ui32DataPos: Cardinal; pBufferData: Pointer; uiBufferSize: Cardinal): DGLE_RESULT; stdcall;
+
 //Sound SubSystem interfaces//
 
 	ISound = interface(IEngineSubSystem)
 	['{054C07EE-2724-42f2-AC2B-E81FCF5B4ADA}']
 
 		function SetMasterVolume(uiVolume : Cardinal) : DGLE_RESULT; stdcall;
-		function PauseAllChannels(bPaused : Boolean) : DGLE_RESULT; stdcall;
+		function MasterPause(bPaused : Boolean) : DGLE_RESULT; stdcall;
 		function StopAllChannels() : DGLE_RESULT; stdcall;
 		function SetMaxChannelsCount(uiCount : Cardinal) : DGLE_RESULT; stdcall;
-		function SetListnerPosition( out stCoords : TPoint3) : DGLE_RESULT; stdcall;
-		function GetListnerPosition( out stCoords : TPoint3) : DGLE_RESULT; stdcall;
-		function SetListnerOrientation(out stDir : TVector3 ; out stUp : TVector3 ) : DGLE_RESULT; stdcall;
-		function GetListnerOrientation(out stDir : TVector3 ; out stUp : TVector3 ) : DGLE_RESULT; stdcall;
+		function GetListenerPosition(out stCoords : TPoint3) : DGLE_RESULT; stdcall;
+		function GetFreeChannelsCount(out uiCount : Cardinal): DGLE_RESULT; stdcall;
+		function ReleaseChannelsByData(const pData: Pointer): DGLE_RESULT; stdcall;
+		function CreateChannel(out prSndChnl : ISoundChannel ; uiSamplesPerSec, uiBitsPerSample: Cardinal ;
+      bStereo : Boolean ; const pData: Pointer; ui32DataSize: Cardinal): DGLE_RESULT; stdcall; //Data not copied!
+		function CreateStreamableChannel(out prSndChnl: ISoundChannel; uiSamplesPerSec, uiBitsPerSample: Cardinal; bStereo: Boolean; ui32DataSize: Cardinal;
+      pStreamCallback: StreamCallbackFunc; pParameter: Pointer): DGLE_RESULT; stdcall;
+
 
 	end;
 
@@ -821,19 +832,22 @@ type
 	ISoundChannel  = interface(IDGLE_Base)
 	['{DE6F7CDD-8262-445c-8D20-68E3324D99A6}']
 
-		function PlayOrPause(): DGLE_RESULT; stdcall;
+		function Play(bLooped: Boolean): DGLE_RESULT; stdcall;
+    function Pause(): DGLE_RESULT; stdcall;
 		function Stop(): DGLE_RESULT; stdcall;
 		function IsPlaying(out bIsPlaying : Boolean): DGLE_RESULT; stdcall;
 		function SetVolume(uiVolume : Cardinal ): DGLE_RESULT; stdcall; //from 0 to 100
 		function GetVolume(out uiVolume : Cardinal): DGLE_RESULT; stdcall;
 		function SetPan(iPan : Integer ): DGLE_RESULT; stdcall; //from -100 to 100
 		function GetPan(out iPan : Integer): DGLE_RESULT; stdcall;
-		function SetFrequency(uiFreq : Cardinal): DGLE_RESULT; stdcall;
-		function GetFrequency(out uiFreq : Cardinal): DGLE_RESULT; stdcall;
-		function SetPosition(const stCoords : TPoint3): DGLE_RESULT; stdcall;
-		function GetPosition(out stCoords : TPoint3): DGLE_RESULT; stdcall;
-		function SetEffects({E_SOUND_CHANNEL_EFFECTS} eFlags : Integer ): DGLE_RESULT; stdcall;
+		function SetSpeed(uiSpeed : Cardinal): DGLE_RESULT; stdcall;//in percents
+		function GetSpeed(out uiSpeed : Cardinal): DGLE_RESULT; stdcall;
+		function SetCurrentPosition(uiPos: Cardinal): DGLE_RESULT; stdcall;
+		function GetCurrentPosition(out uiPos: Cardinal): DGLE_RESULT; stdcall;
+		function GetLength(out uiLength : Cardinal): DGLE_RESULT; stdcall;
+		function IsStreamable(bStreamable: Boolean): DGLE_RESULT; stdcall;
 		function Unaquire(): DGLE_RESULT; stdcall;
+
 	end;
 
 //SoundSample interface//
@@ -845,23 +859,6 @@ type
 		function PlayEx(out pSndChnl : ISoundChannel ; eFlags : {E_SOUND_SAMPLE_PARAMS}Integer  = SSP_NONE): DGLE_RESULT; stdcall; //pSndChnl must be checked on nul
 	end;
 
-//Music interface//
-
-	IMusic = interface(IEngBaseObj)
-	['{81F1E67B-3FEB-4ab1-9AD2-D27C4E662164}']
-
-		function Play(bLooped : Boolean = true): DGLE_RESULT; stdcall;
- 		function Pause(bPaused : Boolean): DGLE_RESULT; stdcall;
-		function Stop(): DGLE_RESULT; stdcall;
-		function IsPlaying(out bIsPlaying : Boolean): DGLE_RESULT; stdcall;
-		function SetVolume(uiVolume : Cardinal): DGLE_RESULT; stdcall;
-		function GetVolume(out uiVolume : Cardinal): DGLE_RESULT; stdcall;
-		function SetCurrentPosition(uiPos : Cardinal): DGLE_RESULT; stdcall;
-		function GetCurrentPosition(out uiPos : Cardinal): DGLE_RESULT; stdcall;
-		function GetLength(out uiLength : Cardinal): DGLE_RESULT; stdcall;
-
-	end;
-
 //FileSystem interfaces//
 
 	IMainFileSystem = interface(IEngineSubSystem)
@@ -869,7 +866,7 @@ type
 
 		function LoadFile(const pcFileName : PAnsiChar; out prFile : IFile): DGLE_RESULT; stdcall;// c:\data.zip|img.jpg
 		function GetVirtualFileSystem(const pcVFSExtension : PAnsiChar{NULL to get HDD file system}; out prVFS : IFileSystem): DGLE_RESULT; stdcall;
-		function RegisterVirtualFileSystem(const pcVFSExtension : PAnsiChar; const pcDescription : PAnsiChar; pVFS : IFileSystem; pDeleteCallback : TFSDelProcedure; pParametr : Pointer = nil): DGLE_RESULT; stdcall;
+		function RegisterVirtualFileSystem(const pcVFSExtension : PAnsiChar; const pcDescription : PAnsiChar; pVFS : IFileSystem; pDeleteCallback : TFSDelProcedure; pParameter : Pointer = nil): DGLE_RESULT; stdcall;
 		function UnregisterVirtualFileSystem(const pcVFSExtension : PAnsiChar): DGLE_RESULT; stdcall;
 		function GetRegisteredVirtualFileSystems(pcTxt : PAnsiChar; out uiCharsCount : Cardinal): DGLE_RESULT; stdcall;
 		function GetVirtualFileSystemDescription(const pcVFSExtension : PAnsiChar; pcTxt : PAnsiChar; out uiCharsCount : Cardinal): DGLE_RESULT; stdcall;
@@ -912,6 +909,8 @@ type
 		function DeleteFile(const pcName : PAnsiChar): DGLE_RESULT; stdcall;
 		function FileExists(const pcName : PAnsiChar; out bExists : Boolean): DGLE_RESULT; stdcall;
 		function Find(const pcMask : PAnsiChar; eFlags :{E_FIND_FLAGS}Integer; out prIterator : IFileIterator): DGLE_RESULT; stdcall;
+ 		function SendCommand(const pcCommand, pcResult: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall ;
+
 
   end;
 
@@ -923,7 +922,7 @@ const
 	GEF_FORCE_QUIT					= $00000004;
 	
 var
-	hServer			: THandle = 0;  
+	hServer			: THandle = 0;
 	pCreateEngine	: Function(out pEngineCore : IEngineCore; eFlags :{E_GET_ENGINE_FLAGS}Integer; ubtSDKVer : byte): Boolean; stdcall;
 	pFreeEngine		: Function(pEngineCore : IEngineCore): Boolean; stdcall;
 

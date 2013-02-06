@@ -13,7 +13,9 @@ unit DGLE_CoreRenderer;
 interface
 
 {$IFDEF FPC}
-{$MODE DELPHI}
+  {$MODE DELPHI}
+  {$MACRO ON}
+  {$DEFINE COMPILERVERSION := 12}
 {$ENDIF}
 
 {$IFNDEF DGLE_CRENDERER}
@@ -97,23 +99,23 @@ const
 
  { For future needs.
  // E_STENCIL_OPERATION
- 
+
   SO_KEEP		= 0;
   SO_ZERO		= 1;
   SO_REPLACE	= 2;
   SO_INVERT	= 3;
   SO_INCR		= 4;
   SO_DECR		= 5;
- 
+
 
  // E_BLEND_OPERATION
- 
+
   BO_ADD		= 0;
   BO_SUBTRACT	= 1;
   BO_REV_SUBTRACT	= 2;
   BO_MIN		= 3;
   BO_MAX		= 4;
- 
+
  }
 
  // E_BLEND_FACTOR
@@ -304,8 +306,10 @@ ICoreRenderer = interface(IEngineSubSystem)
   function SetPointSize(fSize: Single): DGLE_RESULT; stdcall;
   function ReadFrameBuffer(pData: Pointer; uiDataSize: Cardinal; eDataFormat: {E_TEXTURE_DATA_FORMAT} Integer): DGLE_RESULT; stdcall;
   function SetRenderTarget(pTexture: ICoreTexture): DGLE_RESULT; stdcall;
-  function CreateTexture(out prTex: ICoreTexture; const pData: Pointer; uiWidth, uiHeight: Cardinal; bMipmapsPresented: Boolean; eDataAlignment: {E_CORE_RENDERER_DATA_ALIGNMENT} Integer; eDataFormat: {E_TEXTURE_DATA_FORMAT} Integer; eLoadFlags: {E_TEXTURE_LOAD_FLAGS} Integer): DGLE_RESULT; stdcall;
-  function CreateGeometryBuffer(out prBuffer: ICoreGeometryBuffer; const stDrawDesc: TDrawDataDesc; uiVerticesCount, uiIndexesCount: Cardinal; eMode: {E_CORE_RENDERER_DRAW_MODE} Integer; eType: {E_CORE_RENDERER_BUFFER_TYPE} Integer): DGLE_RESULT; stdcall;
+  function CreateTexture(out prTex: ICoreTexture; const pData: Pointer; uiWidth, uiHeight: Cardinal; bMipmapsPresented: Boolean; eDataAlignment: {E_CORE_RENDERER_DATA_ALIGNMENT} Integer;
+    eDataFormat: {E_TEXTURE_DATA_FORMAT} Integer; eLoadFlags: {E_TEXTURE_LOAD_FLAGS} Integer): DGLE_RESULT; stdcall;
+  function CreateGeometryBuffer(out prBuffer: ICoreGeometryBuffer; const stDrawDesc: TDrawDataDesc; uiVerticesCount, uiIndexesCount: Cardinal;
+    eMode: {E_CORE_RENDERER_DRAW_MODE} Integer; eType: {E_CORE_RENDERER_BUFFER_TYPE} Integer): DGLE_RESULT; stdcall;
   function ToggleStateFilter(bEnabled: Boolean): DGLE_RESULT; stdcall;
   function PushStates(): DGLE_RESULT; stdcall;
   function PopStates(): DGLE_RESULT; stdcall;
