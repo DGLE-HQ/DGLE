@@ -14,61 +14,42 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Linq;
+using System.Threading;
 using Gtk;
 using Gui;
 
-namespace DCPPacker {
+namespace Packer {
 
 	public partial class MainWindow: Gui.CustomWindow
 	{
-		private DCP dcp;
+		private long LARGE_FILE_SIZE = 10485760;
+		private Packer.VirtualFileSystem fileSystem;
 		private TreeStore packStore;
 		private TreeIter currentFolder = TreeIter.Zero;
 		private ListStore folderStore;
 
 		private readonly Gdk.Pixbuf folderIcon = 
-			Gdk.PixbufLoader.LoadFromResource("DCPPacker.resources.folder.png").Pixbuf;
+			Gdk.PixbufLoader.LoadFromResource("Packer.resources.folder.png").Pixbuf;
 		private readonly Gdk.Pixbuf fileIcon = 
-			Gdk.PixbufLoader.LoadFromResource("DCPPacker.resources.page_white.png").Pixbuf;
+			Gdk.PixbufLoader.LoadFromResource("Packer.resources.page_white.png").Pixbuf;
 
 		public MainWindow(): base (WindowType.Toplevel)
 		{
 			Build();
 
-			if (InitDCP()) {
-				InitPackTreeView();
-				InitActions();
-				InitKeyControl();
-				InitDnD();
-				
-				ChangePackActionSensitive(false);
-				NewAction.Activate();
-			}
-		}
-
-		private bool InitDCP()
-		{
-			// init dcp file system from dgle
-			try {
-				dcp = new DCP();
-
-				return true;
-			} catch {
-				CustomMessageDialog dlg = new CustomMessageDialog(
-					this, MessageType.Error, ButtonsType.Ok, 
-					"Failed to load DCP file system from DGLE!");
-				dlg.Ok += (sender, e) => Program.Stop();
-				dlg.Show();
-
-				return false;
-			}
+			InitPackTreeView();
+			InitActions();
+			InitKeyControl();
+			SetDestDnD();
+			
+			ChangePackActionSensitive(false);
 		}
 
 		private void InitPackTreeView()
 		{
-			packStore = new TreeStore(typeof(DCP.Item));
+			packStore = new TreeStore(typeof(Packer.Item));
 
-			folderStore = new ListStore(typeof(Gdk.Pixbuf), typeof(string), typeof(DCP.Item));
+			folderStore = new ListStore(typeof(Gdk.Pixbuf), typeof(string), typeof(Packer.Item));
 			packTreeView.Model = folderStore;
 			packTreeView.HeadersVisible = false;
 			packTreeView.Selection.Mode = SelectionMode.Multiple;
@@ -79,10 +60,10 @@ namespace DCPPacker {
 			packTreeView.AppendColumn("Name", new CellRendererText(), "text", 1);
 
 			folderStore.SetSortFunc(0, (model, a, b) => {
-				DCP.Item itemA = model.GetValue(a, 2) as DCP.Item;
-				DCP.Item itemB = model.GetValue(b, 2) as DCP.Item;
+				Packer.Item itemA = model.GetValue(a, 2) as Packer.Item;
+				Packer.Item itemB = model.GetValue(b, 2) as Packer.Item;
 
-				var ItemCost = new Func<DCP.Item, int>((item) => {
+				var ItemCost = new Func<Packer.Item, int>((item) => {
 					return (null == item ? 0 : (item.IsFolder ? (item.IsRoot ? 3 : 2) : 1));
 				});
 
@@ -103,13 +84,39 @@ namespace DCPPacker {
 		{
 			// show about
 			AboutAction.Activated += (sender, e) => 
-				new AboutWindow (this, About.Authors, About.Lines, About.Size).Show();
+				new AboutWindow(this, About.Authors, About.Lines, About.Size).Show();
+
+			// show supported extensions
+			SupportedFormatsAction.Activated += (sender, e) => {
+				new SupportedFormatsWindow(this).Show();
+			};
 
 			// create new pack
-			NewAction.Activated += (sender, e) => {
-				dcp.New();
-				ChangePackActionSensitive(true);
-			};
+			MenuItem newMenuItem = this.UIManager.GetWidget(@"/mainMenuBar/FileAction/NewAction") as MenuItem;
+			Menu newSubMenu = new Menu();
+			newMenuItem.Submenu = newSubMenu;
+
+			Packer.SupportedExtensions.ToList().ForEach(ext => {
+				Gtk.Action action = new Gtk.Action(String.Format("New{0}Action", ext), ext);
+				action.Activated+= (sender, e) => {
+					if (fileSystem != null)
+						fileSystem.Close();
+					fileSystem = null;
+
+					if (Packer.Create(ext, out fileSystem)) {
+						fileSystem.New();
+						ChangePackActionSensitive(true);
+					}
+				};
+				MenuItem menuItem = action.CreateMenuItem() as MenuItem;
+				menuItem.AddAccelerator(
+					"activate", 
+					this.UIManager.AccelGroup, 
+					new AccelKey((Gdk.Key) Gdk.Key.Parse(typeof(Gdk.Key), ext[0].ToString().ToLower()),
+				             Gdk.ModifierType.ControlMask, AccelFlags.Visible));
+
+				newSubMenu.Append(menuItem);
+			});
 
 			// open pack action
 			OpenAction.Activated += (sender, e) => HandleOpenAction();
@@ -119,11 +126,14 @@ namespace DCPPacker {
 
 			// close pack and exit
 			CloseAction.Activated += (sender, e) => {
-				dcp.Close();
+				if (fileSystem != null)
+					fileSystem.Close();
+				fileSystem = null;
 				ChangePackActionSensitive(false);
 				currentFolder = TreeIter.Zero;
 				folderStore.Clear();
 				packStore.Clear();
+				//UnsetDestDnd();
 			};
 
 			// exit app
@@ -156,7 +166,7 @@ namespace DCPPacker {
 				RefreshFolderView(parent);
 				currentFolder = parent;
 				
-				DCP.Item item = packStore.GetValue(iter, 0) as DCP.Item;
+				Packer.Item item = packStore.GetValue(iter, 0) as Packer.Item;
 				TreeIter selectedInFolder = FindInCurrentFolder(item);
 				packTreeView.SelectAndFocus(selectedInFolder);
 			});
@@ -177,7 +187,7 @@ namespace DCPPacker {
 				
 				TreeIter selectedInFolder;
 				folderStore.GetIter(out selectedInFolder, args.Path);
-				DCP.Item item = folderStore.GetValue(selectedInFolder, 2) as DCP.Item;
+				Packer.Item item = folderStore.GetValue(selectedInFolder, 2) as Packer.Item;
 				if (!item.IsFolder)
 					return;
 				
@@ -199,7 +209,7 @@ namespace DCPPacker {
 			};
 		}
 
-		private void InitDnD()
+		private void SetDestDnD()
 		{
 			Drag.DestSet(
 				packTreeView, 
@@ -211,25 +221,41 @@ namespace DCPPacker {
 			);
 
 			packTreeView.DragDataReceived += (o, args) => {
-				string data = Encoding.UTF8.GetString(args.SelectionData.Data);
+				string data = Encoding.UTF8.GetString(args.SelectionData.Data, 0, args.SelectionData.Length-1);
+				data = Uri.UnescapeDataString(data);
 				Drag.Finish(args.Context, true, false, args.Time);
 
-				data.Split("\r\n".ToCharArray())
-					.Where((path) => null != path && path.Length > 0).ToList()
-						.Select((path) => path.StartsWith("file:///") ? path.Substring(8) : path).ToList()
-						.ForEach((path) => {
-							if (Directory.Exists(path)) {
-								DCP.Item folderItem = NewItem(currentFolder, path);
-								TreeIter folderIter = AppendItem(currentFolder, folderItem);
-								AppendFolders(folderIter, path);
-							}
-							else if (File.Exists(path)) {
-								DCP.Item fileItem = NewItem(currentFolder, path);
-								if (dcp.Add(fileItem))
-									AppendItem(currentFolder, fileItem);
-							}
-						});
+				string[] files = data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+				// try to open pack
+				if (fileSystem == null) {
+					if (files.Length == 1)
+						OpenPack(files.Select(
+							(path) => path.StartsWith("file:///") ? path.Substring(8) : path).First()
+						);
+
+					return;
+				}
+
+				packTreeView.Selection.UnselectAll();
+
+				files.Select((path) => path.StartsWith("file:///") ? path.Substring(8) : path).ToList()
+					.ForEach((path) => {
+						if (Directory.Exists(path)) {
+							Packer.Item folderItem = NewItem(currentFolder, path);
+							TreeIter folderIter = AppendItem(currentFolder, folderItem);
+							AppendFolders(folderIter, path);
+						}
+						else if (File.Exists(path)) {
+							AppendFile(currentFolder, path);
+						}
+					});
 			};
+		}
+
+		private void UnsetDestDnd()
+		{
+			Drag.DestUnset(packTreeView);
 		}
 
 		private void ChangePackActionSensitive(bool isPackOpen)
@@ -250,22 +276,57 @@ namespace DCPPacker {
 			CustomFileChooserDialog dlg = 
 				new CustomFileChooserDialog(this, "Open pack", FileChooserAction.Open);
 			dlg.FileChooser.SelectMultiple = false;
-			
-			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
-				filter.Name = "DCP";
-				filter.AddPattern("*.dcp");
-				dlg.FileChooser.AddFilter(filter);
-			}
+
+			Packer.SupportedExtensions.ToList().ForEach(ext => {
+				using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+					filter.Name = ext.ToUpper();
+					filter.AddPattern("*." + ext);
+					dlg.FileChooser.AddFilter(filter);
+				}
+			});
 			
 			dlg.Ok += (sender, e) => {
-				if (dcp.Open(dlg.FileChooser.Filename)) {
-					RebuildPackTree(dcp.ListFiles());
-					ChangePackActionSensitive(true);
-				}
+				if (fileSystem != null)
+					fileSystem.Close();
+				fileSystem = null;
+
+				OpenPack(dlg.FileChooser.Filename);
 				dlg.Destroy();
 			};
 			dlg.Cancel += (sender, e) => dlg.Destroy();
 			dlg.Show();
+		}
+
+		private void OpenPack(string filename)
+		{
+			if (Packer.Create(System.IO.Path.GetExtension(filename), out fileSystem)) {
+				
+				WaitWindow popup = new WaitWindow(this, "Opening", filename);
+				if (new FileInfo(filename).Length >= LARGE_FILE_SIZE)
+					popup.Show();
+				
+				ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
+					RebuildPackTree(fileSystem.ListFiles());
+					ChangePackActionSensitive(true);
+					popup.Destroy();
+				}));
+				
+				ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
+					popup.Destroy();
+					
+					CustomMessageDialog msg = 
+						new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
+					msg.Show();
+					msg.Ok += (sender1, e1) => msg.Destroy();
+				}));
+				
+				new Thread(new ThreadStart(() => {
+					if (fileSystem.Open(filename))
+						done.WakeupMain();
+					else
+						error.WakeupMain();
+				})).Start();
+			}
 		}
 
 		private void RebuildPackTree(string[] filenames)
@@ -277,7 +338,7 @@ namespace DCPPacker {
 			filenames
 				.Where((filename) => filename != null && filename.Length > 0).ToList()
 				.ForEach((filename) => {
-						DCP.Item fileItem = new DCP.Item();
+						Packer.Item fileItem = new Packer.Item();
 						fileItem.Name = System.IO.Path.GetFileName(filename);
 						fileItem.Directory = filename.Replace(fileItem.Name, "");
 
@@ -285,10 +346,10 @@ namespace DCPPacker {
 							.Where((folder) => folder != null && folder.Length > 0).ToList();
 
 						TreeIter lastFolderIter = TreeIter.Zero;
-						DCP.Item lastFolderItem = new DCP.Item();
+						Packer.Item lastFolderItem = new Packer.Item();
 						lastFolderItem.IsFolder = true;
 						folders.ForEach((folder) => {
-							DCP.Item folderItem = new DCP.Item();
+							Packer.Item folderItem = new Packer.Item();
 							folderItem.Name = folder;
 							folderItem.Directory = lastFolderItem.FullName;
 							folderItem.IsFolder = true;
@@ -310,13 +371,16 @@ namespace DCPPacker {
 		#region Save pack action
 		private void HandleSaveAction()
 		{
+			if (fileSystem == null)
+				return;
+
 			CustomFileChooserDialog dlg = 
 				new CustomFileChooserDialog(this, "Save pack", FileChooserAction.Save);
 			dlg.FileChooser.SelectMultiple = false;
 			
 			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
-				filter.Name = "DCP";
-				filter.AddPattern("*.dcp");
+				filter.Name = fileSystem.Extension.ToUpper();
+				filter.AddPattern("*." + fileSystem.Extension.ToLower());
 				dlg.FileChooser.AddFilter(filter);
 			}
 			
@@ -327,7 +391,31 @@ namespace DCPPacker {
 			}
 			
 			dlg.Ok += (sender, e) => {
-				dcp.Save(dlg.FileChooser.Filename);
+				string filename = dlg.FileChooser.Filename;
+
+				WaitWindow popup = new WaitWindow(this, "Saving", filename);
+				popup.Show();
+				
+				ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
+					popup.Destroy();
+				}));
+				
+				ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
+					popup.Destroy();
+					
+					CustomMessageDialog msg = 
+						new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
+					msg.Show();
+					msg.Ok += (sender1, e1) => msg.Destroy();
+				}));
+				
+				new Thread(new ThreadStart(() => {
+					if (fileSystem.Save(filename))
+						done.WakeupMain();
+					else
+						error.WakeupMain();
+				})).Start();
+
 				dlg.Destroy();
 			};
 			dlg.Cancel += (sender, e) => dlg.Destroy();
@@ -338,6 +426,9 @@ namespace DCPPacker {
 		#region Add actions
 		private void HandleAddFilesAction()
 		{
+			if (fileSystem == null)
+				return;
+
 			CustomFileChooserDialog dlg = 
 				new CustomFileChooserDialog(this, "Add files to pack", FileChooserAction.Open);
 			dlg.FileChooser.SelectMultiple = true;
@@ -349,12 +440,9 @@ namespace DCPPacker {
 			}
 			
 			dlg.Ok += (sender, e) => {
-				dlg.FileChooser.Filenames.ToList().ForEach(file => {
-					DCP.Item fileItem = NewItem(currentFolder, file);
-					if (dcp.Add(fileItem))
-						AppendItem(currentFolder, fileItem);
-				});
-
+				packTreeView.Selection.UnselectAll();
+				dlg.FileChooser.Filenames.ToList()
+					.ForEach(file => AppendFile(currentFolder, file));
 				dlg.Destroy();
 			};
 			dlg.Cancel += (sender, e) => dlg.Destroy();
@@ -363,13 +451,16 @@ namespace DCPPacker {
 
 		private void HandleAddFolderAction()
 		{
+			if (fileSystem == null)
+				return;
+
 			CustomFileChooserDialog dlg = 
 				new CustomFileChooserDialog(this, "Add folder to pack", FileChooserAction.SelectFolder);
 
 			dlg.Ok += (sender, e) => {
+				packTreeView.Selection.UnselectAll();
 				string path = dlg.FileChooser.Filename;
-
-				DCP.Item folderItem = NewItem(currentFolder, path);
+				Packer.Item folderItem = NewItem(currentFolder, path);
 				TreeIter folderIter = AppendItem(currentFolder, folderItem);
 				if (!TreeIter.Zero.Equals(folderIter))
 					AppendFolders(folderIter, folderItem.HDDPath);
@@ -386,7 +477,7 @@ namespace DCPPacker {
 		{
 			Directory.EnumerateDirectories(path, "*", SearchOption.TopDirectoryOnly).ToList()
 				.ForEach(folder => {
-					DCP.Item folderItem = NewItem(destIter, folder);
+					Packer.Item folderItem = NewItem(destIter, folder);
 					TreeIter folderIter = AppendItem(destIter, folderItem);
 					AppendFolders(folderIter, folder);
 				});
@@ -396,14 +487,39 @@ namespace DCPPacker {
 		
 		private void AppendFiles(TreeIter destIter, string path) {
 			Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).ToList()
-				.ForEach(file => {
-					DCP.Item fileItem = NewItem(destIter, file);					
-					if (dcp.Add(fileItem))
-						AppendItem(destIter, fileItem);
-				});
+				.ForEach(file => AppendFile(destIter, file));
+		}
+
+		private void AppendFile(TreeIter destIter, string filename) {
+			WaitWindow popup = new WaitWindow(this, "Adding", filename);
+			if (new FileInfo(filename).Length >= LARGE_FILE_SIZE)
+				popup.Show();
+
+			Packer.Item fileItem = NewItem(destIter, filename);
+
+			ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
+				AppendItem(destIter, fileItem);
+				popup.Destroy();
+			}));
+
+			ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
+				popup.Destroy();
+
+				CustomMessageDialog msg = 
+					new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
+				msg.Show();
+				msg.Ok += (sender, e) => msg.Destroy();
+			}));
+
+			new Thread(new ThreadStart(() => {
+				if (fileSystem.Add(fileItem))
+					done.WakeupMain();
+				else
+					error.WakeupMain();
+			})).Start();
 		}
 		
-		private TreeIter AppendItem(TreeIter parent, DCP.Item item)
+		private TreeIter AppendItem(TreeIter parent, Packer.Item item)
 		{
 			TreeIter existIter = FindInPack(item);
 			if (!TreeIter.Zero.Equals(existIter))
@@ -427,6 +543,9 @@ namespace DCPPacker {
 		#region Remove action
 		private void HandleRemoveAction()
 		{
+			if (fileSystem == null)
+				return;
+
 			List<TreeIter> selectedIters = packTreeView.GetSelected().ToList();
 
 			if (selectedIters.Count == 0)
@@ -440,17 +559,17 @@ namespace DCPPacker {
 				if (TreeIter.Zero.Equals(selectedInFolder))
 					return;
 
-				DCP.Item selectedItem = folderStore.GetValue(selectedInFolder, 2) as DCP.Item;
+				Packer.Item selectedItem = folderStore.GetValue(selectedInFolder, 2) as Packer.Item;
 				if (selectedItem.IsRoot)
 					return;
 				
 				TreeIter selectedInPack = FindInPack(selectedItem);
 				if (!TreeIter.Zero.Equals(selectedInPack)) {
 					List<TreeIter> iterInPack = packStore.GetTree(selectedInPack).ToList();
-					iterInPack.Select(iter => packStore.GetValue(iter, 0) as DCP.Item).ToList()
+					iterInPack.Select(iter => packStore.GetValue(iter, 0) as Packer.Item).ToList()
 						.ForEach(item => {
 							if (!item.IsFolder)
-								dcp.Remove(item);
+								fileSystem.Remove(item);
 						});
 
 					packStore.Remove(ref selectedInPack);
@@ -466,20 +585,23 @@ namespace DCPPacker {
 		#region Extract action
 		private void HandleExtractAction()
 		{
+			if (fileSystem == null)
+				return;
+
 			int selectedCount = packTreeView.Selection.CountSelectedRows();
 
 			if (selectedCount == 0)
 				return;
 
 			List<TreeIter> selectedInFolder = packTreeView.GetSelected().ToList();
-			DCP.Item firstItem = folderStore.GetValue(selectedInFolder.First(), 2) as DCP.Item;
+			Packer.Item firstItem = folderStore.GetValue(selectedInFolder.First(), 2) as Packer.Item;
 
 			if (selectedCount == 1 && !firstItem.IsFolder) {
 
 				TreeIter iterInPack = FindInPack(firstItem);
 
 				CustomFileChooserDialog dlg = new CustomFileChooserDialog(this, "Extract file from pack", FileChooserAction.Save);
-				dlg.FileChooser.SetFilename(firstItem.Name);
+				dlg.FileChooser.CurrentName = firstItem.Name;
 
 				using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
 					filter.Name = "All";
@@ -502,7 +624,7 @@ namespace DCPPacker {
 				dlg.Ok += (sender, e) => {
 
 					selectedInFolder.ForEach((iter) => {
-						DCP.Item item = folderStore.GetValue(iter, 2) as DCP.Item;
+						Packer.Item item = folderStore.GetValue(iter, 2) as Packer.Item;
 						TreeIter iterInPack = FindInPack(item);
 
 						if (item.IsFolder) {
@@ -522,13 +644,16 @@ namespace DCPPacker {
 
 		private void HandleExtractAllAction()
 		{
+			if (fileSystem == null)
+				return;
+
 			CustomFileChooserDialog dlg = new CustomFileChooserDialog(
 				this, "Extract pack", FileChooserAction.SelectFolder);
 			
 			dlg.Ok += (sender, e) => {
 
 				packStore.GetTopIters().ToList().ForEach((iterInPack) => {
-					DCP.Item item = packStore.GetValue(iterInPack, 0) as DCP.Item;
+					Packer.Item item = packStore.GetValue(iterInPack, 0) as Packer.Item;
 					
 					if (item.IsFolder) {
 						ExtractFolder(iterInPack, dlg.FileChooser.Filename);
@@ -546,13 +671,35 @@ namespace DCPPacker {
 
 		private void ExtractFile(TreeIter iter, string filename)
 		{
-			DCP.Item item = packStore.GetValue(iter, 0) as DCP.Item;
-			dcp.Extract(item, filename);
+			WaitWindow popup = new WaitWindow(this, "Extracting", filename);
+			popup.Show();
+
+			Packer.Item item = packStore.GetValue(iter, 0) as Packer.Item;
+
+			ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
+				popup.Destroy();
+			}));
+			
+			ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
+				popup.Destroy();
+				
+				CustomMessageDialog msg = 
+					new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
+				msg.Show();
+				msg.Ok += (sender1, e1) => msg.Destroy();
+			}));
+			
+			new Thread(new ThreadStart(() => {
+				if (fileSystem.Extract(item, filename))
+					done.WakeupMain();
+				else
+					error.WakeupMain();
+			})).Start();
 		}
 		
 		private void ExtractFolder(TreeIter iter, string path)
 		{
- 			DCP.Item item = packStore.GetValue(iter, 0) as DCP.Item;
+			Packer.Item item = packStore.GetValue(iter, 0) as Packer.Item;
 			
 			if (item.IsRoot)
 				return;
@@ -583,13 +730,13 @@ namespace DCPPacker {
 			else {
 				packStore.IterChildren(out child, parent);
 
-				DCP.Item root = new DCP.Item(true);
+				Packer.Item root = new Packer.Item(true);
 				folderStore.AppendValues(root.IsFolder ? folderIcon : fileIcon, root.Name, root);
 			}
 
 			if (!TreeIter.Zero.Equals(child)) {
 				do {
-					DCP.Item item = packStore.GetValue(child, 0) as DCP.Item;
+					Packer.Item item = packStore.GetValue(child, 0) as Packer.Item;
 
 					folderStore.AppendValues(item.IsFolder ? folderIcon : fileIcon, item.Name, item);
 				} while(packStore.IterNext(ref child));
@@ -598,12 +745,12 @@ namespace DCPPacker {
 
 		}
 
-		private TreeIter FindInCurrentFolder(DCP.Item item)
+		private TreeIter FindInCurrentFolder(Packer.Item item)
 		{
 			// find iter in list store of current folder
 			TreeIter foundIter = TreeIter.Zero;
 			folderStore.Foreach((model, path, iter) => {
-				DCP.Item foundItem = folderStore.GetValue(iter, 2) as DCP.Item;
+				Packer.Item foundItem = folderStore.GetValue(iter, 2) as Packer.Item;
 				if (foundItem.FullName.CompareTo(item.FullName) == 0) {
 					foundIter = iter;
 					return true;
@@ -614,12 +761,12 @@ namespace DCPPacker {
 			return foundIter;
 		}
 
-		private TreeIter FindInPack(DCP.Item item)
+		private TreeIter FindInPack(Packer.Item item)
 		{
 			// find iter in tree store of current pack
 			TreeIter foundIter = TreeIter.Zero;
 			packStore.Foreach((model, path, iter) => {
-				DCP.Item foundItem = packStore.GetValue(iter, 0) as DCP.Item;
+				Packer.Item foundItem = packStore.GetValue(iter, 0) as Packer.Item;
 				if (item.FullName.CompareTo(foundItem.FullName) == 0) {
 					foundIter = iter;
 					return true;
@@ -629,11 +776,11 @@ namespace DCPPacker {
 			return foundIter;
 		}
 
-		private DCP.Item NewItem(TreeIter parent, string path)
+		private Packer.Item NewItem(TreeIter parent, string path)
 		{
-			DCP.Item item = new DCP.Item(path);
+			Packer.Item item = new Packer.Item(path);
 			if (!TreeIter.Zero.Equals(parent)) {
-				DCP.Item parentItem = packStore.GetValue(parent, 0) as DCP.Item;
+				Packer.Item parentItem = packStore.GetValue(parent, 0) as Packer.Item;
 				item.Directory = parentItem.FullName;
 			}
 			return item;

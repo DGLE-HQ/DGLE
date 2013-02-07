@@ -9,22 +9,24 @@ See "DGLE.h" for more details.
 using System;
 using System.Runtime.InteropServices;
 
-namespace DCPPacker
+namespace DGLE
 {
 	public class MarshalUtils
 	{
-		public static string MarshalString(System.Func<IntPtr, uint, uint> action, uint capacity = 512) {
+		public static string MarshalString(System.Func<IntPtr, uint, uint> action, uint length = 0) {
 			
 			string marshalString = "";
 			IntPtr pnt = IntPtr.Zero;
 			try {
-				uint length = capacity;
+				if (length == 0)
+					length = action(pnt, length);
 				int size = Marshal.SystemDefaultCharSize * (int)length;
 				pnt = Marshal.AllocHGlobal(size);
 				length = action(pnt, length);
 				if (length > 0 && !IntPtr.Zero.Equals(pnt))
 					marshalString = Marshal.PtrToStringAnsi(pnt);
-			} catch {
+			} catch (Exception e) {
+				marshalString = e.Message;
 			} finally {
 				Marshal.FreeHGlobal(pnt);
 			}

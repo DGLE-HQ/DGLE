@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{874F5AD4-9567-4745-B064-2ED934CB63C2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DCPPacker</RootNamespace>
-    <AssemblyName>DCPPacker</AssemblyName>
+    <RootNamespace>Packer</RootNamespace>
+    <AssemblyName>Packer</AssemblyName>
     <ApplicationIcon>..\..\..\misc\lamp.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -62,17 +62,28 @@
     <EmbeddedResource Include="resources\package_add.png" />
     <EmbeddedResource Include="resources\package_delete.png" />
     <EmbeddedResource Include="resources\disk.png" />
+    <EmbeddedResource Include="resources\door_open.png" />
+    <EmbeddedResource Include="resources\information.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <Link>resources\information.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\book_open.png" />
+    <EmbeddedResource Include="resources\progress.gif" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="gtk-gui\DCPPacker.MainWindow.cs" />
-    <Compile Include="DCP.cs" />
     <Compile Include="TreeViewExtensions.cs" />
     <Compile Include="TreeStoreExtensions.cs" />
     <Compile Include="MarshalUtils.cs" />
+    <Compile Include="gtk-gui\Packer.MainWindow.cs" />
+    <Compile Include="Packer.cs" />
+    <Compile Include="SupportedFormatsWindow.cs" />
+    <Compile Include="gtk-gui\Packer.SupportedFormatsWindow.cs" />
+    <Compile Include="WaitWindow.cs" />
+    <Compile Include="gtk-gui\Packer.WaitWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

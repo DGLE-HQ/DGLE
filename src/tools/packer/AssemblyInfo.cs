@@ -12,11 +12,11 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("DCPPacker")]
-[assembly: AssemblyDescription("DGLE DCP Packer App")]
+[assembly: AssemblyTitle("Packer")]
+[assembly: AssemblyDescription("DGLE Packer App")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DGLEDCPPackerApp")]
+[assembly: AssemblyProduct("DGLEPackerApp")]
 [assembly: AssemblyCopyright("MIKE")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

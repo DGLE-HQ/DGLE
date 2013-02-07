@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gui", "..\..\..\src\tools\g
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontTool", "..\..\..\src\tools\font_tool\FontTool.csproj", "{35391DDE-4EEB-4113-8E9E-435723E0996A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCPPacker", "..\..\..\src\tools\dcp_packer\DCPPacker.csproj", "{874F5AD4-9567-4745-B064-2ED934CB63C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Packer", "..\..\..\src\tools\packer\Packer.csproj", "{874F5AD4-9567-4745-B064-2ED934CB63C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorPicker", "..\..\..\src\tools\color_picker\ColorPicker.csproj", "{2F4D408F-BE6E-4D1D-AA27-3D7EAC449476}"
 EndProject
@@ -40,7 +40,7 @@ Global
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		BaseDirectory = ..\..\..\src\tools
-		StartupItem = ..\..\..\src\tools\dcp_packer\DCPPacker.csproj
+		StartupItem = ..\..\..\src\tools\packer\Packer.csproj
 		Policies = $0
 		$0.StandardHeader = $1
 		$1.Text = @\\author\t\t${AuthorName}\n\\date\t\t${Day}.${Month}.${Year} (c)${CopyrightHolder}\n\nThis file is a part of DGLE project and is distributed\nunder the terms of the GNU Lesser General Public License.\nSee "DGLE.h" for more details.

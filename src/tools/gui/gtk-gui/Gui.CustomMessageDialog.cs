@@ -18,6 +18,7 @@ namespace Gui
 			// Widget Gui.CustomMessageDialog
 			this.Name = "Gui.CustomMessageDialog";
 			this.Title = global::Mono.Unix.Catalog.GetString ("CustomMessageDialog");
+			this.TypeHint = ((global::Gdk.WindowTypeHint)(1));
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Modal = true;
 			this.Resizable = false;

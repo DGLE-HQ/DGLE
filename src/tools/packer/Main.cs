@@ -13,13 +13,13 @@ using Gtk;
 using Gui;
 using DGLE;
 
-namespace DCPPacker
+namespace Packer
 {
 	internal static class About
 	{
 		internal static string[] Authors = new string[]
 		{
-			"DCP File System:",
+			"Engine File Subsystems:",
 			"Andrey Korotkov aka DRON",
 			"Interface:",
 			"Shestakov Mikhail aka MIKE"
@@ -82,7 +82,20 @@ namespace DCPPacker
 			Core.InitializeEngine(
 				IntPtr.Zero, appName, ref eng_win, 33, 
 				E_ENGINE_INIT_FLAGS.EIF_FORCE_NO_WINDOW | E_ENGINE_INIT_FLAGS.EIF_FORCE_NO_SPLASH);
-			Core.ConsoleVisible(false);
+			//Core.ConsoleVisible(false);
+
+			// init virtual file systems from dgle
+			try {
+				Packer.Init();
+			} catch {
+				CustomMessageDialog dlg = new CustomMessageDialog(
+					null, MessageType.Error, ButtonsType.Ok, 
+					"Failed to load file systems from DGLE!");
+				dlg.Ok += (sender, e) => Program.Stop();
+				dlg.Show();
+				
+				return false;
+			}
 
 			// init main win
 			MainWindow win = new MainWindow();

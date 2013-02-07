@@ -7,71 +7,86 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../../../bin/windows/tools/Gui.dll" />
-    <widget-library name="../../../../bin/windows/tools/DCPPacker.exe" internal="true" />
+    <widget-library name="../../../../bin/windows/tools/Packer.exe" internal="true" />
   </import>
   <icon-factory>
     <icon-set id="page-white-add">
       <source>
-        <property name="Image">resource:DCPPacker.resources.page_white_add.png</property>
+        <property name="Image">resource:Packer.resources.page_white_add.png</property>
       </source>
     </icon-set>
     <icon-set id="folder-add">
       <source>
-        <property name="Image">resource:DCPPacker.resources.folder_add.png</property>
+        <property name="Image">resource:Packer.resources.folder_add.png</property>
       </source>
     </icon-set>
     <icon-set id="page-white-delete">
       <source>
-        <property name="Image">resource:DCPPacker.resources.page_white_delete.png</property>
+        <property name="Image">resource:Packer.resources.page_white_delete.png</property>
       </source>
     </icon-set>
     <icon-set id="page-white-copy">
       <source>
-        <property name="Image">resource:DCPPacker.resources.page_white_copy.png</property>
+        <property name="Image">resource:Packer.resources.page_white_copy.png</property>
       </source>
     </icon-set>
     <icon-set id="folder-delete">
       <source>
-        <property name="Image">resource:DCPPacker.resources.folder_delete.png</property>
+        <property name="Image">resource:Packer.resources.folder_delete.png</property>
       </source>
     </icon-set>
     <icon-set id="page-white-zip">
       <source>
-        <property name="Image">resource:DCPPacker.resources.page_white_zip.png</property>
+        <property name="Image">resource:Packer.resources.page_white_zip.png</property>
       </source>
     </icon-set>
     <icon-set id="page-white-stack">
       <source>
-        <property name="Image">resource:DCPPacker.resources.page_white_stack.png</property>
+        <property name="Image">resource:Packer.resources.page_white_stack.png</property>
       </source>
     </icon-set>
     <icon-set id="package">
       <source>
-        <property name="Image">resource:DCPPacker.resources.package.png</property>
+        <property name="Image">resource:Packer.resources.package.png</property>
       </source>
     </icon-set>
     <icon-set id="package-add">
       <source>
-        <property name="Image">resource:DCPPacker.resources.package_add.png</property>
+        <property name="Image">resource:Packer.resources.package_add.png</property>
       </source>
     </icon-set>
     <icon-set id="package-delete">
       <source>
-        <property name="Image">resource:DCPPacker.resources.package_delete.png</property>
+        <property name="Image">resource:Packer.resources.package_delete.png</property>
       </source>
     </icon-set>
     <icon-set id="folder">
       <source>
-        <property name="Image">resource:DCPPacker.resources.folder.png</property>
+        <property name="Image">resource:Packer.resources.folder.png</property>
       </source>
     </icon-set>
     <icon-set id="disk">
       <source>
-        <property name="Image">resource:DCPPacker.resources.disk.png</property>
+        <property name="Image">resource:Packer.resources.disk.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="door_open">
+      <source>
+        <property name="Image">resource:Packer.resources.door_open.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="information">
+      <source>
+        <property name="Image">resource:Packer.resources.information.png</property>
+      </source>
+    </icon-set>
+    <icon-set id="book_open">
+      <source>
+        <property name="Image">resource:Packer.resources.book_open.png</property>
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Window" id="DCPPacker.MainWindow" design-size="522 400">
+  <widget class="Gtk.Window" id="Packer.MainWindow" design-size="522 400">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -94,6 +109,7 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">About</property>
         <property name="ShortLabel" translatable="yes">About</property>
+        <property name="StockId">information</property>
       </action>
       <action id="OpenAction">
         <property name="Type">Action</property>
@@ -111,7 +127,6 @@
       </action>
       <action id="NewAction">
         <property name="Type">Action</property>
-        <property name="Accelerator">&lt;Control&gt;n</property>
         <property name="Label" translatable="yes">New</property>
         <property name="ShortLabel" translatable="yes">New</property>
         <property name="StockId">package</property>
@@ -160,11 +175,23 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Exit</property>
         <property name="ShortLabel" translatable="yes">Exit</property>
+        <property name="StockId">door_open</property>
       </action>
       <action id="CreateFolderAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Create Folder</property>
         <property name="ShortLabel" translatable="yes">Create Folder</property>
+      </action>
+      <action id="SupportedFormatsAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Supported formats</property>
+        <property name="ShortLabel" translatable="yes">Supported formats</property>
+        <property name="StockId">book_open</property>
+      </action>
+      <action id="TestAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Test</property>
+        <property name="ShortLabel" translatable="yes">Test</property>
       </action>
     </action-group>
     <property name="MemberName" />
@@ -193,6 +220,7 @@
                 <node type="Menuitem" action="ExtractAllAction" />
               </node>
               <node type="Menu" action="HelpAction">
+                <node type="Menuitem" action="SupportedFormatsAction" />
                 <node type="Menuitem" action="AboutAction" />
               </node>
             </node>
@@ -230,6 +258,80 @@
           <packing>
             <property name="Position">1</property>
             <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="Packer.SupportedFormatsWindow" design-size="400 300">
+    <property name="MemberName" />
+    <property name="WidthRequest">400</property>
+    <property name="HeightRequest">300</property>
+    <property name="Visible">False</property>
+    <property name="Title" translatable="yes">Supported Formats</property>
+    <property name="TypeHint">Dialog</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="Decorated">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.NodeView" id="formatsView">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="Packer.WaitWindow" design-size="200 200">
+    <property name="MemberName" />
+    <property name="WidthRequest">200</property>
+    <property name="HeightRequest">200</property>
+    <property name="Visible">False</property>
+    <property name="Title" translatable="yes">Packer</property>
+    <property name="TypeHint">Splashscreen</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="Resizable">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <property name="BorderWidth">6</property>
+        <child>
+          <widget class="Gtk.Image" id="imgAnimation">
+            <property name="MemberName" />
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="lFile">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">File</property>
+            <property name="Ellipsize">Middle</property>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
       </widget>
