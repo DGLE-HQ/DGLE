@@ -80,7 +80,7 @@ class CBitmapFontDummy: public IBitmapFont
 {
 public:
 	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture){prTexture = NULL; return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API SetScale(const float &fScale){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetScale(float fScale){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetScale(float &fScale){fScale = 1.f; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight){uiWidth = 0; uiHeight = 0; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor){return E_NOTIMPL;}

@@ -46,7 +46,7 @@ DGLE_RESULT DGLE_API CBitmapFont::GetTextDimensions(const char *pcTxt, uint &uiW
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CBitmapFont::SetScale(const float &fScale)
+DGLE_RESULT DGLE_API CBitmapFont::SetScale(float fScale)
 {
 	_fScale = fScale;
 	return S_OK;

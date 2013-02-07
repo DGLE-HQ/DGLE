@@ -44,10 +44,8 @@ Visit [official website](http://dgle.dronprogs.org) for more details on this pro
 ## Supported Programming Languages
 
 * C++
-* C# and any .Net language
-* Objective C
-* Delphi
-* Free Pascal
+* C# (any .Net compatible language as well)
+* Delphi and Free Pascal
 * Lua (for scripting purpose only)
 
 ## Getting Started
@@ -67,17 +65,11 @@ DGLE_DYNAMIC_FUNC
 
 IEngineCore *pEngineCore = NULL;
 IBitmapFont *pFont = NULL;
-IRender2D *pRender2D = NULL;
 
 void DGLE_API Init(void *pParametr)
 {
 	IResourceManager *resMan;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)resMan);
-
-	IRender *render;
-	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)render);
-	render->GetRender2D(pRender2D);
-	
 	resMan->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj *&)pFont);
 }
 

@@ -6,17 +6,11 @@ DGLE_DYNAMIC_FUNC
 
 IEngineCore	*pEngineCore = NULL;
 IBitmapFont	*pFont = NULL;
-IRender2D	*pRender2D = NULL;
 
 void DGLE_API Init(void *pParametr)
 {
 	IResourceManager *resMan;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)resMan);
-
-	IRender *render;
-	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)render);
-	render->GetRender2D(pRender2D);
-	
 	resMan->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj *&)pFont);
 }
 

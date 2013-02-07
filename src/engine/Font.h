@@ -46,7 +46,7 @@ public:
 	~CBitmapFont();
 
 	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture);
-	DGLE_RESULT DGLE_API SetScale(const float &fScale);
+	DGLE_RESULT DGLE_API SetScale(float fScale);
 	DGLE_RESULT DGLE_API GetScale(float &fScale);
 	DGLE_RESULT DGLE_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight);
 	DGLE_RESULT DGLE_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor);

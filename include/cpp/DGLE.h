@@ -1049,7 +1049,7 @@ namespace DGLE
 	{
 	public: 	
 		virtual DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetScale(const float &fScale) = 0;
+		virtual DGLE_RESULT DGLE_API SetScale(float fScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetScale(float &fScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight) = 0;
 		virtual DGLE_RESULT DGLE_API Draw2DSimple(int iX, int iY, const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
@@ -1461,8 +1461,11 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 			return E_INVALIDARG;\
 		else\
 		{\
+			if (pcResult && uiCharsCount > 0)\
+				strcpy(pcResult, "");\
+			else\
+				pcResult = NULL;\
 			uiCharsCount = 0;\
-			strcpy(pcResult, "");\
 			return E_NOTIMPL;\
 		}\
 	}\

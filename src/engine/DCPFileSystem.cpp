@@ -707,9 +707,17 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcR
 
 		if (!pcResult || uiCharsCount < list.size() + 1)
 		{
+			if (pcResult)
+			{
+				if (uiCharsCount == 0)
+					return E_INVALIDARG;
+
+				strcpy(pcResult, list.substr(0, uiCharsCount - 1).c_str());				
+			}
+
 			uiCharsCount = list.size() + 1;
-			strcpy(pcResult, "");
-			return pcResult ? E_INVALIDARG : S_OK;
+
+			return S_OK;
 		}
 
 		strcpy(pcResult, list.c_str());
@@ -726,9 +734,17 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcR
 
 			if (!pcResult || uiCharsCount < err.size() + 1)
 			{
+				if (pcResult)
+				{
+					if (uiCharsCount == 0)
+						return E_INVALIDARG;
+
+					strcpy(pcResult, err.substr(0, uiCharsCount - 1).c_str());				
+				}
+
 				uiCharsCount = err.size() + 1;
-				strcpy(pcResult, "");
-				return pcResult ? E_INVALIDARG : S_OK;
+
+				return S_OK;
 			}
 
 			strcpy(pcResult, err.c_str());
@@ -739,9 +755,12 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcR
 			if (uiCharsCount < 1)
 				return E_INVALIDARG;
 			else
-			{
+			{		
+				if (pcResult && uiCharsCount > 0)
+					strcpy(pcResult, "");
+			
 				uiCharsCount = 0;
-				strcpy(pcResult, "");
+
 				return E_INVALIDARG;
 			}
 }
