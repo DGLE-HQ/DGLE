@@ -1449,7 +1449,7 @@ DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEven
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CCore::AddEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
+DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
 {
 	if (eEventType == ET_BEFORE_INIT && _bInitedFlag)//Means that engine already inited and event will never happend
 		return S_FALSE;
@@ -1472,7 +1472,7 @@ DGLE_RESULT DGLE_API CCore::AddEventListner(E_EVENT_TYPE eEventType, void (DGLE_
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::RemoveEventListner(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
+DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
 {
 	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)

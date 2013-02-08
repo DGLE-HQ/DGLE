@@ -270,7 +270,7 @@ _iProfilerState(0)
 
 	RegisterDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj*)_pDefBmpFnt);
 
-	Core()->AddEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
+	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	LOG("Resource Manager Subsystem initialized.",LT_INFO);
 }
@@ -281,7 +281,7 @@ CResourceManager::~CResourceManager()
 	Console()->UnRegCom("rman_list_file_formats");
 	Console()->UnRegCom("rman_list_resources");
 	
-	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
+	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	LOG("Resource Manager Subsystem finalized.",LT_INFO);
 }

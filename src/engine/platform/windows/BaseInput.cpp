@@ -231,20 +231,20 @@ TJoystickStates CBaseInput::GetJoystickStates(uint id)
 				
 		if (joyGetPosEx(joy.id, &info) == JOYERR_NOERROR)
 		{
-			states.iXAxes = _AxisValue(info.dwXpos, joy.info.wXmin, joy.info.wXmax);
-			states.iYAxes = _AxisValue(info.dwYpos, joy.info.wYmin, joy.info.wYmax);
+			states.iXAxis = _AxisValue(info.dwXpos, joy.info.wXmin, joy.info.wXmax);
+			states.iYAxis = _AxisValue(info.dwYpos, joy.info.wYmin, joy.info.wYmax);
 			
 			if ((joy.info.wCaps & JOYCAPS_HASZ) > 0)
-				states.iZAxes = _AxisValue(info.dwZpos, joy.info.wZmin, joy.info.wZmax);
+				states.iZAxis = _AxisValue(info.dwZpos, joy.info.wZmin, joy.info.wZmax);
 			
 			if ((joy.info.wCaps & JOYCAPS_HASR) > 0)
-				states.iRAxes = _AxisValue(info.dwRpos, joy.info.wRmin, joy.info.wRmax);
+				states.iRAxis = _AxisValue(info.dwRpos, joy.info.wRmin, joy.info.wRmax);
 			
 			if ((joy.info.wCaps & JOYCAPS_HASU) > 0)
-				states.iUAxes = _AxisValue(info.dwUpos, joy.info.wUmin, joy.info.wUmax);
+				states.iUAxis = _AxisValue(info.dwUpos, joy.info.wUmin, joy.info.wUmax);
 			
 			if ((joy.info.wCaps & JOYCAPS_HASV) > 0)
-				states.iVAxes = _AxisValue(info.dwVpos, joy.info.wVmin, joy.info.wVmax);
+				states.iVAxis = _AxisValue(info.dwVpos, joy.info.wVmin, joy.info.wVmax);
 
 			if ((joy.info.wCaps & JOYCAPS_HASPOV) > 0 && (info.dwPOV & 0xFFFF) != 0xFFFF)
 				states.iPOV = (int)((float)(info.dwPOV & 0xFFFF) / 100.f);

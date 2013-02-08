@@ -313,7 +313,7 @@ namespace DGLE
 		ET_ON_WIN_MESSAGE,			/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
 		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
-		ET_ON_CONSOLE_WRITE			/**< Event occurs when some text is being outputted to the engine console. \see IEvFatalMessage */
+		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputted to the engine console. \see IEvFatalMessage */
 		ET_ON_FULLSCREEN			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
 	};
 

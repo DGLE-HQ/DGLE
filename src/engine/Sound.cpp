@@ -346,7 +346,7 @@ CBaseSound(uiInstIdx), _bPaused(false), _fMasterVolume(1.f), _iProfilerState(0)
 
 	Console()->RegComValue("snd_profiler", "Displays sound subsystems profiler.", &_iProfilerState, 0, 1);
 	
-	Core()->AddEventListner(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
+	Core()->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
 
 	if (_bInited)
 		LOG("Sound Subsystem initialized.", LT_INFO);
@@ -358,7 +358,7 @@ CSound::~CSound()
 {
 	Console()->UnRegCom("snd_profiler");
 
-	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
+	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
 
 	if (_bInited)
 	{

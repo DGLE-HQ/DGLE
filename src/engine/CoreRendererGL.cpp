@@ -577,7 +577,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults
 	SetDepthStencilState(_stCurrentState.stDepthStencilDesc);
 	SetRasterizerState(_stCurrentState.stRasterDesc);
 
-	Core()->AddEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
+	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
 	Console()->RegComValue("crgl_profiler", "Displays Core Renderer OpenGL subsystems profiler.", &_iProfilerState, 0, 2);
@@ -597,7 +597,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 	Console()->UnRegCom("crgl_print_exts_list");
 	Console()->UnRegCom("crgl_profiler");
 
-	Core()->RemoveEventListner(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
+	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	delete _pCachedStateMan;
 
