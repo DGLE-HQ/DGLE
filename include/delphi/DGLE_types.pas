@@ -89,41 +89,6 @@ const
 
 type
 
-	TVariant = record
-		_type: {E_DGLE_VARIANT_TYPE} Integer ;
-		_i: Integer;
-		_f: Single;
-		_p: Pointer;
-
-    {$IF COMPILERVERSION < 18}
-    end;
-    {$IFEND}
-
-		procedure Clear({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND});                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		procedure SetInt({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}iVal: Integer);         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		procedure SetFloat({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}fVal: Single);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		procedure SetBool({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}bVal: Boolean);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		procedure SetPointer({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pPointer: Pointer); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		procedure SetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pData: Pointer; uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		function AsInt({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Integer;                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		function AsFloat({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Single;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		function AsBool({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Boolean;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		function AsPointer({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Pointer;            {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		procedure GetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-		function GetType({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): {E_DGLE_VARIANT_TYPE} Integer; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    {$IF COMPILERVERSION >= 20}
-    class operator Implicit(AVar: TVariant): Integer; inline;
-    class operator Implicit(AVar: TVariant): Single;  inline;
-    class operator Implicit(AVar: TVariant): Boolean; inline;
-    class operator Implicit(AVar: TVariant): Pointer; inline;
-    {$IFEND}
-  {$IF COMPILERVERSION >= 18}
-	end;
-  {$ELSE}
-  type
-  {$IFEND}
-
-
   DGLE_RESULT = Integer;
 
 	TWinHandle		= HWND;
@@ -373,32 +338,59 @@ type
     iPOV	 : Integer;		  //**< Point-Of-View direction. */
 	end;
 
-TDrawDataDesc = record
-  pData: Pointer; //Must be start of the vertex data. 2 or 3 floats
+  TDrawDataDesc = record
+    pData: Pointer; //Must be start of the vertex data. 2 or 3 floats
 
-  uiVertexStride: Cardinal;
-  bVertexCoord2: Boolean;
+    uiVertexStride: Cardinal;
+    bVertexCoord2: Boolean;
 
-  uiNormalOffset: Cardinal; //3 floats
-  uiNormalStride: Cardinal;
+    uiNormalOffset: Cardinal; //3 floats
+    uiNormalStride: Cardinal;
 
-  uiTexCoordOffset: Cardinal; //2 floats
-  uiTexCoordStride: Cardinal;
+    uiTexCoordOffset: Cardinal; //2 floats
+    uiTexCoordStride: Cardinal;
 
-  uiColorOffset: Cardinal; //4 floats
-  uiColorStride: Cardinal;
+    uiColorOffset: Cardinal; //4 floats
+    uiColorStride: Cardinal;
 
-  pIndexBuffer: Pointer; //May point to separate memory. uint16 or uint32 data pointer.
-  bIndexBuffer32: Boolean;
+    pIndexBuffer: Pointer; //May point to separate memory. uint16 or uint32 data pointer.
+    bIndexBuffer32: Boolean;
 
-  //ToDo: Add VertexAttribPointers.
-{$IF COMPILERVERSION >= 18}
-  constructor Create(Dummy: Byte); overload;
-  constructor Create(pData: Pointer; uiTexCoordDataOffset: Cardinal = minus1;
-    bTwoCoordPerVertex: Boolean = True); overload;
-{$IFEND}
-end;
+    //ToDo: Add VertexAttribPointers.
+  {$IF COMPILERVERSION >= 18}
+    constructor Create(Dummy: Byte); overload;
+    constructor Create(pData: Pointer; uiTexCoordDataOffset: Cardinal = minus1;
+      bTwoCoordPerVertex: Boolean = True); overload;
+  {$IFEND}
+  end;
 
+ 	TVariant = record
+		_type: {E_DGLE_VARIANT_TYPE} Integer ;
+		_Data: Pointer;
+  {$IF COMPILERVERSION >= 20}
+    class operator Implicit(AVar: TVariant): Integer; inline;
+    class operator Implicit(AVar: TVariant): Single;  inline;
+    class operator Implicit(AVar: TVariant): Boolean; inline;
+    class operator Implicit(AVar: TVariant): Pointer; inline;
+  {$IFEND}
+  {$IF COMPILERVERSION < 18}
+  end;
+  {$IFEND}
+		procedure Clear({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND});                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		procedure SetInt({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}iVal: Integer);         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		procedure SetFloat({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}fVal: Single);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		procedure SetBool({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}bVal: Boolean);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		procedure SetPointer({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pPointer: Pointer); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		procedure SetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pData: Pointer; uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		function AsInt({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Integer;                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		function AsFloat({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Single;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		function AsBool({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Boolean;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		function AsPointer({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Pointer;            {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		procedure GetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+		function GetType({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): {E_DGLE_VARIANT_TYPE} Integer; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+  {$IF COMPILERVERSION >= 18}
+	end;
+  {$IFEND}
 
  const	//E_KEYBOARD_KEY_CODES
 
@@ -2121,94 +2113,123 @@ end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}Clear({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND});
 begin
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type := DVT_UNKNOWN;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i := 0;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_f := 0;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_p := nil;
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  begin
+    _type := DVT_UNKNOWN;
+    if Assigned(_Data) then
+      FreeMem(_Data);
+    _Data :=  nil;
+  end;
 end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetInt({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}iVal: Integer);
 begin
-  Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type := DVT_INT;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i := iVal;
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  begin
+    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    _type := DVT_INT;
+    GetMem(_Data, SizeOf(Integer));
+    CopyMemory(_Data, @iVal, SizeOf(Integer));
+  end;
 end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetFloat({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}fVal: Single);
 begin
-  Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type := DVT_FLOAT;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_f := fVal;
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  begin
+    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    _type := DVT_FLOAT;
+    GetMem(_Data, SizeOf(Single));
+    CopyMemory(_Data, @fVal, SizeOf(Single));
+  end;
 end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetBool({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}bVal: Boolean);
 begin
-  Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type := DVT_BOOL;
-  if bVal then
-    {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i := 1
-  else
-    {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i := 0;
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  begin
+    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    _type := DVT_BOOL;
+    GetMem(_Data, SizeOf(LongBool));
+    if bVal then
+      PInteger(_Data)^ := 1
+    else
+      PInteger(_Data)^ := 0;
+  end;
 end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetPointer({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pPointer: Pointer);
 begin
-  Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type := DVT_POINTER;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_p := pPointer;
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  begin
+    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    _type := DVT_POINTER;
+    _Data := pPointer;
+  end;
 end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pData: Pointer; uiDataSize: Cardinal);
 begin
-  Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type := DVT_DATA;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_p := pData;
-  {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i := uiDataSize;
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  begin
+    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    _type := DVT_DATA;
+    GetMem(_Data, uiDataSize + SizeOf(Integer));
+    CopyMemory(_Data, @uiDataSize, SizeOf(Integer));
+    CopyMemory(Pointer(Integer(_Data) + SizeOf(Integer)), pData, uiDataSize);
+  end;
 end;
 
 function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsInt({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Integer;
 begin
-  if ({$IF COMPILERVERSION < 18}AVar.{$IFEND}_type <> DVT_INT) then
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  if (_type <> DVT_INT) then
     Result := 0
   else
-    Result := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i;
+    CopyMemory(@Result, _Data, SizeOf(Integer));
 end;
 
 function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsFloat({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Single;
 begin
-  if ({$IF COMPILERVERSION < 18}AVar.{$IFEND}_type <> DVT_FLOAT) then
-    Result := 0
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  if (_type <> DVT_FLOAT) then
+    Result := 0.
   else
-    Result := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_f;
+    CopyMemory(@Result, _Data, SizeOf(Single));
 end;
 
 function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsBool({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Boolean;
 begin
-  if ({$IF COMPILERVERSION < 18}AVar.{$IFEND}_type <> DVT_BOOL) then
-    Result := false
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  if (_type <> DVT_BOOL) then
+    Result := False
   else
-    Result := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i = 1;
+    Result := not (PInteger(_Data)^ = 0);
 end;
 
 function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsPointer({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Pointer;
 begin
-  if ({$IF COMPILERVERSION < 18}AVar.{$IFEND}_type <> DVT_POINTER) then
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  if (_type <> DVT_POINTER) then
     Result := nil
   else
-    Result := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_p;
+    Result := _Data;
 end;
 
 procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}GetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}out pData: Pointer; out uiDataSize: Cardinal);
 begin
-  if ({$IF COMPILERVERSION < 18}AVar.{$IFEND}_type <> DVT_DATA) then
+  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  if (_type <> DVT_DATA) then
   begin
     pData := nil;
     uiDataSize := 0;
   end
   else
   begin
-    pData := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_p;
-    uiDataSize := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_i;
+    GetMem(_Data, uiDataSize + SizeOf(Integer));
+    CopyMemory(@uiDataSize, _Data, SizeOf(Integer));
+    GetMem(pData, uiDataSize);
+    CopyMemory(pData, Pointer(Integer(_Data) + SizeOf(Integer)), uiDataSize);
   end;
 end;
 

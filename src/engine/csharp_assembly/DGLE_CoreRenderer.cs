@@ -150,17 +150,17 @@ namespace DGLE
 		CRDM_TRIANGLE_FAN
 	};
 
-/*
-#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
-#pragma pack( push, 1 )
-#endif
-*/
+	/*
+	#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
+	#pragma pack( push, 1 )
+	#endif
+	*/
 	public struct TBlendStateDesc
 	{
-		bool				bEnable;
+		bool bEnable;
 
-		E_BLEND_FACTOR		eSrcFactor;
-		E_BLEND_FACTOR		eDestFactor;
+		E_BLEND_FACTOR eSrcFactor;
+		E_BLEND_FACTOR eDestFactor;
 
 		/* For future needs.
 		E_BLEND_OPERATION	eOperation;
@@ -190,8 +190,8 @@ namespace DGLE
 
 	public struct TDepthStencilDesc
 	{
-		bool	bDepthTestEnable;
-		bool	bWriteToDepthBuffer;
+		bool bDepthTestEnable;
+		bool bWriteToDepthBuffer;
 		E_COMPARISON_FUNC
 				eDepthFunc;
 
@@ -212,18 +212,18 @@ namespace DGLE
 
 	public struct TRasterizerStateDesc
 	{
-		bool	bWireframe;
+		bool bWireframe;
 
 		E_POLYGON_CULL_MODE
 				eCullMode;
-		bool	bFrontCounterClockwise;
+		bool bFrontCounterClockwise;
 
-		bool	bScissorEnable;
+		bool bScissorEnable;
 
-		bool	bAlphaTestEnable;
+		bool bAlphaTestEnable;
 		E_COMPARISON_FUNC
 				eAlphaTestFunc;
-		float	fAlphaTestRefValue;
+		float fAlphaTestRefValue;
 
 		/* For future needs.
 		int		iDepthBias;
@@ -234,12 +234,12 @@ namespace DGLE
 
 		public TRasterizerStateDesc(byte dummy)
 		{
-		bWireframe = false;
+			bWireframe = false;
 			eCullMode = E_POLYGON_CULL_MODE.PCM_NONE;
 			bFrontCounterClockwise = true;
 			bScissorEnable = false;
 
-		bAlphaTestEnable = false;
+			bAlphaTestEnable = false;
 			eAlphaTestFunc = E_COMPARISON_FUNC.CF_GREATER;
 			fAlphaTestRefValue = 0.25f;
 		}
@@ -248,7 +248,8 @@ namespace DGLE
 	public struct TDrawDataDesc
 	{
 		//Pointer?
-		[MarshalAs(UnmanagedType.LPArray)] byte[] pData; //Must be start of the vertex data. 2 or 3 floats
+		[MarshalAs(UnmanagedType.LPArray)]
+		byte[] pData; //Must be start of the vertex data. 2 or 3 floats
 
 		uint uiVertexStride;
 		bool bVertexCoord2;
@@ -263,7 +264,8 @@ namespace DGLE
 		uint uiColorStride;
 
 		//Pointer?
-		[MarshalAs(UnmanagedType.LPArray)] byte[] pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
+		[MarshalAs(UnmanagedType.LPArray)]
+		byte[] pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
 		bool bIndexBuffer32;
 
 		//ToDo: Add VertexAttribPointers.
@@ -274,39 +276,39 @@ namespace DGLE
 
 		public TDrawDataDesc(byte dummy)
 		{
-			pData = null; 
-			uiVertexStride = 0; 
+			pData = null;
+			uiVertexStride = 0;
 			bVertexCoord2 = false;
-			uiNormalOffset = minus1; 
+			uiNormalOffset = minus1;
 			uiNormalStride = 0;
-			uiTexCoordOffset = minus1; 
+			uiTexCoordOffset = minus1;
 			uiTexCoordStride = 0;
-			uiColorOffset = minus1; 
+			uiColorOffset = minus1;
 			uiColorStride = 0;
-			pIndexBuffer = null; 
+			pIndexBuffer = null;
 			bIndexBuffer32 = false;
 		}
 
 		public TDrawDataDesc([MarshalAs(UnmanagedType.LPArray)] byte[] pDataPointer, uint uiTexCoordDataOffset = minus1, bool bTwoCoordPerVertex = true)
 		{
-			pData = pDataPointer; 
-			uiVertexStride = 0; 
+			pData = pDataPointer;
+			uiVertexStride = 0;
 			bVertexCoord2 = bTwoCoordPerVertex;
-			uiNormalOffset = minus1; 
+			uiNormalOffset = minus1;
 			uiNormalStride = 0;
-			uiTexCoordOffset = uiTexCoordDataOffset; 
+			uiTexCoordOffset = uiTexCoordDataOffset;
 			uiTexCoordStride = 0;
-			uiColorOffset = minus1; 
+			uiColorOffset = minus1;
 			uiColorStride = 0;
-			pIndexBuffer = null; 
+			pIndexBuffer = null;
 			bIndexBuffer32 = false;
 		}
 	};
-/*
-#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
-#pragma pack(pop)
-#endif
-*/
+	/*
+	#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
+	#pragma pack(pop)
+	#endif
+	*/
 
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -319,17 +321,17 @@ namespace DGLE
 		void GetObjectType(out E_ENG_OBJ_TYPE eType);
 	};
 
-/*
-#if defined(OPENGL_LEGACY_BASE_OBJECTS)
+	/*
+	#if defined(OPENGL_LEGACY_BASE_OBJECTS)
 
-#ifndef USE_GLEW_HEADER
-#	include <gl/GL.h>
-#else
-#	include <gl/glew.h>
-#endif
- */
+	#ifndef USE_GLEW_HEADER
+	#	include <gl/GL.h>
+	#else
+	#	include <gl/glew.h>
+	#endif
+	 */
 
- // --------------GLuint not found in openGL.cs, here in openGL interfaces uint used instead-----------------
+	// --------------GLuint not found in openGL.cs, here in openGL interfaces uint used instead-----------------
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
 	Guid("7264D8D2-C3AF-4ED3-91D1-90E02BE6A4EE")]
@@ -338,7 +340,7 @@ namespace DGLE
 		#region IDGLE_Base
 		new void GetGUID(ref Guid guid);
 		#endregion
-		void  GetTexture(out uint texture);
+		void GetTexture(out uint texture);
 	};
 
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -352,7 +354,7 @@ namespace DGLE
 		void GetIndexBufferObject(out uint vbo);
 	};
 
-//#endif
+	//#endif
 
 	// {8BFF07F9-2A8E-41D0-8505-3128C1B8160A}
 
@@ -372,8 +374,8 @@ namespace DGLE
 		void GetPixelData([MarshalAs(UnmanagedType.LPArray)] out byte[] pData, uint uiDataSize, uint uiLodLevel);
 		void SetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiLodLevel);
 		void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat);
-		void  GetBaseObject(out IBaseRenderObjectContainer prObj);
-		void  Free();
+		void GetBaseObject(out IBaseRenderObjectContainer prObj);
+		void Free();
 	};
 
 
@@ -402,7 +404,7 @@ namespace DGLE
 	{
 		#region IDGLE_Base
 		new void GetGUID(ref Guid guid);
-		#endregion	
+		#endregion
 		//Must not be called by user
 
 		// here bool is TCRendererInitResult
@@ -437,7 +439,7 @@ namespace DGLE
 		void ToggleAlphaTestState(bool bEnabled);
 		void SetBlendState(TBlendStateDesc stState);
 		void GetBlendState(out TBlendStateDesc stState);
-		void SetDepthStencilState( TDepthStencilDesc stState);
+		void SetDepthStencilState(TDepthStencilDesc stState);
 		void GetDepthStencilState(out TDepthStencilDesc stState);
 		void SetRasterizerState(TRasterizerStateDesc stState);
 		void GetRasterizerState(out TRasterizerStateDesc stState);

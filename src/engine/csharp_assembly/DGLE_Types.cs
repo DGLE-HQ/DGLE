@@ -1,4 +1,16 @@
-﻿using System;
+﻿/**
+\file		DGLE_Types.cs
+\author		Korotkov Andrey aka DRON
+\version	2:0.3.0
+\date		XX.XX.2012 (c)Korotkov Andrey
+
+\brief		Main DGLE engine header.
+
+To use engine you should just include this header to your project.
+This header is a part of DGLE SDK.
+*/
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -7,7 +19,7 @@ using System.Reflection;
 
 namespace DGLE
 {
-    	//variant//
+	//variant//
 
 	public enum E_DGLE_VARIANT_TYPE
 	{
@@ -21,19 +33,19 @@ namespace DGLE
 
 	public struct TVariant
 	{
-	
+
 
 		private E_DGLE_VARIANT_TYPE _type;
 		private int _i;
 		private float _f;
-        private IntPtr? _p; // it is nullable for all operations to be ok, is nullable ok ? // phomm
+		private IntPtr? _p; // it is nullable for all operations to be ok, is nullable ok ? // phomm
 
 		public void Clear()
 		{
 			_type = E_DGLE_VARIANT_TYPE.DVT_UNKNOWN;
 			_i = 0;
 			_f = 0.0f;
-			_p = null; 
+			_p = null;
 		}
 
 		public void SetInt(int iVal)
@@ -72,7 +84,7 @@ namespace DGLE
 			_i = (int)uiDataSize;
 		}
 
-		public int AsInt() 
+		public int AsInt()
 		{
 			if (_type != E_DGLE_VARIANT_TYPE.DVT_INT)
 				return 0;
@@ -80,7 +92,7 @@ namespace DGLE
 				return _i;
 		}
 
-		public float AsFloat() 
+		public float AsFloat()
 		{
 			if (_type != E_DGLE_VARIANT_TYPE.DVT_FLOAT)
 				return 0.0f;
@@ -88,7 +100,7 @@ namespace DGLE
 				return _f;
 		}
 
-		public bool AsBool() 
+		public bool AsBool()
 		{
 			if (_type != E_DGLE_VARIANT_TYPE.DVT_BOOL)
 				return false;
@@ -96,7 +108,7 @@ namespace DGLE
 				return _i == 1;
 		}
 
-		public IntPtr? AsPointer() 
+		public IntPtr? AsPointer()
 		{
 			if (_type != E_DGLE_VARIANT_TYPE.DVT_POINTER)
 				return null;
@@ -104,7 +116,7 @@ namespace DGLE
 				return _p;
 		}
 
-		public void GetData(/*[MarshalAs(UnmanagedType.LPArray)] byte[]*/ IntPtr? pData, out uint uiDataSize) 
+		public void GetData(/*[MarshalAs(UnmanagedType.LPArray)] byte[]*/ IntPtr? pData, out uint uiDataSize)
 		{
 			if (_type != E_DGLE_VARIANT_TYPE.DVT_DATA)
 			{
@@ -118,20 +130,20 @@ namespace DGLE
 			}
 		}
 
-		public E_DGLE_VARIANT_TYPE GetType() 
-        { 
-            return _type;
-        }
+		public E_DGLE_VARIANT_TYPE GetType()
+		{
+			return _type;
+		}
 
-        public static implicit operator int(TVariant v) { return v._i; }
+		public static implicit operator int(TVariant v) { return v._i; }
 
-        public static implicit operator float(TVariant v) { return v._f; }
+		public static implicit operator float(TVariant v) { return v._f; }
 
-        public static implicit operator bool(TVariant v) { return v._i == 1; }
+		public static implicit operator bool(TVariant v) { return v._i == 1; }
 
-        public static implicit operator IntPtr?(TVariant v) { return v._p; }
+		public static implicit operator IntPtr?(TVariant v) { return v._p; }
 
-	} 
+	}
 
 
 
@@ -146,12 +158,12 @@ namespace DGLE
 		{
 			get { return new TWinMessage(0, 0, 0); }
 		}
-		
+
 		public TWinMessage(UInt32 msg, UInt32 wpm, UInt32 lpm)
 		{
 			message = msg;
-			wParam	= wpm;
-			lParam	= lpm;
+			wParam = wpm;
+			lParam = lpm;
 		}
 	};
 
@@ -168,11 +180,13 @@ namespace DGLE
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct TEngWindow
-	{	
+	{
 		public UInt32 Width;
 		public UInt32 Height;
-		[MarshalAs(UnmanagedType.U1)] public bool FullScreen;
-		[MarshalAs(UnmanagedType.U1)] public bool VSync;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool FullScreen;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool VSync;
 		public UInt32 SamplesCount;
 		public E_ENG_WINDOW_FLAGS Flags;
 
@@ -183,18 +197,18 @@ namespace DGLE
 
 		public TEngWindow(UInt32 width, UInt32 height, [MarshalAs(UnmanagedType.U1)] bool fscreen, [MarshalAs(UnmanagedType.U1)] bool vsync, UInt32 scount, E_ENG_WINDOW_FLAGS flags)
 		{
-			Width		    = width;
-			Height		    = height;
-			FullScreen	    = fscreen;
-			VSync		    = vsync;
-			SamplesCount    = scount;
-			Flags           = (E_ENG_WINDOW_FLAGS)flags;
+			Width = width;
+			Height = height;
+			FullScreen = fscreen;
+			VSync = vsync;
+			SamplesCount = scount;
+			Flags = (E_ENG_WINDOW_FLAGS)flags;
 		}
 	};
 
-	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet=CharSet.Ansi)]
+	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
 	public struct TSystemInfo
-	{	
+	{
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
 		public string os_name;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
@@ -209,10 +223,10 @@ namespace DGLE
 		public UInt32 videocard_ram;
 	};
 
-	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet=CharSet.Ansi)]
+	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
 	public struct TPluginInfo
 	{
-		public byte btPluginSDKVersion;
+		public byte ui8PluginSDKVersion;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
 		public string cName;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
@@ -243,7 +257,7 @@ namespace DGLE
 	public struct TColor4
 	{
 		public float r, g, b, a;
-	 
+
 		public static TColor4 White
 		{
 			get { return new TColor4(255, 255, 255, 255); }
@@ -251,22 +265,22 @@ namespace DGLE
 
 		public TColor4(int color, byte alpha)
 		{
-			r = (color & 0xff)          /255.0f;
-			g = ((color >> 8) & 0xff)   /255.0f;
-			b = (color >> 16)           /255.0f;
-			a = (float)(alpha/255.0f);
+			r = (color & 0xff) / 255.0f;
+			g = ((color >> 8) & 0xff) / 255.0f;
+			b = (color >> 16) / 255.0f;
+			a = (float)(alpha / 255.0f);
 		}
 
 		public TColor4(UInt32 ui32RGBA)
 		{
-			r = (float)((ui32RGBA & 0xff) & 0xff)/0xff;
-			g = (float)((ui32RGBA >> 8) & 0xff)/0xff;
-			b = (float)((ui32RGBA >> 16) & 0xff)/0xff;
-			a = (float)(ui32RGBA >> 24)/0xff;
+			r = (float)((ui32RGBA & 0xff) & 0xff) / 0xff;
+			g = (float)((ui32RGBA >> 8) & 0xff) / 0xff;
+			b = (float)((ui32RGBA >> 16) & 0xff) / 0xff;
+			a = (float)(ui32RGBA >> 24) / 0xff;
 		}
 
 		public TColor4(byte ubR, byte ubG, byte ubB, byte ubA)
-		{			
+		{
 			r = ubR / 255.0f; g = ubG / 255.0f; b = ubB / 255.0f; a = ubA / 255.0f;
 		}
 
@@ -324,7 +338,7 @@ namespace DGLE
 
 			return resColor;
 		}
-		public string ToString()
+		public override string ToString()
 		{
 			return "r=" + r.ToString() + " g=" + g.ToString() + " b=" + b.ToString() + " a=" + a.ToString();
 		}
@@ -351,21 +365,108 @@ namespace DGLE
 		{
 			return new TPoint2(lPoint.x - rPoint.x, lPoint.y - rPoint.y);
 		}
+		public static TPoint2 operator +(TPoint2 lPoint, float val)
+		{
+			return new TPoint2(lPoint.x + val, lPoint.y + val);
+		}
+		public static TPoint2 operator -(TPoint2 lPoint, float val)
+		{
+			return new TPoint2(lPoint.x - val, lPoint.y - val);
+		}
+		public static TPoint2 operator *(TPoint2 lPoint, TPoint2 rPoint)
+		{
+			return new TPoint2(lPoint.x * rPoint.x, lPoint.y * rPoint.y);
+		}
 
-		public static TPoint2 Parse(string strColor)
+		public static TPoint2 operator *(TPoint2 lPoint, float val)
+		{
+			return new TPoint2(lPoint.x * val, lPoint.y * val);
+		}
+
+		public static TPoint2 operator /(TPoint2 lPoint, TPoint2 rPoint)
+		{
+			return new TPoint2(lPoint.x / rPoint.x, lPoint.y / rPoint.y);
+		}
+
+		public static TPoint2 operator /(TPoint2 lPoint, float val)
+		{
+			return new TPoint2(lPoint.x / val, lPoint.y / val);
+		}
+
+		public float Dot(TPoint2 point)
+		{
+			return x * point.x + y * point.y;
+		}
+
+		public float Cross(TPoint2 point)
+		{
+			return x * point.y - point.x * y;
+		}
+
+		public float DistTo(TPoint2 point)
+		{
+			return (float)Math.Sqrt((point.x - x) * (point.x - x) + (point.y - y) * (point.y - y));
+		}
+
+		public float DistToQ(TPoint2 point)
+		{
+			return (point - this).LengthQ();
+		}
+
+		public float LengthQ()
+		{
+			return x * x + y * y;
+		}
+
+		public float Length()
+		{
+			return (float)Math.Sqrt(LengthQ());
+		}
+
+		public TPoint2 Normalize()
+		{
+			float len = Length();
+			x /= len;
+			y /= len;
+			return this;
+		}
+
+		public TPoint2 Lerp(TPoint2 point, float coeff)
+		{
+			return this + (point - this) * coeff;
+		}
+
+		public float Angle(TPoint2 point)
+		{
+			return (float)Math.Atan2(x * point.y - y * point.x, x * point.x + y * point.y);
+		}
+
+		public TPoint2 Rotate(float fAngle)
+		{
+			float s = (float)Math.Sin(fAngle), c = (float)Math.Cos(fAngle);
+			return new TPoint2(x * c - y * s, x * s + y * c);
+		}
+
+		public TPoint2 Reflect(TPoint2 normal)
+		{
+			return this - normal * (2f * Dot(normal));
+		}
+
+
+		public static TPoint2 Parse(string strPoint)
 		{
 			TPoint2 resPoint = new TPoint2();
-			int index = strColor.IndexOf('=', 0) + 1;
-			int endIndex = strColor.IndexOf(' ', index);
-			resPoint.x = float.Parse(strColor.Substring(index, endIndex - index));
+			int index = strPoint.IndexOf('=', 0) + 1;
+			int endIndex = strPoint.IndexOf(' ', index);
+			resPoint.x = float.Parse(strPoint.Substring(index, endIndex - index));
 
-			index = strColor.IndexOf('=', endIndex) + 1;
-			endIndex = strColor.Length;
-			resPoint.y = float.Parse(strColor.Substring(index, endIndex - index));
+			index = strPoint.IndexOf('=', endIndex) + 1;
+			endIndex = strPoint.Length;
+			resPoint.y = float.Parse(strPoint.Substring(index, endIndex - index));
 
 			return resPoint;
 		}
-		public string ToString()
+		public override string ToString()
 		{
 			return "x=" + x.ToString() + " y=" + y.ToString();
 		}
@@ -382,7 +483,119 @@ namespace DGLE
 		}
 
 		public TPoint3(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
-		public string ToString()
+
+
+		public static TPoint3 operator +(TPoint3 lPoint, TPoint3 rPoint)
+		{
+			return new TPoint3(lPoint.x + rPoint.x, lPoint.y + rPoint.z, lPoint.z + rPoint.z);
+		}
+		public static TPoint3 operator +(TPoint3 lPoint, float val)
+		{
+			return new TPoint3(lPoint.x + val, lPoint.y + val, lPoint.z + val);
+		}
+
+		public static TPoint3 operator -(TPoint3 lPoint, TPoint3 rPoint)
+		{
+			return new TPoint3(lPoint.x - rPoint.x, lPoint.y - rPoint.z, lPoint.z - rPoint.z);
+		}
+
+		public static TPoint3 operator -(TPoint3 lPoint, float val)
+		{
+			return new TPoint3(lPoint.x - val, lPoint.y - val, lPoint.z - val);
+		}
+		public static TPoint3 operator *(TPoint3 lPoint, TPoint3 rPoint)
+		{
+			return new TPoint3(lPoint.x * rPoint.x, lPoint.y * rPoint.z, lPoint.y * rPoint.z);
+		}
+
+		public static TPoint3 operator *(TPoint3 lPoint, float val)
+		{
+			return new TPoint3(lPoint.x * val, lPoint.y * val, lPoint.z * val);
+		}
+
+		public static TPoint3 operator /(TPoint3 lPoint, TPoint3 rPoint)
+		{
+			return new TPoint3(lPoint.x / rPoint.x, lPoint.y / rPoint.y, lPoint.z / rPoint.z);
+		}
+
+		public static TPoint3 operator /(TPoint3 lPoint, float val)
+		{
+			return new TPoint3(lPoint.x / val, lPoint.y / val, lPoint.z / val);
+		}
+
+		public float Dot(TPoint3 point)
+		{
+			return x * point.x + y * point.y + z * point.z;
+		}
+
+		public TPoint3 Cross(TPoint3 point)
+		{
+			return new TPoint3(y * point.z - z * point.y, z * point.x - x * point.z, x * point.y - y * point.x);
+		}
+
+		public float FlatDistTo(TPoint3 point)
+		{
+			return (float)Math.Sqrt((point.x - x) * (point.x - x) + (point.y - y) * (point.y - y));
+		}
+
+		public float DistTo(TPoint3 point)
+		{
+			return (float)Math.Sqrt((point.x - x) * (point.x - x) + (point.y - y) * (point.y - y) + (point.z - z) * (point.z - z));
+		}
+
+		public float DistToQ(TPoint3 point)
+		{
+			return (point - this).LengthQ();
+		}
+
+		public float LengthQ()
+		{
+			return x * x + y * y + z * z;
+		}
+
+		public float Length()
+		{
+			return (float)Math.Sqrt(LengthQ());
+		}
+
+		public TPoint3 Normalize()
+		{
+			float len = Length();
+			x /= len;
+			y /= len;
+			z /= len;
+			return this;
+		}
+
+		public TPoint3 Lerp(TPoint3 point, float coeff)
+		{
+			return this + (point - this) * coeff;
+		}
+
+		public float Angle(TPoint3 point)
+		{
+			return (float)Math.Acos(Dot(point) / Math.Sqrt(LengthQ() * point.LengthQ()));
+		}
+
+		public TPoint3 Rotate(float fAngle, TPoint3 Axis)
+		{
+			float s = (float)Math.Sin(fAngle), c = (float)Math.Cos(fAngle);
+
+			TPoint3[] v = new TPoint3[3];
+
+			v[0] = Axis * Dot(Axis);
+			v[1] = this - v[0];
+			v[2] = Axis.Cross(v[1]);
+
+			return new TPoint3(v[0].x + v[1].x * c + v[2].x * s, v[0].y + v[1].y * c + v[2].y * s, v[0].z + v[1].z * c + v[2].z * s);
+		}
+
+		public TPoint3 Reflect(TPoint3 normal)
+		{
+			return this - normal * (2f * Dot(normal));
+		}
+
+		public override string ToString()
 		{
 			return "x=" + x.ToString() + " y=" + y.ToString() + " z=" + z.ToString();
 		}
@@ -414,7 +627,7 @@ namespace DGLE
 		{
 			get { return new TVertex3(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f); }
 		}
-		
+
 		public TVertex3(float fX, float fY, float fZ, float fU, float fW, float fR, float fG, float fB, float fA)
 		{
 			x = fX; y = fY; z = fZ;
@@ -432,7 +645,7 @@ namespace DGLE
 		{
 			get { return new TRectF(0.0f, 0.0f, 0.0f, 0.0f); }
 		}
-		
+
 		public TRectF(float fX, float fY, float fWidth, float fHeight)
 		{
 			x = fX;
@@ -460,9 +673,9 @@ namespace DGLE
 		}
 		public bool InRect(TRectF stRect)
 		{
-			return	stRect.x < x && stRect.y < y && stRect.x + stRect.width > x + width && stRect.y + stRect.height > y + height;
+			return stRect.x < x && stRect.y < y && stRect.x + stRect.width > x + width && stRect.y + stRect.height > y + height;
 		}
-		public TRectF Intersect(TRectF stRect)
+		public TRectF GetIntersectionRect(TRectF stRect)
 		{
 			if (IntersectRect(stRect))
 			{
@@ -477,7 +690,8 @@ namespace DGLE
 				float rectb = y + height, strectb = stRect.y + stRect.height;
 				result.height = (rectb > strectb ? strectb : rectb) - result.y;
 
-				return result;            }
+				return result;
+			}
 			else
 				return new TRectF();
 		}
@@ -485,19 +699,19 @@ namespace DGLE
 		public void Round()
 		{
 			float fTmp = x + width;
-			if(fTmp > (float)(int)fTmp)
+			if (fTmp > (float)(int)fTmp)
 				width = (float)(int)(width + 1.0f);
 			else
 				width = (float)(int)width;
 			fTmp = y + height;
-			if(fTmp > (float)(int)fTmp)
+			if (fTmp > (float)(int)fTmp)
 				height = (float)(int)(height + 1.0f);
 			else
 				height = (float)(int)height;
 			x = (float)(int)x;
-			y = (float)(int)y; 
+			y = (float)(int)y;
 		}
-		public string ToString()
+		public override string ToString()
 		{
 			return "x=" + x.ToString() + " y=" + y.ToString() + " width=" + width.ToString() + " height=" + height.ToString();
 		}
@@ -510,17 +724,29 @@ namespace DGLE
 		public float _10; public float _11; public float _12; public float _13;
 		public float _20; public float _21; public float _22; public float _23;
 		public float _30; public float _31; public float _32; public float _33;
-		
+
 		public float this[int n]
 		{
 			get
 			{
 				switch (n)
 				{
-					case 0:  return _00; case 1:  return _01; case 2:  return _02; case 3:  return _03;
-					case 4:  return _10; case 5:  return _11; case 6:  return _12; case 7:  return _13;
-					case 8:  return _20; case 9:  return _21; case 10: return _22; case 11: return _23;
-					case 12: return _30; case 13: return _31; case 14: return _32; case 15: return _33;
+					case 0: return _00;
+					case 1: return _01;
+					case 2: return _02;
+					case 3: return _03;
+					case 4: return _10;
+					case 5: return _11;
+					case 6: return _12;
+					case 7: return _13;
+					case 8: return _20;
+					case 9: return _21;
+					case 10: return _22;
+					case 11: return _23;
+					case 12: return _30;
+					case 13: return _31;
+					case 14: return _32;
+					case 15: return _33;
 					default: throw new ArgumentException();
 				}
 			}
@@ -528,10 +754,22 @@ namespace DGLE
 			{
 				switch (n)
 				{
-					case 0:  _00 = value; break; case 1:  _01 = value; break; case 2:  _02 = value; break; case 3:  _03 = value; break;
-					case 4:  _10 = value; break; case 5:  _11 = value; break; case 6:  _12 = value; break; case 7:  _13 = value; break;
-					case 8:  _20 = value; break; case 9:  _21 = value; break; case 10: _22 = value; break; case 11: _23 = value; break;
-					case 12: _30 = value; break; case 13: _31 = value; break; case 14: _32 = value; break; case 15: _33 = value; break;
+					case 0: _00 = value; break;
+					case 1: _01 = value; break;
+					case 2: _02 = value; break;
+					case 3: _03 = value; break;
+					case 4: _10 = value; break;
+					case 5: _11 = value; break;
+					case 6: _12 = value; break;
+					case 7: _13 = value; break;
+					case 8: _20 = value; break;
+					case 9: _21 = value; break;
+					case 10: _22 = value; break;
+					case 11: _23 = value; break;
+					case 12: _30 = value; break;
+					case 13: _31 = value; break;
+					case 14: _32 = value; break;
+					case 15: _33 = value; break;
 					default: throw new ArgumentException();
 				}
 			}
@@ -552,9 +790,9 @@ namespace DGLE
 		public TMatrix(float[] m)
 		{
 			if (m.Length < 16) throw new ArgumentException();
-			_00 = m[0];  _01 = m[1];  _02 = m[2];  _03 = m[3];
-			_10 = m[4];  _11 = m[5];  _12 = m[6];  _13 = m[7];
-			_20 = m[8];  _21 = m[9];  _22 = m[10]; _23 = m[11];
+			_00 = m[0]; _01 = m[1]; _02 = m[2]; _03 = m[3];
+			_10 = m[4]; _11 = m[5]; _12 = m[6]; _13 = m[7];
+			_20 = m[8]; _21 = m[9]; _22 = m[10]; _23 = m[11];
 			_30 = m[12]; _31 = m[13]; _32 = m[14]; _33 = m[15];
 		}
 
@@ -572,8 +810,8 @@ namespace DGLE
 		public static TMatrix operator -(TMatrix m)
 		{
 			TMatrix res = new TMatrix();
-			for(int i = 0; i < 16; i++)
-				res[i] = - m[i];
+			for (int i = 0; i < 16; i++)
+				res[i] = -m[i];
 			return res;
 		}
 
@@ -701,7 +939,7 @@ namespace DGLE
 					0.0f, 0.0f, 0.0f, 1.0f);
 			}
 		}
-		
+
 		public static TMatrix MatrixInverse(TMatrix stMatrix)
 		{
 			return stMatrix.MatrixInverse();
@@ -714,7 +952,7 @@ namespace DGLE
 			{
 				mat[i] = new float[8]
 				{
-					this[4 * i],     this[4 * i + 1],
+					this[4 * i],	 this[4 * i + 1],
 					this[4 * i + 2], this[4 * i + 3],
 					(i == 0) ? 1.0f : 0.0f, (i == 1) ? 1.0f : 0.0f,
 					(i == 2) ? 1.0f : 0.0f, (i == 3) ? 1.0f : 0.0f
@@ -771,7 +1009,7 @@ namespace DGLE
 				_03, _13, _23, _33
 				);
 		}
-		
+
 		public static TMatrix MatrixTranspose(TMatrix stMatrix)
 		{
 			return new TMatrix(
@@ -781,7 +1019,7 @@ namespace DGLE
 				stMatrix._03, stMatrix._13, stMatrix._23, stMatrix._33
 				);
 		}
-		
+
 		public static TMatrix MatrixScale(TPoint3 stVec)
 		{
 			return new TMatrix(
@@ -790,7 +1028,7 @@ namespace DGLE
 				0.0f, 0.0f, stVec.z, 0.0f,
 				0.0f, 0.0f, 0.0f, 1.0f);
 		}
-		
+
 		public static TMatrix MatrixTranslate(TPoint3 stVec)
 		{
 			return new TMatrix(
@@ -800,29 +1038,29 @@ namespace DGLE
 				stVec.x, stVec.y, stVec.z, 1.0f);
 		}
 
-		public static TMatrix MatrixRotate(float fAngle, TPoint3 stAxes)
+		public static TMatrix MatrixRotate(float fAngle, TPoint3 stAxis)
 		{
 			float
-				axis_norm = (float)Math.Sqrt(stAxes.x * stAxes.x + stAxes.y * stAxes.y + stAxes.z * stAxes.z),
-				x = stAxes.x / axis_norm,
-				y = stAxes.y / axis_norm,
-				z = stAxes.z / axis_norm,
+				axis_norm = (float)Math.Sqrt(stAxis.x * stAxis.x + stAxis.y * stAxis.y + stAxis.z * stAxis.z),
+				x = stAxis.x / axis_norm,
+				y = stAxis.y / axis_norm,
+				z = stAxis.z / axis_norm,
 				sin_angle = (float)Math.Sin(fAngle * 3.1415926535897932 / 180.0f),
 				cos_angle = (float)Math.Cos(fAngle * 3.1415926535897932 / 180.0f);
 			return new TMatrix(
-				(1.0f - x * x) * cos_angle + x * x,			z * sin_angle + x * y * (1.0f - cos_angle),	x * z * (1.0f - cos_angle) - y * sin_angle,	0.0f,
-				x * y * (1.0f - cos_angle) - z * sin_angle,	(1.0f - y * y) * cos_angle + y * y,			y * z * (1.0f - cos_angle) + x * sin_angle,	0.0f,
-				x * z * (1.0f - cos_angle) + y * sin_angle,	y * z * (1.0f - cos_angle) - x * sin_angle,	(1.0f - z * z) * cos_angle + z * z,			0.0f,
-				0.0f,										0.0f,										0.0f,										1.0f);
+				(1.0f - x * x) * cos_angle + x * x, z * sin_angle + x * y * (1.0f - cos_angle), x * z * (1.0f - cos_angle) - y * sin_angle, 0.0f,
+				x * y * (1.0f - cos_angle) - z * sin_angle, (1.0f - y * y) * cos_angle + y * y, y * z * (1.0f - cos_angle) + x * sin_angle, 0.0f,
+				x * z * (1.0f - cos_angle) + y * sin_angle, y * z * (1.0f - cos_angle) - x * sin_angle, (1.0f - z * z) * cos_angle + z * z, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		public static TMatrix MatrixBillboard(TMatrix stMatrix)
 		{
 			return new TMatrix(
-				1.0f,			0.0f,			0.0f,			stMatrix._03,
-				0.0f,			1.0f,			0.0f,			stMatrix._13,
-				0.0f,			0.0f,			1.0f,			stMatrix._23,
-				stMatrix._30,   stMatrix._31,	stMatrix._32,	stMatrix._33);
+				1.0f, 0.0f, 0.0f, stMatrix._03,
+				0.0f, 1.0f, 0.0f, stMatrix._13,
+				0.0f, 0.0f, 1.0f, stMatrix._23,
+				stMatrix._30, stMatrix._31, stMatrix._32, stMatrix._33);
 		}
 	};
 
@@ -857,163 +1095,173 @@ namespace DGLE
 		}
 	};
 
-	
+
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct TMouseStates
 	{
 		public Int32 iX, iY;
 		public Int32 iDeltaX, iDeltaY, iDeltaWheel;
-		[MarshalAs(UnmanagedType.U1)] public bool bLeftButton;
-		[MarshalAs(UnmanagedType.U1)] public bool bRightButton;
-		[MarshalAs(UnmanagedType.U1)] public bool bMiddleButton;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bLeftButton;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bRightButton;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bMiddleButton;
 	};
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public struct TKeyBoardStates 
+	public struct TKeyBoardStates
 	{
-		[MarshalAs(UnmanagedType.U1)] public bool bCapsLock;
-		[MarshalAs(UnmanagedType.U1)] public bool bShiftL;
-		[MarshalAs(UnmanagedType.U1)] public bool bShiftR;
-		[MarshalAs(UnmanagedType.U1)] public bool bCtrlL;
-		[MarshalAs(UnmanagedType.U1)] public bool bCtrlR;
-		[MarshalAs(UnmanagedType.U1)] public bool bAltL;
-		[MarshalAs(UnmanagedType.U1)] public bool bAltR;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bCapsLock;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bShiftL;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bShiftR;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bCtrlL;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bCtrlR;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bAltL;
+		[MarshalAs(UnmanagedType.U1)]
+		public bool bAltR;
 	};
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct TJoystickStates
 	{
 		public uint uiBtnsCount;	/**< Count of available joystick buttons. */
-		
-// not allowed to use bool[32] // phomm  
-	  
+
+		// not allowed to use bool[32] // phomm  
+
 		public bool[] bButtons;	/**< Array of joystick buttons states (pressed or not). */
-		public int iXAxes;		    /**< X-axis position. Value varies -100 to 100. */
-		public int iYAxes;		    /**< Y-axis position. Value varies -100 to 100. */
-		public int iZAxes;		    /**< Z-axis position. Value varies -100 to 100. */
-		public int iRAxes;			/**< Current position of the rudder or fourth joystick axis. Value varies -100 to 100. */
-		public int iUAxes;			/**< Current fifth axis position. Value varies -100 to 100. */
-		public int iVAxes;			/**< Current sixth axis position. Value varies -100 to 100. */
+		public int iXAxis;			/**< X-axis position. Value varies -100 to 100. */
+		public int iYAxis;			/**< Y-axis position. Value varies -100 to 100. */
+		public int iZAxis;			/**< Z-axis position. Value varies -100 to 100. */
+		public int iRAxis;			/**< Current position of the rudder or fourth joystick axis. Value varies -100 to 100. */
+		public int iUAxis;			/**< Current fifth axis position. Value varies -100 to 100. */
+		public int iVAxis;			/**< Current sixth axis position. Value varies -100 to 100. */
 		public int iPOV;			/**< Point-Of-View direction. */
 
 	};
 
 	public enum E_KEYBOARD_KEY_CODES
 	{
-		KEY_ESCAPE          = 0x01,		// Escape
-		KEY_TAB             = 0x0F,		// Tab
-		KEY_GRAVE           = 0x29,     // accent grave "~"
-		KEY_CAPSLOCK        = 0x3A,     // Caps Lock
-		KEY_BACKSPACE       = 0x0E,     // Backspace
-		KEY_RETURN          = 0x1C,     // Enter
-		KEY_SPACE           = 0x39,		// Space
-		KEY_SLASH           = 0x35,     // "/" 
-		KEY_BACKSLASH       = 0x2B,		// "\"
+		KEY_ESCAPE = 0x01,		// Escape
+		KEY_TAB = 0x0F,		// Tab
+		KEY_GRAVE = 0x29,	 // accent grave "~"
+		KEY_CAPSLOCK = 0x3A,	 // Caps Lock
+		KEY_BACKSPACE = 0x0E,	 // Backspace
+		KEY_RETURN = 0x1C,	 // Enter
+		KEY_SPACE = 0x39,		// Space
+		KEY_SLASH = 0x35,	 // "/" 
+		KEY_BACKSLASH = 0x2B,		// "\"
 
-		KEY_SYSRQ           = 0xB7,     // PtrScr (SysRq)
-		KEY_SCROLL          = 0x46,     // Scroll Lock
-		KEY_PAUSE           = 0xC5,     // Pause
+		KEY_SYSRQ = 0xB7,	 // PtrScr (SysRq)
+		KEY_SCROLL = 0x46,	 // Scroll Lock
+		KEY_PAUSE = 0xC5,	 // Pause
 
-		KEY_INSERT          = 0xD2,     // Insert
-		KEY_DELETE          = 0xD3,     // Delete
-		KEY_HOME            = 0xC7,     // Home
-		KEY_END             = 0xCF,     // End
-		KEY_PGUP            = 0xC9,     // PgUp
-		KEY_PGDN            = 0xD1,     // PgDn
+		KEY_INSERT = 0xD2,	 // Insert
+		KEY_DELETE = 0xD3,	 // Delete
+		KEY_HOME = 0xC7,	 // Home
+		KEY_END = 0xCF,	 // End
+		KEY_PGUP = 0xC9,	 // PgUp
+		KEY_PGDN = 0xD1,	 // PgDn
 
-		KEY_LSHIFT          = 0x2A,		// Left Shift
-		KEY_RSHIFT          = 0x36,		// Right Shift
-		KEY_LALT			= 0x38,     // Left Alt
-		KEY_RALT            = 0xB8,     // Right Alt
-		KEY_LWIN            = 0xDB,     // Left Windows key 
-		KEY_RWIN            = 0xDC,     // Right Windows key 
-		KEY_LCONTROL        = 0x1D,		// Left Control
-		KEY_RCONTROL        = 0x9D,		// Right Control
+		KEY_LSHIFT = 0x2A,		// Left Shift
+		KEY_RSHIFT = 0x36,		// Right Shift
+		KEY_LALT = 0x38,	 // Left Alt
+		KEY_RALT = 0xB8,	 // Right Alt
+		KEY_LWIN = 0xDB,	 // Left Windows key 
+		KEY_RWIN = 0xDC,	 // Right Windows key 
+		KEY_LCONTROL = 0x1D,		// Left Control
+		KEY_RCONTROL = 0x9D,		// Right Control
 
-		KEY_UP              = 0xC8,     // UpArrow
-		KEY_RIGHT           = 0xCD,     // RightArrow
-		KEY_LEFT            = 0xCB,     // LeftArrow
-		KEY_DOWN            = 0xD0,     // DownArrow
+		KEY_UP = 0xC8,	 // UpArrow
+		KEY_RIGHT = 0xCD,	 // RightArrow
+		KEY_LEFT = 0xCB,	 // LeftArrow
+		KEY_DOWN = 0xD0,	 // DownArrow
 
-		KEY_1               = 0x02,
-		KEY_2               = 0x03,
-		KEY_3               = 0x04,
-		KEY_4               = 0x05,
-		KEY_5               = 0x06,
-		KEY_6               = 0x07,
-		KEY_7               = 0x08,
-		KEY_8               = 0x09,
-		KEY_9               = 0x0A,
-		KEY_0               = 0x0B,
+		KEY_1 = 0x02,
+		KEY_2 = 0x03,
+		KEY_3 = 0x04,
+		KEY_4 = 0x05,
+		KEY_5 = 0x06,
+		KEY_6 = 0x07,
+		KEY_7 = 0x08,
+		KEY_8 = 0x09,
+		KEY_9 = 0x0A,
+		KEY_0 = 0x0B,
 
-		KEY_F1              = 0x3B,
-		KEY_F2              = 0x3C,
-		KEY_F3              = 0x3D,
-		KEY_F4              = 0x3E,
-		KEY_F5              = 0x3F,
-		KEY_F6              = 0x40,
-		KEY_F7              = 0x41,
-		KEY_F8              = 0x42,
-		KEY_F9              = 0x43,
-		KEY_F10             = 0x44,
-		KEY_F11             = 0x57,
-		KEY_F12             = 0x58,
+		KEY_F1 = 0x3B,
+		KEY_F2 = 0x3C,
+		KEY_F3 = 0x3D,
+		KEY_F4 = 0x3E,
+		KEY_F5 = 0x3F,
+		KEY_F6 = 0x40,
+		KEY_F7 = 0x41,
+		KEY_F8 = 0x42,
+		KEY_F9 = 0x43,
+		KEY_F10 = 0x44,
+		KEY_F11 = 0x57,
+		KEY_F12 = 0x58,
 
-		KEY_Q               = 0x10,
-		KEY_W               = 0x11,
-		KEY_E               = 0x12,
-		KEY_R               = 0x13,
-		KEY_T               = 0x14,
-		KEY_Y               = 0x15,
-		KEY_U               = 0x16,
-		KEY_I               = 0x17,
-		KEY_O               = 0x18,
-		KEY_P               = 0x19,
-		KEY_A               = 0x1E,
-		KEY_S               = 0x1F,
-		KEY_D               = 0x20,
-		KEY_F               = 0x21,
-		KEY_G               = 0x22,
-		KEY_H               = 0x23,
-		KEY_J               = 0x24,
-		KEY_K               = 0x25,
-		KEY_L               = 0x26,
-		KEY_Z               = 0x2C,
-		KEY_X               = 0x2D,
-		KEY_C               = 0x2E,
-		KEY_V               = 0x2F,
-		KEY_B               = 0x30,
-		KEY_N               = 0x31,
-		KEY_M               = 0x32,
+		KEY_Q = 0x10,
+		KEY_W = 0x11,
+		KEY_E = 0x12,
+		KEY_R = 0x13,
+		KEY_T = 0x14,
+		KEY_Y = 0x15,
+		KEY_U = 0x16,
+		KEY_I = 0x17,
+		KEY_O = 0x18,
+		KEY_P = 0x19,
+		KEY_A = 0x1E,
+		KEY_S = 0x1F,
+		KEY_D = 0x20,
+		KEY_F = 0x21,
+		KEY_G = 0x22,
+		KEY_H = 0x23,
+		KEY_J = 0x24,
+		KEY_K = 0x25,
+		KEY_L = 0x26,
+		KEY_Z = 0x2C,
+		KEY_X = 0x2D,
+		KEY_C = 0x2E,
+		KEY_V = 0x2F,
+		KEY_B = 0x30,
+		KEY_N = 0x31,
+		KEY_M = 0x32,
 
-		KEY_MINUS           = 0x0C,		// "-"
-		KEY_PLUS            = 0x0D,		// "+"
-		KEY_LBRACKET        = 0x1A,		// "["
-		KEY_RBRACKET        = 0x1B,     // "]" 
+		KEY_MINUS = 0x0C,		// "-"
+		KEY_PLUS = 0x0D,		// "+"
+		KEY_LBRACKET = 0x1A,		// "["
+		KEY_RBRACKET = 0x1B,	 // "]" 
 
-		KEY_SEMICOLON       = 0x27,     // ";"
-		KEY_APOSTROPHE      = 0x28,     // '"' 
+		KEY_SEMICOLON = 0x27,	 // ";"
+		KEY_APOSTROPHE = 0x28,	 // '"' 
 
-		KEY_COMMA           = 0x33,		// ","
-		KEY_PERIOD          = 0x34,		// "."
+		KEY_COMMA = 0x33,		// ","
+		KEY_PERIOD = 0x34,		// "."
 
-		KEY_NUMPAD0         = 0x52,
-		KEY_NUMPAD1         = 0x4F,
-		KEY_NUMPAD2         = 0x50,
-		KEY_NUMPAD3         = 0x51,
-		KEY_NUMPAD4         = 0x4B,
-		KEY_NUMPAD5         = 0x4C,
-		KEY_NUMPAD6         = 0x4D,
-		KEY_NUMPAD7         = 0x47,
-		KEY_NUMPAD8         = 0x48,
-		KEY_NUMPAD9         = 0x49,
-		KEY_NUMPADPERIOD    = 0x53,		// "." on numpad
-		KEY_NUMPADENTER     = 0x9C,		// Enter on numpad
-		KEY_NUMPADSTAR      = 0x37,		// "*" on numpad
-		KEY_NUMPADPLUS      = 0x4E,		// "+" on numpad
-		KEY_NUMPADMINUS     = 0x4A,		// "-" on numpad
-		KEY_NUMPADSLASH     = 0xB5,		// "/" on numpad
-		KEY_NUMLOCK         = 0x45,		// Num Lock on numpad
+		KEY_NUMPAD0 = 0x52,
+		KEY_NUMPAD1 = 0x4F,
+		KEY_NUMPAD2 = 0x50,
+		KEY_NUMPAD3 = 0x51,
+		KEY_NUMPAD4 = 0x4B,
+		KEY_NUMPAD5 = 0x4C,
+		KEY_NUMPAD6 = 0x4D,
+		KEY_NUMPAD7 = 0x47,
+		KEY_NUMPAD8 = 0x48,
+		KEY_NUMPAD9 = 0x49,
+		KEY_NUMPADPERIOD = 0x53,		// "." on numpad
+		KEY_NUMPADENTER = 0x9C,		// Enter on numpad
+		KEY_NUMPADSTAR = 0x37,		// "*" on numpad
+		KEY_NUMPADPLUS = 0x4E,		// "+" on numpad
+		KEY_NUMPADMINUS = 0x4A,		// "-" on numpad
+		KEY_NUMPADSLASH = 0xB5,		// "/" on numpad
+		KEY_NUMLOCK = 0x45,		// Num Lock on numpad
 	};
 
 	public delegate TResult Func<in T, out TResult>(T arg);
@@ -1033,12 +1281,12 @@ namespace DGLE
 				return null;
 			else
 			{
-				Type tyobj = obj.GetType(); //узнаем тип объекта
-				if (tyobj.IsPrimitive) return obj; //если тип является примитивом (int, double и т.п.) то нет смысла копаться в его внутренностях
+				Type tyobj = obj.GetType();
+				if (tyobj.IsPrimitive) return obj; // for primitive types (int, double etc) - nothing more
 				else
 				{
 					object clone = MemberwiseClone(obj);
-					//глубококлонируем все поля объекта
+					// otherwise clone all the fields going down the structure
 					foreach (var field in tyobj.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
 					{
 						if (field.Name == "_strName")
@@ -1049,21 +1297,21 @@ namespace DGLE
 					return clone;
 				}
 			}
-			
+
 		}
 
 		public static object DeepClone(object obj)
 		{
-			if (object.ReferenceEquals(obj, null)) //Если объект ~ null, то и клон его - null
+			if (object.ReferenceEquals(obj, null)) //obj equals ~ null, then clone will be null
 				return null;
 			else
 			{
 				if (obj is string)
 					return string.Copy(obj as string);
-				else if (obj is Array) //Если объект - массив, необходимо поочередно глубококлонировать его элементы
+				else if (obj is Array) // for array type of object - deeply clone all the elements
 				{
 					Array array = (obj as Array).Clone() as Array;
-					
+
 					int lenght = (obj as Array).Length;
 					if (lenght != 0)
 					{
@@ -1074,7 +1322,7 @@ namespace DGLE
 							{
 								int rank = array.Rank;
 								int[] sizes = new int[rank];
-								for(int i = 0; i < rank; ++i)
+								for (int i = 0; i < rank; ++i)
 									sizes[i] = array.GetLength(i);
 								Array resArray = Array.CreateInstance(arrayType, sizes);
 								Array.Copy(obj as Array, resArray, lenght);
@@ -1083,7 +1331,7 @@ namespace DGLE
 							break;
 						}
 					}
-					
+
 					switch (array.Rank)
 					{
 						case 1: // T[]
@@ -1135,29 +1383,29 @@ namespace DGLE
 											array.SetValue(DeepClone(array.GetValue(i, j, k)), i, j, k);
 								break;
 							}
-						default: // T[,,...,] - более трех размерностей
+						default: // T[,,...,] - more than 3 dimensions
 							{
-								//для прохода по всем индексам используем специальный индекс-итератор
+								// for iterating through the indexes use the special index-iterator 
 								foreach (var indx in new Indexer(array)) array.SetValue(DeepClone(array.GetValue(indx)), indx);
 								break;
 							}
 					}
-					
+
 					return array;
 				}
-				else // объект не null, не строка и не массив
+				else // obj is not null, not string, not an array 
 				{
 					Type tyobj = obj.GetType();
 					if (tyobj.FullName == "System.__ComObject")
 						return obj;
 					if (tyobj.FullName == "GuiEditor.CGUIEngine")
 						return obj;
-					else if (tyobj.IsPrimitive)  //если тип является примитивом (int, double и т.п.) то нет смысла копаться в его внутренностях
+					else if (tyobj.IsPrimitive)  // for primitive types (int, double etc) nothing more 
 						return obj;
 					else
 					{
 						object clone = MemberwiseClone(obj);
-						//глубококлонируем все поля объекта
+						// otherwise clone all the fields going down the structure
 						foreach (var field in tyobj.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
 						{
 							if (field.Name == "_pStyle")
@@ -1205,7 +1453,7 @@ namespace DGLE
 		{
 			return (IEnumerator)GetEnumerator();
 		}
-		
+
 		public IEnumerator<int[]> GetEnumerator()
 		{
 			int[] CurrentIndexs = this.LoverBownds.Clone() as int[];
