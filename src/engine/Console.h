@@ -15,12 +15,12 @@ struct TConEntry
 {
 	char	*pcName;
 	char	*pcHelp;
-	void	*pParametr;
+	void	*pParameter;
 	int		*piValue;
 	int		 iMinValue,
 			 iMaxValue;
 
-	void(DGLE_API *pProc)(void *pParametr, const char *pcParam);
+	void(DGLE_API *pProc)(void *pParameter, const char *pcParam);
 
 	bool operator < (const TConEntry &entry) const
 	{
@@ -47,16 +47,16 @@ class CConsole : public CInstancedObj
 	void _Cmdlist();
 	void _Help(const char* pcParam);
 	
-	static void DGLE_API _s_Hide(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_Show(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_Save(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_Clear(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_Terminate(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_SetPos(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_SetSize(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ResetPos(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_Cmdlist(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_Help(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_Hide(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_Show(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_Save(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_Clear(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_Terminate(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_SetPos(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_SetSize(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ResetPos(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_Cmdlist(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_Help(void *pParameter, const char *pcParam);
 
 	static void DGLE_API _s_OnConWindowEvent(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand);
 
@@ -70,8 +70,8 @@ public:
 	uint32 GetThreadId();
 	void  Write(const std::string &strTxt, bool bToPrevLine = false);
 	void  Exec(const char *pcCommand);
-	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
-	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam) = NULL, void *pParametr = NULL);
+	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
+	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL);
 	bool  UnRegCom(const char *pcName);
 	void  EnterThreadSafeSection();
 	void  LeaveThreadSafeSection();

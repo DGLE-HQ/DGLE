@@ -110,11 +110,11 @@ namespace DGLE
 	typedef signed long long	int64;
 	typedef unsigned long long	uint64;
 
-#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
+#ifdef STRUCT_ALIGNMENT_1
 #pragma pack( push, 1 )
 #endif
 
-	//variant//
+	//Variant data type definition//
 
 	enum E_DGLE_VARIANT_TYPE
 	{
@@ -408,11 +408,11 @@ namespace DGLE
 
 		inline TColor4():r(1.f), g(1.f), b(1.f), a(1.f){}
 
-		inline TColor4(uint32 ui32RGBA):
-			r((float)(ui32RGBA & 0xff) / 0xff),
-			g((float)((ui32RGBA >> 8) & 0xff) / 0xff),
-			b((float)((ui32RGBA >> 16) & 0xff) / 0xff),
-			a((float)((ui32RGBA >> 24) & 0xff) / 0xff)
+		inline TColor4(uint32 ui32ABGR):
+			r((float)(ui32ABGR & 0xFF) / 0xFF),
+			g((float)((ui32ABGR >> 8) & 0xFF) / 0xFF),
+			b((float)((ui32ABGR >> 16) & 0xFF) / 0xFF),
+			a((float)((ui32ABGR >> 24) & 0xFF) / 0xFF)
 		{}
 
 		inline TColor4(uint8 ubR, uint8 ubG, uint8 ubB, uint8 ubA)
@@ -422,7 +422,7 @@ namespace DGLE
 		
 		inline TColor4(cref rgba)
 		{
-			memcpy(TColor4::rgba, rgba, sizeof rgba);
+			memcpy(TColor4::rgba, rgba, sizeof(rgba));
 		}
 
 		inline void SetColorF(float fR, float fG, float fB, float fA)
@@ -432,22 +432,22 @@ namespace DGLE
 		
 		inline void SetColorB(uint8 ubR, uint8 ubG, uint8 ubB, uint8 ubA)
 		{
-			r = ubR/255.f; g = ubG/255.f; b = ubB/255.f; a = ubA/255.f;
+			r = ubR / 255.f; g = ubG / 255.f; b = ubB / 255.f; a = ubA / 255.f;
 		}
 		
 		inline uint32 ColorRGB()
 		{
-			return RGB(255*r, 255*g, 255*b);
+			return RGB(255 * r, 255 * g, 255 * b);
 		}
 
 		inline uint32 ColorRGBA()
 		{
-			return RGBA(255*r, 255*g, 255*b, 255*a);
+			return RGBA(255 * r, 255 * g, 255 * b, 255 * a);
 		}
 
 		inline operator uint32()
 		{
-			return RGBA(255*r, 255*g, 255*b, 255*a);
+			return RGBA(255 * r, 255 * g, 255 * b, 255 * a);
 		}
 
 		inline operator ref()
@@ -460,6 +460,34 @@ namespace DGLE
 			return rgba;
 		}
 	};
+
+	inline TColor4 ColorClear() { return TColor4(0x00, 0x00, 0x00, 0); }
+	inline TColor4 ColorWhite() { return TColor4(0xFF, 0xFF, 0xFF, 255); }
+	inline TColor4 ColorBlack() { return TColor4(0x00, 0x00, 0x00, 255); }
+	inline TColor4 ColorRed() { return TColor4(0xFF, 0x00, 0x00, 255); }
+	inline TColor4 ColorGreen() { return TColor4(0x00, 0xFF, 0x00, 255); }
+	inline TColor4 ColorBlue() { return TColor4(0x00, 0x00, 0xFF, 255); }
+		
+	inline TColor4 ColorAqua() { return TColor4(0x00, 0xFF, 0xFF, 255); }
+	inline TColor4 ColorBrown() { return TColor4(0xA5, 0x2A, 0x2A, 255); }
+	inline TColor4 ColorCyan() { return TColor4(0x00, 0xFF, 0xFF, 255); }
+	inline TColor4 ColorFuchsia() { return TColor4(0xFF, 0x00, 0xFF, 255); }
+	inline TColor4 ColorGray() { return TColor4(0x80, 0x80, 0x80, 255); }
+	inline TColor4 ColorGrey() { return TColor4(0x80, 0x80, 0x80, 255); }
+	inline TColor4 ColorMagenta() { return TColor4(0xFF, 0x00, 0xFF, 255); }
+	inline TColor4 ColorMaroon() { return TColor4(0x80, 0x00, 0x00, 255); }
+	inline TColor4 ColorNavy() { return TColor4(0x00, 0x00, 0x80, 255); }
+	inline TColor4 ColorOlive() { return TColor4(0x80, 0x80, 0x00, 255); }
+	inline TColor4 ColorOrange() { return TColor4(0xFF, 0xA5, 0x00, 255); }
+	inline TColor4 ColorPink() { return TColor4(0xFF, 0xC0, 0xCB, 255); }
+	inline TColor4 ColorPurple() { return TColor4(0x80, 0x00, 0x80, 255); }
+	inline TColor4 ColorSilver() { return TColor4(0xC0, 0xC0, 0xC0, 255); }
+	inline TColor4 ColorTeal() { return TColor4(0x00, 0x80, 0x80, 255); }
+	inline TColor4 ColorViolet() { return TColor4(0xEE, 0x82, 0xEE, 255); }
+	inline TColor4 ColorYellow() { return TColor4(0x00, 0x00, 0x00, 255); }
+
+	inline TColor4 ColorOfficialOrange() { return TColor4(230, 120, 25, 255); }
+	inline TColor4 ColorOfficialBlack() { return TColor4(55, 50, 50, 255); }
 
 	typedef TColor4 TColor;
 
@@ -650,7 +678,7 @@ namespace DGLE
 		{
 			x += point.x;
 			y += point.y;
-			z += point.y;
+			z += point.z;
 			return *this;
 		}
 
@@ -818,23 +846,6 @@ namespace DGLE
 		x(fX), y(fY), u(fU), w(fW), r(fR), g(fG), b(fB), a(fA){}
 	};
 
-	/** Describes graphical point coordinates, color and its texture coordinates in 3D space. */
-	struct TVertex3
-	{
-		union
-		{
-			struct
-			{
-				float x, y, z, u, w, r, g, b, a;
-			};
-			float data[9];
-		};
-
-		inline TVertex3():x(0.f), y(0.f), z(0.f), u(0.f), w(0.f), r(1.f), g(1.f), b(1.f), a(1.f){}
-		inline TVertex3(float fX, float fY, float fZ, float fU, float fW, float fR, float fG, float fB, float fA):
-		x(fX), y(fY), z(fZ), u(fU), w(fW), r(fR), g(fG), b(fB), a(fA){}
-	};
-
 	/** Describes 2D rectangle by float values. */
 	struct TRectF
 	{
@@ -885,7 +896,7 @@ namespace DGLE
 	/** Describes 4x4 matrix and some math routines used in 3D graphics computes. 
 	\warning In engine matrices are stored per lines. Like in Direct3D and unlike it in OpenGL. So keep it in mind when using them directly via GAPI.
 	*/
-	struct TMatrix
+	struct TMatrix4x4
 	{
 		union
 		{
@@ -893,12 +904,12 @@ namespace DGLE
 			float _2D[4][4];
 		};
 
-		inline TMatrix()
+		inline TMatrix4x4()
 		{
 			memset(_1D, 0, sizeof(_1D));
 		}
 
-		inline TMatrix(
+		inline TMatrix4x4(
 			float _00, float _01, float _02, float _03,
 			float _10, float _11, float _12, float _13,
 			float _20, float _21, float _22, float _23,
@@ -910,86 +921,86 @@ namespace DGLE
 			_2D[3][0] = _30; _2D[3][1] = _31; _2D[3][2] = _32; _2D[3][3] = _33;
 		}
 
-		inline TMatrix &operator +=(float right)
+		inline TMatrix4x4 &operator +=(float right)
 		{
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; ++i)
 				_1D[i] += right;
 			return *this;
 		}
 
-		inline TMatrix &operator -=(float right)
+		inline TMatrix4x4 &operator -=(float right)
 		{
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; ++i)
 				_1D[i] -= right;
 			return *this;
 		}
 
-		inline TMatrix &operator *=(float right)
+		inline TMatrix4x4 &operator *=(float right)
 		{
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; ++i)
 				_1D[i] *= right;
 			return *this;
 		}
 
-		inline TMatrix &operator /=(float right)
+		inline TMatrix4x4 &operator /=(float right)
 		{
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; ++i)
 				_1D[i] /= right;
 			return *this;
 		}
 
-		TMatrix &operator +=(const TMatrix &right)
+		inline TMatrix4x4 &operator +=(const TMatrix4x4 &right)
 		{
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; ++i)
 				_1D[i] += right._1D[i];
 			return *this;
 		}
 
-		TMatrix &operator -=(const TMatrix &right)
+		inline TMatrix4x4 &operator -=(const TMatrix4x4 &right)
 		{
-			for (int i = 0; i < 16; i++)
+			for (int i = 0; i < 16; ++i)
 				_1D[i] -= right._1D[i];
 			return *this;
 		}
 
-		TMatrix &operator *=(const TMatrix &right)
+		inline TMatrix4x4 &operator *=(const TMatrix4x4 &right)
 		{
 			return *this = *this * right;
 		}
 
-		TMatrix operator +(float right) const
+		inline TMatrix4x4 operator +(float right) const
 		{
-			return TMatrix(*this) += right;
+			return TMatrix4x4(*this) += right;
 		}
 
-		TMatrix operator -(float right) const
+		inline TMatrix4x4 operator -(float right) const
 		{
-			return TMatrix(*this) -= right;
+			return TMatrix4x4(*this) -= right;
 		}
 
-		TMatrix operator *(float right) const
+		inline TMatrix4x4 operator *(float right) const
 		{
-			return TMatrix(*this) *= right;
+			return TMatrix4x4(*this) *= right;
 		}
 
-		TMatrix operator /(float right) const
+		inline TMatrix4x4 operator /(float right) const
 		{
-			return TMatrix(*this) /= right;
+			return TMatrix4x4(*this) /= right;
 		}
 
-		TMatrix operator +(const TMatrix &right) const
+		inline TMatrix4x4 operator +(const TMatrix4x4 &right) const
 		{
-			return TMatrix(*this) += right;
+			return TMatrix4x4(*this) += right;
 		}
 
-		TMatrix operator -(const TMatrix &right) const
+		inline TMatrix4x4 operator -(const TMatrix4x4 &right) const
 		{
-			return TMatrix(*this) -= right;
+			return TMatrix4x4(*this) -= right;
 		}
 
-		TMatrix operator *(const TMatrix &right) const
+		__forceinline TMatrix4x4 operator *(const TMatrix4x4 &right) const
 		{
-			TMatrix product;
+			TMatrix4x4 product;
 
 			product._2D[0][0] = _2D[0][0] * right._2D[0][0] + _2D[0][1] * right._2D[1][0] + _2D[0][2] * right._2D[2][0] + _2D[0][3] * right._2D[3][0];
 			product._2D[1][0] = _2D[1][0] * right._2D[0][0] + _2D[1][1] * right._2D[1][0] + _2D[1][2] * right._2D[2][0] + _2D[1][3] * right._2D[3][0];
@@ -1010,16 +1021,46 @@ namespace DGLE
 
 			return product;
 		}
+
+		inline TPoint3 ApplyToPoint(const TPoint3 &stPoint) const
+		{
+			TPoint3 product;
+
+			product.xyz[0] = stPoint.xyz[0] * _2D[0][0] + stPoint.xyz[1] * _2D[1][0] + stPoint.xyz[2] * _2D[2][0] + _2D[3][0];
+			product.xyz[1] = stPoint.xyz[0] * _2D[0][1] + stPoint.xyz[1] * _2D[1][1] + stPoint.xyz[2] * _2D[2][1] + _2D[3][1];
+			product.xyz[2] = stPoint.xyz[0] * _2D[0][2] + stPoint.xyz[1] * _2D[1][2] + stPoint.xyz[2] * _2D[2][2] + _2D[3][2];
+
+			return product;
+		}
+
+		inline TPoint2 ApplyToPoint(const TPoint2 &stPoint) const
+		{
+			TPoint2 product;
+
+			product.xy[0] = stPoint.xy[0] * _2D[0][0] + stPoint.xy[1] * _2D[1][0] + _2D[3][0];
+			product.xy[1] = stPoint.xy[0] * _2D[0][1] + stPoint.xy[1] * _2D[1][1] + _2D[3][1];
+
+			return product;
+		}
+
+		inline TPoint3 ApplyToVector(const TPoint3 &stPoint) const
+		{
+			TPoint3 product;
+
+			product.xyz[0] = stPoint.xyz[0] * _2D[0][0] + stPoint.xyz[1] * _2D[1][0] + stPoint.xyz[2] * _2D[2][0];
+			product.xyz[1] = stPoint.xyz[0] * _2D[0][1] + stPoint.xyz[1] * _2D[1][1] + stPoint.xyz[2] * _2D[2][1];
+			product.xyz[2] = stPoint.xyz[0] * _2D[0][2] + stPoint.xyz[1] * _2D[1][2] + stPoint.xyz[2] * _2D[2][2];
+
+			return product;
+		}
 	};
 	
-	typedef TMatrix TMat4, TMatrix4, TMatrix4x4;
+	typedef TMatrix4x4 TMat4, TMatrix4;
 
-	// Matrix helper functions //
-
-	/** Returns identity matrx. */
-	inline TMatrix MatrixIdentity()
+	/** Returns identity matrix. */
+	inline TMatrix4x4 MatrixIdentity()
 	{
-		return TMatrix(
+		return TMatrix4x4(
 			1.f, 0.f, 0.f, 0.f,
 			0.f, 1.f, 0.f, 0.f,
 			0.f, 0.f, 1.f, 0.f,
@@ -1027,7 +1068,7 @@ namespace DGLE
 	}
 
 	/** Returns inverse matrix. */
-	inline TMatrix MatrixInverse(const TMatrix &stMatrix)
+	inline TMatrix4x4 MatrixInverse(const TMatrix4x4 &stMatrix)
 	{
 		float mat[4][8] =
 		{
@@ -1076,7 +1117,7 @@ namespace DGLE
 					rows[r][c] -= factor * rows[i][c];
 			}
 
-		return TMatrix(
+		return TMatrix4x4(
 			rows[0][4] / rows[0][0], rows[0][5] / rows[0][0], rows[0][6] / rows[0][0], rows[0][7] / rows[0][0],
 			rows[1][4] / rows[1][1], rows[1][5] / rows[1][1], rows[1][6] / rows[1][1], rows[1][7] / rows[1][1],
 			rows[2][4] / rows[2][2], rows[2][5] / rows[2][2], rows[2][6] / rows[2][2], rows[2][7] / rows[2][2],
@@ -1084,9 +1125,9 @@ namespace DGLE
 	}
 
 	/** Returns transpose matrix. */
-	inline TMatrix MatrixTranspose(const TMatrix &stMatrix)
+	inline TMatrix4x4 MatrixTranspose(const TMatrix4x4 &stMatrix)
 	{
-		return TMatrix(
+		return TMatrix4x4(
 			stMatrix._2D[0][0], stMatrix._2D[1][0], stMatrix._2D[2][0], stMatrix._2D[3][0],
 			stMatrix._2D[0][1], stMatrix._2D[1][1], stMatrix._2D[2][1], stMatrix._2D[3][1],
 			stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2], stMatrix._2D[3][2],
@@ -1094,9 +1135,9 @@ namespace DGLE
 	}
 	
 	/** Returns scaled matrix by a given vector. */
-	inline TMatrix MatrixScale(const TVector3 &stVec)
+	inline TMatrix4x4 MatrixScale(const TVector3 &stVec)
 	{
-		return TMatrix(
+		return TMatrix4x4(
 			stVec.x, 0.f, 0.f, 0.f,
 			0.f, stVec.y, 0.f, 0.f,
 			0.f, 0.f, stVec.z, 0.f,
@@ -1104,9 +1145,9 @@ namespace DGLE
 	}
 
 	/** Returns translated matrix by a given vector. */
-	inline TMatrix MatrixTranslate(const TVector3 &stVec)
+	inline TMatrix4x4 MatrixTranslate(const TVector3 &stVec)
 	{
-		return TMatrix(
+		return TMatrix4x4(
 			1.f, 0.f, 0.f, 0.f,
 			0.f, 1.f, 0.f, 0.f,
 			0.f, 0.f, 1.f, 0.f,
@@ -1114,7 +1155,7 @@ namespace DGLE
 	}
 
 	/** Returns rotated matrix by a given axis vector and angle. */
-	inline TMatrix MatrixRotate(float fAngle, TVector3 &stAxis)
+	inline TMatrix4x4 MatrixRotate(float fAngle, TVector3 &stAxis)
 	{
 		const float
 			axis_norm = sqrt(stAxis.x*stAxis.x + stAxis.y*stAxis.y + stAxis.z*stAxis.z),
@@ -1123,7 +1164,7 @@ namespace DGLE
 			z = stAxis.z / axis_norm,
 			sin_angle = sinf(fAngle*(float)M_PI/180.f),
 			cos_angle = cosf(fAngle*(float)M_PI/180.f);
-		return TMatrix(
+		return TMatrix4x4(
 			(1.f - x * x) * cos_angle + x * x,			z * sin_angle + x * y * (1.f - cos_angle),	x * z * (1.f - cos_angle) - y * sin_angle,	0.f,
 			x * y * (1.f - cos_angle) - z * sin_angle,	(1.f - y * y) * cos_angle + y * y,			y * z * (1.f - cos_angle) + x * sin_angle,	0.f,
 			x * z * (1.f - cos_angle) + y * sin_angle,	y * z * (1.f - cos_angle) - x * sin_angle,	(1.f - z * z) * cos_angle + z * z,			0.f,
@@ -1131,9 +1172,9 @@ namespace DGLE
 	}
 
 	/** Returns billboarded matrix. Removes rotation information from the matrix. */
-	inline TMatrix MatrixBillboard(const TMatrix &stMatrix)
+	inline TMatrix4x4 MatrixBillboard(const TMatrix4x4 &stMatrix)
 	{
-		return TMatrix(
+		return TMatrix4x4(
 			1.f,				0.f,				0.f,				stMatrix._2D[0][3],
 			0.f,				1.f,				0.f,				stMatrix._2D[1][3],
 			0.f,				0.f,				1.f,				stMatrix._2D[2][3],
@@ -1204,7 +1245,7 @@ namespace DGLE
 	}
 
 	/** Stack of matrix 4x4 multiplication operations. */
-	typedef TTransformStack<TMatrix> TMatrixStack;
+	typedef TTransformStack<TMatrix4x4> TMatrix4x4Stack;
 
 	/** Describes the state of the mouse. 
 		\see IInput
@@ -1251,7 +1292,7 @@ namespace DGLE
 		int iPOV;			/**< Point-Of-View direction. */
 	};
 
-#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
+#ifdef STRUCT_ALIGNMENT_1
 #pragma pack(pop)
 #endif
 

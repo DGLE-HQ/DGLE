@@ -51,9 +51,9 @@ catch(...)\
 namespace DGLE
 {
 
-typedef void	(DGLE_API *TPProc)(void *pParametr),
-				(DGLE_API *TPEventProc)(void *pParametr, IBaseEvent *pEvent),
-				(DGLE_API *TPMsgProc)(void *pParametr, const TWinMessage &stMsg);
+typedef void	(DGLE_API *TPProc)(void *pParameter),
+				(DGLE_API *TPEventProc)(void *pParameter, IBaseEvent *pEvent),
+				(DGLE_API *TPMsgProc)(void *pParameter, const TWinMessage &stMsg);
 
 template<typename F>
 class CFunctorImpl;
@@ -79,7 +79,7 @@ class TCFuncDelegate
 
 	struct _TFunc
 	{
-		void *pParametr;
+		void *pParameter;
 		T1	pFunc;
 	};
 
@@ -106,18 +106,18 @@ public:
 		return _funcList.empty();
 	}
 
-	void Add(T1 pFunc, void *pParametr)
+	void Add(T1 pFunc, void *pParameter)
 	{
 		_TFunc tmp;
-		tmp.pParametr = pParametr;
+		tmp.pParameter = pParameter;
 		tmp.pFunc = pFunc;
 		_funcList.push_back(tmp);
 	}
 
-	void Remove(T1 pFunc, void *pParametr)
+	void Remove(T1 pFunc, void *pParameter)
 	{
 		for (std::size_t i = 0; i < _funcList.size(); ++i)
-			if (_funcList[i].pParametr == pParametr && _funcList[i].pFunc == pFunc)
+			if (_funcList[i].pParameter == pParameter && _funcList[i].pFunc == pFunc)
 			{
 				_funcList.erase(_funcList.begin() + i);
 				break;
@@ -146,7 +146,7 @@ public:
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr);
+				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParameter);
 			)
 	}
 };
@@ -162,7 +162,7 @@ public:
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr, stMsg);
+				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParameter, stMsg);
 			)
 	}
 };
@@ -178,7 +178,7 @@ public:
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParametr, pEvent);
+				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParameter, pEvent);
 			)
 	}
 };

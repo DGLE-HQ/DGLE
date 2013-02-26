@@ -79,15 +79,15 @@ DGLE_RESULT DGLE_API CMainFS::GetRegisteredVirtualFileSystems(char *pcTxt, uint 
 	return S_OK;
 }
 
-void DGLE_API CMainFS::_s_ConListVFS(void *pParametr, const char *pcParam)
+void DGLE_API CMainFS::_s_ConListVFS(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CMainFS, "No parametrs expected.");
+		CON(CMainFS, "No parameters expected.");
 	else 
 		CON(CMainFS, string("---Supported VFile Systems---\n" + PTHIS(CMainFS)->_strVFSsDescs + "-----------------------------").c_str());
 }
 
-void DGLE_API CMainFS::_s_FSDeleteCallback(void *pParametr, IFileSystem *pVFS)
+void DGLE_API CMainFS::_s_FSDeleteCallback(void *pParameter, IFileSystem *pVFS)
 {
 	if (PTHIS(CMainFS)->_pHDDFS == pVFS)
 		delete PTHIS(CMainFS)->_pHDDFS;
@@ -178,7 +178,7 @@ DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystemDescription(const char *pcVFSE
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CMainFS::RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr)
+DGLE_RESULT DGLE_API CMainFS::RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter)
 {
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == string(pcVFSExtension))
@@ -187,7 +187,7 @@ DGLE_RESULT DGLE_API CMainFS::RegisterVirtualFileSystem(const char *pcVFSExtensi
 			return E_INVALIDARG;
 		}
 	
-	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteCallback, pParametr));
+	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteCallback, pParameter));
 
 	_strVFSsDescs += string("- " + ToUpperCase(string(pcVFSExtension)) + " " + string(pcDiscription) + "\n");
 

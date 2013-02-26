@@ -128,13 +128,13 @@ class CEvGetSubSystem : public IEvGetSubSystem
 
 public:
 
-	CEvGetSubSystem(E_ENGINE_SUB_SYSTEM eSSType, IEngineSubSystem	*pEngSS)
+	CEvGetSubSystem(E_ENGINE_SUB_SYSTEM eSSType, IEngineSubSystem *pEngSS)
 	{
 		_eSSType = eSSType;
 		_ppEngSS = &pEngSS;
 	}
 
-	DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem)
+	DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM &eSubSystem)
 	{
 		eSubSystem = _eSSType;
 		return S_OK;
@@ -281,10 +281,10 @@ _iLogWarningsCount(0), _LogErrorsCount(0),
 _pRender(NULL), _pMainFS(NULL), _pResMan(NULL), _pInput(NULL), _pSound(NULL), _pCoreRenderer(NULL),
 _bBuiltInSound(true), _bBuiltInRenderer(true), _bBuiltInInput(true),
 _pSplashWindow(NULL), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
-_bDoExit(false), _bInDrawProfilers(false), _bWasFScreen(false),
+_bDoExit(false), _bInDrawProfilers(false), _bWasFScreen(false), _bRendering(false),
 _bStartedFlag(false), _bInitedFlag(false), _bQuitFlag(false),
 _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
-_bNeedApplyNewWnd(false), _ui64LastUpdateDeltaTime(0),
+_bNeedApplyNewWnd(false), _ui64LastUpdateDeltaTime(0), _uiLastMemUsage(0),
 //Delegates initialization
 _clDelUpdate(uiInstIdx),
 _clDelRender(uiInstIdx),
@@ -300,7 +300,7 @@ _clDelOnFPSTimer(uiInstIdx)
 	if (!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_NO_LOG_FILE))
 	{
 		_clLogFile.setf(ios_base::right, ios_base::adjustfield);
-		_clLogFile.open((string("log")+(InstIdx() != 0 ? IntToStr(InstIdx()) : string(""))+".txt").c_str(), ios::out | ios::trunc);
+		_clLogFile.open((string("log") + (InstIdx() != 0 ? IntToStr(InstIdx()) : string("")) + ".txt").c_str(), ios::out | ios::trunc);
 
 		TSysTimeAndDate time;
 		GetLocalTimaAndDate(time);
@@ -641,8 +641,11 @@ void CCore::_OnTimer()
 		_bNeedApplyNewWnd = false;
 	}
 
-	_uiLastFPS  = _uiFPSCount;
-	_uiLastUPS  = _uiUPSCount;
+	if (_iDrawProfiler == 3)
+		_uiLastMemUsage = GetProcessMemoryUsage();
+
+	_uiLastFPS = _uiFPSCount;
+	_uiLastUPS = _uiUPSCount;
 
 	if (!_bPause)
 	{
@@ -676,15 +679,19 @@ void CCore::_MainLoop()
 
 	Console()->EnterThreadSafeSection();
 
-	uint cycles_cnt = (uint)(time_delta / _uiUpdateInterval);
+	uint cycles_cnt;
 		
-	if ((_eInitFlags & EIF_DISABLE_SMART_TIMING) && cycles_cnt > 1)
-		cycles_cnt = 1;
+	if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
+		cycles_cnt = time_delta >= _uiUpdateInterval;
 	else
+	{
+		cycles_cnt = (uint)(time_delta / _uiUpdateInterval);
+
 		if (cycles_cnt > _sc_MaxUpdateCycles)
 			cycles_cnt = _sc_MaxUpdateCycles;
+	}
 
-	_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_DISABLE_SMART_TIMING) ? time_delta : _uiUpdateInterval;
+	_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
 
 	if (cycles_cnt > 0)
 		_ui64UpdateDelay = GetPerfTimer();
@@ -709,8 +716,30 @@ void CCore::_MainLoop()
 	if (flag)
 	{
 		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
-		_ui64TimeOld = GetPerfTimer() / 1000 - time_delta % _uiUpdateInterval;
+		
+		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
+		{
+			if (cycles_cnt == 1)
+				_ui64TimeOld = time;
+		}
+		else
+			_ui64TimeOld = GetPerfTimer() / 1000 - time_delta % _uiUpdateInterval;
 	}
+
+	_RenderFrame();
+
+	Console()->LeaveThreadSafeSection();
+
+	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiUpdateInterval || _bPause)) * 10 +
+				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 5;
+
+	if (sleep > 0)
+		Suspend(sleep);
+}
+
+void CCore::_RenderFrame()
+{
+	_bRendering = true;
 
 	_pRender->BeginRender();
 
@@ -728,7 +757,7 @@ void CCore::_MainLoop()
 
 	_ui64RenderDelay = GetPerfTimer() - _ui64RenderDelay;
 
-	//begin of profilers//
+	// Begin of profilers //
 
 	if (_iAllowDrawProfilers == 1)
 	{
@@ -761,6 +790,9 @@ void CCore::_MainLoop()
 				RenderProfilerTxt(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
 				RenderProfilerTxt(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
 			}
+
+			if (_iDrawProfiler == 3)
+				RenderProfilerTxt(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), TColor4());
 		}
 				
 		_pRender->pRender2D()->DrawProfiler();
@@ -772,19 +804,23 @@ void CCore::_MainLoop()
 		_pRender->pRender2D()->EndProfiler2D();
 	}
 
-	//end of profilers//
+	// end of profilers //
 
 	_pRender->EndRender();
 
 	++_uiFPSCount;
 
-	Console()->LeaveThreadSafeSection();
+	_bRendering = false;
+}
 
-	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiUpdateInterval || _bPause)) * 10 +
-				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 5;
+DGLE_RESULT DGLE_API CCore::RenderFrame()
+{
+	if (_bRendering)
+		return E_FAIL;
 
-	if (sleep > 0)
-		Suspend(sleep);
+	_RenderFrame();
+
+	return S_OK;
 }
 
 void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
@@ -987,6 +1023,11 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 			return E_ABORT;
 		}
 
+		locale::global(std::locale(""));
+		setlocale(LC_NUMERIC, "C");
+
+		LOG("Current locale: " + locale().name(), LT_INFO);
+
 		_stWin = stWindowParam;
 		_uiUpdateInterval = uiUpdateInterval;
 		_bPause = false;
@@ -1010,9 +1051,9 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		GetCurrentWorkingPath(working_path);
 
 		if (eng_path == working_path)
-			LOG("Working directory is: \"" + working_path + "\".", LT_INFO);
+			LOG("Working directory: \"" + working_path + "\"", LT_INFO);
 		else
-			LOG("Engine working directory is: \"" + eng_path + "\".\nApplication working directory is: \"" + working_path + "\".", LT_INFO);
+			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + "\"", LT_INFO);
 
 		string system_info;
 		GetSystemInformation(system_info, _stSysInfo);
@@ -1044,7 +1085,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 
 		Console()->RegComValue("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, (void*)this);
 		Console()->RegComValue("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, (void*)this);
-		Console()->RegComValue("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additional draw performance graphs.", &_iDrawProfiler, 0, 2, NULL, (void*)this);
+		Console()->RegComValue("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additionally draw performance metrics.\n3 - additionally draw memory usage metrics.", &_iDrawProfiler, 0, 3, NULL, (void*)this);
 		Console()->RegComValue("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, (void*)this);
 		Console()->RegComProc("core_version", "Prints engine version.", &_s_ConPrintVersion, (void*)this);
 		Console()->RegComProc("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, (void*)this);
@@ -1449,22 +1490,22 @@ DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEven
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
+DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
-	if (eEventType == ET_BEFORE_INIT && _bInitedFlag)//Means that engine already inited and event will never happend
+	if (eEventType == ET_BEFORE_INIT && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
 	
 	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)
 		{
-			_clEvents[i].pDEvent->Add(pListnerProc, pParametr);
+			_clEvents[i].pDEvent->Add(pListnerProc, pParameter);
 			return S_OK;
 		}
 
 	TEvent new_event;
 	new_event.eType = eEventType;
 	new_event.pDEvent = new TEventProcDelegate(InstIdx());
-	new_event.pDEvent->Add(pListnerProc, pParametr);
+	new_event.pDEvent->Add(pListnerProc, pParameter);
 	new_event.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
 	_clEvents.push_back(new_event);
@@ -1472,12 +1513,12 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr)
+DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
 	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)
 		{
-			_clEvents[i].pDEvent->Remove(pListnerProc, pParametr);
+			_clEvents[i].pDEvent->Remove(pListnerProc, pParameter);
 			return S_OK;
 		}
 
@@ -1507,26 +1548,26 @@ DGLE_RESULT DGLE_API CCore::RemoveUserCallback(IUserCallback *pUserCallback)
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr)
+DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter)
 {
 	switch(eProcType)
 	{
 	case EPT_UPDATE:
-		_clDelUpdate.Add(pProc, pParametr);
+		_clDelUpdate.Add(pProc, pParameter);
 		break;
 	case EPT_RENDER:
-		_clDelRender.Add(pProc, pParametr);
+		_clDelRender.Add(pProc, pParameter);
 		break;
 	case EPT_INIT:
-		_clDelInit.Add(pProc, pParametr);
+		_clDelInit.Add(pProc, pParameter);
 		if(_bStartedFlag)
 		{
-			(*pProc)(pParametr);
+			(*pProc)(pParameter);
 			return S_FALSE;
 		}
 		break;
 	case EPT_FREE:
-		_clDelFree.Add(pProc, pParametr);
+		_clDelFree.Add(pProc, pParameter);
 		break;
 	default: return E_INVALIDARG;
 	}
@@ -1534,21 +1575,21 @@ DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr)
+DGLE_RESULT DGLE_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter)
 {
 	switch(eProcType)
 	{
 	case EPT_UPDATE:
-		_clDelUpdate.Remove(pProc, pParametr);
+		_clDelUpdate.Remove(pProc, pParameter);
 		break;
 	case EPT_RENDER:
-		_clDelRender.Remove(pProc, pParametr);
+		_clDelRender.Remove(pProc, pParameter);
 		break;
 	case EPT_INIT:
-		_clDelInit.Remove(pProc, pParametr);
+		_clDelInit.Remove(pProc, pParameter);
 		break;
 	case EPT_FREE:
-		_clDelFree.Remove(pProc, pParametr);
+		_clDelFree.Remove(pProc, pParameter);
 		break;
 	default: return E_INVALIDARG;
 	}
@@ -1568,12 +1609,12 @@ DGLE_RESULT DGLE_API CCore::AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, cons
 	return S_OK;
 }
 
-void DGLE_API CCore::_s_InstIdx(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_InstIdx(void *pParameter, const char *pcParam)
 {
 	CON(CCore, (string("Instance Index is ") + IntToStr(PTHIS(CCore)->InstIdx()) + ".").c_str());
 }
 
-void DGLE_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 
@@ -1635,32 +1676,32 @@ void DGLE_API CCore::_s_ConFeatures(void *pParametr, const char *pcParam)
 		CON(CCore, res.c_str());
 }
 
-void DGLE_API CCore::_s_ConPrintVersion(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConPrintVersion(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CCore, "No parametrs expected.");
+		CON(CCore, "No parameters expected.");
 	else 
 		CON(CCore, (string("Engine version: ")+string(DGLE_VERSION)).c_str());
 }
 
-void DGLE_API CCore::_s_ConAutoPause(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConAutoPause(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CCore, "No parametrs expected.");
+		CON(CCore, "No parameters expected.");
 }
 
-void DGLE_API CCore::_s_ConListPlugs(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConListPlugs(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CCore, "No parametrs expected.");
+		CON(CCore, "No parameters expected.");
 	else
 		PTHIS(CCore)->_PrintPluginsInfo();
 }
 
-void DGLE_API CCore::_s_ConChangeMode(void *pParametr, const char *pcParam)
+void DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) == 0)
-		CON(CCore, "Parametrs expected.");
+		CON(CCore, "Parameters expected.");
 	else
 	{
 		TEngWindow wnd; int samples;
@@ -1705,15 +1746,15 @@ DGLE_RESULT DGLE_API CCore::ConsoleExec(const char *pcCommandTxt)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
+DGLE_RESULT DGLE_API CCore::ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
-	Console()->RegComProc(pcCommandName, pcCommandHelp, pProc, pParametr);
+	Console()->RegComProc(pcCommandName, pcCommandHelp, pProc, pParameter);
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
+DGLE_RESULT DGLE_API CCore::ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
-	Console()->RegComValue(pcCommandName, pcCommandHelp, piValue, iMinValue, iMaxValue, pProc, pParametr);
+	Console()->RegComValue(pcCommandName, pcCommandHelp, piValue, iMinValue, iMaxValue, pProc, pParameter);
 	return S_OK;
 }
 
@@ -1790,17 +1831,17 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 	return S_OK;
 }
 
-void DGLE_API CCore::_s_OnTimer(void *pParametr)
+void DGLE_API CCore::_s_OnTimer(void *pParameter)
 {
 	PTHIS(CCore)->_OnTimer();
 }
 
-void DGLE_API CCore::_s_MainLoop(void *pParametr)
+void DGLE_API CCore::_s_MainLoop(void *pParameter)
 {
 	PTHIS(CCore)->_MainLoop();
 }
 
-void DGLE_API CCore::_s_MessageProc(void *pParametr, const TWinMessage &stMsg)
+void DGLE_API CCore::_s_MessageProc(void *pParameter, const TWinMessage &stMsg)
 {
 	PTHIS(CCore)->_MessageProc(stMsg);
 }

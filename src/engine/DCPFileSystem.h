@@ -77,8 +77,8 @@ class CDCPFileSystem :public CInstancedObj, public IFileSystem
 	void _ReplaceSubstrInStr(std::string &outStr, const std::string &findCh, const std::string &repCh);
 	void _ConvertFormatFromDirToRegEx(std::string &outStr, const std::string &inStr);
 
-	static void DGLE_API _s_ConCmdHelp(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ConExecCmd(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConCmdHelp(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ConExecCmd(void *pParameter, const char *pcParam);
 
 public:
 

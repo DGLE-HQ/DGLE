@@ -48,12 +48,12 @@ class CRender2D: public CInstancedObj, public IRender2D
 	inline bool  _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor);
 
 	bool		_bInProfilerMode, _bCameraWasSet;
-	TMatrix		_stCamTransform, _stPrevCamTransform;
+	TMatrix4	_stCamTransform, _stPrevCamTransform;
 	TPoint2		_stCamScale;
 	
-	TMatrix		_stPrevProjMat, _stPrevModelViewMat;
+	TMatrix4	_stPrevProjMat, _stPrevModelViewMat;
 	uint		_uiPrevViewPortX, _uiPrevViewPortY, _uiPrevViewPortW, _uiPrevViewPortH;
-	E_EFFECT2D_BLENDING_FLAGS
+	E_EFFECT_BLENDING_FLAGS
 				_ePrevBlendingMode;
 
 	float		*_pBuffer;
@@ -132,19 +132,19 @@ public:
 
 	DGLE_RESULT DGLE_API Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
-	DGLE_RESULT DGLE_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY);
+	DGLE_RESULT DGLE_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4x4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY);
 
 	DGLE_RESULT DGLE_API SetRotationPoint(const TPoint2 &stCoords);
 	DGLE_RESULT DGLE_API SetScale(const TPoint2 &stScale);
 	DGLE_RESULT DGLE_API SetColorMix(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode);
+	DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode);
 	DGLE_RESULT DGLE_API SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4);
 	DGLE_RESULT DGLE_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4);
 
 	DGLE_RESULT DGLE_API GetRotationPoint(TPoint2 &stCoords);
 	DGLE_RESULT DGLE_API GetScale(TPoint2 &stScale);
 	DGLE_RESULT DGLE_API GetColorMix(TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode);
+	DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode);
 	DGLE_RESULT DGLE_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4);
 	DGLE_RESULT DGLE_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4);
 

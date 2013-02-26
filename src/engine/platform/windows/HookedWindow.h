@@ -29,7 +29,7 @@ class CHookedWindow : public CInstancedObj, public IMainWindow
 	uint			 _uiUpdateTimer;
 
 	void _KillWindow();
-	static void DGLE_API	_s_ConsoleQuit(void *pParametr, const char *pcParam);
+	static void DGLE_API	_s_ConsoleQuit(void *pParameter, const char *pcParam);
 	static LRESULT CALLBACK _s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK _s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

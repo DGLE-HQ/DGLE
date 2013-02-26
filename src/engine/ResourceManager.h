@@ -7,8 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
-#ifndef _RESOURCEMANAGER_H
-#define _RESOURCEMANAGER_H
+#pragma once
 
 #include "Common.h"
 //#include "LightAttribs.h"
@@ -23,8 +22,8 @@ struct TFileFormat
 	std::string ext;
 	std::string discr;
 	E_ENG_OBJ_TYPE type;
-	void *pParametr;
-	bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	void *pParameter;
+	bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter);
 };
 
 struct TDefaultRes
@@ -61,8 +60,7 @@ struct TResource
 
 class CResourceManager : public CInstancedObj, public IResourceManager
 {
-	// Don't forget to change this value and method when enum E_ENG_OBJ_TYPE is being changed.
-	static const uint _sc_EngObjTypeCount = EOT_GUI_FORMS + 1;
+	static const uint _sc_EngObjTypeCount = EOT_EMPTY + 1;
 	static void _s_GetObjTypeName(E_ENG_OBJ_TYPE type, std::string &name);
 
 	TWinHandle				_stWnd;
@@ -80,13 +78,15 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	IMaterial				*_pDefMaterial;
 	IBitmapFont				*_pDefBmpFnt;
 	IMesh					*_pDefMesh;
+	IModel					*_pDefModel;
 
 	CBObjDummy				*_pBObjDummy;
 	CBitmapFontDummy		*_pDefBmFntDummy;
 	CSSampleDummy			*_pDefSSmpDummy;
-	
+	CMusicDummy				*_pDefMusicDummy;
+
 	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngBaseObj *&prObj, uint uiLoadFlags);
-	inline uint _GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
+	inline uint _GetFileFormatLoaderIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, uint uiLoadFlags, IEngBaseObj *&prObj);
 	inline uint8 _GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format);
 	uint _GenerateDecompressedTextureData(const uint8 *pDataIn, uint8 *&prDataOut, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_TEXTURE_CREATION_FLAGS &eCreationFlags);
 	bool _SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);
@@ -103,21 +103,21 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	bool _CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize);
 	bool _LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample);
 
-	bool _CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags);
-	bool _LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LOAD_FLAGS eLoadFlags);
+	bool _CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags);
+	bool _LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_MODEL_LOAD_FLAGS eLoadFlags);
 
 	void _ProfilerEventHandler() const;
 	void _ListResources() const;
 
-	static void DGLE_API _s_ConListFileFormats(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ConListResources(void *pParametr, const char *pcParam);
-	static bool DGLE_API _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
-	static bool DGLE_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr); 
-	static bool DGLE_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static void DGLE_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
+	static void DGLE_API _s_ConListFileFormats(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ConListResources(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter);
+	static bool DGLE_API _s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter); 
+	static bool DGLE_API _s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter); 
+	static bool DGLE_API _s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter);
+	static bool DGLE_API _s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter);
+	static bool DGLE_API _s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter);
+	static void DGLE_API _s_ProfilerEventHandler(void *pParameter, IBaseEvent *pEvent);
 
 public:
 
@@ -129,10 +129,11 @@ public:
 
 	DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
 	DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse);
-	DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
+	DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse);
+	DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName, bool bAddResource);
 	DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResourse);
 
-	DGLE_RESULT DGLE_API RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr);
+	DGLE_RESULT DGLE_API RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter);
 	DGLE_RESULT DGLE_API UnregisterFileFormat(const char* pcExtension);
 	DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
 	DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj);
@@ -154,4 +155,3 @@ public:
 
 	IDGLE_BASE_IMPLEMENTATION(IResourceManager, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };
-#endif //_RESOURCEMANAGER_H

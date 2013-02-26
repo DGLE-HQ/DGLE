@@ -73,8 +73,8 @@ class CChannel : public ISoundChannel
 	bool _bLooped;
 	E_SOUND_CHANNEL_STATE _eState;
 
-	void (DGLE_API *_pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize);
-	void *_pParametr;
+	void (DGLE_API *_pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize);
+	void *_pParameter;
 	const uint _c_uiBufferSize;
 
 	TSoundFrame _frame;
@@ -87,7 +87,7 @@ public:
 
 	CChannel();
 	CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize);
-	CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, uint uiBufferSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr);
+	CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, uint uiBufferSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter);
 	~CChannel();
 
 	inline bool IsActive() const;
@@ -136,12 +136,12 @@ class CSound: private CBaseSound, public ISound
 
 	CChannel _clChannels[_sc_uiMaxChannels];
 
-	static void DGLE_API _s_StreamToDeviceCallback(void *pParametr, uint8 *pBufferData);
+	static void DGLE_API _s_StreamToDeviceCallback(void *pParameter, uint8 *pBufferData);
 	void _MixSoundChannels(TSoundFrame *frames, uint uiFramesCount);
 	uint _ReleaseChannel();
 
 	void _ProfilerDraw();
-	static void DGLE_API _s_EventProfilerDraw(void *pParametr, IBaseEvent *pEvent);
+	static void DGLE_API _s_EventProfilerDraw(void *pParameter, IBaseEvent *pEvent);
 
 public:
 
@@ -155,7 +155,7 @@ public:
 	DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount);
 	DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData);
 	DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize);
-	DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr);
+	DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter);
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
 
 	IDGLE_BASE_IMPLEMENTATION(ISound, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))

@@ -47,7 +47,7 @@ void CALLBACK CBaseSound::_s_WaveCallback(HWAVEOUT hWaveOut, UINT uMsg, DWORD dw
 	waveOutUnprepareHeader(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));
 	
 	if (p_this->_pStreamToDeviceCallback)
-		p_this->_pStreamToDeviceCallback(p_this->_pParametr, (uint8 *)pWaveHdr->lpData);
+		p_this->_pStreamToDeviceCallback(p_this->_pParameter, (uint8 *)pWaveHdr->lpData);
 	
 	waveOutPrepareHeader(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));
 	
@@ -132,7 +132,7 @@ bool CBaseSound::_InitDevice(uint id)
 	return true;
 }
 
-bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr)
+bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParameter, uint8 *pBufferData), void *pParameter)
 {
 	if (_hWaveOut || !pStreamToDeviceCallback)
 		return false;
@@ -169,7 +169,7 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 	}
 
 	_pStreamToDeviceCallback = pStreamToDeviceCallback;
-	_pParametr = pParametr;
+	_pParameter = pParameter;
 	uiBufferSize = _uiBufferSize;
 
 	return true;
@@ -239,19 +239,19 @@ void CBaseSound::_PrintDevList()
 	Console()->Write(output.c_str());
 }
 
-void DGLE_API CBaseSound::_s_PrintDevList(void *pParametr, const char *pcParam)
+void DGLE_API CBaseSound::_s_PrintDevList(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CBaseSound, "No parametrs expected.");
+		CON(CBaseSound, "No parameters expected.");
 	else
 		PTHIS(CBaseSound)->_PrintDevList();
 
 }
 
-void DGLE_API CBaseSound::_s_PrintDevId(void *pParametr, const char *pcParam)
+void DGLE_API CBaseSound::_s_PrintDevId(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CBaseSound, "No parametrs expected.");
+		CON(CBaseSound, "No parameters expected.");
 	else
 	{
 		UINT id;
@@ -260,12 +260,12 @@ void DGLE_API CBaseSound::_s_PrintDevId(void *pParametr, const char *pcParam)
 	}
 }
 
-void DGLE_API CBaseSound::_s_ForceDevice(void *pParametr, const char *pcParam)
+void DGLE_API CBaseSound::_s_ForceDevice(void *pParameter, const char *pcParam)
 {
 	string param(pcParam);
 
 	if (param.find(' ') != string::npos)
-		CON(CBaseSound, "Only one parametr expected.");
+		CON(CBaseSound, "Only one parameter expected.");
 	else
 	{
 		PTHIS(CBaseSound)->CloseDevice();

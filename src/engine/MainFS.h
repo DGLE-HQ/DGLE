@@ -19,15 +19,15 @@ struct TVFileSystem
 	std::string discr;
 	IFileSystem *fs;
 	void *param;
-	void (DGLE_API *pdc)(void *pParametr, IFileSystem *pVFS);
+	void (DGLE_API *pdc)(void *pParameter, IFileSystem *pVFS);
 
-	TVFileSystem(const char *pcExt, const char *pcDiscr, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr)
+	TVFileSystem(const char *pcExt, const char *pcDiscr, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter)
 	{
 		ext		= ToUpperCase(std::string(pcExt));
 		discr	= std::string(pcDiscr);
 		fs		= pVFS;
 		pdc		= pDeleteCallback;
-		param	= pParametr;
+		param	= pParameter;
 	}
 };
 
@@ -41,8 +41,8 @@ class CMainFS: public CInstancedObj, public IMainFileSystem
 	std::vector<TVFileSystem> _clVFileSystems;
 	std::string _strVFSsDescs;
 
-	static void DGLE_API _s_ConListVFS(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_FSDeleteCallback(void *pParametr, IFileSystem *pVFS);
+	static void DGLE_API _s_ConListVFS(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_FSDeleteCallback(void *pParameter, IFileSystem *pVFS);
 
 public:
 	
@@ -53,7 +53,7 @@ public:
 
 	DGLE_RESULT DGLE_API LoadFile(const char *pcFileName, IFile *&prFile);
 	DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
-	DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParametr, IFileSystem *pVFS), void *pParametr);
+	DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter);
 	DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char *pcVFSExtension);
 	DGLE_RESULT DGLE_API GetRegisteredVirtualFileSystems(char *pcTxt, uint &uiCharsCount);
 	DGLE_RESULT DGLE_API GetVirtualFileSystemDescription(const char *pcVFSExtension, char *pcTxt, uint &uiCharsCount);

@@ -97,7 +97,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 		if (_strMetricsList[i] == '\t')
 			_strMetricsList[i] = ' ';
 
-	SetClearColor(TColor4(0x00646464));
+	SetClearColor(ColorClear());
 
 	_pRender2D = new CRender2D(InstIdx());
 
@@ -136,7 +136,7 @@ void CRender::_SetPerspectiveMatrix(uint width, uint height)
 	left = bottom * aspect,
 	right = top * aspect;
 
-	_pCoreRenderer->SetMatrix(TMatrix(
+	_pCoreRenderer->SetMatrix(TMatrix4(
 		(2 * _fZNear) / (right - left), 0.f, (right + left) / (right - left), 0.f,
 		0.f, (2 * _fZNear) / (top - bottom), (top + bottom) / (top - bottom), 0.f,
 		0.f, 0.f, -((_fZFar + _fZNear) / (_fZFar - _fZNear)), -1.f,
@@ -155,7 +155,14 @@ void CRender::OnResize(uint uiWidth, uint uiHeight)
 
 DGLE_RESULT DGLE_API CRender::SetClearColor(const TColor4 &stColor)
 {
+	_stClearColor = stColor;
 	_pCoreRenderer->SetClearColor(stColor);
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender::GetClearColor(TColor4 &stColor)
+{
+	stColor = _stClearColor;
 	return S_OK;
 }
 
@@ -217,12 +224,6 @@ DGLE_RESULT DGLE_API CRender::ScreenshotBMP(const char* pFileName)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender::CreatePostProcess(IPostprocess *&pPP)
-{
-	//ToDo
-	return S_OK;
-}
-
 DGLE_RESULT DGLE_API CRender::GetRender2D(IRender2D *&prRender2D)
 {
 	prRender2D = _pRender2D;
@@ -240,10 +241,10 @@ DGLE_RESULT DGLE_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 	return S_OK;
 }
 
-void DGLE_API CRender::_s_ConListFeatures(void *pParametr, const char *pcParam)
+void DGLE_API CRender::_s_ConListFeatures(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CRender, "No parametrs expected.");
+		CON(CRender, "No parameters expected.");
 	else
 	{
 		CON(CRender, PTHIS(CRender)->_strFeturesList.c_str());

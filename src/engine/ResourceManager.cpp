@@ -16,9 +16,10 @@ See "DGLE.h" for more details.
 //#include "RenderGL.h"
 #include "Texture.h"
 #include "Font.h"
+#include "Music.h"
 //#include "MusicMCI.h"
-//#include "Mesh.h"
-//#include "MultiMesh.h"
+#include "Mesh.h"
+#include "Model.h"
 
 #ifdef PLATFORM_WINDOWS
 #include "..\..\build\windows\engine\resource.h"
@@ -76,6 +77,26 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
 };
 
+class CMusicDummy: public IMusic
+{
+public:
+	DGLE_RESULT DGLE_API Play(bool bLooped){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Pause(bool bPaused){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Stop(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying){bIsPlaying = false; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetVolume(uint uiVolume){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos){uiPos = 0; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetLength(uint &uiLength){uiLength = 0; return E_NOTIMPL;}
+	
+	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_MUSIC; return S_OK;}
+	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
+
+	IDGLE_BASE_IMPLEMENTATION(IMusic, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
+};
+
 class CBitmapFontDummy: public IBitmapFont
 {
 public:
@@ -87,6 +108,7 @@ public:
 	DGLE_RESULT DGLE_API Draw2DRect(const TRectF &stRect, const char *pcTxt, const TColor4 &stColor){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API Draw2D(float fX, float fY, const char *pcTxt, const TColor4 &stColor, float fAngle, bool bVerticesColors){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API Draw3D(const char *pcTxt){return E_NOTIMPL;}
+	
 	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
@@ -162,6 +184,10 @@ CResourceManager::CResourceManager(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _iProfilerState(0)
 {
+	// If this assertion occures than you must see _s_GetObjTypeName method if all E_ENG_OBJ_TYPE enum elements are implemented there.
+	// After it change this assertion expression as well.
+	assert(EOT_MUSIC == EOT_EMPTY - 1);
+
 	Core()->pMainWindow()->GetWindowHandle(_stWnd);
 	
 	_pCoreRenderer = Core()->pCoreRenderer();
@@ -173,7 +199,7 @@ _iProfilerState(0)
 	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, (void*)this);
 	RegisterFileFormat("tga", EOT_TEXTURE, "truevision TarGA images.", &_s_LoadTextureTGA, (void*)this);
 	RegisterFileFormat("dtx", EOT_TEXTURE, "Dgle TeXtures images.", &_s_LoadTextureDTX, (void*)this);
-	RegisterFileFormat("dmd", EOT_MESH, "Dgle MoDel static and animated meshes.", &_s_LoadDMDFile, (void*)this);
+	RegisterFileFormat("dmd", EOT_MODEL, "Dgle MoDel is a bunch of meshes with additionall attributes and material references.", &_s_LoadDMDFile, (void*)this);
 	RegisterFileFormat("dft", EOT_BITMAP_FONT, "Dgle FonT bitmap 2D fonts.", &_s_LoadFontDFT, (void*)this);
 	
 	if (Core()->SoundEnabled())
@@ -184,8 +210,10 @@ _iProfilerState(0)
 	_pBObjDummy	= new CBObjDummy();
 	_pDefBmFntDummy	= new CBitmapFontDummy();
 	_pDefSSmpDummy	= new CSSampleDummy();
+	_pDefMusicDummy = new CMusicDummy();
 
 	RegisterDefaultResource(EOT_SOUND_SAMPLE, (IEngBaseObj*)_pDefSSmpDummy);
+	RegisterDefaultResource(EOT_MUSIC, (IEngBaseObj*)_pDefMusicDummy);
 
 	//Create default texture
 
@@ -241,12 +269,15 @@ _iProfilerState(0)
 	memcpy(ubt_mesh_data, def_mesh_vtx, sizeof(def_mesh_vtx));
 	memcpy(ubt_mesh_data + sizeof(def_mesh_vtx), def_mesh_fs, sizeof(def_mesh_fs));
 
-	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), _countof(def_mesh_vtx)/8, _countof(def_mesh_fs)/3, (E_MESH_CREATION_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_LOAD_FLAGS)RES_LOAD_DEFAULT))
+	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), _countof(def_mesh_vtx) / 8, _countof(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATION_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
 		LOG("Can't create default mesh.", LT_FATAL);
 
-//	((CMesh*)_pDefMesh)->_stExtents = TPoint3(0.5,0.5,0.5);
-
 	RegisterDefaultResource(EOT_MESH, (IEngBaseObj*)_pDefMesh);
+
+	_pDefModel = new CModel(InstIdx());
+	_pDefModel->AddMesh(_pDefMesh);
+
+	RegisterDefaultResource(EOT_MODEL, (IEngBaseObj*)_pDefModel);
 
 	//Create default font
 	
@@ -296,13 +327,15 @@ void CResourceManager::FreeAllResources()
 		_resList.begin()->pObj->Free();
 	}
 
-	//delete ((CMesh*)_pDefMesh);
+	delete ((CModel*)_pDefModel);
+	delete ((CMesh*)_pDefMesh);
 	//delete (CBaseMaterial*)_pDefMaterial;
 	delete ((CTexture*)_pDefTex);
 	delete ((CBitmapFont*)_pDefBmpFnt);
 
 	delete _pDefBmFntDummy;
 	delete _pDefSSmpDummy;
+	delete _pDefMusicDummy;
 	delete _pBObjDummy;
 }
 
@@ -340,18 +373,18 @@ DGLE_RESULT DGLE_API CResourceManager::UnregisterFileFormat(const char* pcExtens
 	return E_INVALIDARG;
 }
 
-void DGLE_API CResourceManager::_s_ConListFileFormats(void *pParametr, const char *pcParam)
+void DGLE_API CResourceManager::_s_ConListFileFormats(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CResourceManager, "No parametrs expected.");
+		CON(CResourceManager, "No parameters expected.");
 	else 
 		CON(CResourceManager, string("---Supported File Formats---\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
 }
 
-void DGLE_API CResourceManager::_s_ConListResources(void *pParametr, const char *pcParam)
+void DGLE_API CResourceManager::_s_ConListResources(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CResourceManager, "No parametrs expected.");
+		CON(CResourceManager, "No parameters expected.");
 	else 
 		PTHIS(CResourceManager)->_ListResources();
 }
@@ -813,7 +846,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint
 	return true;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr), void *pParametr)
+DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter)
 {
 	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == string(pcExtension) && _clFileFormats[i].type == eObjType)
@@ -825,7 +858,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 	tff.type = eObjType;
 	tff.discr = string(pcDiscription);
 	tff.pLoadProc = pLoadProc;
-	tff.pParametr = pParametr;
+	tff.pParameter = pParameter;
 
 	_clFileFormats.push_back(tff);
 
@@ -1143,70 +1176,113 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	return ret;
 }
 
-bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
 {
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return false;
 
-	/*
-	CMesh *p_mesh = new CMesh(InstIdx());
-
-	p_mesh->_bTextureCoords = (eCreationFlags & MCF_TEXTURE_COORDS_PRESENTED) != 0;
-	p_mesh->_bTangentSpace	= (eCreationFlags & MCF_TANGENT_SPACE_PRESENTED) != 0;
-	p_mesh->_uiNumVerts		= uiNumVerts;
-	p_mesh->_uiNumFaces		= uiNumFaces;
-
-	ubyte face_size = uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
-
-	uint data_size = (p_mesh->_uiNumVerts + (eCreationFlags & MCF_NORMALS_PRESENTED)*p_mesh->_uiNumVerts)*sizeof(float)*3 +
-					  p_mesh->_uiNumFaces*face_size*3 +
-					 (p_mesh->_bTextureCoords*2 + p_mesh->_bTangentSpace*6)*p_mesh->_uiNumVerts*sizeof(float);
-
-	if(uiDataSize != data_size)
+	if (!pData || uiNumVerts == 0)
 	{
-		p_mesh->Free();
-		LOG("Can't create mesh input data is incorrect.",LT_ERROR);
+		prMesh = new CMesh(InstIdx(), NULL, stCenter, stExtents);
+		return true;
+	}
+
+	bool normals = (eCreationFlags & MCF_NORMALS_PRESENTED) != 0,
+		 textured = (eCreationFlags & MCF_TEXTURE_COORDS_PRESENTED) != 0,
+		 tangents = (eCreationFlags & MCF_TANGENT_SPACE_PRESENTED) != 0;
+
+	uint8 face_size = uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
+
+	uint vdata_size = (((1 + (int)normals) * uiNumVerts) * 3 + (textured * 2 + tangents * 6) * uiNumVerts) * sizeof(float),
+		 idata_size = uiNumFaces * face_size * 3,
+		 data_size = vdata_size + idata_size;
+
+	if (uiDataSize != data_size || (uiNumFaces == 0 && uiNumVerts % 3 != 0))
+	{
+		LOG("Can't create mesh input data is incorrect.", LT_ERROR);
 		return false;
 	}
 
-	if(eCreationFlags & MCF_NORMALS_PRESENTED)
+	ICoreGeometryBuffer *p_buff;
+	TDrawDataDesc desc;
+
+	desc.pData = const_cast<uint8 *>(pData);
+	desc.bIndexBuffer32 = face_size == sizeof(uint32);
+	
+	if (uiNumVerts != 0)
+		desc.pIndexBuffer = const_cast<uint8 *>(&pData[vdata_size]);
+	
+	if (eCreationFlags & MCF_VERTEX_DATA_INTERLEAVED)
 	{
-		p_mesh->_pData = new ubyte[data_size];
-		memcpy(p_mesh->_pData, pubtData, data_size);
+		uint offset = 3 * sizeof(float), interleave = (3 + (normals ? 3 : 0) + (textured ? 2 : 0) + (tangents ? 6 : 0)) * sizeof(float);
+		
+		desc.uiVertexStride = interleave;
+
+		if (normals)
+		{
+			desc.uiNormalOffset = offset;
+			desc.uiNormalStride = interleave;
+			offset *= 2;
+		}
+
+		if (textured)
+		{
+			desc.uiTexCoordOffset = offset;
+			desc.uiTexCoordStride = interleave;
+			offset += 2 * sizeof(float);
+		}
+
+		if (tangents)
+		{
+			desc.uiTangentOffset = offset;
+			desc.uiTangentStride = interleave;
+			offset += 3 * sizeof(float);			
+
+			desc.uiBinormalOffset = offset;
+			desc.uiBinormalStride = interleave;
+			offset += 3 * sizeof(float);
+		}
 	}
 	else
 	{
-		uint vertices_size = p_mesh->_uiNumVerts*sizeof(float)*3;
+		uint offset = 3 * uiNumVerts * sizeof(float);
 
-		p_mesh->_pData = new ubyte[data_size + vertices_size];
+		if (normals)
+		{
+			desc.uiNormalOffset = offset;
+			offset *= 2;
+		}
 
-		memcpy(p_mesh->_pData, pubtData, vertices_size);
-		ZeroMemory((void*)&p_mesh->_pData[vertices_size], vertices_size);
-		memcpy((void*)&p_mesh->_pData[vertices_size*2], (void*)&pubtData[vertices_size], uiDataSize - vertices_size);
+		if (textured)
+		{
+			desc.uiTexCoordOffset = offset;
+			offset += 2 * uiNumVerts * sizeof(float);
+		}
 
-		eCreationFlags = (E_MESH_CREATION_FLAGS)(eCreationFlags | MCF_NORMALS_PRESENTED);
+		if (tangents)
+		{
+			desc.uiTangentOffset = offset;
+			offset += 3 * uiNumVerts * sizeof(float);
+		
+			desc.uiBinormalOffset = offset;
+			offset += 3 * uiNumVerts * sizeof(float);
+		}
 	}
 
-	p_mesh->_uiAllDataSize	= data_size;
-	p_mesh->_uiFaceDataSize	= face_size*p_mesh->_uiNumFaces*3;
-	p_mesh->_eMeshCrFlags	= eCreationFlags;
-	p_mesh->_eMeshLdFlags	= eLoadFlags;
+	if (FAILED(_pCoreRenderer->CreateGeometryBuffer(p_buff, desc, uiNumVerts, uiNumFaces * 3, CRDM_TRIANGLES,
+		(eLoadFlags & MMLF_FORCE_SOFTWARE_BUFFER) ? CRBT_SOFTWARE : (eLoadFlags & MMLF_DYNAMIC_BUFFER ? CRBT_HARDWARE_DYNAMIC : CRBT_HARDWARE_STATIC))))
+	{
+		p_buff->Free();
+		LOG("Can't create mesh geometry buffer.", LT_ERROR);
+		return false;
+	}
 
-	if(eLoadFlags & MLF_CALCULATE_NORMALS)
-		p_mesh->_CalculateNormals();
-
-	if(p_mesh->_bTextureCoords && eLoadFlags & MLF_CALCULATE_TANGENT_SPACE)
-		p_mesh->_CalculateTangentSpace();
-
-	if(!(eLoadFlags & MLF_FORCE_NO_VBO))
-		p_mesh->WriteToVBO();
-
-	prMesh = (IMesh*)p_mesh;
-	*/
+	prMesh = new CMesh(InstIdx(), p_buff, stCenter, stExtents);
+	
 	return true;
 }
 
-bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
 {
 	uint ui_read;
 
@@ -1226,10 +1302,15 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 		return false;
 	}
 
+	enum E_DMD_HEADER_FLAGS
+	{
+		DHF_MULTIMESH = 0x00000001
+	};
+
 #pragma pack(push, 1)
 	struct TDMDHeader
 	{
-		uint32	uiFlags;
+		E_DMD_HEADER_FLAGS uiFlags;
 		bool	bTexCoords;
 		uint32	uiNumVerts;
 		uint32	uiNumFaces;
@@ -1242,27 +1323,21 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 
 	uint8 face_size = header.uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
 
-	uint datasize = (header.uiNumVerts*sizeof(float)*2 + header.uiNumFaces*face_size)*3 + header.bTexCoords*header.uiNumVerts*sizeof(float)*2;
+	uint datasize = (header.uiNumVerts * sizeof(float) * 2 + header.uiNumFaces * face_size) * 3 + header.bTexCoords * header.uiNumVerts * sizeof(float) * 2;
 
-	bool b_frame_animated = (header.uiFlags & 0x00000001/*MULTI_MESH*/);
+	uint mcount = 1;
 
-	uint ui_mcount = 1;
-/*
-	CMesh *p_cur_mesh = NULL;
-	CMultiMesh *p_cur_multi_mesh = NULL;
-
-	if (b_frame_animated)
-	{
-		p_cur_multi_mesh = new CMultiMesh(InstIdx());
-		pFile->Read(&ui_mcount, sizeof(uint), ui_read);
-	}
+	if (header.uiFlags & DHF_MULTIMESH)
+		pFile->Read(&mcount, sizeof(uint), ui_read);
 
 	bool ret = false;
 
-	for (uint i = 0; i < ui_mcount; ++i)
+	CModel *p_model = new CModel(InstIdx());
+
+	for (uint i = 0; i < mcount; ++i)
 	{
 		float points[6];
-		pFile->Read(&points, sizeof(float)*6, ui_read);
+		pFile->Read(&points, sizeof(float) * 6, ui_read);
 
 		uint8 *data_in = new uint8[datasize];
 
@@ -1272,6 +1347,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 		{
 			LOG("Error(s) while reading DMD mesh data.", LT_ERROR);
 			delete[] data_in;
+			delete p_model;
 			return false;
 		}
 
@@ -1280,52 +1356,38 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_LO
 		if (header.bTexCoords)
 			(int&)cr_flags |= MCF_TEXTURE_COORDS_PRESENTED;
 
-		ret = _CreateMesh((IMesh *&)p_cur_mesh, data_in, datasize, header.uiNumVerts, header.uiNumFaces, cr_flags, eLoadFlags);
+		IMesh *p_mesh;
 
-		if (ret)
-		{
-			p_cur_mesh->_stCenter	= TPoint3(points[0], points[1], points[2]);
-			p_cur_mesh->_stExtents	= TPoint3(points[3], points[4], points[5]);
-		}
+		ret = _CreateMesh(p_mesh, data_in, datasize, header.uiNumVerts, header.uiNumFaces, TPoint3(points[0], points[1], points[2]), TVector3(points[3], points[4], points[5]), cr_flags, eLoadFlags);
 
 		delete[] data_in;
 
-		if (b_frame_animated)
-			p_cur_multi_mesh->_clMeshs.push_back(p_cur_mesh);
+		if (eLoadFlags & MMLF_FORCE_MODEL_TO_MESH)
+		{
+			delete p_model;
+			prObj = p_mesh;
+			return ret;
+		}
+		else
+			p_model->AddMesh(p_mesh);
 	}
 
-	if (b_frame_animated)
-	{
-		if (ret)
-			prObj = (IEngBaseObj*)p_cur_multi_mesh;
-		else
-			delete p_cur_multi_mesh;
-	}
-	else
-	{
-		if (ret)
-			prObj = (IEngBaseObj*)p_cur_mesh;
-		else
-			delete p_cur_mesh;
-	}
+	prObj = p_model;
 
-	return ret;*/return true;
+	return ret;
 }
 
 void CResourceManager::_s_GetObjTypeName(E_ENG_OBJ_TYPE type, string &name)
 {
 	switch (type)
 	{
-	case EOT_UNKNOWN: name = "Unknown"; break;
 	case EOT_TEXTURE: name = "Texture"; break;
 	case EOT_MATERIAL: name = "Material"; break;
 	case EOT_MESH: name = "Mesh"; break;
 	case EOT_MODEL: name = "Model"; break;
 	case EOT_BITMAP_FONT: name = "Bitmap Font"; break;
-	case EOT_PARTICLE_EFFECT: name = "Particle Effect"; break;
 	case EOT_SOUND_SAMPLE: name = "Sound Sample"; break;
-	case EOT_SPRITE: name = "Sprite"; break;
-	case EOT_GUI_FORMS: name = "GUI Forms"; break;
+	case EOT_MUSIC: name = "Music"; break;
 	default: name = "Other/Unknown";
 	}
 }
@@ -1597,55 +1659,64 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 	return true;
 }
 
-bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadTextureBMP(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
-	if(ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngBaseObj *&)ptex;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadTextureTGA(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
-	if(ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngBaseObj *&)ptex;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadTextureDTX(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
-	if(ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngBaseObj *&)ptex;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	IEngBaseObj *pobj = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadDMDFile(pFile, pobj, (E_MESH_LOAD_FLAGS)uiLoadFlags);
-	if(ret) prObj = pobj;
+	bool ret = PTHIS(CResourceManager)->_LoadDMDFile(pFile, pobj, (E_MESH_MODEL_LOAD_FLAGS)uiLoadFlags);
+	if (ret) prObj = pobj;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	IBitmapFont *pfnt = NULL;
 	bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt);
-	if(ret) prObj = (IEngBaseObj *&)pfnt;
+	if (ret) prObj = (IEngBaseObj *&)pfnt;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ISoundSample *ps = NULL;
+	
 	bool ret = PTHIS(CResourceManager)->_LoadSoundWAV(pFile, ps);
-	if(ret) prObj = (IEngBaseObj *&)ps;
+	
+	if (ret)
+	{
+		if (uiLoadFlags & SSLF_LOAD_AS_MUSIC)
+			prObj = new CMusic(PTHIS(CResourceManager)->InstIdx(), ps);
+		else
+			prObj = (IEngBaseObj *&)ps;
+	}
+
 	return ret;
 }
 
-void DGLE_API CResourceManager::_s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent)
+void DGLE_API CResourceManager::_s_ProfilerEventHandler(void *pParameter, IBaseEvent *pEvent)
 {
 	PTHIS(CResourceManager)->_ProfilerEventHandler();
 }
@@ -1671,9 +1742,41 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMaterial(IMaterial *&prMaterial, co
 	return E_FAIL;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
+DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
 {
-	DGLE_RESULT result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
+	DGLE_RESULT result;
+
+	if (!pData || uiNumVerts == 0 || uiDataSize == 0)
+		result = _CreateMesh(prMesh, NULL, 0, 0, 0, TPoint3(), TVector3(), eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
+	else
+	{
+		if (uiNumFaces == 0 && uiNumVerts % 3 != 0)
+			return E_INVALIDARG;
+
+		TPoint3 min_dem((numeric_limits<float>::infinity)(), (numeric_limits<float>::infinity)(), (numeric_limits<float>::infinity)()),
+				max_dem(-(numeric_limits<float>::infinity)(), -(numeric_limits<float>::infinity)(), -(numeric_limits<float>::infinity)());
+	
+		uint stride = 3 * sizeof(float);
+
+		if (eCreationFlags & MCF_VERTEX_DATA_INTERLEAVED)
+			stride = (3 + 3 * (eCreationFlags & MCF_NORMALS_PRESENTED) + 2 * (eCreationFlags & MCF_TEXTURE_COORDS_PRESENTED) + 6 * (eCreationFlags & MCF_TANGENT_SPACE_PRESENTED)) * sizeof(float);
+
+		for (uint i = 0; i < uiNumVerts; ++i)
+		{
+			TPoint3 *p = reinterpret_cast<TPoint3 *>(const_cast<uint8 *>(&pData[stride * i]));
+
+			max_dem.x = max(p->x, max_dem.x);
+			min_dem.x = min(p->x, min_dem.x);
+
+			max_dem.y = max(p->y, max_dem.y);
+			min_dem.y = min(p->y, min_dem.y);
+
+			max_dem.z = max(p->z, max_dem.z);
+			min_dem.z = min(p->z, min_dem.z);
+		}
+
+		result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, min_dem + (max_dem - min_dem) / 2.f, (max_dem - min_dem) / 2.f, eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
+	}
 
 	if (bAddResourse)
 	{
@@ -1686,7 +1789,17 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 	return result;
 }
 
-inline uint CResourceManager::_GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj)
+DGLE_RESULT DGLE_API CResourceManager::CreateModel(IModel *&prModel, const char *pcName, bool bAddResource)
+{
+	prModel = new CModel(InstIdx());
+
+	if (bAddResource)
+		_resList.push_back(TResource(pcName, (IEngBaseObj*)prModel));
+	
+	return S_OK;
+}
+
+inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, uint uiLoadFlags, IEngBaseObj *&prObj)
 {
 	uint ret = -1;
 
@@ -1705,10 +1818,22 @@ inline uint CResourceManager::_GetFFIdx(const char *pcFileName, E_ENG_OBJ_TYPE e
 			break;
 		}
 
-	if (ret==-1)
+	if (ret == -1)
 		prObj = (IEngBaseObj*&)_pBObjDummy;
 	else
-		GetDefaultResource(_clFileFormats[ret].type, prObj);
+		switch (_clFileFormats[ret].type)
+		{
+		case EOT_SOUND_SAMPLE:
+			GetDefaultResource(uiLoadFlags & SSLF_LOAD_AS_MUSIC ? EOT_MUSIC : EOT_SOUND_SAMPLE, prObj);
+			break;
+
+		case EOT_MODEL:
+			GetDefaultResource(uiLoadFlags & MMLF_FORCE_MODEL_TO_MESH ? EOT_MESH : EOT_MODEL, prObj);
+			break;
+
+		default:
+			GetDefaultResource(_clFileFormats[ret].type, prObj);
+		}		
 
 	return ret;
 }
@@ -1784,7 +1909,7 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 		return S_FALSE;
 	}
 
-	bool ret = (*_clFileFormats[uiFFIdx].pLoadProc)(pFile, prObj, uiLoadFlags, _clFileFormats[uiFFIdx].pParametr);
+	bool ret = (*_clFileFormats[uiFFIdx].pLoadProc)(pFile, prObj, uiLoadFlags, _clFileFormats[uiFFIdx].pParameter);
 
 	if (!ret)
 		LOG("Error(s) while loading file \"" + string(pcFileName) + "\".", LT_ERROR);
@@ -1802,7 +1927,7 @@ DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngBaseObj 
 		return E_INVALIDARG;
 	}
 
-	uint ff_id = _GetFFIdx(pcFileName, EOT_UNKNOWN, prObj);
+	uint ff_idx = _GetFileFormatLoaderIdx(pcFileName, EOT_UNKNOWN, uiLoadFlags, prObj);
 
 	IFile *p_file = NULL;
 
@@ -1815,7 +1940,7 @@ DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngBaseObj 
 		return E_ABORT;
 	}
 
-	DGLE_RESULT ret = _Load(pcFileName, p_file, ff_id, prObj, uiLoadFlags);
+	DGLE_RESULT ret = _Load(pcFileName, p_file, ff_idx, prObj, uiLoadFlags);
 
 	p_file->Free();
 
@@ -1865,7 +1990,7 @@ DGLE_RESULT DGLE_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, 
 
 	file_name += string(name);
 
-	DGLE_RESULT ret = _Load(file_name.c_str(), pFile, _GetFFIdx(name, EOT_UNKNOWN, prObj), prObj, uiLoadFlags);
+	DGLE_RESULT ret = _Load(file_name.c_str(), pFile, _GetFileFormatLoaderIdx(name, EOT_UNKNOWN, uiLoadFlags, prObj), prObj, uiLoadFlags);
 
 	delete[] name_path;
 

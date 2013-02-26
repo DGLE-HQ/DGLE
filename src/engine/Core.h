@@ -87,7 +87,8 @@ class CCore: public CInstancedObj, public IEngineCore
 						 _uiFPSCount,
 						 _uiLastFPS,
 						 _uiUPSCount,
-						 _uiLastUPS;
+						 _uiLastUPS,
+						 _uiLastMemUsage;
 
 	uint64				 _ui64FPSSumm,
 						 _ui64CyclesCount,
@@ -126,7 +127,10 @@ class CCore: public CInstancedObj, public IEngineCore
 	void				_MainLoop();
 	void				_OnTimer();
 	void				_MessageProc(const TWinMessage &msg);
-	
+
+	void				_RenderFrame();
+	bool				_bRendering;
+
 	void				_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType);
 
 	void				_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
@@ -142,16 +146,16 @@ class CCore: public CInstancedObj, public IEngineCore
 	DGLE_RESULT			_ChangeWinMode(const TEngWindow &stNewWin, bool bForceNoEvents);
 
 
-	static void DGLE_API _s_MainLoop(void *pParametr);
-	static void DGLE_API _s_OnTimer(void *pParametr);
-	static void DGLE_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
+	static void DGLE_API _s_MainLoop(void *pParameter);
+	static void DGLE_API _s_OnTimer(void *pParameter);
+	static void DGLE_API _s_MessageProc(void *pParameter, const TWinMessage &stMsg);
 
-	static void DGLE_API _s_ConAutoPause(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ConPrintVersion(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ConFeatures(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ConListPlugs(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ConChangeMode(void *pParametr, const char *pcParam);	
-	static void DGLE_API _s_InstIdx(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConAutoPause(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ConPrintVersion(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ConFeatures(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ConListPlugs(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ConChangeMode(void *pParameter, const char *pcParam);	
+	static void DGLE_API _s_InstIdx(void *pParameter, const char *pcParam);
 
 public:
 
@@ -191,15 +195,16 @@ public:
 	DGLE_RESULT DGLE_API AddUserCallback(IUserCallback *pUserCallback);
 	DGLE_RESULT DGLE_API RemoveUserCallback(IUserCallback *pUserCallback);
 
-	DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr);
-	DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParametr), void *pParametr);
+	DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter);
+	DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter);
 
 	DGLE_RESULT DGLE_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
-	DGLE_RESULT DGLE_API AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
-	DGLE_RESULT DGLE_API RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParametr, IBaseEvent *pEvent), void *pParametr);
+	DGLE_RESULT DGLE_API AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter);
+	DGLE_RESULT DGLE_API RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter);
 
 	DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
 
+	DGLE_RESULT DGLE_API RenderFrame();
 	DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor);
 	DGLE_RESULT DGLE_API GetInstanceIdx(uint &uiIdx);
 	DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick);
@@ -219,8 +224,8 @@ public:
 	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible);
 	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
 	DGLE_RESULT DGLE_API ConsoleExec(const char* pcCommandTxt);
-	DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr); 
-	DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr);
+	DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
+	DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter);
 	DGLE_RESULT DGLE_API ConsoleUnregCom(const char* pcCommandName);
 
 	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize);

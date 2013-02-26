@@ -29,7 +29,7 @@ bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, si
 static LPTOP_LEVEL_EXCEPTION_FILTER m_previousFilter = NULL;
 static string str_info = "";
 
-void DGLE_API con_dump(void *pParametr, const char *pcParam)
+void DGLE_API con_dump(void *pParameter, const char *pcParam)
 {
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 
@@ -37,7 +37,7 @@ void DGLE_API con_dump(void *pParametr, const char *pcParam)
 		return;
 
 	if(strlen(pcParam)!=0)
-		p_console->Write("No parametrs expected.");
+		p_console->Write("No parameters expected.");
 	else
 	{
 		if(str_info=="")

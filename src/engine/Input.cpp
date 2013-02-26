@@ -358,17 +358,17 @@ DGLE_RESULT DGLE_API CInput::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
 	return S_OK;
 }
 
-void DGLE_API CInput::_s_MessageProc(void *pParametr, const TWinMessage &stMsg)
+void DGLE_API CInput::_s_MessageProc(void *pParameter, const TWinMessage &stMsg)
 {
 	PTHIS(CInput)->_MessageProc(stMsg);
 }
 
-void DGLE_API CInput::_s_Loop(void *pParametr)
+void DGLE_API CInput::_s_Loop(void *pParameter)
 {
 	PTHIS(CInput)->_Loop();
 }
 
-void DGLE_API CInput::_s_Update(void *pParametr)
+void DGLE_API CInput::_s_Update(void *pParameter)
 {
 	PTHIS(CInput)->_Update();
 }

@@ -158,7 +158,26 @@ namespace DGLE
 		CRDM_TRIANGLE_FAN
 	};
 
-#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
+	enum E_ATTRIBUTE_DATA_TYPE
+	{
+		ADT_FLOAT = 0,
+		ADT_BYTE,
+		ADT_UBYTE,
+		ADT_SHORT,
+		ADT_USHORT,
+		ADT_INT,
+		ADT_UINT
+	};
+
+	enum E_ATTRIBUTE_COMPONENTS_COUNT
+	{
+		ACC_ONE = 0,
+		ACC_TWO,
+		ACC_THREE,
+		ACC_FOUR
+	};
+
+#ifdef STRUCT_ALIGNMENT_1
 #pragma pack( push, 1 )
 #endif
 
@@ -239,6 +258,21 @@ namespace DGLE
 		{}
 	};
 
+	struct TDrawDataAttributes
+	{
+		uint uiAttribOffset[8];
+		uint uiAttribStride[8];
+		E_ATTRIBUTE_DATA_TYPE eAttribDataType[8];
+		E_ATTRIBUTE_COMPONENTS_COUNT eAttribCompsCount[8];
+
+		TDrawDataAttributes()
+		//:uiAttribStride(), eAttribDataType(), eAttribCompsCount()
+		{
+			uiAttribOffset[0] = uiAttribOffset[1] = uiAttribOffset[2] = uiAttribOffset[3] =
+				uiAttribOffset[4] = uiAttribOffset[5] = uiAttribOffset[6] = uiAttribOffset[7] = -1;
+		}
+	};
+
 	struct TDrawDataDesc
 	{
 		uint8 *pData; //Must be start of the vertex data. 2 or 3 floats
@@ -255,17 +289,21 @@ namespace DGLE
 		uint uiColorOffset; //4 floats
 		uint uiColorStride;
 
+		/*not implemeted*/ uint uiTangentOffset, uiBinormalOffset; //6 floats, 3 for tangent and 3 for binormal
+		/*not implemeted*/ uint uiTangentStride, uiBinormalStride;
+
+		/*not implemeted*/ TDrawDataAttributes *pAttribs;
+
 		uint8 *pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
 		bool bIndexBuffer32;
-
-		//ToDo: Add VertexAttribPointers.
 
 		inline TDrawDataDesc():
 		pData(NULL), uiVertexStride(0), bVertexCoord2(false),
 		uiNormalOffset(-1), uiNormalStride(0),
 		uiTexCoordOffset(-1), uiTexCoordStride(0),
 		uiColorOffset(-1), uiColorStride(0),
-		pIndexBuffer(NULL), bIndexBuffer32(false)
+		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
+		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 
 		inline TDrawDataDesc(uint8 *pDataPointer, uint uiTexCoordDataOffset = -1, bool bTwoCoordPerVertex = true):
@@ -273,11 +311,12 @@ namespace DGLE
 		uiNormalOffset(-1), uiNormalStride(0),
 		uiTexCoordOffset(uiTexCoordDataOffset), uiTexCoordStride(0),
 		uiColorOffset(-1), uiColorStride(0),
-		pIndexBuffer(NULL), bIndexBuffer32(false)
+		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
+		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 	};
 
-#if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
+#ifdef STRUCT_ALIGNMENT_1
 #pragma pack(pop)
 #endif
 
@@ -389,8 +428,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ToggleStateFilter(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API PushStates() = 0;
 		virtual DGLE_RESULT DGLE_API PopStates() = 0;
-		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
-		virtual DGLE_RESULT DGLE_API GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
+		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
+		virtual DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
 		virtual DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer) = 0;
 		virtual DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor) = 0;

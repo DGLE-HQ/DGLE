@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.01.2013 (c)Korotkov Andrey
+\date		12.02.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -23,6 +23,10 @@ See "DGLE.h" for more details.
 #pragma comment(linker, "/defaultlib:wbemuuid.lib")
 
 #include <direct.h>
+
+#include <psapi.h>
+#pragma message("Linking with \"psapi.lib\".")
+#pragma comment(linker, "/defaultlib:psapi.lib")
 
 using namespace std;
 
@@ -311,7 +315,6 @@ void GetLocalTimaAndDate(TSysTimeAndDate &time)
 
 bool PlatformInit()
 {
-	setlocale(LC_ALL, "");
 	LoadKeyboardLayout("00000409", KLF_ACTIVATE);
 
 	if(QueryPerformanceFrequency(&perfFreq) == FALSE)
@@ -940,6 +943,16 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 void Terminate()
 {
 	TerminateProcess(GetCurrentProcess(), 2);
+}
+
+uint32 GetProcessMemoryUsage()
+{
+	PROCESS_MEMORY_COUNTERS pmc;
+	
+	if (FALSE == GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(PROCESS_MEMORY_COUNTERS)))
+		return 0;
+	else
+		return pmc.WorkingSetSize;
 }
 
 }

@@ -23,8 +23,8 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 	WAVEHDR _stWaveBuffers[2];
 	uint _uiBufferSize;
 	uint8 *_pBuffersData;
-	void (DGLE_API *_pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData);
-	void *_pParametr;
+	void (DGLE_API *_pStreamToDeviceCallback)(void *pParameter, uint8 *pBufferData);
+	void *_pParameter;
 	CRITICAL_SECTION _cs;
 	bool _bDeviceClosingFlag;
 	std::vector<std::string> _devices;
@@ -33,15 +33,15 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 	bool _InitDevice(uint id);
 	void _PrintDevList();
 
-	static void DGLE_API _s_PrintDevList(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_PrintDevId(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ForceDevice(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_PrintDevList(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_PrintDevId(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ForceDevice(void *pParameter, const char *pcParam);
 	
 	static void CALLBACK _s_WaveCallback(HWAVEOUT hWaveOut, UINT uMsg, DWORD dwInstance, PWAVEHDR pWaveHdr, DWORD dwParam2);
 
 public:
 
-	bool OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
+	bool OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParameter, uint8 *pBufferData), void *pParameter);
 	void CloseDevice();
 	void EnterThreadSafeSection();
 	void LeaveThreadSafeSection();

@@ -66,10 +66,10 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 	return (int) st_msg.wParam;
 }
 
-void DGLE_API CMainWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
+void DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CMainWindow, "No parametrs expected.");
+		CON(CMainWindow, "No parameters expected.");
 	else 
 		::PostMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, NULL, NULL);
 }

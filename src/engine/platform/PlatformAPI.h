@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		31.03.2012 (c)Korotkov Andrey
+\date		12.02.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -118,7 +118,7 @@ public:
 class CPlatformBaseSound
 {
 public:
-	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParametr, uint8 *pBufferData), void *pParametr);
+	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParameter, uint8 *pBufferData), void *pParameter);
 	void CloseDevice();
 	void EnterThreadSafeSection();
 	void LeaveThreadSafeSection();
@@ -172,6 +172,7 @@ bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs);
 void GetCurrentWorkingPath(std::string &strPath);
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 void Terminate();
+uint32 GetProcessMemoryUsage();
 
 #endif //ENGINE_PLATFORM_BASE
 

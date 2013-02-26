@@ -1,0 +1,47 @@
+================================= Description =================================
+
+DMD 3.0 [D]gle [M]esh [D]ata binary format specification.
+
+================================ Specification ================================
+
+[BYTE * 11 | FormatDMD][BYTE * 13 | Header][ _ | MeshesData]
+
+================================= Data Blocks =================================
+
+#FormatDMD#
+[CHAR * 11] String must be "DMD 3.0 BIN", without terminating null symbol.
+
+#Header#
+[UINT32 | ExtFlags] Additional flags combined to integer as binary masks.
+
+= Masks =
+[0x00000001 | MULTI_MESH] Means that file contains several meshes.
+=========
+
+[BOOL | IsTextured] Does mesh contains texture coords.
+[UINT32 | NumVertices] Number of vertices in mesh.
+[UINT32 | NumIndices] Number of indices in the mesh index buffer.
+
+* If MULTI_MESH flag is defined in ExtFlags *
+[UINT32 | MeshsCount] Number of meshes in file.
+* Else *
+MeshsCount is set to 1 by default.
+* End If *
+
+#MeshesData#
+[[
+[FLOAT FLOAT FLOAT] Coordinates of the mesh geometric center.
+[FLOAT FLOAT FLOAT] Mesh extents (half of AABB size) per axis.
+[[FLOAT FLOAT FLOAT] * NumVertices] Mesh vertices data.
+[[FLOAT FLOAT FLOAT] * NumVertices] Mesh normals data.
+* If IsTextured is True *
+[[FLOAT FLOAT] * NumVertices] Mesh texture data.
+* End If *
+* If NumVertices <= 65535 *
+[(USHORT USHORT USHORT) * NumIndices] Mesh index buffer.
+* Else *
+[(UINT32 UINT32 UINT32) * NumIndices] Mesh index buffer.
+* End If *
+] * MeshsCount] 
+
+===============================================================================

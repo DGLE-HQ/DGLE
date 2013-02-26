@@ -12,14 +12,17 @@ See "DGLE.h" for more details.
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):
 _pEngineCore(pEngineCore), _iDrawProfiler(0)
 {
+	std::locale::global(std::locale(""));
+	setlocale(LC_NUMERIC, "C");
+
 	_pEngineCore->GetInstanceIdx(_uiInstIdx);
 
 	_pEngineCore->AddProcedure(EPT_RENDER, &_s_Render, (void*)this);
 	_pEngineCore->AddProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 	_pEngineCore->AddProcedure(EPT_INIT, &_s_Init, (void*)this);
 	_pEngineCore->AddProcedure(EPT_FREE, &_s_Free, (void*)this);
-	_pEngineCore->AddEventListner(ET_ON_WIN_MESSAGE, &_s_EventHandler, (void*)this);
-	_pEngineCore->AddEventListner(ET_ON_PROFILER_DRAW, &_s_EventHandler, (void*)this);
+	_pEngineCore->AddEventListener(ET_ON_WIN_MESSAGE, &_s_EventHandler, (void*)this);
+	_pEngineCore->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventHandler, (void*)this);
 
 	_pEngineCore->ConsoleRegComValue("tmpl_profiler", "Displays Plugin Template profiler.", &_iDrawProfiler, 0, 1);
 }
@@ -30,8 +33,8 @@ CPluginCore::~CPluginCore()
 	_pEngineCore->RemoveProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 	_pEngineCore->RemoveProcedure(EPT_INIT, &_s_Init, (void*)this);
 	_pEngineCore->RemoveProcedure(EPT_FREE, &_s_Free, (void*)this);
-	_pEngineCore->RemoveEventListner(ET_ON_WIN_MESSAGE, &_s_EventHandler, (void*)this);
-	_pEngineCore->AddEventListner(ET_ON_PROFILER_DRAW, &_s_EventHandler, (void*)this);
+	_pEngineCore->RemoveEventListener(ET_ON_WIN_MESSAGE, &_s_EventHandler, (void*)this);
+	_pEngineCore->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventHandler, (void*)this);
 
 	_pEngineCore->ConsoleUnregCom("tmpl_profiler");
 }

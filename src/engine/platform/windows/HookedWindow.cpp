@@ -308,10 +308,10 @@ DGLE_RESULT CHookedWindow::Free()
 	return S_OK;
 }
 
-void DGLE_API CHookedWindow::_s_ConsoleQuit(void *pParametr, const char *pcParam)
+void DGLE_API CHookedWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam)!=0)
-		CON(CHookedWindow, "No parametrs expected.");
+		CON(CHookedWindow, "No parameters expected.");
 	else 
 		::SendMessage(PTHIS(CHookedWindow)->_hRootHWnd, WM_CLOSE, NULL, NULL);
 }

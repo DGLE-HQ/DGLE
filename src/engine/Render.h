@@ -19,6 +19,8 @@ class CRender: public CInstancedObj, public IRender
 	float _fFovAngle, _fZNear, _fZFar;
 	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLight, _iMaxTexUnits;
 
+	TColor4 _stClearColor;
+
 	std::string _strFeturesList, _strMetricsList;
 
 	ICoreRenderer *_pCoreRenderer;
@@ -28,7 +30,7 @@ class CRender: public CInstancedObj, public IRender
 
 	void _SetPerspectiveMatrix(uint width, uint height);
 
-	static void DGLE_API _s_ConListFeatures(void *pParametr, const char *pcParam);
+	static void DGLE_API _s_ConListFeatures(void *pParameter, const char *pcParam);
 
 public:
 
@@ -43,12 +45,12 @@ public:
 	void OnResize(uint uiWidth, uint uiHeight);
 
 	DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor);
+	DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor);
 	DGLE_RESULT DGLE_API Unbind(E_ENG_OBJ_TYPE eType);
 	DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea);	
 	DGLE_RESULT DGLE_API DisableScissor();
 	DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex);
 	DGLE_RESULT DGLE_API ScreenshotBMP(const char* pFileName);
-	DGLE_RESULT DGLE_API CreatePostProcess(IPostprocess *&pPP);
 
 	DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D);
 	DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D);

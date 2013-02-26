@@ -259,16 +259,16 @@ namespace DGLE
 	/** Types of engine objects. */
 	enum E_ENG_OBJ_TYPE
 	{
-		EOT_UNKNOWN = 0,		/**< Undefined or custom object type. */ 
-		EOT_TEXTURE,			/**< Texture. \see ITexture*/ 
-		EOT_MATERIAL,			/**< Material. \see IMaterial */ 
-		EOT_MESH,				/**< Mesh. \see IMesh */ 
-		EOT_MODEL,				/**< Model. \see IModel*/ 
-		EOT_BITMAP_FONT,		/**< Bitmap font. \see IBitmapFont */ 
-		EOT_PARTICLE_EFFECT,	/**< Particle effect. \see IParticleEffect*/ 
-		EOT_SOUND_SAMPLE,		/**< Sound sample \see ISoundSample */ 
-		EOT_SPRITE,				/**< Sprite. \see ISprite */ 
-		EOT_GUI_FORMS			/**< Collection of user interface forms. \see IGUIForms */ 
+		EOT_UNKNOWN = 0,		/**< Undefined or custom object type. */
+		EOT_TEXTURE,			/**< Texture represents any basic raster data. \see ITexture*/
+		EOT_MATERIAL,			/**< Material is a combination of textures, colors and other settings of how 3D object will be rendered in scene. \see IMaterial */
+		EOT_MESH,				/**< Mesh is an atomic basic geometry unit. \see IMesh */
+		EOT_MODEL,				/**< Model is a composition of meshes with materials. Could contain animation and levels of detail. \see IModel*/
+		EOT_BITMAP_FONT,		/**< Bitmap font is a simple 2D raster font for common purpose. \see IBitmapFont */
+		EOT_SOUND_SAMPLE,		/**< Sound sample is a container of sound wave which could be streamed to sound device. \see ISoundSample */
+		EOT_MUSIC,				/**< Music is some kind of large streamable sound sample with runtime hardware decoding. \see IMusic*/
+
+		EOT_EMPTY				/**< For empty or dummy objects. \note This enum must be always last in the list. */
 	};
 
 	// {C010239A-6457-40f5-87EF-FAA3156CE6E2}
@@ -313,7 +313,7 @@ namespace DGLE
 		ET_ON_WIN_MESSAGE,			/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
 		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
-		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputted to the engine console. \see IEvFatalMessage */
+		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputted to the engine console. \see IEvConsoleWrite */
 		ET_ON_FULLSCREEN			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
 	};
 
@@ -449,7 +449,7 @@ namespace DGLE
 		/** Returns subsystem type which user is trying to retrieve. 
 			\param[out] eSubSystem Type of retrieving subsystem.
 		 */
-		virtual DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM eSubSystem) = 0;
+		virtual DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM &eSubSystem) = 0;
 		/** Substitutes engine subsystem by custom one. 
 			\param[in] pSubSystem Pointer to subsystem interface with which retrieving subsystem will be substituted.
 		 */		
@@ -525,15 +525,15 @@ namespace DGLE
 	 */
 	enum E_ENGINE_INIT_FLAGS
 	{
-		EIF_DEFAULT				= 0x00000000,	/**< Use default settings. */
-		EIF_CATCH_UNHANDLED		= 0x00000001,	/**< All user callbacks will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
-		EIF_FORCE_NO_SOUND		= 0x00000002,	/**< Sound subsystem will not be initialized. */
-		EIF_LOAD_ALL_PLUGINS	= 0x00000004,	/**< Engine will try to connect any found plugin files found in "plugins" folder near it. \note Ext plugin is connected automatically without this flag as well. */
-		EIF_FORCE_LIMIT_FPS		= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine update interval(uiUpdateInterval). \note Recommended for casual games and desktop applications. */
-		EIF_FORCE_16_BIT_COLOR	= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
-		EIF_DISABLE_SMART_TIMING= 0x00000040,	/**< In some cases engine may call EPT_UPDATE several times at once to reduce lags. This flag will disable this feature. */
-		EIF_FORCE_NO_WINDOW		= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. */
-		EIF_NO_SPLASH			= 0x10000000	/**< This flag will disable engine splash screen. Splash screen is displayed to the user while engine prepare itself and while user initialization procedure is being processed. \note Turning off splash screen is not recommended because the user could be confused while being waiting application execution. */
+		EIF_DEFAULT					= 0x00000000,	/**< Use default settings. */
+		EIF_CATCH_UNHANDLED			= 0x00000001,	/**< All user callbacks will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
+		EIF_FORCE_NO_SOUND			= 0x00000002,	/**< Sound subsystem will not be initialized. */
+		EIF_LOAD_ALL_PLUGINS		= 0x00000004,	/**< Engine will try to connect any found plugin files found in "plugins" folder near it. \note Ext plugin is connected automatically without this flag as well. */
+		EIF_FORCE_LIMIT_FPS			= 0x00000010,	/**< Engine will limit its FPS(frames per second) not to overload CPU. FPS is limited to engine update interval(uiUpdateInterval). \note Recommended for casual games and desktop applications. */
+		EIF_FORCE_16_BIT_COLOR		= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
+		EIF_ENABLE_FLOATING_UPDATE	= 0x00000040,	/**< By default engine uses fixed update mechanism, this means that engine will try to keep fixed update time interval, whenever it's possible. When this flag is set the update routine simply will be called once when delta time between updates is greater than update interval (for example, even if delta time is twice greater than update interval), so you should use delta time value. \see EPT_UPDATE, IEngineCore::GetLastUpdateDeltaTime */
+		EIF_FORCE_NO_WINDOW			= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. */
+		EIF_NO_SPLASH				= 0x10000000	/**< This flag will disable engine splash screen. Splash screen is displayed to the user while engine prepare itself and while user initialization procedure is being processed. \note Turning off splash screen is not recommended because the user could be confused while being waiting application execution. */
 	};
 
 	// {111BB884-2BA6-4e84-95A5-5E4700309CBA}
@@ -555,7 +555,7 @@ namespace DGLE
 
 		/** Adds plugin to engine initialization list. This means that plugin will be loaded on engine initialization. This is the only correct way to setup Render, Sound, Input or other system plugins.
 		 \param[in] pcFileName File name of the plugin.
-		 \note Standard DGLE_EXT plugin will be connected automatically (if found), so you don't need to add it to initialization list.
+		 \note Standard extension plugin ("Ext") will be connected automatically (if found), so you don't need to add it to initialization list.
 		 */
 		virtual DGLE_RESULT DGLE_API AddPluginToInitList(const char *pcFileName) = 0;	
 
@@ -592,6 +592,7 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) = 0;
 
+		virtual DGLE_RESULT DGLE_API RenderFrame() = 0;
 		virtual DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
 		virtual DGLE_RESULT DGLE_API GetInstanceIdx(uint &uiIdx) = 0;
 		virtual DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick) = 0;
@@ -623,6 +624,7 @@ namespace DGLE
 	class IFile;
 	class ITexture;
 	class IMaterial;
+	class IModel;
 	class IMesh;
 	class ISoundSample;
 
@@ -675,15 +677,20 @@ namespace DGLE
 		MCF_ONLY_DEFAULT_DATA		= 0x00000000,//vertex and index arrays must be presented
 		MCF_NORMALS_PRESENTED		= 0x00000001,
 		MCF_TEXTURE_COORDS_PRESENTED= 0x00000002,
-		MCF_TANGENT_SPACE_PRESENTED	= 0x00000004
+		MCF_TANGENT_SPACE_PRESENTED	= 0x00000004,
+		MCF_VERTEX_DATA_INTERLEAVED	= 0x00000008
 	};
 
-	enum E_MESH_LOAD_FLAGS
+	enum E_MESH_MODEL_LOAD_FLAGS
 	{
-		MLF_EDITABLE				= 0x00000001,
-		MLF_FORCE_NO_VBO			= 0x00000002,
-		MLF_CALCULATE_TANGENT_SPACE = 0x00000004,
-		MLF_CALCULATE_NORMALS		= 0x00000008
+		MMLF_FORCE_SOFTWARE_BUFFER	= 0x00000001,
+		MMLF_DYNAMIC_BUFFER			= 0x00000002,
+		MMLF_FORCE_MODEL_TO_MESH	= 0x00000004
+	};
+
+	enum E_SOUND_SAMPLE_LOAD_FLAGS
+	{
+		SSLF_LOAD_AS_MUSIC			= 0x00000001
 	};
 
 	const uint TEXTURE_LOAD_DEFAULT_2D = (uint)(TLF_FILTERING_BILINEAR | TLF_COORDS_CLAMP);
@@ -700,7 +707,8 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResource = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0; //pData could be NULL to create empty mesh, index buffer could be empty
+		virtual DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName = "", bool bAddResource = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResource = false) = 0;
 	
 		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter = NULL) = 0;
@@ -727,7 +735,6 @@ namespace DGLE
 	class IRender2D;
 	class IRender3D;
 	class ILight;
-	class IPostprocess;
 	class ICoreGeometryBuffer;
 	
 	struct TDrawDataDesc;
@@ -741,6 +748,16 @@ namespace DGLE
 		GP3F_FROM_NEAR_PLANE
 	};
 
+	enum E_EFFECT_BLENDING_FLAGS
+	{
+		EBF_NORMAL	= 0x00000001, 
+		EBF_ADD		= 0x00000002, 
+		EBF_MULT	= 0x00000004, 
+		EBF_BLACK	= 0x00000008,
+		EBF_WHITE	= 0x00000010,
+		EBF_MASK	= 0x00000020
+	};
+
 	// {EA03C661-A334-4225-B5DB-4C45452CCC41}
 	static const GUID IID_IRender = 
 	{ 0xea03c661, 0xa334, 0x4225, { 0xb5, 0xdb, 0x4c, 0x45, 0x45, 0x2c, 0xcc, 0x41 } };
@@ -749,12 +766,11 @@ namespace DGLE
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API Unbind(E_ENG_OBJ_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
 		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;	
 		virtual DGLE_RESULT DGLE_API DisableScissor() = 0;
 		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0;
-		virtual DGLE_RESULT DGLE_API ScreenshotBMP(const char* pFileName) = 0;
-		virtual DGLE_RESULT DGLE_API CreatePostProcess(IPostprocess *&pPP) = 0;
 		
 		virtual DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D) = 0;
 		virtual DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D) = 0;
@@ -768,7 +784,8 @@ namespace DGLE
 		PF_DEFAULT			= 0x00000000,
 		PF_LINE				= 0x00000000,
 		PF_FILL				= 0x00000001, 
-		PF_VERTICES_COLOR	= 0x00000002
+		PF_VERTICES_COLOR	= 0x00000002,
+		PF_SMOOTH			= 0x00000004 //ToDo
 	};
 
 	//Flags for Effects
@@ -785,17 +802,6 @@ namespace DGLE
 		EF_VERTICES_OFFSET	= 0x00000080, 
 		EF_VERTICES_COLOR	= 0x00000100, 
 		EF_ROTATEPT			= 0x00000200
-	};
-
-	//Flags for Effects Blend mode
-	enum E_EFFECT2D_BLENDING_FLAGS
-	{
-		EBF_NORMAL			= 0x00000001, 
-		EBF_ADD				= 0x00000002, 
-		EBF_MULT			= 0x00000004, 
-		EBF_BLACK			= 0x00000008,
-		EBF_WHITE			= 0x00000010,
-		EBF_MASK			= 0x00000020
 	};
 
 	enum E_BATCH_MODE2D
@@ -848,20 +854,20 @@ namespace DGLE
 		//Advanced
 		virtual DGLE_RESULT DGLE_API Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
 		virtual DGLE_RESULT DGLE_API DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags) = 0;
-		virtual DGLE_RESULT DGLE_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY) = 0;
+		virtual DGLE_RESULT DGLE_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4x4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY) = 0;
 
 		//Effects
 		virtual DGLE_RESULT DGLE_API SetRotationPoint(const TPoint2 &stCoords) = 0;//In texture coord system
 		virtual DGLE_RESULT DGLE_API SetScale(const TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API SetColorMix(const TColor4 &stColor = TColor4()) = 0;
-		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
+		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
 		
 		virtual DGLE_RESULT DGLE_API GetRotationPoint(TPoint2 &stCoords) = 0;
 		virtual DGLE_RESULT DGLE_API GetScale(TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetColorMix(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode) = 0;
+		virtual DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode) = 0;
 		virtual DGLE_RESULT DGLE_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4) = 0;
 	};
@@ -883,14 +889,30 @@ namespace DGLE
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API SetPerspective(float fFovAngle, float fZNear, float fZFar) = 0;
+		virtual DGLE_RESULT DGLE_API GetPerspective(float &fFovAngle, float &fZNear, float &fZFar) = 0;
 	
 		virtual DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
-		virtual DGLE_RESULT DGLE_API ToggleAlphaTest(bool bEnabled, float fAlphaMinTreshold = 0.25) = 0;
+		virtual DGLE_RESULT DGLE_API GetColor(TColor4 &stColor) = 0;
+
+		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
+		virtual DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode) = 0;
+
+		virtual DGLE_RESULT DGLE_API ToggleAlphaTest(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API SetAlphaTreshold(float fValue) = 0;
+		virtual DGLE_RESULT DGLE_API GetAlphaTreshold(float &fValue) = 0;
+
 		virtual DGLE_RESULT DGLE_API ToggleDepthTest(bool bEnabled) = 0;
 
-		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix &stMatrix, bool bMult) = 0;
-		virtual DGLE_RESULT DGLE_API GetMatrix(TMatrix &stMatrix) = 0;
+		virtual DGLE_RESULT DGLE_API ToggleFog(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API SetLinearFogBounds(float fStart, float fEnd) = 0;
+		virtual DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API SetFogDensity(float fValue) = 0;
+		virtual DGLE_RESULT DGLE_API GetLinearFogBounds(float &fStart, float &fEnd) = 0;
+		virtual DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetFogDensity(float &fValue) = 0;
+
+		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, bool bMult) = 0;
+		virtual DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix) = 0;
 
 		virtual DGLE_RESULT DGLE_API DrawAxes(float fSize = 1.f, bool bNoDepthTest = false) = 0;
 
@@ -905,10 +927,10 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull) = 0;
 		virtual DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull) = 0;
 
-		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight) throw() = 0;
-		virtual DGLE_RESULT DGLE_API EnableLighting(bool enable) throw() = 0;
-		virtual DGLE_RESULT DGLE_API SetAmbient(const TColor4 &color) throw() = 0;
-		virtual DGLE_RESULT DGLE_API GetAmbient(TColor4 &color) const throw() = 0;
+		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight) = 0;
+		virtual DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API SetGlobalAmbientLighting(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetGlobalAmbientLighting(TColor4 &stColor) = 0;
 	};
 
 	//Light interface//
@@ -916,7 +938,8 @@ namespace DGLE
 	enum E_LIGHT_TYPE
 	{
 		LT_DIRECTIONAL = 0,
-		LT_POINT
+		LT_POINT,
+		LT_SPOT
 	};
 
 	// {EB73AC84-A465-4554-994D-8BED29744C9D}
@@ -929,25 +952,23 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetEnabled(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetDiffuseColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API SetSpecularColor(const TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API SetPos(const TPoint3 &stPos) = 0;
-		virtual DGLE_RESULT DGLE_API SetDir(const TVector3 &stDir) = 0;
-		virtual DGLE_RESULT DGLE_API SetRange(float range) = 0;
-		virtual DGLE_RESULT DGLE_API SetConstantAttenuation(float attenuation) = 0;
-		virtual DGLE_RESULT DGLE_API SetLinearAttenuation(float attenuation) = 0;
-		virtual DGLE_RESULT DGLE_API SetQuadraticAttenuation(float attenuation) = 0;
+		virtual DGLE_RESULT DGLE_API SetPosition(const TPoint3 &stPos) = 0;
+		virtual DGLE_RESULT DGLE_API SetDirection(const TVector3 &stDir) = 0;
+		virtual DGLE_RESULT DGLE_API SetDistance(float fDist) = 0;
+		virtual DGLE_RESULT DGLE_API SetAttenuation(float fCoeff) = 0;
+		virtual DGLE_RESULT DGLE_API SetSpotCutoff(float fDist) = 0;
 		virtual DGLE_RESULT DGLE_API SetType(E_LIGHT_TYPE eType) = 0;
 		
 		virtual DGLE_RESULT DGLE_API GetEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetDiffuseColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetSpecularColor(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GetPos(TPoint3 &stPos) = 0;
-		virtual DGLE_RESULT DGLE_API GetDir(TVector3 &stDir) = 0;
-		virtual DGLE_RESULT DGLE_API GetRange(float &range) = 0;
-		virtual DGLE_RESULT DGLE_API GetConstantAttenuation(float &attenuation) = 0;
-		virtual DGLE_RESULT DGLE_API GetLinearAttenuation(float &attenuation) = 0;
-		virtual DGLE_RESULT DGLE_API GetQuadraticAttenuation(float &attenuation) = 0;
-		
+		virtual DGLE_RESULT DGLE_API GetPosition(TPoint3 &stPos) = 0;
+		virtual DGLE_RESULT DGLE_API GetDirection(TVector3 &stDir) = 0;
+		virtual DGLE_RESULT DGLE_API GetDistance(float &fDist) = 0;
+		virtual DGLE_RESULT DGLE_API GetAttenuation(float &fCoeff) = 0;
+		virtual DGLE_RESULT DGLE_API GetSpotCutoff(float &fDist) = 0;
 		virtual DGLE_RESULT DGLE_API GetType(E_LIGHT_TYPE &eType) = 0;
+
 		virtual DGLE_RESULT DGLE_API Free() = 0;
 	};
 
@@ -977,26 +998,6 @@ namespace DGLE
 
 	//Material interface//
 
-	enum E_TEX_MAPPING
-	{
-		TM_STD = 0,
-		TM_OBJ_SPACE = 1
-	};
-
-	enum E_NORMAL_TECHNIQUE
-	{
-		NT_UNPERTURBED = 0,
-		NT_NORMAL_MAP_3_COMPONENT = 1,
-		NT_HEIGHT_MAP_HW_DIFF = 3
-	};
-
-	enum E_PARALLAX_TECHNIQUE
-	{
-		PT_NONE = 0,
-		PT_SPHERE = 1,
-		PT_PLANE = 2
-	};
-
 	// {B6506749-BB41-423d-B6C0-982081EF63F9}
 	static const GUID IID_IMaterial = 
 	{ 0xb6506749, 0xbb41, 0x423d, { 0xb6, 0xc0, 0x98, 0x20, 0x81, 0xef, 0x63, 0xf9 } };
@@ -1004,37 +1005,13 @@ namespace DGLE
 	class IMaterial: public IEngBaseObj
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API SetAmbientColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API SetDiffuseColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API SetSpecularColor(const TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API SetHeightScale(float scale) = 0;
-		virtual DGLE_RESULT DGLE_API SetEnvAmount(float amount) = 0;
-		virtual DGLE_RESULT DGLE_API SetShininess(float shininess) = 0;
-		virtual DGLE_RESULT DGLE_API SetTexMappingMode(E_TEX_MAPPING eTexMapping) = 0;
 		virtual DGLE_RESULT DGLE_API SetDiffuseTexture(ITexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetSpecularTexture(ITexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetNormalTexture(ITexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetHeightTexture(ITexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetEnvTexture(ITexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetEnvMask(ITexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API SetNormalTechnique(E_NORMAL_TECHNIQUE technique) = 0;
-		virtual DGLE_RESULT DGLE_API SetParallaxTechnique(E_PARALLAX_TECHNIQUE technique) = 0;
 		
-		virtual DGLE_RESULT DGLE_API GetAmbientColor(TColor4 &stColor) const = 0;
-		virtual DGLE_RESULT DGLE_API GetDiffuseColor(TColor4 &stColor) const = 0;
-		virtual DGLE_RESULT DGLE_API GetSpecularColor(TColor4 &stColor) const = 0;
-		virtual DGLE_RESULT DGLE_API GetHeightScale(float &scale) const = 0;
-		virtual DGLE_RESULT DGLE_API GetEnvAmount(float &amount) const = 0;
-		virtual DGLE_RESULT DGLE_API GetShininess(float &shininess) const = 0;
-		virtual DGLE_RESULT DGLE_API GetTexMappingMode(E_TEX_MAPPING &eTexMapping) const = 0;
-		virtual DGLE_RESULT DGLE_API GetDiffuseTexture(ITexture *&pTexture) const = 0;
-		virtual DGLE_RESULT DGLE_API GetSpecularTexture(ITexture *&pTexture) const = 0;
-		virtual DGLE_RESULT DGLE_API GetNormalTexture(ITexture *&pTexture) const = 0;
-		virtual DGLE_RESULT DGLE_API GetHeightTexture(ITexture *&pTexture) const = 0;
-		virtual DGLE_RESULT DGLE_API GetEnvTexture(ITexture *&pTexture) const = 0;
-		virtual DGLE_RESULT DGLE_API GetEnvMask(ITexture *&pTexture) const = 0;
-		virtual DGLE_RESULT DGLE_API GetNormalTechnique(E_NORMAL_TECHNIQUE &technique) const = 0;
-		virtual DGLE_RESULT DGLE_API GetParallaxTechnique(E_PARALLAX_TECHNIQUE &technique) const = 0;
+		virtual DGLE_RESULT DGLE_API GetDiffuseColor(TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetSpecularColor(TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetDiffuseTexture(ITexture *&prTexture) = 0;
 		
 		virtual DGLE_RESULT DGLE_API Bind() const = 0;
 	};
@@ -1071,25 +1048,19 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API Draw() = 0;
 		virtual DGLE_RESULT DGLE_API GetCenter(TPoint3 &stCenter) = 0;
 		virtual DGLE_RESULT DGLE_API GetExtents(TVector3 &stExtents) = 0;
-		virtual DGLE_RESULT DGLE_API GetTrianglesCount(uint &uiTriCnt) = 0;
-		virtual DGLE_RESULT DGLE_API GetGeometryInfo(uint &uiVertsCount, uint &uiFacesCount, uint &uiDataSize, E_MESH_CREATION_FLAGS &eCreationFlags) = 0;
-		/*Format x,y,z*vertex_count, nx,ny,nz*vertex_count s,q*vertex_count tx,ty,tz,bx,by,bz*vertex_count int16*uiFacesCount*/
-		virtual DGLE_RESULT DGLE_API GetGeometry(uint8 *pubtData) = 0;
-		virtual DGLE_RESULT DGLE_API SetGeometry(uint8 *pubtData) = 0;
+		virtual DGLE_RESULT DGLE_API GetTrianglesCount(uint &uiCnt) = 0;
+		virtual DGLE_RESULT DGLE_API GetGeometryBuffer(ICoreGeometryBuffer *&prBuffer) = 0;
+		virtual DGLE_RESULT DGLE_API SetGeometryBuffer(ICoreGeometryBuffer *pBuffer, bool bFreeCurrentBuffer) = 0;
+		virtual DGLE_RESULT DGLE_API RecalculateNormals() = 0;
+		virtual DGLE_RESULT DGLE_API RecalculateTangentSpace() = 0;
+		virtual DGLE_RESULT DGLE_API RecalculateBounds() = 0;
+		virtual DGLE_RESULT DGLE_API TransformVertices(const TMatrix4x4 &stTransMatrix) = 0;
+		virtual DGLE_RESULT DGLE_API Optimize() = 0;
+		virtual DGLE_RESULT DGLE_API GetOwner(IModel *&prModel) = 0;
+		virtual DGLE_RESULT DGLE_API SetOwner(IModel *pModel) = 0;
 	};
 
-	//Skeleton xform interface//
-
-	// {1D12C62F-9974-4219-8F12-DA92A4CC259F}
-	static const GUID IID_ISkeletonXform = 
-	{ 0x1d12c62f, 0x9974, 0x4219, { 0x8f, 0x12, 0xda, 0x92, 0xa4, 0xcc, 0x25, 0x9f } };
-
-	class ISkeletonXform: public IEngBaseObj
-	{
-	public:
-	};
-
-	//Model interface//
+	//Multi mesh interface//
 
 	// {6107C296-FC07-48d1-B6A7-F88CC2DAE897}
 	static const GUID IID_IModel = 
@@ -1098,31 +1069,22 @@ namespace DGLE
 	class IModel : public IEngBaseObj
 	{
 	public:
+		virtual DGLE_RESULT DGLE_API Draw() = 0;
+		virtual DGLE_RESULT DGLE_API DrawMesh(uint uiMeshIdx) = 0;
+		virtual DGLE_RESULT DGLE_API GetCenter(TPoint3 &stCenter) = 0;
+		virtual DGLE_RESULT DGLE_API GetExtents(TVector3 &stExtents) = 0;
 		virtual DGLE_RESULT DGLE_API MeshsCount(uint &uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetMesh(uint uiIdx, IMesh *&prMesh) = 0;
-		virtual DGLE_RESULT DGLE_API Draw(float fFrameIdx) = 0;
+		virtual DGLE_RESULT DGLE_API SetModelMaterial(IMaterial *pMaterial) = 0;
+		virtual DGLE_RESULT DGLE_API GetModelMaterial(IMaterial *&prMaterial) = 0;
+		virtual DGLE_RESULT DGLE_API SetMeshMaterial(uint uiMeshIdx, IMaterial *pMaterial) = 0;
+		virtual DGLE_RESULT DGLE_API GetMeshMaterial(uint uiMeshIdx, IMaterial *&prMaterial) = 0;
+		virtual DGLE_RESULT DGLE_API AddMesh(IMesh *pMesh) = 0;
+		virtual DGLE_RESULT DGLE_API RemoveMesh(IMesh *pMesh) = 0;
+		virtual DGLE_RESULT DGLE_API ReplaceMesh(uint uiMeshIdx, IMesh *pMesh) = 0;
 	};
 
-	//Postprocess interface//
-
-	// {DC6E4812-6B06-4de8-9DEF-2A13740BC45E}
-	static const GUID IID_IPostprocess = 
-	{ 0xdc6e4812, 0x6b06, 0x4de8, { 0x9d, 0xef, 0x2a, 0x13, 0x74, 0xb, 0xc4, 0x5e } };
-
-	class IPostprocess: public IDGLE_Base
-	{
-	public:
-		virtual DGLE_RESULT DGLE_API Free() = 0;
-
-		virtual DGLE_RESULT DGLE_API SetTargets(ITexture *pSrc, ITexture *pDst) = 0;
-		virtual DGLE_RESULT DGLE_API SetBlurAmount(float fBlur) = 0;
-		virtual DGLE_RESULT DGLE_API SetBloomAmount(float fBloom) = 0;
-		virtual DGLE_RESULT DGLE_API SetBloomThreshold(float fThreshold) = 0;
-		virtual DGLE_RESULT DGLE_API ToggleMonochrome(bool bEnable) = 0;
-		virtual DGLE_RESULT DGLE_API Perform() = 0;
-	};
-
-//Input Subsystem//
+//Input SubSystem//
 	
 	enum E_INPUT_CONFIGURATION_FLAGS
 	{
@@ -1217,7 +1179,27 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on null
 	};
 
-//FileSystem interfaces//
+	//Music interface//
+
+	// {81F1E67B-3FEB-4ab1-9AD2-D27C4E662164}
+	static const GUID IID_IMusic = 
+	{ 0x81f1e67b, 0x3feb, 0x4ab1, { 0x9a, 0xd2, 0xd2, 0x7c, 0x4e, 0x66, 0x21, 0x64 } };
+
+	class IMusic : public IEngBaseObj
+	{
+	public:
+		virtual DGLE_RESULT DGLE_API Play(bool bLooped = true) = 0;
+		virtual DGLE_RESULT DGLE_API Pause(bool bPaused) = 0;
+		virtual DGLE_RESULT DGLE_API Stop() = 0;
+		virtual DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying) = 0;
+		virtual DGLE_RESULT DGLE_API SetVolume(uint uiVolume) = 0;
+		virtual DGLE_RESULT DGLE_API GetVolume(uint &uiVolume) = 0;
+		virtual DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos) = 0;
+		virtual DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos) = 0;
+		virtual DGLE_RESULT DGLE_API GetLength(uint &uiLength) = 0;
+	};
+
+//FileSystem SubSystem//
 
 	class IFileSystem;
 

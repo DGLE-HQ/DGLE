@@ -26,6 +26,7 @@ std::string UIntToStr(DGLE::uint val);
 std::string UInt64ToStr(DGLE::uint64 val);
 std::string UIntToStrX(DGLE::uint val);
 std::string FloatToStr(float val);
+std::string FloatToStrFmt(float val);
 std::string DoubleToStr(double val);
 std::string BoolToStr(bool val);
 

@@ -165,6 +165,9 @@
     <ClCompile Include="..\..\..\src\engine\Input.cpp" />
     <ClCompile Include="..\..\..\src\engine\Main.cpp" />
     <ClCompile Include="..\..\..\src\engine\MainFS.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Mesh.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Model.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Music.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\BaseInput.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\BaseRendererGL.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\BaseSound.cpp" />
@@ -206,6 +209,9 @@
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Input.h" />
     <ClInclude Include="..\..\..\src\engine\MainFS.h" />
+    <ClInclude Include="..\..\..\src\engine\Mesh.h" />
+    <ClInclude Include="..\..\..\src\engine\Model.h" />
+    <ClInclude Include="..\..\..\src\engine\Music.h" />
     <ClInclude Include="..\..\..\src\engine\platform\PlatformAPI.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\BaseInput.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\BaseRendererGL.h" />

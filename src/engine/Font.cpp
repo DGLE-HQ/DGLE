@@ -148,11 +148,11 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 	
 	float quad[] = {fX, fY, fX + (float)width, fY, fX + (float)width, fY + (float)height, fX, fY + (float)height};
 	
-	TMatrix transform;
+	TMatrix4 transform;
 
 	if (fAngle != 0.f)
 	{
-		TMatrix rot = MatrixIdentity();
+		TMatrix4 rot = MatrixIdentity();
 		
 		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
 
@@ -161,7 +161,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 		rot._2D[1][0] = +s;
 		rot._2D[1][1] = +c;
 
-		transform = MatrixTranslate(TVec3(-(fX + width / 2.f), -(fY + height / 2.f), 0.f)) * rot * MatrixTranslate(TVec3(fX + width / 2.f, fY + height / 2.f, 0.f));
+		transform = MatrixTranslate(TVector3(-(fX + width / 2.f), -(fY + height / 2.f), 0.f)) * rot * MatrixTranslate(TVector3(fX + width / 2.f, fY + height / 2.f, 0.f));
 
 		float x = quad[0], y = quad[1];
 		quad[0]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];

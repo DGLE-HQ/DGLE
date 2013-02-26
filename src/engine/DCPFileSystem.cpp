@@ -598,10 +598,10 @@ void CDCPFileSystem::_Clean()
 	_clInfoTable.clear();
 }
 
-void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParametr, const char *pcParam)
+void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		CON(CDCPFileSystem, "No parametrs expected.");
+		CON(CDCPFileSystem, "No parameters expected.");
 	else
 		CON(CDCPFileSystem, "You can send some extra commands to DCP file system using ExecCmd, ExecCmdVar or ExecCmdStr methods of IFileSystem class or via \"dcp_exec_cmd\" console command.\n"
 		"Commands for ExecCmdVar method or console:\n"
@@ -620,10 +620,10 @@ void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParametr, const char *pcParam
 		"-1 - deletes any memory cache data or junk.");
 }
 
-void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParametr, const char *pcParam)
+void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) == 0)
-		CON(CDCPFileSystem, "Parametrs expected.");
+		CON(CDCPFileSystem, "Parameters expected.");
 	else
 	{
 		string cmd(pcParam), param;

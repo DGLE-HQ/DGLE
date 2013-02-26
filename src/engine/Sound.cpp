@@ -46,7 +46,7 @@ _c_pData(NULL), _c_ui32DataSize(0), _c_uiDataPerFrame(0),
 _ui32ReaderPos(0), _fFrameCnt(0.f), _c_uiLength(0),
 _bAquired(false), _fVol(1.f), _fPan(0.f), _fSpeed(1.f), _c_fBaseSpeed(1.f), _bLooped(false),
 _eState(SCS_STOPPED), _frame(),
-_pStreamCallback(NULL), _pParametr(NULL), _c_uiBufferSize(0)
+_pStreamCallback(NULL), _pParameter(NULL), _c_uiBufferSize(0)
 {}
 
 CChannel::CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
@@ -56,17 +56,17 @@ _c_pData(pData), _c_ui32DataSize(ui32DataSize), _ui32ReaderPos(0), _c_uiDataPerF
 _fFrameCnt(0.f), _c_uiLength(_DataPosToMsec(ui32DataSize)),
 _bAquired(true), _fVol(1.f), _fPan(0.f), _fSpeed(1.f), _c_fBaseSpeed(uiSamplesPerSec / 44100.f), _bLooped(false),
 _eState(SCS_STOPPED), _frame(),
-_pStreamCallback(NULL), _pParametr(NULL), _c_uiBufferSize(0)
+_pStreamCallback(NULL), _pParameter(NULL), _c_uiBufferSize(0)
 {}
 
-CChannel::CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, uint uiBufferSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr):
+CChannel::CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, uint uiBufferSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter):
 _pSnd(pBaseSound),
 _c_uiSamplesPerSec(uiSamplesPerSec), _c_uiBitsPerSample(uiBitsPerSample), _c_bStereo(bStereo), _c_bStreamable(true),
 _c_pData(NULL), _c_ui32DataSize(ui32DataSize), _c_uiDataPerFrame((uiBitsPerSample / 8) * (bStereo ? 2 : 1)),
 _ui32ReaderPos(0), _fFrameCnt(0.f), _c_uiLength(_DataPosToMsec(ui32DataSize)),
 _bAquired(true), _fVol(1.f), _fPan(0.f), _fSpeed(1.f), _c_fBaseSpeed(uiSamplesPerSec / 44100.f), _bLooped(false),
 _eState(SCS_STOPPED), _frame(),
-_pStreamCallback(pStreamCallback), _pParametr(pParametr), _c_uiBufferSize(uiBufferSize)
+_pStreamCallback(pStreamCallback), _pParameter(pParameter), _c_uiBufferSize(uiBufferSize)
 {
 	_c_pData = new uint8[_c_uiBufferSize];
 }
@@ -117,7 +117,7 @@ inline void CChannel::StreamData()
 	if (!_c_bStreamable)
 		return;
 
-	_pStreamCallback(_pParametr, _ui32ReaderPos, const_cast<uint8 *>(_c_pData), _c_uiBufferSize);
+	_pStreamCallback(_pParameter, _ui32ReaderPos, const_cast<uint8 *>(_c_pData), _c_uiBufferSize);
 }
 
 __forceinline const TSoundFrame & CChannel::NextFrame(float masterVol)
@@ -402,13 +402,13 @@ void CSound::_ProfilerDraw()
 
 }
 
-void DGLE_API CSound::_s_EventProfilerDraw(void *pParametr, IBaseEvent *pEvent)
+void DGLE_API CSound::_s_EventProfilerDraw(void *pParameter, IBaseEvent *pEvent)
 {
 	PTHIS(CSound)->_ProfilerDraw();
 }
 
 // This method is called from separate thread.
-void DGLE_API CSound::_s_StreamToDeviceCallback(void *pParametr, uint8 *pBufferData)
+void DGLE_API CSound::_s_StreamToDeviceCallback(void *pParameter, uint8 *pBufferData)
 {
 	PTHIS(CSound)->_MixSoundChannels(reinterpret_cast<TSoundFrame *>(pBufferData), (PTHIS(CSound)->_uiBufferSize / sizeof(int16)) / 2);
 }
@@ -565,7 +565,7 @@ DGLE_RESULT DGLE_API CSound::CreateChannel(ISoundChannel *&prSndChnl, uint uiSam
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CSound::CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParametr, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParametr)
+DGLE_RESULT DGLE_API CSound::CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter)
 {
 	if (!_bInited || !pStreamCallback || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 11025 && uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 	{
@@ -591,7 +591,7 @@ DGLE_RESULT DGLE_API CSound::CreateStreamableChannel(ISoundChannel *&prSndChnl, 
 	EnterThreadSafeSection();
 
 	_clChannels[idx].~CChannel();
-	new(&_clChannels[idx])CChannel(this, uiSamplesPerSec, uiBitsPerSample, bStereo, ui32DataSize, _uiBufferSize, pStreamCallback, pParametr);
+	new(&_clChannels[idx])CChannel(this, uiSamplesPerSec, uiBitsPerSample, bStereo, ui32DataSize, _uiBufferSize, pStreamCallback, pParameter);
 
 	LeaveThreadSafeSection();
 

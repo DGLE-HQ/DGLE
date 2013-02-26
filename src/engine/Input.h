@@ -38,9 +38,9 @@ class CInput: private CBaseInput, public IInput
 	void		 _Loop();
 	void		 _Update();
 
-	static void DGLE_API _s_MessageProc(void *pParametr, const TWinMessage &stMsg);
-	static void DGLE_API _s_Update(void *pParametr);
-	static void DGLE_API _s_Loop(void *pParametr);
+	static void DGLE_API _s_MessageProc(void *pParameter, const TWinMessage &stMsg);
+	static void DGLE_API _s_Update(void *pParameter);
+	static void DGLE_API _s_Loop(void *pParameter);
 
 public:
 

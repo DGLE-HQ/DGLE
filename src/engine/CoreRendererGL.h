@@ -13,8 +13,9 @@ See "DGLE.h" for more details.
 
 #ifndef NO_BUILTIN_RENDERER
 
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
 #	include "platform\windows\BaseRendererGL.h"
+#	define USE_LEGACY_DRAW
 #endif
 
 #include "StateManagerGL.h"
@@ -28,7 +29,7 @@ struct TState
 	TDepthStencilDesc stDepthStencilDesc;
 	TRasterizerStateDesc stRasterDesc;
 
-	TMatrix stModelviewMat, stProjectionMat, stTextureMat;
+	TMatrix4 stModelviewMat, stProjectionMat, stTextureMat;
 
 	TColor4 stColor;
 
@@ -76,18 +77,21 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	inline GLenum _GetGLBlendFactor(E_BLEND_FACTOR factor);
 	inline GLenum _GetGLComparsionMode(E_COMPARISON_FUNC mode);
 	inline GLenum _GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode);
+#ifdef USE_LEGACY_DRAW
 	__forceinline bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
+#endif
 	inline void _TriangleStatistics(E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	void _ProfilerEventHandler(IBaseEvent *pEvent) const;
 
-	static void DGLE_API _s_ConPrintGLExts(void *pParametr, const char *pcParam);
-	static void DGLE_API _s_ProfilerEventHandler(void *pParametr, IBaseEvent *pEvent);
+	static void DGLE_API _s_ConPrintGLExts(void *pParameter, const char *pcParam);
+	static void DGLE_API _s_ProfilerEventHandler(void *pParameter, IBaseEvent *pEvent);
 
 public:
 	
 	CCoreRendererGL(uint uiInstIdx);
 
 	inline IStateManager* pStateMan() const {return _pStateMan;} /**< \warning Never copy IStateManager* because _pStateMan may be reallocated at any time! */
+	static inline uint GetVertexSize(const TDrawDataDesc &stDesc);
 
 	DGLE_RESULT DGLE_API Prepare(TCRendererInitResult &stResults);
 	DGLE_RESULT DGLE_API Initialize(TCRendererInitResult &stResults);
@@ -110,8 +114,8 @@ public:
 	DGLE_RESULT DGLE_API ToggleStateFilter(bool bEnabled);
 	DGLE_RESULT DGLE_API PushStates();
 	DGLE_RESULT DGLE_API PopStates();
-	DGLE_RESULT DGLE_API SetMatrix(const TMatrix &stMat, E_MATRIX_TYPE eMatType);
-	DGLE_RESULT DGLE_API GetMatrix(TMatrix &stMat, E_MATRIX_TYPE eMatType);
+	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType);
+	DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType);
 	DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer);
 	DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor);
@@ -127,6 +131,7 @@ public:
 	DGLE_RESULT DGLE_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue);
 	DGLE_RESULT DGLE_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported);
 	DGLE_RESULT DGLE_API GetRendererType(E_CORE_RENDERER_TYPE &eType);
+	
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
 
 	IDGLE_BASE_IMPLEMENTATION(ICoreRenderer, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))

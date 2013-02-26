@@ -14,6 +14,9 @@ using namespace std;
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):
 _pEngineCore(pEngineCore)
 {
+	locale::global(std::locale(""));
+	setlocale(LC_NUMERIC, "C");
+	
 	_pEngineCore->GetInstanceIdx(_uiInstIdx);
 
 	_pEngineCore->AddProcedure(EPT_INIT, &_s_Init, (void*)this);

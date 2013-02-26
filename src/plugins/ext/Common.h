@@ -27,3 +27,9 @@ using namespace DGLE;
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
 #define LOG(txt, type) LogWrite(_uiInstIdx, std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG_POINT2(p) LogWrite(_uiInstIdx, ("(" + FloatToStrFmt(p.x) + "," + FloatToStrFmt(p.y) + ")").c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG_POINT3(p) LogWrite(_uiInstIdx, ("(" + FloatToStrFmt(p.x) + "," + FloatToStrFmt(p.y) + "," + FloatToStrFmt(p.z) + ")").c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG_MATRIX4(m) LogWrite(_uiInstIdx, ("[" + FloatToStrFmt(m._2D[0][0]) + "," + FloatToStrFmt(m._2D[0][1]) + "," + FloatToStrFmt(m._2D[0][2]) + "," + FloatToStrFmt(m._2D[0][3]) + "\n"\
+	+ " " + FloatToStrFmt(m._2D[1][0]) + "," + FloatToStrFmt(m._2D[1][1]) + "," + FloatToStrFmt(m._2D[1][2]) + "," + FloatToStrFmt(m._2D[1][3]) + "\n"\
+	+ " " + FloatToStrFmt(m._2D[2][0]) + "," + FloatToStrFmt(m._2D[2][1]) + "," + FloatToStrFmt(m._2D[2][2]) + "," + FloatToStrFmt(m._2D[2][3]) + "\n"\
+	+ " " + FloatToStrFmt(m._2D[3][0]) + "," + FloatToStrFmt(m._2D[3][1]) + "," + FloatToStrFmt(m._2D[3][2]) + "," + FloatToStrFmt(m._2D[3][3]) + "]").c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)

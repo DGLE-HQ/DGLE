@@ -82,6 +82,13 @@
     <ClCompile Include="..\..\..\src\engine\platform\windows\DummyWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Mesh.cpp">
+      <Filter>Render\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Music.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Model.cpp">
+      <Filter>Render\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
@@ -186,6 +193,13 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\platform\windows\DummyWindow.h">
       <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Mesh.h">
+      <Filter>Render\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Music.h" />
+    <ClInclude Include="..\..\..\src\engine\Model.h">
+      <Filter>Render\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

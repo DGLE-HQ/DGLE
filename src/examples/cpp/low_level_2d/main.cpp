@@ -58,7 +58,7 @@ TPoint2 stMousePos;
 bool owlGoLeft = false;
 float owlX = -200.f;
 
-void DGLE_API OnFullScreenEvent(void *pParametr, IBaseEvent *pEvent)
+void DGLE_API OnFullScreenEvent(void *pParameter, IBaseEvent *pEvent)
 {
 	IEvGoFullScreen *p_event = (IEvGoFullScreen *)pEvent;
 
@@ -78,7 +78,7 @@ void DGLE_API OnFullScreenEvent(void *pParametr, IBaseEvent *pEvent)
 		p_event->SetResolution(prevWindowWidth, prevWindowHeight);
 }
 
-void DGLE_API Init(void *pParametr)
+void DGLE_API Init(void *pParameter)
 {
 	IResourceManager *p_res_man;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)p_res_man);
@@ -122,14 +122,14 @@ void DGLE_API Init(void *pParametr)
 	pLight->SetFrameSize(64, 128);
 }
 
-void DGLE_API Free(void *pParametr)
+void DGLE_API Free(void *pParameter)
 {
 	// It's a good idea to stop and unaquire looped sound channels before quit.
 	pChannelAmbientLoop->Stop();
 	pChannelAmbientLoop->Unaquire();
 }
 
-void DGLE_API Update(void *pParametr)
+void DGLE_API Update(void *pParameter)
 {
 	bool prsd;
 	
@@ -173,7 +173,7 @@ void DGLE_API Update(void *pParametr)
 	++counter;
 }
 
-void DGLE_API Render(void *pParametr)
+void DGLE_API Render(void *pParameter)
 {
 	pRender2D->Begin2D();
 

@@ -48,7 +48,7 @@ uint uiCounter = 0;
 
 ITexture *pTex = NULL;
 
-void DGLE_API Init(void *pParametr)
+void DGLE_API Init(void *pParameter)
 {
 	pEngineCore->GetSubSystem(ESS_INPUT, (IEngineSubSystem *&)pInput);
 
@@ -61,11 +61,11 @@ void DGLE_API Init(void *pParametr)
 	pr->GetRender2D(pRender2D);
 }
 
-void DGLE_API Free(void *pParametr)
+void DGLE_API Free(void *pParameter)
 {
 }
 
-void DGLE_API Update(void *pParametr)
+void DGLE_API Update(void *pParameter)
 {
 	bool b_prsd;
 
@@ -77,7 +77,7 @@ void DGLE_API Update(void *pParametr)
 	++uiCounter;
 }
 
-void DGLE_API Render(void *pParametr)
+void DGLE_API Render(void *pParameter)
 {
 	uint w, h;
 	pTex->GetDimensions(w, h);

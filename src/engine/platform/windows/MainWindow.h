@@ -23,7 +23,7 @@ class CMainWindow : public CInstancedObj, public IMainWindow
 
 	int WINAPI				_wWinMain(HINSTANCE hInstance);	
 	static LRESULT DGLE_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static void DGLE_API	_s_ConsoleQuit(void *pParametr, const char *pcParam);
+	static void DGLE_API	_s_ConsoleQuit(void *pParameter, const char *pcParam);
 
 public:
 	

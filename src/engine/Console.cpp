@@ -238,7 +238,7 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 			{
 				_pConsoleWindow->EnterThreadSafeSection();
 
-				(*_commands[i].pProc)(_commands[i].pParametr, param.c_str());
+				(*_commands[i].pProc)(_commands[i].pParameter, param.c_str());
 				
 				_pConsoleWindow->LeaveThreadSafeSection();
 			}
@@ -265,7 +265,7 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 							*_commands[i].piValue = t;
 						
 							if (_commands[i].pProc != NULL)
-								(*_commands[i].pProc)(_commands[i].pParametr, param.c_str());
+								(*_commands[i].pProc)(_commands[i].pParameter, param.c_str());
 
 							_pConsoleWindow->LeaveThreadSafeSection();
 
@@ -335,7 +335,7 @@ bool CConsole::UnRegCom(const char *pcName)
 	return false;
 }
 
-void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr)
+void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
 	TConEntry t;
 	
@@ -349,14 +349,14 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API
 	t.piValue = NULL;
 	t.iMaxValue	= 0;
 	t.iMinValue	= 0;
-	t.pParametr	= pParametr;
+	t.pParameter	= pParameter;
 	
 	_commands.push_back(t);
 	
 	sort(_commands.begin(), _commands.end());
 }
 
-void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParametr, const char *pcParam), void *pParametr) 
+void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) 
 {
 	TConEntry t;
 	
@@ -370,7 +370,7 @@ void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue,
 	t.piValue = piValue;
 	t.iMaxValue	= iMax;
 	t.iMinValue	= iMin;
-	t.pParametr	= pParametr;
+	t.pParameter	= pParameter;
 	
 	_commands.push_back(t);	
 	
@@ -492,70 +492,70 @@ void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 	_pConsoleWindow->OutputTxt(txt.c_str(), bToPrevLine);
 }
 
-void DGLE_API CConsole::_s_Hide(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Hide(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		PTHIS(CConsole)->Write("No parametrs expected.");
+		PTHIS(CConsole)->Write("No parameters expected.");
 	else
 		PTHIS(CConsole)->Visible(false);
 }
 
-void DGLE_API CConsole::_s_Show(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Show(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		PTHIS(CConsole)->Write("No parametrs expected.");
+		PTHIS(CConsole)->Write("No parameters expected.");
 	else
 		PTHIS(CConsole)->Visible(true);
 }
 
-void DGLE_API CConsole::_s_Clear(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Clear(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		PTHIS(CConsole)->Write("No parametrs expected.");
+		PTHIS(CConsole)->Write("No parameters expected.");
 	else
 		PTHIS(CConsole)->_pConsoleWindow->Clear();
 }
 
-void DGLE_API CConsole::_s_Save(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Save(void *pParameter, const char *pcParam)
 {
 	PTHIS(CConsole)->_Save(string(pcParam));
 }
 
-void DGLE_API CConsole::_s_Terminate(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Terminate(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		PTHIS(CConsole)->Write("No parametrs expected.");
+		PTHIS(CConsole)->Write("No parameters expected.");
 	else
 		Terminate();
 }
 
-void DGLE_API CConsole::_s_SetPos(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_SetPos(void *pParameter, const char *pcParam)
 {
 	PTHIS(CConsole)->_SetPos(pcParam);
 }
 
-void DGLE_API CConsole::_s_SetSize(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_SetSize(void *pParameter, const char *pcParam)
 {
 	PTHIS(CConsole)->_SetSize(pcParam);
 }
 
-void DGLE_API CConsole::_s_ResetPos(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_ResetPos(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		PTHIS(CConsole)->Write("No parametrs expected.");
+		PTHIS(CConsole)->Write("No parameters expected.");
 	else
 		PTHIS(CConsole)->_pConsoleWindow->ResetSizeAndPos();
 }
 
-void DGLE_API CConsole::_s_Cmdlist(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Cmdlist(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
-		PTHIS(CConsole)->Write("No parametrs expected.");
+		PTHIS(CConsole)->Write("No parameters expected.");
 	else
 		PTHIS(CConsole)->_Cmdlist();
 }
 
-void DGLE_API CConsole::_s_Help(void *pParametr, const char *pcParam)
+void DGLE_API CConsole::_s_Help(void *pParameter, const char *pcParam)
 {
 	PTHIS(CConsole)->_Help(pcParam);
 }

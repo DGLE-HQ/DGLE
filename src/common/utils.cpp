@@ -110,6 +110,13 @@ string FloatToStr(float val)
 	return string(res);
 }
 
+string FloatToStrFmt(float val)
+{
+	char res[16];
+	sprintf_s(res, "%.4f", val);
+	return res[0] == '-' ? string(res) : " " + string(res);
+}
+
 string DoubleToStr(double val)
 {
 	char res[16];

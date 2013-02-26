@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		20.01.2013 (c)Korotkov Andrey
+\date		26.01.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -390,7 +390,7 @@ inline void CRender2D::_BatchFlush()
 
 void CRender2D::_Set2DProjMatrix(uint width, uint height)
 {
-	_pCoreRenderer->SetMatrix(TMatrix(
+	_pCoreRenderer->SetMatrix(TMatrix4(
 		2.f / (float)width, 0.f, 0.f, 0.f,
 		0.f, -2.f / (float)height, 0.f, 0.f,
 		0.f, 0.f, -1.f, 0.f,
@@ -571,18 +571,18 @@ DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle,
 	
 		if (fAngle != 0.f || stScale.x != 1.f || stScale.y != 1.f)
 		{
-			_stCamTransform = MatrixTranslate(TVec3((float)_uiScreenWidth / 2.f, (float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
+			_stCamTransform = MatrixTranslate(TVector3((float)_uiScreenWidth / 2.f, (float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
 
 			if (_stCamScale.x != 1.f || _stCamScale.y != 1.f)
-				_stCamTransform = MatrixScale(TVec3(stScale.x, stScale.y, 1.f)) * _stCamTransform;
+				_stCamTransform = MatrixScale(TVector3(stScale.x, stScale.y, 1.f)) * _stCamTransform;
 
 			if (fAngle != 0.f)
-				_stCamTransform = MatrixRotate(fAngle, TVec3(0.f, 0.f, 1.f)) * _stCamTransform;
+				_stCamTransform = MatrixRotate(fAngle, TVector3(0.f, 0.f, 1.f)) * _stCamTransform;
 
-			_stCamTransform = MatrixTranslate(TVec3(-(float)_uiScreenWidth / 2.f, -(float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
+			_stCamTransform = MatrixTranslate(TVector3(-(float)_uiScreenWidth / 2.f, -(float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
 		}
 
-		_stCamTransform = MatrixTranslate(TVec3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f)) * _stCamTransform;
+		_stCamTransform = MatrixTranslate(TVector3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f)) * _stCamTransform;
 
 		_pCoreRenderer->SetMatrix(_stCamTransform);
 
@@ -617,11 +617,11 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 	_pBuffer[3] = _pBuffer[2]; _pBuffer[4] = stBBox.y + stBBox.height;
 	_pBuffer[5] = _pBuffer[0]; _pBuffer[6] = _pBuffer[4];
 
-	TMatrix transform;
+	TMatrix4 transform;
 
 	if (fAngle != 0.f)
 	{
-		TMatrix rot = MatrixIdentity();
+		TMatrix4x4 rot = MatrixIdentity();
 		
 		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
 
@@ -630,7 +630,7 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 		rot._2D[1][0] = +s;
 		rot._2D[1][1] = +c;
 
-		transform = MatrixTranslate(TVec3(-(stBBox.x + stBBox.width / 2.f), -(stBBox.y + stBBox.height / 2.f), 0.f)) * rot * MatrixTranslate(TVec3(stBBox.x + stBBox.width / 2.f, stBBox.y + stBBox.height / 2.f, 0.f));
+		transform = MatrixTranslate(TVector3(-(stBBox.x + stBBox.width / 2.f), -(stBBox.y + stBBox.height / 2.f), 0.f)) * rot * MatrixTranslate(TVector3(stBBox.x + stBBox.width / 2.f, stBBox.y + stBBox.height / 2.f, 0.f));
 
 		_pBuffer[7] = _pBuffer[0], _pBuffer[8] = _pBuffer[1];
 		_pBuffer[0]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
@@ -670,7 +670,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 {
 	IN_2D_GUARD
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(CRDM_POINTS, NULL, true);
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(CRDM_POINTS, NULL, true);
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
@@ -724,11 +724,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 {
 	IN_2D_GUARD
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(CRDM_LINES, NULL, true);
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(CRDM_LINES, NULL, true);
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
-	float quad[] = {
+	const float quad[] = {
 		min(stCoords1.x, stCoords2.x), min(stCoords1.y, stCoords2.y),
 		max(stCoords1.x, stCoords2.x), min(stCoords1.y, stCoords2.y),
 		max(stCoords1.x, stCoords2.x), max(stCoords1.y, stCoords2.y),
@@ -790,7 +790,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &st
 {
 	IN_2D_GUARD
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, NULL, true);
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, NULL, true);
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
@@ -830,13 +830,16 @@ DGLE_RESULT DGLE_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &st
 
 			if (eFlags & PF_VERTICES_COLOR)
 			{
-				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
-				
+				const TVertex2 triangles[] = {TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
+						TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
+						TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
+						TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
+						TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
+						TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a)};
+					
+				_batchAccumulator.resize(_batchAccumulator.size() + 6);
+				memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
+
 				if (!(eFlags & PF_FILL))
 				{
 					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a));
@@ -845,13 +848,16 @@ DGLE_RESULT DGLE_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &st
 			}
 			else
 			{
-				_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
-				_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
-				
+				const TVertex2 triangles[] = {TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
+						TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
+						TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
+						TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
+						TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
+						TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a)};
+					
+				_batchAccumulator.resize(_batchAccumulator.size() + 6);
+				memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
+
 				if (!(eFlags & PF_FILL))
 				{
 					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
@@ -895,7 +901,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 {
 	IN_2D_GUARD
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, NULL, true);
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, NULL, true);
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
@@ -1231,7 +1237,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVer
 	if (pTexture)
 		pTexture->GetCoreTexture(p_tex);
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINE_STRIP, p_tex, true);
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINE_STRIP, p_tex, true);
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
@@ -1248,7 +1254,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, TVertex2 *pstVer
 		min_y = min(pstVertices[i].y, min_y);
 	}
 
-	float quad[] = {
+	const float quad[] = {
 		min_x, min_y,
 		max_x, min_y,
 		max_x, max_y,
@@ -1391,7 +1397,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstV
 	if (pTexture)
 		pTexture->GetCoreTexture(p_tex);
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, p_tex, true);
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, p_tex, true);
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
@@ -1408,7 +1414,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstV
 		min_y = min(pstVertices[i].y, min_y);
 	}
 
-	float quad[] = {
+	const float quad[] = {
 		min_x, min_y,
 		max_x, min_y,
 		max_x, max_y,
@@ -1792,7 +1798,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuff
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix &stTransform, const TVector3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
+DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
 {
 	IN_2D_GUARD
 
@@ -1846,7 +1852,7 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 	if (tex)
 		tex->GetCoreTexture(p_tex);
 
-	bool do_batch_update = _2D_BATCH_NEED_UPDATE(CRDM_TRIANGLES, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
+	const bool do_batch_update = _2D_BATCH_NEED_UPDATE(CRDM_TRIANGLES, p_tex, (flags & EF_COLORMIX) || (flags & EF_VERTICES_COLOR));
 	
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
@@ -1867,11 +1873,11 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 		_pBuffer[7] += _astVerticesOffset[3].y;
 	}
 
-	TMatrix transform;
+	TMatrix4 transform;
 	
 	if (angle != 0.f)
 	{
-		TMatrix translate, translate_back, rot = MatrixIdentity();
+		TMatrix4 translate, translate_back, rot = MatrixIdentity();
 		
 		const float s = sinf(-angle * (float)M_PI / 180.f), c = cosf(-angle * (float)M_PI / 180.f);
 
@@ -1882,13 +1888,13 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 
 		if (flags & EF_ROTATEPT)
 		{
-			translate_back = MatrixTranslate(TVec3(coord.x + _stRotationPoint.x, coord.y + _stRotationPoint.y, 0.f));
-			translate = MatrixTranslate(TVec3(-(coord.x + _stRotationPoint.x), -(coord.y + _stRotationPoint.y), 0.f));
+			translate_back = MatrixTranslate(TVector3(coord.x + _stRotationPoint.x, coord.y + _stRotationPoint.y, 0.f));
+			translate = MatrixTranslate(TVector3(-(coord.x + _stRotationPoint.x), -(coord.y + _stRotationPoint.y), 0.f));
 		}
 		else
 		{
-			translate_back = MatrixTranslate(TVec3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
-			translate = MatrixTranslate(TVec3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
+			translate_back = MatrixTranslate(TVector3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
+			translate = MatrixTranslate(TVector3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
 		}
 
 		transform = translate * rot * translate_back;
@@ -1898,12 +1904,13 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 
 	if (flags & EF_SCALE)
 	{
-		TMatrix scale = MatrixIdentity();
+		TMatrix4 scale = MatrixIdentity();
 		scale._2D[0][0] = _stScale.x;
 		scale._2D[1][1] = _stScale.y;
 
-		TMatrix translate_back = MatrixTranslate(TVec3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f));
-		TMatrix translate = MatrixTranslate(TVec3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
+		const TMatrix4 translate_back = MatrixTranslate(TVector3(coord.x + dimension.x / 2.f, coord.y + dimension.y / 2.f, 0.f)),
+			translate = MatrixTranslate(TVector3(-(coord.x + dimension.x / 2.f), -(coord.y + dimension.y / 2.f), 0.f));
+		
 		transform = translate * scale * translate_back * transform;
 	}
 
@@ -2001,12 +2008,15 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 			{
 				if (flags & EF_VERTICES_COLOR)
 				{
-					_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8],	_pBuffer[9], _astVerticesColors[1].r,_astVerticesColors[1].g,_astVerticesColors[1].b,_astVerticesColors[1].a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11],_astVerticesColors[2].r,_astVerticesColors[2].g,_astVerticesColors[2].b,_astVerticesColors[2].a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], _astVerticesColors[0].r,_astVerticesColors[0].g,_astVerticesColors[0].b,_astVerticesColors[0].a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12],_pBuffer[11], _astVerticesColors[3].r,_astVerticesColors[3].g,_astVerticesColors[3].b,_astVerticesColors[3].a));
+					const TVertex2 triangles[] = {TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
+						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11], _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
+						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
+						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11], _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
+						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
+						TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12], _pBuffer[11], _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a)};
+					
+					_batchAccumulator.resize(_batchAccumulator.size() + 6);
+					memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
 				}
 				else
 				{
@@ -2015,12 +2025,15 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 					if (flags & EF_COLORMIX)
 						col = _stColormix;
 
-					_batchAccumulator.push_back(TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11],col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11],col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r,col.g,col.b,col.a));
-					_batchAccumulator.push_back(TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12],_pBuffer[11], col.r,col.g,col.b,col.a));
+					const TVertex2 triangles[] = {TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], col.r, col.g, col.b, col.a),
+						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11], col.r, col.g, col.b, col.a),
+						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r, col.g, col.b, col.a),
+						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11], col.r, col.g, col.b, col.a),
+						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], col.r, col.g, col.b, col.a),
+						TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12], _pBuffer[11], col.r, col.g, col.b, col.a)};
+					
+					_batchAccumulator.resize(_batchAccumulator.size() + 6);
+					memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
 				}
 			}
 	else
@@ -2070,7 +2083,7 @@ DGLE_RESULT DGLE_API CRender2D::SetColorMix(const TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_EFFECT2D_BLENDING_FLAGS eMode)
+DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
 {
 	IN_2D_GUARD
 
@@ -2152,7 +2165,7 @@ DGLE_RESULT DGLE_API CRender2D::GetColorMix(TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::GetBlendMode(E_EFFECT2D_BLENDING_FLAGS &eMode)
+DGLE_RESULT DGLE_API CRender2D::GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode)
 {
 	eMode = _ePrevBlendingMode;
 	return S_OK;
