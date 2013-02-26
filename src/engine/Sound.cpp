@@ -138,7 +138,7 @@ __forceinline const TSoundFrame & CChannel::NextFrame(float masterVol)
 		}
 		else // 16 bit
 		{
-			const int16 *pi16_dat = reinterpret_cast<const int16 *>(&_c_pData[_ui32ReaderPos]);
+			const int16 * const pi16_dat = reinterpret_cast<const int16 *>(&_c_pData[_ui32ReaderPos]);
 
 			if (!_c_bStereo)
 				_frame.SetMono(pi16_dat[0], _fPan, _fVol * masterVol);

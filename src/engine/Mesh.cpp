@@ -174,10 +174,10 @@ DGLE_RESULT DGLE_API CMesh::RecalculateNormals()
 	if (idxs_count == 0)
 		for(uint i = 0; i < verts_count / 3; ++i)
 		{
-			const TPoint3 *v[3];
-			v[0] = reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 0) * v_stride]);
-			v[1] = reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 1) * v_stride]);
-			v[2] = reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 2) * v_stride]);
+			const TPoint3 * const v[3] = {
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 0) * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 1) * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 2) * v_stride])};
 			
 			const TVector3 faset_normal = ((*v[0] - *v[1]).Cross(*v[1] - *v[2])).Normalize();
 
@@ -203,10 +203,10 @@ DGLE_RESULT DGLE_API CMesh::RecalculateNormals()
 				face[2] = reinterpret_cast<uint16 *>(&desc_new.pIndexBuffer[i * 3 * sizeof(uint16)])[2];
 			}
 
-			const TPoint3 *v[3];
-			v[0] = reinterpret_cast<TPoint3 *>(&desc_new.pData[face[0] * v_stride]);
-			v[1] = reinterpret_cast<TPoint3 *>(&desc_new.pData[face[1] * v_stride]);
-			v[2] = reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride]);
+			const TPoint3 * const v[3] = {
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[face[0] * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[face[1] * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride])};
 
 			const TVector3 faset_normal = ((*v[0] - *v[1]).Cross(*v[1] - *v[2])).Normalize();
 
@@ -293,15 +293,15 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 	if (idxs_count == 0)
 		for(uint i = 0; i < verts_count / 3; ++i)
 		{
-			const TPoint3 *v[3];
-			v[0] = reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 0) * v_stride]);
-			v[1] = reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 1) * v_stride]);
-			v[2] = reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 2) * v_stride]);
+			const TPoint3 * const v[3] = {
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 0) * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 1) * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[(i * 3 + 2) * v_stride])};
 			
-			const TPoint2 *t[3];
-			t[0] = reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + (i * 3 + 0) * tex_stride]);
-			t[1] = reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + (i * 3 + 1) * tex_stride]);
-			t[2] = reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + (i * 3 + 2) * tex_stride]);
+			const TPoint2 * const t[3] = {
+				reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + (i * 3 + 0) * tex_stride]),
+				reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + (i * 3 + 1) * tex_stride]),
+				reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + (i * 3 + 2) * tex_stride])};
 
 			const TVector3 v1 = *v[1] - *v[0], v2 = *v[2] - *v[0];
 			const TVec2 v3 = *t[1] - *t[0], v4 = *t[2] - *t[0];
@@ -341,15 +341,15 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 				face[2] = reinterpret_cast<uint16 *>(&desc_new.pIndexBuffer[i * 3 * sizeof(uint16)])[2];
 			}
 			
-			TPoint3 *v[3];
-			v[0] = reinterpret_cast<TPoint3 *>(&desc_new.pData[face[0] * v_stride]);
-			v[1] = reinterpret_cast<TPoint3 *>(&desc_new.pData[face[1] * v_stride]);
-			v[2] = reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride]);
+			const TPoint3 * const v[3] = {
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[face[0] * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[face[1] * v_stride]),
+				reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride])};
 
-			const TPoint2 *t[3];
-			t[0] = reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[0] * tex_stride]);
-			t[1] = reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[1] * tex_stride]);
-			t[2] = reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[2] * tex_stride]);
+			const TPoint2 * const t[3] = {
+				reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[0] * tex_stride]),
+				reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[1] * tex_stride]),
+				reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[2] * tex_stride])};
 
 			const TVector3 v1 = *v[1] - *v[0], v2 = *v[2] - *v[0];
 			const TVec2 v3 = *t[1] - *t[0], v4 = *t[2] - *t[0];
@@ -374,7 +374,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 
 	for (uint i = 0; i < verts_count; ++i)
 	{
-		const TVector3 *normal = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + i * n_stride]);
+		const TVector3 * const normal = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + i * n_stride]);
 		TVector3 *tangent = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiTangentOffset + i * t_stride]),
 			*binormal = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiBinormalOffset + i * b_stride]);
 		
@@ -409,7 +409,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateBounds()
 
 	for (uint i = 0; i < verts_count; ++i)
 	{
-		TPoint3 *p = reinterpret_cast<TPoint3 *>(&desc.pData[stride * i]);
+		const TPoint3 * const p = reinterpret_cast<TPoint3 *>(&desc.pData[stride * i]);
 
 		max_dem.x = max(p->x, max_dem.x);
 		min_dem.x = min(p->x, min_dem.x);

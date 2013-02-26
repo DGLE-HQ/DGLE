@@ -721,9 +721,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
+DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
-	bool b_non_power_of_two = uiWidth != 1 << (int)floor( ( log( (double)uiWidth ) / log(2.f) ) + 0.5f ) || uiHeight != 1 << (int)floor( ( log( (double)uiHeight ) / log(2.f) ) + 0.5f );
+	const bool b_non_power_of_two = uiWidth != 1 << (int)floor( ( log( (double)uiWidth ) / log(2.f) ) + 0.5f ) || uiHeight != 1 << (int)floor( ( log( (double)uiHeight ) / log(2.f) ) + 0.5f );
 
 	if (
 		((eDataFormat == TDF_BGR8 || eDataFormat == TDF_BGRA8) && !GLEW_EXT_bgra) || 
@@ -827,7 +827,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 	if (eLoadFlags & TLF_FILTERING_TRILINEAR && !(eLoadFlags & TLF_GENERATE_MIPMAPS) && !bMipmapsPresented)
 		(int &)eLoadFlags |= TLF_GENERATE_MIPMAPS;
 
-	bool b_is_compressed = eDataFormat == TDF_DXT1 || eDataFormat == TDF_DXT5;
+	const bool b_is_compressed = eDataFormat == TDF_DXT1 || eDataFormat == TDF_DXT5;
 
 	if (eLoadFlags & TLF_COMPRESS)
 	{
@@ -1187,7 +1187,7 @@ __forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc,
 		(stDrawDesc.uiTangentOffset != -1 || stDrawDesc.uiBinormalOffset != -1 || stDrawDesc.pAttribs))
 		return false;
 
-	const float *data = (float *)stDrawDesc.pData;
+	const float * const data = (float *)stDrawDesc.pData;
 
 	glBegin(_GetGLDrawMode(eMode));
 	
@@ -1351,7 +1351,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 		return S_FALSE;
 	}
 
-	CCoreGeometryBuffer *buff = (CCoreGeometryBuffer*)pBuffer;
+	CCoreGeometryBuffer * const buff = (CCoreGeometryBuffer*)pBuffer;
 
 	if (buff->GetVerticesVBO() != 0)
 	{

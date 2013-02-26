@@ -581,7 +581,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 			return false;
 }
 
-uint CResourceManager::_GenerateScaleImage(const uint8 *pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, uint uiNewWidth, uint uiNewHeight, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
+uint CResourceManager::_GenerateScaleImage(const uint8 * const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, uint uiNewWidth, uint uiNewHeight, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
 {
 	if (format > TDF_BGRA8)
 	{
@@ -618,7 +618,7 @@ uint CResourceManager::_GenerateScaleImage(const uint8 *pDataIn, uint uiWidth, u
 	return data_size;
 }
 
-uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
+uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
 {
 	if (format > TDF_BGRA8)
 		return -1;
@@ -677,7 +677,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 *pDataIn, uint uiWidth, u
 	return data_size;
 }
 
-bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return false;
@@ -1088,7 +1088,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		return false;
 	}
 	
-	int i_line_w = ui_bitmap_length/st_info_header.i32Height;
+	const int i_line_w = ui_bitmap_length/st_info_header.i32Height;
 	
 	uint8 *p_out = new uint8[ui_bitmap_length];
 	
@@ -1097,7 +1097,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 	delete[] p_data;
 
-	bool ret = _CreateTexture(prTex, p_out, st_info_header.i32Width, st_info_header.i32Height, TDF_BGR8, TCF_DEFAULT, eFlags);
+	const bool ret = _CreateTexture(prTex, p_out, st_info_header.i32Width, st_info_header.i32Height, TDF_BGR8, TCF_DEFAULT, eFlags);
 
 	delete[] p_out;
 
@@ -1169,14 +1169,14 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		return false;
 	}
 
-	bool ret = _CreateTexture(prTex, data_in, header.uiWidth, header.uiHeight, format, flags, eFlags);
+	const bool ret = _CreateTexture(prTex, data_in, header.uiWidth, header.uiHeight, format, flags, eFlags);
 
 	delete[] data_in;
 
 	return ret;
 }
 
-bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
 {
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return false;
@@ -1191,9 +1191,9 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDa
 		 textured = (eCreationFlags & MCF_TEXTURE_COORDS_PRESENTED) != 0,
 		 tangents = (eCreationFlags & MCF_TANGENT_SPACE_PRESENTED) != 0;
 
-	uint8 face_size = uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
+	const uint8 face_size = uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
 
-	uint vdata_size = (((1 + (int)normals) * uiNumVerts) * 3 + (textured * 2 + tangents * 6) * uiNumVerts) * sizeof(float),
+	const uint vdata_size = (((1 + (int)normals) * uiNumVerts) * 3 + (textured * 2 + tangents * 6) * uiNumVerts) * sizeof(float),
 		 idata_size = uiNumFaces * face_size * 3,
 		 data_size = vdata_size + idata_size;
 
@@ -1321,9 +1321,9 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_MO
 
 	pFile->Read(&header, sizeof(TDMDHeader), ui_read);
 
-	uint8 face_size = header.uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
+	const uint8 face_size = header.uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
 
-	uint datasize = (header.uiNumVerts * sizeof(float) * 2 + header.uiNumFaces * face_size) * 3 + header.bTexCoords * header.uiNumVerts * sizeof(float) * 2;
+	const uint datasize = (header.uiNumVerts * sizeof(float) * 2 + header.uiNumFaces * face_size) * 3 + header.bTexCoords * header.uiNumVerts * sizeof(float) * 2;
 
 	uint mcount = 1;
 
@@ -1524,7 +1524,7 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 	return true;
 }
 
-bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize)
+bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 * const pData, uint32 ui32DataSize)
 {
 	if (!pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 11025 && uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 		return false;
@@ -1662,7 +1662,7 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadTextureBMP(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = PTHIS(CResourceManager)->_LoadTextureBMP(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 	if (ret) prObj = (IEngBaseObj *&)ptex;
 	return ret;
 }
@@ -1670,7 +1670,7 @@ bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&pr
 bool DGLE_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadTextureTGA(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = PTHIS(CResourceManager)->_LoadTextureTGA(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 	if (ret) prObj = (IEngBaseObj *&)ptex;
 	return ret;
 }
@@ -1678,7 +1678,7 @@ bool DGLE_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&pr
 bool DGLE_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadTextureDTX(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = PTHIS(CResourceManager)->_LoadTextureDTX(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 	if (ret) prObj = (IEngBaseObj *&)ptex;
 	return ret;
 }
@@ -1686,7 +1686,7 @@ bool DGLE_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&pr
 bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	IEngBaseObj *pobj = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadDMDFile(pFile, pobj, (E_MESH_MODEL_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = PTHIS(CResourceManager)->_LoadDMDFile(pFile, pobj, (E_MESH_MODEL_LOAD_FLAGS)uiLoadFlags);
 	if (ret) prObj = pobj;
 	return ret;
 }
@@ -1694,7 +1694,7 @@ bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj
 bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	IBitmapFont *pfnt = NULL;
-	bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt);
+	const bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt);
 	if (ret) prObj = (IEngBaseObj *&)pfnt;
 	return ret;
 }
@@ -1703,7 +1703,7 @@ bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prOb
 {
 	ISoundSample *ps = NULL;
 	
-	bool ret = PTHIS(CResourceManager)->_LoadSoundWAV(pFile, ps);
+	const bool ret = PTHIS(CResourceManager)->_LoadSoundWAV(pFile, ps);
 	
 	if (ret)
 	{
@@ -1723,7 +1723,7 @@ void DGLE_API CResourceManager::_s_ProfilerEventHandler(void *pParameter, IBaseE
 
 DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
 {
-	DGLE_RESULT result = _CreateTexture(prTex, pData, uiWidth, uiHeight, eDataFormat, eCreationFlags, eLoadFlags) ? S_OK : S_FALSE;
+	const DGLE_RESULT result = _CreateTexture(prTex, pData, uiWidth, uiHeight, eDataFormat, eCreationFlags, eLoadFlags) ? S_OK : S_FALSE;
 	
 	if (bAddResourse)
 	{
@@ -1763,7 +1763,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 
 		for (uint i = 0; i < uiNumVerts; ++i)
 		{
-			TPoint3 *p = reinterpret_cast<TPoint3 *>(const_cast<uint8 *>(&pData[stride * i]));
+			const TPoint3 * const p = reinterpret_cast<TPoint3 *>(const_cast<uint8 *>(&pData[stride * i]));
 
 			max_dem.x = max(p->x, max_dem.x);
 			min_dem.x = min(p->x, min_dem.x);

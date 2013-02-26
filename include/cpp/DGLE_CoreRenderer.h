@@ -423,7 +423,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetPointSize(float fSize) = 0;
 		virtual DGLE_RESULT DGLE_API ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
 		virtual DGLE_RESULT DGLE_API SetRenderTarget(ICoreTexture *pTexture) = 0;
-		virtual DGLE_RESULT DGLE_API CreateTexture(ICoreTexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags) = 0;
+		virtual DGLE_RESULT DGLE_API CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags) = 0;
 		virtual DGLE_RESULT DGLE_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType) = 0;
 		virtual DGLE_RESULT DGLE_API ToggleStateFilter(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API PushStates() = 0;

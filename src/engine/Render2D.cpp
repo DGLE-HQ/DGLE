@@ -320,16 +320,16 @@ inline void CRender2D::_BatchFlush()
 	TDrawDataDesc desc;
 
 	desc.bVertexCoord2 = true;
-	desc.uiVertexStride = 8*sizeof(float);
-	desc.uiTexCoordOffset = 2*sizeof(float);
-	desc.uiTexCoordStride = 8*sizeof(float);
-	desc.uiColorOffset = 4*sizeof(float);
-	desc.uiColorStride = 8*sizeof(float);
+	desc.uiVertexStride = 8 * sizeof(float);
+	desc.uiTexCoordOffset = 2 * sizeof(float);
+	desc.uiTexCoordStride = 8 * sizeof(float);
+	desc.uiColorOffset = 4 * sizeof(float);
+	desc.uiColorStride = 8 * sizeof(float);
 
 	uint size = _batchAccumulator.size();
 
 	if (size != 0)
-		desc.pData = (uint8*)&_batchAccumulator[0];
+		desc.pData = (uint8 *)&_batchAccumulator[0];
 
 	if ((_bInLocalBatchMode && _bLocalBatchUEP) || _batchMode == BM_ENABLED_UPDATE_EVERY_TICK )
 	{
@@ -621,7 +621,7 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 
 	if (fAngle != 0.f)
 	{
-		TMatrix4x4 rot = MatrixIdentity();
+		TMatrix4 rot = MatrixIdentity();
 		
 		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
 
@@ -1685,7 +1685,7 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 	_2D_IF_BATCH_NO_UPDATE_EXIT
 		else
 		{
-			const float *data = (float *)stDrawDesc.pData;
+			const float * const data = (float *)stDrawDesc.pData;
 			
 			const uint	v_stride = stDrawDesc.uiVertexStride == 0 ? 2 : stDrawDesc.uiVertexStride/sizeof(float),
 						t_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride/sizeof(float),
