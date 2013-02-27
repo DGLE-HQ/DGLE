@@ -220,6 +220,15 @@ DGLE_RESULT DGLE_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 	switch(eMode)
 	{
 	case BM_AUTO:	
+		if (Core()->InitFlags() & EIF_FORCE_LIMIT_FPS)
+			_batchMode = BM_ENABLED_UPDATE_EVERY_FRAME;
+		else
+		{
+			// ToDo: based on number of objects on screen switch between modes in runtime
+			_batchMode = BM_ENABLED_UPDATE_EVERY_TICK;
+		}
+		break;
+
 	case BM_ENABLED_UPDATE_EVERY_TICK:
 		_batchMode = BM_ENABLED_UPDATE_EVERY_TICK;
 		break;

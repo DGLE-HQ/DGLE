@@ -730,8 +730,8 @@ void CCore::_MainLoop()
 
 	Console()->LeaveThreadSafeSection();
 
-	uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiUpdateInterval || _bPause)) * 10 +
-				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 5;
+	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiUpdateInterval || _bPause)) * 10 +
+				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 6;
 
 	if (sleep > 0)
 		Suspend(sleep);
