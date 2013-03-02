@@ -129,7 +129,7 @@ DGLE_RESULT DGLE_API CMesh::SetGeometryBuffer(ICoreGeometryBuffer *pBuffer, bool
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CMesh::RecalculateNormals()
+DGLE_RESULT DGLE_API CMesh::RecalculateNormals(bool bInvert)
 {
 	if (!_pBuffer)
 		return S_FALSE;
@@ -201,7 +201,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateNormals()
 			reinterpret_cast<TPoint3 *>(&desc_new.pData[face[1] * v_stride]),
 			reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride])};
 
-		const TVector3 faset_normal = ((*v[0] - *v[1]).Cross(*v[1] - *v[2])).Normalize();
+		const TVector3 faset_normal = ((*v[0] - *v[1]).Cross(*v[1] - *v[2])).Normalize() * (bInvert ? -1.f : 1.f);
 
 		*(reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + face[0] * n_stride])) += faset_normal;
 		*(reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + face[1] * n_stride])) += faset_normal;
@@ -235,7 +235,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 		return E_ABORT;
 
 	if (desc.uiNormalOffset == -1)
-		RecalculateNormals();
+		RecalculateNormals(false);
 
 	uint stride, verts_data_size, verts_count, idxs_data_size, idxs_count;
 	_CopyMeshData(desc, stride, verts_data_size, verts_count, idxs_data_size, idxs_count);

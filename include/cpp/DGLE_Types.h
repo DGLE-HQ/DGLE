@@ -1155,15 +1155,15 @@ namespace DGLE
 	}
 
 	/** Returns rotated matrix by a given axis vector and angle. */
-	inline TMatrix4x4 MatrixRotate(float fAngle, TVector3 &stAxis)
+	inline TMatrix4x4 MatrixRotate(float fAngle, const TVector3 &stAxis)
 	{
 		const float
-			axis_norm = sqrt(stAxis.x*stAxis.x + stAxis.y*stAxis.y + stAxis.z*stAxis.z),
+			axis_norm = sqrt(stAxis.x * stAxis.x + stAxis.y * stAxis.y + stAxis.z * stAxis.z),
 			x = stAxis.x / axis_norm,
 			y = stAxis.y / axis_norm,
 			z = stAxis.z / axis_norm,
-			sin_angle = sinf(fAngle*(float)M_PI/180.f),
-			cos_angle = cosf(fAngle*(float)M_PI/180.f);
+			sin_angle = sinf(fAngle * (float)M_PI / 180.f),
+			cos_angle = cosf(fAngle * (float)M_PI / 180.f);
 		return TMatrix4x4(
 			(1.f - x * x) * cos_angle + x * x,			z * sin_angle + x * y * (1.f - cos_angle),	x * z * (1.f - cos_angle) - y * sin_angle,	0.f,
 			x * y * (1.f - cos_angle) - z * sin_angle,	(1.f - y * y) * cos_angle + y * y,			y * z * (1.f - cos_angle) + x * sin_angle,	0.f,

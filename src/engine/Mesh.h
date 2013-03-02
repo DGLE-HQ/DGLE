@@ -34,7 +34,7 @@ public:
 	DGLE_RESULT DGLE_API GetTrianglesCount(uint &uiCnt);
 	DGLE_RESULT DGLE_API GetGeometryBuffer(ICoreGeometryBuffer *&prBuffer);
 	DGLE_RESULT DGLE_API SetGeometryBuffer(ICoreGeometryBuffer *pBuffer, bool bFreeCurrentBuffer);
-	DGLE_RESULT DGLE_API RecalculateNormals();
+	DGLE_RESULT DGLE_API RecalculateNormals(bool bInvert);
 	DGLE_RESULT DGLE_API RecalculateTangentSpace();
 	DGLE_RESULT DGLE_API RecalculateBounds();
 	DGLE_RESULT DGLE_API TransformVertices(const TMatrix4x4 &stTransMatrix);

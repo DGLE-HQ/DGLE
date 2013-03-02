@@ -428,14 +428,14 @@ DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjTyp
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj)
+DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEngBaseObj *&prObj)
 {
 	prObj = NULL;
 
-	if (!pcFileName || strlen(pcFileName) == 0)
+	if (!pcName || strlen(pcName) == 0)
 		return E_INVALIDARG;
 
-	uint32 hash = GetCRC32((uint8*)pcFileName, (uint32)strlen(pcFileName)*sizeof(char));
+	uint32 hash = GetCRC32((uint8*)pcName, (uint32)strlen(pcName) * sizeof(char));
 
 	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].nameHash == hash)

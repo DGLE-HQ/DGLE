@@ -719,7 +719,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType) = 0;
 
-		virtual DGLE_RESULT DGLE_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngBaseObj *&prObj) = 0;
 		virtual DGLE_RESULT DGLE_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj) = 0;
 
 		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
@@ -829,7 +829,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstantProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
 		virtual DGLE_RESULT DGLE_API CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord) = 0;
 		virtual DGLE_RESULT DGLE_API CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord) = 0;
-		virtual DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TPoint2 &stScale = TPoint2(1.f, 1.f)) = 0;
+		virtual DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TVector2 &stScale = TVector2(1.f, 1.f)) = 0;
 		virtual DGLE_RESULT DGLE_API ResetCamera() = 0;
 		virtual DGLE_RESULT DGLE_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
 
@@ -1051,7 +1051,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetTrianglesCount(uint &uiCnt) = 0;
 		virtual DGLE_RESULT DGLE_API GetGeometryBuffer(ICoreGeometryBuffer *&prBuffer) = 0;
 		virtual DGLE_RESULT DGLE_API SetGeometryBuffer(ICoreGeometryBuffer *pBuffer, bool bFreeCurrentBuffer) = 0;
-		virtual DGLE_RESULT DGLE_API RecalculateNormals() = 0;
+		virtual DGLE_RESULT DGLE_API RecalculateNormals(bool bInvert = false) = 0;
 		virtual DGLE_RESULT DGLE_API RecalculateTangentSpace() = 0;
 		virtual DGLE_RESULT DGLE_API RecalculateBounds() = 0;
 		virtual DGLE_RESULT DGLE_API TransformVertices(const TMatrix4x4 &stTransMatrix) = 0;

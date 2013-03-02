@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.01.2013 (c)Korotkov Andrey
+\date		03.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -223,10 +223,7 @@ DGLE_RESULT DGLE_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 		if (Core()->InitFlags() & EIF_FORCE_LIMIT_FPS)
 			_batchMode = BM_ENABLED_UPDATE_EVERY_FRAME;
 		else
-		{
-			// ToDo: based on number of objects on screen switch between modes in runtime
 			_batchMode = BM_ENABLED_UPDATE_EVERY_TICK;
-		}
 		break;
 
 	case BM_ENABLED_UPDATE_EVERY_TICK:
@@ -400,10 +397,10 @@ inline void CRender2D::_BatchFlush()
 void CRender2D::_Set2DProjMatrix(uint width, uint height)
 {
 	_pCoreRenderer->SetMatrix(TMatrix4(
-		2.f / (float)width, 0.f, 0.f, 0.f,
-		0.f, -2.f / (float)height, 0.f, 0.f,
-		0.f, 0.f, -1.f, 0.f,
-		-1.f, 1.f, 0.f, 1.f
+		2.f / (float)width, 0.f,				  0.f, 0.f,
+		0.f,				-2.f / (float)height, 0.f, 0.f,
+		0.f,				0.f,				 -1.f, 0.f,
+		-1.f,				1.f,				  0.f, 1.f
 		), MT_PROJECTION);
 }
 
@@ -557,7 +554,7 @@ DGLE_RESULT DGLE_API CRender2D::CoordAbsoluteToResCorrect(const TPoint2 &stAbsol
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale)
+DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle, const TVector2 &stScale)
 {
 	IN_2D_GUARD
 
@@ -591,7 +588,7 @@ DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle,
 			_stCamTransform = MatrixTranslate(TVector3(-(float)_uiScreenWidth / 2.f, -(float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
 		}
 
-		_stCamTransform = MatrixTranslate(TVector3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f)) * _stCamTransform;
+		_stCamTransform = _stCamTransform * MatrixTranslate(TVector3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f));
 
 		_pCoreRenderer->SetMatrix(_stCamTransform);
 
@@ -1500,123 +1497,150 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, TVertex2 *pstV
 
 DGLE_RESULT DGLE_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags)
 {
+	if (!pMesh)
+		return E_INVALIDARG;
+
+	ICoreGeometryBuffer *p_buff;
+
+	pMesh->GetGeometryBuffer(p_buff);
+
+	TPoint3 center;
+	TVector3 extents;
+
+	pMesh->GetCenter(center);
+	pMesh->GetExtents(extents);
+
+	return DrawBuffer3D(pTexture, p_buff, eFlags, MatrixScale(stDimensions) * (fAngle == 0.f ? MatrixIdentity() : MatrixRotate(fAngle, stAxis)) * MatrixTranslate(stCoords), center, extents, bClip, fFovY);
+}
+
+DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
+{
 	IN_2D_GUARD
-	/*
-	if(!pMesh || !pTexture)
+
+	if (!pBuffer || !pTexture)
 		return E_INVALIDARG;
 
 	_BatchFlush();
 
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
+	const TVector3 scale(stTransform._2D[0][0], stTransform._2D[1][1], stTransform._2D[2][2]);
+	
+	TVector3 corner;
 
-	glLoadIdentity();
+	corner.x = stExtents.x + fabs(stCenter.x);
+	corner.y = stExtents.y + fabs(stCenter.y);
+	corner.z = stExtents.z + fabs(stCenter.z);
+	
+	corner.x *= fabs(scale.x);
+	corner.y *= fabs(scale.y);
+	corner.z *= fabs(scale.z);
 
-	TPoint3 center, extents, corner;
-	pMesh->GetCenter(center);
-	pMesh->GetExtents(extents);
-
-	corner.x = extents.x + abs(center.x);
-	corner.y = extents.y + abs(center.y);
-	corner.z = extents.z + abs(center.z);
-	corner.x *= abs(stDimensions.x);
-	corner.y *= abs(stDimensions.y);
-	corner.z *= abs(stDimensions.z);
-	float max_dist = sqrt(corner.x * corner.x + corner.y * corner.y + corner.z * corner.z);
-
-	GLdouble zplane = _uiScreenHeight / tan(fFovY / 2 * nv_to_rad);
-
-	GLdouble zfar = zplane;
-
-	if(!bClip)
-		zfar += max_dist;
+	const float max_dist = corner.Length();
+	const double z_plane = (double)_uiScreenHeight / tan(fFovY / 2 * (M_PI / 180.0));
+	
+	float z_far;
+	
+	if (!bClip)
+		z_far = (float)(z_plane + max_dist);
+	else
+		z_far = (float)z_plane;
 
 	// restrict znear in a way to [0.998..1.0] ndc z range ([-1..1]) occupy no more then half of eye space z range ([-znear..-zplane])
-	const GLdouble z = 0.999;
-	GLdouble zmin = (zplane - zplane * sqrt(1 - 4 * z * (1 - z))) / (2 * z);
-	GLdouble znear = max(zmin, zplane - max_dist);
-	GLdouble plane_right = _uiScreenWidth / 2., plane_left = -plane_right, plane_bottom = _uiScreenHeight / +2., plane_top = -plane_bottom;
-	GLdouble factor = znear / zplane;
-	GLdouble near_right = plane_right * factor, near_left = -near_right, near_bottom = plane_bottom * factor, near_top = -near_bottom;
+	const double z = 0.999,
+		z_min = (z_plane - z_plane * sqrt(1.0 - 4.0 * z * (1.0 - z))) / (2.0 * z),
+		z_near = max(z_min, z_plane - max_dist),
+		factor = z_near / z_plane;
 
-	glFrustum(near_left, near_right, near_bottom, near_top, znear, zfar);
+	const float
+		plane_right = (float)_uiScreenWidth / 2.f,
+		plane_left = -plane_right,
+		plane_bottom = (float)_uiScreenHeight / 2.f,
+		plane_top = -plane_bottom,
 
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
+		near_right = (float)(plane_right * factor),
+		near_left = -near_right,
+		near_bottom = (float)(plane_bottom * factor),
+		near_top = -near_bottom;
+
+	const TMatrix4 new_proj(
+		(float)(2.0 * z_near / (near_right - near_left)),	 0.f,												 0.f,																0.f,
+		0.f,												 (float)(2.0 * z_near / (near_top - near_bottom)),	 0.f,																0.f,
+		(near_right + near_left) / (near_right - near_left), (near_top + near_bottom) / (near_top - near_bottom),(float)(-((double)z_far + z_near) / ((double)z_far - z_near)),		-1.f,
+		0.f,												 0.f,												 (float)(-2.0 * (double)z_far * z_near / ((double)z_far - z_near)),	0.f);
+	
+	TMatrix4 prev_proj, prev_mview, new_mview;
 
 	float scale_z = 1.f;
 
-	if(_bCameraWasSet)
+	if (_bCameraWasSet)
 	{
-		glLoadIdentity();
-		glTranslated(plane_left, plane_top, 0);
-		glMultMatrixf(_stCamTransform.mat_array);
-		scale_z = (_stCamScale.x+_stCamScale.y)/2.f;
+		new_mview = _stCamTransform * MatrixTranslate(TVector3(plane_left, plane_top, 0.f));
+		scale_z = (_stCamScale.x + _stCamScale.y) / 2.f;
 	}
 	else
-		 glTranslated(plane_left, plane_top, 0);
+		new_mview = MatrixTranslate(TVector3(plane_left, plane_top, 0.f));
 
-	glTranslatef(stCoords.x, stCoords.y, -zplane);
+	new_mview = MatrixScale(TVector3(1.f, 1.f, scale_z)) * stTransform * MatrixTranslate(TVector3(0.f, 0.f, (float)-z_plane)) * new_mview;
 
-	if(fAngle)
-		glRotatef(fAngle, stAxis.x, stAxis.y, stAxis.z);
+	_pCoreRenderer->GetMatrix(prev_proj, MT_PROJECTION);
+	_pCoreRenderer->SetMatrix(new_proj, MT_PROJECTION);
 
-	glScalef(stDimensions.x, stDimensions.y, stDimensions.z*scale_z);
+	_pCoreRenderer->GetMatrix(prev_mview);
+	_pCoreRenderer->SetMatrix(new_mview);
 
-	CFrustum frustum;
+	IRender3D *p_render_3d;
+	Core()->pRender()->GetRender3D(p_render_3d);
 
-	frustum.Setup();
+	p_render_3d->FrustumSetup();
 
-	if(!frustum.Cull(vec3(&center.x), vec3(&extents.x)))
+	bool do_cull;
+	p_render_3d->CullBox(stCenter, stExtents, do_cull);
+
+	if (!do_cull)
 	{
-		if(_batchMode > BM_DISABLED)
-		{
-			GL_SMAN->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			GL_SMAN->glDisableClientState(GL_COLOR_ARRAY);
-			if(GLEW_ARB_vertex_buffer_object)
-				glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-		}
-
-		if(eFlags & EF_COLORMIX)
-			GL_SMAN->glColor4f(_stColormix.r,_stColormix.g,_stColormix.b,_stColormix.a);
+		if (eFlags & EF_COLORMIX)
+			_pCoreRenderer->SetColor(_stColormix);
 		else  
-			GL_SMAN->glColor4f(1.f,1.f,1.f,1.f);
+			_pCoreRenderer->SetColor(TColor4());
 
-		if(eFlags & EF_BLEND)
+		ICoreTexture *p_ctex;
+		pTexture->GetCoreTexture(p_ctex);
+		_pCoreRenderer->BindTexture(p_ctex);
+
+		if (eFlags & EF_BLEND)
 		{
-			GL_SMAN->glDisable(GL_ALPHA_TEST);
-			GL_SMAN->glEnable(GL_BLEND);
-			glEnable(GL_CULL_FACE);
+			_stRasterStateDesc.bAlphaTestEnable = false;
+			_stBlendStateDesc.bEnable = true;
 		}
-		else 
-		{
-			GL_SMAN->glDisable(GL_BLEND);
-			GL_SMAN->glEnable(GL_ALPHA_TEST);
-		}
+		else
+			if (eFlags & EF_NONE)
+			{
+				_stRasterStateDesc.bAlphaTestEnable = false;
+				_stBlendStateDesc.bEnable = false;
+			}
+			else 
+			{
+				_stRasterStateDesc.bAlphaTestEnable = true;
+				_stBlendStateDesc.bEnable = false;
+			}
 
-		GLuint tex_glident;
-		pTexture->GetGLTexIdent(tex_glident);
-		GL_SMAN->glBindTexture(GL_TEXTURE_2D, tex_glident);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
 
-		glEnable(GL_DEPTH_TEST);
-		pMesh->Draw();
-		glDisable(GL_DEPTH_TEST);
+		TDepthStencilDesc ds_desc;
+		ds_desc.bDepthTestEnable = true;
+		_pCoreRenderer->SetDepthStencilState(ds_desc);
 
-		if(eFlags & EF_BLEND)
-			glDisable(GL_CULL_FACE);
+		_pCoreRenderer->DrawBuffer(pBuffer);
 
-		if(_batchMode > BM_DISABLED)
-			glEnableClientState(GL_VERTEX_ARRAY);
+		ds_desc.bDepthTestEnable = false;
+		_pCoreRenderer->SetDepthStencilState(ds_desc);
 
 		++_iObjsDrawnCount;
 	}
 
-	glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
+	_pCoreRenderer->SetMatrix(prev_proj, MT_PROJECTION);
+	_pCoreRenderer->SetMatrix(prev_mview);
 
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	*/
 	return S_OK;
 }
 
@@ -1803,15 +1827,6 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuff
 	_pCoreRenderer->DrawBuffer(pBuffer);
 
 	++_iObjsDrawnCount;
-
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
-{
-	IN_2D_GUARD
-
-	//ToDo
 
 	return S_OK;
 }

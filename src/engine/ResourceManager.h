@@ -141,7 +141,7 @@ public:
 	DGLE_RESULT DGLE_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount);
 	DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType);
 	
-	DGLE_RESULT DGLE_API GetResourceByFileName(const char *pcFileName, IEngBaseObj *&prObj);
+	DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngBaseObj *&prObj);
 	DGLE_RESULT DGLE_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj);
 	
 	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags);

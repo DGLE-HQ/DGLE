@@ -1163,7 +1163,7 @@ inline void CCoreRendererGL::_TriangleStatistics(E_CORE_RENDERER_DRAW_MODE eMode
 	}
 }
 
-inline GLenum CCoreRendererGL::_GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode)
+inline GLenum CCoreRendererGL::_GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) const
 {
 	GLenum mode;
 
@@ -1409,7 +1409,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ToggleAlphaTestState(bool bEnabled)
 	return S_OK;
 }
 
-inline GLenum CCoreRendererGL::_GetGLBlendFactor(E_BLEND_FACTOR factor)
+inline GLenum CCoreRendererGL::_GetGLBlendFactor(E_BLEND_FACTOR factor) const
 {
 	switch (factor)
 	{
@@ -1446,7 +1446,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetBlendState(TBlendStateDesc &stState)
 	return S_OK;
 }
 
-inline GLenum CCoreRendererGL::_GetGLComparsionMode(E_COMPARISON_FUNC mode)
+inline GLenum CCoreRendererGL::_GetGLComparsionMode(E_COMPARISON_FUNC mode) const
 {
 	switch (mode)
 	{

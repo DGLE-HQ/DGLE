@@ -111,7 +111,7 @@ public:
 	DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstaintProportions); 
 	DGLE_RESULT DGLE_API CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord);
 	DGLE_RESULT DGLE_API CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord);
-	DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle, const TPoint2 &stScale);
+	DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle, const TVector2 &stScale);
 	DGLE_RESULT DGLE_API ResetCamera();
 	DGLE_RESULT DGLE_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull);
 

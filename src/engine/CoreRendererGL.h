@@ -74,9 +74,9 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	bool _bStateFilterEnabled;
 	uint _uiUnfilteredDrawSetups, _uiOverallDrawSetups, _uiOverallDrawCalls, _uiOverallTrianglesCount;
 
-	inline GLenum _GetGLBlendFactor(E_BLEND_FACTOR factor);
-	inline GLenum _GetGLComparsionMode(E_COMPARISON_FUNC mode);
-	inline GLenum _GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode);
+	inline GLenum _GetGLBlendFactor(E_BLEND_FACTOR factor) const;
+	inline GLenum _GetGLComparsionMode(E_COMPARISON_FUNC mode) const;
+	inline GLenum _GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) const;
 #ifdef USE_LEGACY_DRAW
 	__forceinline bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 #endif
