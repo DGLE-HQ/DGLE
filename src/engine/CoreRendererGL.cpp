@@ -1026,7 +1026,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *
 		return E_INVALIDARG;
 
 	uint vertices_data_size = uiVerticesCount * CCoreRendererGL::GetVertexSize(stDrawDesc),
-		 indexes_data_size = uiIndexesCount * (stDrawDesc.bIndexBuffer32 ? sizeof(uint16) : sizeof(uint32));
+		 indexes_data_size = uiIndexesCount * (stDrawDesc.bIndexBuffer32 ? sizeof(uint32) : sizeof(uint16));
 
 	TDrawDataDesc desc(stDrawDesc);
 	desc.pData = NULL;
