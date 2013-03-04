@@ -16,7 +16,7 @@ struct TConEntry
 	char	*pcName;
 	char	*pcHelp;
 	void	*pParameter;
-	int		*piValue;
+	int		*piVar;
 	int		 iMinValue,
 			 iMaxValue;
 
@@ -66,12 +66,12 @@ public:
 	~CConsole();
 
 	void  Visible(bool bVisible);
-	TWinHandle GetWindowHandle();
+	TWindowHandle GetWindowHandle();
 	uint32 GetThreadId();
 	void  Write(const std::string &strTxt, bool bToPrevLine = false);
 	void  Exec(const char *pcCommand);
 	void  RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
-	void  RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL);
+	void  RegComVar(const char *pcName, const char *pcHelp, int *piVar, int iMin, int iMax, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL);
 	bool  UnRegCom(const char *pcName);
 	void  EnterThreadSafeSection();
 	void  LeaveThreadSafeSection();

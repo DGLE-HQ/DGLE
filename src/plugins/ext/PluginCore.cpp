@@ -8,16 +8,13 @@ See "DGLE.h" for more details.
 */
 
 #include "PluginCore.h"
-
+#include <locale>
 using namespace std;
 
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):
 _pEngineCore(pEngineCore)
 {
-	locale::global(std::locale(""));
-	setlocale(LC_NUMERIC, "C");
-	
-	_pEngineCore->GetInstanceIdx(_uiInstIdx);
+	_pEngineCore->GetInstanceIndex(_uiInstIdx);
 
 	_pEngineCore->AddProcedure(EPT_INIT, &_s_Init, (void*)this);
 	_pEngineCore->AddProcedure(EPT_FREE, &_s_Free, (void*)this);
@@ -527,35 +524,35 @@ void DGLE_API CPluginCore::_s_Free(void *pParametr)
 	((CPluginCore *)pParametr)->_Free();
 }
 
-bool DGLE_API CPluginCore::_s_LoadTexturePNG(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
 
 	bool ret = ((CPluginCore*)pParametr)->_LoadTexturePNG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
-	if (ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)ptex;
 
 	return ret;
 }
 
-bool DGLE_API CPluginCore::_s_LoadTextureJPG(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
 
 	bool ret = ((CPluginCore*)pParametr)->_LoadTextureJPG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
-	if (ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)ptex;
 
 	return ret;
 }
 
-bool DGLE_API CPluginCore::_s_LoadTextureDDS(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
 {
 	ITexture *ptex = NULL;
 
 	bool ret = ((CPluginCore*)pParametr)->_LoadTextureDDS(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
-	if (ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)ptex;
 
 	return ret;
 }

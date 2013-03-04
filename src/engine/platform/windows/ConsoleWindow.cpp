@@ -97,7 +97,7 @@ DGLE_RESULT CConsoleWindow::GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iH
 	return S_OK;
 }
 
-DGLE_RESULT CConsoleWindow::GetWindowHandle(TWinHandle &tHandle)
+DGLE_RESULT CConsoleWindow::GetWindowHandle(TWindowHandle &tHandle)
 {
 	tHandle = _hWnd;
 

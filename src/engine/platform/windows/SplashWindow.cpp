@@ -57,7 +57,7 @@ DGLE_RESULT CSplashWindow::Free()
 	return S_OK;
 }
 
-DGLE_RESULT CSplashWindow::SetOwnerWindow(TWinHandle tOwnerHwnd)
+DGLE_RESULT CSplashWindow::SetOwnerWindow(TWindowHandle tOwnerHwnd)
 {
 	_hOwnerWndHwnd = tOwnerHwnd;
 	return S_OK;

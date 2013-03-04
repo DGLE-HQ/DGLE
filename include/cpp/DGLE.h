@@ -134,7 +134,7 @@ This is simplest DGLE application for Windows.
 
 #endif
 
-#include "DGLE_types.h"
+#include "DGLE_Types.h"
 
 /** Engines main namespace. */
 namespace DGLE
@@ -161,16 +161,25 @@ namespace DGLE
 	public:
 		/** Returns unique identifier of the last interface in the inheritance chain.
 			\param[out] guid Unique interface identifier.
-			\return Always returns DGLE_types.h::S_OK.
+			\return Always returns DGLE_Types.h::S_OK.
 		 */		
 		virtual DGLE_RESULT DGLE_API GetGUID(GUID &guid) = 0;
+		
 		/** Executes some command using its index or bitmask. Commands are specific for concrete interface. All commands should be described in documentation.
 			\param[in] uiCmd Command index or some bitmask. These values must be gotten from documentation.
 			\param[in, out] stVar Variant with additional command parameters and for storing command result.
 			\return E_NOTIMPL indicates that interface has not got any commands.
 			\note If command returns any TVariant with allocated data inside then command with index -1 should delete any allocated memory inside interface.
 		*/
-		virtual DGLE_RESULT DGLE_API ExecCmd(uint uiCmd, TVariant &stVar) = 0;
+		virtual DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar) = 0;
+			
+		/** Executes some text command and returns result as variant. Commands are specific for concrete interface. All commands should be described in documentation.
+			\param[in] pcCommand Pointer to allocated string with command.
+			\param[in, out] stVar Variant with additional command parameters and for storing command result.
+			\return E_NOTIMPL indicates that interface has not got any commands.
+		*/
+		virtual DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar) = 0;
+
 		/** Executes some text command and returns result as string. Commands are specific for concrete interface. All commands should be described in documentation.
 			\param[in] pcCommand Pointer to allocated string with command.
 			\param[out] pcResult Pointer to allocated string to accept command result.
@@ -178,16 +187,10 @@ namespace DGLE
 			\return E_INVALIDARG must be returned if allocated string is too small, uiCharsCount will contain required string length. E_NOTIMPL indicates that interface has not got any commands.
 			\note If pcResult for command is NULL then uiCharsCount will contain recommended result string length and command should not be executed.
 		*/
-		virtual DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
-		/** Executes some text command and returns result as variant. Commands are specific for concrete interface. All commands should be described in documentation.
-			\param[in] pcCommand Pointer to allocated string with command.
-			\param[in, out] stVar Variant with additional command parameters and for storing command result.
-			\return E_NOTIMPL indicates that interface has not got any commands.
-		*/
-		virtual DGLE_RESULT DGLE_API ExecCmdVar(const char *pcCommand, TVariant &stVar) = 0;
+		virtual DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount) = 0;
 	};
 
-//Engine SubSystem interface//
+//Engine SubSystem Interface//
 
 	/** Engine subsystems types. */
 	enum E_ENGINE_SUB_SYSTEM
@@ -210,12 +213,12 @@ namespace DGLE
 	public:
 		/** Returns type of subsystem. 
 			\param[out] eSubSystemType Type of the subsystem to which you may cast this interface pointer.
-			\return Always returns DGLE_types.h::S_OK.	
+			\return Always returns DGLE_Types.h::S_OK.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType) = 0;
 	};
 
-//Engine Plugin interface//
+//Engine Plugin Interface//
 
 	// {B94E0E40-8885-41dd-8BC5-4CD663AE5709}
 	static const GUID IID_IPlugin = 
@@ -229,6 +232,7 @@ namespace DGLE
 			\param[out] stInfo Structure in which plugin description will be stored.
 		*/
 		virtual DGLE_RESULT DGLE_API GetPluginInfo(TPluginInfo &stInfo) = 0;
+		
 		/** Returns the name of interface which plugin implements or empty string if it implements nothing.
 			\param[out] pcName Pointer to allocated string.
 			\param[in, out] uiCharsCount Count of the chars in allocated string.
@@ -238,7 +242,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetPluginInterfaceName(char* pcName, uint &uiCharsCount) = 0;
 	};
 
-//Engine Subsystem Plugin interface//
+//Engine Subsystem Plugin Interface//
 
 	// {27908E31-8D8E-4076-AE33-087A1BE5DCB3}
 	static const GUID IID_ISubSystemPlugin = 
@@ -254,14 +258,15 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetSubSystemInterface(IEngineSubSystem *&prSubSystem) = 0;
 	};
 
-//Engine Base Object interface//
+//Engine Base Object Interface//
 
 	/** Types of engine objects. */
-	enum E_ENG_OBJ_TYPE
+	enum E_ENGINE_OBJECT_TYPE
 	{
 		EOT_UNKNOWN = 0,		/**< Undefined or custom object type. */
 		EOT_TEXTURE,			/**< Texture represents any basic raster data. \see ITexture*/
 		EOT_MATERIAL,			/**< Material is a combination of textures, colors and other settings of how 3D object will be rendered in scene. \see IMaterial */
+		EOT_LIGHT,				/**< Light is source of lighting for 3D. \see ILight */
 		EOT_MESH,				/**< Mesh is an atomic basic geometry unit. \see IMesh */
 		EOT_MODEL,				/**< Model is a composition of meshes with materials. Could contain animation and levels of detail. \see IModel*/
 		EOT_BITMAP_FONT,		/**< Bitmap font is a simple 2D raster font for common purpose. \see IBitmapFont */
@@ -272,28 +277,30 @@ namespace DGLE
 	};
 
 	// {C010239A-6457-40f5-87EF-FAA3156CE6E2}
-	static const GUID IID_IEngBaseObj = 
+	static const GUID IID_IEngineBaseObject = 
 	{ 0xc010239a, 0x6457, 0x40f5, { 0x87, 0xef, 0xfa, 0xa3, 0x15, 0x6c, 0xe6, 0xe2 } };
 
 	/** Base interface of any engine object. 
 		Engine objects are commonly loaded from files by Resource Manager subsystem.
 		\see IResourceManager
 	*/
-	class IEngBaseObj : public IDGLE_Base
+	class IEngineBaseObject : public IDGLE_Base
 	{
 	public:
 		/** Releases object and deallocates memory. Also removes it from IResourceManager lists. 
 			After calling Free() method you can safely null the pointer to the object.
 		*/
 		virtual DGLE_RESULT DGLE_API Free() = 0;
+
 		/** Returns type of object. 
 			\param[out] eObjType Type of the object to which you may cast this interface pointer.
-			\return Always returns DGLE_types.h::S_OK.	
+			\return Always returns DGLE_Types.h::S_OK.	
 		*/
-		virtual DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType) = 0;
+		virtual DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType) = 0;
+
 		/** In case object type is EOT_UNKNOWN, you can use this function to get specific object type id.
 			\param[out] uiObjUnknownType Integer with unique object type index. Meaning of these indexes must be provided by the developer of specific object type.
-			\return Returnes DGLE_types.h::S_FALSE if object is not of EOT_UNKNOWN type and DGLE_types.h::S_OK otherwise.	
+			\return Returnes DGLE_Types.h::S_FALSE if object is not of EOT_UNKNOWN type and DGLE_Types.h::S_OK otherwise.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) = 0;
 	};
@@ -306,12 +313,12 @@ namespace DGLE
 	enum E_EVENT_TYPE
 	{
 		ET_UNKNOWN = 0,				/**< Undefined or custom event type. */ 
-		ET_BEFORE_INIT,				/**< Event occurs just before engine will call its initialization routines. \see IEvBeforeInit */ 
+		ET_BEFORE_INITIALIZATION,	/**< Event occurs just before engine will call its initialization routines. \see IEvBeforeInitialization */ 
 		ET_BEFORE_RENDER,			/**< Event occurs before every frame. */ 
 		ET_AFTER_RENDER,			/**< Event occurs after every frame. */ 
 		ET_ON_PROFILER_DRAW,		/**< It is a special event on which you can render some text information on screen. \note If you want to output some statistic or profiling information use this event and special RenderProfilerTxt method. \see IEngineCore::RenderProfilerTxt */ 
-		ET_ON_WIN_MESSAGE,			/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWinMessage */ 
-		ET_ON_GET_SSYSTEM,			/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
+		ET_ON_WINDOW_MESSAGE,		/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWindowMessage */ 
+		ET_ON_GET_SUBSYSTEM,		/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
 		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputted to the engine console. \see IEvConsoleWrite */
 		ET_ON_FULLSCREEN			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
@@ -329,39 +336,41 @@ namespace DGLE
 	public:
 		/** Returns type of event. 
 			\param[out] eEvType Type of the event. You may cast this interface pointer to special event interface if such exists.
-			\return Always returns DGLE_types.h::S_OK.	
+			\return Always returns DGLE_Types.h::S_OK.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType) = 0;
+
 		/** In case event type is ET_UNKNOWN, you can use this function to get specific event type id.
 			\param[out] uiUnknEvType Integer with unique event type index. Meaning of these indexes must be provided by the developer of specific event type.
-			\return Returns DGLE_types.h::S_FALSE if event is not of ET_UNKNOWN type and DGLE_types.h::S_OK otherwise.	
+			\return Returns DGLE_Types.h::S_FALSE if event is not of ET_UNKNOWN type and DGLE_Types.h::S_OK otherwise.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetUnknownEventType(uint &uiUnknEvType) = 0;
 	};
 
 	// {EB735739-3D12-4522-B6D7-EEE3225DF934}
-	static const GUID IID_IEvBeforeInit = 
+	static const GUID IID_IEvBeforeInitialization = 
 	{ 0xeb735739, 0x3d12, 0x4522, { 0xb6, 0xd7, 0xee, 0xe3, 0x22, 0x5d, 0xf9, 0x34 } };
 
 	enum E_ENGINE_INIT_FLAGS;
 
 	/** Event occurs just before engine will call its initialization routines.
 		On this event you can hook engine init Parameters.
-		\see ET_BEFORE_INIT, IEngineCore::InitializeEngine, IBaseEvent
+		\see ET_BEFORE_INITIALIZATION, IEngineCore::InitializeEngine, IBaseEvent
 	 */
-	class IEvBeforeInit : public IBaseEvent
+	class IEvBeforeInitialization : public IBaseEvent
 	{
 	public:
 		/** Sets new engine initialization parameters.
 			\param[in] stWindowParam New engine window structure to replace current.
 			\param[in] eInitFlags New engine initialization flags to replace current.
 		 */
-		virtual DGLE_RESULT DGLE_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
+		virtual DGLE_RESULT DGLE_API SetParameters(const TEngineWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
+
 		/** Retrieves current engine initialization parameters. 
 			\param[in] stWindowParam Current engine window structure.
 			\param[in] eInitFlags Current engine initialization flags.
 		 */
-		virtual DGLE_RESULT DGLE_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
+		virtual DGLE_RESULT DGLE_API GetParameters(TEngineWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags) = 0;
 	};
 	
 	// {9E35969A-B0D4-4E5A-A89B-1A5AAD057028}
@@ -403,15 +412,18 @@ namespace DGLE
 		 \return E_INVALIDARG must be returned if allocated string is too small.
 		 \note If pcTxt is NULL then uiCharsCount will contain the length of the text to allocate.
 		 */		
-		virtual DGLE_RESULT DGLE_API GetMessageTxt(char *pcTxt, uint &uiCharsCount) = 0;
+		virtual DGLE_RESULT DGLE_API GetMessageText(char *pcTxt, uint &uiCharsCount) = 0;
+
 		/** Suspends all engine threads and pauses all engine routines. 
 			\param[in] bFreeze Suspends if true or resumes if false engine threads and routines.
 		 */
 		virtual DGLE_RESULT DGLE_API FreezeEngine(bool bFreeze) = 0;
+
 		/** Forces engine not to show error message and console. 
 			\note If you decided not to show error message you should inform user about error somehow.
 		 */
 		virtual DGLE_RESULT DGLE_API ForceNoMessage() = 0;
+
 		/** Forces engine to ignore current error and tries to continue. 
 			\warning Use with care.
 		 */
@@ -419,20 +431,20 @@ namespace DGLE
 	};
 
 	// {8D718E48-581D-4cbb-9C40-C04998106F8D}
-	static const GUID IID_IEvWinMessage = 
+	static const GUID IID_IEvWindowMessage = 
 	{ 0x8d718e48, 0x581d, 0x4cbb, { 0x9c, 0x40, 0xc0, 0x49, 0x98, 0x10, 0x6f, 0x8d } };
 
 	/** Event occurs every time when window receives message. 
 		Use this event to hook window messages.
-		\see ET_ON_WIN_MESSAGE, IBaseEvent
+		\see ET_ON_WINDOW_MESSAGE, IBaseEvent
 	 */
-	class IEvWinMessage : public IBaseEvent
+	class IEvWindowMessage : public IBaseEvent
 	{
 	public:
 		/** Retrieves window message.
 			\param[out] stWinMsg Structure with current message information.
 		 */
-		virtual DGLE_RESULT DGLE_API GetWinMessage(TWinMessage &stWinMsg) = 0;
+		virtual DGLE_RESULT DGLE_API GetMessage(TWindowMessage &stWinMsg) = 0;
 	};
 
 	// {2B6D2547-716E-490c-B1F1-422CB428738F}
@@ -441,7 +453,7 @@ namespace DGLE
 
 	/** Event occurs when someone calls IEngineCore::GetSubSystem method.
 		You can substitute any subsystem by your own realization on this event.
-		\see ET_ON_GET_SSYSTEM, IBaseEvent
+		\see ET_ON_GET_SUBSYSTEM, IBaseEvent
 	 */
 	class IEvGetSubSystem : public IBaseEvent
 	{
@@ -450,6 +462,7 @@ namespace DGLE
 			\param[out] eSubSystem Type of retrieving subsystem.
 		 */
 		virtual DGLE_RESULT DGLE_API GetSubSystemType(E_ENGINE_SUB_SYSTEM &eSubSystem) = 0;
+
 		/** Substitutes engine subsystem by custom one. 
 			\param[in] pSubSystem Pointer to subsystem interface with which retrieving subsystem will be substituted.
 		 */		
@@ -462,8 +475,8 @@ namespace DGLE
 
 	/** Event occures when engine is going fullscreen or go back to windowed mode from fullscreen mode.
 		On this event you can adjust display resolution.
-		\note If you want to prevent engine from going fullscreen mode on hotkey combination see EWF_RESTRICT_FSCREEN_HOTKEY flag.
-		\see ET_ON_FULLSCREEN, IBaseEvent, EWF_RESTRICT_FSCREEN_HOTKEY
+		\note If you want to prevent engine from going fullscreen mode on hotkey combination see EWF_RESTRICT_FULLSCREEN_HOTKEY flag.
+		\see ET_ON_FULLSCREEN, IBaseEvent, EWF_RESTRICT_FULLSCREEN_HOTKEY
 	 */
 	class IEvGoFullScreen : public IBaseEvent
 	{
@@ -474,6 +487,7 @@ namespace DGLE
 			\param[out] bGoFullScreen If true engine is switching to fullscreen mode or to windowed mode in other case.
 		 */		
 		virtual DGLE_RESULT DGLE_API GetResolution(uint &uiScreenWidth, uint &uiScreenHeight, bool &bGoFullScreen) = 0;
+
 		/** Adjust display resolution or window size (when switching from fullscreen mode).
 			\param[in] uiScreenWidth New display resolution width or window width in pixels.
 			\param[in] uiScreenHeight New display resolution height or window height in pixels.
@@ -553,11 +567,12 @@ namespace DGLE
 		 */
 		virtual DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName) = 0;	
 
-		/** Adds plugin to engine initialization list. This means that plugin will be loaded on engine initialization. This is the only correct way to setup Render, Sound, Input or other system plugins.
+		/** Adds plugin to engine initialization list. This means that plugin will be loaded on engine initialization. This is the only correct way to setup specific Render, Sound, Input or other system plugins.
 		 \param[in] pcFileName File name of the plugin.
 		 \note Standard extension plugin ("Ext") will be connected automatically (if found), so you don't need to add it to initialization list.
+		 \see EIF_LOAD_ALL_PLUGINS
 		 */
-		virtual DGLE_RESULT DGLE_API AddPluginToInitList(const char *pcFileName) = 0;	
+		virtual DGLE_RESULT DGLE_API AddPluginToInitializationList(const char *pcFileName) = 0;	
 
 		/** Initialize engine and all of its subroutines. Also creates main engine window.
 		 \param[in] tHandle Handle of some already created window control to render in or NULL in case to let engine create it's own window.
@@ -566,7 +581,7 @@ namespace DGLE
 		 \param[in] uiUpdateInterval Interval in milliseconds between calling of user update routine. \see EPT_UPDATE
 		 \param[in] eInitFlags Special engine configuration flags.
 		 */
-		virtual DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam = TEngWindow(), uint uiUpdateInterval = 33, E_ENGINE_INIT_FLAGS eInitFlags = EIF_DEFAULT ) = 0;
+		virtual DGLE_RESULT DGLE_API InitializeEngine(TWindowHandle tHandle, const char *pcApplicationName, const TEngineWindow &stWindowParam = TEngineWindow(), uint uiUpdateInterval = 33, E_ENGINE_INIT_FLAGS eInitFlags = EIF_DEFAULT) = 0;
 		
 		/** Change interval of calling user update routine after engine has been started. \see EPT_UPDATE
 		 \param[in] uiUpdateInterval Interval in milliseconds.
@@ -594,15 +609,15 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API RenderFrame() = 0;
 		virtual DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
-		virtual DGLE_RESULT DGLE_API GetInstanceIdx(uint &uiIdx) = 0;
+		virtual DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx) = 0;
 		virtual DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick) = 0;
 		virtual DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
-		virtual DGLE_RESULT DGLE_API GetCurrentWin(TEngWindow &stWin) = 0;
+		virtual DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin) = 0;
 		virtual DGLE_RESULT DGLE_API GetFPS(uint &uiFPS) = 0;
 		virtual DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime) = 0;
-		virtual DGLE_RESULT DGLE_API GetHandle(TWinHandle &tHandle) = 0;
+		virtual DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle) = 0;
 
-		virtual DGLE_RESULT DGLE_API ChangeWinMode(const TEngWindow &stNewWin) = 0;
+		virtual DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin) = 0;
 		virtual DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight) = 0;		
 		virtual DGLE_RESULT DGLE_API AllowPause(bool bAllow) = 0;
 
@@ -611,10 +626,10 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine = false) = 0;
-		virtual DGLE_RESULT DGLE_API ConsoleExec(const char *pcCommandTxt) = 0;
-		virtual DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter = NULL) = 0; 
-		virtual DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL) = 0;
-		virtual DGLE_RESULT DGLE_API ConsoleUnregCom(const char *pcCommandName) = 0;
+		virtual DGLE_RESULT DGLE_API ConsoleExecute(const char *pcCommandTxt) = 0;
+		virtual DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter = NULL) = 0; 
+		virtual DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API ConsoleUnregister(const char *pcCommandName) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) = 0;	
 	};
@@ -623,6 +638,7 @@ namespace DGLE
 
 	class IFile;
 	class ITexture;
+	class ILight;
 	class IMaterial;
 	class IModel;
 	class IMesh;
@@ -707,34 +723,34 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResource = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight, const char *pcName = "", bool bAddResource = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0; //pData could be NULL to create empty mesh, index buffer could be empty
 		virtual DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName = "", bool bAddResource = false) = 0;
 		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResource = false) = 0;
 	
-		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterFileFormat(const char *pcExtension) = 0;
-		virtual DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
-		virtual DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj) = 0;
+		virtual DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj) = 0;
+		virtual DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj) = 0;
 		virtual DGLE_RESULT DGLE_API GetRegisteredExtensions(char *pcTxt, uint &uiCharsCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount) = 0;
-		virtual DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType) = 0;
+		virtual DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType) = 0;
 
-		virtual DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngBaseObj *&prObj) = 0;
-		virtual DGLE_RESULT DGLE_API GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj) = 0;
 
-		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
 	
-		virtual DGLE_RESULT DGLE_API FreeResource(IEngBaseObj *&prObj) = 0;
-		virtual DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngBaseObj *pObj) = 0;
-		virtual DGLE_RESULT DGLE_API RemoveResource(IEngBaseObj *pObj, bool &bCanDelete) = 0;
+		virtual DGLE_RESULT DGLE_API FreeResource(IEngineBaseObject *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngineBaseObject *pObj) = 0;
+		virtual DGLE_RESULT DGLE_API RemoveResource(IEngineBaseObject *pObj, bool &bCanDelete) = 0;
 	};
 
 //Render SubSystem//
 
 	class IRender2D;
 	class IRender3D;
-	class ILight;
 	class ICoreGeometryBuffer;
 	
 	struct TDrawDataDesc;
@@ -743,7 +759,7 @@ namespace DGLE
 
 	enum E_GET_POINT3_FLAG
 	{
-		GP3F_FROM_Z_BUFFER	= 0,
+		GP3F_FROM_DEPTH_BUFFER	= 0,
 		GP3F_FROM_FAR_PLANE,
 		GP3F_FROM_NEAR_PLANE
 	};
@@ -767,7 +783,7 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API Unbind(E_ENG_OBJ_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
+		virtual DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
 		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;	
 		virtual DGLE_RESULT DGLE_API DisableScissor() = 0;
 		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0;
@@ -827,25 +843,27 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API EndBatch() = 0;
 		virtual DGLE_RESULT DGLE_API NeedToUpdateBatchData(bool &bNeedUpdate) = 0;
 		virtual DGLE_RESULT DGLE_API SetResolutionCorrection(uint uiResX, uint uiResY, bool bConstantProportions = true) = 0; //Set resx and resy to current screen size to turn off correction
-		virtual DGLE_RESULT DGLE_API CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord) = 0;
-		virtual DGLE_RESULT DGLE_API CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord) = 0;
+		virtual DGLE_RESULT DGLE_API ResolutionCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord) = 0;
+		virtual DGLE_RESULT DGLE_API AbsoluteToResolutionCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord) = 0;
 		virtual DGLE_RESULT DGLE_API SetCamera(const TPoint2 &stCenter, float fAngle = 0.f, const TVector2 &stScale = TVector2(1.f, 1.f)) = 0;
 		virtual DGLE_RESULT DGLE_API ResetCamera() = 0;
+		virtual DGLE_RESULT DGLE_API UnprojectCameraToScreen(const TPoint2 &stCameraCoord, TPoint2 &stScreenCoord) = 0;
+		virtual DGLE_RESULT DGLE_API ProjectScreenToCamera(const TPoint2 &stScreenCoord, TPoint2 &stCameraCoord) = 0;
 		virtual DGLE_RESULT DGLE_API CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull) = 0;
 
 		// 2D Primitives
-		virtual DGLE_RESULT DGLE_API LineWidth(uint uiWidth) = 0;
+		virtual DGLE_RESULT DGLE_API SetLineWidth(uint uiWidth) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor = TColor4(), uint uiSize = 1) = 0;
 		virtual DGLE_RESULT DGLE_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawRect(const TRectF &stRect, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
 		// 2D Sprites
-		virtual DGLE_RESULT DGLE_API DrawTex(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawTexCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawTexSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTextureCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTextureSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		// Extra
 		virtual DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
@@ -901,6 +919,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetAlphaTreshold(float fValue) = 0;
 		virtual DGLE_RESULT DGLE_API GetAlphaTreshold(float &fValue) = 0;
 
+		virtual DGLE_RESULT DGLE_API ClearDepthBuffer() = 0;
 		virtual DGLE_RESULT DGLE_API ToggleDepthTest(bool bEnabled) = 0;
 
 		virtual DGLE_RESULT DGLE_API ToggleFog(bool bEnabled) = 0;
@@ -919,7 +938,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API PushStates(E_PUSH_STATES_FLAGS eStates = PSF_MATRIX) = 0;
 		virtual DGLE_RESULT DGLE_API PopStates() = 0;
 
-		virtual DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag = GP3F_FROM_Z_BUFFER) = 0;
+		virtual DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag = GP3F_FROM_DEPTH_BUFFER) = 0;
 		virtual DGLE_RESULT DGLE_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen) = 0;
 
 		virtual DGLE_RESULT DGLE_API FrustumSetup() = 0;
@@ -927,7 +946,6 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull) = 0;
 		virtual DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull) = 0;
 
-		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight) = 0;
 		virtual DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetGlobalAmbientLighting(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetGlobalAmbientLighting(TColor4 &stColor) = 0;
@@ -946,7 +964,7 @@ namespace DGLE
 	static const GUID IID_ILight = 
 	{ 0xeb73ac84, 0xa465, 0x4554, { 0x99, 0x4d, 0x8b, 0xed, 0x29, 0x74, 0x4c, 0x9d } };
 
-	class ILight: public IDGLE_Base
+	class ILight: public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API SetEnabled(bool bEnabled) = 0;
@@ -968,8 +986,6 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetAttenuation(float &fCoeff) = 0;
 		virtual DGLE_RESULT DGLE_API GetSpotCutoff(float &fDist) = 0;
 		virtual DGLE_RESULT DGLE_API GetType(E_LIGHT_TYPE &eType) = 0;
-
-		virtual DGLE_RESULT DGLE_API Free() = 0;
 	};
 
 	//Texture interface//
@@ -980,7 +996,7 @@ namespace DGLE
 	static const GUID IID_ITexture = 
 	{ 0x85bddbc2, 0xf126, 0x4cae, { 0x94, 0x6d, 0x7d, 0x6b, 0x7, 0x9e, 0x5c, 0xce } };
 
-	class ITexture : public IEngBaseObj
+	class ITexture : public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API GetDimensions(uint &uiWidth, uint &uiHeight) = 0;
@@ -1002,7 +1018,7 @@ namespace DGLE
 	static const GUID IID_IMaterial = 
 	{ 0xb6506749, 0xbb41, 0x423d, { 0xb6, 0xc0, 0x98, 0x20, 0x81, 0xef, 0x63, 0xf9 } };
 
-	class IMaterial: public IEngBaseObj
+	class IMaterial: public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API SetDiffuseColor(const TColor4 &stColor) = 0;
@@ -1013,7 +1029,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetSpecularColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetDiffuseTexture(ITexture *&prTexture) = 0;
 		
-		virtual DGLE_RESULT DGLE_API Bind() const = 0;
+		virtual DGLE_RESULT DGLE_API Bind() = 0;
 	};
 
 	//BitmapFont interface//
@@ -1022,7 +1038,7 @@ namespace DGLE
 	static const GUID IID_IBitmapFont = 
 	{ 0xb03e8d7, 0x23a3, 0x4c79, { 0x9e, 0x82, 0x5b, 0xc6, 0xe5, 0xe, 0x1e, 0xba } };
 
-	class IBitmapFont : public IEngBaseObj
+	class IBitmapFont : public IEngineBaseObject
 	{
 	public: 	
 		virtual DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture) = 0;
@@ -1042,7 +1058,7 @@ namespace DGLE
 	static const GUID IID_IMesh = 
 	{ 0x85e360a8, 0x7b3, 0x4f22, { 0xaa, 0x29, 0x7, 0xc7, 0xfc, 0x7c, 0x68, 0x93 } };
 
-	class IMesh : public IEngBaseObj
+	class IMesh : public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Draw() = 0;
@@ -1066,15 +1082,15 @@ namespace DGLE
 	static const GUID IID_IModel = 
 	{ 0x6107c296, 0xfc07, 0x48d1, { 0xb6, 0xa7, 0xf8, 0x8c, 0xc2, 0xda, 0xe8, 0x97 } };
 
-	class IModel : public IEngBaseObj
+	class IModel : public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Draw() = 0;
 		virtual DGLE_RESULT DGLE_API DrawMesh(uint uiMeshIdx) = 0;
 		virtual DGLE_RESULT DGLE_API GetCenter(TPoint3 &stCenter) = 0;
 		virtual DGLE_RESULT DGLE_API GetExtents(TVector3 &stExtents) = 0;
-		virtual DGLE_RESULT DGLE_API MeshsCount(uint &uiCount) = 0;
-		virtual DGLE_RESULT DGLE_API GetMesh(uint uiIdx, IMesh *&prMesh) = 0;
+		virtual DGLE_RESULT DGLE_API MeshesCount(uint &uiCount) = 0;
+		virtual DGLE_RESULT DGLE_API GetMesh(uint uiMeshIdx, IMesh *&prMesh) = 0;
 		virtual DGLE_RESULT DGLE_API SetModelMaterial(IMaterial *pMaterial) = 0;
 		virtual DGLE_RESULT DGLE_API GetModelMaterial(IMaterial *&prMaterial) = 0;
 		virtual DGLE_RESULT DGLE_API SetMeshMaterial(uint uiMeshIdx, IMaterial *pMaterial) = 0;
@@ -1172,7 +1188,7 @@ namespace DGLE
 	static const GUID IID_ISoundSample = 
 	{ 0x30dd8c94, 0xd3fa, 0x40cf, { 0x9c, 0x49, 0x64, 0x92, 0x11, 0x42, 0x49, 0x19 } };
 
-	class ISoundSample : public IEngBaseObj
+	class ISoundSample : public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Play() = 0;
@@ -1185,7 +1201,7 @@ namespace DGLE
 	static const GUID IID_IMusic = 
 	{ 0x81f1e67b, 0x3feb, 0x4ab1, { 0x9a, 0xd2, 0xd2, 0x7c, 0x4e, 0x66, 0x21, 0x64 } };
 
-	class IMusic : public IEngBaseObj
+	class IMusic : public IEngineBaseObject
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Play(bool bLooped = true) = 0;
@@ -1425,12 +1441,17 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 #endif
 
 #define IDGLE_BASE_DUMMY_COMMANDS_IMPL \
-	DGLE_RESULT DGLE_API ExecCmd(uint uiCmd, TVariant &stVar)\
+	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar)\
 	{\
 		stVar.Clear();\
 		return E_NOTIMPL;\
 	}\
-	DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount)\
+	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar)\
+	{\
+		stVar.Clear();\
+		return E_NOTIMPL;\
+	}\
+	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount)\
 	{\
 		if (!pcCommand)\
 			return E_INVALIDARG;\
@@ -1450,11 +1471,6 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 			uiCharsCount = 0;\
 			return E_NOTIMPL;\
 		}\
-	}\
-	DGLE_RESULT DGLE_API ExecCmdVar(const char *pcCommand, TVariant &stVar)\
-	{\
-		stVar.Clear();\
-		return E_NOTIMPL;\
 	}
 
 #define IDGLE_BASE_GUID_IMPL(interface_name) \

@@ -344,7 +344,7 @@ CBaseSound(uiInstIdx), _bPaused(false), _fMasterVolume(1.f), _iProfilerState(0)
 {
 	_bInited = OpenDevice(_sc_uiSamplesPerSec, _sc_uiBitsPerSample, true, _uiBufferSize, &_s_StreamToDeviceCallback, this);
 
-	Console()->RegComValue("snd_profiler", "Displays sound subsystems profiler.", &_iProfilerState, 0, 1);
+	Console()->RegComVar("snd_profiler", "Displays sound subsystems profiler.", &_iProfilerState, 0, 1);
 	
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
 

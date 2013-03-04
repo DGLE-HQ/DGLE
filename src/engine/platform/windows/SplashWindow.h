@@ -29,7 +29,7 @@ public:
 	CSplashWindow(uint uiInstIdx);
 
 	DGLE_RESULT InitWindow(const char *pcBmpFileName);
-	DGLE_RESULT SetOwnerWindow(TWinHandle tOwnerHwnd);
+	DGLE_RESULT SetOwnerWindow(TWindowHandle tOwnerHwnd);
 	DGLE_RESULT Free();
 
 	IDGLE_BASE_IMPLEMENTATION(ISplashWindow, INTERFACE_IMPL_END)

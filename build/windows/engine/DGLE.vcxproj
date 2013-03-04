@@ -163,8 +163,10 @@
     <ClCompile Include="..\..\..\src\engine\DCPFileSystem.cpp" />
     <ClCompile Include="..\..\..\src\engine\Font.cpp" />
     <ClCompile Include="..\..\..\src\engine\Input.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Light.cpp" />
     <ClCompile Include="..\..\..\src\engine\Main.cpp" />
     <ClCompile Include="..\..\..\src\engine\MainFS.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Material.cpp" />
     <ClCompile Include="..\..\..\src\engine\Mesh.cpp" />
     <ClCompile Include="..\..\..\src\engine\Model.cpp" />
     <ClCompile Include="..\..\..\src\engine\Music.cpp" />
@@ -183,6 +185,7 @@
     <ClCompile Include="..\..\..\src\engine\platform\windows\UnhandledExceptionsFilter.cpp" />
     <ClCompile Include="..\..\..\src\engine\Render.cpp" />
     <ClCompile Include="..\..\..\src\engine\Render2D.cpp" />
+    <ClCompile Include="..\..\..\src\engine\Render3D.cpp" />
     <ClCompile Include="..\..\..\src\engine\ResourceManager.cpp" />
     <ClCompile Include="..\..\..\src\engine\Sound.cpp" />
     <ClCompile Include="..\..\..\src\engine\StateManagerGL.cpp" />
@@ -208,7 +211,9 @@
     <ClInclude Include="..\..\..\src\engine\Font.h" />
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Input.h" />
+    <ClInclude Include="..\..\..\src\engine\Light.h" />
     <ClInclude Include="..\..\..\src\engine\MainFS.h" />
+    <ClInclude Include="..\..\..\src\engine\Material.h" />
     <ClInclude Include="..\..\..\src\engine\Mesh.h" />
     <ClInclude Include="..\..\..\src\engine\Model.h" />
     <ClInclude Include="..\..\..\src\engine\Music.h" />
@@ -226,6 +231,7 @@
     <ClInclude Include="..\..\..\src\engine\platform\windows\SplashWindow.h" />
     <ClInclude Include="..\..\..\src\engine\Render.h" />
     <ClInclude Include="..\..\..\src\engine\Render2D.h" />
+    <ClInclude Include="..\..\..\src\engine\Render3D.h" />
     <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />
     <ClInclude Include="..\..\..\src\engine\Sound.h" />
     <ClInclude Include="..\..\..\src\engine\StateManagerGL.h" />

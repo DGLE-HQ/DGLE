@@ -97,28 +97,28 @@ void DGLE_API Init(void *pParameter)
 
 	pInput->Configure(ICF_HIDE_CURSOR);
 
-	p_res_man->GetDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj*&)pFont);
+	p_res_man->GetDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject*&)pFont);
 
-	p_res_man->Load(RESOURCE_PATH"sounds\\owl.wav", (IEngBaseObj*&)pSndOwl);
-	p_res_man->Load(RESOURCE_PATH"sounds\\forest_ambient.wav", (IEngBaseObj*&)pForestAmbient);
+	p_res_man->Load(RESOURCE_PATH"sounds\\owl.wav", (IEngineBaseObject*&)pSndOwl);
+	p_res_man->Load(RESOURCE_PATH"sounds\\forest_ambient.wav", (IEngineBaseObject*&)pForestAmbient);
 
 	pForestAmbient->PlayEx(pChannelAmbientLoop, SSP_LOOPED);
 	
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_forest_background.png", (IEngBaseObj*&)pBg, TEXTURE_LOAD_DEFAULT_2D);
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_cloudy_night_sky.jpg", (IEngBaseObj*&)pSky, TEXTURE_LOAD_DEFAULT_2D);
-	p_res_man->Load(RESOURCE_PATH"textures\\smoke.png", (IEngBaseObj*&)pFog, TEXTURE_LOAD_DEFAULT_2D);
-	p_res_man->Load(RESOURCE_PATH"textures\\light.jpg", (IEngBaseObj*&)pLightRound, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_forest_background.png", (IEngineBaseObject*&)pBg, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_cloudy_night_sky.jpg", (IEngineBaseObject*&)pSky, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"textures\\smoke.png", (IEngineBaseObject*&)pFog, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"textures\\light.jpg", (IEngineBaseObject*&)pLightRound, TEXTURE_LOAD_DEFAULT_2D);
 
-	p_res_man->Load(RESOURCE_PATH"sprites\\vox.jpg", (IEngBaseObj*&)pVox, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\vox.jpg", (IEngineBaseObject*&)pVox, TEXTURE_LOAD_DEFAULT_2D);
 	pVox->SetFrameSize(149, 149);
 
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_owl.png", (IEngBaseObj*&)pOwl, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_owl.png", (IEngineBaseObject*&)pOwl, TEXTURE_LOAD_DEFAULT_2D);
 	pOwl->SetFrameSize(48, 128);
 
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_anime_girl.png", (IEngBaseObj*&)pTexGirl, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_anime_girl.png", (IEngineBaseObject*&)pTexGirl, TEXTURE_LOAD_DEFAULT_2D);
 	pTexGirl->SetFrameSize(55, 117);
 
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_mistery_light.jpg", (IEngBaseObj*&)pLight, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_mistery_light.jpg", (IEngineBaseObject*&)pLight, TEXTURE_LOAD_DEFAULT_2D);
 	pLight->SetFrameSize(64, 128);
 }
 
@@ -179,7 +179,7 @@ void DGLE_API Render(void *pParameter)
 
 	// Draw static sky
 	
-	pRender2D->DrawTex(pSky, TPoint2(), TPoint2(GAME_VP_WIDTH, GAME_VP_HEIGHT));
+	pRender2D->DrawTexture(pSky, TPoint2(), TPoint2(GAME_VP_WIDTH, GAME_VP_HEIGHT));
 
 	// Draw background
 
@@ -187,7 +187,7 @@ void DGLE_API Render(void *pParameter)
 
 	pRender2D->SetBlendMode(EBF_NORMAL);
 
-	pRender2D->DrawTexCropped(pBg, TPoint2(-200.f, 150.f), TPoint2(1399.f, 517.f), TRectF(0.f, 905.f, 1399.f, 517.f), 0.f, EF_BLEND);
+	pRender2D->DrawTextureCropped(pBg, TPoint2(-200.f, 150.f), TPoint2(1399.f, 517.f), TRectF(0.f, 905.f, 1399.f, 517.f), 0.f, EF_BLEND);
 
 	// Draw moving fog on background
 
@@ -203,7 +203,7 @@ void DGLE_API Render(void *pParameter)
 	
 	for (uint i = 0; i < 22; ++i)
 		for (uint j = 0; j < 2; ++j)
-			pRender2D->DrawTex(pFog,
+			pRender2D->DrawTexture(pFog,
 			TPoint2(500.f + sin((float)i) * 600.f - cos((float)counter / 50.f) * 10.f * (i % 4),
 					475.f + sin((float)j * 2.5f) * 150.f - sin((float)counter / 50.f) * 20.f * (i % 3)),
 			TPoint2(250.f, 150.f), 0.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLORMIX));
@@ -220,11 +220,11 @@ void DGLE_API Render(void *pParameter)
 	// Owl
 
 	pRender2D->SetColorMix(TColor4(150, 150, 150, 255)); // make sprite little darker
-	pRender2D->DrawTexSprite(pOwl, TPoint2(owlX, 425.f), TPoint2(48.f, 128.f), (counter / 3) % 15, 0.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLORMIX | (owlGoLeft ? EF_FLIPX : EF_DEFAULT)));
+	pRender2D->DrawTextureSprite(pOwl, TPoint2(owlX, 425.f), TPoint2(48.f, 128.f), (counter / 3) % 15, 0.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLORMIX | (owlGoLeft ? EF_FLIPX : EF_DEFAULT)));
 
 	// Draw tree
 
-	pRender2D->DrawTexCropped(pBg, TPoint2(), TPoint2(1399.f, 900.f), TRectF(0.f, 0.f, 1399.f, 900.f), 0.f, EF_BLEND);
+	pRender2D->DrawTextureCropped(pBg, TPoint2(), TPoint2(1399.f, 900.f), TRectF(0.f, 0.f, 1399.f, 900.f), 0.f, EF_BLEND);
 
 	// Glowing disc under moving light
 	
@@ -232,7 +232,7 @@ void DGLE_API Render(void *pParameter)
 	
 	pRender2D->SetVerticesOffset(TPoint2(-100.f, 0.f), TPoint2(-100.f, 0.f), TPoint2(), TPoint2());
 	pRender2D->SetColorMix(TColor4(65, 59, 193, 255));
-	pRender2D->DrawTex(pLightRound, TPoint2(lights[0].x - 32.f, lights[0].y + 64.f), TPoint2(256.f, 256.f), 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSET | EF_BLEND | EF_COLORMIX));
+	pRender2D->DrawTexture(pLightRound, TPoint2(lights[0].x - 32.f, lights[0].y + 64.f), TPoint2(256.f, 256.f), 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSET | EF_BLEND | EF_COLORMIX));
 
 	// Girl Shadow
 	
@@ -240,25 +240,25 @@ void DGLE_API Render(void *pParameter)
 	
 	pRender2D->SetVerticesOffset(TPoint2(-150.f + cos((float)counter / 100.f) * 100.f, -55.f), TPoint2(-50.f + cos((float)counter / 100.f) * 100.f, -55.f), TPoint2(15.f, 5.f), TPoint2(15.f, 5.f));
 	pRender2D->SetColorMix(TColor4(0, 0, 0, 128));
-	pRender2D->DrawTexSprite(pTexGirl, TPoint2(550.f, 725.f), TPoint2(60.f, 120.f), (counter / 5) % 16, 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSET | EF_BLEND | EF_COLORMIX));
+	pRender2D->DrawTextureSprite(pTexGirl, TPoint2(550.f, 725.f), TPoint2(60.f, 120.f), (counter / 5) % 16, 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSET | EF_BLEND | EF_COLORMIX));
 
 	// Girl Sprite
 
-	pRender2D->DrawTexSprite(pTexGirl, TPoint2(550.f, 725.f), TPoint2(60.f, 120.f), (counter / 5) % 16, 0.f, EF_BLEND);
+	pRender2D->DrawTextureSprite(pTexGirl, TPoint2(550.f, 725.f), TPoint2(60.f, 120.f), (counter / 5) % 16, 0.f, EF_BLEND);
 
 	// Lights
 
 	pRender2D->SetBlendMode(EBF_ADD);
 
 	for (uint i = 0; i < 5; ++i)
-		pRender2D->DrawTexSprite(pLight, TPoint2(lights[i].x, lights[i].y), TPoint2(64.f, 128.f), (counter / 2) % 14, 0.f, EF_BLEND);
+		pRender2D->DrawTextureSprite(pLight, TPoint2(lights[i].x, lights[i].y), TPoint2(64.f, 128.f), (counter / 2) % 14, 0.f, EF_BLEND);
 
 	pRender2D->ResetCamera();
 
 	// We must calculate correct coordinates in game space because game resolution and screen resolution can be different.
 	TPoint2 pos;
-	pRender2D->CoordAbsoluteToResCorrect(stMousePos, pos);
-	pRender2D->DrawTexSprite(pVox, TPoint2(pos.x - 37, pos.y - 37), TPoint2(75.f, 75.f), (counter / 2) % 16, 0.f, EF_BLEND);
+	pRender2D->AbsoluteToResolutionCorrect(stMousePos, pos);
+	pRender2D->DrawTextureSprite(pVox, TPoint2(pos.x - 37, pos.y - 37), TPoint2(75.f, 75.f), (counter / 2) % 16, 0.f, EF_BLEND);
 
 	uint tw, th;
 	pFont->GetTextDimensions(HELP_TEXT, tw, th);
@@ -271,7 +271,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	if (GetEngine(DLL_PATH, pEngineCore))
 	{
-		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL,APP_CAPTION,TEngWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false, false, MM_NONE, EWF_ALLOW_SIZEING))))
+		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngineWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false, false, MM_NONE, EWF_ALLOW_SIZEING))))
 		{
 			pEngineCore->AddProcedure(EPT_INIT,	&Init);
 			pEngineCore->AddProcedure(EPT_FREE,	&Free);

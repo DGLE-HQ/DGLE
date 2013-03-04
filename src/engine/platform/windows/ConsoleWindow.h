@@ -51,7 +51,7 @@ public:
 	DGLE_RESULT Visible(bool bVisible);
 	DGLE_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
 	DGLE_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
-	DGLE_RESULT GetWindowHandle(TWinHandle &tHandle);
+	DGLE_RESULT GetWindowHandle(TWindowHandle &tHandle);
 	DGLE_RESULT GetThreadId(uint32 &ui32Id);
 	DGLE_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
 	DGLE_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize);

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		xx.xx.2012 (c)Korotkov Andrey
+\date		03.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -45,15 +45,10 @@ typedef HMODULE TDynLibHandle;
 #	include <new>
 #endif
 
-//#include <new.h>
-//#include <exception>
 #include <assert.h>
 #include <string>
-//#include <list>
 #include <vector>
-//#include <set>
 #include <map>
-//#include <bitset>
 #include <algorithm>
 #include <fstream>
 #include <strstream>
@@ -148,37 +143,12 @@ public:
 
 #define DGLE_VERSION (string(_DGLE_VER_" (")+string(__TIMESTAMP__)+string(")")).c_str()
 
-#ifdef _DEBUG
-
-/*//DEBUG_NEW
-#	include <stdlib.h>
-#	include <crtdbg.h>
-#	ifndef DEBUG_NEW
-#		define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-#		define new DEBUG_NEW
-#	endif*/
-
-#endif
-
 // Externs //
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
-// Helper class //
+// Macroses //
 
-
-// Helper functions //
-/*
-template<class Class, class Intarface>
-inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) throw(...)
-{
-	return *static_cast<const Class *>(left) == *static_cast<const Class *>(right);
-}*/
-
-//Macroses//
-
-//#define RENDERGL Core()->pRenderGL()
-//#define GL_SMAN RENDERGL->pSMan()
 #define PTHIS(cl_name) (reinterpret_cast<cl_name *>(pParameter))
 #define CON(cl_name, txt) PTHIS(cl_name)->Console()->Write(txt, false)
 #define LOG(txt, type) LogWrite(this->InstIdx(), std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
@@ -191,15 +161,7 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 	+ " " + FloatToStrFmt(m._2D[2][0]) + "," + FloatToStrFmt(m._2D[2][1]) + "," + FloatToStrFmt(m._2D[2][2]) + "," + FloatToStrFmt(m._2D[2][3]) + "\n"\
 	+ " " + FloatToStrFmt(m._2D[3][0]) + "," + FloatToStrFmt(m._2D[3][1]) + "," + FloatToStrFmt(m._2D[3][2]) + "," + FloatToStrFmt(m._2D[3][3]) + "]").c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
 
-#define OUTPUT_HR_MESSAGE(message, hr, type) \
-{\
-	/* termination 0 counded in _countof()*/\
-	char str[_countof(message ". hr: ") + numeric_limits<DGLE_RESULT>::digits10] = message ". hr: ";\
-	_itoa(hr, str + _countof(message ". hr: ") - 1, 10);\
-	LOG(str, type);\
-}
-
-#define IENGBASEOBJ_IMPLEMENTATION(object_type) \
+#define IENGINE_BASE_OBJECT_IMPLEMENTATION(object_type) \
 	DGLE_RESULT DGLE_API Free()\
 	{\
 		bool can_delete;\
@@ -212,7 +174,7 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 		else\
 			return S_FALSE;\
 	}\
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType)\
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType)\
 	{\
 		eObjType = object_type;\
 		return S_OK;\
@@ -222,45 +184,3 @@ inline bool CmpInterfaceTargets(const Intarface *left, const Intarface *right) t
 		uiObjUnknownType = -1;\
 		return S_FALSE;\
 	}
-
-/*
-template<class Interface, typename Type, typename ReturnType = Type>
-struct CComGetWrapper: public binary_function<Interface *, DGLE_RESULT (DGLE_API Interface::*)(Type &), ReturnType>
-{
-	result_type operator ()(first_argument_type object, second_argument_type method) const
-	{
-		Type data;
-		CHECK_RES((object->*method)(data));
-		return data;
-	}
-};*/
-/*
-inline const char *GlError2String(GLenum error)
-{
-	switch (error)
-	{
-	case GL_NO_ERROR:			return "GL_NO_ERROR";
-	case GL_INVALID_ENUM:		return "GL_INVALID_ENUM";
-	case GL_INVALID_VALUE:		return "GL_INVALID_VALUE";
-	case GL_INVALID_OPERATION:	return "GL_INVALID_OPERATION";
-	case GL_STACK_OVERFLOW:		return "GL_STACK_OVERFLOW";
-	case GL_STACK_UNDERFLOW:	return "GL_STACK_UNDERFLOW";
-	case GL_OUT_OF_MEMORY:		return "GL_OUT_OF_MEMORY";
-	default:					return "UNKNOWN ERROR";
-	}
-}
-*/
-/*
-// TODO: try C++ 0x typeof for operator () signature
-#define LAZY(handler) \
-class LAZY##handler\
-{\
-	bool _modified;\
-public:\
-	name(): _modified(true) {}\
-	void operator ()()\
-	{\
-		handler();\
-	}\
-}\
-*/

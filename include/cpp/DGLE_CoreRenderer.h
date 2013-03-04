@@ -39,7 +39,7 @@ namespace DGLE
 		CRSF_BUILTIN_FSCREEN_MODE = 0,
 		CRSF_BUILTIN_STATE_FILTER,
 		CRSF_MULTISAMPLING,
-		CRDF_VSYNC,
+		CRDF_VERTICAL_SYNCHRONIZATION,
 		CRDF_PROGRAMMABLE_PIPELINE,
 		CRSF_BGRA_DATA_FORMAT,
 		CRSF_TEXTURE_COMPRESSION,
@@ -327,7 +327,7 @@ namespace DGLE
 	class IBaseRenderObjectContainer : public IDGLE_Base
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API GetObjectType(E_ENG_OBJ_TYPE &eType) = 0;
+		virtual DGLE_RESULT DGLE_API GetObjectType(E_ENGINE_OBJECT_TYPE &eType) = 0;
 	};
 
 #if defined(OPENGL_LEGACY_BASE_OBJECTS)
@@ -406,10 +406,10 @@ namespace DGLE
 	{
 	public:
 		//Must not be called by user
-		virtual DGLE_RESULT DGLE_API Prepare(TCRendererInitResult &stResults) = 0;
-		virtual DGLE_RESULT DGLE_API Initialize(TCRendererInitResult &stResults) = 0;
+		virtual DGLE_RESULT DGLE_API Prepare(TCrRndrInitResults &stResults) = 0;
+		virtual DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults) = 0;
 		virtual DGLE_RESULT DGLE_API Finalize() = 0;
-		virtual DGLE_RESULT DGLE_API AdjustMode(TEngWindow &stNewWin) = 0;
+		virtual DGLE_RESULT DGLE_API AdjustMode(TEngineWindow &stNewWin) = 0;
 		//
 		
 		virtual DGLE_RESULT DGLE_API MakeCurrent() = 0;

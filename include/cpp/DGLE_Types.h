@@ -247,70 +247,69 @@ namespace DGLE
 
 #ifdef PLATFORM_WINDOWS
 
-	typedef HWND TWinHandle;
-	typedef HDC TWinDrawHandle;
-	typedef bool TCRendererInitResult;
+	typedef HWND TWindowHandle;
+	typedef HDC TWindowDrawHandle;
+	typedef bool TCrRndrInitResults;
 
 #endif
 
-	/** Flags of TWinMessage structure that determines type of the message. 
-		\see TWinMessage
+	/** Flags of TWindowMessage structure that determines type of the message. 
+		\see TWindowMessage
 	 */
 	enum E_WINDOW_MESSAGE_TYPE
 	{
-		WMT_UNKNOWN = 0,/**< This type will be returned if there is no proper conversion from platform specific window event to engine window message. Message parameters have platform specific usage. \note For Windows pParam3 of TWinMessage structure will point to the MSG structure. */
+		WMT_UNKNOWN = 0,/**< This type will be returned if there is no proper conversion from platform specific window event to engine window message. Message parameters have platform specific usage. \note For Windows pParameter3 of TWindowMessage structure will point to the MSG structure. */
 		WMT_REDRAW,		/**< Message indicates that window must redraw itself. Message parameters are not used. */
 		WMT_PRESENT,	/**< Message indicates that window is ready and now will be displayed to the user for the first time. Message parameters are not used. */
 		WMT_CLOSE,		/**< Message indicates that window is ready to be destroyed and now will disappear from the screen. Message parameters are not used. */
 		WMT_CREATE,		/**< Message indicates that window is being created. Message parameters are not used. */
 		WMT_DESTROY,	/**< Message indicates that window is ready to be destroyed. Message parameters are not used. */
 		WMT_RELEASED,	/**< Message indicates that window was destroyed and released successfully. Message parameters are not used. */
-		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Param1 value is TWinHandle of the window which loses focus. */
-		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Param1 value is TWinHandle of the window which gets focus. */
-		WMT_MINIMIZED,	/**< Message indicates that window was minimized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
-		WMT_RESTORED,	/**< Message indicates that window was restored to its normal state. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
-		WMT_MOVE,		/**< Message indicates that window is being moved. Message parameter ui32Param1 stores x coordinate of upper left window corner and ui32Param2 stores y coordinate. \note Under Windows pParam3 points to RECT structure with window size. */
-		WMT_SIZE,		/**< Message indicates that window is being sized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
-		WMT_KEY_UP,		/**< Message indicates that the user has released some keyboard key. Message parameter ui32Param1 is the engine code of the key being released. \see E_KEYBOARD_KEY_CODES */
-		WMT_KEY_DOWN,	/**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the engine code of the key being pressed. \see E_KEYBOARD_KEY_CODES */
-		WMT_ENTER_CHAR, /**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the ASCII code of the key being pressed. */
-		WMT_MOUSE_MOVE, /**< Message indicates that cursor is being moved within the window. Message parameter ui32Param1 stores x coordinate of cursor and ui32Param1 stores y coordinate. */
-		WMT_MOUSE_DOWN, /**< Message indicates that the user has pressed mouse button. Message parameter ui32Param1 indicates what button was pressed: 0 - Left, 1 - Right, 2 - Middle */
-		WMT_MOUSE_UP,	/**< Message indicates that the user has released mouse button. Message parameter ui32Param1 indicates what button was released: 0 - Left, 1 - Right, 2 - Middle */
-		WMT_MOUSE_WHEEL /**< Message indicates that the user has rolled mouse wheel. Message parameter pParam3 points to integer (int) with mouse wheel delta value. */
+		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Parameter1 value is TWindowHandle of the window which loses focus. */
+		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Parameter1 value is TWindowHandle of the window which gets focus. */
+		WMT_MINIMIZED,	/**< Message indicates that window was minimized. Message parameter ui32Parameter1 stores width of the window and ui32Parameter2 stores height. \note Under Windows pParameter3 points to RECT structure with window size. */
+		WMT_RESTORED,	/**< Message indicates that window was restored to its normal state. Message parameter ui32Parameter1 stores width of the window and ui32Parameter2 stores height. \note Under Windows pParameter3 points to RECT structure with window size. */
+		WMT_MOVE,		/**< Message indicates that window is being moved. Message parameter ui32Parameter1 stores x coordinate of upper left window corner and ui32Parameter2 stores y coordinate. \note Under Windows pParameter3 points to RECT structure with window size. */
+		WMT_SIZE,		/**< Message indicates that window is being sized. Message parameter ui32Parameter1 stores width of the window and ui32Parameter2 stores height. \note Under Windows pParameter3 points to RECT structure with window size. */
+		WMT_KEY_UP,		/**< Message indicates that the user has released some keyboard key. Message parameter ui32Parameter1 is the engine code of the key being released. \see E_KEYBOARD_KEY_CODES */
+		WMT_KEY_DOWN,	/**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Parameter1 is the engine code of the key being pressed. \see E_KEYBOARD_KEY_CODES */
+		WMT_ENTER_CHAR, /**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Parameter1 is the ASCII code of the key being pressed. */
+		WMT_MOUSE_MOVE, /**< Message indicates that cursor is being moved within the window. Message parameter ui32Parameter1 stores x coordinate of cursor and ui32Parameter1 stores y coordinate. */
+		WMT_MOUSE_DOWN, /**< Message indicates that the user has pressed mouse button. Message parameter ui32Parameter1 indicates what button was pressed: 0 - Left, 1 - Right, 2 - Middle */
+		WMT_MOUSE_UP,	/**< Message indicates that the user has released mouse button. Message parameter ui32Parameter1 indicates what button was released: 0 - Left, 1 - Right, 2 - Middle */
+		WMT_MOUSE_WHEEL /**< Message indicates that the user has rolled mouse wheel. Message parameter pParameter3 points to integer (int) with mouse wheel delta value. */
 	};
 
 	/** Structure with window event message information. 
-		\see IEvWinMessage
+		\see IEvWindowMessage
 	 */
-	struct TWinMessage
+	struct TWindowMessage
 	{
-		E_WINDOW_MESSAGE_TYPE
-				uiMsgType;	/**< Window message type identifier. */
-		uint32	ui32Param1;	/**< Message first parameter. */
-		uint32	ui32Param2;	/**< Message second parameter. */
-		void	*pParam3;	/**< Message third parameter. Points to specific message data. */
+		E_WINDOW_MESSAGE_TYPE eMessage; /**< Window message type identifier. */
+		uint32	ui32Parameter1;	/**< Message first parameter. */
+		uint32	ui32Parameter2;	/**< Message second parameter. */
+		void	*pParameter3;	/**< Message third parameter. Points to specific message data. */
 		
-		TWinMessage():uiMsgType(WMT_UNKNOWN), ui32Param1(0), ui32Param2(0), pParam3(NULL){}
-		TWinMessage(E_WINDOW_MESSAGE_TYPE msg, uint32 param1 = 0, uint32 param2 = 0, void *param3 = NULL):uiMsgType(msg), ui32Param1(param1), ui32Param2(param2), pParam3(param3){}
+		TWindowMessage():eMessage(WMT_UNKNOWN), ui32Parameter1(0), ui32Parameter2(0), pParameter3(NULL){}
+		TWindowMessage(E_WINDOW_MESSAGE_TYPE msg, uint32 param1 = 0, uint32 param2 = 0, void *param3 = NULL):eMessage(msg), ui32Parameter1(param1), ui32Parameter2(param2), pParameter3(param3){}
 	};
 
 
 //Engine types definition//
 
-	/** Flags of TEngWindow structure that determines the behavior of main engine window. */
+	/** Flags of TEngineWindow structure that determines the behavior of main engine window. */
 	enum E_ENGINE_WINDOW_FLAGS
 	{
-		EWF_DEFAULT					= 0x00000000,/**< This flag is suitable in most cases. */
-		EWF_ALLOW_SIZEING			= 0x00000001,/**< User can resize engine window arbitrarily */
-		EWF_TOPMOST					= 0x00000002,/**< Engine window will be always on top. */
-		EWF_DONT_HOOK_MLOOP			= 0x00000004,/**< If flag set and engine doesn't owns window, host applications main loop will not be hooked. User must call window repaint manually. */
-		EWF_DONT_HOOK_ROOT_WIN		= 0x00000008,/**< If flag set and engine doesn't owns window, main host application window will not be hooked. User must redirect windows messages manually.*/
-		EWF_RESTRICT_FSCREEN_HOTKEY	= 0x00000010,/**< Switching between fullscreen and windowed modes by pressing platform specific hotkey combination will be restricted. */
-		EWF_RESTRICT_CONSOLE_HOTKEY	= 0x00000020 /**< Restricts calling engine console window by pressing "~" or "§" key. */
+		EWF_DEFAULT						= 0x00000000,/**< This flag is suitable in most cases. */
+		EWF_ALLOW_SIZEING				= 0x00000001,/**< User can resize engine window arbitrarily */
+		EWF_TOPMOST						= 0x00000002,/**< Engine window will be always on top. */
+		EWF_DONT_HOOK_MAIN_LOOP			= 0x00000004,/**< If flag set and engine doesn't owns window, host applications main loop will not be hooked. User must call window repaint manually. */
+		EWF_DONT_HOOK_ROOT_WINDOW		= 0x00000008,/**< If flag set and engine doesn't owns window, main host application window will not be hooked. User must redirect windows messages manually.*/
+		EWF_RESTRICT_FULLSCREEN_HOTKEY	= 0x00000010,/**< Switching between fullscreen and windowed modes by pressing platform specific hotkey combination will be restricted. */
+		EWF_RESTRICT_CONSOLE_HOTKEY		= 0x00000020 /**< Restricts calling engine console window by pressing "~" or "§" key. */
 	};
 
-	/** Flags of TEngWindow structure that determines antialiasing samples count. */
+	/** Flags of TEngineWindow structure that determines antialiasing samples count. */
 	enum E_MULTISAMPLING_MODE
 	{
 		MM_NONE	= 0x00000000,/**< Multisampling is off. */
@@ -323,35 +322,33 @@ namespace DGLE
 	/** Describes the parameters of the main engine window and its behavior. 
 		\see IEngineCore::InitializeEngine
 	 */
-	struct TEngWindow
+	struct TEngineWindow
 	{	
-		uint	uiWidth;			/**< Resolution width of client area. */
-		uint	uiHeight;			/**< Resolution height of client area. */
-		bool	bFullScreen;		/**< Switch to fullscreen mode or not. */
-		bool	bVSync;				/**< Enable or not vertical synchronization(triple buffering). */
-		E_MULTISAMPLING_MODE
-				eMSampling;			/**< Fullscreen antialiasing samples count. */
-		E_ENGINE_WINDOW_FLAGS
-				uiFlags;			/**< Additional settings. */
+		uint	uiWidth;	/**< Resolution width of client area. */
+		uint	uiHeight;	/**< Resolution height of client area. */
+		bool	bFullScreen;/**< Switch to fullscreen mode or not. */
+		bool	bVerticalSynchronization;	/**< Enable or not vertical synchronization (triple buffering). */
+		E_MULTISAMPLING_MODE eMultisampling;/**< Fullscreen antialiasing samples count. */
+		E_ENGINE_WINDOW_FLAGS uiFlags;		/**< Additional settings. */
 
-		TEngWindow()
+		TEngineWindow()
 		{
-			uiWidth			= 800;
-			uiHeight		= 600;
-			bFullScreen		= false;
-			bVSync			= false;
-			eMSampling		= MM_NONE;
-			uiFlags			= EWF_DEFAULT;
+			uiWidth = 800;
+			uiHeight = 600;
+			bFullScreen = false;
+			bVerticalSynchronization = false;
+			eMultisampling = MM_NONE;
+			uiFlags	= EWF_DEFAULT;
 		}
 
-		TEngWindow(uint width, uint height, bool fscreen, bool vsync = false, E_MULTISAMPLING_MODE msampling = MM_NONE, E_ENGINE_WINDOW_FLAGS flags = EWF_DEFAULT)
+		TEngineWindow(uint width, uint height, bool fscreen, bool vsync = false, E_MULTISAMPLING_MODE msampling = MM_NONE, E_ENGINE_WINDOW_FLAGS flags = EWF_DEFAULT)
 		{
-			uiWidth			= width;
-			uiHeight		= height;
-			bFullScreen		= fscreen;
-			bVSync			= vsync;
-			eMSampling		= msampling;
-			uiFlags			= flags;
+			uiWidth	= width;
+			uiHeight = height;
+			bFullScreen = fscreen;
+			bVerticalSynchronization = vsync;
+			eMultisampling = msampling;
+			uiFlags = flags;
 		}
 	};
 
@@ -363,7 +360,7 @@ namespace DGLE
 		char cOSName[128];			/**< String with operating system description. */
 		char cCPUName[128];			/**< String with CPU description. */
 		uint uiCPUCount;			/**< Number of CPUs on host system. */
-		uint uiCPUFreq;				/**< Real CPU frequency in MHz. */
+		uint uiCPUFrequency;		/**< Real CPU frequency in MHz. */
 		uint uiRAMTotal;			/**< Amount of RAM in system in megabytes. */
 		uint uiRAMAvailable;		/**< Amount of free RAM in system on engine start in megabytes. */
 		char cVideocardName[128];	/**< String with primary videocard description. */
@@ -408,11 +405,11 @@ namespace DGLE
 
 		inline TColor4():r(1.f), g(1.f), b(1.f), a(1.f){}
 
-		inline TColor4(uint32 ui32ABGR):
-			r((float)(ui32ABGR & 0xFF) / 0xFF),
-			g((float)((ui32ABGR >> 8) & 0xFF) / 0xFF),
-			b((float)((ui32ABGR >> 16) & 0xFF) / 0xFF),
-			a((float)((ui32ABGR >> 24) & 0xFF) / 0xFF)
+		inline TColor4(uint32 ui32RGBA):
+			r((float)(ui32RGBA & 0xFF) / 0xFF),
+			g((float)((ui32RGBA >> 8) & 0xFF) / 0xFF),
+			b((float)((ui32RGBA >> 16) & 0xFF) / 0xFF),
+			a((float)((ui32RGBA >> 24) & 0xFF) / 0xFF)
 		{}
 
 		inline TColor4(uint8 ubR, uint8 ubG, uint8 ubB, uint8 ubA)
@@ -484,10 +481,10 @@ namespace DGLE
 	inline TColor4 ColorSilver() { return TColor4(0xC0, 0xC0, 0xC0, 255); }
 	inline TColor4 ColorTeal() { return TColor4(0x00, 0x80, 0x80, 255); }
 	inline TColor4 ColorViolet() { return TColor4(0xEE, 0x82, 0xEE, 255); }
-	inline TColor4 ColorYellow() { return TColor4(0x00, 0x00, 0x00, 255); }
+	inline TColor4 ColorYellow() { return TColor4(0xFF, 0xFF, 0x00, 255); }
 
-	inline TColor4 ColorOfficialOrange() { return TColor4(230, 120, 25, 255); }
-	inline TColor4 ColorOfficialBlack() { return TColor4(55, 50, 50, 255); }
+	inline TColor4 ColorOfficialOrange() { return TColor4(0xE7, 0x78, 0x17, 255); }
+	inline TColor4 ColorOfficialBlack() { return TColor4(0x38, 0x34, 0x31, 255); }
 
 	typedef TColor4 TColor;
 
@@ -1186,6 +1183,7 @@ namespace DGLE
 	class TTransformStack: private std::stack<TTransform>
 	{
 	public:
+		/** Creates stack with base transform loaded to top. */
 		TTransformStack(const TTransform &base_transform = TTransform());
 		/** Saves current stack state. */
 		void Push();
@@ -1199,6 +1197,8 @@ namespace DGLE
 		void MultGlobal(const TTransform &transform);
 		/** Multiplicates transform on current stack state and saves result as current stack state. */
 		void MultLocal(const TTransform &transform);
+		/** Clears stack and loads given base transform to top. */
+		void Clear(const TTransform &base_transform);
 	};
 
 	template<class TTransform>
@@ -1216,7 +1216,9 @@ namespace DGLE
 	template<class TTransform>
 	inline void TTransformStack<TTransform>::Pop()
 	{
-		assert(size() > 1);
+		if (size() == 1)
+			return;
+
 		pop();
 	}
 
@@ -1242,6 +1244,15 @@ namespace DGLE
 	inline void TTransformStack<TTransform>::MultLocal(const TTransform &transform)
 	{
 		top() = transform * top();
+	}
+
+	template<class TTransform>
+	inline void TTransformStack<TTransform>::Clear(const TTransform &base_transform)
+	{
+		while (!empty())
+			pop();
+
+		push(base_transform);
 	}
 
 	/** Stack of matrix 4x4 multiplication operations. */
@@ -1281,7 +1292,7 @@ namespace DGLE
 	*/
 	struct TJoystickStates
 	{
-		uint uiBtnsCount;	/**< Count of available joystick buttons. */
+		uint uiButtonsCount;/**< Count of available joystick buttons. */
 		bool bButtons[32];	/**< Array of joystick buttons states (pressed or not). */
 		int iXAxis;		    /**< X-axis position. Value varies -100 to 100. */
 		int iYAxis;		    /**< Y-axis position. Value varies -100 to 100. */

@@ -234,7 +234,7 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 	for (size_t i = 0; i < _commands.size(); ++i)
 		if (cmd == _commands[i].pcName)
 		{
-			if (_commands[i].piValue == NULL)
+			if (_commands[i].piVar == NULL)
 			{
 				_pConsoleWindow->EnterThreadSafeSection();
 
@@ -246,7 +246,7 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 			{
 				if (param.empty())
 				{
-					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_commands[i].piValue) + " .\n"
+					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_commands[i].piVar) + " .\n"
 						"Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
 				}
 				else
@@ -262,7 +262,7 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 						{
 							_pConsoleWindow->EnterThreadSafeSection();
 						
-							*_commands[i].piValue = t;
+							*_commands[i].piVar = t;
 						
 							if (_commands[i].pProc != NULL)
 								(*_commands[i].pProc)(_commands[i].pParameter, param.c_str());
@@ -346,7 +346,7 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API
 	strcpy(t.pcHelp, pcHelp);
 	
 	t.pProc	= pProc;
-	t.piValue = NULL;
+	t.piVar = NULL;
 	t.iMaxValue	= 0;
 	t.iMinValue	= 0;
 	t.pParameter	= pParameter;
@@ -356,7 +356,7 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, void (DGLE_API
 	sort(_commands.begin(), _commands.end());
 }
 
-void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue, int iMin, int iMax, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) 
+void CConsole::RegComVar(const char *pcName, const char *pcHelp, int *piVar, int iMin, int iMax, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) 
 {
 	TConEntry t;
 	
@@ -367,7 +367,7 @@ void CConsole::RegComValue(const char *pcName, const char *pcHelp, int *piValue,
 	strcpy(t.pcHelp, pcHelp);
 	
 	t.pProc	= pProc;
-	t.piValue = piValue;
+	t.piVar = piVar;
 	t.iMaxValue	= iMax;
 	t.iMinValue	= iMin;
 	t.pParameter	= pParameter;
@@ -459,9 +459,9 @@ void CConsole::Visible(bool IsVisible)
 	_pConsoleWindow->Visible(IsVisible);
 }
 
-TWinHandle CConsole::GetWindowHandle()
+TWindowHandle CConsole::GetWindowHandle()
 {
-	TWinHandle handle;
+	TWindowHandle handle;
 	_pConsoleWindow->GetWindowHandle(handle);
 	
 	return handle;

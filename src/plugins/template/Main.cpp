@@ -53,8 +53,8 @@ void CALLBACK FreePlugin(IPlugin *plugin)
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+					   DWORD  ul_reason_for_call,
+					   LPVOID lpReserved
 					 )
 {
 	switch (ul_reason_for_call)
@@ -63,7 +63,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		::hModule = hModule;
 		break;
 	case DLL_PROCESS_DETACH:
-		for(size_t i = 0; i < PlCores.size(); i++)
+		for (size_t i = 0; i < PlCores.size(); i++)
 			delete PlCores[i];
 		PlCores.clear();
 		break;

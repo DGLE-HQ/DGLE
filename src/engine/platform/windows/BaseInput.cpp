@@ -249,7 +249,7 @@ TJoystickStates CBaseInput::GetJoystickStates(uint id)
 			if ((joy.info.wCaps & JOYCAPS_HASPOV) > 0 && (info.dwPOV & 0xFFFF) != 0xFFFF)
 				states.iPOV = (int)((float)(info.dwPOV & 0xFFFF) / 100.f);
 
-			states.uiBtnsCount = joy.info.wNumButtons;
+			states.uiButtonsCount = joy.info.wNumButtons;
 
 			for (uint i = 0; i < joy.info.wNumButtons; ++i)
 				states.bButtons[i] = (info.dwButtons & (1 << i)) != 0;

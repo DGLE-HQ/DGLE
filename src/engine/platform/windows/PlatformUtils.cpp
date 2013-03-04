@@ -37,40 +37,40 @@ namespace DGLE
 
 LARGE_INTEGER	perfFreq;
 
-TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
+TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (Msg)
 	{
 	case WM_PAINT:
-		return TWinMessage(WMT_REDRAW);
+		return TWindowMessage(WMT_REDRAW);
 
 	case WM_SHOWWINDOW:
 		if (wParam == TRUE && lParam == 0)
-			return TWinMessage(WMT_PRESENT);
+			return TWindowMessage(WMT_PRESENT);
 		else
-			return TWinMessage();
+			return TWindowMessage();
 		
 	case WM_CLOSE:
-		return TWinMessage(WMT_CLOSE);
+		return TWindowMessage(WMT_CLOSE);
 
 	case WM_CREATE:
-		return TWinMessage(WMT_CREATE);
+		return TWindowMessage(WMT_CREATE);
 
 	case WM_DESTROY:
-		return TWinMessage(WMT_DESTROY);
+		return TWindowMessage(WMT_DESTROY);
 
 	case WM_SETFOCUS:
-		return TWinMessage(WMT_ACTIVATED, wParam);
+		return TWindowMessage(WMT_ACTIVATED, wParam);
 
 	case WM_KILLFOCUS:
-		return TWinMessage(WMT_DEACTIVATED, wParam);
+		return TWindowMessage(WMT_DEACTIVATED, wParam);
 
 	case WM_MOVING:
-		return TWinMessage(WMT_MOVE, ((RECT*)lParam)->left, ((RECT*)lParam)->top, (RECT*)lParam);
+		return TWindowMessage(WMT_MOVE, ((RECT*)lParam)->left, ((RECT*)lParam)->top, (RECT*)lParam);
 
 	case WM_SIZING:
 		// This message receives window rectangle not client, so this message should be override in window message handler.
-		return TWinMessage(WMT_SIZE, ((RECT*)lParam)->right - ((RECT*)lParam)->left, ((RECT*)lParam)->bottom - ((RECT*)lParam)->top, (RECT*)lParam);
+		return TWindowMessage(WMT_SIZE, ((RECT*)lParam)->right - ((RECT*)lParam)->left, ((RECT*)lParam)->bottom - ((RECT*)lParam)->top, (RECT*)lParam);
 
 	case WM_SIZE:
 		RECT r;
@@ -79,81 +79,81 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		r.bottom = HIWORD(lParam);
 
 		if (wParam == SIZE_MINIMIZED)
-			return TWinMessage(WMT_MINIMIZED, r.right, r.bottom, &r);					
+			return TWindowMessage(WMT_MINIMIZED, r.right, r.bottom, &r);					
 		else
 			if (wParam == SIZE_RESTORED)
-				return TWinMessage(WMT_RESTORED, r.right, r.bottom, &r);			
+				return TWindowMessage(WMT_RESTORED, r.right, r.bottom, &r);			
 			else
-				return TWinMessage(WMT_SIZE, r.right, r.bottom, &r);
+				return TWindowMessage(WMT_SIZE, r.right, r.bottom, &r);
 
 	case WM_KEYUP:
 		if (lParam & 0x00100000)
 		{
 			if (wParam == 16)
-				return TWinMessage(WMT_KEY_UP, KEY_RSHIFT);
+				return TWindowMessage(WMT_KEY_UP, KEY_RSHIFT);
 			else
 				if (wParam == 17)
-					return TWinMessage(WMT_KEY_UP, KEY_RCONTROL);
+					return TWindowMessage(WMT_KEY_UP, KEY_RCONTROL);
 				else
-					return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
+					return TWindowMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
 		}
 		else
-			return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
+			return TWindowMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_KEYDOWN:
 		if (lParam & 0x00100000)
 		{
 			if (wParam == 16)
-				return TWinMessage(WMT_KEY_DOWN, KEY_RSHIFT);
+				return TWindowMessage(WMT_KEY_DOWN, KEY_RSHIFT);
 			else
 				if (wParam == 17)
-					return TWinMessage(WMT_KEY_DOWN, KEY_RCONTROL);
+					return TWindowMessage(WMT_KEY_DOWN, KEY_RCONTROL);
 				else
-					return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
+					return TWindowMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
 		}
 		else
-			return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
+			return TWindowMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_SYSKEYUP:
 		if (wParam == VK_MENU)
-			return TWinMessage(WMT_KEY_UP, lParam & 0x00100000 ? KEY_RALT : KEY_LALT);
+			return TWindowMessage(WMT_KEY_UP, lParam & 0x00100000 ? KEY_RALT : KEY_LALT);
 		else
-			return TWinMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
+			return TWindowMessage(WMT_KEY_UP, ASCIIKeyToEngKey((uchar)wParam));
 	
 	case WM_SYSKEYDOWN:
 		if (wParam == VK_MENU)
-			return TWinMessage(WMT_KEY_DOWN, lParam & 0x00100000 ? KEY_RALT : KEY_LALT);
+			return TWindowMessage(WMT_KEY_DOWN, lParam & 0x00100000 ? KEY_RALT : KEY_LALT);
 		else
-			return TWinMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
+			return TWindowMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_CHAR:
-		return TWinMessage(WMT_ENTER_CHAR, (uint32)wParam);
+		return TWindowMessage(WMT_ENTER_CHAR, (uint32)wParam);
 
 	case WM_MOUSEMOVE:
-		return TWinMessage(WMT_MOUSE_MOVE, LOWORD(lParam), HIWORD(lParam));
+		return TWindowMessage(WMT_MOUSE_MOVE, LOWORD(lParam), HIWORD(lParam));
 
 	case WM_LBUTTONDOWN:
-		return TWinMessage(WMT_MOUSE_DOWN, 0);
+		return TWindowMessage(WMT_MOUSE_DOWN, 0);
 
 	case WM_MBUTTONDOWN:
-		return TWinMessage(WMT_MOUSE_DOWN, 3);
+		return TWindowMessage(WMT_MOUSE_DOWN, 3);
 
 	case WM_RBUTTONDOWN:
-		return TWinMessage(WMT_MOUSE_DOWN, 2);
+		return TWindowMessage(WMT_MOUSE_DOWN, 2);
 
 	case WM_LBUTTONUP:
-		return TWinMessage(WMT_MOUSE_UP, 0);
+		return TWindowMessage(WMT_MOUSE_UP, 0);
 
 	case WM_MBUTTONUP:
-		return TWinMessage(WMT_MOUSE_UP, 3);
+		return TWindowMessage(WMT_MOUSE_UP, 3);
 
 	case WM_RBUTTONUP:
-		return TWinMessage(WMT_MOUSE_UP, 2);
+		return TWindowMessage(WMT_MOUSE_UP, 2);
 
 	case WM_MOUSEWHEEL: 
 		int delta;
 		delta = GET_WHEEL_DELTA_WPARAM(wParam);
-		return TWinMessage(WMT_MOUSE_WHEEL, 0, 0, &delta);
+		return TWindowMessage(WMT_MOUSE_WHEEL, 0, 0, &delta);
 
 	default: 
 		MSG msg;
@@ -161,13 +161,13 @@ TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		msg.lParam = lParam;
 		msg.wParam = wParam;
 		msg.message = Msg;
-		return TWinMessage(WMT_UNKNOWN, 0, 0, &msg);
+		return TWindowMessage(WMT_UNKNOWN, 0, 0, &msg);
 	}
 }
 
-void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM &lParam)
+void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM &lParam)
 {
-	switch (msg.uiMsgType)
+	switch (msg.eMessage)
 	{
 	case WMT_REDRAW:
 		Msg = WM_PAINT;
@@ -214,14 +214,14 @@ void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM
 	case WMT_MINIMIZED:
 		Msg = WM_SIZE;
 		wParam = SIZE_MINIMIZED;
-		lParam = MAKELPARAM((WORD)msg.ui32Param1, (WORD)msg.ui32Param2);
+		lParam = MAKELPARAM((WORD)msg.ui32Parameter1, (WORD)msg.ui32Parameter2);
 		break;
 
 	case WMT_MOVE:
 		Msg = WM_MOVING;
 		wParam = 0;
-		if (msg.pParam3)
-			lParam = LPARAM(msg.pParam3);
+		if (msg.pParameter3)
+			lParam = LPARAM(msg.pParameter3);
 		else
 			lParam = 0;
 		break;
@@ -230,38 +230,38 @@ void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM
 	case WMT_SIZE:
 		Msg = WM_SIZE;
 		wParam = SIZE_RESTORED;
-		lParam = MAKELPARAM((WORD)msg.ui32Param1, (WORD)msg.ui32Param2);
+		lParam = MAKELPARAM((WORD)msg.ui32Parameter1, (WORD)msg.ui32Parameter2);
 		break;
 
 	case WMT_KEY_UP:
 		Msg = WM_KEYUP;
-		wParam = EngKeyToASCIIKey((uint8)msg.ui32Param1);
+		wParam = EngKeyToASCIIKey((uint8)msg.ui32Parameter1);
 		lParam = 0;
 		break;
 
 	case WMT_KEY_DOWN:
 		Msg = WM_KEYDOWN;
-		wParam = EngKeyToASCIIKey((uint8)msg.ui32Param1);
+		wParam = EngKeyToASCIIKey((uint8)msg.ui32Parameter1);
 		lParam = 0;
 		break;
 
 	case WMT_ENTER_CHAR:
 		Msg = WM_CHAR;
-		wParam = msg.ui32Param1;
+		wParam = msg.ui32Parameter1;
 		lParam = 0;
 		break;
 
 	case WMT_MOUSE_MOVE:
 		Msg = WM_MOUSEMOVE;
 		wParam = 0;
-		lParam = MAKELPARAM((WORD)msg.ui32Param1, (WORD)msg.ui32Param2);
+		lParam = MAKELPARAM((WORD)msg.ui32Parameter1, (WORD)msg.ui32Parameter2);
 		break;
 
 	case WMT_MOUSE_DOWN:
-		if (msg.ui32Param1 == 0)
+		if (msg.ui32Parameter1 == 0)
 			Msg = WM_LBUTTONDOWN;
 		else
-			if (msg.ui32Param1 == 2)
+			if (msg.ui32Parameter1 == 2)
 					Msg = WM_RBUTTONDOWN;
 				else
 					Msg = WM_MBUTTONDOWN;
@@ -270,10 +270,10 @@ void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM
 		break;
 
 	case WMT_MOUSE_UP:
-		if (msg.ui32Param1 == 0)
+		if (msg.ui32Parameter1 == 0)
 			Msg = WM_LBUTTONUP;
 		else
-			if (msg.ui32Param1 == 2)
+			if (msg.ui32Parameter1 == 2)
 					Msg = WM_RBUTTONUP;
 				else
 					Msg = WM_MBUTTONUP;
@@ -283,8 +283,8 @@ void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM
 
 	case WMT_MOUSE_WHEEL:
 		Msg = WM_MOUSEWHEEL;
-		if (msg.pParam3)
-			wParam = MAKEWPARAM(0,*(int*)msg.pParam3);
+		if (msg.pParameter3)
+			wParam = MAKEWPARAM(0,*(int*)msg.pParameter3);
 		else
 			wParam = 0;
 		lParam = 0;
@@ -731,7 +731,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	str +=")";
 
 	result += str + "\n\t";
-	stSysInfo.uiCPUFreq = mhz;
+	stSysInfo.uiCPUFrequency = mhz;
 	stSysInfo.uiCPUCount = st_sys_info.dwNumberOfProcessors;
 	
 	if (strlen(pc_processor_name) <= 128)

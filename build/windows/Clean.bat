@@ -43,6 +43,7 @@ call :removeBinJunkCPP "examples\cpp"
 call :removeSlnJunkCPP "examples\cpp"
 
 call :removeProjJunkCPP "examples\cpp\low_level_2d"
+call :removeProjJunkCPP "examples\cpp\3d_in_2d"
 
 :: CSharp assemblies
 

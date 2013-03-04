@@ -44,21 +44,26 @@ using namespace DGLE;
 IEngineCore *pEngineCore = NULL;
 IInput *pInput = NULL;
 IRender2D *pRender2D = NULL;
+IRender3D *pRender3D = NULL;
 uint uiCounter = 0;
 
 ITexture *pTex = NULL;
+IModel *pModel = NULL;
 
 void DGLE_API Init(void *pParameter)
 {
 	pEngineCore->GetSubSystem(ESS_INPUT, (IEngineSubSystem *&)pInput);
 
-	IResourceManager *prman;
-	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)prman);
-	prman->Load(RESOURCE_PATH"tests\\npot_tex.bmp", (IEngBaseObj *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
+	IResourceManager *p_res_man;
+	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)p_res_man);
+	p_res_man->Load(RESOURCE_PATH"tests\\npot_tex.bmp", (IEngineBaseObject *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
+
+	p_res_man->GetDefaultResource(EOT_MODEL, (IEngineBaseObject *&)pModel);
 
 	IRender *pr;
 	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pr);
 	pr->GetRender2D(pRender2D);
+	pr->GetRender3D(pRender3D);
 }
 
 void DGLE_API Free(void *pParameter)
@@ -79,6 +84,13 @@ void DGLE_API Update(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
+	pRender3D->SetMatrix(MatrixTranslate(TVector3(0.f, 0.f, -5.f)), true);
+	pRender3D->SetMatrix(MatrixRotate((float)uiCounter, TVector3(0.6f, 0.25f, 0.4f)), true);
+
+	pTex->Bind();
+	pModel->Draw();
+	pRender3D->DrawAxes(2.f, true);
+
 	uint w, h;
 	pTex->GetDimensions(w, h);
 	pTex->Draw2DSimple((SCREEN_X - (int)w)/2, (SCREEN_Y - (int)h)/2);
@@ -88,10 +100,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	if (GetEngine(DLL_PATH, pEngineCore))
 	{
-		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngWindow(SCREEN_X, SCREEN_Y, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, EIF_LOAD_ALL_PLUGINS)))
+		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngineWindow(SCREEN_X, SCREEN_Y, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, EIF_LOAD_ALL_PLUGINS)))
 		{
 			pEngineCore->ConsoleVisible(true);
-			pEngineCore->ConsoleExec("core_profiler 1");
+			pEngineCore->ConsoleExecute("core_profiler 1");
 			
 			pEngineCore->AddProcedure(EPT_INIT, &Init);
 			pEngineCore->AddProcedure(EPT_FREE, &Free);

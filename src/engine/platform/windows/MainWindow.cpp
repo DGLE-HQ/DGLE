@@ -61,7 +61,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 
 	Console()->UnRegCom("quit");
 
-	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
 
 	return (int) st_msg.wParam;
 }
@@ -102,28 +102,28 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		case WM_ACTIVATEAPP:
 			if (!(eng_inst.eGetEngFlags & GEF_FORCE_SINGLE_THREAD))
 			{
-				this_ptr->_pDelMessageProc->Invoke(TWinMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
+				this_ptr->_pDelMessageProc->Invoke(TWindowMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
 				break;
 			}
 
 		case WM_ENTERSIZEMOVE:
-			this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_DEACTIVATED));
+			this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_DEACTIVATED));
 			SetTimer(hWnd, UPDATE_TIMER_ID, USER_TIMER_MINIMUM, NULL);
 			break;
 
 		case WM_EXITSIZEMOVE:
-			this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_ACTIVATED));
+			this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_ACTIVATED));
 			KillTimer(hWnd, UPDATE_TIMER_ID);
 			break;
 
 		case WM_SIZING:
 			GetClientRect(hWnd, &r);
-			this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_SIZE, (uint32)r.right, (uint32)r.bottom));
+			this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_SIZE, (uint32)r.right, (uint32)r.bottom));
 			break;
 
 		case WM_TIMER:
 			if (wParam == UPDATE_TIMER_ID)
-				this_ptr->_pDelMessageProc->Invoke(TWinMessage(WMT_REDRAW));
+				this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_REDRAW));
 			break;
 
 		default:
@@ -137,7 +137,7 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-DGLE_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE_RESULT CMainWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	_hWnd				= tHandle;
 	_pDelMainLoop		= pDelMainLoop;
@@ -198,7 +198,7 @@ DGLE_RESULT CMainWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResu
 	return S_OK;
 }
 
-DGLE_RESULT CMainWindow::SendMessage(const TWinMessage &stMsg)
+DGLE_RESULT CMainWindow::SendMessage(const TWindowMessage &stMsg)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -217,7 +217,7 @@ DGLE_RESULT CMainWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 	return S_OK;
 }
 
-DGLE_RESULT CMainWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE_RESULT CMainWindow::GetWindowHandle(TWindowHandle &stHandle)
 {
 	stHandle = _hWnd;
 
@@ -319,7 +319,7 @@ DGLE_RESULT CMainWindow::KillWindow()
 	return S_OK;
 }
 
-DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -354,7 +354,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocu
 		{
 			LOG("Can't set fullscreen mode " +IntToStr(stWind.uiWidth)+"X"+IntToStr(stWind.uiHeight)+", switching back to windowed mode.", LT_ERROR);
 			_bFScreen = false;
-			const_cast<TEngWindow *>(&stWind)->bFullScreen = false;
+			const_cast<TEngineWindow *>(&stWind)->bFullScreen = false;
 			res = S_FALSE;
 		}
 		else

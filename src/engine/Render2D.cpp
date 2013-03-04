@@ -37,8 +37,8 @@ _uiBufferSize(34)// never less than 34
 	_pCoreRenderer = Core()->pCoreRenderer();
 	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
 
-	Console()->RegComValue("rnd2d_profiler", "Displays Render 2D subsystems profiler.", &_iProfilerState, 0, 2);
-	Console()->RegComValue("rnd2d_draw_bboxes", "Displays bounding boxes of all 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
+	Console()->RegComVar("rnd2d_profiler", "Displays Render 2D subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComVar("rnd2d_draw_bboxes", "Displays bounding boxes of all 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
 }
 
 CRender2D::~CRender2D()
@@ -118,10 +118,10 @@ void CRender2D::_SetDefaultStates()
 {
 	_stRotationPoint = TPoint2();
 	_stScale = TPoint2(1.f, 1.f);
-	_astVerticesOffset[0] = _astVerticesOffset[1] = _astVerticesOffset[2] = _astVerticesOffset[3] =  TPoint2();
+	_astVerticesOffset[0] = _astVerticesOffset[1] = _astVerticesOffset[2] = _astVerticesOffset[3] = TPoint2();
 	_stColormix = TColor4();
 
-	_pCoreRenderer->SetColor(TColor4());
+	_pCoreRenderer->SetColor(ColorWhite());
 	
 	_pCoreRenderer->SetLineWidth(1.f);
 	_pCoreRenderer->SetPointSize(1.f);
@@ -538,7 +538,7 @@ DGLE_RESULT DGLE_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::CoordResCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord)
+DGLE_RESULT DGLE_API CRender2D::ResolutionCorrectToAbsolute(const TPoint2 &stLogicCoord, TPoint2 &stAbsoluteCoord)
 {
 	stAbsoluteCoord.x = stLogicCoord.x * ((float)_uiPrevViewPortW - _uiCropX * 2.f) / (float)_uiScreenWidth + (float)_uiCropX;
 	stAbsoluteCoord.y = stLogicCoord.y * ((float)_uiPrevViewPortH - _uiCropY * 2.f) / (float)_uiScreenHeight + (float)_uiCropY;
@@ -546,7 +546,7 @@ DGLE_RESULT DGLE_API CRender2D::CoordResCorrectToAbsolute(const TPoint2 &stLogic
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::CoordAbsoluteToResCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord)
+DGLE_RESULT DGLE_API CRender2D::AbsoluteToResolutionCorrect(const TPoint2 &stAbsoluteCoord, TPoint2 &stLogicCoord)
 {
 	stLogicCoord.x = (stAbsoluteCoord.x - (float)_uiCropX) * (float)_uiScreenWidth / ((float)_uiPrevViewPortW - _uiCropX * 2.f);
 	stLogicCoord.y = (stAbsoluteCoord.y - (float)_uiCropY) * (float)_uiScreenHeight / ((float)_uiPrevViewPortH - _uiCropY * 2.f);
@@ -614,6 +614,32 @@ DGLE_RESULT DGLE_API CRender2D::ResetCamera()
 	return S_OK;
 }
 
+DGLE_RESULT DGLE_API CRender2D::UnprojectCameraToScreen(const TPoint2 &stCameraCoord, TPoint2 &stScreenCoord)
+{
+	if (!_bCameraWasSet)
+	{
+		stScreenCoord = stCameraCoord;
+		return S_OK;
+	}
+
+	stScreenCoord = _stCamTransform.ApplyToPoint(stCameraCoord);
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender2D::ProjectScreenToCamera(const TPoint2 &stScreenCoord, TPoint2 &stCameraCoord)
+{
+	if (!_bCameraWasSet)
+	{
+		stCameraCoord = stScreenCoord;
+		return S_OK;
+	}
+	
+	stCameraCoord = MatrixInverse(_stCamTransform).ApplyToPoint(stScreenCoord);
+
+	return S_OK;
+}
+
 DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAngle, bool &bCull)
 {
 	IN_2D_GUARD
@@ -665,7 +691,7 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::LineWidth(uint uiWidth)
+DGLE_RESULT DGLE_API CRender2D::SetLineWidth(uint uiWidth)
 {
 	_fLineWidth = (float)uiWidth;
 	_pCoreRenderer->SetLineWidth((float)uiWidth);
@@ -792,7 +818,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawRect(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -1534,23 +1560,29 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 	corner.y *= fabs(scale.y);
 	corner.z *= fabs(scale.z);
 
-	const float max_dist = corner.Length();
-	const double z_plane = (double)_uiScreenHeight / tan(fFovY / 2 * (M_PI / 180.0));
+	float scale_z;
+
+	if (_bCameraWasSet)
+		scale_z = (_stCamScale.x + _stCamScale.y) / 2.f;
+	else
+		scale_z = 1.f;
+
+	const float max_dist = corner.Length() * scale_z,
+		z_plane = (float)_uiScreenHeight / tanf(fFovY / 2.f * ((float)M_PI / 180.f));
 	
 	float z_far;
 	
 	if (!bClip)
-		z_far = (float)(z_plane + max_dist);
+		z_far = z_plane + max_dist;
 	else
-		z_far = (float)z_plane;
+		z_far = z_plane;
 
 	// restrict znear in a way to [0.998..1.0] ndc z range ([-1..1]) occupy no more then half of eye space z range ([-znear..-zplane])
-	const double z = 0.999,
-		z_min = (z_plane - z_plane * sqrt(1.0 - 4.0 * z * (1.0 - z))) / (2.0 * z),
+	const float z = 0.999f,
+		z_min = (z_plane - z_plane * sqrtf(1.f - 4.f * z * (1.f - z))) / (2.f * z),
 		z_near = max(z_min, z_plane - max_dist),
-		factor = z_near / z_plane;
+		factor = z_near / z_plane,
 
-	const float
 		plane_right = (float)_uiScreenWidth / 2.f,
 		plane_left = -plane_right,
 		plane_bottom = (float)_uiScreenHeight / 2.f,
@@ -1562,24 +1594,19 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 		near_top = -near_bottom;
 
 	const TMatrix4 new_proj(
-		(float)(2.0 * z_near / (near_right - near_left)),	 0.f,												 0.f,																0.f,
-		0.f,												 (float)(2.0 * z_near / (near_top - near_bottom)),	 0.f,																0.f,
-		(near_right + near_left) / (near_right - near_left), (near_top + near_bottom) / (near_top - near_bottom),(float)(-((double)z_far + z_near) / ((double)z_far - z_near)),		-1.f,
-		0.f,												 0.f,												 (float)(-2.0 * (double)z_far * z_near / ((double)z_far - z_near)),	0.f);
+		2.f * z_near / (near_right - near_left),			 0.f,												 0.f,										0.f,
+		0.f,												 2.f * z_near / (near_top - near_bottom),			 0.f,										0.f,
+		(near_right + near_left) / (near_right - near_left), (near_top + near_bottom) / (near_top - near_bottom),-(z_far + z_near) / (z_far - z_near),		-1.f,
+		0.f,												 0.f,												 -2.f * z_far * z_near / (z_far - z_near),	0.f);
 	
 	TMatrix4 prev_proj, prev_mview, new_mview;
 
-	float scale_z = 1.f;
-
 	if (_bCameraWasSet)
-	{
 		new_mview = _stCamTransform * MatrixTranslate(TVector3(plane_left, plane_top, 0.f));
-		scale_z = (_stCamScale.x + _stCamScale.y) / 2.f;
-	}
 	else
 		new_mview = MatrixTranslate(TVector3(plane_left, plane_top, 0.f));
 
-	new_mview = MatrixScale(TVector3(1.f, 1.f, scale_z)) * stTransform * MatrixTranslate(TVector3(0.f, 0.f, (float)-z_plane)) * new_mview;
+	new_mview = MatrixScale(TVector3(1.f, 1.f, scale_z)) * stTransform * MatrixTranslate(TVector3(0.f, 0.f, -z_plane)) * new_mview;
 
 	_pCoreRenderer->GetMatrix(prev_proj, MT_PROJECTION);
 	_pCoreRenderer->SetMatrix(new_proj, MT_PROJECTION);
@@ -1831,7 +1858,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuff
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawTex(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	uint width = 0, height = 0;
 
@@ -1841,7 +1868,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTex(ITexture *pTexture, const TPoint2 &stCoo
 	return DrawTexture(pTexture, stCoords, stDimensions, TRectF(0.f, 0.f, (float)width, (float)height), fAngle, eFlags);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawTexSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTextureSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;
@@ -1859,7 +1886,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTexSprite(ITexture *pTexture, const TPoint2 
 		fAngle, eFlags);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawTexCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawTextureCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle, E_EFFECT2D_FLAGS eFlags)
 {
 	if (pTexture == NULL)
 		return E_INVALIDARG;

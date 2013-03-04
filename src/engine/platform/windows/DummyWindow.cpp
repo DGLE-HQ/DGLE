@@ -18,7 +18,7 @@ CDummyWindow::~CDummyWindow()
 	LOG("Window closed properly.", LT_INFO);	
 }
 
-DGLE_RESULT CDummyWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE_RESULT CDummyWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	_pDelMessageProc = pDelMsgProc;
 
@@ -42,7 +42,7 @@ DGLE_RESULT CDummyWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRes
 	return S_OK;
 }
 
-DGLE_RESULT CDummyWindow::SendMessage(const TWinMessage &stMsg)
+DGLE_RESULT CDummyWindow::SendMessage(const TWindowMessage &stMsg)
 {
 	return E_NOTIMPL;
 }
@@ -54,7 +54,7 @@ DGLE_RESULT CDummyWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 	return S_OK;
 }
 
-DGLE_RESULT CDummyWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE_RESULT CDummyWindow::GetWindowHandle(TWindowHandle &stHandle)
 {
 	stHandle = _hWnd;
 
@@ -108,7 +108,7 @@ DGLE_RESULT CDummyWindow::BeginMainLoop()
 
 DGLE_RESULT CDummyWindow::KillWindow()
 {
-	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
 
 	if (_hDC && !ReleaseDC(_hWnd,_hDC))
 		LOG("Failed to release Device Context.", LT_ERROR);
@@ -122,7 +122,7 @@ DGLE_RESULT CDummyWindow::KillWindow()
 	return S_OK;
 }
 
-DGLE_RESULT CDummyWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE_RESULT CDummyWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus)
 {
 	if (!_hWnd)
 		return E_FAIL;

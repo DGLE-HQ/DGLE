@@ -34,11 +34,11 @@ class CInput: private CBaseInput, public IInput
 	int			 _uiOldMouseX, _uiOldMouseY;
 
 	void		 _ClipCursor();
-	void		 _MessageProc(const TWinMessage &stMsg);
+	void		 _MessageProc(const TWindowMessage &stMsg);
 	void		 _Loop();
 	void		 _Update();
 
-	static void DGLE_API _s_MessageProc(void *pParameter, const TWinMessage &stMsg);
+	static void DGLE_API _s_MessageProc(void *pParameter, const TWindowMessage &stMsg);
 	static void DGLE_API _s_Update(void *pParameter);
 	static void DGLE_API _s_Loop(void *pParameter);
 

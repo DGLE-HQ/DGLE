@@ -46,7 +46,7 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API GetObjectType(E_ENG_OBJ_TYPE &eType)
+	DGLE_RESULT DGLE_API GetObjectType(E_ENGINE_OBJECT_TYPE &eType)
 	{
 		eType = EOT_MESH;
 		return S_OK;
@@ -256,7 +256,7 @@ public:
 
 	inline GLuint GetTex() const { return _tex; }
 
-	DGLE_RESULT DGLE_API GetObjectType(E_ENG_OBJ_TYPE &eType)
+	DGLE_RESULT DGLE_API GetObjectType(E_ENGINE_OBJECT_TYPE &eType)
 	{
 		eType = EOT_TEXTURE;
 		return S_OK;
@@ -498,12 +498,12 @@ inline uint CCoreRendererGL::GetVertexSize(const TDrawDataDesc &stDesc)
 	return res;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::Prepare(TCRendererInitResult &stResults)
+DGLE_RESULT DGLE_API CCoreRendererGL::Prepare(TCrRndrInitResults &stResults)
 {
 	return stResults = CBaseRendererGL::Prepare(), stResults ? S_OK : E_FAIL;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults)
+DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
 {
 	if (_stInitResults)
 		return E_ABORT;
@@ -593,7 +593,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCRendererInitResult &stResults
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
 	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
-	Console()->RegComValue("crgl_profiler", "Displays Core Renderer OpenGL subsystems profiler.", &_iProfilerState, 0, 2);
+	Console()->RegComVar("crgl_profiler", "Displays Core Renderer OpenGL subsystems profiler.", &_iProfilerState, 0, 2);
 
 	_stInitResults = stResults;
 
@@ -621,7 +621,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 	return ret;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::AdjustMode(TEngWindow &stNewWin)
+DGLE_RESULT DGLE_API CCoreRendererGL::AdjustMode(TEngineWindow &stNewWin)
 {
 	return CBaseRendererGL::AdjustMode(stNewWin) ? S_OK : S_FALSE;
 }
@@ -717,7 +717,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataS
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 {
-	//ToDo
+	// ToDo
 	return S_OK;
 }
 
@@ -1026,7 +1026,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *
 		return E_INVALIDARG;
 
 	uint vertices_data_size = uiVerticesCount * CCoreRendererGL::GetVertexSize(stDrawDesc),
-		 indexes_data_size = uiIndexesCount * (stDrawDesc.bIndexBuffer32 ? sizeof(uint16) : sizeof(uint32)) * (stDrawDesc.pIndexBuffer ? 3 : 0);
+		 indexes_data_size = uiIndexesCount * (stDrawDesc.bIndexBuffer32 ? sizeof(uint16) : sizeof(uint32));
 
 	TDrawDataDesc desc(stDrawDesc);
 	desc.pData = NULL;
@@ -1086,7 +1086,6 @@ DGLE_RESULT DGLE_API CCoreRendererGL::PushStates()
 {
 	_pStateMan->Push();
 	_clStatesStack.push(_stCurrentState);
-
 	return S_OK;
 }
 
@@ -1594,7 +1593,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 	case CRSF_BUILTIN_FSCREEN_MODE : bIsSupported = false; break;
 	case CRSF_BUILTIN_STATE_FILTER : bIsSupported = true; break;
 	case CRSF_MULTISAMPLING : bIsSupported = GLEW_ARB_multisample == GL_TRUE; break;
-	case CRDF_VSYNC : 
+	case CRDF_VERTICAL_SYNCHRONIZATION : 
 #if defined(PLATFORM_WINDOWS)
 		bIsSupported = WGLEW_EXT_swap_control == GL_TRUE; 
 #endif

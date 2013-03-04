@@ -49,27 +49,27 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(IBaseEvent, INTERFACE_IMPL_END)
 };
 
-class CEvBeforeInit : public IEvBeforeInit
+class CEvBeforeInit : public IEvBeforeInitialization
 {
-	 TEngWindow			 *_pstWindowParam;
+	 TEngineWindow			 *_pstWindowParam;
 	 E_ENGINE_INIT_FLAGS *_peInitFlags; 
 
 public:
 
-	CEvBeforeInit(TEngWindow *pstWindowParam, E_ENGINE_INIT_FLAGS *peInitFlags)
+	CEvBeforeInit(TEngineWindow *pstWindowParam, E_ENGINE_INIT_FLAGS *peInitFlags)
 	{
 		_pstWindowParam = pstWindowParam;
 		_peInitFlags	= peInitFlags;
 	}
 
-	DGLE_RESULT DGLE_API SetEngParams(const TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
+	DGLE_RESULT DGLE_API SetParameters(const TEngineWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
 	{
 		(*_pstWindowParam)= stWindowParam;
 		(*_peInitFlags)	= eInitFlags;
 		return S_OK;
 	}
 	
-	DGLE_RESULT DGLE_API GetEngParams(TEngWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
+	DGLE_RESULT DGLE_API GetParameters(TEngineWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
 	{
 		stWindowParam = (*_pstWindowParam);
 		eInitFlags	  = (*_peInitFlags); 	
@@ -78,7 +78,7 @@ public:
 
 	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
-		eEvType = ET_BEFORE_INIT;
+		eEvType = ET_BEFORE_INITIALIZATION;
 		return S_OK;
 	}
 
@@ -88,18 +88,18 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvBeforeInit, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
+	IDGLE_BASE_IMPLEMENTATION(IEvBeforeInitialization, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
-class CEvWinMessage : public IEvWinMessage
+class CEvWinMessage : public IEvWindowMessage
 {
-	TWinMessage _stMessage;
+	TWindowMessage _stMessage;
 
 public:
 
-	CEvWinMessage(const TWinMessage &stMessage):_stMessage(stMessage){}
+	CEvWinMessage(const TWindowMessage &stMessage):_stMessage(stMessage){}
 
-	DGLE_RESULT DGLE_API GetWinMessage(TWinMessage &stWinMsg)
+	DGLE_RESULT DGLE_API GetMessage(TWindowMessage &stWinMsg)
 	{
 		stWinMsg = _stMessage;
 		return S_OK;
@@ -107,7 +107,7 @@ public:
 
 	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
-		eEvType = ET_ON_WIN_MESSAGE;
+		eEvType = ET_ON_WINDOW_MESSAGE;
 		return S_OK;
 	}
 
@@ -117,7 +117,7 @@ public:
 		return S_FALSE;
 	}
 
-	IDGLE_BASE_IMPLEMENTATION(IEvWinMessage, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
+	IDGLE_BASE_IMPLEMENTATION(IEvWindowMessage, INTERFACE_IMPL(IBaseEvent, INTERFACE_IMPL_END))
 };
 
 class CEvGetSubSystem : public IEvGetSubSystem
@@ -148,7 +148,7 @@ public:
 
 	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
-		eEvType = ET_ON_GET_SSYSTEM;
+		eEvType = ET_ON_GET_SUBSYSTEM;
 		return S_OK;
 	}
 
@@ -175,7 +175,7 @@ public:
 	bool DoHalt() {return !_bNoHalt;}
 	bool DoShowMessage() {return !_bNoMessage;}
 
-	DGLE_RESULT DGLE_API GetMessageTxt(char *pcTxt, uint &uiCharsCount)
+	DGLE_RESULT DGLE_API GetMessageText(char *pcTxt, uint &uiCharsCount)
 	{
 		if (!pcTxt)
 		{
@@ -439,11 +439,11 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 	Console()->Write(pcTxt);
 }
 
-void CCore::_MessageProc(const TWinMessage &stMsg)
+void CCore::_MessageProc(const TWindowMessage &stMsg)
 {
 	size_t i;
 
-	switch (stMsg.uiMsgType)
+	switch (stMsg.eMessage)
 	{
 	case WMT_REDRAW:
 
@@ -540,7 +540,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 	case WMT_ACTIVATED:
 
-		if (stMsg.ui32Param1 == 1)
+		if (stMsg.ui32Parameter1 == 1)
 			break;
 
 		_bPause = false;	
@@ -555,7 +555,7 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 	case WMT_DEACTIVATED:
 
-		if (stMsg.ui32Param1 == 1)
+		if (stMsg.ui32Parameter1 == 1)
 			break;
 
 		_bPause = true;
@@ -589,34 +589,34 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 
 	case WMT_SIZE:
 
-		_stWin.uiWidth = stMsg.ui32Param1;
-		_stWin.uiHeight= stMsg.ui32Param2;
+		_stWin.uiWidth = stMsg.ui32Parameter1;
+		_stWin.uiHeight= stMsg.ui32Parameter2;
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
 		break;
 
 	case WMT_KEY_UP:
 
-		if (!(_stWin.uiFlags & EWF_RESTRICT_FSCREEN_HOTKEY))
+		if (!(_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY))
 		{
-			if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
+			if (stMsg.ui32Parameter1 == c_eFScreenKeyFirst[0] || stMsg.ui32Parameter1 == c_eFScreenKeyFirst[1])
 				_bCmdKeyIsPressed = false;
 
-			if (stMsg.ui32Param1 == c_eFScreenKeySecond)
+			if (stMsg.ui32Parameter1 == c_eFScreenKeySecond)
 				_bFScreenKeyIsPressed = false;
 		}
 
-		if (stMsg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
+		if (stMsg.ui32Parameter1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
 			Console()->Visible(true);
 
 		break;
 
 	case WMT_KEY_DOWN:
 
-		if (_stWin.uiFlags & EWF_RESTRICT_FSCREEN_HOTKEY)
+		if (_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY)
 			break;
 
-		if (stMsg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
+		if (stMsg.ui32Parameter1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
 		{
 			_bFScreenKeyIsPressed = true;
 			_stWndToApply = _stWin;
@@ -624,13 +624,13 @@ void CCore::_MessageProc(const TWinMessage &stMsg)
 			_ChangeWinMode(_stWndToApply, false);
 		}
 
-		if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
+		if (stMsg.ui32Parameter1 == c_eFScreenKeyFirst[0] || stMsg.ui32Parameter1 == c_eFScreenKeyFirst[1])
 			_bCmdKeyIsPressed = true;
 
 		break;
 	}
 
-	CastEvent(ET_ON_WIN_MESSAGE, (IBaseEvent*)&CEvWinMessage(stMsg));
+	CastEvent(ET_ON_WINDOW_MESSAGE, (IBaseEvent*)&CEvWinMessage(stMsg));
 }
 
 void CCore::_OnTimer()
@@ -742,8 +742,6 @@ void CCore::_RenderFrame()
 	_bRendering = true;
 
 	_pRender->BeginRender();
-
-	//	_pRender->pRender3D()->Prepare();
 
 	_ui64RenderDelay = GetPerfTimer();
 
@@ -953,8 +951,14 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	(*pInitPlugin)((IEngineCore*)this, tmp.pPlugin);
 
-	TPluginInfo info;
+	if (!tmp.pPlugin)
+	{
+		LOG("Failed to retrieve plugin interface from library \"" + clFileName + "\".", LT_ERROR);
+		ReleaseDynamicLib(tmp.tLib);
+		return false;
+	}
 
+	TPluginInfo info;
 	tmp.pPlugin->GetPluginInfo(info);
 
 	if (info.ui8PluginSDKVersion != _DGLE_PLUGIN_SDK_VER_)
@@ -999,7 +1003,7 @@ DGLE_RESULT DGLE_API CCore::LoadSplashPicture(const char *pcBmpFileName)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::AddPluginToInitList(const char *pcFileName)
+DGLE_RESULT DGLE_API CCore::AddPluginToInitializationList(const char *pcFileName)
 {
 	if (_bInitedFlag)
 		return S_FALSE;
@@ -1009,7 +1013,7 @@ DGLE_RESULT DGLE_API CCore::AddPluginToInitList(const char *pcFileName)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags)
+DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags)
 {
 	if (!_bInitedFlag)
 	{
@@ -1023,7 +1027,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 			return E_ABORT;
 		}
 
-		locale::global(std::locale(""));
+		locale::global(std::locale(""));	
 		setlocale(LC_NUMERIC, "C");
 
 		LOG("Current locale: " + locale().name(), LT_INFO);
@@ -1032,7 +1036,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		_uiUpdateInterval = uiUpdateInterval;
 		_bPause = false;
 
-		CastEvent(ET_BEFORE_INIT, (IBaseEvent*)&CEvBeforeInit(&_stWin, &_eInitFlags));
+		CastEvent(ET_BEFORE_INITIALIZATION, (IBaseEvent*)&CEvBeforeInit(&_stWin, &_eInitFlags));
 
 		bool do_spl = !((uint)_eInitFlags & EIF_NO_SPLASH) && InstIdx() == 0;
 
@@ -1083,10 +1087,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 		_clDelInit.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 		_clDelFree.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
-		Console()->RegComValue("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, (void*)this);
-		Console()->RegComValue("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, (void*)this);
-		Console()->RegComValue("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additionally draw performance metrics.\n3 - additionally draw memory usage metrics.", &_iDrawProfiler, 0, 3, NULL, (void*)this);
-		Console()->RegComValue("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, (void*)this);
+		Console()->RegComVar("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, (void*)this);
+		Console()->RegComVar("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, (void*)this);
+		Console()->RegComVar("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additionally draw performance metrics.\n3 - additionally draw memory usage metrics.", &_iDrawProfiler, 0, 3, NULL, (void*)this);
+		Console()->RegComVar("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, (void*)this);
 		Console()->RegComProc("core_version", "Prints engine version.", &_s_ConPrintVersion, (void*)this);
 		Console()->RegComProc("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, (void*)this);
 		Console()->RegComProc("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, (void*)this);
@@ -1216,7 +1220,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 #endif
 		}
 
-		TCRendererInitResult rnd_init_res;
+		TCrRndrInitResults rnd_init_res;
 
 		if (FAILED(_pCoreRenderer->Prepare(rnd_init_res)))
 			return E_ABORT;
@@ -1226,7 +1230,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWinHandle tHandle, const char* pcA
 
 		if (do_spl)
 		{
-			TWinHandle t_h;
+			TWindowHandle t_h;
 			_pMainWindow->GetWindowHandle(t_h);
 			_pSplashWindow->SetOwnerWindow(t_h);
 		}
@@ -1308,15 +1312,15 @@ DGLE_RESULT DGLE_API CCore::GetSystemInfo(TSystemInfo &stSysInfo)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::GetCurrentWin(TEngWindow &stWin)
+DGLE_RESULT DGLE_API CCore::GetCurrentWindow(TEngineWindow &stWin)
 {
 	stWin = _stWin;
 	return S_OK;
 }
 
-DGLE_RESULT CCore::_ChangeWinMode(const TEngWindow &stNewWin, bool bForceNoEvents)
+DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents)
 {
-	TEngWindow wnd = stNewWin;
+	TEngineWindow wnd = stNewWin;
 
 	if (!bForceNoEvents && wnd.bFullScreen != _stWin.bFullScreen)
 		CastEvent(ET_ON_FULLSCREEN, (IBaseEvent*)&CEvGoFullScreen(wnd.uiWidth, wnd.uiHeight, wnd.bFullScreen));
@@ -1350,8 +1354,8 @@ DGLE_RESULT CCore::_ChangeWinMode(const TEngWindow &stNewWin, bool bForceNoEvent
 
 		LOG(string("Window mode (Viewport: ") + IntToStr(_stWin.uiWidth) + "X" + IntToStr(_stWin.uiHeight) +
 			(_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16 bit" : "") +
-			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVSync?", VSync":"") +
-			(_stWin.eMSampling != MM_NONE ? ", MSAA: " + IntToStr((int)pow(2.f, (int)_stWin.eMSampling)) + "X" : "") +
+			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVerticalSynchronization?", VSync":"") +
+			(_stWin.eMultisampling != MM_NONE ? ", MSAA: " + IntToStr((int)pow(2.f, (int)_stWin.eMultisampling)) + "X" : "") +
 			") has been set properly.", LT_INFO);
 	}
 	else
@@ -1363,7 +1367,7 @@ DGLE_RESULT CCore::_ChangeWinMode(const TEngWindow &stNewWin, bool bForceNoEvent
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ChangeWinMode(const TEngWindow &stNewWin)
+DGLE_RESULT DGLE_API CCore::ChangeWindowMode(const TEngineWindow &stNewWin)
 {
 	return _ChangeWinMode(stNewWin, false);
 }
@@ -1432,7 +1436,7 @@ DGLE_RESULT DGLE_API CCore::QuitEngine()
 
 	_bQuitFlag = true;
 
-	_pMainWindow->SendMessage(TWinMessage(WMT_CLOSE));
+	_pMainWindow->SendMessage(TWindowMessage(WMT_CLOSE));
 
 	if (_eInitFlags & EIF_FORCE_NO_WINDOW)
 		_pMainWindow->KillWindow();
@@ -1459,7 +1463,7 @@ DGLE_RESULT DGLE_API CCore::GetLastUpdateDeltaTime(uint64 &ui64DeltaTime)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::GetInstanceIdx(uint &uiIdx)
+DGLE_RESULT DGLE_API CCore::GetInstanceIndex(uint &uiIdx)
 {
 	uiIdx = InstIdx();
 	return S_OK;
@@ -1492,7 +1496,7 @@ DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEven
 
 DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
-	if (eEventType == ET_BEFORE_INIT && _bInitedFlag) // Means that engine is already inited and event will never happen.
+	if (eEventType == ET_BEFORE_INITIALIZATION && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
 	
 	for (size_t i = 0; i < _clEvents.size(); ++i)
@@ -1704,16 +1708,16 @@ void DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
 		CON(CCore, "Parameters expected.");
 	else
 	{
-		TEngWindow wnd; int samples;
+		TEngineWindow wnd; int samples;
 		istrstream params_str(pcParam);
-		params_str >> wnd.uiWidth >> wnd.uiHeight >> wnd.bFullScreen >> wnd.bVSync >> samples;
+		params_str >> wnd.uiWidth >> wnd.uiHeight >> wnd.bFullScreen >> wnd.bVerticalSynchronization >> samples;
 
 		switch (samples)
 		{
-		case 2: wnd.eMSampling = MM_2X; break;
-		case 4: wnd.eMSampling = MM_4X; break;
-		case 8: wnd.eMSampling = MM_8X; break;
-		default: wnd.eMSampling = MM_NONE;
+		case 2: wnd.eMultisampling = MM_2X; break;
+		case 4: wnd.eMultisampling = MM_4X; break;
+		case 8: wnd.eMultisampling = MM_8X; break;
+		default: wnd.eMultisampling = MM_NONE;
 		}
 
 		wnd.uiFlags = PTHIS(CCore)->_stWin.uiFlags;
@@ -1722,7 +1726,7 @@ void DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
 	}
 }
 
-DGLE_RESULT DGLE_API CCore::GetHandle(TWinHandle &tHandle)
+DGLE_RESULT DGLE_API CCore::GetWindowHandle(TWindowHandle &tHandle)
 {
 	_pMainWindow->GetWindowHandle(tHandle);
 	return S_OK;
@@ -1740,25 +1744,25 @@ DGLE_RESULT DGLE_API CCore::ConsoleWrite(const char *pcTxt, bool bWriteToPreviou
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleExec(const char *pcCommandTxt)
+DGLE_RESULT DGLE_API CCore::ConsoleExecute(const char *pcCommandTxt)
 {
 	Console()->Exec(pcCommandTxt);
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
+DGLE_RESULT DGLE_API CCore::ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
 	Console()->RegComProc(pcCommandName, pcCommandHelp, pProc, pParameter);
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
+DGLE_RESULT DGLE_API CCore::ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
-	Console()->RegComValue(pcCommandName, pcCommandHelp, piValue, iMinValue, iMaxValue, pProc, pParameter);
+	Console()->RegComVar(pcCommandName, pcCommandHelp, piVar, iMinValue, iMaxValue, pProc, pParameter);
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleUnregCom(const char *pcCommandName)
+DGLE_RESULT DGLE_API CCore::ConsoleUnregister(const char *pcCommandName)
 {
 	if (Console()->UnRegCom(pcCommandName))
 		return S_OK;
@@ -1826,7 +1830,7 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 			return E_INVALIDARG;
 	}
 
-	CastEvent(ET_ON_GET_SSYSTEM, (IBaseEvent*)&CEvGetSubSystem(eSubSystem, prSubSystem));
+	CastEvent(ET_ON_GET_SUBSYSTEM, (IBaseEvent*)&CEvGetSubSystem(eSubSystem, prSubSystem));
 
 	return S_OK;
 }
@@ -1841,7 +1845,7 @@ void DGLE_API CCore::_s_MainLoop(void *pParameter)
 	PTHIS(CCore)->_MainLoop();
 }
 
-void DGLE_API CCore::_s_MessageProc(void *pParameter, const TWinMessage &stMsg)
+void DGLE_API CCore::_s_MessageProc(void *pParameter, const TWindowMessage &stMsg)
 {
 	PTHIS(CCore)->_MessageProc(stMsg);
 }

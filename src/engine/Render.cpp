@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		29.04.2012 (c)Korotkov Andrey
+\date		03.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,6 +9,7 @@ See "DGLE.h" for more details.
 
 #include "Render.h"
 #include "Render2D.h"
+#include "Render3D.h"
 
 CRender::CRender(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
@@ -31,7 +32,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 	_pCoreRenderer->IsFeatureSupported(CRSF_MULTISAMPLING, b_supported);
 	_strFeturesList += std::string("Multisampling: ") + (b_supported ? "Yes" : "No") + "\n\t";
 	
-	_pCoreRenderer->IsFeatureSupported(CRDF_VSYNC, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRDF_VERTICAL_SYNCHRONIZATION, b_supported);
 	_strFeturesList += std::string("Vertical synchronization: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRDF_PROGRAMMABLE_PIPELINE, b_supported);
@@ -100,6 +101,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 	SetClearColor(ColorClear());
 
 	_pRender2D = new CRender2D(InstIdx());
+	_pRender3D = new CRender3D(InstIdx());
 
 	LOG("Render subsystem initialized.", LT_INFO);
 }
@@ -107,6 +109,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 CRender::~CRender()
 {
 	delete _pRender2D;
+	delete _pRender3D;
 
 	Console()->UnRegCom("rnd_list_features");
 
@@ -116,41 +119,57 @@ CRender::~CRender()
 void CRender::BeginRender()
 {
 	_pCoreRenderer->Clear();
-	_pCoreRenderer->SetMatrix(MatrixIdentity());
 
+	_pRender3D->BeginFrame();
 	_pRender2D->BeginFrame();
 }
 
 void CRender::EndRender()
 {
 	_pRender2D->EndFrame();
+	_pRender3D->EndFrame();
 
 	_pCoreRenderer->Present();
 }
 
 void CRender::_SetPerspectiveMatrix(uint width, uint height)
 {
-	float aspect = (float)width / (float)height,
-	top = _fZNear * tanf(_fFovAngle * (float)M_PI / 360.f),
-	bottom = -top,
-	left = bottom * aspect,
-	right = top * aspect;
+	const float aspect = (float)width / (float)height,
+		top = _fZNear * tanf(_fFovAngle * (float)M_PI / 360.f),
+		bottom = -top,
+		left = bottom * aspect,
+		right = top * aspect;
 
 	_pCoreRenderer->SetMatrix(TMatrix4(
-		(2 * _fZNear) / (right - left), 0.f, (right + left) / (right - left), 0.f,
-		0.f, (2 * _fZNear) / (top - bottom), (top + bottom) / (top - bottom), 0.f,
-		0.f, 0.f, -((_fZFar + _fZNear) / (_fZFar - _fZNear)), -1.f,
-		0.f, 0.f, -((2*_fZFar*_fZNear) / (_fZFar - _fZNear)), 0.f
+		2.f * _fZNear / (right - left),		0.f,								(right + left) / (right - left),				0.f,
+		0.f,								2.f * _fZNear / (top - bottom),		(top + bottom) / (top - bottom),				0.f,
+		0.f,								0.f,								-(_fZFar + _fZNear) / (_fZFar - _fZNear),		-1.f,
+		0.f,								0.f,								-2.f * _fZFar * _fZNear / (_fZFar - _fZNear),	0.f
 		), MT_PROJECTION);
 }
 
 void CRender::OnResize(uint uiWidth, uint uiHeight)
 {
 	_pCoreRenderer->SetViewport(0, 0, uiWidth, uiHeight);						
-
 	_SetPerspectiveMatrix(uiWidth, uiHeight);
+}
 
-	_pCoreRenderer->SetMatrix(MatrixIdentity());
+void CRender::SetPerspective(float fFovAngle, float fZNear, float fZFar)
+{
+	_fFovAngle = fFovAngle;
+	_fZNear = fZNear;
+	_fZFar = fZFar;
+
+	uint x, y, width, height;
+	_pCoreRenderer->GetViewport(x, y, width, height);
+	_SetPerspectiveMatrix(width, height);
+}
+
+void CRender::GetPerspective(float &fFovAngle, float &fZNear, float &fZFar) const
+{
+	fFovAngle = _fFovAngle;
+	fZNear = _fZNear;
+	fZFar = _fZFar;
 }
 
 DGLE_RESULT DGLE_API CRender::SetClearColor(const TColor4 &stColor)
@@ -166,7 +185,7 @@ DGLE_RESULT DGLE_API CRender::GetClearColor(TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
+DGLE_RESULT DGLE_API CRender::Unbind(E_ENGINE_OBJECT_TYPE eType)
 {
 	switch (eType)
 	{
@@ -175,17 +194,21 @@ DGLE_RESULT DGLE_API CRender::Unbind(E_ENG_OBJ_TYPE eType)
 		Unbind(EOT_TEXTURE);
 		Unbind(EOT_MESH);
 		break;
+
 	case EOT_TEXTURE:
 		for (int i = _iMaxTexUnits - 1; i >= 0; --i)
 			_pCoreRenderer->BindTexture(NULL, i);
 		break;
+
 	case EOT_MESH:
 	case EOT_MODEL:
 		_pCoreRenderer->DrawBuffer(NULL);
 		break;
+
 	case EOT_MATERIAL:
-		//ToDo
+		_pRender3D->UnbindMaterial();
 		break;
+
 	default:
 		return E_INVALIDARG;
 	}
@@ -214,14 +237,12 @@ DGLE_RESULT DGLE_API CRender::DisableScissor()
 
 DGLE_RESULT DGLE_API CRender::SetRenderTarget(ITexture* pTargetTex)
 {
-	//ToDo
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CRender::ScreenshotBMP(const char* pFileName)
-{
-	//ToDo
-	return S_OK;
+	ICoreTexture *p_tex = NULL;
+	
+	if (pTargetTex)
+		pTargetTex->GetCoreTexture(p_tex);
+	
+	return _pCoreRenderer->SetRenderTarget(p_tex);
 }
 
 DGLE_RESULT DGLE_API CRender::GetRender2D(IRender2D *&prRender2D)
@@ -232,6 +253,7 @@ DGLE_RESULT DGLE_API CRender::GetRender2D(IRender2D *&prRender2D)
 
 DGLE_RESULT DGLE_API CRender::GetRender3D(IRender3D *&prRender3D)
 {
+	prRender3D = _pRender3D;
 	return S_OK;
 }
 

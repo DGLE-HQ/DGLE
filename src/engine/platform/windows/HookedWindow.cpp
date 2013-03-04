@@ -78,7 +78,7 @@ LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam
 		return CallWindowProc(this_ptr->_stOldWindowProc, hWnd, msg, wParam, lParam);
 }
 
-DGLE_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
+DGLE_RESULT CHookedWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
 	if(_stOldWindowProc || _stOldRootWindowProc)
 		return E_FAIL;
@@ -86,7 +86,7 @@ DGLE_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRe
 	_hWnd = tHandle;
 	_pDelMainLoop = pDelMainLoop;
 	_pDelMessageProc = pDelMsgProc;
-	_bNoMloopHook = (Core()->EngWindow()->uiFlags & EWF_DONT_HOOK_MLOOP) != 0;
+	_bNoMloopHook = (Core()->EngWindow()->uiFlags & EWF_DONT_HOOK_MAIN_LOOP) != 0;
 
 	if (IsWindow(tHandle) == FALSE)
 	{
@@ -106,7 +106,7 @@ DGLE_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRe
 			return E_INVALIDARG;
 		}
 
-		if (Core()->EngWindow()->uiFlags & EWF_DONT_HOOK_ROOT_WIN)
+		if (Core()->EngWindow()->uiFlags & EWF_DONT_HOOK_ROOT_WINDOW)
 			_stOldRootWindowProc = NULL;
 		else
 		{
@@ -146,7 +146,7 @@ DGLE_RESULT CHookedWindow::InitWindow(TWinHandle tHandle, const TCRendererInitRe
 	}
 }
 
-DGLE_RESULT CHookedWindow::SendMessage(const TWinMessage &stMsg)
+DGLE_RESULT CHookedWindow::SendMessage(const TWindowMessage &stMsg)
 {
 	if (!_hWnd)
 		return E_FAIL;
@@ -165,14 +165,14 @@ DGLE_RESULT CHookedWindow::GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType)
 	return S_OK;
 }
 
-DGLE_RESULT CHookedWindow::GetWindowHandle(TWinHandle &stHandle)
+DGLE_RESULT CHookedWindow::GetWindowHandle(TWindowHandle &stHandle)
 {
 	stHandle = _hWnd;
 
 	return S_OK;
 }
 
-DGLE_RESULT CHookedWindow::GetDrawContext(TWinDrawHandle &tHandle)
+DGLE_RESULT CHookedWindow::GetDrawContext(TWindowDrawHandle &tHandle)
 {
 	if (!_hDC)
 		return E_FAIL;
@@ -228,7 +228,7 @@ DGLE_RESULT CHookedWindow::ScreenToClient(int &iX, int &iY)
 	return S_OK;
 }
 
-DGLE_RESULT CHookedWindow::ConfigureWindow(const TEngWindow &stWind, bool bSetFocus)
+DGLE_RESULT CHookedWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus)
 {
 	return S_FALSE;
 }
@@ -271,8 +271,8 @@ void CHookedWindow::_KillWindow()
 
 	Console()->UnRegCom("quit");
 
-	_pDelMessageProc->Invoke(TWinMessage(WMT_CLOSE));
-	_pDelMessageProc->Invoke(TWinMessage(WMT_DESTROY));
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_CLOSE));
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_DESTROY));
 
 	if (!_bNoMloopHook && !ReleaseTimer(_uiUpdateTimer))
 		LOG("Can't kill update timer.", LT_ERROR);
@@ -288,7 +288,7 @@ void CHookedWindow::_KillWindow()
 	_stOldWindowProc = NULL;
 	_stOldRootWindowProc = NULL;
 
-	_pDelMessageProc->Invoke(TWinMessage(WMT_RELEASED));
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
 }
 
 DGLE_RESULT CHookedWindow::KillWindow()

@@ -17,6 +17,9 @@ CInstancedObj(uiInstIdx), _pOwnerModel(NULL), _pBuffer(pBuffer), _stCenter(stCen
 
 CMesh::~CMesh()
 {
+	if (_pOwnerModel)
+		_pOwnerModel->RemoveMesh(this);
+
 	_pBuffer->Free();
 }
 
@@ -576,6 +579,9 @@ DGLE_RESULT DGLE_API CMesh::GetOwner(IModel *&prModel)
 
 DGLE_RESULT DGLE_API CMesh::SetOwner(IModel *pModel)
 {
+	if (_pOwnerModel == pModel)
+		return S_OK;
+
 	if (_pOwnerModel)
 		_pOwnerModel->RemoveMesh(this);
 

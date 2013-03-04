@@ -89,6 +89,15 @@
     <ClCompile Include="..\..\..\src\engine\Model.cpp">
       <Filter>Render\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Render3D.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Light.cpp">
+      <Filter>Render\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\Material.cpp">
+      <Filter>Render\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
@@ -199,6 +208,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\Music.h" />
     <ClInclude Include="..\..\..\src\engine\Model.h">
+      <Filter>Render\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Render3D.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Light.h">
+      <Filter>Render\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\Material.h">
       <Filter>Render\Objects</Filter>
     </ClInclude>
   </ItemGroup>

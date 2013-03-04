@@ -26,7 +26,7 @@ private:
 	void _Update(uint64 ui64DeltaTime);
 	void _Init();
 	void _Free();
-	void _MsgProc(const TWinMessage &stMsg);
+	void _MsgProc(const TWindowMessage &stMsg);
 	void _ProfilerDraw();
 
 	static void DGLE_API _s_EventHandler(void *pParametr, IBaseEvent *pEvent);

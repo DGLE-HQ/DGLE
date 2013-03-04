@@ -19,7 +19,7 @@ See "DGLE.h" for more details.
 class CBaseRendererGL : public CInstancedObj, public CPlatformBaseRenderGL
 {
 	HGLRC _hRC;
-	TWinDrawHandle _hDC;
+	TWindowDrawHandle _hDC;
 
 public:
 	
@@ -28,7 +28,7 @@ public:
 	bool Prepare();
 	bool Initialize();
 	bool Finalize();
-	bool AdjustMode(TEngWindow &stNewWin);
+	bool AdjustMode(TEngineWindow &stNewWin);
 	bool MakeCurrent();
 	void Present();
 

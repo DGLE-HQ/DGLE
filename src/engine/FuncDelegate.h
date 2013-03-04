@@ -53,7 +53,7 @@ namespace DGLE
 
 typedef void	(DGLE_API *TPProc)(void *pParameter),
 				(DGLE_API *TPEventProc)(void *pParameter, IBaseEvent *pEvent),
-				(DGLE_API *TPMsgProc)(void *pParameter, const TWinMessage &stMsg);
+				(DGLE_API *TPMsgProc)(void *pParameter, const TWindowMessage &stMsg);
 
 template<typename F>
 class CFunctorImpl;
@@ -152,12 +152,12 @@ public:
 };
 
 template<>
-class CFunctorImpl<void (const TWinMessage &)>: CFunctorBase<TPMsgProc, void (const TWinMessage &)>
+class CFunctorImpl<void (const TWindowMessage &)>: CFunctorBase<TPMsgProc, void (const TWindowMessage &)>
 {
 protected:
-	CFunctorImpl(TCFuncDelegate<TPMsgProc, void (const TWinMessage &)> &parent): CFunctorBase(parent) {}
+	CFunctorImpl(TCFuncDelegate<TPMsgProc, void (const TWindowMessage &)> &parent): CFunctorBase(parent) {}
 public:
-	void operator ()(const TWinMessage &stMsg)
+	void operator ()(const TWindowMessage &stMsg)
 	{
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
@@ -184,7 +184,7 @@ public:
 };
 
 typedef TCFuncDelegate<TPProc, void ()> TProcDelegate;
-typedef TCFuncDelegate<TPMsgProc, void (const TWinMessage &)> TMsgProcDelegate;
+typedef TCFuncDelegate<TPMsgProc, void (const TWindowMessage &)> TMsgProcDelegate;
 typedef TCFuncDelegate<TPEventProc, void (IBaseEvent *)> TEventProcDelegate;
 
 }

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		30.04.2012 (c)Korotkov Andrey
+\date		03.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -8,38 +8,32 @@ See "DGLE.h" for more details.
 */
 
 #include "ResourceManager.h"
-//#include "Material.h"
-//#include "shader.h"
-//#include "Core.h"
+#include "Material.h"
+#include "Light.h"
 #include "MainFS.h"
-#include "ResFile.h"
-//#include "RenderGL.h"
 #include "Texture.h"
 #include "Font.h"
 #include "Music.h"
-//#include "MusicMCI.h"
 #include "Mesh.h"
 #include "Model.h"
 
 #ifdef PLATFORM_WINDOWS
+#include "ResFile.h"
 #include "..\..\build\windows\engine\resource.h"
 #endif
 
 using namespace std;
 
-//#define _CRTDBG_MAP_ALLOC
-//#include <debag.h>
-
 //Dummy Classes//
 
-class CBObjDummy: public IEngBaseObj
+class CBObjDummy: public IEngineBaseObject
 {
 public:
 	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_UNKNOWN; return S_OK;}
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType){eObjType = EOT_UNKNOWN; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = 0; return S_OK;}
 
-	IDGLE_BASE_IMPLEMENTATION(IEngBaseObj, INTERFACE_IMPL_END)
+	IDGLE_BASE_IMPLEMENTATION(IEngineBaseObject, INTERFACE_IMPL_END)
 };
 
 class CSoundChannelDummy : public ISoundChannel
@@ -71,10 +65,10 @@ public:
 	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags){pSndChnl = (ISoundChannel*)new CSoundChannelDummy; return E_NOTIMPL;}
 	
 	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE; return S_OK;}
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
+	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))
 };
 
 class CMusicDummy: public IMusic
@@ -91,10 +85,10 @@ public:
 	DGLE_RESULT DGLE_API GetLength(uint &uiLength){uiLength = 0; return E_NOTIMPL;}
 	
 	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_MUSIC; return S_OK;}
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType){eObjType = EOT_MUSIC; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION(IMusic, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
+	IDGLE_BASE_IMPLEMENTATION(IMusic, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))
 };
 
 class CBitmapFontDummy: public IBitmapFont
@@ -110,10 +104,10 @@ public:
 	DGLE_RESULT DGLE_API Draw3D(const char *pcTxt){return E_NOTIMPL;}
 	
 	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API GetType(E_ENG_OBJ_TYPE &eObjType){eObjType = EOT_BITMAP_FONT; return S_OK;}
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType){eObjType = EOT_BITMAP_FONT; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) {uiObjUnknownType = -1; return S_FALSE;}
 
-	IDGLE_BASE_IMPLEMENTATION(IBitmapFont, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
+	IDGLE_BASE_IMPLEMENTATION(IBitmapFont, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))
 };
 
 //CSoundSample//
@@ -173,8 +167,8 @@ public:
 		return res;
 	}
 	
-	IENGBASEOBJ_IMPLEMENTATION(EOT_SOUND_SAMPLE)
-	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngBaseObj, INTERFACE_IMPL_END))
+	IENGINE_BASE_OBJECT_IMPLEMENTATION(EOT_SOUND_SAMPLE)
+	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))
 };
 
 
@@ -184,7 +178,7 @@ CResourceManager::CResourceManager(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _iProfilerState(0)
 {
-	// If this assertion occures than you must see _s_GetObjTypeName method if all E_ENG_OBJ_TYPE enum elements are implemented there.
+	// If this assertion occures than you must see _s_GetObjTypeName method if all E_ENGINE_OBJECT_TYPE enum elements are implemented there.
 	// After it change this assertion expression as well.
 	assert(EOT_MUSIC == EOT_EMPTY - 1);
 
@@ -192,7 +186,7 @@ _iProfilerState(0)
 	
 	_pCoreRenderer = Core()->pCoreRenderer();
 
-	Console()->RegComValue("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
+	Console()->RegComVar("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
 	Console()->RegComProc("rman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, (void*)this);
 	Console()->RegComProc("rman_list_resources", "Lists all loaded resources.", &_s_ConListResources, (void*)this);
 
@@ -212,8 +206,8 @@ _iProfilerState(0)
 	_pDefSSmpDummy	= new CSSampleDummy();
 	_pDefMusicDummy = new CMusicDummy();
 
-	RegisterDefaultResource(EOT_SOUND_SAMPLE, (IEngBaseObj*)_pDefSSmpDummy);
-	RegisterDefaultResource(EOT_MUSIC, (IEngBaseObj*)_pDefMusicDummy);
+	RegisterDefaultResource(EOT_SOUND_SAMPLE, (IEngineBaseObject*)_pDefSSmpDummy);
+	RegisterDefaultResource(EOT_MUSIC, (IEngineBaseObject*)_pDefMusicDummy);
 
 	//Create default texture
 
@@ -225,14 +219,14 @@ _iProfilerState(0)
 	if (!_CreateTexture(_pDefTex, &ubt_def_tex_dat[0], 2, 2, TDF_RGB8, TCF_DEFAULT, (E_TEXTURE_LOAD_FLAGS)(TLF_FILTERING_NONE | TLF_COORDS_REPEAT)))
 		LOG("Can't create default texture.", LT_FATAL);
 
-	RegisterDefaultResource(EOT_TEXTURE, (IEngBaseObj*)_pDefTex);
+	RegisterDefaultResource(EOT_TEXTURE, (IEngineBaseObject*)_pDefTex);
 
 	//Create default material
 
-//	if (FAILED(CreateMaterial(_pDefMaterial, "", false)) || FAILED(_pDefMaterial->SetDiffuseTexture(_pDefTex)))
-//		LOG("Can't create default material.", LT_FATAL);
+	_pDefMaterial = new CMaterial(uiInstIdx);
+	_pDefMaterial->SetDiffuseTexture(_pDefTex);
 
-	RegisterDefaultResource(EOT_MATERIAL, (IEngBaseObj*)_pDefMaterial);
+	RegisterDefaultResource(EOT_MATERIAL, (IEngineBaseObject*)_pDefMaterial);
 
 	//Create default mesh
 	
@@ -272,12 +266,12 @@ _iProfilerState(0)
 	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), _countof(def_mesh_vtx) / 8, _countof(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATION_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
 		LOG("Can't create default mesh.", LT_FATAL);
 
-	RegisterDefaultResource(EOT_MESH, (IEngBaseObj*)_pDefMesh);
+	RegisterDefaultResource(EOT_MESH, (IEngineBaseObject*)_pDefMesh);
 
 	_pDefModel = new CModel(InstIdx());
 	_pDefModel->AddMesh(_pDefMesh);
 
-	RegisterDefaultResource(EOT_MODEL, (IEngBaseObj*)_pDefModel);
+	RegisterDefaultResource(EOT_MODEL, (IEngineBaseObject*)_pDefModel);
 
 	//Create default font
 	
@@ -299,7 +293,7 @@ _iProfilerState(0)
 	_pDefBmpFnt = (IBitmapFont*)_pDefBmFntDummy;
 #endif
 
-	RegisterDefaultResource(EOT_BITMAP_FONT, (IEngBaseObj*)_pDefBmpFnt);
+	RegisterDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject*)_pDefBmpFnt);
 
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
@@ -327,9 +321,9 @@ void CResourceManager::FreeAllResources()
 		_resList.begin()->pObj->Free();
 	}
 
-	delete ((CModel*)_pDefModel);
 	delete ((CMesh*)_pDefMesh);
-	//delete (CBaseMaterial*)_pDefMaterial;
+	delete ((CModel*)_pDefModel);
+	delete (CMaterial*)_pDefMaterial;
 	delete ((CTexture*)_pDefTex);
 	delete ((CBitmapFont*)_pDefBmpFnt);
 
@@ -339,7 +333,7 @@ void CResourceManager::FreeAllResources()
 	delete _pBObjDummy;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::RegisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
+DGLE_RESULT DGLE_API CResourceManager::RegisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj)
 {
 	if (eObjType == EOT_UNKNOWN)
 		return E_INVALIDARG;
@@ -349,7 +343,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterDefaultResource(E_ENG_OBJ_TYPE eO
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::UnregisterDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *pObj)
+DGLE_RESULT DGLE_API CResourceManager::UnregisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj)
 {
 	for (size_t i = 0; i < _defRes.size(); ++i)
 		if (_defRes[i].type == eObjType && _defRes[i].pBaseObj == pObj)
@@ -414,7 +408,7 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjType, IEngBaseObj *&prObj)
+DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj)
 {
 	for (int i = (int)_defRes.size() - 1; i > -1; --i)
 		if (eObjType == _defRes[i].type)
@@ -423,12 +417,12 @@ DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENG_OBJ_TYPE eObjTyp
 			return S_OK;
 		}
 
-	prObj = (IEngBaseObj*)_pBObjDummy;
+	prObj = (IEngineBaseObject*)_pBObjDummy;
 
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEngBaseObj *&prObj)
+DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEngineBaseObject *&prObj)
 {
 	prObj = NULL;
 
@@ -846,7 +840,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 	return true;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENG_OBJ_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter)
+DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter)
 {
 	for (size_t i = 0; i<_clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == string(pcExtension) && _clFileFormats[i].type == eObjType)
@@ -1209,7 +1203,7 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, ui
 	desc.pData = const_cast<uint8 *>(pData);
 	desc.bIndexBuffer32 = face_size == sizeof(uint32);
 	
-	if (uiNumVerts != 0)
+	if (uiNumFaces != 0)
 		desc.pIndexBuffer = const_cast<uint8 *>(&pData[vdata_size]);
 	
 	if (eCreationFlags & MCF_VERTEX_DATA_INTERLEAVED)
@@ -1282,7 +1276,7 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, ui
 	return true;
 }
 
-bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
 {
 	uint ui_read;
 
@@ -1377,12 +1371,13 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, E_MESH_MO
 	return ret;
 }
 
-void CResourceManager::_s_GetObjTypeName(E_ENG_OBJ_TYPE type, string &name)
+void CResourceManager::_s_GetObjTypeName(E_ENGINE_OBJECT_TYPE type, string &name)
 {
 	switch (type)
 	{
 	case EOT_TEXTURE: name = "Texture"; break;
 	case EOT_MATERIAL: name = "Material"; break;
+	case EOT_LIGHT: name = "Light"; break;
 	case EOT_MESH: name = "Mesh"; break;
 	case EOT_MODEL: name = "Model"; break;
 	case EOT_BITMAP_FONT: name = "Bitmap Font"; break;
@@ -1410,7 +1405,7 @@ void CResourceManager::_ProfilerEventHandler() const
 
 		for (size_t i = 0; i < _resList.size(); ++i)
 		{
-			E_ENG_OBJ_TYPE type;
+			E_ENGINE_OBJECT_TYPE type;
 			_resList[i].pObj->GetType(type);
 			++cnt[type];
 		}
@@ -1421,7 +1416,7 @@ void CResourceManager::_ProfilerEventHandler() const
 		{
 			string s;
 			
-			_s_GetObjTypeName((E_ENG_OBJ_TYPE)i, s);
+			_s_GetObjTypeName((E_ENGINE_OBJECT_TYPE)i, s);
 
 			s += ':' + UIntToStr(cnt[i]);
 
@@ -1439,7 +1434,7 @@ void CResourceManager::_ListResources() const
 
 	for (size_t i = 0; i < _resList.size(); ++i)
 	{
-		E_ENG_OBJ_TYPE type;
+		E_ENGINE_OBJECT_TYPE type;
 		_resList[i].pObj->GetType(type);
 		string name;
 		_s_GetObjTypeName(type, name);
@@ -1537,14 +1532,14 @@ bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPe
 	return true;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResourse)
+DGLE_RESULT DGLE_API CResourceManager::CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResource)
 {
 	DGLE_RESULT result = _CreateSound(prSndSample, uiSamplesPerSec, uiBitsPerSample, bStereo, pData, ui32DataSize) ? S_OK : E_FAIL;
 
-	if (bAddResourse)
+	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_resList.push_back(TResource(pcName, (IEngBaseObj*)prSndSample));
+			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prSndSample));
 		else
 			LOG("Error creating sound with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
@@ -1659,47 +1654,47 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 	return true;
 }
 
-bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
+bool DGLE_API CResourceManager::_s_LoadTextureBMP(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 	const bool ret = PTHIS(CResourceManager)->_LoadTextureBMP(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
-	if (ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)ptex;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
+bool DGLE_API CResourceManager::_s_LoadTextureTGA(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 	const bool ret = PTHIS(CResourceManager)->_LoadTextureTGA(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
-	if (ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)ptex;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
+bool DGLE_API CResourceManager::_s_LoadTextureDTX(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 	const bool ret = PTHIS(CResourceManager)->_LoadTextureDTX(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
-	if (ret) prObj = (IEngBaseObj *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)ptex;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
+bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
-	IEngBaseObj *pobj = NULL;
+	IEngineBaseObject *pobj = NULL;
 	const bool ret = PTHIS(CResourceManager)->_LoadDMDFile(pFile, pobj, (E_MESH_MODEL_LOAD_FLAGS)uiLoadFlags);
 	if (ret) prObj = pobj;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
+bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	IBitmapFont *pfnt = NULL;
 	const bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt);
-	if (ret) prObj = (IEngBaseObj *&)pfnt;
+	if (ret) prObj = (IEngineBaseObject *&)pfnt;
 	return ret;
 }
 
-bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParameter)
+bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ISoundSample *ps = NULL;
 	
@@ -1710,7 +1705,7 @@ bool DGLE_API CResourceManager::_s_LoadSoundWAV(IFile *pFile, IEngBaseObj *&prOb
 		if (uiLoadFlags & SSLF_LOAD_AS_MUSIC)
 			prObj = new CMusic(PTHIS(CResourceManager)->InstIdx(), ps);
 		else
-			prObj = (IEngBaseObj *&)ps;
+			prObj = (IEngineBaseObject *&)ps;
 	}
 
 	return ret;
@@ -1721,14 +1716,14 @@ void DGLE_API CResourceManager::_s_ProfilerEventHandler(void *pParameter, IBaseE
 	PTHIS(CResourceManager)->_ProfilerEventHandler();
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
+DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource)
 {
 	const DGLE_RESULT result = _CreateTexture(prTex, pData, uiWidth, uiHeight, eDataFormat, eCreationFlags, eLoadFlags) ? S_OK : S_FALSE;
 	
-	if (bAddResourse)
+	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_resList.push_back(TResource(pcName, (IEngBaseObj*)prTex));
+			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prTex));
 		else
 			LOG("Error creating texture with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
@@ -1736,13 +1731,27 @@ DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uin
 	return result;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResourse)
+DGLE_RESULT DGLE_API CResourceManager::CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResource)
 {
-	//ToDo
-	return E_FAIL;
+	prMaterial = new CMaterial(InstIdx());
+
+	if (bAddResource)
+			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prMaterial));
+
+	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResourse)
+DGLE_RESULT DGLE_API CResourceManager::CreateLight(ILight *&prLight, const char *pcName, bool bAddResource)
+{
+	prLight = new CLight(InstIdx());
+
+	if (bAddResource)
+			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prLight));
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource)
 {
 	DGLE_RESULT result;
 
@@ -1778,10 +1787,10 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 		result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, min_dem + (max_dem - min_dem) / 2.f, (max_dem - min_dem) / 2.f, eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
 	}
 
-	if (bAddResourse)
+	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_resList.push_back(TResource(pcName, (IEngBaseObj*)prMesh));
+			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prMesh));
 		else
 			LOG("Error creating mesh with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
@@ -1794,18 +1803,18 @@ DGLE_RESULT DGLE_API CResourceManager::CreateModel(IModel *&prModel, const char 
 	prModel = new CModel(InstIdx());
 
 	if (bAddResource)
-		_resList.push_back(TResource(pcName, (IEngBaseObj*)prModel));
+		_resList.push_back(TResource(pcName, (IEngineBaseObject*)prModel));
 	
 	return S_OK;
 }
 
-inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_ENG_OBJ_TYPE eObjType, uint uiLoadFlags, IEngBaseObj *&prObj)
+inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_ENGINE_OBJECT_TYPE eObjType, uint uiLoadFlags, IEngineBaseObject *&prObj)
 {
 	uint ret = -1;
 
 	if (pcFileName == NULL)
 	{
-		prObj = (IEngBaseObj*&)_pBObjDummy;
+		prObj = (IEngineBaseObject*&)_pBObjDummy;
 		return ret;
 	}
 
@@ -1819,7 +1828,7 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 		}
 
 	if (ret == -1)
-		prObj = (IEngBaseObj*&)_pBObjDummy;
+		prObj = (IEngineBaseObject*&)_pBObjDummy;
 	else
 		switch (_clFileFormats[ret].type)
 		{
@@ -1838,7 +1847,7 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 	return ret;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension, E_ENG_OBJ_TYPE &eType)
+DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType)
 {
 	for (size_t i = 0; i < _clFileFormats.size(); ++i)
 		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
@@ -1880,7 +1889,7 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExt
 	return S_FALSE;
 }
 
-inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngBaseObj *&prObj, uint uiLoadFlags)
+inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags)
 {
 	if (uiFFIdx == -1)
 	{
@@ -1919,7 +1928,7 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	return ret ? S_OK : S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngBaseObj *&prObj, uint uiLoadFlags)
+DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags)
 {
 	if (pcFileName == NULL || strlen(pcFileName) == 0)
 	{
@@ -1947,7 +1956,7 @@ DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngBaseObj 
 	return ret;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags)
+DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags)
 {
 	if (pFile == NULL)
 	{
@@ -1960,14 +1969,14 @@ DGLE_RESULT DGLE_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, 
 
 	if (FAILED(pFile->GetName(NULL, name_length)))
 	{
-		prObj = (IEngBaseObj*&)_pBObjDummy;
+		prObj = (IEngineBaseObject*&)_pBObjDummy;
 		LOG("Can't get file name length.", LT_ERROR);
 		return E_ABORT;
 	}
 	
 	if (FAILED(pFile->GetPath(NULL, path_length)))
 	{
-		prObj = (IEngBaseObj*&)_pBObjDummy;
+		prObj = (IEngineBaseObject*&)_pBObjDummy;
 		LOG("Can't get file path length.", LT_ERROR);
 		return E_ABORT;
 	}
@@ -1978,7 +1987,7 @@ DGLE_RESULT DGLE_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, 
 
 	if (FAILED(pFile->GetName(name, name_length)) || FAILED(pFile->GetPath(path, path_length)))
 	{
-		prObj = (IEngBaseObj*&)_pBObjDummy;
+		prObj = (IEngineBaseObject*&)_pBObjDummy;
 		LOG("Can't get filename of IFile.", LT_ERROR);
 		return E_ABORT;
 	}
@@ -1997,15 +2006,15 @@ DGLE_RESULT DGLE_API CResourceManager::Load2(IFile *pFile, IEngBaseObj *&prObj, 
 	return ret;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::FreeResource(IEngBaseObj *&prObj)
+DGLE_RESULT DGLE_API CResourceManager::FreeResource(IEngineBaseObject *&prObj)
 {
-	E_ENG_OBJ_TYPE obj_type;
+	E_ENGINE_OBJECT_TYPE obj_type;
 	prObj->GetType(obj_type);
 	prObj->Free();
 	return GetDefaultResource(obj_type, prObj);
 }
 
-DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngBaseObj *pObj)
+DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngineBaseObject *pObj)
 {
 	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].pObj == pObj)
@@ -2016,7 +2025,7 @@ DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngBaseO
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::RemoveResource(IEngBaseObj *pObj, bool &bCanDelete)
+DGLE_RESULT DGLE_API CResourceManager::RemoveResource(IEngineBaseObject *pObj, bool &bCanDelete)
 {
 	for (size_t i = 0; i < _resList.size(); ++i)
 		if (_resList[i].pObj == pObj)

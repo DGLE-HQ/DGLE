@@ -72,7 +72,7 @@ class CCore: public CInstancedObj, public IEngineCore
 	/** \remark: Setting _bDoExit to true is the the ONLY correct way to quit engine. */
 	bool				 _bDoExit;
 
-	TEngWindow			 _stWin;
+	TEngineWindow			 _stWin;
 
 	uint				 _uiUpdateInterval;
 	uint64				 _ui64TimeOld;
@@ -126,7 +126,7 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	void				_MainLoop();
 	void				_OnTimer();
-	void				_MessageProc(const TWinMessage &msg);
+	void				_MessageProc(const TWindowMessage &msg);
 
 	void				_RenderFrame();
 	bool				_bRendering;
@@ -141,14 +141,14 @@ class CCore: public CInstancedObj, public IEngineCore
 						_iAllowDrawProfilers,
 						_iDrawProfiler;
 
-	TEngWindow			_stWndToApply;
+	TEngineWindow			_stWndToApply;
 	bool				_bNeedApplyNewWnd;
-	DGLE_RESULT			_ChangeWinMode(const TEngWindow &stNewWin, bool bForceNoEvents);
+	DGLE_RESULT			_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents);
 
 
 	static void DGLE_API _s_MainLoop(void *pParameter);
 	static void DGLE_API _s_OnTimer(void *pParameter);
-	static void DGLE_API _s_MessageProc(void *pParameter, const TWinMessage &stMsg);
+	static void DGLE_API _s_MessageProc(void *pParameter, const TWindowMessage &stMsg);
 
 	static void DGLE_API _s_ConAutoPause(void *pParameter, const char *pcParam);
 	static void DGLE_API _s_ConPrintVersion(void *pParameter, const char *pcParam);
@@ -175,15 +175,15 @@ public:
 	inline	TMsgProcDelegate* pDMessageProc() {return &_clDelMProc;}
 	inline	TProcDelegate* pDMLoopProc() {return &_clDelMLoop;}
 	inline	TProcDelegate* pDFPSTimerProc() {return &_clDelOnFPSTimer;}
-	inline	TEngWindow* EngWindow() {return &_stWin;}
+	inline	TEngineWindow* EngWindow() {return &_stWin;}
 	
 	inline	bool SoundEnabled() const {return _bSndEnabled;}
 	void	ToogleSuspendEngine(bool bSuspend);
 
 	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName);
-	DGLE_RESULT DGLE_API AddPluginToInitList(const char *pcFileName);
+	DGLE_RESULT DGLE_API AddPluginToInitializationList(const char *pcFileName);
 
-	DGLE_RESULT DGLE_API InitializeEngine(TWinHandle tHandle, const char* pcApplicationName, const TEngWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags);
+	DGLE_RESULT DGLE_API InitializeEngine(TWindowHandle tHandle, const char* pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags);
 	DGLE_RESULT DGLE_API SetUpdateInterval(uint uiUpdateInterval);
 	DGLE_RESULT DGLE_API StartEngine();
 	DGLE_RESULT DGLE_API QuitEngine();
@@ -206,15 +206,15 @@ public:
 
 	DGLE_RESULT DGLE_API RenderFrame();
 	DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetInstanceIdx(uint &uiIdx);
+	DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx);
 	DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick);
 	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo);
-	DGLE_RESULT DGLE_API GetCurrentWin(TEngWindow &stWin);
+	DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin);
 	DGLE_RESULT DGLE_API GetFPS(uint &uiFPS);
 	DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime);
-	DGLE_RESULT DGLE_API GetHandle(TWinHandle &tHandle);
+	DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle);
 
-	DGLE_RESULT DGLE_API ChangeWinMode(const TEngWindow &stNewWin);
+	DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin);
 	DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight);
 	DGLE_RESULT DGLE_API AllowPause(bool bAllow);
 
@@ -223,10 +223,10 @@ public:
 
 	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible);
 	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
-	DGLE_RESULT DGLE_API ConsoleExec(const char* pcCommandTxt);
-	DGLE_RESULT DGLE_API ConsoleRegComProc(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
-	DGLE_RESULT DGLE_API ConsoleRegComValue(const char *pcCommandName, const char *pcCommandHelp, int *piValue, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter);
-	DGLE_RESULT DGLE_API ConsoleUnregCom(const char* pcCommandName);
+	DGLE_RESULT DGLE_API ConsoleExecute(const char* pcCommandTxt);
+	DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
+	DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter);
+	DGLE_RESULT DGLE_API ConsoleUnregister(const char* pcCommandName);
 
 	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize);
 
@@ -242,7 +242,7 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API TranslateMessage(const TWinMessage &stWinMsg)
+	DGLE_RESULT DGLE_API TranslateMessage(const TWindowMessage &stWinMsg)
 	{
 		_clDelMProc.Invoke(stWinMsg);
 		return S_OK;
@@ -252,8 +252,8 @@ public:
 	{
 		_bDoExit = true;
 		_MainLoop();
-		_MessageProc(TWinMessage(WMT_DESTROY));
-		_MessageProc(TWinMessage(WMT_RELEASED));
+		_MessageProc(TWindowMessage(WMT_DESTROY));
+		_MessageProc(TWindowMessage(WMT_RELEASED));
 		return S_OK;
 	}
 

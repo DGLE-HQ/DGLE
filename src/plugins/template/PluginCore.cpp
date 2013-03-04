@@ -8,23 +8,20 @@ See "DGLE.h" for more details.
 */
 
 #include "PluginCore.h"
-
+#include <locale>
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):
 _pEngineCore(pEngineCore), _iDrawProfiler(0)
 {
-	std::locale::global(std::locale(""));
-	setlocale(LC_NUMERIC, "C");
-
-	_pEngineCore->GetInstanceIdx(_uiInstIdx);
+	_pEngineCore->GetInstanceIndex(_uiInstIdx);
 
 	_pEngineCore->AddProcedure(EPT_RENDER, &_s_Render, (void*)this);
 	_pEngineCore->AddProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 	_pEngineCore->AddProcedure(EPT_INIT, &_s_Init, (void*)this);
 	_pEngineCore->AddProcedure(EPT_FREE, &_s_Free, (void*)this);
-	_pEngineCore->AddEventListener(ET_ON_WIN_MESSAGE, &_s_EventHandler, (void*)this);
+	_pEngineCore->AddEventListener(ET_ON_WINDOW_MESSAGE, &_s_EventHandler, (void*)this);
 	_pEngineCore->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventHandler, (void*)this);
 
-	_pEngineCore->ConsoleRegComValue("tmpl_profiler", "Displays Plugin Template profiler.", &_iDrawProfiler, 0, 1);
+	_pEngineCore->ConsoleRegisterVariable("tmpl_profiler", "Displays Plugin Template profiler.", &_iDrawProfiler, 0, 1);
 }
 
 CPluginCore::~CPluginCore()
@@ -33,10 +30,10 @@ CPluginCore::~CPluginCore()
 	_pEngineCore->RemoveProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 	_pEngineCore->RemoveProcedure(EPT_INIT, &_s_Init, (void*)this);
 	_pEngineCore->RemoveProcedure(EPT_FREE, &_s_Free, (void*)this);
-	_pEngineCore->RemoveEventListener(ET_ON_WIN_MESSAGE, &_s_EventHandler, (void*)this);
+	_pEngineCore->RemoveEventListener(ET_ON_WINDOW_MESSAGE, &_s_EventHandler, (void*)this);
 	_pEngineCore->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventHandler, (void*)this);
 
-	_pEngineCore->ConsoleUnregCom("tmpl_profiler");
+	_pEngineCore->ConsoleUnregister("tmpl_profiler");
 }
 
 void CPluginCore::_Render()
@@ -59,7 +56,7 @@ void CPluginCore::_Free()
 	//ToDo: Put your code here.
 }
 
-void CPluginCore::_MsgProc(const TWinMessage &stMsg)
+void CPluginCore::_MsgProc(const TWindowMessage &stMsg)
 {
 	//ToDo: Put your code here.
 }
@@ -132,16 +129,16 @@ void DGLE_API CPluginCore::_s_Free(void *pParametr)
 void DGLE_API CPluginCore::_s_EventHandler(void *pParametr, IBaseEvent *pEvent)
 {
 	E_EVENT_TYPE ev_type;
-	TWinMessage msg;
+	TWindowMessage msg;
 
 	pEvent->GetEventType(ev_type);
 
 	switch(ev_type)
 	{
-	case ET_ON_WIN_MESSAGE:
-		IEvWinMessage *p_ev_msg;
-		p_ev_msg = (IEvWinMessage *)pEvent;
-		p_ev_msg->GetWinMessage(msg);
+	case ET_ON_WINDOW_MESSAGE:
+		IEvWindowMessage *p_ev_msg;
+		p_ev_msg = (IEvWindowMessage *)pEvent;
+		p_ev_msg->GetMessage(msg);
 		((CPluginCore *)pParametr)->_MsgProc(msg);
 		break;
 

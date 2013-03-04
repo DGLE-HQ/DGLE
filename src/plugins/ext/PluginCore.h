@@ -37,9 +37,9 @@ private:
 	static void DGLE_API _s_Init(void *pParametr);
 	static void DGLE_API _s_Free(void *pParametr);
 
-	static bool DGLE_API _s_LoadTexturePNG(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadTextureJPG(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadTextureDDS(IFile *pFile, IEngBaseObj *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
 
 	static void _s_PNGError(png_structp ptr, png_const_charp msg);
 	static void PNGAPI _s_PNGReadCallback(png_structp ptr, png_bytep data, png_size_t length);

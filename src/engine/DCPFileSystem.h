@@ -93,9 +93,9 @@ public:
 	DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists);
 	DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator);
 
-	DGLE_RESULT DGLE_API ExecCmd(uint uiCmd, TVariant &stVar);
-	DGLE_RESULT DGLE_API ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount);
-	DGLE_RESULT DGLE_API ExecCmdVar(const char *pcCommand, TVariant &stVar);
+	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar);
+	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar);
+	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount);
 
 	IDGLE_BASE_GUID_IMPL(IFileSystem)
 	IUNKNOWN_IMPL(INTERFACE_IMPL(IDGLE_Base, INTERFACE_IMPL(IFileSystem, INTERFACE_IMPL_END)))

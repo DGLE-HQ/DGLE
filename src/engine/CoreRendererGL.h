@@ -49,7 +49,7 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	static const uint _sc_uiMaxVerticesCountForLegacy = 128;
 	static const uint _sc_uiMaxDrawCallsPerFrame = 3000;
 
-	TCRendererInitResult _stInitResults;
+	TCrRndrInitResults _stInitResults;
 
 	CStateManager<false> _clPassThroughStateMan;
 	CStateManager<true>	*_pCachedStateMan;
@@ -93,10 +93,10 @@ public:
 	inline IStateManager* pStateMan() const {return _pStateMan;} /**< \warning Never copy IStateManager* because _pStateMan may be reallocated at any time! */
 	static inline uint GetVertexSize(const TDrawDataDesc &stDesc);
 
-	DGLE_RESULT DGLE_API Prepare(TCRendererInitResult &stResults);
-	DGLE_RESULT DGLE_API Initialize(TCRendererInitResult &stResults);
+	DGLE_RESULT DGLE_API Prepare(TCrRndrInitResults &stResults);
+	DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults);
 	DGLE_RESULT DGLE_API Finalize();
-	DGLE_RESULT DGLE_API AdjustMode(TEngWindow &stNewWin);
+	DGLE_RESULT DGLE_API AdjustMode(TEngineWindow &stNewWin);
 	DGLE_RESULT DGLE_API MakeCurrent();
 	DGLE_RESULT DGLE_API Present();
 

@@ -311,7 +311,7 @@ bool CDCPPackager::ExtractFile(const string &strSrcFileName, const string &strDe
 CDCPFileSystem::CDCPFileSystem(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _pPack(NULL), _pPackager(NULL)
 {
-	Console()->RegComProc("dcp_cmd_help", "Prints help for extra text commands which you can send to DCP file system using ExecCmd, ExecCmdVar or ExecCmdStr methods of IFileSystem class or via \"dcp_exec_cmd\" console command.", &_s_ConCmdHelp, (void*)this);
+	Console()->RegComProc("dcp_cmd_help", "Prints help for extra text commands which you can send to DCP file system using ExecuteCommand, ExecuteTextCommand2 or ExecuteTextCommand methods of IFileSystem class or via \"dcp_exec_cmd\" console command.", &_s_ConCmdHelp, (void*)this);
 	Console()->RegComProc("dcp_exec_cmd", "Executes extra command of DCP file system. These commands are used to manipulate with DCP packages. See \"dcp_cmd_help\" for more help.", &_s_ConExecCmd, (void*)this);
 }
 
@@ -603,8 +603,8 @@ void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParameter, const char *pcPara
 	if (strlen(pcParam) != 0)
 		CON(CDCPFileSystem, "No parameters expected.");
 	else
-		CON(CDCPFileSystem, "You can send some extra commands to DCP file system using ExecCmd, ExecCmdVar or ExecCmdStr methods of IFileSystem class or via \"dcp_exec_cmd\" console command.\n"
-		"Commands for ExecCmdVar method or console:\n"
+		CON(CDCPFileSystem, "You can send some extra commands to DCP file system using ExecuteCommand, ExecuteTextCommand or ExecuteTextCommandEx methods of IFileSystem class or via \"dcp_exec_cmd\" console command.\n"
+		"Commands for ExecuteTextCommand method or console:\n"
 		"For these commands return value is boolean.\n"
 		"\"create\" - creates empty package in memory.\n"
 		"\"close\" - closes current package.\n"
@@ -613,10 +613,10 @@ void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParameter, const char *pcPara
 		"\"add [file name];<directory in package>\" - adds file to current package, you could also specify directory in package.\n"
 		"\"extract [src file name];[dest file name]\" - extracts file from current package to hdd.\n"
 		"\"remove [file name]\" - deletes file from current package.\n"
-		"Commands for ExecCmdStr method or console:\n"
+		"Commands for ExecuteTextCommandEx method or console:\n"
 		"\"list\" - returns string with all files names in current package separated by \";\".\n"
 		"\"last_error\" - returns string with last error discription text.\n"
-		"Commands for ExecCmd method only:\n"
+		"Commands for ExecuteCommand method only:\n"
 		"-1 - deletes any memory cache data or junk.");
 }
 
@@ -663,7 +663,7 @@ void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 			{
 				TVariant var;
 				
-				PTHIS(CDCPFileSystem)->ExecCmdVar((cmd + " " + param).c_str(), var);
+				PTHIS(CDCPFileSystem)->ExecuteTextCommand((cmd + " " + param).c_str(), var);
 				
 				if (!var.AsBool())
 				{
@@ -682,7 +682,7 @@ void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 	}
 }
 
-DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmd(uint uiCmd, TVariant &stVar)
+DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteCommand(uint uiCmd, TVariant &stVar)
 {
 	if (uiCmd == -1)
 	{
@@ -696,7 +696,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmd(uint uiCmd, TVariant &stVar)
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount)
 {
 	if (strcmp(pcCommand, "list") == 0)
 	{
@@ -765,7 +765,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdStr(const char *pcCommand, char *pcR
 			}
 }
 
-DGLE_RESULT DGLE_API CDCPFileSystem::ExecCmdVar(const char *pcCommand, TVariant &stVar)
+DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, TVariant &stVar)
 {
 	string cmd(pcCommand), param;
 

@@ -31,14 +31,14 @@ static const GUID IID_IMainWindow =
 class IMainWindow : public IDGLE_Base
 {
 public:
-	virtual DGLE_RESULT InitWindow(TWinHandle tHandle, const TCRendererInitResult &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) = 0;
-	virtual DGLE_RESULT SendMessage(const TWinMessage &stMsg) = 0;
+	virtual DGLE_RESULT InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) = 0;
+	virtual DGLE_RESULT SendMessage(const TWindowMessage &stMsg) = 0;
 	virtual DGLE_RESULT GetWindowAccessType(E_WINDOW_ACCESS_TYPE &eType) = 0;
-	virtual DGLE_RESULT GetWindowHandle(TWinHandle &tHandle) = 0;
-	virtual DGLE_RESULT GetDrawContext(TWinDrawHandle &tHandle) = 0;
+	virtual DGLE_RESULT GetWindowHandle(TWindowHandle &tHandle) = 0;
+	virtual DGLE_RESULT GetDrawContext(TWindowDrawHandle &tHandle) = 0;
 	virtual DGLE_RESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
 	virtual DGLE_RESULT ScreenToClient(int &iX, int &iY) = 0;
-	virtual DGLE_RESULT ConfigureWindow(const TEngWindow &stWind, bool bSetFocus) = 0;
+	virtual DGLE_RESULT ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus) = 0;
 	virtual DGLE_RESULT SetCaption(const char *pcTxt) = 0;
 	virtual DGLE_RESULT Minimize() = 0;
 	virtual DGLE_RESULT BeginMainLoop() = 0;
@@ -54,7 +54,7 @@ class ISplashWindow : public IDGLE_Base
 {
 public:
 	virtual DGLE_RESULT InitWindow(const char *pcBmpFileName) = 0;
-	virtual DGLE_RESULT SetOwnerWindow(TWinHandle tOwnerHwnd) = 0;
+	virtual DGLE_RESULT SetOwnerWindow(TWindowHandle tOwnerHwnd) = 0;
 	virtual DGLE_RESULT Free() = 0;
 };
 
@@ -77,7 +77,7 @@ public:
 	virtual DGLE_RESULT Visible(bool bVisible) = 0;
 	virtual DGLE_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) = 0;
 	virtual DGLE_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
-	virtual DGLE_RESULT GetWindowHandle(TWinHandle &tHandle) = 0;
+	virtual DGLE_RESULT GetWindowHandle(TWindowHandle &tHandle) = 0;
 	virtual DGLE_RESULT GetThreadId(uint32 &ui32Id) = 0;
 	virtual DGLE_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine) = 0;
 	virtual DGLE_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize) = 0;
@@ -98,7 +98,7 @@ class IEngineCoreWrapper
 {
 public:
 	virtual DGLE_RESULT DGLE_API SetWindowAPI(IMainWindow *pMainWindow) = 0;
-	virtual DGLE_RESULT DGLE_API TranslateMessage(const TWinMessage &stWinMsg) = 0;
+	virtual DGLE_RESULT DGLE_API TranslateMessage(const TWindowMessage &stWinMsg) = 0;
 	virtual DGLE_RESULT DGLE_API KillEngine() = 0;
 };
 
@@ -110,7 +110,7 @@ public:
 	bool Prepare();
 	bool Initialize();
 	bool Finalize();
-	bool AdjustMode(TEngWindow &stNewWin);
+	bool AdjustMode(TEngineWindow &stNewWin);
 	bool MakeCurrent();
 	void Present();
 };
@@ -139,8 +139,8 @@ public:
 
 #ifdef PLATFORM_WINDOWS
 
-TWinMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam);
-void EngMsgToWinAPIMsg(const TWinMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM &lParam);
+TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam);
+void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPARAM &lParam);
 
 #endif
 
