@@ -1432,7 +1432,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetBlendState(const TBlendStateDesc &stSta
 	else
 		_pStateMan->glDisable(GL_BLEND);
 
-	_pStateMan->glBlendFunc(_GetGLBlendFactor(stState.eSrcFactor), _GetGLBlendFactor(stState.eDestFactor));
+	_pStateMan->glBlendFunc(_GetGLBlendFactor(stState.eSrcFactor), _GetGLBlendFactor(stState.eDstFactor));
 
 	_stCurrentState.stBlendDesc = stState;
 
@@ -1590,10 +1590,10 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 {
 	switch (eFeature)
 	{
-	case CRSF_BUILTIN_FSCREEN_MODE : bIsSupported = false; break;
+	case CRSF_BUILTIN_FULLSCREEN_MODE : bIsSupported = false; break;
 	case CRSF_BUILTIN_STATE_FILTER : bIsSupported = true; break;
 	case CRSF_MULTISAMPLING : bIsSupported = GLEW_ARB_multisample == GL_TRUE; break;
-	case CRDF_VERTICAL_SYNCHRONIZATION : 
+	case CRDF_VSYNC : 
 #if defined(PLATFORM_WINDOWS)
 		bIsSupported = WGLEW_EXT_swap_control == GL_TRUE; 
 #endif
@@ -1624,21 +1624,21 @@ void CCoreRendererGL::_ProfilerEventHandler(IBaseEvent *pEvent) const
 
 	TColor4 color;
 
-	Core()->RenderProfilerTxt("===Core Renderer Profiler===", color);
+	Core()->RenderProfilerText("===Core Renderer Profiler===", color);
 
 	if (_iProfilerState > 0)
 	{
 		if (_bStateFilterEnabled)
 		{
-			Core()->RenderProfilerTxt(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
-			Core()->RenderProfilerTxt(("Overall triangles:" + UIntToStr(_uiOverallTrianglesCount)).c_str(), TColor4());
+			Core()->RenderProfilerText(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
+			Core()->RenderProfilerText(("Overall triangles:" + UIntToStr(_uiOverallTrianglesCount)).c_str(), TColor4());
 
 			string str("Draw states setups (unfiltered/overall):" + UIntToStr(_uiUnfilteredDrawSetups) + '/' + UIntToStr(_uiOverallDrawSetups));
 
 			if (_uiOverallDrawSetups)
 				str.append(" (").append(UIntToStr((_uiOverallDrawSetups - _uiUnfilteredDrawSetups) * 100 / _uiOverallDrawSetups)).append("% redundant)");
 
-			Core()->RenderProfilerTxt(str.c_str(), TColor4());
+			Core()->RenderProfilerText(str.c_str(), TColor4());
 		}
 
 		_pStateMan->OutputProfileSummary();
@@ -1646,9 +1646,9 @@ void CCoreRendererGL::_ProfilerEventHandler(IBaseEvent *pEvent) const
 
 	if (_iProfilerState > 1)
 	{
-		Core()->RenderProfilerTxt("---- State Filter Stats ----", color);
+		Core()->RenderProfilerText("---- State Filter Stats ----", color);
 		_pStateMan->OutputProfileData();
-		Core()->RenderProfilerTxt("----------------------------", color);
+		Core()->RenderProfilerText("----------------------------", color);
 	}
 
 	_pStateMan->ResetProfileData();

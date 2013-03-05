@@ -23,7 +23,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 
 	_strFeturesList = "Core Renderer supported features\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_FSCREEN_MODE, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_FULLSCREEN_MODE, b_supported);
 	_strFeturesList += std::string("Hardware fullscreen: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_STATE_FILTER, b_supported);
@@ -32,7 +32,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 	_pCoreRenderer->IsFeatureSupported(CRSF_MULTISAMPLING, b_supported);
 	_strFeturesList += std::string("Multisampling: ") + (b_supported ? "Yes" : "No") + "\n\t";
 	
-	_pCoreRenderer->IsFeatureSupported(CRDF_VERTICAL_SYNCHRONIZATION, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRDF_VSYNC, b_supported);
 	_strFeturesList += std::string("Vertical synchronization: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRDF_PROGRAMMABLE_PIPELINE, b_supported);

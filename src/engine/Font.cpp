@@ -138,7 +138,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	if (!b_need_update)
 	{
-		Core()->pRender()->pRender2D()->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLORMIX)));
+		Core()->pRender()->pRender2D()->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 		return S_OK;
 	}
 
@@ -271,7 +271,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 	if (bVerticesColors)
 		desc.uiColorOffset = length*24*sizeof(float);
 
-	Core()->pRender()->pRender2D()->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLORMIX)));
+	Core()->pRender()->pRender2D()->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 
 	Core()->pRender()->pRender2D()->SetColorMix(prev_color);
 

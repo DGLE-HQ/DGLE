@@ -168,29 +168,29 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 
 		case WMT_KEY_DOWN:
 			
-			_abKeys[stMsg.ui32Parameter1] = true;
+			_abKeys[stMsg.ui32Param1] = true;
 			
 			break;
 
 		case WMT_KEY_UP:
 			
-			_abKeys[stMsg.ui32Parameter1] = false;
+			_abKeys[stMsg.ui32Param1] = false;
 			
 			break;
 
 		case WMT_MOUSE_MOVE:	
 			
-			_stMsts.iX = stMsg.ui32Parameter1;
-			_stMsts.iY = stMsg.ui32Parameter2;
+			_stMsts.iX = stMsg.ui32Param1;
+			_stMsts.iY = stMsg.ui32Param2;
 			
 			break;
 			
 		case WMT_MOUSE_DOWN:
 			
-			if (stMsg.ui32Parameter1 == 0)
+			if (stMsg.ui32Param1 == 0)
 				_stMsts.bLeftButton = true;
 			else
-				if (stMsg.ui32Parameter1 == 1)
+				if (stMsg.ui32Param1 == 1)
 					_stMsts.bRightButton = true;
 				else
 					_stMsts.bMiddleButton = true;
@@ -199,10 +199,10 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 
 		case WMT_MOUSE_UP:
 			
-			if (stMsg.ui32Parameter1 == 0)
+			if (stMsg.ui32Param1 == 0)
 				_stMsts.bLeftButton = false;
 			else
-				if (stMsg.ui32Parameter1 == 1)
+				if (stMsg.ui32Param1 == 1)
 					_stMsts.bRightButton = false;
 				else
 					_stMsts.bMiddleButton = false;
@@ -211,7 +211,7 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 
 		case WMT_MOUSE_WHEEL: 
 			
-			_stMsts.iDeltaWheel = *((int*)stMsg.pParameter3);
+			_stMsts.iDeltaWheel = *((int*)stMsg.pParam3);
 			
 			break;
 
@@ -219,10 +219,10 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 			
 			if (_bIsTxtInput)
 			{
-				if (stMsg.ui32Parameter1 > 31)
-					_clInputTxt += (char)stMsg.ui32Parameter1;
+				if (stMsg.ui32Param1 > 31)
+					_clInputTxt += (char)stMsg.ui32Param1;
 				else
-					if (stMsg.ui32Parameter1 == 8 /*Backspace*/ && _clInputTxt.length() > 0) 
+					if (stMsg.ui32Param1 == 8 /*Backspace*/ && _clInputTxt.length() > 0) 
 						_clInputTxt.erase(_clInputTxt.length() - 1, 1);
 				
 				if (_uiBufSize > _clInputTxt.size())

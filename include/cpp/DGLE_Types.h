@@ -258,26 +258,26 @@ namespace DGLE
 	 */
 	enum E_WINDOW_MESSAGE_TYPE
 	{
-		WMT_UNKNOWN = 0,/**< This type will be returned if there is no proper conversion from platform specific window event to engine window message. Message parameters have platform specific usage. \note For Windows pParameter3 of TWindowMessage structure will point to the MSG structure. */
+		WMT_UNKNOWN = 0,/**< This type will be returned if there is no proper conversion from platform specific window event to engine window message. Message parameters have platform specific usage. \note For Windows pParam3 of TWindowMessage structure will point to the MSG structure. */
 		WMT_REDRAW,		/**< Message indicates that window must redraw itself. Message parameters are not used. */
 		WMT_PRESENT,	/**< Message indicates that window is ready and now will be displayed to the user for the first time. Message parameters are not used. */
 		WMT_CLOSE,		/**< Message indicates that window is ready to be destroyed and now will disappear from the screen. Message parameters are not used. */
 		WMT_CREATE,		/**< Message indicates that window is being created. Message parameters are not used. */
 		WMT_DESTROY,	/**< Message indicates that window is ready to be destroyed. Message parameters are not used. */
 		WMT_RELEASED,	/**< Message indicates that window was destroyed and released successfully. Message parameters are not used. */
-		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Parameter1 value is TWindowHandle of the window which loses focus. */
-		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Parameter1 value is TWindowHandle of the window which gets focus. */
-		WMT_MINIMIZED,	/**< Message indicates that window was minimized. Message parameter ui32Parameter1 stores width of the window and ui32Parameter2 stores height. \note Under Windows pParameter3 points to RECT structure with window size. */
-		WMT_RESTORED,	/**< Message indicates that window was restored to its normal state. Message parameter ui32Parameter1 stores width of the window and ui32Parameter2 stores height. \note Under Windows pParameter3 points to RECT structure with window size. */
-		WMT_MOVE,		/**< Message indicates that window is being moved. Message parameter ui32Parameter1 stores x coordinate of upper left window corner and ui32Parameter2 stores y coordinate. \note Under Windows pParameter3 points to RECT structure with window size. */
-		WMT_SIZE,		/**< Message indicates that window is being sized. Message parameter ui32Parameter1 stores width of the window and ui32Parameter2 stores height. \note Under Windows pParameter3 points to RECT structure with window size. */
-		WMT_KEY_UP,		/**< Message indicates that the user has released some keyboard key. Message parameter ui32Parameter1 is the engine code of the key being released. \see E_KEYBOARD_KEY_CODES */
-		WMT_KEY_DOWN,	/**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Parameter1 is the engine code of the key being pressed. \see E_KEYBOARD_KEY_CODES */
-		WMT_ENTER_CHAR, /**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Parameter1 is the ASCII code of the key being pressed. */
-		WMT_MOUSE_MOVE, /**< Message indicates that cursor is being moved within the window. Message parameter ui32Parameter1 stores x coordinate of cursor and ui32Parameter1 stores y coordinate. */
-		WMT_MOUSE_DOWN, /**< Message indicates that the user has pressed mouse button. Message parameter ui32Parameter1 indicates what button was pressed: 0 - Left, 1 - Right, 2 - Middle */
-		WMT_MOUSE_UP,	/**< Message indicates that the user has released mouse button. Message parameter ui32Parameter1 indicates what button was released: 0 - Left, 1 - Right, 2 - Middle */
-		WMT_MOUSE_WHEEL /**< Message indicates that the user has rolled mouse wheel. Message parameter pParameter3 points to integer (int) with mouse wheel delta value. */
+		WMT_ACTIVATED,	/**< Message indicates that window became a foreground window and get user input focus. If ui32Param1 value is TWindowHandle of the window which loses focus. */
+		WMT_DEACTIVATED,/**< Message indicates that window became a background window and lost user input focus. If ui32Param1 value is TWindowHandle of the window which gets focus. */
+		WMT_MINIMIZED,	/**< Message indicates that window was minimized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
+		WMT_RESTORED,	/**< Message indicates that window was restored to its normal state. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
+		WMT_MOVE,		/**< Message indicates that window is being moved. Message parameter ui32Param1 stores x coordinate of upper left window corner and ui32Param2 stores y coordinate. \note Under Windows pParam3 points to RECT structure with window size. */
+		WMT_SIZE,		/**< Message indicates that window is being sized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
+		WMT_KEY_UP,		/**< Message indicates that the user has released some keyboard key. Message parameter ui32Param1 is the engine code of the key being released. \see E_KEYBOARD_KEY_CODES */
+		WMT_KEY_DOWN,	/**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the engine code of the key being pressed. \see E_KEYBOARD_KEY_CODES */
+		WMT_ENTER_CHAR, /**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the ASCII code of the key being pressed. */
+		WMT_MOUSE_MOVE, /**< Message indicates that cursor is being moved within the window. Message parameter ui32Param1 stores x coordinate of cursor and ui32Param1 stores y coordinate. */
+		WMT_MOUSE_DOWN, /**< Message indicates that the user has pressed mouse button. Message parameter ui32Param1 indicates what button was pressed: 0 - Left, 1 - Right, 2 - Middle */
+		WMT_MOUSE_UP,	/**< Message indicates that the user has released mouse button. Message parameter ui32Param1 indicates what button was released: 0 - Left, 1 - Right, 2 - Middle */
+		WMT_MOUSE_WHEEL /**< Message indicates that the user has rolled mouse wheel. Message parameter pParam3 points to integer (int) with mouse wheel delta value. */
 	};
 
 	/** Structure with window event message information. 
@@ -286,12 +286,12 @@ namespace DGLE
 	struct TWindowMessage
 	{
 		E_WINDOW_MESSAGE_TYPE eMessage; /**< Window message type identifier. */
-		uint32	ui32Parameter1;	/**< Message first parameter. */
-		uint32	ui32Parameter2;	/**< Message second parameter. */
-		void	*pParameter3;	/**< Message third parameter. Points to specific message data. */
+		uint32	ui32Param1;	/**< Message first parameter. */
+		uint32	ui32Param2;	/**< Message second parameter. */
+		void	*pParam3;	/**< Message third parameter. Points to specific message data. */
 		
-		TWindowMessage():eMessage(WMT_UNKNOWN), ui32Parameter1(0), ui32Parameter2(0), pParameter3(NULL){}
-		TWindowMessage(E_WINDOW_MESSAGE_TYPE msg, uint32 param1 = 0, uint32 param2 = 0, void *param3 = NULL):eMessage(msg), ui32Parameter1(param1), ui32Parameter2(param2), pParameter3(param3){}
+		TWindowMessage():eMessage(WMT_UNKNOWN), ui32Param1(0), ui32Param2(0), pParam3(NULL){}
+		TWindowMessage(E_WINDOW_MESSAGE_TYPE msg, uint32 param1 = 0, uint32 param2 = 0, void *param3 = NULL):eMessage(msg), ui32Param1(param1), ui32Param2(param2), pParam3(param3){}
 	};
 
 
@@ -327,7 +327,7 @@ namespace DGLE
 		uint	uiWidth;	/**< Resolution width of client area. */
 		uint	uiHeight;	/**< Resolution height of client area. */
 		bool	bFullScreen;/**< Switch to fullscreen mode or not. */
-		bool	bVerticalSynchronization;	/**< Enable or not vertical synchronization (triple buffering). */
+		bool	bVSync;		/**< Enable or not vertical synchronization (triple buffering). */
 		E_MULTISAMPLING_MODE eMultisampling;/**< Fullscreen antialiasing samples count. */
 		E_ENGINE_WINDOW_FLAGS uiFlags;		/**< Additional settings. */
 
@@ -336,7 +336,7 @@ namespace DGLE
 			uiWidth = 800;
 			uiHeight = 600;
 			bFullScreen = false;
-			bVerticalSynchronization = false;
+			bVSync = false;
 			eMultisampling = MM_NONE;
 			uiFlags	= EWF_DEFAULT;
 		}
@@ -346,7 +346,7 @@ namespace DGLE
 			uiWidth	= width;
 			uiHeight = height;
 			bFullScreen = fscreen;
-			bVerticalSynchronization = vsync;
+			bVSync = vsync;
 			eMultisampling = msampling;
 			uiFlags = flags;
 		}
@@ -459,32 +459,32 @@ namespace DGLE
 	};
 
 	inline TColor4 ColorClear() { return TColor4(0x00, 0x00, 0x00, 0); }
-	inline TColor4 ColorWhite() { return TColor4(0xFF, 0xFF, 0xFF, 255); }
-	inline TColor4 ColorBlack() { return TColor4(0x00, 0x00, 0x00, 255); }
-	inline TColor4 ColorRed() { return TColor4(0xFF, 0x00, 0x00, 255); }
-	inline TColor4 ColorGreen() { return TColor4(0x00, 0xFF, 0x00, 255); }
-	inline TColor4 ColorBlue() { return TColor4(0x00, 0x00, 0xFF, 255); }
+	inline TColor4 ColorWhite(uint8 alpha = 255) { return TColor4(0xFF, 0xFF, 0xFF, alpha); }
+	inline TColor4 ColorBlack(uint8 alpha = 255) { return TColor4(0x00, 0x00, 0x00, alpha); }
+	inline TColor4 ColorRed(uint8 alpha = 255) { return TColor4(0xFF, 0x00, 0x00, alpha); }
+	inline TColor4 ColorGreen(uint8 alpha = 255) { return TColor4(0x00, 0xFF, 0x00, alpha); }
+	inline TColor4 ColorBlue(uint8 alpha = 255) { return TColor4(0x00, 0x00, 0xFF, alpha); }
 		
-	inline TColor4 ColorAqua() { return TColor4(0x00, 0xFF, 0xFF, 255); }
-	inline TColor4 ColorBrown() { return TColor4(0xA5, 0x2A, 0x2A, 255); }
-	inline TColor4 ColorCyan() { return TColor4(0x00, 0xFF, 0xFF, 255); }
-	inline TColor4 ColorFuchsia() { return TColor4(0xFF, 0x00, 0xFF, 255); }
-	inline TColor4 ColorGray() { return TColor4(0x80, 0x80, 0x80, 255); }
-	inline TColor4 ColorGrey() { return TColor4(0x80, 0x80, 0x80, 255); }
-	inline TColor4 ColorMagenta() { return TColor4(0xFF, 0x00, 0xFF, 255); }
-	inline TColor4 ColorMaroon() { return TColor4(0x80, 0x00, 0x00, 255); }
-	inline TColor4 ColorNavy() { return TColor4(0x00, 0x00, 0x80, 255); }
-	inline TColor4 ColorOlive() { return TColor4(0x80, 0x80, 0x00, 255); }
-	inline TColor4 ColorOrange() { return TColor4(0xFF, 0xA5, 0x00, 255); }
-	inline TColor4 ColorPink() { return TColor4(0xFF, 0xC0, 0xCB, 255); }
-	inline TColor4 ColorPurple() { return TColor4(0x80, 0x00, 0x80, 255); }
-	inline TColor4 ColorSilver() { return TColor4(0xC0, 0xC0, 0xC0, 255); }
-	inline TColor4 ColorTeal() { return TColor4(0x00, 0x80, 0x80, 255); }
-	inline TColor4 ColorViolet() { return TColor4(0xEE, 0x82, 0xEE, 255); }
-	inline TColor4 ColorYellow() { return TColor4(0xFF, 0xFF, 0x00, 255); }
+	inline TColor4 ColorAqua(uint8 alpha = 255) { return TColor4(0x00, 0xFF, 0xFF, alpha); }
+	inline TColor4 ColorBrown(uint8 alpha = 255) { return TColor4(0xA5, 0x2A, 0x2A, alpha); }
+	inline TColor4 ColorCyan(uint8 alpha = 255) { return TColor4(0x00, 0xFF, 0xFF, alpha); }
+	inline TColor4 ColorFuchsia(uint8 alpha = 255) { return TColor4(0xFF, 0x00, 0xFF, alpha); }
+	inline TColor4 ColorGray(uint8 alpha = 255) { return TColor4(0x80, 0x80, 0x80, alpha); }
+	inline TColor4 ColorGrey(uint8 alpha = 255) { return TColor4(0x80, 0x80, 0x80, alpha); }
+	inline TColor4 ColorMagenta(uint8 alpha = 255) { return TColor4(0xFF, 0x00, 0xFF, alpha); }
+	inline TColor4 ColorMaroon(uint8 alpha = 255) { return TColor4(0x80, 0x00, 0x00, alpha); }
+	inline TColor4 ColorNavy(uint8 alpha = 255) { return TColor4(0x00, 0x00, 0x80, alpha); }
+	inline TColor4 ColorOlive(uint8 alpha = 255) { return TColor4(0x80, 0x80, 0x00, alpha); }
+	inline TColor4 ColorOrange(uint8 alpha = 255) { return TColor4(0xFF, 0xA5, 0x00, alpha); }
+	inline TColor4 ColorPink(uint8 alpha = 255) { return TColor4(0xFF, 0xC0, 0xCB, alpha); }
+	inline TColor4 ColorPurple(uint8 alpha = 255) { return TColor4(0x80, 0x00, 0x80, alpha); }
+	inline TColor4 ColorSilver(uint8 alpha = 255) { return TColor4(0xC0, 0xC0, 0xC0, alpha); }
+	inline TColor4 ColorTeal(uint8 alpha = 255) { return TColor4(0x00, 0x80, 0x80, alpha); }
+	inline TColor4 ColorViolet(uint8 alpha = 255) { return TColor4(0xEE, 0x82, 0xEE, alpha); }
+	inline TColor4 ColorYellow(uint8 alpha = 255) { return TColor4(0xFF, 0xFF, 0x00, alpha); }
 
-	inline TColor4 ColorOfficialOrange() { return TColor4(0xE7, 0x78, 0x17, 255); }
-	inline TColor4 ColorOfficialBlack() { return TColor4(0x38, 0x34, 0x31, 255); }
+	inline TColor4 ColorOfficialOrange(uint8 alpha = 255) { return TColor4(0xE7, 0x78, 0x17, alpha); }
+	inline TColor4 ColorOfficialBlack(uint8 alpha = 255) { return TColor4(0x38, 0x34, 0x31, alpha); }
 
 	typedef TColor4 TColor;
 

@@ -68,9 +68,9 @@ void CPluginCore::_ProfilerDraw()
 
 	//ToDo: Put your code here.
 
-	_pEngineCore->RenderProfilerTxt("======Plugin Template=======");
-	_pEngineCore->RenderProfilerTxt("Everything is Ok!");
-	_pEngineCore->RenderProfilerTxt("============================");
+	_pEngineCore->RenderProfilerText("======Plugin Template=======");
+	_pEngineCore->RenderProfilerText("Everything is Ok!");
+	_pEngineCore->RenderProfilerText("============================");
 }
 
 DGLE_RESULT DGLE_API CPluginCore::GetPluginInfo(TPluginInfo &stInfo)

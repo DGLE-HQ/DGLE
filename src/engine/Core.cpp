@@ -540,7 +540,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_ACTIVATED:
 
-		if (stMsg.ui32Parameter1 == 1)
+		if (stMsg.ui32Param1 == 1)
 			break;
 
 		_bPause = false;	
@@ -555,7 +555,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_DEACTIVATED:
 
-		if (stMsg.ui32Parameter1 == 1)
+		if (stMsg.ui32Param1 == 1)
 			break;
 
 		_bPause = true;
@@ -589,8 +589,8 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_SIZE:
 
-		_stWin.uiWidth = stMsg.ui32Parameter1;
-		_stWin.uiHeight= stMsg.ui32Parameter2;
+		_stWin.uiWidth = stMsg.ui32Param1;
+		_stWin.uiHeight= stMsg.ui32Param2;
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
 		break;
@@ -599,14 +599,14 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		if (!(_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY))
 		{
-			if (stMsg.ui32Parameter1 == c_eFScreenKeyFirst[0] || stMsg.ui32Parameter1 == c_eFScreenKeyFirst[1])
+			if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
 				_bCmdKeyIsPressed = false;
 
-			if (stMsg.ui32Parameter1 == c_eFScreenKeySecond)
+			if (stMsg.ui32Param1 == c_eFScreenKeySecond)
 				_bFScreenKeyIsPressed = false;
 		}
 
-		if (stMsg.ui32Parameter1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
+		if (stMsg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
 			Console()->Visible(true);
 
 		break;
@@ -616,7 +616,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		if (_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY)
 			break;
 
-		if (stMsg.ui32Parameter1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
+		if (stMsg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
 		{
 			_bFScreenKeyIsPressed = true;
 			_stWndToApply = _stWin;
@@ -624,7 +624,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 			_ChangeWinMode(_stWndToApply, false);
 		}
 
-		if (stMsg.ui32Parameter1 == c_eFScreenKeyFirst[0] || stMsg.ui32Parameter1 == c_eFScreenKeyFirst[1])
+		if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
 			_bCmdKeyIsPressed = true;
 
 		break;
@@ -774,23 +774,23 @@ void CCore::_RenderFrame()
 			if (_uiLastFPS < 60)
 				col.b = col.g = 0.f;
 					
-			RenderProfilerTxt(("FPS:" + IntToStr(_uiLastFPS)).c_str(), col);
+			RenderProfilerText(("FPS:" + IntToStr(_uiLastFPS)).c_str(), col);
 
 			col = TColor4();
 
 			if (_uiLastUPS < 1000 / _uiUpdateInterval)
 				col.b = col.g = 0.f;
 					
-			RenderProfilerTxt(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
+			RenderProfilerText(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerTxt(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
-				RenderProfilerTxt(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
+				RenderProfilerText(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
+				RenderProfilerText(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
 			}
 
 			if (_iDrawProfiler == 3)
-				RenderProfilerTxt(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), TColor4());
+				RenderProfilerText(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), TColor4());
 		}
 				
 		_pRender->pRender2D()->DrawProfiler();
@@ -838,7 +838,7 @@ void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 	)
 }
 
-DGLE_RESULT DGLE_API CCore::RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor)
+DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 &stColor)
 {
 	if (!_bInDrawProfilers)
 		return S_FALSE;
@@ -1354,7 +1354,7 @@ DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEv
 
 		LOG(string("Window mode (Viewport: ") + IntToStr(_stWin.uiWidth) + "X" + IntToStr(_stWin.uiHeight) +
 			(_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16 bit" : "") +
-			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVerticalSynchronization?", VSync":"") +
+			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVSync?", VSync":"") +
 			(_stWin.eMultisampling != MM_NONE ? ", MSAA: " + IntToStr((int)pow(2.f, (int)_stWin.eMultisampling)) + "X" : "") +
 			") has been set properly.", LT_INFO);
 	}
@@ -1710,7 +1710,7 @@ void DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
 	{
 		TEngineWindow wnd; int samples;
 		istrstream params_str(pcParam);
-		params_str >> wnd.uiWidth >> wnd.uiHeight >> wnd.bFullScreen >> wnd.bVerticalSynchronization >> samples;
+		params_str >> wnd.uiWidth >> wnd.uiHeight >> wnd.bFullScreen >> wnd.bVSync >> samples;
 
 		switch (samples)
 		{

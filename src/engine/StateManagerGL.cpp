@@ -744,12 +744,12 @@ void CStateManager<false>::ResetProfileData()
 
 void CStateManager<false>::OutputProfileData()
 {
-	Core()->RenderProfilerTxt("No data available.", TColor4());
+	Core()->RenderProfilerText("No data available.", TColor4());
 }
 
 void CStateManager<false>::OutputProfileSummary()
 {
-	Core()->RenderProfilerTxt("Filtering is disabled.", TColor4());
+	Core()->RenderProfilerText("Filtering is disabled.", TColor4());
 }
 
 void CStateManager<true>::Push()
@@ -945,12 +945,12 @@ void CStateManager<true>::_OutputFunctionProfileData(const string &functionName,
 	string str(functionName + UIntToStr(profileData.unfilteredCallCount) + '/' + UIntToStr(profileData.overallCallCount));
 	if (profileData.overallCallCount)
 		str.append(" (").append(UIntToStr((profileData.overallCallCount - profileData.unfilteredCallCount) * 100 / profileData.overallCallCount)).append("% redundant)");
-	Core()->RenderProfilerTxt(str.c_str(), TColor4());
+	Core()->RenderProfilerText(str.c_str(), TColor4());
 }
 
 void CStateManager<true>::OutputProfileData()
 {
-	Core()->RenderProfilerTxt("OpenGL functions calls (unfiltered/overall)", TColor4());
+	Core()->RenderProfilerText("OpenGL functions calls (unfiltered/overall)", TColor4());
 	_OutputFunctionProfileData("glEnable...................", _profileData.toggleStateProfileData.glEnableProfileData);
 	_OutputFunctionProfileData("glDisable..................", _profileData.toggleStateProfileData.glDisableProfileData);
 	_OutputFunctionProfileData("glEnableClientState........", _profileData.toggleStateProfileData.glEnableClientStateProfileData);

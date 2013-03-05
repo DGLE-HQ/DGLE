@@ -36,10 +36,10 @@ namespace DGLE
 
 	enum E_CORE_RENDERER_FEATURE_TYPE
 	{
-		CRSF_BUILTIN_FSCREEN_MODE = 0,
+		CRSF_BUILTIN_FULLSCREEN_MODE = 0,
 		CRSF_BUILTIN_STATE_FILTER,
 		CRSF_MULTISAMPLING,
-		CRDF_VERTICAL_SYNCHRONIZATION,
+		CRDF_VSYNC,
 		CRDF_PROGRAMMABLE_PIPELINE,
 		CRSF_BGRA_DATA_FORMAT,
 		CRSF_TEXTURE_COMPRESSION,
@@ -186,18 +186,18 @@ namespace DGLE
 		bool				bEnable;
 
 		E_BLEND_FACTOR		eSrcFactor;
-		E_BLEND_FACTOR		eDestFactor;
+		E_BLEND_FACTOR		eDstFactor;
 
 		/* For future needs.
 		E_BLEND_OPERATION	eOperation;
 
 		bool bSeparate;
 		E_BLEND_FACTOR		eSrcAlpha;
-		E_BLEND_FACTOR		eDestAlpha;
+		E_BLEND_FACTOR		eDstAlpha;
 		E_BLEND_OPERATION	eOpAlpha;
 		*/
 		TBlendStateDesc():
-		bEnable(false), eSrcFactor(BF_SRC_ALPHA), eDestFactor(BF_ONE_MINUS_SRC_ALPHA)
+		bEnable(false), eSrcFactor(BF_SRC_ALPHA), eDstFactor(BF_ONE_MINUS_SRC_ALPHA)
 		{}
 	};
 
@@ -215,8 +215,7 @@ namespace DGLE
 	{
 		bool	bDepthTestEnable;
 		bool	bWriteToDepthBuffer;
-		E_COMPARISON_FUNC
-				eDepthFunc;
+		E_COMPARISON_FUNC eDepthFunc;
 		
 		/* For future needs.
 		bool	bStencilEnable;
@@ -234,15 +233,13 @@ namespace DGLE
 	{
 		bool	bWireframe;
 
-		E_POLYGON_CULL_MODE
-				eCullMode;
+		E_POLYGON_CULL_MODE eCullMode;
 		bool	bFrontCounterClockwise;
 
 		bool	bScissorEnable;
 
 		bool	bAlphaTestEnable;
-		E_COMPARISON_FUNC
-				eAlphaTestFunc;
+		E_COMPARISON_FUNC eAlphaTestFunc;
 		float	fAlphaTestRefValue;
 
 		/* For future needs.

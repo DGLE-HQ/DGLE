@@ -79,27 +79,27 @@ DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
 	{
 	case EBF_NORMAL:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
-		_stBlendStateDesc.eDestFactor = BF_ONE_MINUS_SRC_ALPHA;
+		_stBlendStateDesc.eDstFactor = BF_ONE_MINUS_SRC_ALPHA;
 		break;
 	case EBF_ADD:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
-		_stBlendStateDesc.eDestFactor = BF_ONE;
+		_stBlendStateDesc.eDstFactor = BF_ONE;
 		break;
 	case EBF_MULT:
 		_stBlendStateDesc.eSrcFactor = BF_ZERO;
-		_stBlendStateDesc.eDestFactor = BF_SRC_COLOR;
+		_stBlendStateDesc.eDstFactor = BF_SRC_COLOR;
 		break;
 	case EBF_BLACK:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_COLOR;
-		_stBlendStateDesc.eDestFactor = BF_ONE_MINUS_SRC_COLOR;
+		_stBlendStateDesc.eDstFactor = BF_ONE_MINUS_SRC_COLOR;
 		break;
 	case EBF_WHITE:
 		_stBlendStateDesc.eSrcFactor = BF_ONE_MINUS_SRC_COLOR;
-		_stBlendStateDesc.eDestFactor = BF_SRC_COLOR;
+		_stBlendStateDesc.eDstFactor = BF_SRC_COLOR;
 		break;
 	case EBF_MASK:
 		_stBlendStateDesc.eSrcFactor = BF_DST_ALPHA;
-		_stBlendStateDesc.eDestFactor = BF_ZERO;
+		_stBlendStateDesc.eDstFactor = BF_ZERO;
 		break;
 	}
 
@@ -110,22 +110,22 @@ DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
 
 DGLE_RESULT DGLE_API CRender3D::GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode)
 {
-	if (_stBlendStateDesc.eSrcFactor == BF_SRC_ALPHA && _stBlendStateDesc.eDestFactor == BF_ONE_MINUS_SRC_ALPHA)
+	if (_stBlendStateDesc.eSrcFactor == BF_SRC_ALPHA && _stBlendStateDesc.eDstFactor == BF_ONE_MINUS_SRC_ALPHA)
 		eMode = EBF_NORMAL;
 	else
-		if (_stBlendStateDesc.eSrcFactor == BF_SRC_ALPHA && _stBlendStateDesc.eDestFactor == BF_ONE)
+		if (_stBlendStateDesc.eSrcFactor == BF_SRC_ALPHA && _stBlendStateDesc.eDstFactor == BF_ONE)
 			eMode = EBF_ADD;
 		else
-			if (_stBlendStateDesc.eSrcFactor == BF_ZERO && _stBlendStateDesc.eDestFactor == BF_SRC_COLOR)
+			if (_stBlendStateDesc.eSrcFactor == BF_ZERO && _stBlendStateDesc.eDstFactor == BF_SRC_COLOR)
 				eMode = EBF_MULT;
 			else
-				if (_stBlendStateDesc.eSrcFactor == BF_SRC_COLOR && _stBlendStateDesc.eDestFactor == BF_ONE_MINUS_SRC_COLOR)
+				if (_stBlendStateDesc.eSrcFactor == BF_SRC_COLOR && _stBlendStateDesc.eDstFactor == BF_ONE_MINUS_SRC_COLOR)
 					eMode = EBF_BLACK;
 				else
-					if (_stBlendStateDesc.eSrcFactor == BF_ONE_MINUS_SRC_COLOR && _stBlendStateDesc.eDestFactor == BF_SRC_COLOR)
+					if (_stBlendStateDesc.eSrcFactor == BF_ONE_MINUS_SRC_COLOR && _stBlendStateDesc.eDstFactor == BF_SRC_COLOR)
 						eMode = EBF_WHITE;
 					else
-						if (_stBlendStateDesc.eSrcFactor == BF_DST_ALPHA && _stBlendStateDesc.eDestFactor == BF_ZERO)
+						if (_stBlendStateDesc.eSrcFactor == BF_DST_ALPHA && _stBlendStateDesc.eDstFactor == BF_ZERO)
 							eMode = EBF_MASK;
 							
 	return S_OK;

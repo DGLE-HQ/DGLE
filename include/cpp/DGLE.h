@@ -316,7 +316,7 @@ namespace DGLE
 		ET_BEFORE_INITIALIZATION,	/**< Event occurs just before engine will call its initialization routines. \see IEvBeforeInitialization */ 
 		ET_BEFORE_RENDER,			/**< Event occurs before every frame. */ 
 		ET_AFTER_RENDER,			/**< Event occurs after every frame. */ 
-		ET_ON_PROFILER_DRAW,		/**< It is a special event on which you can render some text information on screen. \note If you want to output some statistic or profiling information use this event and special RenderProfilerTxt method. \see IEngineCore::RenderProfilerTxt */ 
+		ET_ON_PROFILER_DRAW,		/**< It is a special event on which you can render some text information on screen. \note If you want to output some statistic or profiling information use this event and special RenderProfilerText method. \see IEngineCore::RenderProfilerText */ 
 		ET_ON_WINDOW_MESSAGE,		/**< Event occurs every time when window receives message. Use this event to hook engine window messages. \see IEvWindowMessage */ 
 		ET_ON_GET_SUBSYSTEM,		/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
@@ -608,7 +608,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) = 0;
 
 		virtual DGLE_RESULT DGLE_API RenderFrame() = 0;
-		virtual DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
+		virtual DGLE_RESULT DGLE_API RenderProfilerText(const char *pcTxt, const TColor4 &stColor = TColor4()) = 0;
 		virtual DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx) = 0;
 		virtual DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick) = 0;
 		virtual DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
@@ -800,7 +800,7 @@ namespace DGLE
 		PF_DEFAULT			= 0x00000000,
 		PF_LINE				= 0x00000000,
 		PF_FILL				= 0x00000001, 
-		PF_VERTICES_COLOR	= 0x00000002,
+		PF_VERTICES_COLORS	= 0x00000002,
 		PF_SMOOTH			= 0x00000004 //ToDo
 	};
 
@@ -811,13 +811,13 @@ namespace DGLE
 		EF_NONE				= 0x00000001,
 		EF_ALPHA_TEST		= 0x00000002,
 		EF_BLEND			= 0x00000004, 
-		EF_FLIPX			= 0x00000008, 
-		EF_FLIPY			= 0x00000010, 
-		EF_COLORMIX			= 0x00000020, 
+		EF_FLIP_HORIZONTALLY= 0x00000008, 
+		EF_FLIP_VERTICALLY	= 0x00000010, 
+		EF_COLOR_MIX		= 0x00000020, 
 		EF_SCALE			= 0x00000040,  
-		EF_VERTICES_OFFSET	= 0x00000080, 
-		EF_VERTICES_COLOR	= 0x00000100, 
-		EF_ROTATEPT			= 0x00000200
+		EF_VERTICES_OFFSETS	= 0x00000080, 
+		EF_VERTICES_COLORS	= 0x00000100, 
+		EF_ROTATION_POINT	= 0x00000200
 	};
 
 	enum E_BATCH_MODE2D
@@ -855,10 +855,10 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetLineWidth(uint uiWidth) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor = TColor4(), uint uiSize = 1) = 0;
 		virtual DGLE_RESULT DGLE_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor = TColor4(), float fAngle = 0.f, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), float fAngle = 0.f, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
 		// 2D Sprites
 		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
@@ -866,7 +866,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DrawTextureSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		// Extra
-		virtual DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis = TVector3(), float fAngle = 0.f, bool bClip = true, float fFovY = 90.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		//Advanced
@@ -879,14 +879,14 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetScale(const TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API SetColorMix(const TColor4 &stColor = TColor4()) = 0;
 		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
-		virtual DGLE_RESULT DGLE_API SetVerticesOffset(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
+		virtual DGLE_RESULT DGLE_API SetVerticesOffsets(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
 		
 		virtual DGLE_RESULT DGLE_API GetRotationPoint(TPoint2 &stCoords) = 0;
 		virtual DGLE_RESULT DGLE_API GetScale(TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetColorMix(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode) = 0;
-		virtual DGLE_RESULT DGLE_API GetVerticesOffset(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
+		virtual DGLE_RESULT DGLE_API GetVerticesOffsets(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4) = 0;
 	};
 

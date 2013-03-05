@@ -205,7 +205,7 @@ public:
 	DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
 
 	DGLE_RESULT DGLE_API RenderFrame();
-	DGLE_RESULT DGLE_API RenderProfilerTxt(const char *pcTxt, const TColor4 &stColor);
+	DGLE_RESULT DGLE_API RenderProfilerText(const char *pcTxt, const TColor4 &stColor);
 	DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx);
 	DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick);
 	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo);

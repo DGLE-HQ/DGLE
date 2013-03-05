@@ -326,7 +326,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 
 	bool builtin_fscreen;
 
-	Core()->pCoreRenderer()->IsFeatureSupported(CRSF_BUILTIN_FSCREEN_MODE, builtin_fscreen);
+	Core()->pCoreRenderer()->IsFeatureSupported(CRSF_BUILTIN_FULLSCREEN_MODE, builtin_fscreen);
 
 	if (builtin_fscreen)
 		return S_OK;

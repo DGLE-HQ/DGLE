@@ -1393,10 +1393,10 @@ void CResourceManager::_ProfilerEventHandler() const
 		return;
 
 	TColor4 color;
-	Core()->RenderProfilerTxt("== Resource Man. Profiler ==", color);
+	Core()->RenderProfilerText("== Resource Man. Profiler ==", color);
 
 	if (_iProfilerState > 0)
-		Core()->RenderProfilerTxt(("Resources loaded: " + UIntToStr((uint)_resList.size())).c_str(), color);
+		Core()->RenderProfilerText(("Resources loaded: " + UIntToStr((uint)_resList.size())).c_str(), color);
 
 	if (_iProfilerState > 1)
 	{
@@ -1410,7 +1410,7 @@ void CResourceManager::_ProfilerEventHandler() const
 			++cnt[type];
 		}
 
-		Core()->RenderProfilerTxt("---- Resource Statistic ----", color);
+		Core()->RenderProfilerText("---- Resource Statistic ----", color);
 
 		for (int i = 0; i < _sc_EngObjTypeCount; ++i)
 		{
@@ -1420,10 +1420,10 @@ void CResourceManager::_ProfilerEventHandler() const
 
 			s += ':' + UIntToStr(cnt[i]);
 
-			Core()->RenderProfilerTxt(s.c_str(), color);
+			Core()->RenderProfilerText(s.c_str(), color);
 		}
 
-		Core()->RenderProfilerTxt("----------------------------", color);
+		Core()->RenderProfilerText("----------------------------", color);
 	}
 
 }

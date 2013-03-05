@@ -202,7 +202,7 @@ bool CBaseRendererGL::AdjustMode(TEngineWindow &stNewWin)
 	{
 		int swapint = wglGetSwapIntervalEXT();
 		
-		if (stNewWin.bVerticalSynchronization)
+		if (stNewWin.bVSync)
 		{
 			if (swapint != 1)
 				wglSwapIntervalEXT(1);
@@ -215,7 +215,7 @@ bool CBaseRendererGL::AdjustMode(TEngineWindow &stNewWin)
 	else 
 	{
 		res = false;
-		stNewWin.bVerticalSynchronization = false;
+		stNewWin.bVSync = false;
 		LOG("VSync is not supported.", LT_WARNING);
 	}
 
