@@ -800,8 +800,7 @@ namespace DGLE
 		PF_DEFAULT			= 0x00000000,
 		PF_LINE				= 0x00000000,
 		PF_FILL				= 0x00000001, 
-		PF_VERTICES_COLORS	= 0x00000002,
-		PF_SMOOTH			= 0x00000004 //ToDo
+		PF_VERTICES_COLORS	= 0x00000002
 	};
 
 	//Flags for Effects
@@ -855,9 +854,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetLineWidth(uint uiWidth) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPoint(const TPoint2 &stCoords, const TColor4 &stColor = TColor4(), uint uiSize = 1) = 0;
 		virtual DGLE_RESULT DGLE_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor = TColor4(), float fAngle = 0.f, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), float fAngle = 0.f, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = TColor4(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
 		// 2D Sprites

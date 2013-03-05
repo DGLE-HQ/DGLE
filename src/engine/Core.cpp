@@ -1355,7 +1355,7 @@ DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEv
 		LOG(string("Window mode (Viewport: ") + IntToStr(_stWin.uiWidth) + "X" + IntToStr(_stWin.uiHeight) +
 			(_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16 bit" : "") +
 			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVSync?", VSync":"") +
-			(_stWin.eMultisampling != MM_NONE ? ", MSAA: " + IntToStr((int)pow(2.f, (int)_stWin.eMultisampling)) + "X" : "") +
+			(_stWin.eMultisampling != MM_NONE ? ", MSAA: " + IntToStr((int)_stWin.eMultisampling * 2) + "X" : "") +
 			") has been set properly.", LT_INFO);
 	}
 	else

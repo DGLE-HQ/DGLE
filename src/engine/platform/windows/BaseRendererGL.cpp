@@ -83,7 +83,7 @@ bool CBaseRendererGL::Initialize()
 					WGL_STENCIL_BITS_ARB, 8,
 					WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
 					WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
-					WGL_SAMPLES_ARB, (int)pow(2.f, (int)Core()->EngWindow()->eMultisampling),
+					WGL_SAMPLES_ARB, (int)Core()->EngWindow()->eMultisampling * 2,
 					0, 0
 				};
 
@@ -99,7 +99,7 @@ bool CBaseRendererGL::Initialize()
 					pixel_format = tmp_pixel_format;
 				else
 				{
-					LOG("Can't find suitable PixelFormat with required MSAA " + IntToStr((int)pow(2.f, (int)Core()->EngWindow()->eMultisampling)) + "X support.", LT_WARNING);
+					LOG("Can't find suitable PixelFormat with required MSAA " + IntToStr((int)Core()->EngWindow()->eMultisampling * 2) + "X support.", LT_WARNING);
 					Core()->EngWindow()->eMultisampling = MM_NONE;
 				}
 			}

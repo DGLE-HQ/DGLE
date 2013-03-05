@@ -818,7 +818,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor4 &stColor, float fAngle, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -834,42 +834,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 	_pBuffer[5] = stRect.y + stRect.height;
 	_pBuffer[6] = _pBuffer[0];
 	_pBuffer[7] = _pBuffer[5];
-
-	if (fAngle != 0.f)
-	{
-		TMatrix4 rot = MatrixIdentity();
-		
-		const float s = sinf(-fAngle * (float)M_PI / 180.f), c = cosf(-fAngle * (float)M_PI / 180.f);
-
-		rot._2D[0][0] = +c;
-		rot._2D[0][1] = -s;
-		rot._2D[1][0] = +s;
-		rot._2D[1][1] = +c;
-
-		TMatrix4 transform = MatrixTranslate(TVector3(-(stRect.x + stRect.width / 2.f), -(stRect.y + stRect.height / 2.f), 0.f)) *
-			rot *  MatrixTranslate(TVector3(stRect.x + stRect.width / 2.f, stRect.y + stRect.height / 2.f, 0.f));
-
-		float x = _pBuffer[0], y = _pBuffer[1];
-		_pBuffer[0]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		_pBuffer[1]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-
-		 x = _pBuffer[2]; y = _pBuffer[3];
-		_pBuffer[2]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		_pBuffer[3]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-
-		x = _pBuffer[4]; y = _pBuffer[5];
-		_pBuffer[4]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		_pBuffer[5]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-
-		x = _pBuffer[6]; y = _pBuffer[7];
-		_pBuffer[6]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		_pBuffer[7]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-	}
-
 	_pBuffer[8] = _pBuffer[0];
 	_pBuffer[9] = _pBuffer[1];
 
-	if (!BBoxInScreen(_pBuffer, fAngle != 0.f))
+	if (!BBoxInScreen(_pBuffer, false))
 		return S_OK;
 
 	_2D_IF_BATCH_DO_SET_STATES
@@ -963,10 +931,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 
 DGLE_RESULT DGLE_API CRender2D::DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
-	return DrawEllipse(stCoords, TPoint2((float)uiRadius, (float)uiRadius), uiQuality, stColor, 0.f, eFlags);
+	return DrawEllipse(stCoords, TPoint2((float)uiRadius, (float)uiRadius), uiQuality, stColor, eFlags);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, float fAngle, E_PRIMITIVE2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags)
 {
 	IN_2D_GUARD
 
@@ -981,39 +949,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 		stCoords.x - stRadius.x, stCoords.y + stRadius.y
 	};
 
-	TMatrix4 transform;
-
-	if (fAngle != 0.f)
-	{
-		TMatrix4 rot = MatrixIdentity();
-		
-		const float s = sinf(-fAngle * (float)M_PI / 180.f), c = cosf(-fAngle * (float)M_PI / 180.f);
-
-		rot._2D[0][0] = +c;
-		rot._2D[0][1] = -s;
-		rot._2D[1][0] = +s;
-		rot._2D[1][1] = +c;
-
-		transform = MatrixTranslate(TVector3(-stCoords.x, -stCoords.y, 0.f)) * rot *  MatrixTranslate(TVector3(stCoords.x, stCoords.y, 0.f));
-
-		float x = quad[0], y = quad[1];
-		quad[0]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		quad[1]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-
-		x = quad[2], y = quad[3];
-		quad[2]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		quad[3]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-
-		x = quad[4], y = quad[5];
-		quad[4]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		quad[5]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-
-		x = quad[6], y = quad[7];
-		quad[6]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
-		quad[7]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
-	}
-
-	if (!BBoxInScreen(quad, fAngle != 0.f))
+	if (!BBoxInScreen(quad, false))
 		return S_OK;
 
 	_2D_IF_BATCH_DO_SET_STATES
@@ -1036,30 +972,12 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 	_2D_IF_BATCH_NO_UPDATE_EXIT
 		else
 		{
-			float x = stCoords.x + stRadius.x, y = stCoords.y;
-
-			if (fAngle != 0.f)
-			{
-				const float prev_x = x, prev_y = y;
-				x = transform._2D[0][0] * prev_x + transform._2D[1][0] * prev_y + transform._2D[3][0];
-				y = transform._2D[0][1] * prev_x + transform._2D[1][1] * prev_y + transform._2D[3][1];
-			}
-
-			_batchAccumulator.push_back(TVertex2(x, y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+			_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x, stCoords.y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 			
 			if (eFlags & PF_FILL)
 				_batchAccumulator.push_back(TVertex2(stCoords.x, stCoords.y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 			
-			x = stCoords.x + stRadius.x * cosf(k * (float)M_PI / 180.f), y = stCoords.y + stRadius.y * sinf(k * (float)M_PI / 180.f);
-
-			if (fAngle != 0.f)
-			{
-				const float prev_x = x, prev_y = y;
-				x = transform._2D[0][0] * prev_x + transform._2D[1][0] * prev_y + transform._2D[3][0];
-				y = transform._2D[0][1] * prev_x + transform._2D[1][1] * prev_y + transform._2D[3][1];
-			}
-
-			_batchAccumulator.push_back(TVertex2(x, y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+			_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(k * (float)M_PI / 180.f), stCoords.y + stRadius.y * sinf(k * (float)M_PI / 180.f), 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 
 			for (uint i = 2; i <= uiQuality; ++i)
 			{
@@ -1071,16 +989,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 				else
 					_batchAccumulator.push_back(_batchAccumulator[_batchAccumulator.size() - 1]);
 
-				float x = stCoords.x + stRadius.x * cosf(i * k * (float)M_PI / 180.f), y = stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f);
-
-				if (fAngle != 0.f)
-				{
-					const float prev_x = x, prev_y = y;
-					x = transform._2D[0][0] * prev_x + transform._2D[1][0] * prev_y + transform._2D[3][0];
-					y = transform._2D[0][1] * prev_x + transform._2D[1][1] * prev_y + transform._2D[3][1];
-				}
-
-				_batchAccumulator.push_back(TVertex2(x, y, 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
+				_batchAccumulator.push_back(TVertex2(stCoords.x + stRadius.x * cosf(i * k * (float)M_PI / 180.f), stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f),
+					0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a));
 			}
 		}
 	else
@@ -1100,17 +1010,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 
 		for (uint i = 0; i <= uiQuality; ++i)
 		{
-			float x = stCoords.x + stRadius.x * cosf(i * k * (float)M_PI / 180.f), y = stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f);
-			
-			if (fAngle != 0.f)
-			{
-				const float prev_x = x, prev_y = y;
-				x = transform._2D[0][0] * prev_x + transform._2D[1][0] * prev_y + transform._2D[3][0];
-				y = transform._2D[0][1] * prev_x + transform._2D[1][1] * prev_y + transform._2D[3][1];
-			}
-			
-			_pBuffer[2 + i * 2] = x;
-			_pBuffer[3 + i * 2] = y;
+			_pBuffer[2 + i * 2] = stCoords.x + stRadius.x * cosf(i * k * (float)M_PI / 180.f);
+			_pBuffer[3 + i * 2] = stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f);
 		}
 
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2]), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
@@ -1130,39 +1031,39 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 		uint16 index[3];
 	};
 
-	struct TVector2D : TPoint2
+	struct TVector2Ex : TVector2
 	{
-		TVector2D() {}
+		TVector2Ex() {}
 
-		TVector2D(const TPoint2 &p) : TPoint2(p) {}
+		TVector2Ex(const TPoint2 &p) : TPoint2(p) {}
 
-		TVector2D(const TVertex2 &v) : TPoint2(v.data) {}
+		TVector2Ex(const TVertex2 &v) : TPoint2(v.data) {}
 
-		TVector2D(float x, float y) : TPoint2(x, y) {}
+		TVector2Ex(float x, float y) : TPoint2(x, y) {}
 
-		TVector2D Diff(const TVector2D &p) const
+		TVector2Ex Diff(const TVector2Ex &p) const
 		{
 			return TPoint2(x - p.x, y - p.y);
 		}
 
-		TVector2D &OrthoCCW()
+		TVector2Ex &OrthoCCW()
 		{
-			return *new(this) TVector2D(-y, x);
+			return *new(this) TVector2Ex(-y, x);
 		}
 
-		TVector2D OrthoCCW() const
+		TVector2Ex OrthoCCW() const
 		{
-			return TVector2D(*this).OrthoCCW();
+			return TVector2Ex(*this).OrthoCCW();
 		}
 
-		TVector2D &OrthoCW()
+		TVector2Ex &OrthoCW()
 		{
-			return *new(this) TVector2D(y, -x);
+			return *new(this) TVector2Ex(y, -x);
 		}
 
-		TVector2D OrthoCW() const
+		TVector2Ex OrthoCW() const
 		{
-			return TVector2D(*this).OrthoCW();
+			return TVector2Ex(*this).OrthoCW();
 		}
 
 	};
@@ -1170,7 +1071,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 	struct TFContainer
 	{
 	private:
-		static inline int32 GetNextActive(int32 x, int32 vertexCount, const bool *active)
+		static inline uint GetNextActive(uint x, uint vertexCount, const bool *active)
 		{
 			for(;;)
 			{
@@ -1179,7 +1080,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 			}
 		}
 
-		static inline int32 GetPrevActive(int32 x, int32 vertexCount, const bool *active)
+		static inline uint GetPrevActive(uint x, uint vertexCount, const bool *active)
 		{
 			for(;;)
 			{
@@ -1189,20 +1090,20 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 		}
 
 	public:
-		static __forceinline int32 TriangulatePolygon(int32 vertexCount, const TVertex2 *vertex, bool ccw, TTriangle *triangle)
+		static __forceinline uint TriangulatePolygon(uint vertexCount, const TVertex2 *vertex, bool ccw, TTriangle *triangle)
 		{
 			const float c_epsilon = 0.001f;
 
 			bool *active = new bool[vertexCount];
-			for (int32 a = 0; a < vertexCount; ++a)
+			for (uint a = 0; a < vertexCount; ++a)
 				active[a] = true;
 
-			int32 triangleCount = 0;
-			int32 start = 0;
-			int32 p1 = 0;
-			int32 p2 = 1;
-			int32 m1 = vertexCount - 1;
-			int32 m2 = vertexCount - 2;
+			uint triangleCount = 0,
+				start = 0,
+				p1 = 0,
+				p2 = 1,
+				m1 = vertexCount - 1,
+				m2 = vertexCount - 2;
 
 			bool last_positive = false;
 			for(;;)
@@ -1216,12 +1117,12 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 					break;
 				}
 
-				const TVector2D c_vp1 = vertex[p1], c_vp2 = vertex[p2],
+				const TVector2Ex c_vp1 = vertex[p1], c_vp2 = vertex[p2],
 				c_vm1 = vertex[m1], c_vm2 = vertex[m2];
 				bool  positive = false, negative = false;
 
 				// Determine whether c_vp1, c_vp2 and c_vm1 form a valid triangle
-				TVector2D n1 = c_vm1.Diff(c_vp2).Normalize();
+				TVector2Ex n1 = c_vm1.Diff(c_vp2).Normalize();
 				if (ccw)
 					n1.OrthoCCW();
 				else
@@ -1229,8 +1130,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 				if (n1.Dot(c_vp1.Diff(c_vp2)) > c_epsilon)
 				{
 					positive = true;
-					TVector2D n2 = c_vp1.Diff(c_vm1).Normalize();
-					TVector2D n3 = c_vp2.Diff(c_vp1).Normalize();
+					TVector2Ex n2 = c_vp1.Diff(c_vm1).Normalize();
+					TVector2Ex n3 = c_vp2.Diff(c_vp1).Normalize();
 					if (ccw)
 					{
 						n2.OrthoCCW();
@@ -1242,11 +1143,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 						n3.OrthoCW();
 					}
 
-					for (int32 a = 0; a < vertexCount; ++a)
+					for (uint a = 0; a < vertexCount; ++a)
 					{	// Look for other vertices inside the triangle
 						if (active[a] && a != p1 && a != p2 && a != m1)
 						{
-							const TVector2D c_v = vertex[a];
+							const TVector2Ex c_v = vertex[a];
 							if( n1.Dot(c_v.Diff(c_vp2).Normalize()) > -c_epsilon &&
 								n2.Dot(c_v.Diff(c_vm1).Normalize()) > -c_epsilon &&
 								n3.Dot(c_v.Diff(c_vp1).Normalize()) > -c_epsilon)
@@ -1267,8 +1168,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 				if (n1.Dot(c_vm1.Diff(c_vp1)) > c_epsilon)
 				{
 					negative = true;
-					TVector2D n2 = (c_vm1.Diff(c_vm2)).Normalize();
-					TVector2D n3 = (c_vp1.Diff(c_vm1)).Normalize();
+					TVector2Ex n2 = (c_vm1.Diff(c_vm2)).Normalize();
+					TVector2Ex n3 = (c_vp1.Diff(c_vm1)).Normalize();
 					if (ccw)
 					{
 						n2.OrthoCCW();
@@ -1280,11 +1181,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 						n3.OrthoCW();
 					}
 
-					for (int32 a = 0; a < vertexCount; ++a)
+					for (uint a = 0; a < vertexCount; ++a)
 					{	// Look for other vertices inside the triangle
 						if (active[a] && a != m1 && a != m2 && a != p1)
 						{
-							const TVector2D v = vertex[a];
+							const TVector2Ex v = vertex[a];
 							if (n1.Dot(v.Diff(c_vp1).Normalize()) > -c_epsilon &&
 								n2.Dot(v.Diff(c_vm2).Normalize()) > -c_epsilon &&
 								n3.Dot(v.Diff(c_vm1).Normalize()) > -c_epsilon)
@@ -1422,10 +1323,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 		}
 
 		float angle = 0;
-		TVector2D e1 = (TVector2D(pstVertices[0]).Diff(pstVertices[uiVerticesCount - 1])).Normalize(), e2;
+		TVector2Ex e1 = (TVector2Ex(pstVertices[0]).Diff(pstVertices[uiVerticesCount - 1])).Normalize(), e2;
 		for (uint vert_idx = 0; vert_idx < uiVerticesCount; e1 = e2, ++vert_idx)
 		{
-			e2 = TVector2D(TVector2D(pstVertices[(vert_idx + 1) % uiVerticesCount]).Diff(pstVertices[vert_idx])).Normalize();
+			e2 = TVector2Ex(TVector2Ex(pstVertices[(vert_idx + 1) % uiVerticesCount]).Diff(pstVertices[vert_idx])).Normalize();
 			const float s = e1.Cross(e2), c = e1.Dot(e2);
 			angle += atan2(s, c);
 		}
