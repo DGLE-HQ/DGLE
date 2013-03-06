@@ -11,6 +11,9 @@ See "DGLE.h" for more details.
 
 #ifndef NO_BUILTIN_RENDERER
 
+#include "Render.h"
+#include "Render2D.h"
+
 using namespace std;
 
 //COpenGLBufferContainer
@@ -482,7 +485,7 @@ CBaseRendererGL(uiInstIdx), _clPassThroughStateMan(uiInstIdx), _pCachedStateMan(
 _bStateFilterEnabled(true), _uiUnfilteredDrawSetups(0), _uiOverallDrawSetups(0), _uiOverallDrawCalls(0),
 _uiOverallTrianglesCount(0), _pCurBindedBuffer(NULL), _pLastDrawnBuffer(NULL),
 _bVerticesBufferBindedFlag(false), _bIndexesBufferBindedFlag(false),
-_uiDrawCount(-1)
+_pCurRenderTarget(NULL), _uiCurFrameBufferIdx(-1), _uiDrawCount(-1)
 {}
 
 inline uint CCoreRendererGL::GetVertexSize(const TDrawDataDesc &stDesc)
@@ -572,6 +575,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
 	else
 		_iMaxTexUnits = 1;
 
+	if (GLEW_EXT_framebuffer_multisample)
+		glGetIntegerv(GL_MAX_SAMPLES_EXT, &_iMaxFBOSamples);
+	else
+		_iMaxFBOSamples = 1;
+
 	_bIsGLSLSupported = GLEW_ARB_shader_objects && GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader && GLEW_ARB_shading_language_100;
 
 	_pStateMan = _pCachedStateMan = new CStateManager<true>(InstIdx(), _iMaxTexUnits);
@@ -590,7 +598,8 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
 	SetDepthStencilState(_stCurrentState.stDepthStencilDesc);
 	SetRasterizerState(_stCurrentState.stRasterDesc);
 
-	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
+	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_EventsHandler, this);
+	Core()->AddEventListener(ET_ON_PER_SECOND_TIMER, _s_EventsHandler, this);
 
 	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
 	Console()->RegComVar("crgl_profiler", "Displays Core Renderer OpenGL subsystems profiler.", &_iProfilerState, 0, 2);
@@ -610,7 +619,24 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 	Console()->UnRegCom("crgl_print_exts_list");
 	Console()->UnRegCom("crgl_profiler");
 
-	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
+	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, _s_EventsHandler, this);
+	Core()->RemoveEventListener(ET_ON_PER_SECOND_TIMER, _s_EventsHandler, this);
+
+	if (GLEW_EXT_framebuffer_object)
+	{
+		for (size_t i = 0; i < _clFrameBuffers.size(); ++i)
+		{
+			glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBObject);
+			
+			if (_clFrameBuffers[i].uiFBBlitObject != 0)
+				glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBBlitObject);
+			
+			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectDepthStencil);
+		}
+
+		_clFrameBuffers.clear();
+	}
 
 	delete _pCachedStateMan;
 
@@ -717,8 +743,237 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataS
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 {
-	// ToDo
+	if (pTexture != NULL && _pCurRenderTarget != NULL)
+		SetRenderTarget(NULL);
+
+	if (pTexture == NULL && _pCurRenderTarget != NULL) // swap image to texture
+	{
+		Core()->pRender()->pRender2D()->End2D();
+
+		E_TEXTURE_DATA_FORMAT fmt;
+		_pCurRenderTarget->GetFormat(fmt);
+
+		uint width, height;
+		_pCurRenderTarget->GetSize(width, height);
+
+		if (GLEW_EXT_framebuffer_object && _uiCurFrameBufferIdx != -1 && _clFrameBuffers[_uiCurFrameBufferIdx].bValid)
+		{
+			if (GLEW_EXT_framebuffer_multisample && _clFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject != 0)
+			{
+				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, _clFrameBuffers[_uiCurFrameBufferIdx].uiFBObject);
+				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, _clFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject);
+				
+				if (fmt == TDF_DEPTH_COMPONENT24)
+					glBlitFramebufferEXT(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+				else
+					glBlitFramebufferEXT(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
+
+			if (fmt == TDF_DEPTH_COMPONENT24)
+				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
+			else
+				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, 0, 0);
+
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		}
+		else
+		{
+			GLenum color_format;
+
+			switch (fmt)
+			{
+			case TDF_RGB8: color_format = GL_RGB; break;
+			case TDF_RGBA8: color_format = GL_RGBA; break;
+			case TDF_ALPHA8: color_format = GL_ALPHA; break;
+			case TDF_DEPTH_COMPONENT24: color_format = GL_DEPTH_COMPONENT; break;
+			default:
+				return E_INVALIDARG;
+			}
+
+			BindTexture(_pCurRenderTarget, 0);
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, color_format, 0, 0, width, height, 0);
+		}
+
+		SetViewport(uiPrevVpX, uiPrevVpY, uiPrevVpWidth, uiPrevVpHeight);
+
+		if (fmt == TDF_DEPTH_COMPONENT24)
+		{
+			_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB);
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			if (!GLEW_EXT_framebuffer_object)
+				glClear(GL_DEPTH_BUFFER_BIT);
+		}
+		else
+			if (!GLEW_EXT_framebuffer_object)
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		_pCurRenderTarget = NULL;
+	}
+	else
+		if (pTexture != NULL && _pCurRenderTarget == NULL) // prepare for rendering to texture
+		{
+			E_TEXTURE_DATA_FORMAT fmt;
+			pTexture->GetFormat(fmt);
+
+			if (fmt != TDF_RGB8 && fmt != TDF_RGBA8 && fmt != TDF_ALPHA8 && fmt != TDF_DEPTH_COMPONENT24)
+				return E_INVALIDARG;
+
+			uint width, height;
+			pTexture->GetSize(width, height);
+
+			if (GLEW_EXT_framebuffer_object)
+			{		
+				const GLuint tex_id = ((CCoreTexture*)pTexture)->GetTex();
+
+				uint fbo_id = -1;
+
+				for (size_t i = 0; i < _clFrameBuffers.size(); ++i)
+					if (_clFrameBuffers[i].uiWidth == width && _clFrameBuffers[i].uiHeight == height)
+					{
+						fbo_id = i;
+						break;
+					}
+
+				if (fbo_id == -1) // create FBO if necessary
+				{
+					TFrameBuffer fbo;
+
+					fbo.uiWidth = width;
+					fbo.uiHeight = height;
+
+					const TEngineWindow *wnd = Core()->EngWindow();
+
+					glGenFramebuffersEXT(1, &fbo.uiFBObject);
+					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBObject);
+
+					glGenRenderbuffersEXT(1, &fbo.uiRBObjectColor);
+					glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo.uiRBObjectColor);
+					
+					const bool do_multisample = GLEW_EXT_framebuffer_multisample && wnd->eMultisampling != MM_NONE && (int)wnd->eMultisampling * 2 <= _iMaxFBOSamples;
+
+					if (do_multisample)
+						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, (int)wnd->eMultisampling * 2, GL_RGBA8, fbo.uiWidth, fbo.uiHeight);				
+					else
+						glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, fbo.uiWidth, fbo.uiHeight);
+
+					glGenRenderbuffersEXT(1, &fbo.uiRBObjectDepthStencil);
+					glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
+					
+					GLenum rb_format = GL_DEPTH_COMPONENT24_ARB;
+
+					if (GL_EXT_packed_depth_stencil)
+						rb_format = GL_DEPTH24_STENCIL8_EXT;
+
+					if (do_multisample)
+						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, (int)wnd->eMultisampling * 2, rb_format, fbo.uiWidth, fbo.uiHeight);					
+					else
+						glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, rb_format, fbo.uiWidth, fbo.uiHeight);
+
+					glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectColor);
+					glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
+					glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
+
+					glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+
+					fbo.bValid = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+
+					if (fbo.bValid)
+					{
+						if( do_multisample)
+						{
+							glGenFramebuffersEXT(1, &fbo.uiFBBlitObject);
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBBlitObject);
+						}
+
+						if (fmt == TDF_DEPTH_COMPONENT24)
+							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, tex_id, 0);
+						else
+							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_id, 0);
+
+						fbo.bValid = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+					}
+
+					if (!fbo.bValid)
+					{
+						_uiCurFrameBufferIdx = -1;
+						glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+					}
+					else
+					{
+						_uiCurFrameBufferIdx = _clFrameBuffers.size();
+						if (do_multisample)
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBObject);
+					}
+
+					_clFrameBuffers.push_back(fbo);
+				}
+				else // use already created FBO
+					if (_clFrameBuffers[fbo_id].bValid)
+					{
+						_uiCurFrameBufferIdx = fbo_id;
+
+						_clFrameBuffers[fbo_id].uiIdleTime = 0;
+
+						const bool do_multisample = GLEW_EXT_framebuffer_multisample && _clFrameBuffers[fbo_id].uiFBBlitObject != 0;
+
+						if (do_multisample)
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBBlitObject);
+						else
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBObject);
+
+						if (fmt == TDF_DEPTH_COMPONENT24)
+							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, tex_id, 0);
+						else
+							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_id, 0);
+					
+						if (do_multisample)
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBObject);
+					}
+					else
+						_uiCurFrameBufferIdx = -1;
+			}
+
+			GetViewport(uiPrevVpX, uiPrevVpY, uiPrevVpWidth, uiPrevVpHeight);
+			SetViewport(0, 0, width, height);
+
+			if (fmt == TDF_DEPTH_COMPONENT24)
+			{
+				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+				glClear(GL_DEPTH_BUFFER_BIT);
+			}
+			else
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			_pCurRenderTarget = pTexture;
+		}
+		else
+			return E_INVALIDARG;
+
 	return S_OK;
+}
+
+void CCoreRendererGL::_KillDeadFBOs()
+{
+	size_t i = 0;
+	while (i < _clFrameBuffers.size())
+	{
+		++_clFrameBuffers[i].uiIdleTime;
+
+		if (_clFrameBuffers.size() > _sc_uiFBOMaxCacheSize && _clFrameBuffers[i].uiIdleTime > _sc_uiMaxFBOIdleTime)
+		{
+			glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBObject);
+			
+			if(_clFrameBuffers[i].uiFBBlitObject != 0)
+				glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBBlitObject);
+			
+			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectDepthStencil);
+			
+			_clFrameBuffers.erase(_clFrameBuffers.begin() + i);
+		}
+		else
+			++i;
+	}
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
@@ -1608,6 +1863,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 	case CRDF_TEXTURE_MIRRORED_REPEAT : bIsSupported = GLEW_VERSION_1_4 == GL_TRUE; break;
 	case CRDF_TEXTURE_MIRROR_CLAMP : bIsSupported = GLEW_EXT_texture_mirror_clamp == GL_TRUE; break;
 	case CRDF_GEOMETRY_BUFFER : bIsSupported = GLEW_ARB_vertex_buffer_object == GL_TRUE; break;
+	case CRDF_FRAME_BUFFER :  bIsSupported = GLEW_EXT_framebuffer_object == GL_TRUE; break;
 
 	default: 
 		bIsSupported = false;
@@ -1617,7 +1873,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 	return S_OK;
 }
 
-void CCoreRendererGL::_ProfilerEventHandler(IBaseEvent *pEvent) const
+void CCoreRendererGL::_ProfilerEventHandler() const
 {
 	if (_iProfilerState == 0)
 		return;
@@ -1666,9 +1922,23 @@ void DGLE_API CCoreRendererGL::_s_ConPrintGLExts(void *pParameter, const char *p
 		CON(CCoreRendererGL, res.c_str());
 }
 
-void DGLE_API CCoreRendererGL::_s_ProfilerEventHandler(void *pParameter, IBaseEvent *pEvent)
+void DGLE_API CCoreRendererGL::_s_EventsHandler(void *pParameter, IBaseEvent *pEvent)
 {
-	PTHIS(CCoreRendererGL)->_ProfilerEventHandler(pEvent);
+	E_EVENT_TYPE type;
+	pEvent->GetEventType(type);
+
+	switch (type)
+	{
+	case ET_ON_PROFILER_DRAW:
+		PTHIS(CCoreRendererGL)->_ProfilerEventHandler();
+		break;
+	
+	case ET_ON_PER_SECOND_TIMER:
+		PTHIS(CCoreRendererGL)->_KillDeadFBOs();
+		break;
+	}
+
+	
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::GetRendererType(E_CORE_RENDERER_TYPE &eType)

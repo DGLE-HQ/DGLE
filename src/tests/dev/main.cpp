@@ -43,6 +43,7 @@ using namespace DGLE;
 
 IEngineCore *pEngineCore = NULL;
 IInput *pInput = NULL;
+IRender *pRender = NULL;
 IRender2D *pRender2D = NULL;
 IRender3D *pRender3D = NULL;
 uint uiCounter = 0;
@@ -60,10 +61,9 @@ void DGLE_API Init(void *pParameter)
 
 	p_res_man->GetDefaultResource(EOT_MODEL, (IEngineBaseObject *&)pModel);
 
-	IRender *pr;
-	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pr);
-	pr->GetRender2D(pRender2D);
-	pr->GetRender3D(pRender3D);
+	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pRender);
+	pRender->GetRender2D(pRender2D);
+	pRender->GetRender3D(pRender3D);
 }
 
 void DGLE_API Free(void *pParameter)
@@ -89,7 +89,7 @@ void DGLE_API Render(void *pParameter)
 
 	pTex->Bind();
 	pModel->Draw();
-	pRender3D->DrawAxes(2.f, true);
+	pRender3D->DrawAxes(2.f, false);
 
 	uint w, h;
 	pTex->GetDimensions(w, h);

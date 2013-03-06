@@ -48,6 +48,19 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 {
 	static const uint _sc_uiMaxVerticesCountForLegacy = 128;
 	static const uint _sc_uiMaxDrawCallsPerFrame = 3000;
+	static const uint _sc_uiMaxFBOIdleTime = 10; // in seconds
+	static const uint _sc_uiFBOMaxCacheSize = 16;
+
+	struct TFrameBuffer
+	{
+		bool bValid;
+		GLuint uiFBObject, uiFBBlitObject,
+			uiRBObjectColor, uiRBObjectDepthStencil;
+		uint uiWidth, uiHeight;
+		uint uiIdleTime;
+
+		TFrameBuffer() : uiIdleTime(0), uiFBBlitObject(0) {}
+	};
 
 	TCrRndrInitResults _stInitResults;
 
@@ -56,7 +69,8 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	IStateManager *_pStateMan;
 
 	std::string _strOpenGLExtensions;
-	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLight, _iMaxTexUnits;
+	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLight, _iMaxTexUnits,
+		_iMaxFBOSamples;
 	bool _bIsGLSLSupported;
 
 	int _iProfilerState;
@@ -67,6 +81,11 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	TDrawDataDesc _stDrawDataDesc;
 	E_CORE_RENDERER_DRAW_MODE _eDrawMode;
 	uint _uiDrawCount;
+
+	uint uiPrevVpX, uiPrevVpY, uiPrevVpWidth, uiPrevVpHeight; 
+	std::vector<TFrameBuffer> _clFrameBuffers;
+	ICoreTexture *_pCurRenderTarget;
+	uint _uiCurFrameBufferIdx;
 
 	CCoreGeometryBuffer *_pCurBindedBuffer, *_pLastDrawnBuffer;
 	bool _bVerticesBufferBindedFlag, _bIndexesBufferBindedFlag;
@@ -81,10 +100,11 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	__forceinline bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 #endif
 	inline void _TriangleStatistics(E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
-	void _ProfilerEventHandler(IBaseEvent *pEvent) const;
+	void _ProfilerEventHandler() const;
+	void _KillDeadFBOs();
 
 	static void DGLE_API _s_ConPrintGLExts(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ProfilerEventHandler(void *pParameter, IBaseEvent *pEvent);
+	static void DGLE_API _s_EventsHandler(void *pParameter, IBaseEvent *pEvent);
 
 public:
 	

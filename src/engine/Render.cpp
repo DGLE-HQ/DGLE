@@ -63,8 +63,11 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 	_strFeturesList += std::string("Texture mirror clamp: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, b_supported);
-	_strFeturesList += std::string("Hardware geometry buffer: ") + (b_supported ? "Yes" : "No");
+	_strFeturesList += std::string("Hardware geometry buffers: ") + (b_supported ? "Yes" : "No") + "\n\t";;
 	
+	_pCoreRenderer->IsFeatureSupported(CRDF_FRAME_BUFFER, b_supported);
+	_strFeturesList += std::string("Hardware frame buffers: ") + (b_supported ? "Yes" : "No");
+
 	//Don't append "\n\t" to the last line!
 
 	LOG(_strFeturesList, LT_INFO);

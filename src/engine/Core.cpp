@@ -641,6 +641,8 @@ void CCore::_OnTimer()
 		_bNeedApplyNewWnd = false;
 	}
 
+	CastEvent(ET_ON_PER_SECOND_TIMER, (IBaseEvent*)&CBaseEvent(ET_ON_PER_SECOND_TIMER));
+
 	if (_iDrawProfiler == 3)
 		_uiLastMemUsage = GetProcessMemoryUsage();
 

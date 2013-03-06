@@ -321,7 +321,8 @@ namespace DGLE
 		ET_ON_GET_SUBSYSTEM,		/**< Event occurs when someone calls IEngineCore::GetSubSystem method and you can substitute any subsystem by your own realization. \see IEvGetSubSystem */ 
 		ET_ON_ENGINE_FATAL_MESSAGE,	/**< Event occurs on engine fatal error. \see IEvFatalMessage */
 		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputted to the engine console. \see IEvConsoleWrite */
-		ET_ON_FULLSCREEN			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
+		ET_ON_FULLSCREEN,			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
+		ET_ON_PER_SECOND_TIMER		/**< Event occurs every second, just before engine recalculates its current per second metrics. */
 	};
 
 	// {6DFEF982-AADF-42e9-A369-378BDB31404A}
@@ -860,9 +861,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 	
 		// 2D Sprites
-		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawTextureCropped(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawTextureSprite(ITexture *pTexture, const TPoint2 &stCoords, const TPoint2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTextureCropped(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawTextureSprite(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, uint uiFrameIndex, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 
 		// Extra
 		virtual DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
