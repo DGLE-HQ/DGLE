@@ -756,7 +756,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 		uint width, height;
 		_pCurRenderTarget->GetSize(width, height);
 
-		if (GLEW_EXT_framebuffer_object && _uiCurFrameBufferIdx != -1 && _clFrameBuffers[_uiCurFrameBufferIdx].bValid)
+		if ((GLEW_EXT_framebuffer_object && GL_EXT_packed_depth_stencil) && _uiCurFrameBufferIdx != -1 && _clFrameBuffers[_uiCurFrameBufferIdx].bValid)
 		{
 			if (GLEW_EXT_framebuffer_multisample && _clFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject != 0)
 			{
@@ -814,14 +814,17 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 		{
 			E_TEXTURE_DATA_FORMAT fmt;
 			pTexture->GetFormat(fmt);
+			
+			uint depth;
+			pTexture->GetDepth(depth);
 
-			if (fmt != TDF_RGB8 && fmt != TDF_RGBA8 && fmt != TDF_ALPHA8 && fmt != TDF_DEPTH_COMPONENT24)
+			if ((fmt != TDF_RGB8 && fmt != TDF_RGBA8 && fmt != TDF_ALPHA8 && fmt != TDF_DEPTH_COMPONENT24) || depth != 0)
 				return E_INVALIDARG;
 
 			uint width, height;
 			pTexture->GetSize(width, height);
 
-			if (GLEW_EXT_framebuffer_object)
+			if (GLEW_EXT_framebuffer_object && GL_EXT_packed_depth_stencil)
 			{		
 				const GLuint tex_id = ((CCoreTexture*)pTexture)->GetTex();
 
@@ -1863,7 +1866,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 	case CRDF_TEXTURE_MIRRORED_REPEAT : bIsSupported = GLEW_VERSION_1_4 == GL_TRUE; break;
 	case CRDF_TEXTURE_MIRROR_CLAMP : bIsSupported = GLEW_EXT_texture_mirror_clamp == GL_TRUE; break;
 	case CRDF_GEOMETRY_BUFFER : bIsSupported = GLEW_ARB_vertex_buffer_object == GL_TRUE; break;
-	case CRDF_FRAME_BUFFER :  bIsSupported = GLEW_EXT_framebuffer_object == GL_TRUE; break;
+	case CRDF_FRAME_BUFFER :  bIsSupported = GLEW_EXT_framebuffer_object == GL_TRUE && GL_EXT_packed_depth_stencil == GL_TRUE ; break;
 
 	default: 
 		bIsSupported = false;

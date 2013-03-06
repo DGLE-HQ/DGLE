@@ -27,7 +27,7 @@ IInput *pInput = NULL;
 TPoint2 stMouseOnScreen, stMouseInCamera;
 
 ITexture *pTexGrass, *pTexStone, *pTexTree1, *pTexTree2, *pTexTree3, *pTexHouse, *pTexCopter, *pTexZombie, *pTexRotor,
-	*pMeshTree1Shadow, *pMeshTree2Shadow, *pMeshTree3Shadow, *pMeshHouseShadow, *pMeshCopterShadow;
+	*pMeshTree1Shadow, *pMeshTree2Shadow, *pMeshTree3Shadow, *pMeshHouseShadow, *pMeshCopterShadow, *pRotorShadow;
 
 IMesh *pMeshTree1, *pMeshTree2, *pMeshTree3, *pMeshHouse, *pMeshCopter;
 
@@ -94,6 +94,11 @@ void DGLE_API Init(void *pParameter)
 	RenderMeshToTexture(pMeshTree3Shadow, pMeshTree3, pTexTree3);
 	RenderMeshToTexture(pMeshHouseShadow, pMeshHouse, pTexHouse);
 	RenderMeshToTexture(pMeshCopterShadow, pMeshCopter, pTexCopter);
+
+	pResMan->CreateTexture(pRotorShadow, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
+	pRender->SetRenderTarget(pRotorShadow);
+	pRender2D->DrawCircle(TPoint2(128, 128), 100, 64, ColorWhite(), PF_FILL);
+	pRender->SetRenderTarget(NULL);
 }
 
 void DGLE_API Free(void *pParameter)
@@ -208,7 +213,10 @@ void DGLE_API Render(void *pParameter)
 	// Draw copter model and rotor sprite
 	const TPoint2 vint_pos(stCopterPos.x - 200.f + cosf(TO_RAD(fCopterAngle)) * 80.f, stCopterPos.y - 200.f + sinf(TO_RAD(fCopterAngle)) * 80.f);
 	pRender2D->DrawTexture(pMeshCopterShadow, stCopterPos - TPoint2(200.f, 200.f), TVector2(600.f, 600.f), fCopterAngle, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
-	pRender2D->DrawTexture(pTexRotor, vint_pos + TPoint2(100.f, 100.f), TVector2(400.f, 400.f), uiCounter * 25.f, (E_EFFECT2D_FLAGS)(EF_COLOR_MIX | EF_BLEND));
+	
+	// Make blinky rotor shadow
+	pRender2D->SetColorMix(ColorBlack(uiCounter % 3 == 2 ? 64 : 16));
+	pRender2D->DrawTexture(pRotorShadow, vint_pos + TPoint2(100.f, 100.f), TVector2(400.f, 400.f), 0.f, (E_EFFECT2D_FLAGS)(EF_COLOR_MIX | EF_BLEND));
 
 	pRender2D->DrawMesh(pMeshCopter, pTexCopter, stCopterPos, TPoint3(600.f, 600.f, 600.f), TVector3(0.f, 0.f, 1.f), fCopterAngle, false);
 	pRender2D->DrawTexture(pTexRotor, vint_pos, TVector2(400.f, 400.f), uiCounter * 25.f);

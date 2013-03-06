@@ -787,7 +787,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
 		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;	
 		virtual DGLE_RESULT DGLE_API DisableScissor() = 0;
-		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0; // if not CRDF_FRAME_BUFFER than every SetRenderTarget(NULL) screen will be cleared
 		
 		virtual DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D) = 0;
 		virtual DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D) = 0;
