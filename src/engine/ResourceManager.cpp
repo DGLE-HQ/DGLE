@@ -176,7 +176,7 @@ public:
 
 CResourceManager::CResourceManager(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
-_iProfilerState(0)
+_iProfilerState(0), _uiResIdxCounter(0)
 {
 	// If this assertion occures than you must see _s_GetObjTypeName method if all E_ENGINE_OBJECT_TYPE enum elements are implemented there.
 	// After it change this assertion expression as well.
@@ -439,6 +439,17 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEn
 		}
 
 	return E_INVALIDARG;
+}
+
+void CResourceManager::_AddResource(const char *pcName, IEngineBaseObject *pObj)
+{
+	if (pcName == NULL || strlen(pcName) == 0)
+	{
+		_resList.push_back(TResource(("Res_" + IntToStr(_uiResIdxCounter)).c_str(), pObj));
+		++_uiResIdxCounter;
+	}
+	else
+		_resList.push_back(TResource(pcName, pObj));
 }
 
 inline uint8 CResourceManager::_GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format)
@@ -1539,7 +1550,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateSound(ISoundSample *&prSndSample, u
 	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prSndSample));
+			_AddResource(pcName, (IEngineBaseObject*)prSndSample);
 		else
 			LOG("Error creating sound with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
@@ -1723,7 +1734,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uin
 	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prTex));
+			_AddResource(pcName, (IEngineBaseObject*)prTex);
 		else
 			LOG("Error creating texture with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
@@ -1736,7 +1747,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMaterial(IMaterial *&prMaterial, co
 	prMaterial = new CMaterial(InstIdx());
 
 	if (bAddResource)
-			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prMaterial));
+		_AddResource(pcName, (IEngineBaseObject*)prMaterial);
 
 	return S_OK;
 }
@@ -1746,7 +1757,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateLight(ILight *&prLight, const char 
 	prLight = new CLight(InstIdx());
 
 	if (bAddResource)
-			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prLight));
+		_AddResource(pcName, (IEngineBaseObject*)prLight);
 
 	return S_OK;
 }
@@ -1789,8 +1800,8 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 
 	if (bAddResource)
 	{
-		if (result == S_OK) 
-			_resList.push_back(TResource(pcName, (IEngineBaseObject*)prMesh));
+		if (result == S_OK)
+			_AddResource(pcName, (IEngineBaseObject*)prMesh);
 		else
 			LOG("Error creating mesh with name \"" + string(pcName) + "\".", LT_ERROR);
 	}
@@ -1803,7 +1814,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateModel(IModel *&prModel, const char 
 	prModel = new CModel(InstIdx());
 
 	if (bAddResource)
-		_resList.push_back(TResource(pcName, (IEngineBaseObject*)prModel));
+		_AddResource(pcName, (IEngineBaseObject*)prModel);
 	
 	return S_OK;
 }
@@ -2020,7 +2031,7 @@ DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngineBa
 		if (_resList[i].pObj == pObj)
 			return E_INVALIDARG;
 
-	_resList.push_back(TResource(pcName, pObj));
+	_AddResource(pcName, pObj);
 
 	return S_OK;
 }

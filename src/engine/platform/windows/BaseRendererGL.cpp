@@ -33,7 +33,7 @@ bool CBaseRendererGL::Initialize()
 		PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
 		PFD_DOUBLEBUFFER,							// Must Support Double Buffering
 		PFD_TYPE_RGBA,								// Request An RGBA Format
-		(Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR) ? 16 : 32,// Select Our Color Bits
+		(Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR) ? 16 : 24,// Select Our Color Bits
 		0, 0, 0, 0, 0, 0,							// Per Color Bits and Shifts Ignored
 		8,											// Alpha Bits
 		0,											// Shift Bit Ignored
@@ -77,7 +77,7 @@ bool CBaseRendererGL::Initialize()
 					WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
 					WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
 					WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-					WGL_COLOR_BITS_ARB, (Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR) ? 16 : 32,
+					WGL_COLOR_BITS_ARB, (Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR) ? 16 : 24,
 					WGL_ALPHA_BITS_ARB, 8,
 					WGL_DEPTH_BITS_ARB, 24,
 					WGL_STENCIL_BITS_ARB, 8,

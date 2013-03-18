@@ -68,6 +68,7 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	std::string				_strFileFormatsDescs;
 	std::vector<TFileFormat>_clFileFormats;
 
+	uint _uiResIdxCounter;
 	std::vector<TResource>	_resList;
 	std::vector<TDefaultRes>_defRes;
 
@@ -84,6 +85,8 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 
 	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags);
 	inline uint _GetFileFormatLoaderIdx(const char *pcFileName, E_ENGINE_OBJECT_TYPE eObjType, uint uiLoadFlags, IEngineBaseObject *&prObj);
+	void _AddResource(const char *pcName, IEngineBaseObject *pObj);
+
 	inline uint8 _GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format);
 	uint _GenerateDecompressedTextureData(const uint8 * pDataIn, uint8 *&prDataOut, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_TEXTURE_CREATION_FLAGS &eCreationFlags);
 	bool _SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);

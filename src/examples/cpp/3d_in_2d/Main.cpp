@@ -48,7 +48,7 @@ uint uiCounter = 1;
 
 void RenderMeshToTexture(ITexture *&pTex, IMesh *pMesh, ITexture *pMeshTex)
 {
-	pResMan->CreateTexture(pTex, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
+	pResMan->CreateTexture(pTex, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR, "", true);
 	pRender->SetRenderTarget(pTex);
 	pRender2D->DrawMesh(pMesh, pMeshTex, TPoint2(128.f, 128.f), TVector3(256.f, 256.f, 1.f));
 	pRender->SetRenderTarget(NULL);
@@ -89,13 +89,15 @@ void DGLE_API Init(void *pParameter)
 
 	pResMan->Load(RESOURCE_PATH"meshes\\copter\\propeller.png", (IEngineBaseObject *&)pTexRotor, TEXTURE_LOAD_DEFAULT_2D);
 
+	// Render shadows
 	RenderMeshToTexture(pMeshTree1Shadow, pMeshTree1, pTexTree1);
 	RenderMeshToTexture(pMeshTree2Shadow, pMeshTree2, pTexTree2);
 	RenderMeshToTexture(pMeshTree3Shadow, pMeshTree3, pTexTree3);
 	RenderMeshToTexture(pMeshHouseShadow, pMeshHouse, pTexHouse);
 	RenderMeshToTexture(pMeshCopterShadow, pMeshCopter, pTexCopter);
 
-	pResMan->CreateTexture(pRotorShadow, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
+	// Render rotor shadow
+	pResMan->CreateTexture(pRotorShadow, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR, "", true);
 	pRender->SetRenderTarget(pRotorShadow);
 	pRender2D->DrawCircle(TPoint2(128, 128), 100, 64, ColorWhite(), PF_FILL);
 	pRender->SetRenderTarget(NULL);
