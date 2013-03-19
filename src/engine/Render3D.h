@@ -23,6 +23,8 @@ class CRender3D: public CInstancedObj, public IRender3D
 
 	std::stack<E_PUSH_STATES_FLAGS> _stackStatesFlag;
 
+	float _afFrPlanes[6][4], _afAbsFrPlanes[6][3];
+
 	struct TFogDescriptor
 	{
 		bool bEnabled;
@@ -81,8 +83,8 @@ public:
 
 	DGLE_RESULT DGLE_API FrustumSetup();
 	DGLE_RESULT DGLE_API CullPoint(const TPoint3 &stCoords, bool &bCull);
-	DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull);
-	DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull);
+	DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCenter, float fRadius, bool &bCull);
+	DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenter, const TVector3 &stExtents, bool &bCull);
 
 	DGLE_RESULT DGLE_API CreateLight(ILight *&prLight);
 	DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled);

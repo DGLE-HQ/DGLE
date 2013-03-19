@@ -48,7 +48,7 @@ uint uiCounter = 1;
 
 void RenderMeshToTexture(ITexture *&pTex, IMesh *pMesh, ITexture *pMeshTex)
 {
-	pResMan->CreateTexture(pTex, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR, "", true);
+	pResMan->CreateTexture(pTex, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
 	pRender->SetRenderTarget(pTex);
 	pRender2D->DrawMesh(pMesh, pMeshTex, TPoint2(128.f, 128.f), TVector3(256.f, 256.f, 1.f));
 	pRender->SetRenderTarget(NULL);
@@ -66,8 +66,8 @@ void DGLE_API Init(void *pParameter)
 	pResMan->Load(RESOURCE_PATH"sounds\\helicopter.wav", (IEngineBaseObject *&)pHelicopter);
 	pHelicopter->PlayEx(pHelicopterSndChan, SSP_LOOPED);
 
-	pResMan->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass);
-	pResMan->Load(RESOURCE_PATH"textures\\stone.tga", (IEngineBaseObject *&)pTexStone);
+	pResMan->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass, TEXTURE_LOAD_DEFAULT_2D);
+	pResMan->Load(RESOURCE_PATH"textures\\stone.tga", (IEngineBaseObject *&)pTexStone, TEXTURE_LOAD_DEFAULT_2D);
 	
 	pResMan->Load(RESOURCE_PATH"meshes\\house\\tex_diffuse.jpg", (IEngineBaseObject *&)pTexHouse, TEXTURE_LOAD_DEFAULT_3D);
 	pResMan->Load(RESOURCE_PATH"meshes\\house\\house.dmd", (IEngineBaseObject *&)pMeshHouse, MMLF_FORCE_MODEL_TO_MESH);
@@ -97,7 +97,7 @@ void DGLE_API Init(void *pParameter)
 	RenderMeshToTexture(pMeshCopterShadow, pMeshCopter, pTexCopter);
 
 	// Render rotor shadow
-	pResMan->CreateTexture(pRotorShadow, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR, "", true);
+	pResMan->CreateTexture(pRotorShadow, NULL, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
 	pRender->SetRenderTarget(pRotorShadow);
 	pRender2D->DrawCircle(TPoint2(128, 128), 100, 64, ColorWhite(), PF_FILL);
 	pRender->SetRenderTarget(NULL);
@@ -193,10 +193,10 @@ void DGLE_API Render(void *pParameter)
 
 	pRender2D->DrawTexture(pMeshTree1Shadow, TPoint2(900.f - 225.f, 500.f - 225.f), TVector2(450.f, 450.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
 	pRender2D->DrawTexture(pMeshTree1Shadow, TPoint2(-250.f - 225.f, 300.f - 225.f), TVector2(450.f, 450.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
+	pRender2D->DrawTexture(pMeshTree1Shadow, TPoint2(800.f - 225.f, 200.f - 225.f), TVector2(450.f, 450.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
 	pRender2D->DrawTexture(pMeshTree2Shadow, TPoint2(0.f - 175.f, 450.f - 175.f), TVector2(350.f, 350.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
-	pRender2D->DrawTexture(pMeshTree2Shadow, TPoint2(500.f - 225.f, 150.f - 225.f), TVector2(450.f, 450.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
-	pRender2D->DrawTexture(pMeshTree3Shadow, TPoint2(50.f - 175.f, 750.f - 175.f), TVector2(350.f, 350.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
-	pRender2D->DrawTexture(pMeshTree3Shadow, TPoint2(800.f - 225.f, 200.f - 225.f), TVector2(450.f, 450.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
+	pRender2D->DrawTexture(pMeshTree2Shadow, TPoint2(50.f - 175.f, 750.f - 175.f), TVector2(350.f, 350.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
+	pRender2D->DrawTexture(pMeshTree3Shadow, TPoint2(500.f - 225.f, 150.f - 225.f), TVector2(450.f, 450.f), 0.f, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
 
 	// Draw 3D models
 	pRender2D->DrawMesh(pMeshHouse, pTexHouse, TPoint2(180.f, 150.f), TVector3(400.f, 400.f, 600.f));
@@ -204,10 +204,10 @@ void DGLE_API Render(void *pParameter)
 
 	pRender2D->DrawMesh(pMeshTree1, pTexTree1, TPoint2(900.f, 500.f), TVector3(400.f, 400.f, 500.f));
 	pRender2D->DrawMesh(pMeshTree1, pTexTree1, TPoint2(-250.f, 300.f), TVector3(400.f, 400.f, 500.f));
+	pRender2D->DrawMesh(pMeshTree1, pTexTree1, TPoint2(800.f, 200.f), TVector3(400.f, 400.f, 400.f));
 	pRender2D->DrawMesh(pMeshTree2, pTexTree2, TPoint2(0.f, 450.f), TVector3(300.f, 300.f, 400.f));
-	pRender2D->DrawMesh(pMeshTree2, pTexTree2, TPoint2(500.f, 150.f), TVector3(400.f, 400.f, 500.f));
-	pRender2D->DrawMesh(pMeshTree3, pTexTree3, TPoint2(50.f, 750.f), TVector3(300.f, 300.f, 300.f));
-	pRender2D->DrawMesh(pMeshTree3, pTexTree3, TPoint2(800.f, 200.f), TVector3(400.f, 400.f, 500.f));
+	pRender2D->DrawMesh(pMeshTree2, pTexTree2, TPoint2(50.f, 750.f), TVector3(300.f, 300.f, 300.f));
+	pRender2D->DrawMesh(pMeshTree3, pTexTree3, TPoint2(500.f, 150.f), TVector3(400.f, 400.f, 500.f));
 
 	// Need to clear depth buffer to draw copter model over houses and trees
 	pRender3D->ClearDepthBuffer();

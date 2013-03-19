@@ -14,6 +14,9 @@ CRender3D::CRender3D(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _stGlobalAmbient(ColorBlack())
 {
 	_pCoreRenderer = Core()->pCoreRenderer();
+
+	memset(_afFrPlanes, 0, 6 * 4 * sizeof(float));
+	memset(_afAbsFrPlanes, 0, 6 * 3 * sizeof(float));
 }
 
 CRender3D::~CRender3D()
@@ -45,7 +48,7 @@ void CRender3D::UnbindMaterial()
 
 void CRender3D::BindMaterial(IMaterial *pMaterial)
 {
-
+	// ToDo
 }
 
 DGLE_RESULT DGLE_API CRender3D::SetPerspective(float fFovAngle, float fZNear, float fZFar)
@@ -304,28 +307,86 @@ DGLE_RESULT DGLE_API CRender3D::GetPoint2(const TPoint3 &stPoint, TPoint2 &stRes
 
 DGLE_RESULT DGLE_API CRender3D::FrustumSetup()
 {
-	// ToDo
+	TMatrix4 mview, proj;
+	
+	_pCoreRenderer->GetMatrix(mview, MT_MODELVIEW);
+	_pCoreRenderer->GetMatrix(proj, MT_PROJECTION);
+
+	TMatrix4 plane_transform = mview * proj;
+
+	_afFrPlanes[0][0] = -plane_transform._2D[0][0] - plane_transform._2D[0][3];
+	_afFrPlanes[0][1] = -plane_transform._2D[1][0] - plane_transform._2D[1][3];
+	_afFrPlanes[0][2] = -plane_transform._2D[2][0] - plane_transform._2D[2][3];
+	_afFrPlanes[0][3] = -plane_transform._2D[3][0] - plane_transform._2D[3][3];
+
+	_afFrPlanes[1][0] = plane_transform._2D[0][0] - plane_transform._2D[0][3];
+	_afFrPlanes[1][1] = plane_transform._2D[1][0] - plane_transform._2D[1][3];
+	_afFrPlanes[1][2] = plane_transform._2D[2][0] - plane_transform._2D[2][3];
+	_afFrPlanes[1][3] = plane_transform._2D[3][0] - plane_transform._2D[3][3];
+
+	_afFrPlanes[2][0] = -plane_transform._2D[0][1] - plane_transform._2D[0][3];
+	_afFrPlanes[2][1] = -plane_transform._2D[1][1] - plane_transform._2D[1][3];
+	_afFrPlanes[2][2] = -plane_transform._2D[2][1] - plane_transform._2D[2][3];
+	_afFrPlanes[2][3] = -plane_transform._2D[3][1] - plane_transform._2D[3][3];
+
+	_afFrPlanes[3][0] = plane_transform._2D[0][1] - plane_transform._2D[0][3];
+	_afFrPlanes[3][1] = plane_transform._2D[1][1] - plane_transform._2D[1][3];
+	_afFrPlanes[3][2] = plane_transform._2D[2][1] - plane_transform._2D[2][3];
+	_afFrPlanes[3][3] = plane_transform._2D[3][1] - plane_transform._2D[3][3];
+
+	_afFrPlanes[4][0] = -plane_transform._2D[0][2] - plane_transform._2D[0][3];
+	_afFrPlanes[4][1] = -plane_transform._2D[1][2] - plane_transform._2D[1][3];
+	_afFrPlanes[4][2] = -plane_transform._2D[2][2] - plane_transform._2D[2][3];
+	_afFrPlanes[4][3] = -plane_transform._2D[3][2] - plane_transform._2D[3][3];
+
+	_afFrPlanes[5][0] = plane_transform._2D[0][2] - plane_transform._2D[0][3];
+	_afFrPlanes[5][1] = plane_transform._2D[1][2] - plane_transform._2D[1][3];
+	_afFrPlanes[5][2] = plane_transform._2D[2][2] - plane_transform._2D[2][3];
+	_afFrPlanes[5][3] = plane_transform._2D[3][2] - plane_transform._2D[3][3];
+
+	_afAbsFrPlanes[0][0] = fabs(_afFrPlanes[0][0]); _afAbsFrPlanes[0][1] = fabs(_afFrPlanes[0][1]); _afAbsFrPlanes[0][2] = fabs(_afFrPlanes[0][2]);
+	_afAbsFrPlanes[1][0] = fabs(_afFrPlanes[1][0]); _afAbsFrPlanes[1][1] = fabs(_afFrPlanes[1][1]); _afAbsFrPlanes[1][2] = fabs(_afFrPlanes[1][2]);
+	_afAbsFrPlanes[2][0] = fabs(_afFrPlanes[2][0]); _afAbsFrPlanes[2][1] = fabs(_afFrPlanes[2][1]); _afAbsFrPlanes[2][2] = fabs(_afFrPlanes[2][2]);
+	_afAbsFrPlanes[3][0] = fabs(_afFrPlanes[3][0]); _afAbsFrPlanes[3][1] = fabs(_afFrPlanes[3][1]); _afAbsFrPlanes[3][2] = fabs(_afFrPlanes[3][2]);
+	_afAbsFrPlanes[4][0] = fabs(_afFrPlanes[4][0]); _afAbsFrPlanes[4][1] = fabs(_afFrPlanes[4][1]); _afAbsFrPlanes[4][2] = fabs(_afFrPlanes[4][2]);
+	_afAbsFrPlanes[5][0] = fabs(_afFrPlanes[5][0]); _afAbsFrPlanes[5][1] = fabs(_afFrPlanes[5][1]); _afAbsFrPlanes[5][2] = fabs(_afFrPlanes[5][2]);
+
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CRender3D::CullPoint(const TPoint3 &stCoords, bool &bCull)
 {
-	bCull = false;
-	// ToDo
+	bCull = stCoords.Dot(TVector3(&_afFrPlanes[0][0])) + _afFrPlanes[0][3] > 0 ||
+		stCoords.Dot(TVector3(&_afFrPlanes[1][0])) + _afFrPlanes[1][3] > 0 ||
+		stCoords.Dot(TVector3(&_afFrPlanes[2][0])) + _afFrPlanes[2][3] > 0 ||
+		stCoords.Dot(TVector3(&_afFrPlanes[3][0])) + _afFrPlanes[3][3] > 0 ||
+		stCoords.Dot(TVector3(&_afFrPlanes[4][0])) + _afFrPlanes[4][3] > 0 ||
+		stCoords.Dot(TVector3(&_afFrPlanes[5][0])) + _afFrPlanes[5][3] > 0;
+
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull)
+DGLE_RESULT DGLE_API CRender3D::CullSphere(const TPoint3 &stCenter, float fRadius, bool &bCull)
 {
-	bCull = false;
-	// ToDo
+	bCull = stCenter.Dot(TVector3(&_afFrPlanes[0][0])) + _afFrPlanes[0][3] - fRadius > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[1][0])) + _afFrPlanes[1][3] - fRadius > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[2][0])) + _afFrPlanes[2][3] - fRadius > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[3][0])) + _afFrPlanes[3][3] - fRadius > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[4][0])) + _afFrPlanes[4][3] - fRadius > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[5][0])) + _afFrPlanes[5][3] - fRadius > 0;
+
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull)
+DGLE_RESULT DGLE_API CRender3D::CullBox(const TPoint3 &stCenter, const TVector3 &stExtents, bool &bCull)
 {
-	bCull = false;
-	// ToDo
+	bCull = stCenter.Dot(TVector3(&_afFrPlanes[0][0])) + _afFrPlanes[0][3] - stExtents.Dot(TVector3(&_afAbsFrPlanes[0][0])) > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[1][0])) + _afFrPlanes[1][3] - stExtents.Dot(TVector3(&_afAbsFrPlanes[1][0])) > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[2][0])) + _afFrPlanes[2][3] - stExtents.Dot(TVector3(&_afAbsFrPlanes[2][0])) > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[3][0])) + _afFrPlanes[3][3] - stExtents.Dot(TVector3(&_afAbsFrPlanes[3][0])) > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[4][0])) + _afFrPlanes[4][3] - stExtents.Dot(TVector3(&_afAbsFrPlanes[4][0])) > 0 ||
+		stCenter.Dot(TVector3(&_afFrPlanes[5][0])) + _afFrPlanes[5][3] - stExtents.Dot(TVector3(&_afAbsFrPlanes[5][0])) > 0;
+
 	return S_OK;
 }
 

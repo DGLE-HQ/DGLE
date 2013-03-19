@@ -722,12 +722,12 @@ namespace DGLE
 	class IResourceManager : public IEngineSubSystem
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResource = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight, const char *pcName = "", bool bAddResource = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = false) = 0; //pData could be NULL to create empty mesh, index buffer could be empty
-		virtual DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName = "", bool bAddResource = false) = 0;
-		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResource = false) = 0;
+		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = true) = 0;
+		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResource = true) = 0;
+		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight, const char *pcName = "", bool bAddResource = true) = 0;
+		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = true) = 0; //pData could be NULL to create empty mesh, index buffer could be empty
+		virtual DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName = "", bool bAddResource = true) = 0;
+		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResource = true) = 0;
 	
 		virtual DGLE_RESULT DGLE_API RegisterFileFormat(const char *pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDescription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterFileFormat(const char *pcExtension) = 0;
@@ -943,8 +943,8 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API FrustumSetup() = 0;
 		virtual DGLE_RESULT DGLE_API CullPoint(const TPoint3 &stCoords, bool &bCull) = 0;
-		virtual DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCoords, float fRadius, bool &bCull) = 0;
-		virtual DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenterCoords, const TVector3 &stExtents, bool &bCull) = 0;
+		virtual DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCenter, float fRadius, bool &bCull) = 0;
+		virtual DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenter, const TVector3 &stExtents, bool &bCull) = 0;
 
 		virtual DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetGlobalAmbientLighting(const TColor4 &stColor) = 0;
