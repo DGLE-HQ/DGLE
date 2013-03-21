@@ -53,13 +53,10 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 
 	struct TFrameBuffer
 	{
-		bool bValid;
+		bool bValid, isDepthStencil;
 		GLuint uiFBObject, uiFBBlitObject,
 			uiRBObjectColor, uiRBObjectDepthStencil;
-		uint uiWidth, uiHeight;
-		uint uiIdleTime;
-
-		TFrameBuffer() : uiIdleTime(0), uiFBBlitObject(0) {}
+		uint uiWidth, uiHeight, uiIdleTime;
 	};
 
 	TCrRndrInitResults _stInitResults;
@@ -127,7 +124,7 @@ public:
 	DGLE_RESULT DGLE_API SetScissor(uint x, uint y, uint width, uint height);
 	DGLE_RESULT DGLE_API SetLineWidth(float fWidth);
 	DGLE_RESULT DGLE_API SetPointSize(float fSize);
-	DGLE_RESULT DGLE_API ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat);
+	DGLE_RESULT DGLE_API ReadFrameBuffer(uint uiX, uint uiY, uint uiWidth, uint uiHeight, uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat);
 	DGLE_RESULT DGLE_API SetRenderTarget(ICoreTexture *pTexture);
 	DGLE_RESULT DGLE_API CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags);
 	DGLE_RESULT DGLE_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType);

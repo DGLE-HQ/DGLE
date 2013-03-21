@@ -292,7 +292,9 @@ class CCoreTexture : public ICoreTexture
 		{
 		case TDF_BGR8: return GL_BGR_EXT;
 		case TDF_RGB8: return GL_RGB;
-		case TDF_DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT;
+		case TDF_DEPTH_COMPONENT24:
+		case TDF_DEPTH_COMPONENT32:
+			return GL_DEPTH_COMPONENT;
 		case TDF_BGRA8: return GL_BGRA_EXT;
 		case TDF_RGBA8: return GL_RGBA;
 		case TDF_ALPHA8: return GL_ALPHA;
@@ -315,6 +317,7 @@ class CCoreTexture : public ICoreTexture
 			break;
 		case TDF_BGRA8: 
 		case TDF_RGBA8:
+		case TDF_DEPTH_COMPONENT32:
 			bytes = 4;
 			break;
 		case TDF_ALPHA8:
@@ -631,7 +634,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 			if (_clFrameBuffers[i].uiFBBlitObject != 0)
 				glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBBlitObject);
 			
-			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			if (_clFrameBuffers[i].uiRBObjectColor != 0)
+				glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			
 			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectDepthStencil);
 		}
 
@@ -709,10 +714,10 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetPointSize(float fSize)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat)
+DGLE_RESULT DGLE_API CCoreRendererGL::ReadFrameBuffer(uint uiX, uint uiY, uint uiWidth, uint uiHeight, uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat)
 {
 	GLenum format;
-	int bytes;
+	uint bytes;
 
 	switch (eDataFormat)
 	{
@@ -729,15 +734,17 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ReadFrameBuffer(uint8 *pData, uint uiDataS
 			return E_INVALIDARG;		
 		format = GL_BGRA; bytes = 4;
 		break;
-	case TDF_DEPTH_COMPONENT24: format = GL_DEPTH_COMPONENT; bytes = 3; break;
-	default : return E_INVALIDARG;
+	case TDF_DEPTH_COMPONENT32: format = GL_DEPTH_COMPONENT; bytes = 4; break;
+	
+	default:
+		return E_INVALIDARG;
 	}
 
-	if (uiDataSize < Core()->EngWindow()->uiWidth*Core()->EngWindow()->uiHeight*bytes)
+	if (uiDataSize < uiWidth * uiHeight * bytes)
 		return E_INVALIDARG;
-
-	glReadPixels(0, 0, Core()->EngWindow()->uiWidth, Core()->EngWindow()->uiHeight, format, GL_UNSIGNED_BYTE, pData);
 	
+	glReadPixels(uiX, _stCurrentState.iViewPortHeight - uiY, uiWidth, uiHeight, format, eDataFormat == TDF_DEPTH_COMPONENT32 ? GL_FLOAT : GL_UNSIGNED_BYTE, pData);
+
 	return S_OK;
 }
 
@@ -752,6 +759,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 		E_TEXTURE_DATA_FORMAT fmt;
 		_pCurRenderTarget->GetFormat(fmt);
+		const bool depth_texture = fmt == TDF_DEPTH_COMPONENT24 || fmt == TDF_DEPTH_COMPONENT32;
 
 		uint width, height;
 		_pCurRenderTarget->GetSize(width, height);
@@ -763,13 +771,13 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, _clFrameBuffers[_uiCurFrameBufferIdx].uiFBObject);
 				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, _clFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject);
 				
-				if (fmt == TDF_DEPTH_COMPONENT24)
+				if (depth_texture)
 					glBlitFramebufferEXT(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 				else
 					glBlitFramebufferEXT(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			}
 
-			if (fmt == TDF_DEPTH_COMPONENT24)
+			if (depth_texture)
 				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
 			else
 				glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, 0, 0);
@@ -785,7 +793,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 			case TDF_RGB8: color_format = GL_RGB; break;
 			case TDF_RGBA8: color_format = GL_RGBA; break;
 			case TDF_ALPHA8: color_format = GL_ALPHA; break;
-			case TDF_DEPTH_COMPONENT24: color_format = GL_DEPTH_COMPONENT; break;
+			case TDF_DEPTH_COMPONENT24:
+			case TDF_DEPTH_COMPONENT32:
+				color_format = GL_DEPTH_COMPONENT; break;
 			default:
 				return E_INVALIDARG;
 			}
@@ -796,7 +806,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 		SetViewport(uiPrevVpX, uiPrevVpY, uiPrevVpWidth, uiPrevVpHeight);
 
-		if (fmt == TDF_DEPTH_COMPONENT24)
+		if (depth_texture)
 		{
 			_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB);
 			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -814,24 +824,28 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 		{
 			E_TEXTURE_DATA_FORMAT fmt;
 			pTexture->GetFormat(fmt);
-			
+			const bool depth_texture = fmt == TDF_DEPTH_COMPONENT24 || fmt == TDF_DEPTH_COMPONENT32;
+
 			uint depth;
 			pTexture->GetDepth(depth);
 
-			if ((fmt != TDF_RGB8 && fmt != TDF_RGBA8 && fmt != TDF_ALPHA8 && fmt != TDF_DEPTH_COMPONENT24) || depth != 0)
+			if ((fmt != TDF_RGB8 && fmt != TDF_RGBA8 && fmt != TDF_ALPHA8 && fmt != TDF_DEPTH_COMPONENT24 && fmt != TDF_DEPTH_COMPONENT32) || depth != 0)
 				return E_INVALIDARG;
 
 			uint width, height;
 			pTexture->GetSize(width, height);
 
-			if (GLEW_EXT_framebuffer_object && GL_EXT_packed_depth_stencil)
+			if (GLEW_EXT_framebuffer_object && (GL_EXT_packed_depth_stencil || fmt == TDF_DEPTH_COMPONENT32))
 			{		
 				const GLuint tex_id = ((CCoreTexture*)pTexture)->GetTex();
 
 				uint fbo_id = -1;
 
 				for (size_t i = 0; i < _clFrameBuffers.size(); ++i)
-					if (_clFrameBuffers[i].uiWidth == width && _clFrameBuffers[i].uiHeight == height)
+					if (_clFrameBuffers[i].uiWidth == width && _clFrameBuffers[i].uiHeight == height &&
+						((!depth_texture && _clFrameBuffers[i].uiRBObjectColor != 0) ||
+						(depth_texture && _clFrameBuffers[i].uiRBObjectColor == 0 &&
+						((fmt == TDF_DEPTH_COMPONENT24 && _clFrameBuffers[i].isDepthStencil) || (fmt == TDF_DEPTH_COMPONENT32 && !_clFrameBuffers[i].isDepthStencil)))))
 					{
 						fbo_id = i;
 						break;
@@ -846,35 +860,51 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 					const TEngineWindow *wnd = Core()->EngWindow();
 
+					const bool do_multisample = GLEW_EXT_framebuffer_multisample && wnd->eMultisampling != MM_NONE && (int)wnd->eMultisampling * 2 <= _iMaxFBOSamples;
+
 					glGenFramebuffersEXT(1, &fbo.uiFBObject);
 					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBObject);
 
-					glGenRenderbuffersEXT(1, &fbo.uiRBObjectColor);
-					glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo.uiRBObjectColor);
-					
-					const bool do_multisample = GLEW_EXT_framebuffer_multisample && wnd->eMultisampling != MM_NONE && (int)wnd->eMultisampling * 2 <= _iMaxFBOSamples;
+					if (!depth_texture)
+					{
+						glGenRenderbuffersEXT(1, &fbo.uiRBObjectColor);
+						glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo.uiRBObjectColor);
 
-					if (do_multisample)
-						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, (int)wnd->eMultisampling * 2, GL_RGBA8, fbo.uiWidth, fbo.uiHeight);				
+						if (do_multisample)
+							glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, (int)wnd->eMultisampling * 2, GL_RGBA8, fbo.uiWidth, fbo.uiHeight);				
+						else
+							glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, fbo.uiWidth, fbo.uiHeight);
+					}
 					else
-						glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, fbo.uiWidth, fbo.uiHeight);
+						fbo.uiRBObjectColor = 0;
 
 					glGenRenderbuffersEXT(1, &fbo.uiRBObjectDepthStencil);
 					glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
 					
 					GLenum rb_format = GL_DEPTH_COMPONENT24_ARB;
+					fbo.isDepthStencil = false;
 
-					if (GL_EXT_packed_depth_stencil)
-						rb_format = GL_DEPTH24_STENCIL8_EXT;
+					if (fmt == TDF_DEPTH_COMPONENT32)
+						rb_format = GL_DEPTH_COMPONENT32_ARB;
+					else
+						if (GL_EXT_packed_depth_stencil)
+						{
+							rb_format = GL_DEPTH24_STENCIL8_EXT;
+							fbo.isDepthStencil = true;
+						}
 
 					if (do_multisample)
 						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, (int)wnd->eMultisampling * 2, rb_format, fbo.uiWidth, fbo.uiHeight);					
 					else
 						glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, rb_format, fbo.uiWidth, fbo.uiHeight);
 
-					glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectColor);
+					if (!depth_texture)
+						glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectColor);					
+					
 					glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
-					glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
+					
+					if (rb_format == GL_DEPTH24_STENCIL8_EXT)
+						glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo.uiRBObjectDepthStencil);
 
 					glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
 
@@ -887,8 +917,10 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 							glGenFramebuffersEXT(1, &fbo.uiFBBlitObject);
 							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBBlitObject);
 						}
+						else
+							fbo.uiFBBlitObject = 0;
 
-						if (fmt == TDF_DEPTH_COMPONENT24)
+						if (depth_texture)
 							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, tex_id, 0);
 						else
 							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_id, 0);
@@ -904,10 +936,12 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 					else
 					{
 						_uiCurFrameBufferIdx = _clFrameBuffers.size();
+						
 						if (do_multisample)
 							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBObject);
 					}
 
+					fbo.uiIdleTime = 0;
 					_clFrameBuffers.push_back(fbo);
 				}
 				else // use already created FBO
@@ -924,7 +958,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 						else
 							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBObject);
 
-						if (fmt == TDF_DEPTH_COMPONENT24)
+						if (depth_texture)
 							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, tex_id, 0);
 						else
 							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_id, 0);
@@ -939,7 +973,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 			GetViewport(uiPrevVpX, uiPrevVpY, uiPrevVpWidth, uiPrevVpHeight);
 			SetViewport(0, 0, width, height);
 
-			if (fmt == TDF_DEPTH_COMPONENT24)
+			if (depth_texture)
 			{
 				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 				glClear(GL_DEPTH_BUFFER_BIT);
@@ -969,7 +1003,9 @@ void CCoreRendererGL::_KillDeadFBOs()
 			if(_clFrameBuffers[i].uiFBBlitObject != 0)
 				glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBBlitObject);
 			
-			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			if (_clFrameBuffers[i].uiRBObjectColor != 0)
+				glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			
 			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectDepthStencil);
 			
 			_clFrameBuffers.erase(_clFrameBuffers.begin() + i);
@@ -981,12 +1017,12 @@ void CCoreRendererGL::_KillDeadFBOs()
 
 DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
-	const bool b_non_power_of_two = uiWidth != 1 << (int)floor( ( log( (double)uiWidth ) / log(2.f) ) + 0.5f ) || uiHeight != 1 << (int)floor( ( log( (double)uiHeight ) / log(2.f) ) + 0.5f );
+	const bool b_non_power_of_two = uiWidth != 1 << (int)floor( ( logf( (float)uiWidth ) / logf(2.f) ) + 0.5f ) || uiHeight != 1 << (int)floor( ( logf( (float)uiHeight ) / logf(2.f) ) + 0.5f );
 
 	if (
 		((eDataFormat == TDF_BGR8 || eDataFormat == TDF_BGRA8) && !GLEW_EXT_bgra) || 
 		((eDataFormat == TDF_DXT1 || eDataFormat == TDF_DXT5) && !GLEW_ARB_texture_compression) ||
-		(eDataFormat == TDF_DEPTH_COMPONENT24 && !GLEW_ARB_depth_texture) ||
+		((eDataFormat == TDF_DEPTH_COMPONENT24 || eDataFormat == TDF_DEPTH_COMPONENT32) && !GLEW_ARB_depth_texture) ||
 		((int)uiWidth > _iMaxTexResolution || (int)uiHeight > _iMaxTexResolution) ||
 		(!GLEW_ARB_texture_non_power_of_two && b_non_power_of_two)
 		)
@@ -1036,6 +1072,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 		tex_format = GL_DEPTH_COMPONENT;
 		tex_internal_format= GL_DEPTH_COMPONENT24_ARB;
 		bytes_per_pixel = 3;
+		break;
+	case TDF_DEPTH_COMPONENT32:
+		tex_format = GL_DEPTH_COMPONENT;
+		tex_internal_format= GL_DEPTH_COMPONENT32_ARB;
+		bytes_per_pixel = 4;
 		break;
 	default : return E_INVALIDARG;
 	}
@@ -1129,7 +1170,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			++i_mipmaps;
 		}
 
-		int i_cur_w = uiWidth*2, i_cur_h = uiHeight*2;
+		int i_cur_w = uiWidth * 2, i_cur_h = uiHeight * 2;
 		uint dat_offset = 0, cur_align = 0, data_size;
 		
 		uint8 *p_cur_data;
@@ -1152,9 +1193,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 					cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pixel, 4);
 
 				if (b_is_compressed)
-					dat_offset += ((i_cur_w + 3)/4)*((i_cur_h + 3)/4)*bytes_per_pixel;
+					dat_offset += ((i_cur_w + 3) / 4) * ((i_cur_h + 3) / 4) * bytes_per_pixel;
 				else
-					dat_offset += i_cur_h*(i_cur_w*bytes_per_pixel + cur_align);
+					dat_offset += i_cur_h * (i_cur_w * bytes_per_pixel + cur_align);
 			}
 		}
 
@@ -1172,9 +1213,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 				cur_align = 0;
 
 			if(b_is_compressed)
-				data_size = ((i_cur_w + 3)/4)*((i_cur_h + 3)/4)*bytes_per_pixel;
+				data_size = ((i_cur_w + 3) / 4) * ((i_cur_h + 3) / 4) * bytes_per_pixel;
 			else
-				data_size = i_cur_h*(i_cur_w*bytes_per_pixel + cur_align);
+				data_size = i_cur_h * (i_cur_w * bytes_per_pixel + cur_align);
 			
 			p_cur_data = const_cast<uint8 *>(&pData[dat_offset]);
 
@@ -1213,7 +1254,8 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			if (GLEW_ARB_framebuffer_object)
 				glGenerateMipmap(GL_TEXTURE_2D);
 			else
-				glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
+				if (GLEW_SGIS_generate_mipmap)
+					glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
 		}
 	}
 

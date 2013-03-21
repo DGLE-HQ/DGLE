@@ -462,6 +462,7 @@ inline uint8 CResourceManager::_GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format)
 		return 3;
 	case TDF_BGRA8: 
 	case TDF_RGBA8:
+	case TDF_DEPTH_COMPONENT32:
 		return 4;
 	case TDF_ALPHA8:
 		return 1;
@@ -731,7 +732,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	int i_new_w = uiWidth, i_new_h = uiHeight;
 
-	if (!(eCreationFlags & TCF_MIPMAPS_PRESENTED) && !(b_is_compressed || eDataFormat == TDF_DEPTH_COMPONENT24))
+	if (!(eCreationFlags & TCF_MIPMAPS_PRESENTED) && !(b_is_compressed || eDataFormat == TDF_DEPTH_COMPONENT24 || eDataFormat == TDF_DEPTH_COMPONENT32))
 	{
 		if (eLoadFlags & TLF_DECREASE_QUALITY_MEDIUM)
 		{
@@ -756,13 +757,13 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 		i_new_w = i_max_tex_res;
 	else
 		if (!b_feature_supported)
-			i_new_w = 1 << (int)floor((log((double)uiWidth)/log(2.f)) + 0.5f);
+			i_new_w = 1 << (int)floor((logf((float)uiWidth)/logf(2.f)) + 0.5f);
 
 	if (uiHeight > (uint)i_max_tex_res)
 		i_new_h = i_max_tex_res;
 	else
 		if (!b_feature_supported)
-			i_new_h = 1 << (int)floor((log((double)uiHeight)/log(2.f)) + 0.5f);
+			i_new_h = 1 << (int)floor((logf((float)uiHeight)/logf(2.f)) + 0.5f);
 
 	bool b_need_scale = (i_new_w != uiWidth || i_new_h != uiHeight);
 
@@ -776,7 +777,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	if (b_need_scale)
 	{
-		if (eDataFormat == TDF_DEPTH_COMPONENT24)
+		if (eDataFormat == TDF_DEPTH_COMPONENT24 || eDataFormat == TDF_DEPTH_COMPONENT32)
 		{
 			if (need_delete_data_in)
 				delete[] p_data_in;

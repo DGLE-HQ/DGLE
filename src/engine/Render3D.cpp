@@ -295,13 +295,84 @@ DGLE_RESULT DGLE_API CRender3D::PopStates()
 
 DGLE_RESULT DGLE_API CRender3D::GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag)
 {
-	// ToDo
+	TMatrix4 mview, proj;
+	
+	_pCoreRenderer->GetMatrix(mview, MT_MODELVIEW);
+	_pCoreRenderer->GetMatrix(proj, MT_PROJECTION);
+
+	uint vport[4];
+	_pCoreRenderer->GetViewport(vport[0], vport[1], vport[2], vport[3]);
+
+	float win[3] = {stPointOnScreen.x, vport[3] - stPointOnScreen.y, 0.f};
+
+	if (eFlag & GP3F_FROM_FAR_PLANE)
+		win[2] = 1.f;
+	else
+		if (eFlag & GP3F_FROM_NEAR_PLANE)
+			win[2] = 0.f;
+		else
+			if (FAILED(_pCoreRenderer->ReadFrameBuffer((uint)stPointOnScreen.x, (uint)stPointOnScreen.y, 1, 1, reinterpret_cast<uint8 *>(&win[2]), sizeof(float), TDF_DEPTH_COMPONENT32)))
+				return E_ABORT;
+
+	const TMatrix4 m = MatrixInverse(mview * proj);
+
+	float in[4], out[4];
+
+	in[0] = (win[0] - vport[0]) / vport[2] * 2.f - 1.f;
+	in[1] = (win[1] - vport[1]) / vport[3] * 2.f - 1.f;
+	in[2] = 2.f * win[2] - 1.f;
+	in[3] = 1.f;
+
+	out[0] = m._1D[0] * in[0] + m._1D[4] * in[1] + m._1D[8] * in[2] + m._1D[12] * in[3];
+	out[1] = m._1D[1] * in[0] + m._1D[5] * in[1] + m._1D[9] * in[2] + m._1D[13] * in[3];
+	out[2] = m._1D[2] * in[0] + m._1D[6] * in[1] + m._1D[10] * in[2] + m._1D[14] * in[3];
+	out[3] = m._1D[3] * in[0] + m._1D[7] * in[1] + m._1D[11] * in[2] + m._1D[15] * in[3];
+ 
+	if (out[3] == 0.f)
+		return E_ABORT;
+	
+	out[3] = 1.f / out[3];
+
+	stResultPoint.x = out[0] * out[3];
+	stResultPoint.y = out[1] * out[3];
+	stResultPoint.z = out[2] * out[3];
+
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CRender3D::GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen)
 {
-	// ToDo
+	TMatrix4 mview, proj;
+	
+	_pCoreRenderer->GetMatrix(mview, MT_MODELVIEW);
+	_pCoreRenderer->GetMatrix(proj, MT_PROJECTION);
+
+	uint vport[4];
+	_pCoreRenderer->GetViewport(vport[0], vport[1], vport[2], vport[3]);
+
+	float tmp[8];
+	  
+	tmp[0] = mview._1D[0] * stPoint.x + mview._1D[4] * stPoint.y + mview._1D[8] * stPoint.z + mview._1D[12];
+	tmp[1] = mview._1D[1] * stPoint.x + mview._1D[5] * stPoint.y + mview._1D[9] * stPoint.z + mview._1D[13];
+	tmp[2] = mview._1D[2] * stPoint.x + mview._1D[6] * stPoint.y + mview._1D[10] * stPoint.z + mview._1D[14];
+	tmp[3] = mview._1D[3] * stPoint.x + mview._1D[7] * stPoint.y + mview._1D[11] * stPoint.z + mview._1D[15];
+
+	tmp[4] = proj._1D[0] * tmp[0] + proj._1D[4] * tmp[1] + proj._1D[8] * tmp[2] + proj._1D[12] * tmp[3];
+	tmp[5] = proj._1D[1] * tmp[0] + proj._1D[5] * tmp[1] + proj._1D[9] * tmp[2] + proj._1D[13] * tmp[3];
+	tmp[6] = proj._1D[2] * tmp[0] + proj._1D[6] * tmp[1] + proj._1D[10] * tmp[2] + proj._1D[14] * tmp[3];
+	tmp[7] = -tmp[2];
+	
+	if (tmp[7] == 0.f)
+		return E_ABORT;
+
+	tmp[7] = 1.f / tmp[7];
+	tmp[4] *= tmp[7];
+	tmp[5] *= tmp[7];
+	tmp[6] *= tmp[7];
+	
+	stResultPointOnScreen.x = (tmp[4] * 0.5f + 0.5f) * vport[2] + vport[0];
+	stResultPointOnScreen.y = vport[3] - ((tmp[5] * 0.5f + 0.5f) * vport[3] + vport[1]);
+
 	return S_OK;
 }
 
