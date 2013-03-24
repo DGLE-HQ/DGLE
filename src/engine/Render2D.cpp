@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		06.03.2013 (c)Korotkov Andrey
+\date		23.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -10,6 +10,7 @@ See "DGLE.h" for more details.
 #include "Render2D.h"
 #include "Core.h"
 #include "Render.h"
+#include "Render3D.h"
 
 using namespace std;
 
@@ -26,16 +27,16 @@ CRender2D::CRender2D(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _iProfilerState(0), _iDoDrawBBoxes(0),
 _bIn2D(false),_bInProfilerMode(false), _bInLocalBatchMode(false), _bLocalBatchUEP(false), _bLocalUEPWasTurnedOn(false),
-_ui64DrawDelay(0), _iObjsDrawnCount(0),
+_ui64DrawDelay(0), _uiObjsDrawnCount(0),
 _batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
 _batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
-_iResCorWidth(0), _iResCorHeight(0), _iResCorConstProp(false), _fLineWidth(1.f),
+_iResCorWidth(0), _iResCorHeight(0), _bResCorConstProp(false), _fLineWidth(1.f),
 _ePrevBlendingMode(EBF_NORMAL), _pPolyTrisBuffer(NULL), _uiPolyTrisBufferSize(0),
 _uiBufferSize(34)// never less than 34
 {
 	_pBuffer = new float[_uiBufferSize];
 	_pCoreRenderer = Core()->pCoreRenderer();
-	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, _bUseGeometryBuffers);
+	_pCoreRenderer->IsFeatureSupported(CRFT_GEOMETRY_BUFFER, _bUseGeometryBuffers);
 
 	Console()->RegComVar("rnd2d_profiler", "Displays Render 2D subsystems profiler.", &_iProfilerState, 0, 2);
 	Console()->RegComVar("rnd2d_draw_bboxes", "Displays bounding boxes of all 2D objects on screen.", &_iDoDrawBBoxes, 0, 1);
@@ -61,6 +62,7 @@ void CRender2D::BeginProfiler2D()
 
 	_bInProfilerMode = true;
 
+	Core()->pRender()->pRender3D()->PushSelfStates();
 	_pCoreRenderer->PushStates();
 
 	_batchPreProfilerMode = _batchMode;
@@ -87,6 +89,7 @@ void CRender2D::EndProfiler2D()
 	_batchMode = _batchPreProfilerMode;
 
 	_pCoreRenderer->PopStates();
+	Core()->pRender()->pRender3D()->PopSelfStates();
 
 	_bInProfilerMode = false;
 }
@@ -95,22 +98,22 @@ void CRender2D::DrawProfiler()
 {
 	if (_iProfilerState > 0)
 	{
-		Core()->RenderProfilerText("======Render2D Profiler=====", TColor4());
-		Core()->RenderProfilerText(("Objects on screen :" + IntToStr(_iObjsDrawnCount)).c_str(), TColor4());
-		Core()->RenderProfilerText(("Batches per frame :" + UIntToStr(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
-		Core()->RenderProfilerText(("Render delay      :" + UInt64ToStr(_ui64DrawAverallDelay / 1000) + "." + UIntToStr(_ui64DrawAverallDelay % 1000) + " ms").c_str(), TColor4());
+		Core()->RenderProfilerText("======Render2D Profiler=====", ColorWhite());
+		Core()->RenderProfilerText(("Objects on screen :" + UIntToStr(_uiObjsDrawnCount)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Batches per frame :" + UIntToStr(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? ColorRed() : ColorWhite());
+		Core()->RenderProfilerText(("Render delay      :" + UInt64ToStr(_ui64DrawAverallDelay / 1000) + "." + UIntToStr(_ui64DrawAverallDelay % 1000) + " ms").c_str(), ColorWhite());
 
 		if (_iProfilerState > 1)
 		{
 			uint  buffs_count = (uint)_pBatchBuffers.size();
 
-			Core()->RenderProfilerText("--------Batch Render--------", TColor4());
-			Core()->RenderProfilerText(("Buffers count  :" + UIntToStr(buffs_count)).c_str(), TColor4());
-			Core()->RenderProfilerText(("Buffers in use :" + UIntToStr(_batchBufferCurCounter)).c_str(), TColor4());
-			Core()->RenderProfilerText(("Effective calls:" + UIntToStr(_batchBuffersNotModefiedPerFrameCounter)).c_str(), !_batchNeedToRefreshBatches && _batchBuffersNotModefiedPerFrameCounter != _batchBufferCurCounter ? TColor4(255, 0, 0, 255) : TColor4());
-			Core()->RenderProfilerText(("Max. batch size:" + UIntToStr(_batchMaxSize)).c_str(), TColor4());
-			Core()->RenderProfilerText(("Min. batch size:" + UIntToStr(_batchMinSize == (numeric_limits<uint>::max)() ? 0 : _batchMinSize)).c_str(), TColor4());
-			Core()->RenderProfilerText("----------------------------", TColor4());
+			Core()->RenderProfilerText("--------Batch Render--------", ColorWhite());
+			Core()->RenderProfilerText(("Buffers count  :" + UIntToStr(buffs_count)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Buffers in use :" + UIntToStr(_batchBufferCurCounter)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Effective calls:" + UIntToStr(_batchBuffersNotModefiedPerFrameCounter)).c_str(), !_batchNeedToRefreshBatches && _batchBuffersNotModefiedPerFrameCounter != _batchBufferCurCounter ? ColorRed() : ColorWhite());
+			Core()->RenderProfilerText(("Max. batch size:" + UIntToStr(_batchMaxSize)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Min. batch size:" + UIntToStr(_batchMinSize == (numeric_limits<uint>::max)() ? 0 : _batchMinSize)).c_str(), ColorWhite());
+			Core()->RenderProfilerText("----------------------------", ColorWhite());
 		}
 	}
 }
@@ -120,7 +123,7 @@ void CRender2D::_SetDefaultStates()
 	_stRotationPoint = TPoint2();
 	_stScale = TPoint2(1.f, 1.f);
 	_astVerticesOffset[0] = _astVerticesOffset[1] = _astVerticesOffset[2] = _astVerticesOffset[3] = TPoint2();
-	_stColormix = TColor4();
+	_stColormix = ColorWhite();
 
 	_pCoreRenderer->SetColor(ColorWhite());
 	
@@ -130,7 +133,7 @@ void CRender2D::_SetDefaultStates()
 	Core()->pRender()->Unbind(EOT_UNKNOWN);
 
 	TDepthStencilDesc ds_desc;
-	ds_desc.bDepthTestEnable = false;
+	ds_desc.bDepthTestEnabled = false;
 	_pCoreRenderer->SetDepthStencilState(ds_desc);
 
 	_stRasterStateDesc = TRasterizerStateDesc();
@@ -139,6 +142,8 @@ void CRender2D::_SetDefaultStates()
 
 	_stBlendStateDesc = TBlendStateDesc();
 	_pCoreRenderer->SetBlendState(_stBlendStateDesc);
+
+	Core()->pRender()->pRender3D()->PrepareFor2D();
 }
 
 __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) const
@@ -159,7 +164,6 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 			vrtcs[i * 2] = _stCamTransform._2D[0][0] * x + _stCamTransform._2D[1][0] * y + _stCamTransform._2D[3][0];
 			vrtcs[i * 2 + 1] = _stCamTransform._2D[0][1] * x + _stCamTransform._2D[1][1] * y + _stCamTransform._2D[3][1];		
 		}
-
 	}
 	else
 		memcpy(&vrtcs[0], &vertices[0], 8 * sizeof(float));
@@ -172,7 +176,7 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 		vrtcs[8] = vrtcs[0]; vrtcs[9] = vrtcs[1];
 		
 		_pCoreRenderer->BindTexture(NULL);
-		_pCoreRenderer->SetColor(TColor4()); 
+		_pCoreRenderer->SetColor(ColorWhite()); 
 		_pCoreRenderer->SetLineWidth(1.f);
 		
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs), CRDM_LINE_STRIP, 5);
@@ -370,15 +374,15 @@ inline void CRender2D::_BatchFlush()
 	switch (_eBatchDrawMode)
 	{
 	case CRDM_POINTS:
-		_iObjsDrawnCount += size;
+		_uiObjsDrawnCount += size;
 		break;
 
 	case CRDM_LINES:
-		_iObjsDrawnCount += size / 2;
+		_uiObjsDrawnCount += size / 2;
 		break;
 
 	case CRDM_TRIANGLES:
-		_iObjsDrawnCount += size / 6;
+		_uiObjsDrawnCount += size / 6;
 		break;
 
 	default:
@@ -416,6 +420,7 @@ DGLE_RESULT DGLE_API CRender2D::Begin2D()
 	_ui64DrawDelay = GetPerfTimer();
 
 	_pCoreRenderer->PushStates();
+	Core()->pRender()->pRender3D()->PushSelfStates();
 
 	_SetDefaultStates();
 
@@ -425,7 +430,7 @@ DGLE_RESULT DGLE_API CRender2D::Begin2D()
 
 	if (_iResCorWidth + _iResCorHeight != 0)
 	{
-		if (_iResCorConstProp && fabs((float)_uiPrevViewPortW / (float)_uiPrevViewPortH - _fResCorCoef) > 0.001)
+		if (_bResCorConstProp && fabs((float)_uiPrevViewPortW / (float)_uiPrevViewPortH - _fResCorCoef) > 0.001)
 		{
 			_uiCropW = (int)((float)_uiPrevViewPortH * _fResCorCoef);
 
@@ -494,6 +499,7 @@ DGLE_RESULT DGLE_API CRender2D::End2D()
 	_pCoreRenderer->SetMatrix(_stPrevProjMat, MT_PROJECTION);
 	_pCoreRenderer->SetMatrix(_stPrevModelViewMat);
 	
+	Core()->pRender()->pRender3D()->PopSelfStates();
 	_pCoreRenderer->PopStates();
 
 	_bIn2D = false;
@@ -514,7 +520,7 @@ void CRender2D::BeginFrame()
 	_batchBufferCurCounter = 0;
 	_batchBuffersRepetedUseCounter = 0;
 	_batchsCount = 0;
-	_iObjsDrawnCount = 0;
+	_uiObjsDrawnCount = 0;
 
 	_batchMinSize = (numeric_limits<uint>::max)();
 	_batchMaxSize = 0;
@@ -533,7 +539,7 @@ DGLE_RESULT DGLE_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY
 {
 	_iResCorWidth = uiResX;
 	_iResCorHeight = uiResY;
-	_iResCorConstProp = bConstaintProportions;
+	_bResCorConstProp = bConstaintProportions;
 	_fResCorCoef = (float)_iResCorWidth/(float)_iResCorHeight;
 
 	return S_OK;
@@ -662,10 +668,10 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 		
 		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
 
-		rot._2D[0][0] = +c;
+		rot._2D[0][0] = c;
 		rot._2D[0][1] = -s;
-		rot._2D[1][0] = +s;
-		rot._2D[1][1] = +c;
+		rot._2D[1][0] = s;
+		rot._2D[1][1] = c;
 
 		transform = MatrixTranslate(TVector3(-(stBBox.x + stBBox.width / 2.f), -(stBBox.y + stBBox.height / 2.f), 0.f)) * rot * MatrixTranslate(TVector3(stBBox.x + stBBox.width / 2.f, stBBox.y + stBBox.height / 2.f, 0.f));
 
@@ -732,17 +738,17 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 
 		if (stColor.a < 1.f)
 		{
-			_stBlendStateDesc.bEnable = true;
-			_stRasterStateDesc.bAlphaTestEnable = false;
+			_stBlendStateDesc.bEnabled = true;
+			_stRasterStateDesc.bAlphaTestEnabled = false;
 		}
 		else
 		{
-			_stBlendStateDesc.bEnable = false;
-			_stRasterStateDesc.bAlphaTestEnable = true;
+			_stBlendStateDesc.bEnabled = false;
+			_stRasterStateDesc.bAlphaTestEnabled = true;
 		}
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 	}
 
 	_2D_IF_BATCH_NO_UPDATE_EXIT
@@ -754,7 +760,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy), CRDM_POINTS, 1);
 		
-		++_iObjsDrawnCount;
+		++_uiObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -782,11 +788,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = stColor.a < 1.f;
+		_stRasterStateDesc.bAlphaTestEnabled = false;
+		_stBlendStateDesc.bEnabled = stColor.a < 1.f;
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 
 		_pCoreRenderer->SetColor(stColor);
 	}
@@ -820,7 +826,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 
 		_pCoreRenderer->Draw(desc, CRDM_LINES, 2);
 
-		++_iObjsDrawnCount;
+		++_uiObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -852,11 +858,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = stColor.a < 1.f;
+		_stRasterStateDesc.bAlphaTestEnabled = false;
+		_stBlendStateDesc.bEnabled = stColor.a < 1.f;
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 
 		_pCoreRenderer->SetColor(stColor);
 	}
@@ -916,9 +922,9 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 		{
 			_pBuffer[8] = _pBuffer[0]; _pBuffer[9] = _pBuffer[1];
 
-			_pBuffer[0] = _pBuffer[2];	_pBuffer[1] = _pBuffer[3];
-			_pBuffer[2] = _pBuffer[4];	_pBuffer[3] = _pBuffer[5];
-			_pBuffer[4] = _pBuffer[8];	_pBuffer[5] = _pBuffer[9];
+			_pBuffer[0] = _pBuffer[2]; _pBuffer[1] = _pBuffer[3];
+			_pBuffer[2] = _pBuffer[4]; _pBuffer[3] = _pBuffer[5];
+			_pBuffer[4] = _pBuffer[8]; _pBuffer[5] = _pBuffer[9];
 		}
 
 		TDrawDataDesc desc((uint8*)_pBuffer);
@@ -931,7 +937,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 
 		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLE_STRIP : CRDM_LINE_STRIP, eFlags & PF_FILL ? 4 : 5);
 
-		++_iObjsDrawnCount;
+		++_uiObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -964,11 +970,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 	{
 		_pCoreRenderer->BindTexture(NULL);
 
-		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = stColor.a < 1.f;
+		_stRasterStateDesc.bAlphaTestEnabled = false;
+		_stBlendStateDesc.bEnabled = stColor.a < 1.f;
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 
 		_pCoreRenderer->SetColor(stColor);
 	}
@@ -1024,7 +1030,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 
 		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2]), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
 
-		++_iObjsDrawnCount;
+		++_uiObjsDrawnCount;
 	}
 
 	return S_OK;
@@ -1319,10 +1325,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 	{
 		_pCoreRenderer->BindTexture(p_tex);
 
-		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = true;
+		_stRasterStateDesc.bAlphaTestEnabled = false;
+		_stBlendStateDesc.bEnabled = true;
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
 		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
 	}
 
@@ -1395,7 +1401,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 
 			_pCoreRenderer->Draw(desc, CRDM_TRIANGLES, tri_count * 3);
 
-			++_iObjsDrawnCount;
+			++_uiObjsDrawnCount;
 		}
 	}
 	else //Draw Line
@@ -1439,7 +1445,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 
 			_pCoreRenderer->Draw(desc, CRDM_LINE_STRIP, uiVerticesCount + 1);
 
-			++_iObjsDrawnCount;
+			++_uiObjsDrawnCount;
 		}
 	}
 
@@ -1489,10 +1495,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 	{
 		_pCoreRenderer->BindTexture(p_tex);
 
-		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = true;
+		_stRasterStateDesc.bAlphaTestEnabled = false;
+		_stBlendStateDesc.bEnabled = true;
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
 		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
 	}
 
@@ -1544,13 +1550,13 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 
 		_pCoreRenderer->Draw(desc, eFlags & PF_FILL ? CRDM_TRIANGLES : CRDM_LINES, eFlags & PF_FILL ? uiVerticesCount : uiVerticesCount*2);
 
-		++_iObjsDrawnCount;
+		++_uiObjsDrawnCount;
 	}
 
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags)
+DGLE_RESULT DGLE_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, E_EFFECT2D_FLAGS eFlags, bool bClip, float fFovY, bool bClearDepthBuffer)
 {
 	if (!pMesh)
 		return E_INVALIDARG;
@@ -1565,10 +1571,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawMesh(IMesh *pMesh, ITexture *pTexture, const
 	pMesh->GetCenter(center);
 	pMesh->GetExtents(extents);
 
-	return DrawBuffer3D(pTexture, p_buff, eFlags, MatrixScale(stDimensions) * (fAngle == 0.f ? MatrixIdentity() : MatrixRotate(fAngle, stAxis)) * MatrixTranslate(stCoords), center, extents, bClip, fFovY);
+	return DrawBuffer3D(pTexture, p_buff, eFlags, MatrixScale(stDimensions) * (fAngle == 0.f ? MatrixIdentity() : MatrixRotate(fAngle, stAxis)) * MatrixTranslate(stCoords), center, extents, bClip, fFovY, bClearDepthBuffer);
 }
 
-DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY)
+DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY, bool bClearDepthBuffer)
 {
 	IN_2D_GUARD
 
@@ -1628,7 +1634,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 		(near_right + near_left) / (near_right - near_left), (near_top + near_bottom) / (near_top - near_bottom),-(z_far + z_near) / (z_far - z_near),		-1.f,
 		0.f,												 0.f,												 -2.f * z_far * z_near / (z_far - z_near),	0.f);
 	
-	TMatrix4 prev_proj, prev_mview, new_mview;
+	TMatrix4 new_mview;
 
 	if (_bCameraWasSet)
 		new_mview = _stCamTransform * MatrixTranslate(TVector3(plane_left, plane_top, 0.f));
@@ -1637,26 +1643,59 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 
 	new_mview = MatrixScale(TVector3(1.f, 1.f, scale_z)) * stTransform * MatrixTranslate(TVector3(0.f, 0.f, -z_plane)) * new_mview;
 
-	_pCoreRenderer->GetMatrix(prev_proj, MT_PROJECTION);
-	_pCoreRenderer->SetMatrix(new_proj, MT_PROJECTION);
+	const TMatrix4 plane_transform = new_mview * new_proj;
 
-	_pCoreRenderer->GetMatrix(prev_mview);
-	_pCoreRenderer->SetMatrix(new_mview);
+	float planes[6][4];
 
-	IRender3D *p_render_3d;
-	Core()->pRender()->GetRender3D(p_render_3d);
+	planes[0][0] = -plane_transform._2D[0][0] - plane_transform._2D[0][3];
+	planes[0][1] = -plane_transform._2D[1][0] - plane_transform._2D[1][3];
+	planes[0][2] = -plane_transform._2D[2][0] - plane_transform._2D[2][3];
+	planes[0][3] = -plane_transform._2D[3][0] - plane_transform._2D[3][3];
 
-	p_render_3d->FrustumSetup();
+	planes[1][0] = plane_transform._2D[0][0] - plane_transform._2D[0][3];
+	planes[1][1] = plane_transform._2D[1][0] - plane_transform._2D[1][3];
+	planes[1][2] = plane_transform._2D[2][0] - plane_transform._2D[2][3];
+	planes[1][3] = plane_transform._2D[3][0] - plane_transform._2D[3][3];
 
-	bool do_cull;
-	p_render_3d->CullBox(stCenter, stExtents, do_cull);
+	planes[2][0] = -plane_transform._2D[0][1] - plane_transform._2D[0][3];
+	planes[2][1] = -plane_transform._2D[1][1] - plane_transform._2D[1][3];
+	planes[2][2] = -plane_transform._2D[2][1] - plane_transform._2D[2][3];
+	planes[2][3] = -plane_transform._2D[3][1] - plane_transform._2D[3][3];
 
-	if (!do_cull)
+	planes[3][0] = plane_transform._2D[0][1] - plane_transform._2D[0][3];
+	planes[3][1] = plane_transform._2D[1][1] - plane_transform._2D[1][3];
+	planes[3][2] = plane_transform._2D[2][1] - plane_transform._2D[2][3];
+	planes[3][3] = plane_transform._2D[3][1] - plane_transform._2D[3][3];
+
+	planes[4][0] = -plane_transform._2D[0][2] - plane_transform._2D[0][3];
+	planes[4][1] = -plane_transform._2D[1][2] - plane_transform._2D[1][3];
+	planes[4][2] = -plane_transform._2D[2][2] - plane_transform._2D[2][3];
+	planes[4][3] = -plane_transform._2D[3][2] - plane_transform._2D[3][3];
+
+	planes[5][0] = plane_transform._2D[0][2] - plane_transform._2D[0][3];
+	planes[5][1] = plane_transform._2D[1][2] - plane_transform._2D[1][3];
+	planes[5][2] = plane_transform._2D[2][2] - plane_transform._2D[2][3];
+	planes[5][3] = plane_transform._2D[3][2] - plane_transform._2D[3][3];
+
+	if (!(stCenter.Dot(TVector3(&planes[0][0])) + planes[0][3] - stExtents.Dot(TVector3(fabs(planes[0][0]), fabs(planes[0][1]), fabs(planes[0][2]))) > 0 ||
+		stCenter.Dot(TVector3(&planes[1][0])) + planes[1][3] - stExtents.Dot(TVector3(fabs(planes[1][0]), fabs(planes[1][1]), fabs(planes[1][2]))) > 0 ||
+		stCenter.Dot(TVector3(&planes[2][0])) + planes[2][3] - stExtents.Dot(TVector3(fabs(planes[2][0]), fabs(planes[2][1]), fabs(planes[2][2]))) > 0 ||
+		stCenter.Dot(TVector3(&planes[3][0])) + planes[3][3] - stExtents.Dot(TVector3(fabs(planes[3][0]), fabs(planes[3][1]), fabs(planes[3][2]))) > 0 ||
+		stCenter.Dot(TVector3(&planes[4][0])) + planes[4][3] - stExtents.Dot(TVector3(fabs(planes[4][0]), fabs(planes[4][1]), fabs(planes[4][2]))) > 0 ||
+		stCenter.Dot(TVector3(&planes[5][0])) + planes[5][3] - stExtents.Dot(TVector3(fabs(planes[5][0]), fabs(planes[5][1]), fabs(planes[5][2]))) > 0))
 	{
+		TMatrix4 prev_proj, prev_mview;
+
+		_pCoreRenderer->GetMatrix(prev_proj, MT_PROJECTION);
+		_pCoreRenderer->SetMatrix(new_proj, MT_PROJECTION);
+
+		_pCoreRenderer->GetMatrix(prev_mview);
+		_pCoreRenderer->SetMatrix(new_mview);
+
 		if (eFlags & EF_COLOR_MIX)
 			_pCoreRenderer->SetColor(_stColormix);
 		else  
-			_pCoreRenderer->SetColor(TColor4());
+			_pCoreRenderer->SetColor(ColorWhite());
 
 		ICoreTexture *p_ctex;
 		pTexture->GetCoreTexture(p_ctex);
@@ -1664,38 +1703,41 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 
 		if (eFlags & EF_BLEND)
 		{
-			_stRasterStateDesc.bAlphaTestEnable = false;
-			_stBlendStateDesc.bEnable = true;
+			_stRasterStateDesc.bAlphaTestEnabled = false;
+			_stBlendStateDesc.bEnabled = true;
 		}
 		else
 			if (eFlags & EF_NONE)
 			{
-				_stRasterStateDesc.bAlphaTestEnable = false;
-				_stBlendStateDesc.bEnable = false;
+				_stRasterStateDesc.bAlphaTestEnabled = false;
+				_stBlendStateDesc.bEnabled = false;
 			}
 			else 
 			{
-				_stRasterStateDesc.bAlphaTestEnable = true;
-				_stBlendStateDesc.bEnable = false;
+				_stRasterStateDesc.bAlphaTestEnabled = true;
+				_stBlendStateDesc.bEnabled = false;
 			}
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 
 		TDepthStencilDesc ds_desc;
-		ds_desc.bDepthTestEnable = true;
+		ds_desc.bDepthTestEnabled = true;
 		_pCoreRenderer->SetDepthStencilState(ds_desc);
+
+		if (bClearDepthBuffer)
+			_pCoreRenderer->Clear(false, true, false);
 
 		_pCoreRenderer->DrawBuffer(pBuffer);
 
-		ds_desc.bDepthTestEnable = false;
+		ds_desc.bDepthTestEnabled = false;
 		_pCoreRenderer->SetDepthStencilState(ds_desc);
 
-		++_iObjsDrawnCount;
+		_pCoreRenderer->SetMatrix(prev_proj, MT_PROJECTION);
+		_pCoreRenderer->SetMatrix(prev_mview);
+		
+		++_uiObjsDrawnCount;
 	}
-
-	_pCoreRenderer->SetMatrix(prev_proj, MT_PROJECTION);
-	_pCoreRenderer->SetMatrix(prev_mview);
 
 	return S_OK;
 }
@@ -1746,29 +1788,29 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 		if (eFlags & EF_COLOR_MIX)
 			_pCoreRenderer->SetColor(_stColormix);
 		else  
-			_pCoreRenderer->SetColor(TColor4());
+			_pCoreRenderer->SetColor(ColorWhite());
 
 		_pCoreRenderer->BindTexture(p_tex);
 
 		if (eFlags & EF_BLEND)
 		{
-			_stRasterStateDesc.bAlphaTestEnable = false;
-			_stBlendStateDesc.bEnable = true;
+			_stRasterStateDesc.bAlphaTestEnabled = false;
+			_stBlendStateDesc.bEnabled = true;
 		}
 		else
 			if (eFlags & EF_NONE)
 			{
-				_stRasterStateDesc.bAlphaTestEnable = false;
-				_stBlendStateDesc.bEnable = false;
+				_stRasterStateDesc.bAlphaTestEnabled = false;
+				_stBlendStateDesc.bEnabled = false;
 			}
 			else 
 			{
-				_stRasterStateDesc.bAlphaTestEnable = true;
-				_stBlendStateDesc.bEnable = false;
+				_stRasterStateDesc.bAlphaTestEnabled = true;
+				_stBlendStateDesc.bEnabled = false;
 			}
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 	}
 
 	_2D_IF_BATCH_NO_UPDATE_EXIT
@@ -1819,7 +1861,8 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 	else
 		_pCoreRenderer->Draw(stDrawDesc, eMode, uiCount);
 
-	++_iObjsDrawnCount;
+	if (!_bInProfilerMode)
+		++_uiObjsDrawnCount;
 
 	return S_OK;
 }
@@ -1853,36 +1896,40 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuff
 	if (eFlags & EF_COLOR_MIX)
 		_pCoreRenderer->SetColor(_stColormix);
 	else  
-		_pCoreRenderer->SetColor(TColor4());
+		_pCoreRenderer->SetColor(ColorWhite());
 
 	if (pTexture)
-		pTexture->Bind();
+	{
+		ICoreTexture *p_ctex;
+		pTexture->GetCoreTexture(p_ctex);
+		_pCoreRenderer->BindTexture(p_ctex);
+	}
 	else
 		_pCoreRenderer->BindTexture(NULL);
 
 	if (eFlags & EF_BLEND)
 	{
-		_stRasterStateDesc.bAlphaTestEnable = false;
-		_stBlendStateDesc.bEnable = true;
+		_stRasterStateDesc.bAlphaTestEnabled = false;
+		_stBlendStateDesc.bEnabled = true;
 	}
 	else
 		if (eFlags & EF_NONE)
 		{
-			_stRasterStateDesc.bAlphaTestEnable = false;
-			_stBlendStateDesc.bEnable = false;
+			_stRasterStateDesc.bAlphaTestEnabled = false;
+			_stBlendStateDesc.bEnabled = false;
 		}
 		else 
 		{
-			_stRasterStateDesc.bAlphaTestEnable = true;
-			_stBlendStateDesc.bEnable = false;
+			_stRasterStateDesc.bAlphaTestEnabled = true;
+			_stBlendStateDesc.bEnabled = false;
 		}
 
-	_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-	_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+	_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+	_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 
 	_pCoreRenderer->DrawBuffer(pBuffer);
 
-	++_iObjsDrawnCount;
+	++_uiObjsDrawnCount;
 
 	return S_OK;
 }
@@ -1961,10 +2008,10 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 		
 		const float s = sinf(-angle * (float)M_PI / 180.f), c = cosf(-angle * (float)M_PI / 180.f);
 
-		rot._2D[0][0] = +c;
+		rot._2D[0][0] = c;
 		rot._2D[0][1] = -s;
-		rot._2D[1][0] = +s;
-		rot._2D[1][1] = +c;
+		rot._2D[1][0] = s;
+		rot._2D[1][1] = c;
 
 		if (flags & EF_ROTATION_POINT)
 		{
@@ -2057,29 +2104,29 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 		if (flags & EF_COLOR_MIX)
 			_pCoreRenderer->SetColor(_stColormix);
 		else  
-			_pCoreRenderer->SetColor(TColor4());
+			_pCoreRenderer->SetColor(ColorWhite());
 
 		_pCoreRenderer->BindTexture(p_tex);
 
 		if (flags & EF_BLEND)
 		{
-			_stRasterStateDesc.bAlphaTestEnable = false;
-			_stBlendStateDesc.bEnable = true;
+			_stRasterStateDesc.bAlphaTestEnabled = false;
+			_stBlendStateDesc.bEnabled = true;
 		}
 		else
 			if (flags & EF_NONE)
 			{
-				_stRasterStateDesc.bAlphaTestEnable = false;
-				_stBlendStateDesc.bEnable = false;
+				_stRasterStateDesc.bAlphaTestEnabled = false;
+				_stBlendStateDesc.bEnabled = false;
 			}
 			else 
 			{
-				_stRasterStateDesc.bAlphaTestEnable = true;
-				_stBlendStateDesc.bEnable = false;
+				_stRasterStateDesc.bAlphaTestEnabled = true;
+				_stBlendStateDesc.bEnabled = false;
 			}
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnable);
-		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnable);
+		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
 
 	}
 
@@ -2139,7 +2186,7 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 
 		_pCoreRenderer->Draw(desc, CRDM_TRIANGLE_STRIP, 4);
 		
-		++_iObjsDrawnCount;
+		++_uiObjsDrawnCount;
 	}
 
 	return S_OK;

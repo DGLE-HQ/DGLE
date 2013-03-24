@@ -19,6 +19,7 @@ See "DGLE.h" for more details.
 #include "CoreRendererGL.h"
 #include "Render.h"
 #include "Render2D.h"
+#include "Render3D.h"
 
 using namespace std;
 
@@ -51,7 +52,7 @@ public:
 
 class CEvBeforeInit : public IEvBeforeInitialization
 {
-	 TEngineWindow			 *_pstWindowParam;
+	 TEngineWindow *_pstWindowParam;
 	 E_ENGINE_INIT_FLAGS *_peInitFlags; 
 
 public:
@@ -59,7 +60,7 @@ public:
 	CEvBeforeInit(TEngineWindow *pstWindowParam, E_ENGINE_INIT_FLAGS *peInitFlags)
 	{
 		_pstWindowParam = pstWindowParam;
-		_peInitFlags	= peInitFlags;
+		_peInitFlags = peInitFlags;
 	}
 
 	DGLE_RESULT DGLE_API SetParameters(const TEngineWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
@@ -72,7 +73,7 @@ public:
 	DGLE_RESULT DGLE_API GetParameters(TEngineWindow &stWindowParam, E_ENGINE_INIT_FLAGS eInitFlags)
 	{
 		stWindowParam = (*_pstWindowParam);
-		eInitFlags	  = (*_peInitFlags); 	
+		eInitFlags = (*_peInitFlags); 	
 		return S_OK;
 	}
 
@@ -124,7 +125,7 @@ class CEvGetSubSystem : public IEvGetSubSystem
 {
 
 	E_ENGINE_SUB_SYSTEM _eSSType;
-	IEngineSubSystem	**_ppEngSS;
+	IEngineSubSystem **_ppEngSS;
 
 public:
 
@@ -277,7 +278,7 @@ public:
 CCore::CCore(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _pMainWindow(NULL), _uiFPSTimer(0),
-_iLogWarningsCount(0), _LogErrorsCount(0),
+_uiLogWarningsCount(0), _uiLogErrorsCount(0),
 _pRender(NULL), _pMainFS(NULL), _pResMan(NULL), _pInput(NULL), _pSound(NULL), _pCoreRenderer(NULL),
 _bBuiltInSound(true), _bBuiltInRenderer(true), _bBuiltInInput(true),
 _pSplashWindow(NULL), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
@@ -331,7 +332,7 @@ CCore::~CCore()
 
 		_LogWrite("Engine Finalized.");
 		_clLogFile << "----" << endl;
-		_clLogFile << "Warning(s): " << _iLogWarningsCount << " Error(s): " << _LogErrorsCount << endl;
+		_clLogFile << "Warning(s): " << _uiLogWarningsCount << " Error(s): " << _uiLogErrorsCount << endl;
 		
 		if (_ui64CyclesCount == 0) _ui64CyclesCount = 1;
 		_clLogFile << "Average FPS: " << (uint64)(_ui64FPSSumm / _ui64CyclesCount) << endl;		
@@ -351,17 +352,17 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 	{
 	case LT_WARNING:
 		msg="[WARNING] " + string(pcTxt);
-		++_iLogWarningsCount;
+		++_uiLogWarningsCount;
 		break;
 	
 	case LT_ERROR:
-		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")";
-		++_LogErrorsCount;
+		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + IntToStr(iSrcLineNumber) + ")";
+		++_uiLogErrorsCount;
 		break;
 	
 	case LT_FATAL:
-		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: "+IntToStr(iSrcLineNumber)+")";
-		++_LogErrorsCount;
+		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + IntToStr(iSrcLineNumber) + ")";
+		++_uiLogErrorsCount;
 		
 		_LogWrite(msg.c_str(), true);		 
 							
@@ -590,7 +591,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 	case WMT_SIZE:
 
 		_stWin.uiWidth = stMsg.ui32Param1;
-		_stWin.uiHeight= stMsg.ui32Param2;
+		_stWin.uiHeight = stMsg.ui32Param2;
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
 		break;
@@ -747,6 +748,9 @@ void CCore::_RenderFrame()
 
 	_ui64RenderDelay = GetPerfTimer();
 
+	_pRender->pRender3D()->BeginFrame();
+	_pRender->pRender2D()->BeginFrame();
+
 	CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
 
 	_InvokeUserCallback(EPT_RENDER);
@@ -755,9 +759,10 @@ void CCore::_RenderFrame()
 
 	CastEvent(ET_AFTER_RENDER, (IBaseEvent*)&CBaseEvent(ET_AFTER_RENDER));
 
+	_pRender->pRender2D()->EndFrame();
+	_pRender->pRender3D()->EndFrame();
+	
 	_ui64RenderDelay = GetPerfTimer() - _ui64RenderDelay;
-
-	// Begin of profilers //
 
 	if (_iAllowDrawProfilers == 1)
 	{
@@ -765,37 +770,27 @@ void CCore::_RenderFrame()
 
 		_bInDrawProfilers = true;
 
-		_uiProfilerCurTxtXOffset	= 0;
-		_uiProfilerCurTxtYOffset	= 0;
-		_uiProfilerCurTxtMaxLength	= 0;
+		_uiProfilerCurTxtXOffset = 0;
+		_uiProfilerCurTxtYOffset = 0;
+		_uiProfilerCurTxtMaxLength = 0;
 				
 		if (_iDrawProfiler > 0)
 		{
-			TColor4 col;
-
-			if (_uiLastFPS < 60)
-				col.b = col.g = 0.f;
-					
-			RenderProfilerText(("FPS:" + IntToStr(_uiLastFPS)).c_str(), col);
-
-			col = TColor4();
-
-			if (_uiLastUPS < 1000 / _uiUpdateInterval)
-				col.b = col.g = 0.f;
-					
-			RenderProfilerText(("UPS:" + IntToStr(_uiLastUPS)).c_str(), col);
+			RenderProfilerText(("FPS:" + IntToStr(_uiLastFPS)).c_str(), _uiLastFPS < 60 ? ColorRed() : ColorWhite());
+			RenderProfilerText(("UPS:" + IntToStr(_uiLastUPS)).c_str(), _uiLastUPS < 1000 / _uiUpdateInterval ? ColorRed() : ColorWhite());
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerText(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
-				RenderProfilerText(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), TColor4());
+				RenderProfilerText(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
 			}
 
 			if (_iDrawProfiler == 3)
-				RenderProfilerText(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), TColor4());
+				RenderProfilerText(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), ColorWhite());
 		}
 				
 		_pRender->pRender2D()->DrawProfiler();
+		_pRender->pRender3D()->DrawProfiler();
 
 		CastEvent(ET_ON_PROFILER_DRAW, (IBaseEvent*)&CBaseEvent(ET_ON_PROFILER_DRAW));
 
@@ -803,8 +798,6 @@ void CCore::_RenderFrame()
 
 		_pRender->pRender2D()->EndProfiler2D();
 	}
-
-	// end of profilers //
 
 	_pRender->EndRender();
 

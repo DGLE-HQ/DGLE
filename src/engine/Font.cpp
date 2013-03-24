@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.09.2012 (c)Korotkov Andrey
+\date		23.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -10,12 +10,16 @@ See "DGLE.h" for more details.
 #include "Font.h"
 #include "Render.h"
 #include "Render2D.h"
+#include "Render3D.h"
 
 CBitmapFont::CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars):
 CInstancedObj(uiInstIdx), _pTex(pTex), _fScale(1.f), _stHeader(stHeader), _uiBufferSize(16)// never less than 16
 {
 	_pBuffer = new float[_uiBufferSize];
-	memcpy(_astChars, pChars, sizeof(TCharBox)*224);
+	memcpy(_astChars, pChars, sizeof(TCharBox) * 224);
+	
+	_pRender2D = Core()->pRender()->pRender2D();
+	_pRender3D = Core()->pRender()->pRender3D();
 }
 
 CBitmapFont::~CBitmapFont()
@@ -71,18 +75,18 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 	if (FAILED(hr = GetTextDimensions(pcTxt, strwidth, strheight)))
 		return hr;
 
-	ICoreTexture *p_tex;
-	_pTex->GetCoreTexture(p_tex);
-	Core()->pCoreRenderer()->BindTexture(p_tex);
+	_pTex->Bind();
 
 	uint t_w, t_h;
 	_pTex->GetDimensions(t_w, t_h);
 	
 	float x = -(float)strwidth * 0.5f, y = -(float)strheight * 0.5f;
 
-	if (_uiBufferSize < length*12*2)
+	const uint l_12 = length * 12;
+
+	if (_uiBufferSize < l_12 * 2)
 	{
-		_uiBufferSize = (uint)length*12*2;
+		_uiBufferSize = l_12 * 2;
 		delete[] _pBuffer;
 		_pBuffer = new float[_uiBufferSize];
 	}
@@ -96,26 +100,28 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 			&curb_w = _astChars[ch].w,
 			&curb_h = _astChars[ch].h;
 
-		_pBuffer[i*12] = x + curb_w * _fScale; _pBuffer[i*12 + 1] = y;
-		_pBuffer[i*12 + 2] = x + curb_w * _fScale; _pBuffer[i*12 + 3] = y + curb_h * _fScale;
-		_pBuffer[i*12 + 4] = x; _pBuffer[i*12 + 5] = y;
-		
-		_pBuffer[i*12 + 6] = x; _pBuffer[i*12 + 7] = y;
-		_pBuffer[i*12 + 8] = x; _pBuffer[i*12 + 9] = _pBuffer[i*12 + 3];
-		_pBuffer[i*12 + 10] = x + curb_w * _fScale; _pBuffer[i*12 + 11] = _pBuffer[i*12 + 3];
+		const uint i_12 = i * 12;
 
-		_pBuffer[length*12 + i*12]	   = (curb_x + curb_w) / (float)t_w;_pBuffer[length*12 + i*12 + 1] = (curb_y + curb_h) / (float)t_h;
-		_pBuffer[length*12 + i*12 + 2] = _pBuffer[length*12 + i*12];	_pBuffer[length*12 + i*12 + 3] = curb_y / (float)t_h;
-		_pBuffer[length*12 + i*12 + 4] = curb_x / (float)t_w;			_pBuffer[length*12 + i*12 + 5] = _pBuffer[length*12 + i*12 + 1];
+		_pBuffer[i_12] = x + curb_w * _fScale; _pBuffer[i_12 + 1] = y;
+		_pBuffer[i_12 + 2] = x + curb_w * _fScale; _pBuffer[i_12 + 3] = y + curb_h * _fScale;
+		_pBuffer[i_12 + 4] = x; _pBuffer[i_12 + 5] = y;
 		
-		_pBuffer[length*12 + i*12 + 6]  = _pBuffer[length*12 + i*12 + 4]; _pBuffer[length*12 + i*12 + 7]  = _pBuffer[length*12 + i*12 + 1];
-		_pBuffer[length*12 + i*12 + 8]  = _pBuffer[length*12 + i*12 + 4]; _pBuffer[length*12 + i*12 + 9]  = _pBuffer[length*12 + i*12 + 3];
-		_pBuffer[length*12 + i*12 + 10] = _pBuffer[length*12 + i*12 + 2]; _pBuffer[length*12 + i*12 + 11] = _pBuffer[length*12 + i*12 + 3];
+		_pBuffer[i_12 + 6] = x; _pBuffer[i_12 + 7] = y;
+		_pBuffer[i_12 + 8] = x; _pBuffer[i_12 + 9] = _pBuffer[i_12 + 3];
+		_pBuffer[i_12 + 10] = x + curb_w * _fScale; _pBuffer[i_12 + 11] = _pBuffer[i_12 + 3];
+
+		_pBuffer[l_12 + i_12] = (curb_x + curb_w) / (float)t_w; _pBuffer[l_12 + i_12 + 1] = (curb_y + curb_h) / (float)t_h;
+		_pBuffer[l_12 + i_12 + 2] = _pBuffer[l_12 + i_12]; _pBuffer[l_12 + i_12 + 3] = curb_y / (float)t_h;
+		_pBuffer[l_12 + i_12 + 4] = curb_x / (float)t_w; _pBuffer[l_12 + i_12 + 5] = _pBuffer[l_12 + i_12 + 1];
+		
+		_pBuffer[l_12 + i_12 + 6] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 7]  = _pBuffer[l_12 + i_12 + 1];
+		_pBuffer[l_12 + i_12 + 8] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 9]  = _pBuffer[l_12 + i_12 + 3];
+		_pBuffer[l_12 + i_12 + 10] = _pBuffer[l_12 + i_12 + 2]; _pBuffer[l_12 + i_12 + 11] = _pBuffer[l_12 + i_12 + 3];
 
 		x += curb_w * _fScale;
 	}
 
-	Core()->pCoreRenderer()->Draw(TDrawDataDesc((uint8 *)_pBuffer, (uint)length*12*sizeof(float)), CRDM_TRIANGLES, (uint)length*6);
+	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, (uint)l_12 * sizeof(float)), CRDM_TRIANGLES, (uint)length * 6);
 
 	return S_OK;
 }
@@ -134,11 +140,11 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	bool b_need_update;
 
-	Core()->pRender()->pRender2D()->NeedToUpdateBatchData(b_need_update);
+	_pRender2D->NeedToUpdateBatchData(b_need_update);
 
 	if (!b_need_update)
 	{
-		Core()->pRender()->pRender2D()->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
+		_pRender2D->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 		return S_OK;
 	}
 
@@ -156,10 +162,10 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 		
 		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
 
-		rot._2D[0][0] = +c;
+		rot._2D[0][0] = c;
 		rot._2D[0][1] = -s;
-		rot._2D[1][0] = +s;
-		rot._2D[1][1] = +c;
+		rot._2D[1][0] = s;
+		rot._2D[1][1] = c;
 
 		transform = MatrixTranslate(TVector3(-(fX + width / 2.f), -(fY + height / 2.f), 0.f)) * rot * MatrixTranslate(TVector3(fX + width / 2.f, fY + height / 2.f, 0.f));
 
@@ -180,7 +186,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 		quad[7]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 	}
 
-	if (!Core()->pRender()->pRender2D()->BBoxInScreen(quad, fAngle != 0.f))
+	if (!_pRender2D->BBoxInScreen(quad, fAngle != 0.f))
 		return S_OK;
 
 	float xoffset = 0.f;
@@ -190,16 +196,16 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	TColor4 prev_color, verts_colors[4];
 	
-	Core()->pRender()->pRender2D()->GetColorMix(prev_color);
-	Core()->pRender()->pRender2D()->SetColorMix(stColor);
+	_pRender2D->GetColorMix(prev_color);
+	_pRender2D->SetColorMix(stColor);
 
 	if (bVerticesColors)
-		Core()->pRender()->pRender2D()->GetVerticesColors(verts_colors[0], verts_colors[1], verts_colors[2], verts_colors[3]);
+		_pRender2D->GetVerticesColors(verts_colors[0], verts_colors[1], verts_colors[2], verts_colors[3]);
 
-	uint size = length*12*2;
+	uint size = length * 12 * 2;
 
 	if (bVerticesColors)
-		size = length*24*2;
+		size = length * 24 * 2;
 
 	if (_uiBufferSize < size)
 	{
@@ -218,14 +224,14 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 			&curb_w = _astChars[ch].w,
 			&curb_h = _astChars[ch].h;
 		
-		const uint idx = i*24;
+		const uint idx = i * 24;
 
-		_pBuffer[idx] = fX + xoffset; _pBuffer[idx + 1] = fY; _pBuffer[idx + 2] = (float)curb_x/(float)t_w; _pBuffer[idx + 3] = (float)curb_y/(float)t_h;
-		_pBuffer[idx + 4] = fX + xoffset + (float)curb_w*_fScale; _pBuffer[idx + 5] = fY; _pBuffer[idx + 6] = (float)(curb_x + curb_w)/(float)t_w; _pBuffer[idx + 7] = (float)curb_y/(float)t_h;
-		_pBuffer[idx + 8] = fX + xoffset + (float)curb_w*_fScale; _pBuffer[idx + 9] = fY + (float)curb_h*_fScale; _pBuffer[idx + 10] = (float)(curb_x+curb_w)/(float)t_w; _pBuffer[idx + 11] = (float)(curb_y+curb_h)/(float)t_h;
+		_pBuffer[idx] = fX + xoffset; _pBuffer[idx + 1] = fY; _pBuffer[idx + 2] = (float)curb_x / (float)t_w; _pBuffer[idx + 3] = (float)curb_y / (float)t_h;
+		_pBuffer[idx + 4] = fX + xoffset + (float)curb_w * _fScale; _pBuffer[idx + 5] = fY; _pBuffer[idx + 6] = (float)(curb_x + curb_w) / (float)t_w; _pBuffer[idx + 7] = (float)curb_y / (float)t_h;
+		_pBuffer[idx + 8] = fX + xoffset + (float)curb_w * _fScale; _pBuffer[idx + 9] = fY + (float)curb_h * _fScale; _pBuffer[idx + 10] = (float)(curb_x + curb_w) / (float)t_w; _pBuffer[idx + 11] = (float)(curb_y + curb_h) / (float)t_h;
 		_pBuffer[idx + 12] = _pBuffer[idx]; _pBuffer[idx + 13] = _pBuffer[idx + 1]; _pBuffer[idx + 14] = _pBuffer[idx + 2]; _pBuffer[idx + 15] = _pBuffer[idx + 3];
 		_pBuffer[idx + 16] = _pBuffer[idx + 8]; _pBuffer[idx + 17] = _pBuffer[idx + 9]; _pBuffer[idx + 18] = _pBuffer[idx + 10]; _pBuffer[idx + 19] = _pBuffer[idx + 11];
-		_pBuffer[idx + 20] = fX + xoffset; _pBuffer[idx + 21] = fY + (float)curb_h*_fScale; _pBuffer[idx + 22] = (float)curb_x/(float)t_w; _pBuffer[idx + 23] = (float)(curb_y+curb_h)/(float)t_h;
+		_pBuffer[idx + 20] = fX + xoffset; _pBuffer[idx + 21] = fY + (float)curb_h * _fScale; _pBuffer[idx + 22] = (float)curb_x / (float)t_w; _pBuffer[idx + 23] = (float)(curb_y + curb_h) / (float)t_h;
 
 		if (fAngle != 0.f)
 		{
@@ -251,29 +257,29 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 		if (bVerticesColors)
 		{
-			const uint idx = length*24 + i*24;
-			memcpy(&_pBuffer[idx], verts_colors[0], 12*sizeof(float));
-			memcpy(&_pBuffer[idx + 12], verts_colors[0], 4*sizeof(float));
-			memcpy(&_pBuffer[idx + 16], verts_colors[2], 8*sizeof(float));
+			const uint idx = length * 24 + i * 24;
+			memcpy(&_pBuffer[idx], verts_colors[0], 12 * sizeof(float));
+			memcpy(&_pBuffer[idx + 12], verts_colors[0], 4 * sizeof(float));
+			memcpy(&_pBuffer[idx + 16], verts_colors[2], 8 * sizeof(float));
 		}
 
-		xoffset += (float)curb_w*_fScale;
+		xoffset += (float)curb_w * _fScale;
 	}
 
 	TDrawDataDesc desc;
 
 	desc.pData = (uint8 *)_pBuffer;
-	desc.uiVertexStride = 4*sizeof(float);
+	desc.uiVertexStride = 4 * sizeof(float);
 	desc.bVertexCoord2 = true;
-	desc.uiTexCoordOffset = 2*sizeof(float);
+	desc.uiTexCoordOffset = 2 * sizeof(float);
 	desc.uiTexCoordStride = desc.uiVertexStride;
 
 	if (bVerticesColors)
-		desc.uiColorOffset = length*24*sizeof(float);
+		desc.uiColorOffset = length * 24 * sizeof(float);
 
-	Core()->pRender()->pRender2D()->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
+	_pRender2D->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 
-	Core()->pRender()->pRender2D()->SetColorMix(prev_color);
+	_pRender2D->SetColorMix(prev_color);
 
 	return S_OK;
 }

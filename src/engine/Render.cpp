@@ -23,49 +23,52 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 
 	_strFeturesList = "Core Renderer supported features\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_FULLSCREEN_MODE, b_supported);
-	_strFeturesList += std::string("Hardware fullscreen: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_pCoreRenderer->IsFeatureSupported(CRFT_BUILTIN_FULLSCREEN_MODE, b_supported);
+	_strFeturesList += std::string("Builtin fullscreen mode: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_BUILTIN_STATE_FILTER, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_BUILTIN_STATE_FILTER, b_supported);
 	_strFeturesList += std::string("Builtin state filter: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_MULTISAMPLING, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_MULTISAMPLING, b_supported);
 	_strFeturesList += std::string("Multisampling: ") + (b_supported ? "Yes" : "No") + "\n\t";
 	
-	_pCoreRenderer->IsFeatureSupported(CRDF_VSYNC, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_VSYNC, b_supported);
 	_strFeturesList += std::string("Vertical synchronization: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRDF_PROGRAMMABLE_PIPELINE, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_PROGRAMMABLE_PIPELINE, b_supported);
 	_strFeturesList += std::string("Programmable pipeline: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_BGRA_DATA_FORMAT, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_LEGACY_FIXED_FUNCTION_PIPELINE_API, b_supported);
+	_strFeturesList += std::string("Legacy fixed function pipeline API: ") + (b_supported ? "Yes" : "No") + "\n\t";
+
+	_pCoreRenderer->IsFeatureSupported(CRFT_BGRA_DATA_FORMAT, b_supported);
 	_strFeturesList += std::string("BGRA textures: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_COMPRESSION, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_COMPRESSION, b_supported);
 	_strFeturesList += std::string("Texture compression: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_NON_POWER_OF_TWO_TEXTURES, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_NON_POWER_OF_TWO_TEXTURES, b_supported);
 	_strFeturesList += std::string("Non power of two textures: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_DEPTH_TEXTURES, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_DEPTH_TEXTURES, b_supported);
 	_strFeturesList += std::string("Depth textures: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_ANISOTROPY, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_ANISOTROPY, b_supported);
 	_strFeturesList += std::string("Texture anisotropy: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_MIPMAP_GENERATION, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIPMAP_GENERATION, b_supported);
 	_strFeturesList += std::string("Hardware mipmap generation: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRDF_TEXTURE_MIRRORED_REPEAT, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIRRORED_REPEAT, b_supported);
 	_strFeturesList += std::string("Texture mirrored repeat: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRDF_TEXTURE_MIRROR_CLAMP, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIRROR_CLAMP, b_supported);
 	_strFeturesList += std::string("Texture mirror clamp: ") + (b_supported ? "Yes" : "No") + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRDF_GEOMETRY_BUFFER, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_GEOMETRY_BUFFER, b_supported);
 	_strFeturesList += std::string("Hardware geometry buffers: ") + (b_supported ? "Yes" : "No") + "\n\t";;
 	
-	_pCoreRenderer->IsFeatureSupported(CRDF_FRAME_BUFFER, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_FRAME_BUFFER, b_supported);
 	_strFeturesList += std::string("Hardware frame buffers: ") + (b_supported ? "Yes" : "No");
 
 	//Don't append "\n\t" to the last line!
@@ -81,7 +84,7 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, _iMaxTexResolution);
 	_strMetricsList += "Maximum texture resolution: " + IntToStr(_iMaxTexResolution) + "X" + IntToStr(_iMaxTexResolution) + "\n\t";
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_ANISOTROPY, b_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_ANISOTROPY, b_supported);
 	if (b_supported)
 	{
 		_pCoreRenderer->GetDeviceMetric(CRMT_MAX_ANISOTROPY_LEVEL, _iMaxAnisotropy);
@@ -122,16 +125,10 @@ CRender::~CRender()
 void CRender::BeginRender()
 {
 	_pCoreRenderer->Clear();
-
-	_pRender3D->BeginFrame();
-	_pRender2D->BeginFrame();
 }
 
 void CRender::EndRender()
 {
-	_pRender2D->EndFrame();
-	_pRender3D->EndFrame();
-
 	_pCoreRenderer->Present();
 }
 
@@ -188,28 +185,51 @@ DGLE_RESULT DGLE_API CRender::GetClearColor(TColor4 &stColor)
 	return S_OK;
 }
 
+DGLE_RESULT DGLE_API CRender::ClearColorBuffer()
+{
+	_pCoreRenderer->Clear(true, false, false);
+	return S_OK;
+}
+
 DGLE_RESULT DGLE_API CRender::Unbind(E_ENGINE_OBJECT_TYPE eType)
 {
 	switch (eType)
 	{
 	case EOT_UNKNOWN:
+		
 		Unbind(EOT_MATERIAL);
 		Unbind(EOT_TEXTURE);
 		Unbind(EOT_MESH);
+		Unbind(EOT_LIGHT);
+		
 		break;
 
 	case EOT_TEXTURE:
+		
+		_pRender3D->UnbindTextures();
+		
 		for (int i = _iMaxTexUnits - 1; i >= 0; --i)
-			_pCoreRenderer->BindTexture(NULL, i);
+			_pCoreRenderer->BindTexture(NULL, i);		
+		
 		break;
 
 	case EOT_MESH:
 	case EOT_MODEL:
+		
 		_pCoreRenderer->DrawBuffer(NULL);
+		
+		break;
+
+	case EOT_LIGHT:
+		
+		_pRender3D->UnbindLights();
+		
 		break;
 
 	case EOT_MATERIAL:
+		
 		_pRender3D->UnbindMaterial();
+		
 		break;
 
 	default:
@@ -223,7 +243,7 @@ DGLE_RESULT DGLE_API CRender::EnableScissor(const TRectF &stArea)
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
-	desc.bScissorEnable = true;
+	desc.bScissorEnabled = true;
 	_pCoreRenderer->SetRasterizerState(desc);
 	_pCoreRenderer->SetScissor((uint)stArea.x, (uint)stArea.y, (uint)stArea.width, (uint)stArea.height);
 	return S_OK;
@@ -233,7 +253,7 @@ DGLE_RESULT DGLE_API CRender::DisableScissor()
 {
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
-	desc.bScissorEnable = false;
+	desc.bScissorEnabled = false;
 	_pCoreRenderer->SetRasterizerState(desc);
 	return S_OK;
 }

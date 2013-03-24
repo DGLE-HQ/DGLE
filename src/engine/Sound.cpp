@@ -374,18 +374,18 @@ void CSound::_ProfilerDraw()
 	if (_iProfilerState == 0)
 		return;
 
-	Core()->RenderProfilerText("=======Sound Profiler=======", TColor4());
+	Core()->RenderProfilerText("=======Sound Profiler=======", ColorWhite());
 	
 	if (!_bInited)
-		Core()->RenderProfilerText("Initialization failed!", TColor4(255, 0, 0, 255));
+		Core()->RenderProfilerText("Initialization failed!", ColorRed());
 	else
 	{
-		Core()->RenderProfilerText(("Bits per sample :" + UIntToStr(_sc_uiBitsPerSample)).c_str(), TColor4());
-		Core()->RenderProfilerText(("Samples per sec.:" + UIntToStr(_sc_uiSamplesPerSec)).c_str(), TColor4());
+		Core()->RenderProfilerText(("Bits per sample :" + UIntToStr(_sc_uiBitsPerSample)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Samples per sec.:" + UIntToStr(_sc_uiSamplesPerSec)).c_str(), ColorWhite());
 
 		EnterThreadSafeSection();
 
-		Core()->RenderProfilerText(("Mixer delay     :" + UInt64ToStr(_ui64MixDelay / 1000) + "." + UIntToStr(_ui64MixDelay % 1000) + " ms").c_str(), TColor4());
+		Core()->RenderProfilerText(("Mixer delay     :" + UInt64ToStr(_ui64MixDelay / 1000) + "." + UIntToStr(_ui64MixDelay % 1000) + " ms").c_str(), ColorWhite());
 
 		uint cnt = 0;
 
@@ -395,10 +395,10 @@ void CSound::_ProfilerDraw()
 
 		LeaveThreadSafeSection();
 
-		Core()->RenderProfilerText(("Opened channels :" + UIntToStr(cnt) + "/" + UIntToStr(_sc_uiMaxChannels)).c_str(), TColor4());
+		Core()->RenderProfilerText(("Opened channels :" + UIntToStr(cnt) + "/" + UIntToStr(_sc_uiMaxChannels)).c_str(), ColorWhite());
 	}
 	
-	Core()->RenderProfilerText("============================", TColor4());
+	Core()->RenderProfilerText("============================", ColorWhite());
 
 }
 

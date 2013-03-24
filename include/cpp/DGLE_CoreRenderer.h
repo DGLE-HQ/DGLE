@@ -19,8 +19,6 @@ This header is a part of DGLE SDK.
 #error You must include "DGLE.h" first.
 #endif
 
-#include "DGLE.h"
-
 namespace DGLE
 {
 	enum E_CORE_RENDERER_TYPE
@@ -36,21 +34,22 @@ namespace DGLE
 
 	enum E_CORE_RENDERER_FEATURE_TYPE
 	{
-		CRSF_BUILTIN_FULLSCREEN_MODE = 0,
-		CRSF_BUILTIN_STATE_FILTER,
-		CRSF_MULTISAMPLING,
-		CRDF_VSYNC,
-		CRDF_PROGRAMMABLE_PIPELINE,
-		CRSF_BGRA_DATA_FORMAT,
-		CRSF_TEXTURE_COMPRESSION,
-		CRSF_NON_POWER_OF_TWO_TEXTURES,
-		CRSF_DEPTH_TEXTURES,
-		CRSF_TEXTURE_ANISOTROPY,
-		CRSF_TEXTURE_MIPMAP_GENERATION,
-		CRDF_TEXTURE_MIRRORED_REPEAT,
-		CRDF_TEXTURE_MIRROR_CLAMP,
-		CRDF_GEOMETRY_BUFFER,
-		CRDF_FRAME_BUFFER
+		CRFT_BUILTIN_FULLSCREEN_MODE = 0,
+		CRFT_BUILTIN_STATE_FILTER,
+		CRFT_MULTISAMPLING,
+		CRFT_VSYNC,
+		CRFT_PROGRAMMABLE_PIPELINE,
+		CRFT_LEGACY_FIXED_FUNCTION_PIPELINE_API,
+		CRFT_BGRA_DATA_FORMAT,
+		CRFT_TEXTURE_COMPRESSION,
+		CRFT_NON_POWER_OF_TWO_TEXTURES,
+		CRFT_DEPTH_TEXTURES,
+		CRFT_TEXTURE_ANISOTROPY,
+		CRFT_TEXTURE_MIPMAP_GENERATION,
+		CRFT_TEXTURE_MIRRORED_REPEAT,
+		CRFT_TEXTURE_MIRROR_CLAMP,
+		CRFT_GEOMETRY_BUFFER,
+		CRFT_FRAME_BUFFER
 	};
 	
 	enum E_MATRIX_TYPE
@@ -184,7 +183,7 @@ namespace DGLE
 
 	struct TBlendStateDesc
 	{
-		bool				bEnable;
+		bool				bEnabled;
 
 		E_BLEND_FACTOR		eSrcFactor;
 		E_BLEND_FACTOR		eDstFactor;
@@ -198,7 +197,7 @@ namespace DGLE
 		E_BLEND_OPERATION	eOpAlpha;
 		*/
 		TBlendStateDesc():
-		bEnable(false), eSrcFactor(BF_SRC_ALPHA), eDstFactor(BF_ONE_MINUS_SRC_ALPHA)
+		bEnabled(false), eSrcFactor(BF_SRC_ALPHA), eDstFactor(BF_ONE_MINUS_SRC_ALPHA)
 		{}
 	};
 
@@ -214,19 +213,19 @@ namespace DGLE
 
 	struct TDepthStencilDesc
 	{
-		bool	bDepthTestEnable;
+		bool	bDepthTestEnabled;
 		bool	bWriteToDepthBuffer;
 		E_COMPARISON_FUNC eDepthFunc;
 		
 		/* For future needs.
-		bool	bStencilEnable;
+		bool	bStencilEnabled;
 		uint8	ui8StencilReadMask;
 		uint8	ui8StencilWriteMask;
 		TStencilFaceDesc stFrontFace, stBackFace;
 		*/
 
 		TDepthStencilDesc():
-		bDepthTestEnable(true), bWriteToDepthBuffer(true), eDepthFunc(CF_LESS_EQUAL)
+		bDepthTestEnabled(true), bWriteToDepthBuffer(true), eDepthFunc(CF_LESS_EQUAL)
 		{}
 	};
 
@@ -237,9 +236,9 @@ namespace DGLE
 		E_POLYGON_CULL_MODE eCullMode;
 		bool	bFrontCounterClockwise;
 
-		bool	bScissorEnable;
+		bool	bScissorEnabled;
 
-		bool	bAlphaTestEnable;
+		bool	bAlphaTestEnabled;
 		E_COMPARISON_FUNC eAlphaTestFunc;
 		float	fAlphaTestRefValue;
 
@@ -247,12 +246,12 @@ namespace DGLE
 		int		iDepthBias;
 		float	fDepthBiasClamp;
 		float	fSlopeScaledDepthBias;
-		bool	bDepthClipEnable;
+		bool	bDepthClipEnabled;
 		*/
 
 		TRasterizerStateDesc():
-		bWireframe(false), eCullMode(PCM_NONE), bFrontCounterClockwise(true), bScissorEnable(false),
-		bAlphaTestEnable(false), eAlphaTestFunc(CF_GREATER), fAlphaTestRefValue(0.25f)
+		bWireframe(false), eCullMode(PCM_NONE), bFrontCounterClockwise(true), bScissorEnabled(false),
+		bAlphaTestEnabled(false), eAlphaTestFunc(CF_GREATER), fAlphaTestRefValue(0.25f)
 		{}
 	};
 
@@ -396,6 +395,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API Free() = 0;
 	};
 
+	class IFixedFunctionPipeline;
+
 	// {C3B687A1-57B0-4E21-BE4C-4D92F3FAB311}
 	static const GUID IID_ICoreRenderer = 
 	{ 0xc3b687a1, 0x57b0, 0x4e21, { 0xbe, 0x4c, 0x4d, 0x92, 0xf3, 0xfa, 0xb3, 0x11 } };
@@ -440,9 +441,60 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetRasterizerState(const TRasterizerStateDesc &stState) = 0;
 		virtual DGLE_RESULT DGLE_API GetRasterizerState(TRasterizerStateDesc &stState) = 0;
 		virtual DGLE_RESULT DGLE_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer = 0) = 0;
+		virtual DGLE_RESULT DGLE_API GetFixedFunctionPipelineAPI(IFixedFunctionPipeline *&prFFP) = 0;
 		virtual DGLE_RESULT DGLE_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue) = 0;
 		virtual DGLE_RESULT DGLE_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported) = 0;
 		virtual DGLE_RESULT DGLE_API GetRendererType(E_CORE_RENDERER_TYPE &eType) = 0;
+	};
+
+	// {CA99FAF4-D818-4E16-BF96-C84D4E5F3A8F}
+	static const GUID IID_IFixedFunctionPipeline = 
+	{ 0xca99faf4, 0xd818, 0x4e16, { 0xbf, 0x96, 0xc8, 0x4d, 0x4e, 0x5f, 0x3a, 0x8f } };
+
+	class IFixedFunctionPipeline : public IDGLE_Base
+	{
+	public:
+		virtual DGLE_RESULT DGLE_API PushStates() = 0;
+		virtual DGLE_RESULT DGLE_API PopStates() = 0;
+
+		virtual DGLE_RESULT DGLE_API SetMaterialDiffuseColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API SetMaterialSpecularColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API SetMaterialShininess(float fShininess) = 0;
+
+		virtual DGLE_RESULT DGLE_API GetMaterialDiffuseColor(TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetMaterialSpecularColor(TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetMaterialShininess(float &fShininess) = 0;
+
+		virtual DGLE_RESULT DGLE_API ToggleGlobalLighting(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API SetGloablAmbientLight(const TColor4 &stColor) = 0;
+
+		virtual DGLE_RESULT DGLE_API IsGlobalLightingEnabled(bool &bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API GetGloablAmbientLight(TColor4 &stColor) = 0;
+
+		virtual DGLE_RESULT DGLE_API SetLightEnabled(uint uiIdx, bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API SetLightColor(uint uiIdx, const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API SetLightPosition(uint uiIdx, const TPoint3 &stPosition) = 0;
+		virtual DGLE_RESULT DGLE_API SetLightIntensity(uint uiIdx, float fIntensity) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigureDirectionalLight(uint uiIdx, const TVector3 &stDirection) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigurePointLight(uint uiIdx, float fRange) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigureSpotLight(uint uiIdx, const TVector3 &stDirection, float fRange, float fSpotAngle) = 0;
+
+		virtual DGLE_RESULT DGLE_API GetLightEnabled(uint uiIdx, bool &bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API GetLightColor(uint uiIdx, TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetLightPosition(uint uiIdx, TPoint3 &stPosition) = 0;
+		virtual DGLE_RESULT DGLE_API GetLightIntensity(uint uiIdx, float &fIntensity) = 0;
+		virtual DGLE_RESULT DGLE_API GetLightType(uint uiIdx, E_LIGHT_TYPE &eType) = 0;
+		virtual DGLE_RESULT DGLE_API GetDirectionalLightConfiguration(uint uiIdx, TVector3 &stDirection) = 0;
+		virtual DGLE_RESULT DGLE_API GetPointLightConfiguration(uint uiIdx, float &fRange) = 0;
+		virtual DGLE_RESULT DGLE_API GetSpotLightConfiguration(uint uiIdx, TVector3 &stDirection, float &fRange, float &fSpotAngle) = 0;
+		
+		virtual DGLE_RESULT DGLE_API SetFogEnabled(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigureFog(float fStart, float fEnd, float fDensity) = 0;
+
+		virtual DGLE_RESULT DGLE_API GetFogEnabled(bool &bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GonfigureFog(float &fStart, float &fEnd, float &fDensity) = 0;
 	};
 
 }

@@ -161,6 +161,7 @@
     <ClCompile Include="..\..\..\src\engine\Core.cpp" />
     <ClCompile Include="..\..\..\src\engine\CoreRendererGL.cpp" />
     <ClCompile Include="..\..\..\src\engine\DCPFileSystem.cpp" />
+    <ClCompile Include="..\..\..\src\engine\FixedFunctionPipelineGL.cpp" />
     <ClCompile Include="..\..\..\src\engine\Font.cpp" />
     <ClCompile Include="..\..\..\src\engine\Input.cpp" />
     <ClCompile Include="..\..\..\src\engine\Light.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="..\..\..\src\engine\Core.h" />
     <ClInclude Include="..\..\..\src\engine\CoreRendererGL.h" />
     <ClInclude Include="..\..\..\src\engine\DCPFileSystem.h" />
+    <ClInclude Include="..\..\..\src\engine\FixedFunctionPipelineGL.h" />
     <ClInclude Include="..\..\..\src\engine\Font.h" />
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Input.h" />

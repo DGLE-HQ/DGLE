@@ -60,28 +60,28 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	static const uint _sc_EngObjTypeCount = EOT_EMPTY + 1;
 	static void _s_GetObjTypeName(E_ENGINE_OBJECT_TYPE type, std::string &name);
 
-	TWindowHandle			_stWnd;
-	int						_iProfilerState;
+	TWindowHandle _stWnd;
+	int _iProfilerState;
 
-	ICoreRenderer			*_pCoreRenderer;
+	ICoreRenderer *_pCoreRenderer;
 
-	std::string				_strFileFormatsDescs;
+	std::string _strFileFormatsDescs;
 	std::vector<TFileFormat>_clFileFormats;
 
 	uint _uiResIdxCounter;
-	std::vector<TResource>	_resList;
+	std::vector<TResource> _resList;
 	std::vector<TDefaultRes>_defRes;
 
-	ITexture				*_pDefTex;
-	IMaterial				*_pDefMaterial;
-	IBitmapFont				*_pDefBmpFnt;
-	IMesh					*_pDefMesh;
-	IModel					*_pDefModel;
+	ITexture *_pDefTex;
+	IMaterial *_pDefMaterial;
+	IBitmapFont *_pDefBmpFnt, *_pSysBmpFnt;
+	IMesh *_pDefMesh;
+	IModel *_pDefModel;
 
-	CBObjDummy				*_pBObjDummy;
-	CBitmapFontDummy		*_pDefBmFntDummy;
-	CSSampleDummy			*_pDefSSmpDummy;
-	CMusicDummy				*_pDefMusicDummy;
+	CBObjDummy *_pBObjDummy;
+	CBitmapFontDummy *_pDefBmFntDummy;
+	CSSampleDummy *_pDefSSmpDummy;
+	CMusicDummy *_pDefMusicDummy;
 
 	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags);
 	inline uint _GetFileFormatLoaderIdx(const char *pcFileName, E_ENGINE_OBJECT_TYPE eObjType, uint uiLoadFlags, IEngineBaseObject *&prObj);
@@ -124,7 +124,9 @@ public:
 	CResourceManager(uint uiInstIdx);
 	~CResourceManager();
 
-	inline IBitmapFont* pISystemFont(){return (IBitmapFont*)_pDefBmpFnt;}
+	inline IBitmapFont* pISystemFont() const {return _pSysBmpFnt;}
+	inline IMaterial* pIDefaultMaterial() const {return _pDefMaterial;}
+	
 	void FreeAllResources();
 
 	DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource);

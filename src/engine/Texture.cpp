@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		01.05.2012 (c)Korotkov Andrey
+\date		23.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -10,6 +10,7 @@ See "DGLE.h" for more details.
 #include "Texture.h"
 #include "Render.h"
 #include "Render2D.h"
+#include "Render3D.h"
 
 const float c_fQuad[] = {
 	-0.5f, -0.5f, -0.5f, 0.5f,
@@ -24,9 +25,10 @@ _pCoreTexture(pCoreTex),
 _uiWidth(uiWidth), _uiHeight(uiHeight),
 _uiFrameWidth(0), _uiFrameHeight(0)
 {
-	memcpy(_quad, c_fQuad, sizeof(float)*8);
-	_pCoreRenderer = Core()->pCoreRenderer();
+	memcpy(_quad, c_fQuad, sizeof(float) * 8);
+
 	_pRender2D = Core()->pRender()->pRender2D();
+	_pRender3D = Core()->pRender()->pRender3D();
 }
 
 CTexture::~CTexture()
@@ -36,15 +38,15 @@ CTexture::~CTexture()
 
 DGLE_RESULT DGLE_API CTexture::SetFrameSize(uint uiFrameWidth, uint uiFrameHeight)
 {
-	_uiFrameWidth	= uiFrameWidth;
-	_uiFrameHeight	= uiFrameHeight;
+	_uiFrameWidth = uiFrameWidth;
+	_uiFrameHeight = uiFrameHeight;
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CTexture::GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight)
 {
-	uiFrameWidth	= _uiFrameWidth;
-	uiFrameHeight	= _uiFrameHeight;
+	uiFrameWidth = _uiFrameWidth;
+	uiFrameHeight = _uiFrameHeight;
 	return S_OK;
 }
 
@@ -72,10 +74,10 @@ DGLE_RESULT DGLE_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeigh
 
 DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 {
-	_pCoreRenderer->BindTexture(_pCoreTexture);
+	Bind(0);
 
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
 	else
 	{
 		float	tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
@@ -83,12 +85,12 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 				tw = _uiFrameWidth/(float)_uiWidth,
 				th = _uiFrameHeight/(float)_uiHeight;
 
-		_quad[8]  = tx;			_quad[9]  = ty + th;
-		_quad[10] = tx;			_quad[11] = ty;
-		_quad[12] = tx + tw;	_quad[13] = _quad[9];
-		_quad[14] = _quad[12];	_quad[15] = ty;
+		_quad[8] = tx; _quad[9] = ty + th;
+		_quad[10] = tx;	_quad[11] = ty;
+		_quad[12] = tx + tw; _quad[13] = _quad[9];
+		_quad[14] = _quad[12]; _quad[15] = ty;
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
 	}
 
 	return S_OK;
@@ -96,13 +98,13 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 
 DGLE_RESULT DGLE_API CTexture::GetDimensions(uint &uiWidth, uint &uiHeight)
 {
-	uiWidth  = _uiWidth;
+	uiWidth = _uiWidth;
 	uiHeight = _uiHeight;
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CTexture::Bind(uint uiMTextureLayer)
+DGLE_RESULT DGLE_API CTexture::Bind(uint uiTextureLayer)
 {
-	Core()->pCoreRenderer()->BindTexture(_pCoreTexture);
+	_pRender3D->BindTexture(this, uiTextureLayer);	
 	return S_OK;
 }

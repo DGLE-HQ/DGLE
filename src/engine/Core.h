@@ -44,106 +44,84 @@ class CCore: public CInstancedObj, public IEngineCore
 	static const uint _sc_MaxUpdateCycles = 10;
 	static const uint _sc_AppCaptionMaxLength = 128;
 
-	TProcDelegate		 _clDelUpdate,
-						 _clDelRender,
-						 _clDelInit,
-						 _clDelFree,
+	TProcDelegate _clDelUpdate, _clDelRender, _clDelInit, _clDelFree,
+		_clDelMLoop, _clDelOnFPSTimer;
+	TMsgProcDelegate _clDelMProc;
 
-						 //For system use
-						 _clDelMLoop,
-						 _clDelOnFPSTimer;
-	TMsgProcDelegate	 _clDelMProc;
+	std::vector<IUserCallback *> _clUserCallbacks;
 
-	std::vector<IUserCallback *>
-						 _clUserCallbacks;
+	std::vector<TEvent> _clEvents;
 
-	std::vector<TEvent>	 _clEvents;
-
-	std::fstream		 _clLogFile;
-	int					 _iLogWarningsCount;
-	int					 _LogErrorsCount;
-	IMainWindow		    *_pMainWindow;
+	std::fstream _clLogFile;
+	uint _uiLogWarningsCount, _uiLogErrorsCount;
+	IMainWindow *_pMainWindow;
 	
-	char				*_pcCustomSplash;
-	ISplashWindow		*_pSplashWindow;
+	char *_pcCustomSplash;
+	ISplashWindow *_pSplashWindow;
 
-	bool				 _bCmdKeyIsPressed, _bFScreenKeyIsPressed;
+	bool _bCmdKeyIsPressed, _bFScreenKeyIsPressed;
 
 	/** \remark: Setting _bDoExit to true is the the ONLY correct way to quit engine. */
-	bool				 _bDoExit;
+	bool _bDoExit;
 
-	TEngineWindow			 _stWin;
+	TEngineWindow _stWin;
 
-	uint				 _uiUpdateInterval;
-	uint64				 _ui64TimeOld;
-	bool				 _bPause, _bWasFScreen;
-	char				 _pcApplicationCaption[_sc_AppCaptionMaxLength];
+	uint _uiUpdateInterval;
+	uint64 _ui64TimeOld;
+	bool _bPause, _bWasFScreen;
+	char _pcApplicationCaption[_sc_AppCaptionMaxLength];
 
-	bool				 _bInitedFlag,
-						 _bStartedFlag,
-						 _bQuitFlag;
+	bool _bInitedFlag, _bStartedFlag, _bQuitFlag;
 
-	uint				 _uiFPSTimer, 
-						 _uiFPSCount,
-						 _uiLastFPS,
-						 _uiUPSCount,
-						 _uiLastUPS,
-						 _uiLastMemUsage;
+	uint _uiFPSTimer, _uiFPSCount, _uiLastFPS,
+		_uiUPSCount, _uiLastUPS, _uiLastMemUsage;
 
-	uint64				 _ui64FPSSumm,
-						 _ui64CyclesCount,
-						 _ui64RenderDelay,
-						 _ui64UpdateDelay,
-						 _ui64LastUpdateDeltaTime;
+	uint64 _ui64FPSSumm, _ui64CyclesCount, _ui64RenderDelay,
+		_ui64UpdateDelay, _ui64LastUpdateDeltaTime;
 
-	bool				 _bInDrawProfilers;
-	uint				 _uiProfilerCurTxtXOffset,
-						 _uiProfilerCurTxtYOffset,
-						 _uiProfilerCurTxtMaxLength;
+	bool _bInDrawProfilers;
+	uint _uiProfilerCurTxtXOffset, _uiProfilerCurTxtYOffset,
+		_uiProfilerCurTxtMaxLength;
 
-	bool				 _bSndEnabled;
+	bool _bSndEnabled;
 
-	E_ENGINE_INIT_FLAGS  _eInitFlags;
+	E_ENGINE_INIT_FLAGS _eInitFlags;
 
-	TSystemInfo			 _stSysInfo;
+	TSystemInfo _stSysInfo;
 
-	CMainFS				*_pMainFS;
-	CResourceManager
-						*_pResMan;
-	CRender				*_pRender;
+	CMainFS *_pMainFS;
+	CResourceManager *_pResMan;
+	CRender *_pRender;
 
-	ISound				*_pSound;
-	ICoreRenderer		*_pCoreRenderer;
-	IInput				*_pInput;
+	ISound *_pSound;
+	ICoreRenderer *_pCoreRenderer;
+	IInput *_pInput;
 
-	bool				_bBuiltInSound, _bBuiltInRenderer, _bBuiltInInput;
+	bool _bBuiltInSound, _bBuiltInRenderer, _bBuiltInInput;
 
 	std::vector<std::string> _clPluginInitList;
 	std::vector<TPlugin> _clPlugins;
-	bool				_LoadPlugin(const std::string &clFileName, IPlugin *&prPlugin);
-	bool				_UnloadPlugin(IPlugin *pPlugin);
-	void				_PrintPluginsInfo();
+	bool _LoadPlugin(const std::string &clFileName, IPlugin *&prPlugin);
+	bool _UnloadPlugin(IPlugin *pPlugin);
+	void _PrintPluginsInfo();
 
-	void				_MainLoop();
-	void				_OnTimer();
-	void				_MessageProc(const TWindowMessage &msg);
+	void _MainLoop();
+	void _OnTimer();
+	void _MessageProc(const TWindowMessage &msg);
 
-	void				_RenderFrame();
-	bool				_bRendering;
+	void _RenderFrame();
+	bool _bRendering;
 
-	void				_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType);
+	void _InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType);
 
-	void				_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
-	void				_LogWrite(const char *pcTxt, bool bFlush = false);
+	void _LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+	void _LogWrite(const char *pcTxt, bool bFlush = false);
 	
-	int					_iAllowPause,
-						_iFPSToCaption,
-						_iAllowDrawProfilers,
-						_iDrawProfiler;
+	int	_iAllowPause, _iFPSToCaption, _iAllowDrawProfilers, _iDrawProfiler;
 
-	TEngineWindow			_stWndToApply;
-	bool				_bNeedApplyNewWnd;
-	DGLE_RESULT			_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents);
+	TEngineWindow _stWndToApply;
+	bool _bNeedApplyNewWnd;
+	DGLE_RESULT	_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents);
 
 
 	static void DGLE_API _s_MainLoop(void *pParameter);

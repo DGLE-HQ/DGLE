@@ -8,11 +8,13 @@ See "DGLE.h" for more details.
 */
 
 #include "Mesh.h"
+#include "Render.h"
+#include "Render3D.h"
 
 CMesh::CMesh(uint uiInstIdx, ICoreGeometryBuffer *pBuffer, const TPoint3 &stCenter, const TVector3 &stExtents):
 CInstancedObj(uiInstIdx), _pOwnerModel(NULL), _pBuffer(pBuffer), _stCenter(stCenter), _stExtents(stExtents)
 {
-	_pCoreRenderer = Core()->pCoreRenderer();
+	_pRender3D = Core()->pRender()->pRender3D();
 }
 
 CMesh::~CMesh()
@@ -74,7 +76,7 @@ DGLE_RESULT DGLE_API CMesh::Draw()
 	if (!_pBuffer)
 		return S_FALSE;
 
-	_pCoreRenderer->DrawBuffer(_pBuffer);
+	_pRender3D->DrawBuffer(_pBuffer);
 
 	return S_OK;
 }

@@ -22,77 +22,69 @@ class CRender2D: public CInstancedObj, public IRender2D
 	
 	static const uint _sc_uiMaxBatchsPerFrame = 64;
 
-	std::vector<TVertex2>	
-				 _batchAccumulator;
+	std::vector<TVertex2> _batchAccumulator;
 	ICoreTexture *_pBatchCurTex;
-	E_CORE_RENDERER_DRAW_MODE
-				 _eBatchDrawMode;
-	bool		 _bBatchColor;
-	E_BATCH_MODE2D	
-				 _batchMode,
-				 _batchPreProfilerMode;
-	bool		 _batchNeedToRefreshBatches;
-	std::vector<ICoreGeometryBuffer *>
-				 _pBatchBuffers;
-	uint		 _batchBufferCurCounter;
-	bool		 _batchBufferReadyToRender;
+	E_CORE_RENDERER_DRAW_MODE _eBatchDrawMode;
+	bool _bBatchColor;
+	E_BATCH_MODE2D _batchMode, _batchPreProfilerMode;
+	bool _batchNeedToRefreshBatches;
+	std::vector<ICoreGeometryBuffer *> _pBatchBuffers;
+	uint _batchBufferCurCounter;
+	bool _batchBufferReadyToRender;
 	
-	bool		 _bInLocalBatchMode, _bLocalBatchUEP, _bLocalUEPWasTurnedOn;
-	uint		 _batchBuffersRepetedUseCounter,
-				 _batchBuffersNotModefiedPerFrameCounter,
-				 _batchsCount,
-				 _batchMaxSize,
-				 _batchMinSize;
+	bool _bInLocalBatchMode, _bLocalBatchUEP, _bLocalUEPWasTurnedOn;
+	uint _batchBuffersRepetedUseCounter,
+		_batchBuffersNotModefiedPerFrameCounter,
+		_batchsCount, _batchMaxSize, _batchMinSize;
 
-	inline void	 _BatchFlush();
-	inline bool  _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor);
+	inline void _BatchFlush();
+	inline bool _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor);
 
-	bool		_bInProfilerMode, _bCameraWasSet;
-	TMatrix4	_stCamTransform, _stPrevCamTransform;
-	TPoint2		_stCamScale;
+	bool _bInProfilerMode, _bCameraWasSet;
+	TMatrix4 _stCamTransform, _stPrevCamTransform;
+	TPoint2 _stCamScale;
 	
-	TMatrix4	_stPrevProjMat, _stPrevModelViewMat;
-	uint		_uiPrevViewPortX, _uiPrevViewPortY, _uiPrevViewPortW, _uiPrevViewPortH;
-	E_EFFECT_BLENDING_FLAGS
-				_ePrevBlendingMode;
+	TMatrix4 _stPrevProjMat, _stPrevModelViewMat;
+	uint _uiPrevViewPortX, _uiPrevViewPortY, _uiPrevViewPortW, _uiPrevViewPortH;
+	E_EFFECT_BLENDING_FLAGS _ePrevBlendingMode;
 
-	float		*_pBuffer;
-	uint		_uiBufferSize;
+	float *_pBuffer;
+	uint _uiBufferSize;
 
-	uint8		*_pPolyTrisBuffer;
-	uint		_uiPolyTrisBufferSize;
+	uint8 *_pPolyTrisBuffer;
+	uint _uiPolyTrisBufferSize;
 
-	float		_fLineWidth;
+	float _fLineWidth;
 
-	TColor4		_stColormix, _astVerticesColors[4];
+	TColor4 _stColormix, _astVerticesColors[4];
 
-	TPoint2		_stRotationPoint, _stScale,
-				_astVerticesOffset[4];
+	TPoint2	_stRotationPoint, _stScale,
+		_astVerticesOffset[4];
 
-	int			_iResCorWidth, _iResCorHeight;
-	bool		_iResCorConstProp;
-	float		_fResCorCoef;
+	int	_iResCorWidth, _iResCorHeight;
+	bool _bResCorConstProp;
+	float _fResCorCoef;
 
-	uint		_uiScreenWidth, _uiScreenHeight,
-				_uiCropX, _uiCropY,
-				_uiCropW, _uiCropH;
+	uint _uiScreenWidth, _uiScreenHeight,
+		_uiCropX, _uiCropY,
+		_uiCropW, _uiCropH;
 
-	bool		_bViewportChanged;
+	bool _bViewportChanged;
 
-	uint64		_ui64DrawDelay, _ui64DrawAverallDelay;
-	int			_iObjsDrawnCount;
+	uint64 _ui64DrawDelay, _ui64DrawAverallDelay;
+	uint _uiObjsDrawnCount;
 
-	int			_iProfilerState,
-				_iDoDrawBBoxes;
+	int _iProfilerState, _iDoDrawBBoxes;
 
-	void		_SetDefaultStates();
-	void		_Set2DProjMatrix(uint width, uint height);
+	void _SetDefaultStates();
+	void _Set2DProjMatrix(uint width, uint height);
 
 public:
 
 	CRender2D(uint uiInstIdx);
 	~CRender2D();
 
+	inline uint64 GetAverallDelay() const {return _ui64DrawAverallDelay;}
 	inline bool In2DMode() const {return _bIn2D;}
 	__forceinline bool BBoxInScreen(const float *vertices, bool rotated) const; /**< \note \a vertices size must be 8, x and y for each quad point. \a rotated true if quad is not AABB. */
 	__forceinline DGLE_RESULT DrawTexture(ITexture *tex, const TPoint2 &coord, const TVector2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags);
@@ -133,11 +125,11 @@ public:
 	DGLE_RESULT DGLE_API DrawTextureSprite(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, uint uiFrameIndex, float fAngle, E_EFFECT2D_FLAGS eFlags);
 
 	DGLE_RESULT DGLE_API DrawTriangles(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
-	DGLE_RESULT DGLE_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, bool bClip, float fFovY, E_EFFECT2D_FLAGS eFlags);
+	DGLE_RESULT DGLE_API DrawMesh(IMesh *pMesh, ITexture *pTexture, const TPoint2 &stCoords, const TVector3 &stDimensions, const TVector3 &stAxis, float fAngle, E_EFFECT2D_FLAGS eFlags, bool bClip, float fFovY, bool bClearDepthBuffer);
 
 	DGLE_RESULT DGLE_API Draw(ITexture *pTexture, const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawBuffer(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, const TRectF &stAABB, E_EFFECT2D_FLAGS eFlags);
-	DGLE_RESULT DGLE_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4x4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY);
+	DGLE_RESULT DGLE_API DrawBuffer3D(ITexture *pTexture, ICoreGeometryBuffer *pBuffer, E_EFFECT2D_FLAGS eFlags, const TMatrix4x4 &stTransform, const TPoint3 &stCenter, const TVector3 &stExtents, bool bClip, float fFovY, bool bClearDepthBuffer);
 
 	DGLE_RESULT DGLE_API SetRotationPoint(const TPoint2 &stCoords);
 	DGLE_RESULT DGLE_API SetScale(const TPoint2 &stScale);

@@ -173,9 +173,9 @@ bool CPluginCore::_LoadTexturePNG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 	bool result;
 
 	if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-		result = _pResMan->CreateTexture(prTex, data, width, height, TDF_RGBA8, TCF_DEFAULT, eParams) == S_OK;
+		result = _pResMan->CreateTexture(prTex, data, width, height, TDF_RGBA8, TCF_DEFAULT, eParams, NULL, false) == S_OK;
 	else
-		result = _pResMan->CreateTexture(prTex, data, width, height, TDF_RGB8, width % 4 != 0 ? TCF_PIXEL_ALIGNMENT_1 : TCF_DEFAULT, eParams) == S_OK;
+		result = _pResMan->CreateTexture(prTex, data, width, height, TDF_RGB8, width % 4 != 0 ? TCF_PIXEL_ALIGNMENT_1 : TCF_DEFAULT, eParams, NULL, false) == S_OK;
 
 	delete[] data;
 
@@ -303,7 +303,7 @@ bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 
 	delete[] input;
 
-	bool result = _pResMan->CreateTexture(prTex, output, width, height, TDF_RGB8, width % 4 != 0 ? TCF_PIXEL_ALIGNMENT_1 : TCF_DEFAULT, eParams) == S_OK;
+	bool result = _pResMan->CreateTexture(prTex, output, width, height, TDF_RGB8, width % 4 != 0 ? TCF_PIXEL_ALIGNMENT_1 : TCF_DEFAULT, eParams, NULL, false) == S_OK;
 
 	delete[] output;
 
@@ -498,7 +498,7 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 		return false;
 	}
 
-	bool result = _pResMan->CreateTexture(prTex, data, header.dwWidth, header.dwHeight, texture_format, cr_flags, eParams) == S_OK;
+	bool result = _pResMan->CreateTexture(prTex, data, header.dwWidth, header.dwHeight, texture_format, cr_flags, eParams, NULL, false) == S_OK;
 
 	delete[] data;
 

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		01.05.2012 (c)Korotkov Andrey
+\date		23.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,11 +13,12 @@ See "DGLE.h" for more details.
 #include "ResourceManager.h"
 
 class CRender2D;
+class CRender3D;
 
 class CTexture: public CInstancedObj, public ITexture
 {
-	ICoreRenderer *_pCoreRenderer;
 	CRender2D *_pRender2D;
+	CRender3D *_pRender3D;
 	ICoreTexture *_pCoreTexture;
 	uint _uiWidth, _uiHeight, _uiFrameWidth, _uiFrameHeight;
 	float _quad[16];
@@ -37,7 +38,7 @@ public:
 	DGLE_RESULT DGLE_API Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex);
 	DGLE_RESULT DGLE_API Draw3D(uint uiFrameIndex);
 	
-	DGLE_RESULT DGLE_API Bind(uint uiMTextureLayer);
+	DGLE_RESULT DGLE_API Bind(uint uiTextureLayer);
 
 	IENGINE_BASE_OBJECT_IMPLEMENTATION(EOT_TEXTURE)
 	IDGLE_BASE_IMPLEMENTATION(ITexture, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))

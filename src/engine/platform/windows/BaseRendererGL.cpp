@@ -87,9 +87,9 @@ bool CBaseRendererGL::Initialize()
 					0, 0
 				};
 
-				float	fa_attributes[] = {0, 0};
-				uint	formats_cnt;
-				int		tmp_pixel_format;
+				float fa_attributes[] = {0, 0};
+				uint formats_cnt;
+				int tmp_pixel_format;
 				
 				wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
 				int valid = wglChoosePixelFormatARB(temp_win_dc, ia_attributes, fa_attributes, 1, &tmp_pixel_format, &formats_cnt);
@@ -108,10 +108,10 @@ bool CBaseRendererGL::Initialize()
 		}
 
 		if (
-		!wglMakeCurrent(NULL, NULL)||
-		(temp_win_rc!=NULL&&!wglDeleteContext(temp_win_rc))||
-		(temp_win_dc!=NULL&&!ReleaseDC(temp_win_handle, temp_win_dc))||
-		(temp_win_handle!=NULL&&!DestroyWindow(temp_win_handle))
+		!wglMakeCurrent(NULL, NULL) ||
+		(temp_win_rc != NULL && !wglDeleteContext(temp_win_rc)) ||
+		(temp_win_dc != NULL && !ReleaseDC(temp_win_handle, temp_win_dc)) ||
+		(temp_win_handle != NULL && !DestroyWindow(temp_win_handle))
 		)
 			LOG("Can't free resources after performing OpenGL MSAA preinit routine.", LT_WARNING);
 	}
@@ -151,7 +151,7 @@ bool CBaseRendererGL::Initialize()
 
 bool CBaseRendererGL::MakeCurrent()
 {
-	if(wglGetCurrentContext() != _hRC)
+	if (wglGetCurrentContext() != _hRC)
 		return wglMakeCurrent(_hDC, _hRC) != FALSE;
 	else
 		return true;

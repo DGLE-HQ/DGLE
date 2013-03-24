@@ -17,10 +17,10 @@ class CPluginCore : public IPlugin
 
 private:
 	
-	uint				 _uiInstIdx;
-	IEngineCore			*_pEngineCore;
+	uint _uiInstIdx;
+	IEngineCore *_pEngineCore;
 
-	int					 _iDrawProfiler;
+	int _iDrawProfiler;
 
 	void _Render();
 	void _Update(uint64 ui64DeltaTime);

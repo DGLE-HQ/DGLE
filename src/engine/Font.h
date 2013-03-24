@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		05.05.2012 (c)Korotkov Andrey
+\date		23.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -12,9 +12,13 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "ResourceManager.h"
 
+class CRender2D;
+class CRender3D;
+
 class CBitmapFont: public CInstancedObj, public IBitmapFont
 {
 public:
+
 #pragma pack(push, 1)
 	struct TCharBox
 	{
@@ -31,17 +35,21 @@ public:
 
 private:
 
-	float		*_pBuffer;
-	uint		_uiBufferSize;
+	CRender2D *_pRender2D;
+	CRender3D *_pRender3D;
 
-	float		 _fScale;
+	float *_pBuffer;
+	uint _uiBufferSize;
+
+	float _fScale;
  
-	TFontHeader	 _stHeader;
-	TCharBox	 _astChars[224];
+	TFontHeader	_stHeader;
+	TCharBox _astChars[224];
 
-	ITexture	*_pTex;
+	ITexture *_pTex;
 
 public:
+
 	CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars);
 	~CBitmapFont();
 

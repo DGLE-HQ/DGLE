@@ -21,7 +21,6 @@ IEngineCore *pEngineCore = NULL;
 IResourceManager *pResMan = NULL;
 IRender *pRender = NULL;
 IRender2D *pRender2D = NULL;
-IRender3D *pRender3D = NULL;
 IInput *pInput = NULL;
 
 TPoint2 stMouseOnScreen, stMouseInCamera;
@@ -61,7 +60,6 @@ void DGLE_API Init(void *pParameter)
 	pEngineCore->GetSubSystem(ESS_RENDER,(IEngineSubSystem *&)pRender);
 	
 	pRender->GetRender2D(pRender2D);
-	pRender->GetRender3D(pRender3D);
 
 	pResMan->Load(RESOURCE_PATH"sounds\\helicopter.wav", (IEngineBaseObject *&)pHelicopter);
 	pHelicopter->PlayEx(pHelicopterSndChan, SSP_LOOPED);
@@ -72,13 +70,13 @@ void DGLE_API Init(void *pParameter)
 	pResMan->Load(RESOURCE_PATH"meshes\\house\\tex_diffuse.jpg", (IEngineBaseObject *&)pTexHouse, TEXTURE_LOAD_DEFAULT_3D);
 	pResMan->Load(RESOURCE_PATH"meshes\\house\\house.dmd", (IEngineBaseObject *&)pMeshHouse, MMLF_FORCE_MODEL_TO_MESH);
 
-	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_1.png", (IEngineBaseObject *&)pTexTree1, TEXTURE_LOAD_DEFAULT_3D);
+	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_1.png", (IEngineBaseObject *&)pTexTree1, TEXTURE_LOAD_DEFAULT_2D);
 	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_1.dmd", (IEngineBaseObject *&)pMeshTree1, MMLF_FORCE_MODEL_TO_MESH);
 
-	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_2.png", (IEngineBaseObject *&)pTexTree2, TEXTURE_LOAD_DEFAULT_3D);
+	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_2.png", (IEngineBaseObject *&)pTexTree2, TEXTURE_LOAD_DEFAULT_2D);
 	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_2.dmd", (IEngineBaseObject *&)pMeshTree2, MMLF_FORCE_MODEL_TO_MESH);
 
-	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_3.png", (IEngineBaseObject *&)pTexTree3, TEXTURE_LOAD_DEFAULT_3D);
+	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_3.png", (IEngineBaseObject *&)pTexTree3, TEXTURE_LOAD_DEFAULT_2D);
 	pResMan->Load(RESOURCE_PATH"meshes\\trees\\tree_3.dmd", (IEngineBaseObject *&)pMeshTree3, MMLF_FORCE_MODEL_TO_MESH);
 
 	pResMan->Load(RESOURCE_PATH"meshes\\copter\\copter.png", (IEngineBaseObject *&)pTexCopter, TEXTURE_LOAD_DEFAULT_3D);
@@ -209,9 +207,6 @@ void DGLE_API Render(void *pParameter)
 	pRender2D->DrawMesh(pMeshTree2, pTexTree2, TPoint2(50.f, 750.f), TVector3(300.f, 300.f, 300.f));
 	pRender2D->DrawMesh(pMeshTree3, pTexTree3, TPoint2(500.f, 150.f), TVector3(400.f, 400.f, 500.f));
 
-	// Need to clear depth buffer to draw copter model over houses and trees
-	pRender3D->ClearDepthBuffer();
-
 	// Draw copter model and rotor sprite
 	const TPoint2 vint_pos(stCopterPos.x - 200.f + cosf(TO_RAD(fCopterAngle)) * 80.f, stCopterPos.y - 200.f + sinf(TO_RAD(fCopterAngle)) * 80.f);
 	pRender2D->DrawTexture(pMeshCopterShadow, stCopterPos - TPoint2(200.f, 200.f), TVector2(600.f, 600.f), fCopterAngle, (E_EFFECT2D_FLAGS)(EF_FLIP_VERTICALLY | EF_COLOR_MIX | EF_BLEND));
@@ -220,7 +215,7 @@ void DGLE_API Render(void *pParameter)
 	pRender2D->SetColorMix(ColorBlack(uiCounter % 3 == 2 ? 64 : 16));
 	pRender2D->DrawTexture(pRotorShadow, vint_pos + TPoint2(100.f, 100.f), TVector2(400.f, 400.f), 0.f, (E_EFFECT2D_FLAGS)(EF_COLOR_MIX | EF_BLEND));
 
-	pRender2D->DrawMesh(pMeshCopter, pTexCopter, stCopterPos, TPoint3(600.f, 600.f, 600.f), TVector3(0.f, 0.f, 1.f), fCopterAngle, false);
+	pRender2D->DrawMesh(pMeshCopter, pTexCopter, stCopterPos, TPoint3(600.f, 600.f, 600.f), TVector3(0.f, 0.f, 1.f), fCopterAngle, EF_DEFAULT, false, 90.f, true);
 	pRender2D->DrawTexture(pTexRotor, vint_pos, TVector2(400.f, 400.f), uiCounter * 25.f);
 
 	pRender2D->End2D();

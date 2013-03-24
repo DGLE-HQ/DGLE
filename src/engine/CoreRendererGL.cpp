@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		11.09.2012 (c)Andrey Korotkov
+\date		23.03.2013 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -568,32 +568,38 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
 	if (GLEW_EXT_texture_filter_anisotropic) 
 		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &_iMaxAnisotropy);
 
+	if (GLEW_EXT_framebuffer_multisample)
+		glGetIntegerv(GL_MAX_SAMPLES_EXT, &_iMaxFBOSamples);
+	else
+		_iMaxFBOSamples = 1;
+
+	_bIsGLSLSupported = false; /*TEMP*/ //GLEW_ARB_shader_objects && GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader && GLEW_ARB_shading_language_100;
+
 	if (GLEW_ARB_multitexture) 
 	{
-		if (GLEW_ARB_shading_language_100)
+		if (_bIsGLSLSupported)
 			glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &_iMaxTexUnits);
 		else
 			glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &_iMaxTexUnits);
 	}
 	else
 		_iMaxTexUnits = 1;
-
-	if (GLEW_EXT_framebuffer_multisample)
-		glGetIntegerv(GL_MAX_SAMPLES_EXT, &_iMaxFBOSamples);
-	else
-		_iMaxFBOSamples = 1;
-
-	_bIsGLSLSupported = GLEW_ARB_shader_objects && GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader && GLEW_ARB_shading_language_100;
-
+	
 	_pStateMan = _pCachedStateMan = new CStateManager<true>(InstIdx(), _iMaxTexUnits);
 
 	_pStateMan->glEnable(GL_TEXTURE_2D); // Let it be always enabled for the zero texturing layer.
 
-	// ToDo: Switch off for programmable pipeline.
-	glGetIntegerv(GL_MAX_LIGHTS, &_iMaxLight);
-	_pStateMan->glEnable(GL_COLOR_MATERIAL);
-	_pStateMan->glEnable(GL_NORMALIZE);
-	//
+	if (!_bIsGLSLSupported)
+	{
+		glGetIntegerv(GL_MAX_LIGHTS, &_iMaxLights);
+		glEnable(GL_NORMALIZE);
+		_pFFP = new CFixedFunctionPipeline();
+	}
+	else
+	{
+		_pFFP = NULL;
+		_iMaxLights = 8; /*TEMP*/
+	}
 
 	_stCurrentState.clActivatedTexUnits.resize(_iMaxTexUnits);
 
@@ -643,6 +649,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 		_clFrameBuffers.clear();
 	}
 
+	delete _pFFP;
 	delete _pCachedStateMan;
 
 	DGLE_RESULT ret = CBaseRendererGL::Finalize() ? S_OK : E_FAIL;
@@ -672,9 +679,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Clear(bool bColor, bool bDepth, bool bSten
 {
 	GLbitfield mask = 0;
 
-	if (bColor)		mask |= GL_COLOR_BUFFER_BIT;
-	if (bDepth)		mask |= GL_DEPTH_BUFFER_BIT;
-	if (bStencil)	mask |= GL_STENCIL_BUFFER_BIT;
+	if (bColor)	mask |= GL_COLOR_BUFFER_BIT;
+	if (bDepth)	mask |= GL_DEPTH_BUFFER_BIT;
+	if (bStencil) mask |= GL_STENCIL_BUFFER_BIT;
 
 	glClear(mask);
 
@@ -1062,11 +1069,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 		break;
 	case TDF_DXT1:
 		tex_format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-		bytes_per_pixel = 8; //per block
+		bytes_per_pixel = 8; // per block
 		break;
 	case TDF_DXT5:
 		tex_format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-		bytes_per_pixel = 16; //per block
+		bytes_per_pixel = 16; // per block
 		break;
 	case TDF_DEPTH_COMPONENT24:
 		tex_format = GL_DEPTH_COMPONENT;
@@ -1163,7 +1170,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 	{
 		int i_mipmaps = 0, max_side = max(uiWidth, uiHeight)/2;
 
-		//This loop is more correct because of NPOT textures than calculation like this: (int)(log((float)max(uiWidth, uiHeight))/log(2.f))
+		// This loop is more correct because of NPOT textures than calculation like this: log(max(uiWidth, uiHeight)) / log(2)
 		while (max_side > 0)
 		{
 			max_side /= 2;
@@ -1479,7 +1486,6 @@ inline GLenum CCoreRendererGL::_GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) c
 	return mode;
 }
 
-#ifdef USE_LEGACY_DRAW
 __forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
 {
 	if (_bVerticesBufferBindedFlag || uiCount > _sc_uiMaxVerticesCountForLegacy || stDrawDesc.pIndexBuffer != NULL ||
@@ -1550,7 +1556,6 @@ __forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc,
 
 	return true;
 }
-#endif
 
 DGLE_RESULT DGLE_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
 {
@@ -1558,10 +1563,8 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CO
 
 	_TriangleStatistics(eMode, uiCount);
 
-#ifdef USE_LEGACY_DRAW
 	if (_LegacyDraw(stDrawDesc, eMode, uiCount))
 		return S_OK;
-#endif
 
 	++_uiOverallDrawSetups;
 
@@ -1686,7 +1689,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetColor(const TColor4 &stColor)
 
 DGLE_RESULT DGLE_API CCoreRendererGL::ToggleBlendState(bool bEnabled)
 {
-	_stCurrentState.stBlendDesc.bEnable = bEnabled;
+	_stCurrentState.stBlendDesc.bEnabled = bEnabled;
 
 	if (bEnabled)
 		_pStateMan->glEnable(GL_BLEND);
@@ -1698,7 +1701,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ToggleBlendState(bool bEnabled)
 
 DGLE_RESULT DGLE_API CCoreRendererGL::ToggleAlphaTestState(bool bEnabled)
 {
-	_stCurrentState.stRasterDesc.bAlphaTestEnable = bEnabled;
+	_stCurrentState.stRasterDesc.bAlphaTestEnabled = bEnabled;
 
 	if (bEnabled)
 		_pStateMan->glEnable(GL_ALPHA_TEST);
@@ -1727,7 +1730,7 @@ inline GLenum CCoreRendererGL::_GetGLBlendFactor(E_BLEND_FACTOR factor) const
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetBlendState(const TBlendStateDesc &stState)
 {
-	if (stState.bEnable)
+	if (stState.bEnabled)
 		_pStateMan->glEnable(GL_BLEND);
 	else
 		_pStateMan->glDisable(GL_BLEND);
@@ -1789,7 +1792,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTex
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetDepthStencilState(const TDepthStencilDesc &stState)
 {
-	if (stState.bDepthTestEnable)
+	if (stState.bDepthTestEnabled)
 		_pStateMan->glEnable(GL_DEPTH_TEST);
 	else
 		_pStateMan->glDisable(GL_DEPTH_TEST);
@@ -1814,14 +1817,14 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetDepthStencilState(TDepthStencilDesc &st
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetRasterizerState(const TRasterizerStateDesc &stState)
 {
-	if (stState.bAlphaTestEnable)
+	if (stState.bAlphaTestEnabled)
 		_pStateMan->glEnable(GL_ALPHA_TEST);
 	else
 		_pStateMan->glDisable(GL_ALPHA_TEST);
 
 	_pStateMan->glAlphaFunc(_GetGLComparsionMode(stState.eAlphaTestFunc), stState.fAlphaTestRefValue);
 
-	if (stState.bScissorEnable)
+	if (stState.bScissorEnabled)
 		_pStateMan->glEnable(GL_SCISSOR_TEST);
 	else
 		_pStateMan->glDisable(GL_SCISSOR_TEST);
@@ -1870,13 +1873,19 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Present()
 	return S_OK;
 }
 
+DGLE_RESULT DGLE_API CCoreRendererGL::GetFixedFunctionPipelineAPI(IFixedFunctionPipeline *&prFFP)
+{
+	prFFP = _pFFP;
+	return _bIsGLSLSupported ? E_NOTIMPL : S_OK;
+}
+
 DGLE_RESULT DGLE_API CCoreRendererGL::GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue)
 {
 	switch (eMetric)
 	{
 	case CRMT_MAX_TEXTURE_RESOLUTION: iValue = _iMaxTexResolution; break;
 	case CRMT_MAX_ANISOTROPY_LEVEL: iValue = _iMaxAnisotropy; break;
-	case CRMT_MAX_LIGHTS_PER_PASS: iValue = _iMaxLight; break;
+	case CRMT_MAX_LIGHTS_PER_PASS: iValue = _iMaxLights; break;
 	case CRMT_MAX_TEXTURE_LAYERS: iValue = _iMaxTexUnits; break;
 	default:
 		iValue = 0;
@@ -1890,25 +1899,28 @@ DGLE_RESULT DGLE_API CCoreRendererGL::IsFeatureSupported(E_CORE_RENDERER_FEATURE
 {
 	switch (eFeature)
 	{
-	case CRSF_BUILTIN_FULLSCREEN_MODE : bIsSupported = false; break;
-	case CRSF_BUILTIN_STATE_FILTER : bIsSupported = true; break;
-	case CRSF_MULTISAMPLING : bIsSupported = GLEW_ARB_multisample == GL_TRUE; break;
-	case CRDF_VSYNC : 
+	case CRFT_BUILTIN_FULLSCREEN_MODE : bIsSupported = false; break;
+	case CRFT_BUILTIN_STATE_FILTER : bIsSupported = true; break;
+	case CRFT_MULTISAMPLING : bIsSupported = GLEW_ARB_multisample == GL_TRUE; break;
+	case CRFT_VSYNC : 
 #if defined(PLATFORM_WINDOWS)
-		bIsSupported = WGLEW_EXT_swap_control == GL_TRUE; 
+		bIsSupported = WGLEW_EXT_swap_control == GL_TRUE;
+#else
+#error Platform not implemented.
 #endif
 		break;
-	case CRDF_PROGRAMMABLE_PIPELINE : bIsSupported = _bIsGLSLSupported == GL_TRUE; break;
-	case CRSF_BGRA_DATA_FORMAT : bIsSupported = GLEW_EXT_bgra == GL_TRUE; break;
-	case CRSF_TEXTURE_COMPRESSION : bIsSupported = GLEW_ARB_texture_compression == GL_TRUE; break;
-	case CRSF_NON_POWER_OF_TWO_TEXTURES : bIsSupported = GLEW_ARB_texture_non_power_of_two == GL_TRUE; break;
-	case CRSF_DEPTH_TEXTURES : bIsSupported = GLEW_ARB_depth_texture == GL_TRUE; break;
-	case CRSF_TEXTURE_ANISOTROPY : bIsSupported = GLEW_EXT_texture_filter_anisotropic == GL_TRUE; break;
-	case CRSF_TEXTURE_MIPMAP_GENERATION : bIsSupported = GLEW_SGIS_generate_mipmap == GL_TRUE || GLEW_ARB_framebuffer_object == GL_TRUE; break;
-	case CRDF_TEXTURE_MIRRORED_REPEAT : bIsSupported = GLEW_VERSION_1_4 == GL_TRUE; break;
-	case CRDF_TEXTURE_MIRROR_CLAMP : bIsSupported = GLEW_EXT_texture_mirror_clamp == GL_TRUE; break;
-	case CRDF_GEOMETRY_BUFFER : bIsSupported = GLEW_ARB_vertex_buffer_object == GL_TRUE; break;
-	case CRDF_FRAME_BUFFER :  bIsSupported = GLEW_EXT_framebuffer_object == GL_TRUE && GL_EXT_packed_depth_stencil == GL_TRUE ; break;
+	case CRFT_PROGRAMMABLE_PIPELINE : bIsSupported = _bIsGLSLSupported; break;
+	case CRFT_LEGACY_FIXED_FUNCTION_PIPELINE_API : bIsSupported = _bIsGLSLSupported ? false : true; break;
+	case CRFT_BGRA_DATA_FORMAT : bIsSupported = GLEW_EXT_bgra == GL_TRUE; break;
+	case CRFT_TEXTURE_COMPRESSION : bIsSupported = GLEW_ARB_texture_compression == GL_TRUE; break;
+	case CRFT_NON_POWER_OF_TWO_TEXTURES : bIsSupported = GLEW_ARB_texture_non_power_of_two == GL_TRUE; break;
+	case CRFT_DEPTH_TEXTURES : bIsSupported = GLEW_ARB_depth_texture == GL_TRUE; break;
+	case CRFT_TEXTURE_ANISOTROPY : bIsSupported = GLEW_EXT_texture_filter_anisotropic == GL_TRUE; break;
+	case CRFT_TEXTURE_MIPMAP_GENERATION : bIsSupported = GLEW_SGIS_generate_mipmap == GL_TRUE || GLEW_ARB_framebuffer_object == GL_TRUE; break;
+	case CRFT_TEXTURE_MIRRORED_REPEAT : bIsSupported = GLEW_VERSION_1_4 == GL_TRUE; break;
+	case CRFT_TEXTURE_MIRROR_CLAMP : bIsSupported = GLEW_EXT_texture_mirror_clamp == GL_TRUE; break;
+	case CRFT_GEOMETRY_BUFFER : bIsSupported = GLEW_ARB_vertex_buffer_object == GL_TRUE; break;
+	case CRFT_FRAME_BUFFER :  bIsSupported = GLEW_EXT_framebuffer_object == GL_TRUE && GL_EXT_packed_depth_stencil == GL_TRUE ; break;
 
 	default: 
 		bIsSupported = false;
@@ -1931,15 +1943,15 @@ void CCoreRendererGL::_ProfilerEventHandler() const
 	{
 		if (_bStateFilterEnabled)
 		{
-			Core()->RenderProfilerText(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? TColor4(255, 0, 0, 255) : TColor4());
-			Core()->RenderProfilerText(("Overall triangles:" + UIntToStr(_uiOverallTrianglesCount)).c_str(), TColor4());
+			Core()->RenderProfilerText(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? ColorRed() : ColorWhite());
+			Core()->RenderProfilerText(("Overall triangles:" + UIntToStr(_uiOverallTrianglesCount)).c_str(), ColorWhite());
 
 			string str("Draw states setups (unfiltered/overall):" + UIntToStr(_uiUnfilteredDrawSetups) + '/' + UIntToStr(_uiOverallDrawSetups));
 
 			if (_uiOverallDrawSetups)
 				str.append(" (").append(UIntToStr((_uiOverallDrawSetups - _uiUnfilteredDrawSetups) * 100 / _uiOverallDrawSetups)).append("% redundant)");
 
-			Core()->RenderProfilerText(str.c_str(), TColor4());
+			Core()->RenderProfilerText(str.c_str(), ColorWhite());
 		}
 
 		_pStateMan->OutputProfileSummary();
@@ -1982,8 +1994,6 @@ void DGLE_API CCoreRendererGL::_s_EventsHandler(void *pParameter, IBaseEvent *pE
 		PTHIS(CCoreRendererGL)->_KillDeadFBOs();
 		break;
 	}
-
-	
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::GetRendererType(E_CORE_RENDERER_TYPE &eType)

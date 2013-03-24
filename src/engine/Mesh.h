@@ -12,9 +12,11 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "ResourceManager.h"
 
+class CRender3D;
+
 class CMesh: public CInstancedObj, public IMesh
 {
-	ICoreRenderer *_pCoreRenderer;
+	CRender3D *_pRender3D;
 	IModel *_pOwnerModel;
 	ICoreGeometryBuffer *_pBuffer;
 	TPoint3 _stCenter;

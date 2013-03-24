@@ -293,6 +293,8 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	_pDefBmpFnt = (IBitmapFont*)_pDefBmFntDummy;
 #endif
 
+	_pSysBmpFnt = _pDefBmpFnt;
+
 	RegisterDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject*)_pDefBmpFnt);
 
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
@@ -321,11 +323,11 @@ void CResourceManager::FreeAllResources()
 		_resList.begin()->pObj->Free();
 	}
 
-	delete ((CMesh*)_pDefMesh);
-	delete ((CModel*)_pDefModel);
+	delete (CMesh*)_pDefMesh;
+	delete (CModel*)_pDefModel;
 	delete (CMaterial*)_pDefMaterial;
-	delete ((CTexture*)_pDefTex);
-	delete ((CBitmapFont*)_pDefBmpFnt);
+	delete (CTexture*)_pDefTex;
+	delete (CBitmapFont*)_pDefBmpFnt;
 
 	delete _pDefBmFntDummy;
 	delete _pDefSSmpDummy;
@@ -711,7 +713,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 	}
 
 	bool b_feature_supported;
-	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_COMPRESSION, b_feature_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_COMPRESSION, b_feature_supported);
 
 	if (!b_feature_supported && b_is_compressed)
 	{
@@ -722,7 +724,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	bool b_been_swaped = false;
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_BGRA_DATA_FORMAT, b_feature_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_BGRA_DATA_FORMAT, b_feature_supported);
 
 	if (!b_feature_supported && (eDataFormat == TDF_BGR8 || eDataFormat == TDF_BGRA8))
 	{
@@ -751,7 +753,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, i_max_tex_res);
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_NON_POWER_OF_TWO_TEXTURES, b_feature_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_NON_POWER_OF_TWO_TEXTURES, b_feature_supported);
 
 	if (uiWidth > (uint)i_max_tex_res)
 		i_new_w = i_max_tex_res;
@@ -806,7 +808,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 		p_data_in = p_out_dat;
 	}
 
-	_pCoreRenderer->IsFeatureSupported(CRSF_TEXTURE_MIPMAP_GENERATION, b_feature_supported);
+	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIPMAP_GENERATION, b_feature_supported);
 
 	if (!b_feature_supported && eLoadFlags & TLF_GENERATE_MIPMAPS && !(eCreationFlags & TCF_MIPMAPS_PRESENTED))
 	{

@@ -49,6 +49,7 @@ public:
 
 	DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor);
 	DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor);
+	DGLE_RESULT DGLE_API ClearColorBuffer();
 	DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType);
 	DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea);	
 	DGLE_RESULT DGLE_API DisableScissor();

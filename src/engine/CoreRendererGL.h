@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		19.08.2012 (c)Andrey Korotkov
+\date		23.03.2013 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,9 +15,9 @@ See "DGLE.h" for more details.
 
 #if defined(PLATFORM_WINDOWS)
 #	include "platform\windows\BaseRendererGL.h"
-#	define USE_LEGACY_DRAW
 #endif
 
+#include "FixedFunctionPipelineGL.h"
 #include "StateManagerGL.h"
 
 struct TState
@@ -61,12 +61,14 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 
 	TCrRndrInitResults _stInitResults;
 
+	CFixedFunctionPipeline *_pFFP;
+
 	CStateManager<false> _clPassThroughStateMan;
 	CStateManager<true>	*_pCachedStateMan;
 	IStateManager *_pStateMan;
 
 	std::string _strOpenGLExtensions;
-	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLight, _iMaxTexUnits,
+	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLights, _iMaxTexUnits,
 		_iMaxFBOSamples;
 	bool _bIsGLSLSupported;
 
@@ -93,9 +95,7 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	inline GLenum _GetGLBlendFactor(E_BLEND_FACTOR factor) const;
 	inline GLenum _GetGLComparsionMode(E_COMPARISON_FUNC mode) const;
 	inline GLenum _GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) const;
-#ifdef USE_LEGACY_DRAW
 	__forceinline bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
-#endif
 	inline void _TriangleStatistics(E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	void _ProfilerEventHandler() const;
 	void _KillDeadFBOs();
@@ -145,6 +145,7 @@ public:
 	DGLE_RESULT DGLE_API SetRasterizerState(const TRasterizerStateDesc &stState);
 	DGLE_RESULT DGLE_API GetRasterizerState(TRasterizerStateDesc &stState);
 	DGLE_RESULT DGLE_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer);
+	DGLE_RESULT DGLE_API GetFixedFunctionPipelineAPI(IFixedFunctionPipeline *&prFFP);
 	DGLE_RESULT DGLE_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue);
 	DGLE_RESULT DGLE_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported);
 	DGLE_RESULT DGLE_API GetRendererType(E_CORE_RENDERER_TYPE &eType);

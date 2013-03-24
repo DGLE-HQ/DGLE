@@ -98,6 +98,9 @@
     <ClCompile Include="..\..\..\src\engine\Material.cpp">
       <Filter>Render\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\FixedFunctionPipelineGL.cpp">
+      <Filter>Render\CoreRenderGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
@@ -218,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\Material.h">
       <Filter>Render\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\FixedFunctionPipelineGL.h">
+      <Filter>Render\CoreRenderGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
