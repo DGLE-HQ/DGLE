@@ -593,8 +593,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API QuitEngine() = 0;
 
 		virtual DGLE_RESULT DGLE_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin) = 0;	
-		virtual DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin) = 0;	
-		virtual DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) = 0;	
+		virtual DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin) = 0;
+		virtual DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) = 0;
 
 		virtual DGLE_RESULT DGLE_API AddUserCallback(IUserCallback *pUserCallback) = 0;
 		virtual DGLE_RESULT DGLE_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
@@ -619,7 +619,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle) = 0;
 
 		virtual DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin) = 0;
-		virtual DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight) = 0;		
+		virtual DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight) = 0;
 		virtual DGLE_RESULT DGLE_API AllowPause(bool bAllow) = 0;
 
 		virtual DGLE_RESULT DGLE_API AddToLog(const char *pcTxt) = 0;
@@ -632,7 +632,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleUnregister(const char *pcCommandName) = 0;
 
-		virtual DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) = 0;	
+		virtual DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) = 0;
 	};
 
 //Resource Manager SubSystem//
@@ -761,16 +761,16 @@ namespace DGLE
 
 	enum E_GET_POINT3_FLAG
 	{
-		GP3F_FROM_DEPTH_BUFFER	= 0,
+		GP3F_FROM_DEPTH_BUFFER = 0,
 		GP3F_FROM_FAR_PLANE,
 		GP3F_FROM_NEAR_PLANE
 	};
 
 	enum E_EFFECT_BLENDING_FLAGS
 	{
-		EBF_NORMAL	= 0x00000001, 
-		EBF_ADD		= 0x00000002, 
-		EBF_MULT	= 0x00000004, 
+		EBF_NORMAL	= 0x00000001,
+		EBF_ADD		= 0x00000002,
+		EBF_MULT	= 0x00000004,
 		EBF_BLACK	= 0x00000008,
 		EBF_WHITE	= 0x00000010,
 		EBF_MASK	= 0x00000020
@@ -787,7 +787,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API ClearColorBuffer() = 0;
 		virtual DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
-		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;	
+		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;
 		virtual DGLE_RESULT DGLE_API DisableScissor() = 0;
 		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0; // if not CRDF_FRAME_BUFFER than every SetRenderTarget(NULL) screen will be cleared
 		
@@ -861,7 +861,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-	
+
 		// 2D Sprites
 		virtual DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawTextureCropped(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, const TRectF &stTexCropRect, float fAngle = 0.f, E_EFFECT2D_FLAGS eFlags = EF_DEFAULT) = 0;
@@ -883,7 +883,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesOffsets(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API GetRotationPoint(TPoint2 &stCoords) = 0;
 		virtual DGLE_RESULT DGLE_API GetScale(TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetColorMix(TColor4 &stColor) = 0;
@@ -894,13 +894,6 @@ namespace DGLE
 
 	//Render3D interface//
 
-	enum E_PUSH_STATES_FLAGS
-	{
-		PSF_ALL		= 0x00000000,
-		PSF_MATRIX	= 0x00000001,
-		PSF_STATES	= 0x00000002
-	};
-
 	// {5275F43A-4FF9-48b2-B88E-B2F842461AB3}
 	static const GUID IID_IRender3D = 
 	{ 0x5275f43a, 0x4ff9, 0x48b2, { 0xb8, 0x8e, 0xb2, 0xf8, 0x42, 0x46, 0x1a, 0xb3 } };
@@ -910,12 +903,13 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API SetPerspective(float fFovAngle, float fZNear, float fZFar) = 0;
 		virtual DGLE_RESULT DGLE_API GetPerspective(float &fFovAngle, float &fZNear, float &fZFar) = 0;
-	
+
 		virtual DGLE_RESULT DGLE_API BindTexture(ITexture *pTex, uint uiTextureLayer) = 0;
 		virtual DGLE_RESULT DGLE_API GetTexture(ITexture *&prTex, uint uiTextureLayer) = 0;
-		
+
+		virtual DGLE_RESULT DGLE_API GetMaxLightsPerPassCount(uint &uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API UpdateLight(ILight *pLight) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat) = 0;
 		virtual DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat) = 0;
 
@@ -943,12 +937,15 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetFogDensity(float &fDensity) = 0;
 
-		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, bool bMult) = 0;
+		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix) = 0;
+		virtual DGLE_RESULT DGLE_API MultMatrix(const TMatrix4x4 &stMatrix) = 0;
+		virtual DGLE_RESULT DGLE_API PushMatrix() = 0;
+		virtual DGLE_RESULT DGLE_API PopMatrix() = 0;
 		virtual DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix) = 0;
 
 		virtual DGLE_RESULT DGLE_API DrawAxes(float fSize = 1.f, bool bNoDepthTest = false) = 0;
 
-		virtual DGLE_RESULT DGLE_API PushStates(E_PUSH_STATES_FLAGS eStates = PSF_MATRIX) = 0;
+		virtual DGLE_RESULT DGLE_API PushStates() = 0;
 		virtual DGLE_RESULT DGLE_API PopStates() = 0;
 
 		virtual DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag = GP3F_FROM_DEPTH_BUFFER) = 0;
@@ -989,7 +986,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetIntensity(float fIntensity) = 0;
 		virtual DGLE_RESULT DGLE_API SetSpotAngle(float fAngle) = 0;
 		virtual DGLE_RESULT DGLE_API SetType(E_LIGHT_TYPE eType) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API GetEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetPosition(TPoint3 &stPos) = 0;
@@ -998,7 +995,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetIntensity(float &fIntensity) = 0;
 		virtual DGLE_RESULT DGLE_API GetSpotAngle(float &fAngle) = 0;
 		virtual DGLE_RESULT DGLE_API GetType(E_LIGHT_TYPE &eType) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API Update() = 0;
 	};
 
@@ -1039,12 +1036,12 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetSpecularColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API SetShininess(float fShininess) = 0;
 		virtual DGLE_RESULT DGLE_API SetDiffuseTexture(ITexture *pTexture) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API GetDiffuseColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetSpecularColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetShininess(float &fShininess) = 0;
 		virtual DGLE_RESULT DGLE_API GetDiffuseTexture(ITexture *&prTexture) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API Bind() = 0;
 	};
 
@@ -1056,7 +1053,7 @@ namespace DGLE
 
 	class IBitmapFont : public IEngineBaseObject
 	{
-	public: 	
+	public:
 		virtual DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture) = 0;
 		virtual DGLE_RESULT DGLE_API SetScale(float fScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetScale(float &fScale) = 0;
@@ -1134,7 +1131,7 @@ namespace DGLE
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Configure(E_INPUT_CONFIGURATION_FLAGS eFlags = ICF_DEFAULT) = 0;
-	
+
 		virtual DGLE_RESULT DGLE_API GetMouseStates(TMouseStates &stMStates) = 0;
 		virtual DGLE_RESULT DGLE_API GetKey(E_KEYBOARD_KEY_CODES eKeyCode, bool &bPressed) = 0;
 		virtual DGLE_RESULT DGLE_API GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, uchar &cASCIICode) = 0;

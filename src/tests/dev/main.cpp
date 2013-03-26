@@ -37,12 +37,16 @@ using namespace DGLE;
 #	error Unknown platform!
 #endif
 
+#include <gl/GL.h>
+#pragma comment(linker, "/defaultlib:opengl32.lib")
+
 #define APP_CAPTION	"DevTest"
 #define SCREEN_X 800
 #define SCREEN_Y 600
 
 IEngineCore *pEngineCore = NULL;
 IInput *pInput = NULL;
+IResourceManager *pResMan = NULL;
 IRender *pRender = NULL;
 IRender2D *pRender2D = NULL;
 IRender3D *pRender3D = NULL;
@@ -54,16 +58,14 @@ IModel *pModel = NULL;
 void DGLE_API Init(void *pParameter)
 {
 	pEngineCore->GetSubSystem(ESS_INPUT, (IEngineSubSystem *&)pInput);
-
-	IResourceManager *p_res_man;
-	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)p_res_man);
-	p_res_man->Load(RESOURCE_PATH"tests\\npot_tex.bmp", (IEngineBaseObject *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
-
-	p_res_man->GetDefaultResource(EOT_MODEL, (IEngineBaseObject *&)pModel);
-
+	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)pResMan);
 	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pRender);
+
 	pRender->GetRender2D(pRender2D);
 	pRender->GetRender3D(pRender3D);
+
+	pResMan->Load(RESOURCE_PATH"tests\\npot_tex.bmp", (IEngineBaseObject *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
+	pResMan->GetDefaultResource(EOT_MODEL, (IEngineBaseObject *&)pModel);
 }
 
 void DGLE_API Free(void *pParameter)
@@ -84,8 +86,8 @@ void DGLE_API Update(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
-	pRender3D->SetMatrix(MatrixTranslate(TVector3(0.f, 0.f, -5.f)), true);
-	pRender3D->SetMatrix(MatrixRotate((float)uiCounter, TVector3(0.6f, 0.25f, 0.4f)), true);
+	pRender3D->MultMatrix(MatrixTranslate(TVector3(0.f, 0.f, -5.f)));
+	pRender3D->MultMatrix(MatrixRotate(uiCounter, TVector3(0.25f, 0.35f, 0.4f)));
 
 	pTex->Bind();
 	pModel->Draw();

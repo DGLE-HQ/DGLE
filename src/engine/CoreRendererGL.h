@@ -68,7 +68,7 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	IStateManager *_pStateMan;
 
 	std::string _strOpenGLExtensions;
-	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLights, _iMaxTexUnits,
+	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxTexUnits,
 		_iMaxFBOSamples;
 	bool _bIsGLSLSupported;
 

@@ -121,7 +121,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 		x += curb_w * _fScale;
 	}
 
-	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, (uint)l_12 * sizeof(float)), CRDM_TRIANGLES, (uint)length * 6);
+	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, (uint)l_12 * sizeof(float), true), CRDM_TRIANGLES, (uint)length * 6);
 
 	return S_OK;
 }
@@ -144,7 +144,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	if (!b_need_update)
 	{
-		_pRender2D->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
+		_pRender2D->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length * 6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 		return S_OK;
 	}
 

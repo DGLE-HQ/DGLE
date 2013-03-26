@@ -347,7 +347,7 @@ class CCoreTexture : public ICoreTexture
 		lw = w; lh = h;
 
 		if (_format == TDF_DXT1 || _format == TDF_DXT5)
-			return ((w + 3)/4)*((h + 3)/4)*bytes;
+			return ((w + 3) / 4) * ((h + 3) / 4) * bytes;
 		else
 			return h*w*bytes;
 	}
@@ -591,15 +591,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
 
 	if (!_bIsGLSLSupported)
 	{
-		glGetIntegerv(GL_MAX_LIGHTS, &_iMaxLights);
 		glEnable(GL_NORMALIZE);
 		_pFFP = new CFixedFunctionPipeline();
 	}
 	else
-	{
 		_pFFP = NULL;
-		_iMaxLights = 8; /*TEMP*/
-	}
 
 	_stCurrentState.clActivatedTexUnits.resize(_iMaxTexUnits);
 
@@ -1885,7 +1881,6 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetDeviceMetric(E_CORE_RENDERER_METRIC_TYP
 	{
 	case CRMT_MAX_TEXTURE_RESOLUTION: iValue = _iMaxTexResolution; break;
 	case CRMT_MAX_ANISOTROPY_LEVEL: iValue = _iMaxAnisotropy; break;
-	case CRMT_MAX_LIGHTS_PER_PASS: iValue = _iMaxLights; break;
 	case CRMT_MAX_TEXTURE_LAYERS: iValue = _iMaxTexUnits; break;
 	default:
 		iValue = 0;

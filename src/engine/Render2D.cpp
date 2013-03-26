@@ -179,7 +179,7 @@ __forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) 
 		_pCoreRenderer->SetColor(ColorWhite()); 
 		_pCoreRenderer->SetLineWidth(1.f);
 		
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs), CRDM_LINE_STRIP, 5);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs, -1, true), CRDM_LINE_STRIP, 5);
 		
 		_pCoreRenderer->SetLineWidth(_fLineWidth);
 
@@ -758,7 +758,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 	{
 		_pCoreRenderer->SetColor(stColor);
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy), CRDM_POINTS, 1);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy, -1, true), CRDM_POINTS, 1);
 		
 		++_uiObjsDrawnCount;
 	}
@@ -816,7 +816,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 		_pBuffer[0] = stCoords1.x; _pBuffer[1] = stCoords1.y;
 		_pBuffer[2] = stCoords2.x; _pBuffer[3] = stCoords2.y;
 
-		TDrawDataDesc desc((uint8*)_pBuffer);
+		TDrawDataDesc desc((uint8*)_pBuffer, -1, true);
 
 		if (eFlags & PF_VERTICES_COLORS)
 		{
@@ -927,7 +927,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 			_pBuffer[4] = _pBuffer[8]; _pBuffer[5] = _pBuffer[9];
 		}
 
-		TDrawDataDesc desc((uint8*)_pBuffer);
+		TDrawDataDesc desc((uint8*)_pBuffer, -1, true);
 
 		if(eFlags & PF_VERTICES_COLORS)
 		{
@@ -1028,7 +1028,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TPoin
 			_pBuffer[3 + i * 2] = stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f);
 		}
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2]), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2], -1, true), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
 
 		++_uiObjsDrawnCount;
 	}
@@ -1501,7 +1501,6 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
 		_pCoreRenderer->SetBlendState(_stBlendStateDesc);
 	}
-
 	
 	_2D_IF_BATCH_NO_UPDATE_EXIT
 		else
@@ -1818,11 +1817,11 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 		{
 			const float * const data = (float *)stDrawDesc.pData;
 			
-			const uint	v_stride = stDrawDesc.uiVertexStride == 0 ? 2 : stDrawDesc.uiVertexStride/sizeof(float),
-						t_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride/sizeof(float),
-						c_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride/sizeof(float),
-						t_offset = stDrawDesc.uiTexCoordOffset == -1 ? 0 : stDrawDesc.uiTexCoordOffset/sizeof(float),
-						c_offset = stDrawDesc.uiColorOffset == -1 ? 0 : stDrawDesc.uiColorOffset/sizeof(float);
+			const uint	v_stride = stDrawDesc.uiVertexStride == 0 ? 2 : stDrawDesc.uiVertexStride / sizeof(float),
+						t_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride / sizeof(float),
+						c_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride / sizeof(float),
+						t_offset = stDrawDesc.uiTexCoordOffset == -1 ? 0 : stDrawDesc.uiTexCoordOffset / sizeof(float),
+						c_offset = stDrawDesc.uiColorOffset == -1 ? 0 : stDrawDesc.uiColorOffset / sizeof(float);
 
 			for (uint i = 0; i < uiCount; ++i)
 			{
@@ -2176,7 +2175,7 @@ __forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &c
 		_pBuffer[14] = _pBuffer[12];
 		_pBuffer[15] = _pBuffer[11];
 
-		TDrawDataDesc desc((uint8 *)_pBuffer, 8 * sizeof(float));
+		TDrawDataDesc desc((uint8 *)_pBuffer, 8 * sizeof(float), true);
 		
 		if (flags & EF_VERTICES_COLORS)
 		{

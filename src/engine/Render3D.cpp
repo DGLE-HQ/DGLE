@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.03.2013 (c)Korotkov Andrey
+\date		27.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,6 +16,7 @@ See "DGLE.h" for more details.
 
 CRender3D::CRender3D(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _iProfilerState(0),
+_iDrawAxes(0), _iDrawLights(0),
 _bFrCalculated(false), _uiObjsDrawnCount(0)
 {
 	_pCoreRenderer = Core()->pCoreRenderer();
@@ -25,29 +26,36 @@ _bFrCalculated(false), _uiObjsDrawnCount(0)
 	_pCoreRenderer->IsFeatureSupported(CRFT_LEGACY_FIXED_FUNCTION_PIPELINE_API, supported);
 
 	if (supported)
+	{
 		_pCoreRenderer->GetFixedFunctionPipelineAPI(_pFFP);
+		_pFFP->GetMaxLightsPerPassCount(_uiMaxLightsCount);
+	}
 	else
+	{
 		_pFFP = NULL;
+		_uiMaxLightsCount = 0;
+	}
 
 	_stCurState.isLightingEnabled = false;
-	_stCurState.stGlobalAmbient = ColorBlack();
+	_stCurState.stGlobalAmbient = TColor4(50, 50, 50, 255);
 	_stCurState.pCurMat = NULL;
 
-	int count;
+	int i_value;
 	
-	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, count);
-	_stCurState.pCurTexs.resize((size_t)count, NULL);
-	_uiMaxTextsCount = (uint)count;
-
-	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_LIGHTS_PER_PASS, count);
-	_uiMaxLightsCount = (uint)count;
+	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, i_value);
+	_uiMaxTextsCount = (uint)i_value;
+	_stCurState.pCurTexs.resize(_uiMaxTextsCount, NULL);
 
 	Console()->RegComVar("rnd3d_profiler", "Displays Render 3D subsystems profiler.", &_iProfilerState, 0, 1);
+	Console()->RegComVar("rnd3d_draw_axes", "Draws coordinate axes for every object on screen.", &_iDrawAxes, 0, 1);
+	Console()->RegComVar("rnd3d_draw_lights", "Visualizes lights on on screen.", &_iDrawLights, 0, 1);
 }
 
 CRender3D::~CRender3D()
 {
 	Console()->UnRegCom("rnd3d_profiler");
+	Console()->UnRegCom("rnd3d_draw_axes");
+	Console()->UnRegCom("rnd3d_draw_lights");
 }
 
 void CRender3D::DrawProfiler()
@@ -73,9 +81,6 @@ void CRender3D::BeginFrame()
 	while (!_stackStates.empty())
 		_stackStates.pop();
 	
-	while (!_stackStatesFlag.empty())
-		_stackStatesFlag.pop();
-
 	_pCoreRenderer->SetBlendState(_stCurState.stBlendStateDesc);
 	_pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
 	_pCoreRenderer->SetDepthStencilState(_stCurState.stDepthStencilDesc);
@@ -88,6 +93,9 @@ void CRender3D::EndFrame()
 {
 	_ui64DrawDelay = GetPerfTimer() - _ui64DrawDelay - Core()->pRender()->pRender2D()->GetAverallDelay();
 }
+
+void CRender3D::RefreshBatchData()
+{}
 
 void CRender3D::UnbindMaterial()
 {
@@ -123,6 +131,9 @@ DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 
 		TColor4 spec_col;
 		pMat->GetSpecularColor(spec_col);
+
+		if (!_stCurState.isLightingEnabled)
+			_pCoreRenderer->SetColor(diff_col);
 
 		if (_pFFP)
 		{
@@ -165,26 +176,98 @@ DGLE_RESULT DGLE_API CRender3D::BindTexture(ITexture *pTex, uint uiTextureLayer)
 void CRender3D::UnbindLights()
 {
 	if (_pFFP)
-	{
 		for (size_t i = 0; i < _stCurState.pCurLights.size(); ++i)
-			if (_stCurState.pCurLights[i])
-			{
-				bool is_enabled;
-
-				_stCurState.pCurLights[i]->GetEnabled(is_enabled);
-
-				if (is_enabled)
-					_pFFP->SetLightEnabled(i, false);
-			}
-	}
+			if (_stCurState.pCurLights[i].bEnabled)
+				_pFFP->SetLightEnabled(i, false);
 	
 	_stCurState.pCurLights.clear();
 }
 
+DGLE_RESULT DGLE_API CRender3D::GetMaxLightsPerPassCount(uint &uiCount)
+{
+	uiCount = _uiMaxLightsCount;
+	return S_OK;
+}
+
+void CRender3D::_DrawLight(uint idx)
+{
+	bool light = _stCurState.isLightingEnabled;
+
+	if (light)
+		ToggleLighting(false);
+
+	if (_stCurState.pCurTexs[0] != NULL)
+		_pCoreRenderer->BindTexture(NULL, 0);
+
+	_pCoreRenderer->SetPointSize(10.f);
+	_pCoreRenderer->SetColor(_stCurState.pCurLights[idx].stDiffCol);
+	PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_stCurState.pCurLights[idx].stPos.xyz), CRDM_POINTS, 1));
+
+	const TPoint3 &pos = _stCurState.pCurLights[idx].stPos;
+	const TVector3 &dir = _stCurState.pCurLights[idx].stDir;
+	const float &range = _stCurState.pCurLights[idx].fRange;
+
+	if (_stCurState.pCurLights[idx].eType == LT_POINT)
+	{
+		const float cross[] = {-range + pos.x, pos.y, pos.z, range + pos.x, pos.y, pos.z,
+			pos.x, -range + pos.y, pos.z, pos.x, range + pos.y, pos.z,
+			pos.x, pos.y, -range + pos.z, pos.x, pos.y, range + pos.z};
+
+		PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)cross), CRDM_LINES, 6));
+	}
+	else
+		if (_stCurState.pCurLights[idx].eType == LT_DIRECTIONAL)
+		{
+			const float direction[] = {range * dir.x + pos.x, range * dir.y + pos.y, range * dir.z + pos.z,
+				-range * dir.x + pos.x, -range * dir.y + pos.y, -range * dir.z + pos.z};
+			
+			PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)direction), CRDM_LINES, 2));
+		}
+		else
+		{
+			const float angle = ((float)M_PI - _stCurState.pCurLights[idx].fAngle * (float)M_PI / 180.f) / 2.f,
+				rsin = range * sinf(angle), rcos = range * cosf(angle),
+				spot[] = {0.f, 0.f, 0.f, 0.f, range, 0.f,
+				0.f, 0.f, 0.f, rcos, rsin, 0.f,
+				0.f, 0.f, 0.f, -rcos, rsin, 0.f,
+				0.f, 0.f, 0.f, 0.f, rsin, rcos,
+				0.f, 0.f, 0.f, 0.f, rsin, -rcos
+				};
+
+			PushMatrix();
+
+			if (dir.y < 0.999f)
+			{
+				TVector3 right = dir.Cross(TVector3(0.f, 1.f, 0.f));
+				right.Normalize();
+				const TVector3 up = right.Cross(dir);
+				
+				MultMatrix(TMatrix4(right.x, right.y, right.z, 0.f,
+					dir.x, dir.y, dir.z, 0.f,
+					up.x, up.y, up.z, 0.f,
+					0.f, 0.f, 0.f, 1.f) * MatrixTranslate(pos));
+			}
+			else
+				MultMatrix(MatrixTranslate(pos));
+
+			PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)spot), CRDM_LINES, 10));
+
+			PopMatrix();
+		}
+
+	if (_stCurState.pCurTexs[0] != NULL)
+	{
+		ICoreTexture *p_core_tex = NULL;
+		_stCurState.pCurTexs[0]->GetCoreTexture(p_core_tex);
+		_pCoreRenderer->BindTexture(p_core_tex, 0);
+	}
+
+	if (light)
+		ToggleLighting(true);
+}
+
 DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 {
-	// ToDo: if light is becoming desabled it is not removed from pool
-
 	IN_3D_GUARD
 
 	if (!pLight)
@@ -193,7 +276,7 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 	uint idx = -1;
 
 	for (size_t i = 0; i < _stCurState.pCurLights.size(); ++i)
-		if (_stCurState.pCurLights[i] == pLight)
+		if (_stCurState.pCurLights[i].pLight == pLight || !_stCurState.pCurLights[i].bEnabled)
 		{
 			idx = i;
 			break;
@@ -202,58 +285,50 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 	if (idx == -1 && _uiLightsEnabledCount + 1 == _uiMaxLightsCount)
 		return E_ABORT;
 
-	bool is_enabled;
-	pLight->GetEnabled(is_enabled);
-	
-	TColor4 col;
-	pLight->GetColor(col);
-
-	TPoint3 pos;
-	pLight->GetPosition(pos);
-
-	TVector3 dir;
-	pLight->GetDirection(dir);
-
-	float intense;
-	pLight->GetIntensity(intense);
-
-	float range;
-	pLight->GetRange(range);
-
-	float angle;
-	pLight->GetSpotAngle(angle);
-
-	E_LIGHT_TYPE type;
-	pLight->GetType(type);
-
 	if (idx == -1)
 	{
-		_stCurState.pCurLights.push_back(pLight);
-		++_uiLightsEnabledCount;
+		_stCurState.pCurLights.push_back(TState::TLight());
+		idx = _uiLightsEnabledCount++;
 	}
+
+	TState::TLight &light = _stCurState.pCurLights[idx];
+
+	pLight->GetEnabled(light.bEnabled);
+	pLight->GetColor(light.stDiffCol);
+	pLight->GetPosition(light.stPos);
+	pLight->GetDirection(light.stDir);
+	pLight->GetIntensity(light.fIntensity);
+	pLight->GetRange(light.fRange);
+	pLight->GetSpotAngle(light.fAngle);
+	pLight->GetType(light.eType);
+
+	light.pLight = pLight;
 
 	if (_pFFP)
 	{
-		_pFFP->SetLightEnabled(idx, is_enabled);
-		_pFFP->SetLightColor(idx, col);
-		_pFFP->SetLightPosition(idx, pos);
-		_pFFP->SetLightIntensity(idx, intense);
+		_pFFP->SetLightEnabled(idx, light.bEnabled);
+		_pFFP->SetLightColor(idx, light.stDiffCol);
+		_pFFP->SetLightPosition(idx, light.stPos);
+		_pFFP->SetLightIntensity(idx, light.fIntensity);
 
-		switch (type)
+		switch (light.eType)
 		{
 		case LT_POINT:
-			_pFFP->ConfigurePointLight(idx, range);
+			_pFFP->ConfigurePointLight(idx, light.fRange);
 			break;
 
 		case LT_DIRECTIONAL:
-			_pFFP->ConfigureDirectionalLight(idx, dir);
+			_pFFP->ConfigureDirectionalLight(idx, light.stDir);
 			break;
 
 		case LT_SPOT:
-			_pFFP->ConfigureSpotLight(idx, dir, range, angle);
+			_pFFP->ConfigureSpotLight(idx, light.stDir, light.fRange, light.fAngle);
 			break;
 		}
 	}
+
+	if (_iDrawLights == 1)
+		_DrawLight(idx);
 
 	return S_OK;
 }
@@ -444,6 +519,9 @@ DGLE_RESULT DGLE_API CRender3D::Draw(const TDrawDataDesc &stDrawDesc, E_CORE_REN
 
 	++_uiObjsDrawnCount;
 
+	if (_iDrawAxes == 1)
+		DrawAxes(1.f, false);
+
 	return _pCoreRenderer->Draw(stDrawDesc, eMode, uiCount);
 }
 
@@ -452,6 +530,9 @@ DGLE_RESULT DGLE_API CRender3D::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 	IN_3D_GUARD
 
 	++_uiObjsDrawnCount;
+
+	if (_iDrawAxes == 1)
+		DrawAxes(1.f, false);
 
 	return _pCoreRenderer->DrawBuffer(pBuffer);
 }
@@ -476,7 +557,7 @@ DGLE_RESULT DGLE_API CRender3D::SetLinearFogBounds(float fStart, float fEnd)
 	_stCurState.stFogDesc.fEnd = fEnd;
 	
 	if (_pFFP)
-		_pFFP->GonfigureFog(fStart, fEnd, _stCurState.stFogDesc.fDensity);
+		_pFFP->ConfigureFog(fStart, fEnd, _stCurState.stFogDesc.fDensity);
 
 	return S_OK;
 }
@@ -497,10 +578,13 @@ DGLE_RESULT DGLE_API CRender3D::SetFogDensity(float fDensity)
 {
 	IN_3D_GUARD
 
+	if (fDensity < 0.f)
+		return E_INVALIDARG;
+
 	_stCurState.stFogDesc.fDensity = fDensity;
 	
 	if (_pFFP)
-		_pFFP->GonfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd, fDensity);
+		_pFFP->ConfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd, fDensity);
 
 	return S_OK;
 }
@@ -530,17 +614,23 @@ DGLE_RESULT DGLE_API CRender3D::GetFogDensity(float &fDensity)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::SetMatrix(const TMatrix4x4 &stMatrix, bool bMult)
+DGLE_RESULT DGLE_API CRender3D::SetMatrix(const TMatrix4x4 &stMatrix)
 {
 	IN_3D_GUARD
 
-	if (bMult)
-		_stCurState.matrixStack.MultLocal(stMatrix);
-	else
-		_stCurState.matrixStack.Top() = stMatrix;
-
+	_stCurState.matrixStack.Top() = stMatrix;
 	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
 
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender3D::MultMatrix(const TMatrix4x4 &stMatrix)
+{
+	IN_3D_GUARD
+	
+	_stCurState.matrixStack.MultLocal(stMatrix);
+	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
+	
 	return S_OK;
 }
 
@@ -562,7 +652,14 @@ DGLE_RESULT DGLE_API CRender3D::DrawAxes(float fSize, bool bNoDepthTest)
 	desc.pData = (uint8 *)axes;
 	desc.uiColorOffset = 72;
 
-	bool dtest = _stCurState.stDepthStencilDesc.bDepthTestEnabled;
+	bool dtest = _stCurState.stDepthStencilDesc.bDepthTestEnabled,
+		light = _stCurState.isLightingEnabled;
+
+	if (light)
+		ToggleLighting(false);
+
+	if (_stCurState.pCurTexs[0] != NULL)
+		_pCoreRenderer->BindTexture(NULL, 0);
 
 	if (dtest && bNoDepthTest)
 	{
@@ -578,26 +675,44 @@ DGLE_RESULT DGLE_API CRender3D::DrawAxes(float fSize, bool bNoDepthTest)
 		_pCoreRenderer->SetDepthStencilState(_stCurState.stDepthStencilDesc);
 	}
 
+	if (_stCurState.pCurTexs[0] != NULL)
+	{
+		ICoreTexture *p_core_tex = NULL;
+		_stCurState.pCurTexs[0]->GetCoreTexture(p_core_tex);
+		_pCoreRenderer->BindTexture(p_core_tex, 0);
+	}
+
+	if (light)
+		ToggleLighting(true);
+	
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::PushStates(E_PUSH_STATES_FLAGS eStates)
+DGLE_RESULT DGLE_API CRender3D::PushMatrix()
 {
 	IN_3D_GUARD
 
-	_stackStatesFlag.push(eStates);
+	_stCurState.matrixStack.Push();
+	
+	return S_OK;
+}
 
-	if (eStates == PSF_ALL)
-		eStates = (E_PUSH_STATES_FLAGS)(PSF_MATRIX | PSF_STATES);
+DGLE_RESULT DGLE_API CRender3D::PopMatrix()
+{
+	IN_3D_GUARD
+	
+	_stCurState.matrixStack.Pop();
+	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
 
-	if (eStates & PSF_MATRIX)
-		_stCurState.matrixStack.Push();
+	return S_OK;
+}
 
-	if (eStates & PSF_STATES)
-	{
-		_pCoreRenderer->PushStates();
-		PushSelfStates();
-	}
+DGLE_RESULT DGLE_API CRender3D::PushStates()
+{
+	IN_3D_GUARD
+
+	_pCoreRenderer->PushStates();
+	PushSelfStates();
 
 	return S_OK;
 }
@@ -606,18 +721,8 @@ DGLE_RESULT DGLE_API CRender3D::PopStates()
 {
 	IN_3D_GUARD
 
-	E_PUSH_STATES_FLAGS states = _stackStatesFlag.top();
-
-	if (states & PSF_MATRIX)
-		_stCurState.matrixStack.Pop();
-
-	if (states & PSF_STATES)
-	{
-		PopSelfStates();
-		_pCoreRenderer->PopStates();
-	}
-
-	_stackStatesFlag.pop();
+	PopSelfStates();
+	_pCoreRenderer->PopStates();
 
 	return S_OK;
 }

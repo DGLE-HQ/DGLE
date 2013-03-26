@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.03.2013 (c)Korotkov Andrey
+\date		27.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,7 +15,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 {
 	ICoreRenderer *_pCoreRenderer;
 	
-	int _iProfilerState;
+	int _iProfilerState, _iDrawAxes, _iDrawLights;
 	uint64 _ui64DrawDelay;
 	uint _uiObjsDrawnCount;
 
@@ -29,7 +29,19 @@ class CRender3D: public CInstancedObj, public IRender3D
 		TDepthStencilDesc stDepthStencilDesc;
 		IMaterial *pCurMat;
 		std::vector<ITexture *> pCurTexs;
-		std::vector<ILight *> pCurLights;
+		
+		struct TLight
+		{
+			bool bEnabled;
+			E_LIGHT_TYPE eType;
+			TColor4 stDiffCol;
+			TPoint3 stPos;
+			TVector3 stDir;
+			float fRange, fIntensity, fAngle;
+
+			ILight *pLight;
+		};
+		std::vector<TLight> pCurLights;
 
 		struct TFogDescriptor
 		{
@@ -38,7 +50,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 			float fDensity, fStart, fEnd;
 
 			TFogDescriptor() : bEnabled(false), stColor(ColorGray()),
-				fDensity(0.25f), fStart(500.f), fEnd(1000.f){}
+				fDensity(1.f), fStart(500.f), fEnd(1000.f){}
 		} stFogDesc;
 	} _stCurState;
 
@@ -46,12 +58,13 @@ class CRender3D: public CInstancedObj, public IRender3D
 		_uiLightsEnabledCount;
 
 	std::stack<TState> _stackStates;
-	std::stack<E_PUSH_STATES_FLAGS> _stackStatesFlag;
 
 	bool _bFrCalculated;
 	float _afFrPlanes[6][4], _afAbsFrPlanes[6][3];
 
 	IFixedFunctionPipeline *_pFFP;
+
+	void _DrawLight(uint idx);
 
 public:
 
@@ -67,7 +80,8 @@ public:
 	void UnbindLights();
 	
 	void PrepareFor2D();
-	
+	void RefreshBatchData();
+
 	void PushSelfStates();
 	void PopSelfStates();
 
@@ -77,6 +91,7 @@ public:
 	DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor);
 	DGLE_RESULT DGLE_API GetColor(TColor4 &stColor);
 
+	DGLE_RESULT DGLE_API GetMaxLightsPerPassCount(uint &uiCount);
 	DGLE_RESULT DGLE_API UpdateLight(ILight *pLight);
 
 	DGLE_RESULT DGLE_API BindTexture(ITexture *pTex, uint uiTextureLayer);
@@ -109,12 +124,15 @@ public:
 	DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor);
 	DGLE_RESULT DGLE_API GetFogDensity(float &fDensity);
 
-	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, bool bMult);
+	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix);
+	DGLE_RESULT DGLE_API MultMatrix(const TMatrix4x4 &stMatrix);
+	DGLE_RESULT DGLE_API PushMatrix();
+	DGLE_RESULT DGLE_API PopMatrix();
 	DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix);
 
 	DGLE_RESULT DGLE_API DrawAxes(float fSize, bool bNoDepthTest);
 
-	DGLE_RESULT DGLE_API PushStates(E_PUSH_STATES_FLAGS eStates);
+	DGLE_RESULT DGLE_API PushStates();
 	DGLE_RESULT DGLE_API PopStates();
 
 	DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag);

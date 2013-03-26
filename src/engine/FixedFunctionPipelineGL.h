@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2013 (c)Korotkov Andrey
+\date		26.03.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,12 +13,26 @@ See "DGLE.h" for more details.
 
 class CFixedFunctionPipeline : public IFixedFunctionPipeline
 {
+	const float _c_fAttenuationFactor;
+
 	GLint _iMaxLights;
-	std::vector<E_LIGHT_TYPE> _clLights;
+
+	struct TLight
+	{
+		bool bEnabled;
+		E_LIGHT_TYPE eType;
+		TColor4 stDiffCol;
+		TPoint3 stPos;
+		TVector3 stDir;
+		float fRange, fIntensity, fAngle;
+	};
+
+	TLight *_pLights;
 
 public:
 
 	CFixedFunctionPipeline();
+	~CFixedFunctionPipeline();
 
 	DGLE_RESULT DGLE_API PushStates();
 	DGLE_RESULT DGLE_API PopStates();
@@ -34,6 +48,7 @@ public:
 	DGLE_RESULT DGLE_API ToggleGlobalLighting(bool bEnabled);
 	DGLE_RESULT DGLE_API SetGloablAmbientLight(const TColor4 &stColor);
 
+	DGLE_RESULT DGLE_API GetMaxLightsPerPassCount(uint &uiCount);
 	DGLE_RESULT DGLE_API IsGlobalLightingEnabled(bool &bEnabled);
 	DGLE_RESULT DGLE_API GetGloablAmbientLight(TColor4 &stColor);
 
@@ -60,7 +75,7 @@ public:
 
 	DGLE_RESULT DGLE_API GetFogEnabled(bool &bEnabled);
 	DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor);
-	DGLE_RESULT DGLE_API GonfigureFog(float &fStart, float &fEnd, float &fDensity);
+	DGLE_RESULT DGLE_API GetFogConfiguration(float &fStart, float &fEnd, float &fDensity);
 
 	IDGLE_BASE_IMPLEMENTATION(IFixedFunctionPipeline, INTERFACE_IMPL_END)
 };

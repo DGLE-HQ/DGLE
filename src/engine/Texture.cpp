@@ -77,7 +77,7 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 	Bind(0);
 
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	else
 	{
 		float	tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
@@ -90,7 +90,7 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 		_quad[12] = tx + tw; _quad[13] = _quad[9];
 		_quad[14] = _quad[12]; _quad[15] = ty;
 
-		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float)), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	}
 
 	return S_OK;

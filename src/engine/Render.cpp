@@ -81,20 +81,21 @@ _fFovAngle(60.f), _fZNear(0.25f), _fZFar(1000.f)
 
 	_strMetricsList = "Core Renderer device metrics\n\t";
 
-	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, _iMaxTexResolution);
-	_strMetricsList += "Maximum texture resolution: " + IntToStr(_iMaxTexResolution) + "X" + IntToStr(_iMaxTexResolution) + "\n\t";
+	int i_value;
+
+	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, i_value);
+	_strMetricsList += "Maximum texture resolution: " + IntToStr(i_value) + "X" + IntToStr(i_value) + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_ANISOTROPY, b_supported);
 	if (b_supported)
 	{
-		_pCoreRenderer->GetDeviceMetric(CRMT_MAX_ANISOTROPY_LEVEL, _iMaxAnisotropy);
-		_strMetricsList += "Maximum anisotropy level: " + IntToStr(_iMaxAnisotropy) + "X\n\t";
+		_pCoreRenderer->GetDeviceMetric(CRMT_MAX_ANISOTROPY_LEVEL, i_value);
+		_strMetricsList += "Maximum anisotropy level: " + IntToStr(i_value) + "X\n\t";
 	}
 
-	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_LIGHTS_PER_PASS, _iMaxLight);
-
-	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, _iMaxTexUnits);
-	_strMetricsList += "Maximum multitexturing layer: " + IntToStr(_iMaxTexUnits);
+	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, i_value);
+	_uiMaxTexUnits = (uint)i_value;
+	_strMetricsList += "Maximum multitexturing layer: " + IntToStr(i_value);
 
 	//Don't append "\n\t" to the last line!
 
@@ -208,8 +209,8 @@ DGLE_RESULT DGLE_API CRender::Unbind(E_ENGINE_OBJECT_TYPE eType)
 		
 		_pRender3D->UnbindTextures();
 		
-		for (int i = _iMaxTexUnits - 1; i >= 0; --i)
-			_pCoreRenderer->BindTexture(NULL, i);		
+		for (uint i = _uiMaxTexUnits; i != 0; --i)
+			_pCoreRenderer->BindTexture(NULL, i - 1);		
 		
 		break;
 

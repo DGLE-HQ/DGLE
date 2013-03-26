@@ -462,6 +462,8 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		LOG("Finalizing Engine...", LT_INFO);
 
+		_pCoreRenderer->MakeCurrent();
+
 		if (!_clDelFree.IsNull() || !_clUserCallbacks.empty()) 
 		{
 			LOG("Calling user finalization procedure...", LT_INFO);
@@ -704,8 +706,11 @@ void CCore::_MainLoop()
 		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
 		{
 			if (i == cycles_cnt - 1)
+			{
 				_pRender->pRender2D()->RefreshBatchData();
-				
+				_pRender->pRender3D()->RefreshBatchData();
+			}
+
 			_InvokeUserCallback(EPT_UPDATE);
 
 			_clDelUpdate.Invoke();

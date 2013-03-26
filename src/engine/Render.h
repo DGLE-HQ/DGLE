@@ -17,7 +17,7 @@ class CRender3D;
 class CRender: public CInstancedObj, public IRender
 {
 	float _fFovAngle, _fZNear, _fZFar;
-	int _iMaxTexResolution, _iMaxAnisotropy, _iMaxLight, _iMaxTexUnits;
+	uint _uiMaxTexUnits;
 
 	TColor4 _stClearColor;
 

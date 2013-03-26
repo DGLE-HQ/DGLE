@@ -12,8 +12,8 @@ See "DGLE.h" for more details.
 #include "Render3D.h"
 
 CMaterial::CMaterial(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _stDiffCol(ColorGray()),
-_stSpecCol(ColorBlack()), _fShine(0.f), _pDiffTex(NULL)
+CInstancedObj(uiInstIdx), _stDiffCol(ColorWhite()),
+_stSpecCol(ColorBlack()), _fShine(50.f), _pDiffTex(NULL)
 {}
 
 DGLE_RESULT DGLE_API CMaterial::SetDiffuseColor(const TColor4 &stColor)
@@ -30,7 +30,11 @@ DGLE_RESULT DGLE_API CMaterial::SetSpecularColor(const TColor4 &stColor)
 
 DGLE_RESULT DGLE_API CMaterial::SetShininess(float fShininess)
 {
+	if (fShininess < 0.f || fShininess > 100.f)
+		return E_INVALIDARG;
+
 	_fShine = fShininess;
+
 	return S_OK;
 }
 

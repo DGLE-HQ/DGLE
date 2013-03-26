@@ -289,7 +289,7 @@ namespace DGLE
 		uint32	ui32Param1;	/**< Message first parameter. */
 		uint32	ui32Param2;	/**< Message second parameter. */
 		void	*pParam3;	/**< Message third parameter. Points to specific message data. */
-		
+
 		TWindowMessage():eMessage(WMT_UNKNOWN), ui32Param1(0), ui32Param2(0), pParam3(NULL){}
 		TWindowMessage(E_WINDOW_MESSAGE_TYPE msg, uint32 param1 = 0, uint32 param2 = 0, void *param3 = NULL):eMessage(msg), ui32Param1(param1), ui32Param2(param2), pParam3(param3){}
 	};
@@ -323,7 +323,7 @@ namespace DGLE
 		\see IEngineCore::InitializeEngine
 	 */
 	struct TEngineWindow
-	{	
+	{
 		uint	uiWidth;	/**< Resolution width of client area. */
 		uint	uiHeight;	/**< Resolution height of client area. */
 		bool	bFullScreen;/**< Switch to fullscreen mode or not. */
@@ -378,7 +378,7 @@ namespace DGLE
 		char  cVersion[64];		 	/**< String with plugin version. */
 		char  cVendor[128];		 	/**< String with name of vendor(developer). */
 		char  cDescription[256]; 	/**< String with plugin description. */
-		
+
 		TPluginInfo()
 		{
 			ui8PluginSDKVersion = _DGLE_PLUGIN_SDK_VER_;
@@ -416,7 +416,7 @@ namespace DGLE
 		{
 			SetColorB(ubR, ubG, ubB, ubA);
 		}
-		
+
 		inline TColor4(cref rgba)
 		{
 			memcpy(TColor4::rgba, rgba, sizeof(rgba));
@@ -431,7 +431,7 @@ namespace DGLE
 		{
 			r = ubR / 255.f; g = ubG / 255.f; b = ubB / 255.f; a = ubA / 255.f;
 		}
-		
+
 		inline uint32 ColorRGB()
 		{
 			return RGB(255 * r, 255 * g, 255 * b);
@@ -464,7 +464,7 @@ namespace DGLE
 	inline TColor4 ColorRed(uint8 alpha = 255) { return TColor4(0xFF, 0x00, 0x00, alpha); }
 	inline TColor4 ColorGreen(uint8 alpha = 255) { return TColor4(0x00, 0xFF, 0x00, alpha); }
 	inline TColor4 ColorBlue(uint8 alpha = 255) { return TColor4(0x00, 0x00, 0xFF, alpha); }
-		
+
 	inline TColor4 ColorAqua(uint8 alpha = 255) { return TColor4(0x00, 0xFF, 0xFF, alpha); }
 	inline TColor4 ColorBrown(uint8 alpha = 255) { return TColor4(0xA5, 0x2A, 0x2A, alpha); }
 	inline TColor4 ColorCyan(uint8 alpha = 255) { return TColor4(0x00, 0xFF, 0xFF, alpha); }
@@ -534,7 +534,7 @@ namespace DGLE
 		{
 			return TPoint2(*this) -= point;
 		}
-		
+
 		inline TPoint2 &operator *= (const TPoint2 &point)
 		{
 			x *= point.x;
@@ -619,7 +619,7 @@ namespace DGLE
 			x /= len, y /= len;
 			return *this;
 		}
-		
+
 		inline TPoint2 Lerp(const TPoint2 &point, float coeff) const
 		{
 			return *this + (point - *this) * coeff;
@@ -696,7 +696,7 @@ namespace DGLE
 		{
 			return TPoint3(*this) -= point;
 		}
-		
+
 		inline TPoint3 &operator *= (const TPoint3 &point)
 		{
 			x *= point.x;
@@ -810,7 +810,7 @@ namespace DGLE
 			v[0] = axis * Dot(axis);
 			v[1] = *this - v[0];
 			v[2] = axis.Cross(v[1]);
-
+			
 			return TPoint3(v[0].x + v[1].x * c + v[2].x * s, v[0].y + v[1].y * c + v[2].y * s, v[0].z + v[1].z * c + v[2].z * s);
 		}
 
@@ -851,18 +851,18 @@ namespace DGLE
 		inline TRectF(): x(0.f), y(0.f), width(0.f), height(0.f){}
 		inline TRectF(float fX, float fY, float fWidth, float fHeight): x(fX), y(fY), width(fWidth), height(fHeight){}
 		inline TRectF(const TPoint2 &stLeftTop, const TPoint2 &stRightBottom): x(stLeftTop.x), y(stLeftTop.y), width(stRightBottom.x - stLeftTop.x), height(stRightBottom.y - stLeftTop.y){}
-		
+
 		inline bool IntersectRect(const TRectF &stRect) const
 		{
 			return	(x < stRect.x + stRect.width && x + width > stRect.x && y < stRect.y + stRect.height && y + height > stRect.y)||
 					(stRect.x + stRect.width < x && stRect.x > x + width && stRect.y + stRect.height < y && stRect.y > y + height);
 		}
-		
+
 		inline bool PointInRect(const TPoint2 &stPoint) const
 		{
 			return stPoint.x > x && stPoint.x < x + width && stPoint.y > y && stPoint.y < y + height;
 		}
-		
+
 		inline bool RectInRect(const TRectF &stRect) const
 		{
 			return	stRect.x < x && stRect.y < y && stRect.x + stRect.width > x + width && stRect.y + stRect.height > y + height;
@@ -882,7 +882,7 @@ namespace DGLE
 				
 				float rectb = y + height, strectb = stRect.y + stRect.height;
 				result.height = (rectb > strectb ? strectb : rectb) - result.y;
-
+				
 				return result;
 			}
 			else
@@ -998,7 +998,7 @@ namespace DGLE
 		__forceinline TMatrix4x4 operator *(const TMatrix4x4 &right) const
 		{
 			TMatrix4x4 product;
-
+			
 			product._2D[0][0] = _2D[0][0] * right._2D[0][0] + _2D[0][1] * right._2D[1][0] + _2D[0][2] * right._2D[2][0] + _2D[0][3] * right._2D[3][0];
 			product._2D[1][0] = _2D[1][0] * right._2D[0][0] + _2D[1][1] * right._2D[1][0] + _2D[1][2] * right._2D[2][0] + _2D[1][3] * right._2D[3][0];
 			product._2D[2][0] = _2D[2][0] * right._2D[0][0] + _2D[2][1] * right._2D[1][0] + _2D[2][2] * right._2D[2][0] + _2D[2][3] * right._2D[3][0];
@@ -1015,39 +1015,39 @@ namespace DGLE
 			product._2D[1][3] = _2D[1][0] * right._2D[0][3] + _2D[1][1] * right._2D[1][3] + _2D[1][2] * right._2D[2][3] + _2D[1][3] * right._2D[3][3];
 			product._2D[2][3] = _2D[2][0] * right._2D[0][3] + _2D[2][1] * right._2D[1][3] + _2D[2][2] * right._2D[2][3] + _2D[2][3] * right._2D[3][3];
 			product._2D[3][3] = _2D[3][0] * right._2D[0][3] + _2D[3][1] * right._2D[1][3] + _2D[3][2] * right._2D[2][3] + _2D[3][3] * right._2D[3][3];
-
+			
 			return product;
 		}
 
 		inline TPoint3 ApplyToPoint(const TPoint3 &stPoint) const
 		{
 			TPoint3 product;
-
+			
 			product.xyz[0] = stPoint.xyz[0] * _2D[0][0] + stPoint.xyz[1] * _2D[1][0] + stPoint.xyz[2] * _2D[2][0] + _2D[3][0];
 			product.xyz[1] = stPoint.xyz[0] * _2D[0][1] + stPoint.xyz[1] * _2D[1][1] + stPoint.xyz[2] * _2D[2][1] + _2D[3][1];
 			product.xyz[2] = stPoint.xyz[0] * _2D[0][2] + stPoint.xyz[1] * _2D[1][2] + stPoint.xyz[2] * _2D[2][2] + _2D[3][2];
-
+			
 			return product;
 		}
 
 		inline TPoint2 ApplyToPoint(const TPoint2 &stPoint) const
 		{
 			TPoint2 product;
-
+			
 			product.xy[0] = stPoint.xy[0] * _2D[0][0] + stPoint.xy[1] * _2D[1][0] + _2D[3][0];
 			product.xy[1] = stPoint.xy[0] * _2D[0][1] + stPoint.xy[1] * _2D[1][1] + _2D[3][1];
-
+			
 			return product;
 		}
 
 		inline TPoint3 ApplyToVector(const TPoint3 &stPoint) const
 		{
 			TPoint3 product;
-
+			
 			product.xyz[0] = stPoint.xyz[0] * _2D[0][0] + stPoint.xyz[1] * _2D[1][0] + stPoint.xyz[2] * _2D[2][0];
 			product.xyz[1] = stPoint.xyz[0] * _2D[0][1] + stPoint.xyz[1] * _2D[1][1] + stPoint.xyz[2] * _2D[2][1];
 			product.xyz[2] = stPoint.xyz[0] * _2D[0][2] + stPoint.xyz[1] * _2D[1][2] + stPoint.xyz[2] * _2D[2][2];
-
+			
 			return product;
 		}
 	};
@@ -1091,7 +1091,7 @@ namespace DGLE
 					row_num=r;
 				}
 			}
-
+			
 			if (row_num != i)
 			{
 				(int &)rows[i]			^= (int)rows[row_num];
@@ -1113,7 +1113,7 @@ namespace DGLE
 				for (int c = 4; c < 8; ++c)
 					rows[r][c] -= factor * rows[i][c];
 			}
-
+			
 		return TMatrix4x4(
 			rows[0][4] / rows[0][0], rows[0][5] / rows[0][0], rows[0][6] / rows[0][0], rows[0][7] / rows[0][0],
 			rows[1][4] / rows[1][1], rows[1][5] / rows[1][1], rows[1][6] / rows[1][1], rows[1][7] / rows[1][1],
@@ -1130,7 +1130,7 @@ namespace DGLE
 			stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2], stMatrix._2D[3][2],
 			stMatrix._2D[0][3], stMatrix._2D[1][3], stMatrix._2D[2][3], stMatrix._2D[3][3]);
 	}
-	
+
 	/** Returns scaled matrix by a given vector. */
 	inline TMatrix4x4 MatrixScale(const TVector3 &stVec)
 	{
@@ -1322,18 +1322,18 @@ namespace DGLE
 		KEY_SPACE			= 0x39,
 		KEY_SLASH			= 0x35,
 		KEY_BACKSLASH		= 0x2B,
-
+		
 		KEY_SYSRQ			= 0xB7,
 		KEY_SCROLL			= 0x46,
 		KEY_PAUSE			= 0xC5,
-
+		
 		KEY_INSERT			= 0xD2,
 		KEY_DELETE			= 0xD3,
 		KEY_HOME			= 0xC7,
 		KEY_END				= 0xCF,
 		KEY_PGUP			= 0xC9,
 		KEY_PGDN			= 0xD1,
-
+		
 		KEY_LSHIFT			= 0x2A,
 		KEY_RSHIFT			= 0x36,
 		KEY_LALT			= 0x38,
@@ -1342,12 +1342,12 @@ namespace DGLE
 		KEY_RWIN_OR_CMD		= 0xDC,
 		KEY_LCONTROL		= 0x1D,
 		KEY_RCONTROL		= 0x9D,
-
+		
 		KEY_UP				= 0xC8,
 		KEY_RIGHT			= 0xCD,
 		KEY_LEFT			= 0xCB,
 		KEY_DOWN			= 0xD0,
-
+		
 		KEY_1				= 0x02,
 		KEY_2				= 0x03,
 		KEY_3				= 0x04,
@@ -1358,7 +1358,7 @@ namespace DGLE
 		KEY_8				= 0x09,
 		KEY_9				= 0x0A,
 		KEY_0				= 0x0B,
-
+		
 		KEY_F1				= 0x3B,
 		KEY_F2				= 0x3C,
 		KEY_F3				= 0x3D,
@@ -1371,7 +1371,7 @@ namespace DGLE
 		KEY_F10				= 0x44,
 		KEY_F11				= 0x57,
 		KEY_F12				= 0x58,
-
+		
 		KEY_Q				= 0x10,
 		KEY_W				= 0x11,
 		KEY_E				= 0x12,
@@ -1398,18 +1398,18 @@ namespace DGLE
 		KEY_B				= 0x30,
 		KEY_N				= 0x31,
 		KEY_M				= 0x32,
-
+		
 		KEY_MINUS			= 0x0C,
 		KEY_PLUS			= 0x0D,
 		KEY_LBRACKET		= 0x1A,
 		KEY_RBRACKET		= 0x1B,
-
+		
 		KEY_SEMICOLON		= 0x27,
 		KEY_APOSTROPHE		= 0x28,
-
+		
 		KEY_COMMA			= 0x33,
 		KEY_PERIOD			= 0x34,
-
+		
 		KEY_NUMPAD0			= 0x52,
 		KEY_NUMPAD1			= 0x4F,
 		KEY_NUMPAD2			= 0x50,

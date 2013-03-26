@@ -24,12 +24,14 @@ namespace DGLE
 	enum E_CORE_RENDERER_TYPE
 	{
 		CRT_UNKNOWN = 0,
-		CRT_OPENGL_LEGACY,
+		CRT_OPENGL_LEGACY
+		/*  For future needs.
 		CRT_OPENGL_4_1,
 		CRT_OPENGL_ES_1_1,
 		CRT_OPENGL_ES_2_0,
 		CRT_DIRECT_3D_9_0c,
 		CRT_DIRECT_3D_11
+		*/
 	};
 
 	enum E_CORE_RENDERER_FEATURE_TYPE
@@ -68,9 +70,8 @@ namespace DGLE
 	enum E_CORE_RENDERER_METRIC_TYPE
 	{
 		CRMT_MAX_TEXTURE_RESOLUTION = 0,
-		CRMT_MAX_ANISOTROPY_LEVEL,
-		CRMT_MAX_LIGHTS_PER_PASS,
-		CRMT_MAX_TEXTURE_LAYERS
+		CRMT_MAX_TEXTURE_LAYERS,
+		CRMT_MAX_ANISOTROPY_LEVEL
 	};
 
 	enum E_COMPARISON_FUNC
@@ -123,7 +124,7 @@ namespace DGLE
 		BF_DST_ALPHA,
 		BF_ONE_MINUS_SRC_COLOR,
 		BF_ONE_MINUS_SRC_ALPHA
-
+		
 		/* For future needs.
 		BF_ONE_MINUS_DST_COLOR,
 		BF_ONE_MINUS_DST_ALPHA,
@@ -183,18 +184,18 @@ namespace DGLE
 
 	struct TBlendStateDesc
 	{
-		bool				bEnabled;
-
-		E_BLEND_FACTOR		eSrcFactor;
-		E_BLEND_FACTOR		eDstFactor;
-
+		bool bEnabled;
+		
+		E_BLEND_FACTOR eSrcFactor;
+		E_BLEND_FACTOR eDstFactor;
+		
 		/* For future needs.
-		E_BLEND_OPERATION	eOperation;
-
+		E_BLEND_OPERATION eOperation;
+		
 		bool bSeparate;
-		E_BLEND_FACTOR		eSrcAlpha;
-		E_BLEND_FACTOR		eDstAlpha;
-		E_BLEND_OPERATION	eOpAlpha;
+		E_BLEND_FACTOR eSrcAlpha;
+		E_BLEND_FACTOR eDstAlpha;
+		E_BLEND_OPERATION eOpAlpha;
 		*/
 		TBlendStateDesc():
 		bEnabled(false), eSrcFactor(BF_SRC_ALPHA), eDstFactor(BF_ONE_MINUS_SRC_ALPHA)
@@ -204,23 +205,23 @@ namespace DGLE
 	/* For future needs.
 	struct TStencilFaceDesc
 	{
-		E_STENCIL_OPERATION	eStencilFailOp;
-		E_STENCIL_OPERATION	eStencilDepthFailOp;
-		E_STENCIL_OPERATION	eStencilPassOp;
-		E_COMPARISON_FUNC	eStencilFunc;
+		E_STENCIL_OPERATION eStencilFailOp;
+		E_STENCIL_OPERATION eStencilDepthFailOp;
+		E_STENCIL_OPERATION eStencilPassOp;
+		E_COMPARISON_FUNC eStencilFunc;
 	};
 	*/
 
 	struct TDepthStencilDesc
 	{
-		bool	bDepthTestEnabled;
-		bool	bWriteToDepthBuffer;
+		bool bDepthTestEnabled;
+		bool bWriteToDepthBuffer;
 		E_COMPARISON_FUNC eDepthFunc;
 		
 		/* For future needs.
-		bool	bStencilEnabled;
-		uint8	ui8StencilReadMask;
-		uint8	ui8StencilWriteMask;
+		bool bStencilEnabled;
+		uint8 ui8StencilReadMask;
+		uint8 ui8StencilWriteMask;
 		TStencilFaceDesc stFrontFace, stBackFace;
 		*/
 
@@ -231,22 +232,22 @@ namespace DGLE
 
 	struct TRasterizerStateDesc
 	{
-		bool	bWireframe;
-
+		bool bWireframe;
+		
 		E_POLYGON_CULL_MODE eCullMode;
-		bool	bFrontCounterClockwise;
-
-		bool	bScissorEnabled;
-
-		bool	bAlphaTestEnabled;
+		bool bFrontCounterClockwise;
+		
+		bool bScissorEnabled;
+		
+		bool bAlphaTestEnabled;
 		E_COMPARISON_FUNC eAlphaTestFunc;
-		float	fAlphaTestRefValue;
-
+		float fAlphaTestRefValue;
+		
 		/* For future needs.
-		int		iDepthBias;
-		float	fDepthBiasClamp;
-		float	fSlopeScaledDepthBias;
-		bool	bDepthClipEnabled;
+		int iDepthBias;
+		float fDepthBiasClamp;
+		float fSlopeScaledDepthBias;
+		bool bDepthClipEnabled;
 		*/
 
 		TRasterizerStateDesc():
@@ -276,21 +277,21 @@ namespace DGLE
 		
 		uint uiVertexStride;
 		bool bVertexCoord2;
-
+		
 		uint uiNormalOffset; //3 floats
 		uint uiNormalStride;
-
+		
 		uint uiTexCoordOffset; //2 floats
 		uint uiTexCoordStride;
-
+		
 		uint uiColorOffset; //4 floats
 		uint uiColorStride;
-
+		
 		/*not implemeted*/ uint uiTangentOffset, uiBinormalOffset; //6 floats, 3 for tangent and 3 for binormal
 		/*not implemeted*/ uint uiTangentStride, uiBinormalStride;
-
+		
 		/*not implemeted*/ TDrawDataAttributes *pAttribs;
-
+		
 		uint8 *pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
 		bool bIndexBuffer32;
 
@@ -303,8 +304,8 @@ namespace DGLE
 		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 
-		inline TDrawDataDesc(uint8 *pDataPointer, uint uiTexCoordDataOffset = -1, bool bTwoCoordPerVertex = true):
-		pData(pDataPointer), uiVertexStride(0), bVertexCoord2(bTwoCoordPerVertex),
+		inline TDrawDataDesc(uint8 *pDataPointer, uint uiTexCoordDataOffset = -1, bool bTwoCoordsPerVertex = false):
+		pData(pDataPointer), uiVertexStride(0), bVertexCoord2(bTwoCoordsPerVertex),
 		uiNormalOffset(-1), uiNormalStride(0),
 		uiTexCoordOffset(uiTexCoordDataOffset), uiTexCoordStride(0),
 		uiColorOffset(-1), uiColorStride(0),
@@ -468,6 +469,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ToggleGlobalLighting(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetGloablAmbientLight(const TColor4 &stColor) = 0;
 
+		virtual DGLE_RESULT DGLE_API GetMaxLightsPerPassCount(uint &uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API IsGlobalLightingEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetGloablAmbientLight(TColor4 &stColor) = 0;
 
@@ -487,14 +489,14 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetDirectionalLightConfiguration(uint uiIdx, TVector3 &stDirection) = 0;
 		virtual DGLE_RESULT DGLE_API GetPointLightConfiguration(uint uiIdx, float &fRange) = 0;
 		virtual DGLE_RESULT DGLE_API GetSpotLightConfiguration(uint uiIdx, TVector3 &stDirection, float &fRange, float &fSpotAngle) = 0;
-		
+
 		virtual DGLE_RESULT DGLE_API SetFogEnabled(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API ConfigureFog(float fStart, float fEnd, float fDensity) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetFogEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GonfigureFog(float &fStart, float &fEnd, float &fDensity) = 0;
+		virtual DGLE_RESULT DGLE_API GetFogConfiguration(float &fStart, float &fEnd, float &fDensity) = 0;
 	};
 
 }

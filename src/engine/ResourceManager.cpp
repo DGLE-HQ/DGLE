@@ -687,9 +687,6 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 
 bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
-	if (FAILED(_pCoreRenderer->MakeCurrent()))
-		return false;
-
 	if (eLoadFlags == RES_LOAD_DEFAULT)
 		eLoadFlags = (E_TEXTURE_LOAD_FLAGS)(TLF_FILTERING_BILINEAR | TLF_COORDS_REPEAT);
 
@@ -1186,9 +1183,6 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
 {
-	if (FAILED(_pCoreRenderer->MakeCurrent()))
-		return false;
-
 	if (!pData || uiNumVerts == 0)
 	{
 		prMesh = new CMesh(InstIdx(), NULL, stCenter, stExtents);

@@ -15,11 +15,11 @@ See "DGLE.h" for more details.
 class CLight: public CInstancedObj, public ILight
 {
 	bool _bEnabled;
-	E_LIGHT_TYPE _type;
+	E_LIGHT_TYPE _eType;
 	TColor4 _stMainCol;
 	TPoint3 _stPos;
 	TVector3 _stDir;
-	float _fRange, _fIntense, _fAngle;
+	float _fRange, _fIntensity, _fAngle;
 
 public:
 
