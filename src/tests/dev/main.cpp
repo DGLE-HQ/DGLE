@@ -87,7 +87,7 @@ void DGLE_API Update(void *pParameter)
 void DGLE_API Render(void *pParameter)
 {
 	pRender3D->MultMatrix(MatrixTranslate(TVector3(0.f, 0.f, -5.f)));
-	pRender3D->MultMatrix(MatrixRotate(uiCounter, TVector3(0.25f, 0.35f, 0.4f)));
+	pRender3D->MultMatrix(MatrixRotate((float)uiCounter, TVector3(0.25f, 0.35f, 0.4f)));
 
 	pTex->Bind();
 	pModel->Draw();

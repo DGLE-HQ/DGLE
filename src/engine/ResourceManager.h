@@ -83,7 +83,7 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	CSSampleDummy *_pDefSSmpDummy;
 	CMusicDummy *_pDefMusicDummy;
 
-	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags);
+	inline DGLE_RESULT _Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName);
 	inline uint _GetFileFormatLoaderIdx(const char *pcFileName, E_ENGINE_OBJECT_TYPE eObjType, uint uiLoadFlags, IEngineBaseObject *&prObj);
 	void _AddResource(const char *pcName, IEngineBaseObject *pObj);
 
@@ -147,8 +147,8 @@ public:
 	DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj);
 	DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj);
 	
-	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags);
-	DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags);
+	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName);
+	DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName);
 	
 	DGLE_RESULT DGLE_API FreeResource(IEngineBaseObject *&prObj);
 	DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngineBaseObject *pObj);

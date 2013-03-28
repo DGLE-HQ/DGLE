@@ -168,8 +168,11 @@ DGLE_RESULT DGLE_API CFixedFunctionPipeline::SetLightPosition(uint uiIdx, const 
 	if (stPosition == _pLights[uiIdx].stPos)
 		return S_OK;
 	
-	const float pos[] = {stPosition.x, stPosition.y, stPosition.z, _pLights[uiIdx].eType == LT_DIRECTIONAL ? 0.f : 1.f};
-	glLightfv(GL_LIGHT0 + uiIdx, GL_POSITION, pos);
+	if (_pLights[uiIdx].eType != LT_DIRECTIONAL)
+	{
+		const float pos[] = {stPosition.x, stPosition.y, stPosition.z, 1.f};
+		glLightfv(GL_LIGHT0 + uiIdx, GL_POSITION, pos);
+	}
 
 	_pLights[uiIdx].stPos = stPosition;
 
@@ -186,6 +189,8 @@ DGLE_RESULT DGLE_API CFixedFunctionPipeline::SetLightIntensity(uint uiIdx, float
 
 	glLightf(GL_LIGHT0 + uiIdx, GL_CONSTANT_ATTENUATION, 1.f / fIntensity);
 
+	_pLights[uiIdx].fIntensity = fIntensity;
+	
 	return S_OK;
 }
 

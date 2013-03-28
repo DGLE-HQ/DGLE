@@ -1482,7 +1482,7 @@ inline GLenum CCoreRendererGL::_GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) c
 	return mode;
 }
 
-__forceinline bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
+FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount)
 {
 	if (_bVerticesBufferBindedFlag || uiCount > _sc_uiMaxVerticesCountForLegacy || stDrawDesc.pIndexBuffer != NULL ||
 		(stDrawDesc.uiTangentOffset != -1 || stDrawDesc.uiBinormalOffset != -1 || stDrawDesc.pAttribs))

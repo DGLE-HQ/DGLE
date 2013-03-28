@@ -470,7 +470,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 			
 			_InvokeUserCallback(EPT_FREE);
 
-			_clDelFree.Invoke();
+			_clDelFree.Invoke();	
 			
 			LOG("Done.", LT_INFO);
 		}
@@ -711,9 +711,9 @@ void CCore::_MainLoop()
 				_pRender->pRender3D()->RefreshBatchData();
 			}
 
-			_InvokeUserCallback(EPT_UPDATE);
-
 			_clDelUpdate.Invoke();
+			
+			_InvokeUserCallback(EPT_UPDATE);
 
 			++_uiUPSCount;
 		}
@@ -758,9 +758,9 @@ void CCore::_RenderFrame()
 
 	CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
 
-	_InvokeUserCallback(EPT_RENDER);
-
 	_clDelRender.Invoke();
+	
+	_InvokeUserCallback(EPT_RENDER);
 
 	CastEvent(ET_AFTER_RENDER, (IBaseEvent*)&CBaseEvent(ET_AFTER_RENDER));
 
@@ -1391,9 +1391,9 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 	{
 		LOG("Calling user initialization procedure...", LT_INFO);
 		
-		_InvokeUserCallback(EPT_INIT);
-
 		_clDelInit.Invoke();
+		
+		_InvokeUserCallback(EPT_INIT);
 		
 		LOG("Done.", LT_INFO);
 	}
@@ -1471,27 +1471,27 @@ DGLE_RESULT DGLE_API CCore::GetInstanceIndex(uint &uiIdx)
 
 DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &uiTick)
 {
-	uiTick = GetPerfTimer()/1000;
+	uiTick = GetPerfTimer() / 1000;
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {
-	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
-	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
-		_clUserCallbacks[i]->OnEvent(eEventType, pEvent);
-	)
-
 	for (size_t i = 0; i < _clEvents.size(); ++i)
 		if (eEventType == _clEvents[i].eType)
 		{
 			if (!_clEvents[i].pDEvent->IsNull())
 				_clEvents[i].pDEvent->Invoke(pEvent);
 			
-			return S_OK;
+			break;
 		}
 
-	return S_FALSE;
+	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
+	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
+		_clUserCallbacks[i]->OnEvent(eEventType, pEvent);
+	)
+	
+	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)

@@ -17,18 +17,21 @@ DGLE_DYNAMIC_FUNC
 #define HELP_TEXT "You can resize this window to see it's behavior or go fullscreen by pressing \"Alt + Enter\" keys."
 
 // This example is made for 800X600 screen resolution.
+
+// logical game resolution
 #define GAME_VP_WIDTH	800u
 #define GAME_VP_HEIGHT	600u
 
-// Screen resolution
+// screen resolution
 #define SCREEN_WIDTH	1024u
 #define SCREEN_HEIGHT	768u
 
+// subsystems
 IEngineCore *pEngineCore = NULL;
 IInput *pInput = NULL;
 IRender2D *pRender2D = NULL;
 
-// Textures
+// textures
 ITexture *pBg = NULL, *pSky = NULL, *pFog = NULL, *pTexGirl = NULL, *pLight = NULL,
 	*pLightRound = NULL, *pOwl = NULL, *pVox = NULL;
 
@@ -37,7 +40,7 @@ IBitmapFont *pFont = NULL;
 ISoundSample *pSndOwl = NULL, *pForestAmbient = NULL;
 ISoundChannel *pChannelAmbientLoop = NULL;
 
-// Lights positions
+// lights positions
 TPoint2 lights[] =
 {
 	TPoint2(0.f, 0.f),
@@ -58,6 +61,7 @@ TPoint2 stMousePos;
 bool owlGoLeft = false;
 float owlX = -200.f;
 
+// event callback on switching to fullscreen event
 void DGLE_API OnFullScreenEvent(void *pParameter, IBaseEvent *pEvent)
 {
 	IEvGoFullScreen *p_event = (IEvGoFullScreen *)pEvent;
@@ -71,7 +75,7 @@ void DGLE_API OnFullScreenEvent(void *pParameter, IBaseEvent *pEvent)
 		prevWindowWidth = res_width;
 		prevWindowHeight = res_height;
 
-		pEngineCore->GetDesktopResolution( res_width, res_height);
+		pEngineCore->GetDesktopResolution(res_width, res_height);
 		p_event->SetResolution(res_width, res_height);
 	}
 	else
@@ -89,12 +93,13 @@ void DGLE_API Init(void *pParameter)
 	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)p_render);
 	p_render->GetRender2D(pRender2D);
 
-	// Background clear color setup.
+	// background clear color setup
 	p_render->SetClearColor(TColor4(38, 38, 55, 255));
 
-	// This example adapted only for 800X600 resolution, if even resolution will be higher it won't effect it.
+	// This example adapted only for 800X600 resolution, if even physical resolution will be higher it won't effect it.
 	pRender2D->SetResolutionCorrection(GAME_VP_WIDTH, GAME_VP_HEIGHT);
 
+	// hide system cursor
 	pInput->Configure(ICF_HIDE_CURSOR);
 
 	p_res_man->GetDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject*&)pFont);
@@ -177,79 +182,59 @@ void DGLE_API Render(void *pParameter)
 {
 	pRender2D->Begin2D();
 
-	// Draw static sky
-	
+	// draw static sky background
 	pRender2D->DrawTexture(pSky, TPoint2(), TVector2(GAME_VP_WIDTH, GAME_VP_HEIGHT));
 
-	// Draw background
-
+	
+	// draw background
 	pRender2D->SetCamera(TPoint2(cameraPosition.x / 1.5f, cameraPosition.y / 1.5f), cameraAngle, TPoint2(cameraScale, cameraScale));
-
 	pRender2D->SetBlendMode(EBF_NORMAL);
-
 	pRender2D->DrawTextureCropped(pBg, TPoint2(-200.f, 150.f), TVector2(1399.f, 517.f), TRectF(0.f, 905.f, 1399.f, 517.f), 0.f, EF_BLEND);
 
-	// Draw moving fog on background
-
+	// draw moving fog on background
 	pRender2D->SetCamera(TPoint2(cameraPosition.x / 1.2f, cameraPosition.y / 1.2f), cameraAngle, TPoint2(cameraScale, cameraScale));
-
 	pRender2D->SetBlendMode(EBF_ADD);
 
 	// Sometimes it's better to batch a lot of similar objects.
-
 	pRender2D->BeginBatch(); 
-
 	pRender2D->SetColorMix(TColor4(255, 255, 255, 64));
-	
 	for (uint i = 0; i < 22; ++i)
 		for (uint j = 0; j < 2; ++j)
 			pRender2D->DrawTexture(pFog,
 			TPoint2(500.f + sin((float)i) * 600.f - cos((float)counter / 50.f) * 10.f * (i % 4),
 					475.f + sin((float)j * 2.5f) * 150.f - sin((float)counter / 50.f) * 20.f * (i % 3)),
 			TVector2(250.f, 150.f), 0.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLOR_MIX));
-
 	pRender2D->EndBatch();
 
-	// Draw foreground scene
+	// Draw foreground scene.
 
-	// Setup camera and blending
 	pRender2D->SetCamera(cameraPosition, cameraAngle, TPoint2(cameraScale, cameraScale));
-
 	pRender2D->SetBlendMode(EBF_NORMAL);
 
-	// Owl
-
+	// flying owl
 	pRender2D->SetColorMix(TColor4(150, 150, 150, 255)); // make sprite little darker
 	pRender2D->DrawTextureSprite(pOwl, TPoint2(owlX, 425.f), TVector2(48.f, 128.f), (counter / 3) % 15, 0.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLOR_MIX | (owlGoLeft ? EF_FLIP_HORIZONTALLY : EF_DEFAULT)));
 
-	// Draw tree background
-
+	// draw tree on background
 	pRender2D->DrawTextureCropped(pBg, TPoint2(), TVector2(1399.f, 900.f), TRectF(0.f, 0.f, 1399.f, 900.f), 0.f, EF_BLEND);
 
-	// Glowing disc under moving light
-	
+	// draw glowing disc under moving light
 	pRender2D->SetBlendMode(EBF_ADD);
-	
 	pRender2D->SetVerticesOffsets(TPoint2(-100.f, 0.f), TPoint2(-100.f, 0.f), TPoint2(), TPoint2());
 	pRender2D->SetColorMix(TColor4(65, 59, 193, 255));
 	pRender2D->DrawTexture(pLightRound, TPoint2(lights[0].x - 32.f, lights[0].y + 64.f), TVector2(256.f, 256.f), 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSETS | EF_BLEND | EF_COLOR_MIX));
 
-	// Girl Shadow
-	
+	// draw girl shadow
 	pRender2D->SetBlendMode(EBF_NORMAL);
-	
 	pRender2D->SetVerticesOffsets(TPoint2(-150.f + cos((float)counter / 100.f) * 100.f, -55.f), TPoint2(-50.f + cos((float)counter / 100.f) * 100.f, -55.f), TPoint2(15.f, 5.f), TPoint2(15.f, 5.f));
 	pRender2D->SetColorMix(TColor4(0, 0, 0, 128));
 	pRender2D->DrawTextureSprite(pTexGirl, TPoint2(550.f, 725.f), TVector2(60.f, 120.f), (counter / 5) % 16, 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSETS | EF_BLEND | EF_COLOR_MIX));
 
-	// Girl Sprite
-
+	// draw girl sprite
 	pRender2D->DrawTextureSprite(pTexGirl, TPoint2(550.f, 725.f), TVector2(60.f, 120.f), (counter / 5) % 16, 0.f, EF_BLEND);
 
-	// Lights
-
+	// draw lights
 	pRender2D->SetBlendMode(EBF_ADD);
-
 	for (uint i = 0; i < 5; ++i)
 		pRender2D->DrawTextureSprite(pLight, TPoint2(lights[i].x, lights[i].y), TVector2(64.f, 128.f), (counter / 2) % 14, 0.f, EF_BLEND);
 
@@ -258,8 +243,11 @@ void DGLE_API Render(void *pParameter)
 	// We must calculate correct coordinates in game space because game resolution and screen resolution can be different.
 	TPoint2 pos;
 	pRender2D->AbsoluteToResolutionCorrect(stMousePos, pos);
+	
+	// draw sprite effect at cursor position
 	pRender2D->DrawTextureSprite(pVox, TPoint2(pos.x - 37, pos.y - 37), TVector2(75.f, 75.f), (counter / 2) % 16, 0.f, EF_BLEND);
 
+	// draw help text at the bottom of the screen
 	uint tw, th;
 	pFont->GetTextDimensions(HELP_TEXT, tw, th);
 	pFont->Draw2D((float)((GAME_VP_WIDTH - tw) / 2), (float)(GAME_VP_HEIGHT - th), HELP_TEXT);
@@ -278,6 +266,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pEngineCore->AddProcedure(EPT_UPDATE, &Update);
 			pEngineCore->AddProcedure(EPT_RENDER, &Render);
 			
+			// register event callback
 			pEngineCore->AddEventListener(ET_ON_FULLSCREEN, &OnFullScreenEvent);
 
 			pEngineCore->StartEngine();

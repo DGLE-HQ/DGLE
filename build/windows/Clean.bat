@@ -39,11 +39,22 @@ call :removeProjJunkCSharp "tests\csharp"
 :: Examples
 
 call :removeBinJunkCPP "examples\cpp"
+call :removeBinJunkCPPBuilder "examples\cpp_builder"
 
 call :removeSlnJunkCPP "examples\cpp"
+call :removeGroupprojJunkCPPBuilder "examples\cpp_builder"
 
-call :removeProjJunkCPP "examples\cpp\low_level_2d"
 call :removeProjJunkCPP "examples\cpp\3d_in_2d"
+call :removeProjJunkCPP "examples\cpp\asteroids_game"
+call :removeProjJunkCPP "examples\cpp\basic_2d"
+call :removeProjJunkCPP "examples\cpp\core_renderer_and_opengl"
+call :removeProjJunkCPP "examples\cpp\hello_world"
+call :removeProjJunkCPP "examples\cpp\low_level_2d"
+call :removeProjJunkCPP "examples\cpp\low_level_3d"
+call :removeProjJunkCPP "examples\cpp\matrix_stack_3d"
+call :removeProjJunkCPP "examples\cpp\render_to_texture_2d"
+
+call :removeProjJunkCPPBuilder "examples\cpp_builder\render_to_panel"
 
 :: CSharp assemblies
 
@@ -63,6 +74,37 @@ call :removeProjJunkCSharp "tools\template"
 call :removeProjJunkCSharp "tools\font_tool"
 call :removeProjJunkCSharp "tools\packer"
 call :removeProjJunkCSharp "tools\color_picker"
+
+:: Functions will clear all temporary Embarcadero (Borland) C++ Builder files.
+
+:removeBinJunkCPPBuilder
+
+set arg=%1
+
+del %BIN_WIN_32_PATH%\%arg%\log.txt
+del %BIN_WIN_32_PATH%\%arg%\*.map
+del %BIN_WIN_32_PATH%\%arg%\*.tds
+
+goto :eof
+
+:removeGroupprojJunkCPPBuilder
+
+set arg=%1
+
+del .\%arg%\*.local
+
+goto :eof
+
+:removeProjJunkCPPBuilder
+
+set arg=%1
+
+del .\..\..\src\%arg%\*.local
+rd /s /q .\..\..\src\%arg%\Debug
+rd /s /q .\..\..\src\%arg%\Release
+rd /s /q .\..\..\src\%arg%\__history
+
+goto :eof
 
 :: Functions will clear all temporary Visual Studio files for C++ project.
 

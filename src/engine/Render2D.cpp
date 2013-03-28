@@ -146,7 +146,7 @@ void CRender2D::_SetDefaultStates()
 	Core()->pRender()->pRender3D()->PrepareFor2D();
 }
 
-__forceinline bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) const
+FORCE_INLINE bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) const
 {
 	if (_bInProfilerMode)
 		return true;
@@ -1969,7 +1969,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTextureCropped(ITexture *pTexture, const TPo
 	return DrawTexture(pTexture, stCoords, stDimensions, stTexCropRect, fAngle, eFlags);
 }
 
-__forceinline DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TVector2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
+FORCE_INLINE DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TVector2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
 {
 	IN_2D_GUARD
 

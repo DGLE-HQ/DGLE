@@ -53,3 +53,7 @@ ipch/
 *.mdb
 *.exe.manifest
 *.vshost.exe
+
+# Delphi and C++ Builder
+*__history*
+*.local

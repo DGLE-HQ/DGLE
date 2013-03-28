@@ -1,0 +1,36 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{44B7799E-6C41-4118-A6B0-3AEEBB0A8EC1}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="..\..\..\..\src\examples\cpp_builder\render_to_panel\RenderToPanel.cbproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="RenderToPanel">
+			<MSBuild Projects="..\..\..\..\src\examples\cpp_builder\render_to_panel\RenderToPanel.cbproj"/>
+		</Target>
+		<Target Name="RenderToPanel:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\..\..\src\examples\cpp_builder\render_to_panel\RenderToPanel.cbproj"/>
+		</Target>
+		<Target Name="RenderToPanel:Make">
+			<MSBuild Targets="Make" Projects="..\..\..\..\src\examples\cpp_builder\render_to_panel\RenderToPanel.cbproj"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="RenderToPanel"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="RenderToPanel:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="RenderToPanel:Make"/>
+		</Target>
+		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+	</Project>

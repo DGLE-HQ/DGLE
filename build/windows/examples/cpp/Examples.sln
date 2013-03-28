@@ -5,6 +5,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LowLevel2D", "low_level_2d\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3DIn2D", "3d_in_2d\3DIn2D.vcxproj", "{F461408B-0004-4D19-B9F3-1F8F798225DE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AsteroidsGame", "asteroids_game\AsteroidsGame.vcxproj", "{48EB2BD3-2010-4EBB-91AC-189A04F25634}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Basic2D", "basic_2d\Basic2D.vcxproj", "{97124B37-1388-41CE-9F51-0CF2FF52E2D7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreRendererAndOpenGL", "core_renderer_and_opengl\CoreRendererAndOpenGL.vcxproj", "{657A0389-D487-4D9C-9206-7E4729B71059}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "hello_world\HelloWorld.vcxproj", "{E88984FC-99DC-408F-BA08-83D69D50901B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LowLevel3D", "low_level_3d\LowLevel3D.vcxproj", "{00D7259F-874B-4045-A1C6-15DDB7B65FBB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatrixStack3D", "matrix_stack_3d\MatrixStack3D.vcxproj", "{8D57F525-EEAE-4B7D-91CE-93D71E8574DB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderToTexture2D", "render_to_texture_2d\RenderToTexture2D.vcxproj", "{B9C38B74-6181-487F-A382-3A253BCC2A76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +33,34 @@ Global
 		{F461408B-0004-4D19-B9F3-1F8F798225DE}.Debug|Win32.Build.0 = Debug|Win32
 		{F461408B-0004-4D19-B9F3-1F8F798225DE}.Release|Win32.ActiveCfg = Release|Win32
 		{F461408B-0004-4D19-B9F3-1F8F798225DE}.Release|Win32.Build.0 = Release|Win32
+		{48EB2BD3-2010-4EBB-91AC-189A04F25634}.Debug|Win32.ActiveCfg = Debug|Win32
+		{48EB2BD3-2010-4EBB-91AC-189A04F25634}.Debug|Win32.Build.0 = Debug|Win32
+		{48EB2BD3-2010-4EBB-91AC-189A04F25634}.Release|Win32.ActiveCfg = Release|Win32
+		{48EB2BD3-2010-4EBB-91AC-189A04F25634}.Release|Win32.Build.0 = Release|Win32
+		{97124B37-1388-41CE-9F51-0CF2FF52E2D7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{97124B37-1388-41CE-9F51-0CF2FF52E2D7}.Debug|Win32.Build.0 = Debug|Win32
+		{97124B37-1388-41CE-9F51-0CF2FF52E2D7}.Release|Win32.ActiveCfg = Release|Win32
+		{97124B37-1388-41CE-9F51-0CF2FF52E2D7}.Release|Win32.Build.0 = Release|Win32
+		{657A0389-D487-4D9C-9206-7E4729B71059}.Debug|Win32.ActiveCfg = Debug|Win32
+		{657A0389-D487-4D9C-9206-7E4729B71059}.Debug|Win32.Build.0 = Debug|Win32
+		{657A0389-D487-4D9C-9206-7E4729B71059}.Release|Win32.ActiveCfg = Release|Win32
+		{657A0389-D487-4D9C-9206-7E4729B71059}.Release|Win32.Build.0 = Release|Win32
+		{E88984FC-99DC-408F-BA08-83D69D50901B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E88984FC-99DC-408F-BA08-83D69D50901B}.Debug|Win32.Build.0 = Debug|Win32
+		{E88984FC-99DC-408F-BA08-83D69D50901B}.Release|Win32.ActiveCfg = Release|Win32
+		{E88984FC-99DC-408F-BA08-83D69D50901B}.Release|Win32.Build.0 = Release|Win32
+		{00D7259F-874B-4045-A1C6-15DDB7B65FBB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00D7259F-874B-4045-A1C6-15DDB7B65FBB}.Debug|Win32.Build.0 = Debug|Win32
+		{00D7259F-874B-4045-A1C6-15DDB7B65FBB}.Release|Win32.ActiveCfg = Release|Win32
+		{00D7259F-874B-4045-A1C6-15DDB7B65FBB}.Release|Win32.Build.0 = Release|Win32
+		{8D57F525-EEAE-4B7D-91CE-93D71E8574DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8D57F525-EEAE-4B7D-91CE-93D71E8574DB}.Debug|Win32.Build.0 = Debug|Win32
+		{8D57F525-EEAE-4B7D-91CE-93D71E8574DB}.Release|Win32.ActiveCfg = Release|Win32
+		{8D57F525-EEAE-4B7D-91CE-93D71E8574DB}.Release|Win32.Build.0 = Release|Win32
+		{B9C38B74-6181-487F-A382-3A253BCC2A76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B9C38B74-6181-487F-A382-3A253BCC2A76}.Debug|Win32.Build.0 = Debug|Win32
+		{B9C38B74-6181-487F-A382-3A253BCC2A76}.Release|Win32.ActiveCfg = Release|Win32
+		{B9C38B74-6181-487F-A382-3A253BCC2A76}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

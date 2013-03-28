@@ -244,7 +244,7 @@ DGLE_RESULT CMainWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight)
 	if (GetClientRect(_hWnd, &rect) == FALSE)
 	{
 		iX = iY = iWidth = iHeight = 0;
-		LOG("Can't get window client rect.", LT_ERROR);
+		LOG("Can't get window client rectangle.", LT_ERROR);
 		return E_FAIL;
 	}
 

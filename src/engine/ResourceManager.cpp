@@ -1897,11 +1897,11 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExt
 	return S_FALSE;
 }
 
-inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags)
+inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile, uint uiFFIdx, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName)
 {
 	if (uiFFIdx == -1)
 	{
-		Console()->Write("Use \"rman_list_reged_fformats\" console command to list supported file formats.");
+		Console()->Write("Use \"rman_list_file_formats\" console command to list supported file formats.");
 		LOG("Resource Manager can't load file \"" + string(pcFileName) + "\" because of unknown file extension \"" + ToUpperCase(GetFileExt(pcFileName)) + "\".", LT_FATAL);
 		return E_FAIL;
 	}
@@ -1931,12 +1931,12 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	if (!ret)
 		LOG("Error(s) while loading file \"" + string(pcFileName) + "\".", LT_ERROR);
 	else
-		_resList.push_back(TResource(pcFileName, prObj));
+		_resList.push_back(TResource(pcName == NULL || strlen(pcName) == 0 ? pcFileName : pcName, prObj));
 
 	return ret ? S_OK : S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags)
+DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName)
 {
 	if (pcFileName == NULL || strlen(pcFileName) == 0)
 	{
@@ -1957,14 +1957,14 @@ DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngineBaseO
 		return E_ABORT;
 	}
 
-	DGLE_RESULT ret = _Load(pcFileName, p_file, ff_idx, prObj, uiLoadFlags);
+	DGLE_RESULT ret = _Load(pcFileName, p_file, ff_idx, prObj, uiLoadFlags, pcName);
 
 	p_file->Free();
 
 	return ret;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags)
+DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName)
 {
 	if (pFile == NULL)
 	{
@@ -2007,7 +2007,7 @@ DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&
 
 	file_name += string(name);
 
-	DGLE_RESULT ret = _Load(file_name.c_str(), pFile, _GetFileFormatLoaderIdx(name, EOT_UNKNOWN, uiLoadFlags, prObj), prObj, uiLoadFlags);
+	DGLE_RESULT ret = _Load(file_name.c_str(), pFile, _GetFileFormatLoaderIdx(name, EOT_UNKNOWN, uiLoadFlags, prObj), prObj, uiLoadFlags, pcName);
 
 	delete[] name_path;
 

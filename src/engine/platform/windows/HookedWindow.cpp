@@ -192,7 +192,7 @@ DGLE_RESULT CHookedWindow::GetWinRect(int &iX, int &iY, int &iWidth, int &iHeigh
 	if (GetClientRect(_hWnd, &rect) == FALSE)
 	{
 		iX = iY = iWidth = iHeight = 0;
-		LOG("Can't get window client rect.", LT_ERROR);
+		LOG("Can't get window client rectangle.", LT_ERROR);
 		return E_FAIL;
 	}
 
@@ -251,11 +251,18 @@ DGLE_RESULT CHookedWindow::BeginMainLoop()
 	if (!_stOldWindowProc && !_stOldRootWindowProc)
 		return E_FAIL;
 
-	if (!_bNoMloopHook && (_uiUpdateTimer = CreateTimer(USER_TIMER_MINIMUM, _pDelMainLoop), _uiUpdateTimer != -1))
+	if (!_bNoMloopHook && (_uiUpdateTimer = CreateTimer(USER_TIMER_MINIMUM, _pDelMainLoop), _uiUpdateTimer == -1))
 	{
 		LOG("Can't set update timer.", LT_FATAL);
 		return E_ABORT;
 	}
+
+	RECT rect;
+	
+	if (GetClientRect(_hWnd, &rect) == FALSE)
+		LOG("Can't get window client rectangle.", LT_FATAL);
+	
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_SIZE, rect.right, rect.bottom));
 
 	LOG("**Entering main loop**",LT_INFO);
 

@@ -87,6 +87,31 @@ This is simplest DGLE application for Windows.
 #ifndef DGLE_HEADER
 #define DGLE_HEADER
 
+//Compiler compatibility tweaks//
+
+#if defined(_MSC_VER)
+
+#	define FORCE_INLINE __forceinline
+#	define ENUM_FORWARD_DECLARATION(name) name
+
+#elif defined(__BORLANDC__)
+
+#	define FORCE_INLINE __inline
+
+#	ifdef __CODEGEARC__
+#		define ENUM_FORWARD_DECLARATION(name) name : uint32
+#	else
+#		define ENUM_FORWARD_DECLARATION(name) name
+#	endif
+
+#	define sqrtf sqrt
+#	define sinf sin
+#	define cosf cos
+#	define atan2f atan2
+#	define acosf acos
+
+#endif
+
 //Engine version defines//
 
 /** Defines DGLE version string. 
@@ -352,7 +377,7 @@ namespace DGLE
 	static const GUID IID_IEvBeforeInitialization = 
 	{ 0xeb735739, 0x3d12, 0x4522, { 0xb6, 0xd7, 0xee, 0xe3, 0x22, 0x5d, 0xf9, 0x34 } };
 
-	enum E_ENGINE_INIT_FLAGS;
+	enum ENUM_FORWARD_DECLARATION(E_ENGINE_INIT_FLAGS);
 
 	/** Event occurs just before engine will call its initialization routines.
 		On this event you can hook engine init Parameters.
@@ -538,7 +563,7 @@ namespace DGLE
 	/** Engine initialization flags. 
 		\see IEngineCore::InitializeEngine
 	 */
-	enum E_ENGINE_INIT_FLAGS
+	enum ENUM_FORWARD_DECLARATION(E_ENGINE_INIT_FLAGS)
 	{
 		EIF_DEFAULT					= 0x00000000,	/**< Use default settings. */
 		EIF_CATCH_UNHANDLED			= 0x00000001,	/**< All user callbacks will be executed in safe mode and engine will catch any unhandled errors. Engine will convert cached errors to engine fatal errors. Also ET_ON_ENGINE_FATAL_MESSAGE event will be generated. */
@@ -557,7 +582,7 @@ namespace DGLE
 
 	/** Main engine interface.
 		Pointer to this interface is retrieved directly from DGLE library.
-		\see ENG_DYNAMIC_FUNC
+		\see DGLE_DYNAMIC_FUNC
 	 */
 	class IEngineCore : public IDGLE_Base
 	{
@@ -741,8 +766,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj) = 0;
 		virtual DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj) = 0;
 
-		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT, const char *pcName = "") = 0;
+		virtual DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT, const char *pcName = "") = 0;
 	
 		virtual DGLE_RESULT DGLE_API FreeResource(IEngineBaseObject *&prObj) = 0;
 		virtual DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngineBaseObject *pObj) = 0;
@@ -757,7 +782,7 @@ namespace DGLE
 	
 	struct TDrawDataDesc;
 
-	enum E_CORE_RENDERER_DRAW_MODE;
+	enum ENUM_FORWARD_DECLARATION(E_CORE_RENDERER_DRAW_MODE);
 
 	enum E_GET_POINT3_FLAG
 	{

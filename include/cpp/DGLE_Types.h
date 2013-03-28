@@ -995,7 +995,7 @@ namespace DGLE
 			return TMatrix4x4(*this) -= right;
 		}
 
-		__forceinline TMatrix4x4 operator *(const TMatrix4x4 &right) const
+		FORCEINLINE TMatrix4x4 operator *(const TMatrix4x4 &right) const
 		{
 			TMatrix4x4 product;
 			
