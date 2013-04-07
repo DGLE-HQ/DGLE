@@ -46,7 +46,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 	
 	TMatrix4 _stPrevProjMat, _stPrevModelViewMat;
 	uint _uiPrevViewPortX, _uiPrevViewPortY, _uiPrevViewPortW, _uiPrevViewPortH;
-	E_EFFECT_BLENDING_FLAGS _ePrevBlendingMode;
+	E_BLENDING_EFFECT _ePrevBlendingMode;
 
 	float *_pBuffer;
 	uint _uiBufferSize;
@@ -134,14 +134,14 @@ public:
 	DGLE_RESULT DGLE_API SetRotationPoint(const TPoint2 &stCoords);
 	DGLE_RESULT DGLE_API SetScale(const TPoint2 &stScale);
 	DGLE_RESULT DGLE_API SetColorMix(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode);
+	DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode);
 	DGLE_RESULT DGLE_API SetVerticesOffsets(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4);
 	DGLE_RESULT DGLE_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4);
 
 	DGLE_RESULT DGLE_API GetRotationPoint(TPoint2 &stCoords);
 	DGLE_RESULT DGLE_API GetScale(TPoint2 &stScale);
 	DGLE_RESULT DGLE_API GetColorMix(TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode);
+	DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode);
 	DGLE_RESULT DGLE_API GetVerticesOffsets(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4);
 	DGLE_RESULT DGLE_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4);
 

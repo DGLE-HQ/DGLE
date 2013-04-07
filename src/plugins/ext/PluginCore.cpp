@@ -8,7 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "PluginCore.h"
-#include <locale>
+
 using namespace std;
 
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):

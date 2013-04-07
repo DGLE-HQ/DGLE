@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		03.03.2013 (c)Korotkov Andrey
+\date		07.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -121,6 +121,14 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 
 public:
 
+	static const char sc_acFormatString[];
+
+	enum E_DMD_HEADER_FLAGS
+	{
+		DHF_NOTHING = 0x00000000,
+		DHF_MODEL_AABB = 0x00000001
+	};
+
 	CResourceManager(uint uiInstIdx);
 	~CResourceManager();
 
@@ -145,6 +153,7 @@ public:
 	DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType);
 	
 	DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj);
+	DGLE_RESULT DGLE_API GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount);
 	DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj);
 	
 	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName);

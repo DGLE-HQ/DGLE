@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		03.03.2013 (c)Korotkov Andrey
+\date		07.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -54,6 +54,51 @@ void CModel::_RecalculateBounds()
 
 	_center = min_dem + (max_dem - min_dem) / 2.f;
 	_extents = (max_dem - min_dem) / 2.f;
+}
+
+bool CModel::_SaveToFile(IFile *pFile)
+{
+	CResourceManager::E_DMD_HEADER_FLAGS flags = CResourceManager::DHF_NOTHING;
+
+	if (_meshes.size() > 1)
+		flags = CResourceManager::DHF_MODEL_AABB;
+
+	uint written;
+
+	pFile->Write(CResourceManager::sc_acFormatString, sizeof(char) * strlen(CResourceManager::sc_acFormatString), written);
+	pFile->Write(&flags, sizeof(CResourceManager::E_DMD_HEADER_FLAGS), written);
+
+	uint count = _meshes.size();
+	pFile->Write(&count, sizeof(uint), written);
+
+	if (flags & CResourceManager::DHF_MODEL_AABB)
+	{
+		pFile->Write(_center.xyz, sizeof(TPoint3), written);
+		pFile->Write(_extents.xyz, sizeof(TVector3), written);	
+	}
+
+	bool ret = true;
+
+	for (size_t i = 0; i < _meshes.size(); ++i)
+	{
+		TVariant var;
+		var.SetPointer(pFile);
+		
+		if (FAILED(_meshes[i]->ExecuteCommand(1, var)) || !var.AsBool())
+			ret = false;
+	}
+
+	return ret;
+}
+
+void CModel::AddMesh(IMesh *pMesh, const TPoint3 &stCenter, const TVector3 &stExtents)
+{
+	pMesh->SetOwner(this);
+	_meshes.push_back(pMesh);
+	_materials.push_back(NULL);
+
+	_center = stCenter;
+	_extents = stExtents;
 }
 
 DGLE_RESULT DGLE_API CModel::Draw()
@@ -190,4 +235,42 @@ DGLE_RESULT DGLE_API CModel::ReplaceMesh(uint uiMeshIdx, IMesh *pMesh)
 	_RecalculateBounds();
 
 	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CModel::ExecuteCommand(uint uiCmd, TVariant &stVar)
+{
+	if (uiCmd != 1 || stVar.GetType() != DVT_POINTER)
+		return E_INVALIDARG;
+
+	stVar.SetBool(_SaveToFile(reinterpret_cast<IFile *>(stVar.AsPointer())));
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CModel::ExecuteTextCommand(const char *pcCommand, TVariant &stVar)
+{
+	stVar.Clear();
+	return E_NOTIMPL;
+}
+
+DGLE_RESULT DGLE_API CModel::ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+{
+	if (!pcCommand)
+		return E_INVALIDARG;
+	if (!pcResult)
+	{
+		uiCharsCount = 1;
+		return S_OK;
+	}
+	if (uiCharsCount < 1)
+		return E_INVALIDARG;
+	else
+	{
+		if (pcResult && uiCharsCount > 0)
+			strcpy(pcResult, "");
+		else
+			pcResult = NULL;
+		uiCharsCount = 0;
+		return E_NOTIMPL;
+	}
 }

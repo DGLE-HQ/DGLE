@@ -1,6 +1,4 @@
-#include <DGLE.h>
-
-using namespace DGLE;
+#include "game.h" // already include DGLE header and namespace
 
 DGLE_DYNAMIC_FUNC
 
@@ -8,22 +6,22 @@ DGLE_DYNAMIC_FUNC
 
 #ifdef _DEBUG
 #	define DLL_PATH "..\\..\\..\\..\\bin\\windows\\DGLE.dll"
-#	define RESOURCE_PATH "..\\..\\..\\..\\..\\resources\\"
 #else
 #	define DLL_PATH "..\\..\\DGLE.dll"
-#	define RESOURCE_PATH "..\\..\\..\\..\\resources\\"
 #endif
 
 #define SCREEN_WIDTH	1024u
 #define SCREEN_HEIGHT	768u
 
-IEngineCore *pEngineCore = NULL;
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	IEngineCore *pEngineCore = NULL;
+	
 	if (GetEngine(DLL_PATH, pEngineCore))
 	{
-		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngineWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false))))
+		CGame game(pEngineCore);
+		
+		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngineWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false, false, MM_4X))))
 			pEngineCore->StartEngine();
 
 		FreeEngine();

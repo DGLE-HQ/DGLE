@@ -11,6 +11,7 @@ bin/windows/examples*.exe
 bin/windows/x64/examples*.exe
 bin/windows/plugins/*.dll
 bin/windows/x64/plugins/*.dll
+bin/windows/utils/*.exe
 bin/windows/tools/*.exe
 bin/windows/tools/*.dll
 bin/windows/tools/*.o

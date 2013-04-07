@@ -572,7 +572,7 @@ namespace DGLE
 		EIF_FORCE_LIMIT_FPS			= 0x00000010,	/**< Engine will limit its FPS (frames per second) not to overload CPU and overheat GPU. \note Recommended for casual games, 2D and simple 3D games and desktop applications. */
 		EIF_FORCE_16_BIT_COLOR		= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
 		EIF_ENABLE_FLOATING_UPDATE	= 0x00000040,	/**< By default engine uses fixed update mechanism, this means that engine will try to keep fixed update time interval, whenever it's possible. When this flag is set the update routine simply will be called once when delta time between updates is greater than update interval (for example, even if delta time is twice greater than update interval), so you should use delta time value. \see EPT_UPDATE, IEngineCore::GetLastUpdateDeltaTime */
-		EIF_FORCE_NO_WINDOW			= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. */
+		EIF_FORCE_NO_WINDOW			= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. \warning You must call IEngineCore::StartEngine and IEngineCore::QuitEngine routines for correct engine initialization and finalization. */
 		EIF_NO_SPLASH				= 0x10000000	/**< This flag will disable engine splash screen. Splash screen is displayed to the user while engine prepare itself and while user initialization procedure is being processed. \note Turning off splash screen is not recommended because the user could be confused while being waiting application execution. */
 	};
 
@@ -764,6 +764,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj) = 0;
 
 		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT, const char *pcName = "") = 0;
@@ -784,21 +785,21 @@ namespace DGLE
 
 	enum ENUM_FORWARD_DECLARATION(E_CORE_RENDERER_DRAW_MODE);
 
-	enum E_GET_POINT3_FLAG
+	enum E_GET_POINT3_MODE
 	{
-		GP3F_FROM_DEPTH_BUFFER = 0,
-		GP3F_FROM_FAR_PLANE,
-		GP3F_FROM_NEAR_PLANE
+		GP3M_FROM_DEPTH_BUFFER = 0,
+		GP3M_FROM_FAR_PLANE,
+		GP3M_FROM_NEAR_PLANE
 	};
 
-	enum E_EFFECT_BLENDING_FLAGS
+	enum E_BLENDING_EFFECT
 	{
-		EBF_NORMAL	= 0x00000001,
-		EBF_ADD		= 0x00000002,
-		EBF_MULT	= 0x00000004,
-		EBF_BLACK	= 0x00000008,
-		EBF_WHITE	= 0x00000010,
-		EBF_MASK	= 0x00000020
+		BE_NORMAL = 0,
+		BE_ADD,
+		BE_MULT,
+		BE_BLACK,
+		BE_WHITE,
+		BE_MASK
 	};
 
 	// {EA03C661-A334-4225-B5DB-4C45452CCC41}
@@ -905,14 +906,14 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetRotationPoint(const TPoint2 &stCoords) = 0;//In texture coord system
 		virtual DGLE_RESULT DGLE_API SetScale(const TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API SetColorMix(const TColor4 &stColor = ColorWhite()) = 0;
-		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
+		virtual DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode = BE_NORMAL) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesOffsets(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TPoint2 &stCoords3, const TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API SetVerticesColors(const TColor4 &stColor1, const TColor4 &stColor2, const TColor4 &stColor3, const TColor4 &stColor4) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetRotationPoint(TPoint2 &stCoords) = 0;
 		virtual DGLE_RESULT DGLE_API GetScale(TPoint2 &stScale) = 0;
 		virtual DGLE_RESULT DGLE_API GetColorMix(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode) = 0;
+		virtual DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode) = 0;
 		virtual DGLE_RESULT DGLE_API GetVerticesOffsets(TPoint2 &stCoords1, TPoint2 &stCoords2, TPoint2 &stCoords3, TPoint2 &stCoords4) = 0;
 		virtual DGLE_RESULT DGLE_API GetVerticesColors(TColor4 &stColor1, TColor4 &stColor2, TColor4 &stColor3, TColor4 &stColor4) = 0;
 	};
@@ -938,8 +939,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat) = 0;
 		virtual DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat) = 0;
 
-		virtual DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode = EBF_NORMAL) = 0;
-		virtual DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode) = 0;
+		virtual DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode = BE_NORMAL) = 0;
+		virtual DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode) = 0;
 
 		virtual DGLE_RESULT DGLE_API ToggleAlphaTest(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetAlphaTreshold(float fTreshold) = 0;
@@ -973,7 +974,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API PushStates() = 0;
 		virtual DGLE_RESULT DGLE_API PopStates() = 0;
 
-		virtual DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag = GP3F_FROM_DEPTH_BUFFER) = 0;
+		virtual DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_MODE eFlag = GP3M_FROM_DEPTH_BUFFER) = 0;
 		virtual DGLE_RESULT DGLE_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen) = 0;
 
 		virtual DGLE_RESULT DGLE_API SetupFrustum() = 0;

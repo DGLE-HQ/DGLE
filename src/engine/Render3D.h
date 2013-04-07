@@ -48,10 +48,8 @@ class CRender3D: public CInstancedObj, public IRender3D
 			bool bEnabled;
 			TColor4 stColor;
 			float fDensity, fStart, fEnd;
-
-			TFogDescriptor() : bEnabled(false), stColor(ColorGray()),
-				fDensity(1.f), fStart(500.f), fEnd(1000.f){}
 		} stFogDesc;
+		
 	} _stCurState;
 
 	uint _uiMaxLightsCount, _uiMaxTextsCount,
@@ -64,6 +62,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 
 	IFixedFunctionPipeline *_pFFP;
 
+	void _SetDefaultStates();
 	void _DrawLight(uint idx);
 
 public:
@@ -100,8 +99,8 @@ public:
 	DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat);
 	DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat);
 
-	DGLE_RESULT DGLE_API SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode);
-	DGLE_RESULT DGLE_API GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode);
+	DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode);
+	DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode);
 
 	DGLE_RESULT DGLE_API ToggleAlphaTest(bool bEnabled);
 	DGLE_RESULT DGLE_API SetAlphaTreshold(float fTreshold);
@@ -135,7 +134,7 @@ public:
 	DGLE_RESULT DGLE_API PushStates();
 	DGLE_RESULT DGLE_API PopStates();
 
-	DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag);
+	DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_MODE eFlag);
 	DGLE_RESULT DGLE_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen);
 
 	DGLE_RESULT DGLE_API SetupFrustum();

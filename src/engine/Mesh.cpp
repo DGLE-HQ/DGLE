@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.02.2013 (c)Korotkov Andrey
+\date		07.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -32,7 +32,7 @@ inline bool CMesh::_IsInterleaved(const TDrawDataDesc &stDesc) const
 	if (stDesc.uiNormalOffset != -1 && stDesc.uiNormalStride != stride)
 		return false;
 
-	if (stDesc.uiTexCoordOffset != -1 && stDesc.uiTexCoordStride != stride)
+	if (stDesc.uiTextureVertexOffset != -1 && stDesc.uiTextureVertexStride != stride)
 		return false;
 
 	if (stDesc.uiColorOffset != -1 && stDesc.uiColorStride != stride)
@@ -69,6 +69,51 @@ void CMesh::_CopyMeshData(TDrawDataDesc &stDesc, uint &uiStride, uint &uiVertice
 	stDesc.pIndexBuffer = &stDesc.pData[uiVerticesDataSize];
 
 	PARANOIC_CHECK_RES(_pBuffer->GetGeometryData(stDesc, uiVerticesDataSize, uiIndexesDataSize));
+}
+
+bool CMesh::_SaveToFile(IFile *pFile)
+{
+	if (!_pBuffer)
+		return false;
+
+	TDrawDataDesc desc;
+	uint stride, verts_data_size, verts_count, idxs_data_size, idxs_count;
+	_CopyMeshData(desc, stride, verts_data_size, verts_count, idxs_data_size, idxs_count);
+
+	if (_IsInterleaved(desc))
+	{
+		//ToDo: Add ability to save as interleaved when DMD format will support it.
+		delete[] desc.pData;
+		return false;
+	}
+	else
+	{
+		uint ui_written;
+		
+		bool textured = desc.uiTextureVertexOffset != -1;
+		pFile->Write(&textured, sizeof(bool), ui_written);
+
+		bool tangent_space = false; //ToDo: Write tangent space if calculated.
+		pFile->Write(&tangent_space, sizeof(bool), ui_written);
+
+		pFile->Write(&verts_count, sizeof(uint), ui_written);
+		pFile->Write(&idxs_count, sizeof(uint), ui_written);
+
+		pFile->Write(_stCenter.xyz, sizeof(TPoint3), ui_written);
+		pFile->Write(_stExtents.xyz, sizeof(TVector3), ui_written);
+
+		pFile->Write(&desc.pData[0], sizeof(float) * 3 * verts_count, ui_written);
+		pFile->Write(&desc.pData[desc.uiNormalOffset], sizeof(float) * 3 * verts_count, ui_written);
+
+		if (textured)
+			pFile->Write(&desc.pData[desc.uiTextureVertexOffset], sizeof(float) * 2 * verts_count, ui_written);
+
+		pFile->Write(desc.pIndexBuffer, idxs_data_size, ui_written);
+	}
+
+	delete[] desc.pData;
+
+	return true;
 }
 
 DGLE_RESULT DGLE_API CMesh::Draw()
@@ -235,7 +280,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 		
 	_pBuffer->GetBufferDrawDataDesc(desc);
 
-	if (desc.uiTexCoordOffset == -1 ||
+	if (desc.uiTextureVertexOffset == -1 ||
 		(desc.uiTangentOffset == -1 && desc.uiBinormalOffset != -1) || (desc.uiTangentOffset != -1 && desc.uiBinormalOffset == -1)) // confusing situation should never happen
 		return E_ABORT;
 
@@ -284,7 +329,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 
 	const uint t_stride = desc_new.uiTangentStride == 0 ? 3 * sizeof(float) : desc_new.uiTangentStride,
 		b_stride = desc_new.uiBinormalStride == 0 ? 3 * sizeof(float) : desc_new.uiBinormalStride,
-		tex_stride = desc_new.uiTexCoordStride == 0 ? 2 * sizeof(float) : desc_new.uiTexCoordStride,
+		tex_stride = desc_new.uiTextureVertexStride == 0 ? 2 * sizeof(float) : desc_new.uiTextureVertexStride,
 		v_stride = desc_new.uiVertexStride == 0 ? 3 * sizeof(float) : desc_new.uiVertexStride,
 		n_stride = desc_new.uiNormalStride == 0 ? 3 * sizeof(float) : desc_new.uiNormalStride,
 		count = idxs_count == 0 ? verts_count / 3 : idxs_count / 3;
@@ -319,9 +364,9 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 			reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride])};
 
 		const TPoint2 * const t[3] = {
-			reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[0] * tex_stride]),
-			reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[1] * tex_stride]),
-			reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTexCoordOffset + face[2] * tex_stride])};
+			reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTextureVertexOffset + face[0] * tex_stride]),
+			reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTextureVertexOffset + face[1] * tex_stride]),
+			reinterpret_cast<TPoint2 *>(&desc_new.pData[desc_new.uiTextureVertexOffset + face[2] * tex_stride])};
 
 		const TVector3 v1 = *v[1] - *v[0], v2 = *v[2] - *v[0];
 		const TVector2 v3 = *t[1] - *t[0], v4 = *t[2] - *t[0];
@@ -455,16 +500,16 @@ DGLE_RESULT DGLE_API CMesh::Optimize()
 		*(reinterpret_cast<TPoint3 *>(&desc_optimized.pData[offset])) = *(reinterpret_cast<TPoint3 *>(&desc.pData[i * stride]));
 		offset += 3 * sizeof(float);
 
-		if (desc.uiTexCoordOffset != -1)
+		if (desc.uiTextureVertexOffset != -1)
 		{
-			stride = desc.uiTexCoordStride == 0 ? 2 * sizeof(float) : desc.uiTexCoordStride;
-			*(reinterpret_cast<TPoint2 *>(&desc_optimized.pData[offset])) = *(reinterpret_cast<TPoint2 *>(&desc.pData[desc.uiTexCoordOffset + i * stride]));
+			stride = desc.uiTextureVertexStride == 0 ? 2 * sizeof(float) : desc.uiTextureVertexStride;
+			*(reinterpret_cast<TPoint2 *>(&desc_optimized.pData[offset])) = *(reinterpret_cast<TPoint2 *>(&desc.pData[desc.uiTextureVertexOffset + i * stride]));
 			offset += 2 * sizeof(float);
 		}
 
 		if (desc.uiColorOffset != -1)
 		{
-			stride = desc.uiColorStride == 0 ? 4 * sizeof(float) : desc.uiTexCoordStride;
+			stride = desc.uiColorStride == 0 ? 4 * sizeof(float) : desc.uiTextureVertexStride;
 			*(reinterpret_cast<TColor4 *>(&desc_optimized.pData[offset])) = *(reinterpret_cast<TColor4 *>(&desc.pData[desc.uiColorOffset + i * stride]));
 			offset += 4 * sizeof(float);
 		}
@@ -498,9 +543,9 @@ DGLE_RESULT DGLE_API CMesh::Optimize()
 
 	offset = 3 * sizeof(float);
 
-	if (desc_optimized.uiTexCoordOffset != -1)
+	if (desc_optimized.uiTextureVertexOffset != -1)
 	{
-		desc_optimized.uiTexCoordOffset = offset;
+		desc_optimized.uiTextureVertexOffset = offset;
 		offset += 2 * sizeof(float);
 	}
 
@@ -535,8 +580,8 @@ DGLE_RESULT DGLE_API CMesh::Optimize()
 
 	desc_optimized.uiVertexStride = offset;
 
-	if (desc_optimized.uiTexCoordOffset != -1)
-		desc_optimized.uiTexCoordStride = offset;
+	if (desc_optimized.uiTextureVertexOffset != -1)
+		desc_optimized.uiTextureVertexStride = offset;
 
 	if (desc_optimized.uiColorOffset != -1)
 		desc_optimized.uiColorStride = offset;
@@ -590,4 +635,42 @@ DGLE_RESULT DGLE_API CMesh::SetOwner(IModel *pModel)
 	_pOwnerModel = pModel;
 
 	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CMesh::ExecuteCommand(uint uiCmd, TVariant &stVar)
+{
+	if (uiCmd != 1 || stVar.GetType() != DVT_POINTER)
+		return E_INVALIDARG;
+
+	stVar.SetBool(_SaveToFile(reinterpret_cast<IFile *>(stVar.AsPointer())));
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CMesh::ExecuteTextCommand(const char *pcCommand, TVariant &stVar)
+{
+	stVar.Clear();
+	return E_NOTIMPL;
+}
+
+DGLE_RESULT DGLE_API CMesh::ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount)
+{
+	if (!pcCommand)
+		return E_INVALIDARG;
+	if (!pcResult)
+	{
+		uiCharsCount = 1;
+		return S_OK;
+	}
+	if (uiCharsCount < 1)
+		return E_INVALIDARG;
+	else
+	{
+		if (pcResult && uiCharsCount > 0)
+			strcpy(pcResult, "");
+		else
+			pcResult = NULL;
+		uiCharsCount = 0;
+		return E_NOTIMPL;
+	}
 }

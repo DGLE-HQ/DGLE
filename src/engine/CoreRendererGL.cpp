@@ -133,7 +133,7 @@ public:
 	DGLE_RESULT DGLE_API Reallocate(const TDrawDataDesc &stDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode)
 	{
 		const uint vertices_data_size = uiVerticesCount * CCoreRendererGL::GetVertexSize(stDesc),
-		 indexes_data_size = uiIndexesCount * (stDesc.bIndexBuffer32 ? sizeof(uint16) : sizeof(uint32)) * (stDesc.pIndexBuffer ? 3 : 0);
+		 indexes_data_size = uiIndexesCount * (stDesc.bIndexBuffer32 ? sizeof(uint32) : sizeof(uint16)) * (stDesc.pIndexBuffer ? 3 : 0);
 
 		if (_uiIndexesDataSize == 0 && indexes_data_size != 0)
 			return E_INVALIDARG;
@@ -493,7 +493,7 @@ _pCurRenderTarget(NULL), _uiCurFrameBufferIdx(-1), _uiDrawCount(-1)
 
 inline uint CCoreRendererGL::GetVertexSize(const TDrawDataDesc &stDesc)
 {
-	uint res = sizeof(float) * ((stDesc.bVertexCoord2 ? 2 : 3) + (stDesc.uiNormalOffset != -1 ? 3 : 0) + (stDesc.uiTexCoordOffset != -1 ? 2 : 0) +
+	uint res = sizeof(float) * ((stDesc.bVertices2D ? 2 : 3) + (stDesc.uiNormalOffset != -1 ? 3 : 0) + (stDesc.uiTextureVertexOffset != -1 ? 2 : 0) +
 			(stDesc.uiColorOffset != -1 ? 4 : 0) + (stDesc.uiTangentOffset != -1 ? 3 : 0) + (stDesc.uiBinormalOffset != -1 ? 3 : 0));
 
 	if (stDesc.pAttribs)
@@ -1492,36 +1492,36 @@ FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, 
 
 	glBegin(_GetGLDrawMode(eMode));
 	
-	const	uint tex_offset = stDrawDesc.uiTexCoordOffset / sizeof(float),
+	const	uint tex_offset = stDrawDesc.uiTextureVertexOffset / sizeof(float),
 			color_offset = stDrawDesc.uiColorOffset / sizeof(float),
 			normals_offset = stDrawDesc.uiNormalOffset / sizeof(float),
-			vert_stride = stDrawDesc.uiVertexStride == 0 ? (stDrawDesc.bVertexCoord2 ? 2 : 3):
+			vert_stride = stDrawDesc.uiVertexStride == 0 ? (stDrawDesc.bVertices2D ? 2 : 3):
 			stDrawDesc.uiVertexStride / sizeof(float),
-			tex_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride / sizeof(float),
+			tex_stride = stDrawDesc.uiTextureVertexStride == 0 ? 2 : stDrawDesc.uiTextureVertexStride / sizeof(float),
 			color_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride / sizeof(float),
 			normals_stride = stDrawDesc.uiNormalStride == 0 ? 3 : stDrawDesc.uiNormalStride / sizeof(float);
 
-	if (uiCount == 4 && stDrawDesc.bVertexCoord2 && stDrawDesc.uiNormalOffset == -1) // most common case for 2D
+	if (uiCount == 4 && stDrawDesc.bVertices2D && stDrawDesc.uiNormalOffset == -1) // most common case for 2D
 	{
-			if (stDrawDesc.uiTexCoordOffset != -1)
+			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset]);	
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset]);
 			glVertex2fv(&data[0]);
 
-			if (stDrawDesc.uiTexCoordOffset != -1)
+			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset + tex_stride]);	
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset + color_stride]);
 			glVertex2fv(&data[vert_stride]);
 
-			if (stDrawDesc.uiTexCoordOffset != -1)
+			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset + 2 * tex_stride]);	
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset + 2 * color_stride]);
 			glVertex2fv(&data[2*vert_stride]);
 
-			if (stDrawDesc.uiTexCoordOffset != -1)
+			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset + 3 * tex_stride]);	
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset + 3 * color_stride]);
@@ -1533,13 +1533,13 @@ FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, 
 			if (stDrawDesc.uiNormalOffset != -1)
 				glNormal3fv(&data[normals_offset + i * normals_stride]);
 
-			if (stDrawDesc.uiTexCoordOffset != -1)
+			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset + i * tex_stride]);
 			
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset + i * color_stride]);
 
-			if (stDrawDesc.bVertexCoord2)
+			if (stDrawDesc.bVertices2D)
 				glVertex2fv(&data[i * vert_stride]);
 			else
 				glVertex3fv(&data[i * vert_stride]);
@@ -1589,10 +1589,10 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CO
 		else
 			_pStateMan->glDisableClientState(GL_COLOR_ARRAY);
 
-		if (stDrawDesc.uiTexCoordOffset != -1)
+		if (stDrawDesc.uiTextureVertexOffset != -1)
 		{
 			_pStateMan->glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, stDrawDesc.uiTexCoordStride, stDrawDesc.pData + stDrawDesc.uiTexCoordOffset);
+			glTexCoordPointer(2, GL_FLOAT, stDrawDesc.uiTextureVertexStride, stDrawDesc.pData + stDrawDesc.uiTextureVertexOffset);
 		}
 		else
 			_pStateMan->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1613,7 +1613,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CO
 		if (stDrawDesc.pData || _bVerticesBufferBindedFlag)
 		{
 			_pStateMan->glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(stDrawDesc.bVertexCoord2 ? 2 : 3, GL_FLOAT, stDrawDesc.uiVertexStride, stDrawDesc.pData);
+			glVertexPointer(stDrawDesc.bVertices2D ? 2 : 3, GL_FLOAT, stDrawDesc.uiVertexStride, stDrawDesc.pData);
 		}
 		else
 			_pStateMan->glDisableClientState(GL_VERTEX_ARRAY);

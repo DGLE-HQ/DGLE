@@ -188,12 +188,12 @@ void DGLE_API Render(void *pParameter)
 	
 	// draw background
 	pRender2D->SetCamera(TPoint2(cameraPosition.x / 1.5f, cameraPosition.y / 1.5f), cameraAngle, TPoint2(cameraScale, cameraScale));
-	pRender2D->SetBlendMode(EBF_NORMAL);
+	pRender2D->SetBlendMode(BE_NORMAL);
 	pRender2D->DrawTextureCropped(pBg, TPoint2(-200.f, 150.f), TVector2(1399.f, 517.f), TRectF(0.f, 905.f, 1399.f, 517.f), 0.f, EF_BLEND);
 
 	// draw moving fog on background
 	pRender2D->SetCamera(TPoint2(cameraPosition.x / 1.2f, cameraPosition.y / 1.2f), cameraAngle, TPoint2(cameraScale, cameraScale));
-	pRender2D->SetBlendMode(EBF_ADD);
+	pRender2D->SetBlendMode(BE_ADD);
 
 	// Sometimes it's better to batch a lot of similar objects.
 	pRender2D->BeginBatch(); 
@@ -209,7 +209,7 @@ void DGLE_API Render(void *pParameter)
 	// Draw foreground scene.
 
 	pRender2D->SetCamera(cameraPosition, cameraAngle, TPoint2(cameraScale, cameraScale));
-	pRender2D->SetBlendMode(EBF_NORMAL);
+	pRender2D->SetBlendMode(BE_NORMAL);
 
 	// flying owl
 	pRender2D->SetColorMix(TColor4(150, 150, 150, 255)); // make sprite little darker
@@ -219,13 +219,13 @@ void DGLE_API Render(void *pParameter)
 	pRender2D->DrawTextureCropped(pBg, TPoint2(), TVector2(1399.f, 900.f), TRectF(0.f, 0.f, 1399.f, 900.f), 0.f, EF_BLEND);
 
 	// draw glowing disc under moving light
-	pRender2D->SetBlendMode(EBF_ADD);
+	pRender2D->SetBlendMode(BE_ADD);
 	pRender2D->SetVerticesOffsets(TPoint2(-100.f, 0.f), TPoint2(-100.f, 0.f), TPoint2(), TPoint2());
 	pRender2D->SetColorMix(TColor4(65, 59, 193, 255));
 	pRender2D->DrawTexture(pLightRound, TPoint2(lights[0].x - 32.f, lights[0].y + 64.f), TVector2(256.f, 256.f), 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSETS | EF_BLEND | EF_COLOR_MIX));
 
 	// draw girl shadow
-	pRender2D->SetBlendMode(EBF_NORMAL);
+	pRender2D->SetBlendMode(BE_NORMAL);
 	pRender2D->SetVerticesOffsets(TPoint2(-150.f + cos((float)counter / 100.f) * 100.f, -55.f), TPoint2(-50.f + cos((float)counter / 100.f) * 100.f, -55.f), TPoint2(15.f, 5.f), TPoint2(15.f, 5.f));
 	pRender2D->SetColorMix(TColor4(0, 0, 0, 128));
 	pRender2D->DrawTextureSprite(pTexGirl, TPoint2(550.f, 725.f), TVector2(60.f, 120.f), (counter / 5) % 16, 0.f, (E_EFFECT2D_FLAGS)(EF_VERTICES_OFFSETS | EF_BLEND | EF_COLOR_MIX));
@@ -234,7 +234,7 @@ void DGLE_API Render(void *pParameter)
 	pRender2D->DrawTextureSprite(pTexGirl, TPoint2(550.f, 725.f), TVector2(60.f, 120.f), (counter / 5) % 16, 0.f, EF_BLEND);
 
 	// draw lights
-	pRender2D->SetBlendMode(EBF_ADD);
+	pRender2D->SetBlendMode(BE_ADD);
 	for (uint i = 0; i < 5; ++i)
 		pRender2D->DrawTextureSprite(pLight, TPoint2(lights[i].x, lights[i].y), TVector2(64.f, 128.f), (counter / 2) % 14, 0.f, EF_BLEND);
 

@@ -276,13 +276,13 @@ namespace DGLE
 		uint8 *pData; //Must be start of the vertex data. 2 or 3 floats
 		
 		uint uiVertexStride;
-		bool bVertexCoord2;
+		bool bVertices2D;
 		
 		uint uiNormalOffset; //3 floats
 		uint uiNormalStride;
 		
-		uint uiTexCoordOffset; //2 floats
-		uint uiTexCoordStride;
+		uint uiTextureVertexOffset; //2 floats
+		uint uiTextureVertexStride;
 		
 		uint uiColorOffset; //4 floats
 		uint uiColorStride;
@@ -296,18 +296,18 @@ namespace DGLE
 		bool bIndexBuffer32;
 
 		inline TDrawDataDesc():
-		pData(NULL), uiVertexStride(0), bVertexCoord2(false),
+		pData(NULL), uiVertexStride(0), bVertices2D(false),
 		uiNormalOffset(-1), uiNormalStride(0),
-		uiTexCoordOffset(-1), uiTexCoordStride(0),
+		uiTextureVertexOffset(-1), uiTextureVertexStride(0),
 		uiColorOffset(-1), uiColorStride(0),
 		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
 		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 
 		inline TDrawDataDesc(uint8 *pDataPointer, uint uiTexCoordDataOffset = -1, bool bTwoCoordsPerVertex = false):
-		pData(pDataPointer), uiVertexStride(0), bVertexCoord2(bTwoCoordsPerVertex),
+		pData(pDataPointer), uiVertexStride(0), bVertices2D(bTwoCoordsPerVertex),
 		uiNormalOffset(-1), uiNormalStride(0),
-		uiTexCoordOffset(uiTexCoordDataOffset), uiTexCoordStride(0),
+		uiTextureVertexOffset(uiTexCoordDataOffset), uiTextureVertexStride(0),
 		uiColorOffset(-1), uiColorStride(0),
 		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
 		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)

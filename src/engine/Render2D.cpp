@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2013 (c)Korotkov Andrey
+\date		02.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,7 +31,7 @@ _ui64DrawDelay(0), _uiObjsDrawnCount(0),
 _batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
 _batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
 _iResCorWidth(0), _iResCorHeight(0), _bResCorConstProp(false), _fLineWidth(1.f),
-_ePrevBlendingMode(EBF_NORMAL), _pPolyTrisBuffer(NULL), _uiPolyTrisBufferSize(0),
+_ePrevBlendingMode(BE_NORMAL), _pPolyTrisBuffer(NULL), _uiPolyTrisBufferSize(0),
 _uiBufferSize(34)// never less than 34
 {
 	_pBuffer = new float[_uiBufferSize];
@@ -138,10 +138,12 @@ void CRender2D::_SetDefaultStates()
 
 	_stRasterStateDesc = TRasterizerStateDesc();
 	_stRasterStateDesc.fAlphaTestRefValue = 0.75f;
+	_stRasterStateDesc.bFrontCounterClockwise = false;
 	_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
 
 	_stBlendStateDesc = TBlendStateDesc();
 	_pCoreRenderer->SetBlendState(_stBlendStateDesc);
+	_ePrevBlendingMode = BE_NORMAL;
 
 	Core()->pRender()->pRender3D()->PrepareFor2D();
 }
@@ -330,10 +332,10 @@ inline void CRender2D::_BatchFlush()
 
 	TDrawDataDesc desc;
 
-	desc.bVertexCoord2 = true;
+	desc.bVertices2D = true;
 	desc.uiVertexStride = 8 * sizeof(float);
-	desc.uiTexCoordOffset = 2 * sizeof(float);
-	desc.uiTexCoordStride = 8 * sizeof(float);
+	desc.uiTextureVertexOffset = 2 * sizeof(float);
+	desc.uiTextureVertexStride = 8 * sizeof(float);
 	desc.uiColorOffset = 4 * sizeof(float);
 	desc.uiColorStride = 8 * sizeof(float);
 
@@ -1392,10 +1394,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 			TDrawDataDesc desc;
 
 			desc.pData = (uint8 *)_pBuffer;
-			desc.bVertexCoord2 = true;
+			desc.bVertices2D = true;
 			desc.uiVertexStride = 8 * sizeof(float);
-			desc.uiTexCoordOffset = 2 * sizeof(float);
-			desc.uiTexCoordStride = 8 * sizeof(float);
+			desc.uiTextureVertexOffset = 2 * sizeof(float);
+			desc.uiTextureVertexStride = 8 * sizeof(float);
 			desc.uiColorOffset = 4 * sizeof(float);
 			desc.uiColorStride = 8 * sizeof(float);
 
@@ -1436,10 +1438,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 			TDrawDataDesc desc;
 
 			desc.pData = (uint8 *)_pBuffer;
-			desc.bVertexCoord2 = true;
+			desc.bVertices2D = true;
 			desc.uiVertexStride = 8 * sizeof(float);
-			desc.uiTexCoordOffset = 2 * sizeof(float);
-			desc.uiTexCoordStride = 8 * sizeof(float);
+			desc.uiTextureVertexOffset = 2 * sizeof(float);
+			desc.uiTextureVertexStride = 8 * sizeof(float);
 			desc.uiColorOffset = 4 * sizeof(float);
 			desc.uiColorStride = 8 * sizeof(float);
 
@@ -1540,10 +1542,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 		else
 			desc.pData = (uint8 *)pstVertices;
 				
-		desc.bVertexCoord2 = true;
+		desc.bVertices2D = true;
 		desc.uiVertexStride = 8 * sizeof(float);
-		desc.uiTexCoordOffset = 2 * sizeof(float);
-		desc.uiTexCoordStride = 8 * sizeof(float);
+		desc.uiTextureVertexOffset = 2 * sizeof(float);
+		desc.uiTextureVertexStride = 8 * sizeof(float);
 		desc.uiColorOffset = 4 * sizeof(float);
 		desc.uiColorStride = 8 * sizeof(float);
 
@@ -1582,18 +1584,16 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 
 	_BatchFlush();
 
-	const TVector3 scale(stTransform._2D[0][0], stTransform._2D[1][1], stTransform._2D[2][2]);
-	
 	TVector3 corner;
 
 	corner.x = stExtents.x + fabs(stCenter.x);
 	corner.y = stExtents.y + fabs(stCenter.y);
 	corner.z = stExtents.z + fabs(stCenter.z);
-	
-	corner.x *= fabs(scale.x);
-	corner.y *= fabs(scale.y);
-	corner.z *= fabs(scale.z);
 
+	corner.x *= TVector3(stTransform._2D[0][0], stTransform._2D[1][0], stTransform._2D[2][0]).Length();
+	corner.y *= TVector3(stTransform._2D[0][1], stTransform._2D[1][1], stTransform._2D[2][1]).Length();
+	corner.z *= TVector3(stTransform._2D[0][2], stTransform._2D[1][2], stTransform._2D[2][2]).Length();
+	
 	float scale_z;
 
 	if (_bCameraWasSet)
@@ -1703,6 +1703,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 		if (eFlags & EF_BLEND)
 		{
 			_stRasterStateDesc.bAlphaTestEnabled = false;
+			_stRasterStateDesc.eCullMode = PCM_BACK;
+			
 			_stBlendStateDesc.bEnabled = true;
 		}
 		else
@@ -1717,9 +1719,9 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 				_stBlendStateDesc.bEnabled = false;
 			}
 
-		_pCoreRenderer->ToggleAlphaTestState(_stRasterStateDesc.bAlphaTestEnabled);
+		_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
 		_pCoreRenderer->ToggleBlendState(_stBlendStateDesc.bEnabled);
-
+		
 		TDepthStencilDesc ds_desc;
 		ds_desc.bDepthTestEnabled = true;
 		_pCoreRenderer->SetDepthStencilState(ds_desc);
@@ -1729,8 +1731,17 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 
 		_pCoreRenderer->DrawBuffer(pBuffer);
 
+		if (bClearDepthBuffer)
+			_pCoreRenderer->Clear(false, true, false);
+		
 		ds_desc.bDepthTestEnabled = false;
 		_pCoreRenderer->SetDepthStencilState(ds_desc);
+
+		if (eFlags & EF_BLEND)
+		{
+			_stRasterStateDesc.eCullMode = PCM_NONE;
+			_pCoreRenderer->SetRasterizerState(_stRasterStateDesc);
+		}
 
 		_pCoreRenderer->SetMatrix(prev_proj, MT_PROJECTION);
 		_pCoreRenderer->SetMatrix(prev_mview);
@@ -1745,7 +1756,7 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 {
 	IN_2D_GUARD
 
-	if ((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) && (!stDrawDesc.bVertexCoord2 || !stDrawDesc.pData || stDrawDesc.uiNormalOffset != -1))
+	if ((_batchNeedToRefreshBatches || (_bInLocalBatchMode && !_bLocalBatchUEP)) && (!stDrawDesc.bVertices2D || !stDrawDesc.pData || stDrawDesc.uiNormalOffset != -1))
 		return E_INVALIDARG;
 
 	ICoreTexture *p_tex = NULL;
@@ -1818,9 +1829,9 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 			const float * const data = (float *)stDrawDesc.pData;
 			
 			const uint	v_stride = stDrawDesc.uiVertexStride == 0 ? 2 : stDrawDesc.uiVertexStride / sizeof(float),
-						t_stride = stDrawDesc.uiTexCoordStride == 0 ? 2 : stDrawDesc.uiTexCoordStride / sizeof(float),
+						t_stride = stDrawDesc.uiTextureVertexStride == 0 ? 2 : stDrawDesc.uiTextureVertexStride / sizeof(float),
 						c_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride / sizeof(float),
-						t_offset = stDrawDesc.uiTexCoordOffset == -1 ? 0 : stDrawDesc.uiTexCoordOffset / sizeof(float),
+						t_offset = stDrawDesc.uiTextureVertexOffset == -1 ? 0 : stDrawDesc.uiTextureVertexOffset / sizeof(float),
 						c_offset = stDrawDesc.uiColorOffset == -1 ? 0 : stDrawDesc.uiColorOffset / sizeof(float);
 
 			for (uint i = 0; i < uiCount; ++i)
@@ -1833,7 +1844,7 @@ DGLE_RESULT DGLE_API CRender2D::Draw(ITexture *pTexture, const TDrawDataDesc &st
 
 				v.x = data[v_idx]; v.y = data[v_idx + 1];
 
-				if (stDrawDesc.uiTexCoordOffset != -1)
+				if (stDrawDesc.uiTextureVertexOffset != -1)
 				{
 					v.u = data[t_idx];
 					v.w = data[t_idx + 1];
@@ -1876,7 +1887,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer(ITexture *pTexture, ICoreGeometryBuff
 	TDrawDataDesc desc;
 	pBuffer->GetBufferDrawDataDesc(desc);
 
-	if (!desc.bVertexCoord2 || desc.uiNormalOffset != -1)
+	if (!desc.bVertices2D || desc.uiNormalOffset != -1)
 		return E_INVALIDARG;
 
 	if (stAABB.x != 0.f || stAABB.y != 0.f || stAABB.width != 0.f || stAABB.height != 0.f)
@@ -2218,7 +2229,7 @@ DGLE_RESULT DGLE_API CRender2D::SetColorMix(const TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
+DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_BLENDING_EFFECT eMode)
 {
 	IN_2D_GUARD
 
@@ -2229,27 +2240,27 @@ DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
 
 	switch(eMode)
 	{
-	case EBF_NORMAL:
+	case BE_NORMAL:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
 		_stBlendStateDesc.eDstFactor = BF_ONE_MINUS_SRC_ALPHA;
 		break;
-	case EBF_ADD:
+	case BE_ADD:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
 		_stBlendStateDesc.eDstFactor = BF_ONE;
 		break;
-	case EBF_MULT:
+	case BE_MULT:
 		_stBlendStateDesc.eSrcFactor = BF_ZERO;
 		_stBlendStateDesc.eDstFactor = BF_SRC_COLOR;
 		break;
-	case EBF_BLACK:
+	case BE_BLACK:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_COLOR;
 		_stBlendStateDesc.eDstFactor = BF_ONE_MINUS_SRC_COLOR;
 		break;
-	case EBF_WHITE:
+	case BE_WHITE:
 		_stBlendStateDesc.eSrcFactor = BF_ONE_MINUS_SRC_COLOR;
 		_stBlendStateDesc.eDstFactor = BF_SRC_COLOR;
 		break;
-	case EBF_MASK:
+	case BE_MASK:
 		_stBlendStateDesc.eSrcFactor = BF_DST_ALPHA;
 		_stBlendStateDesc.eDstFactor = BF_ZERO;
 		break;
@@ -2313,7 +2324,7 @@ DGLE_RESULT DGLE_API CRender2D::GetColorMix(TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender2D::GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode)
+DGLE_RESULT DGLE_API CRender2D::GetBlendMode(E_BLENDING_EFFECT &eMode)
 {
 	IN_2D_GUARD
 	

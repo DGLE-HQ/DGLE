@@ -8,7 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "PluginCore.h"
-#include <locale>
+
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):
 _pEngineCore(pEngineCore), _iDrawProfiler(0)
 {

@@ -36,6 +36,14 @@ call :removeProjJunkCPP "tests\dev"
 call :removeBinJunkCSharp "tests"
 call :removeProjJunkCSharp "tests\csharp"
 
+:: Utils
+
+call :removeBinJunkCPP "utils"
+
+call :removeSlnJunkCPP "utils"
+
+call :removeProjJunkCPP "utils\console"
+
 :: Examples
 
 call :removeBinJunkCPP "examples\cpp"

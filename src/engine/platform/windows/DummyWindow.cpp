@@ -108,16 +108,8 @@ DGLE_RESULT CDummyWindow::BeginMainLoop()
 
 DGLE_RESULT CDummyWindow::KillWindow()
 {
+	_pDelMessageProc->Invoke(TWindowMessage(WMT_DESTROY));
 	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
-
-	if (_hDC && !ReleaseDC(_hWnd,_hDC))
-		LOG("Failed to release Device Context.", LT_ERROR);
-
-	if (DestroyWindow(_hWnd) == FALSE)
-	{
-		LOG("Can't destroy window.",LT_ERROR);
-		return S_FALSE;
-	}
 
 	return S_OK;
 }
@@ -132,6 +124,16 @@ DGLE_RESULT CDummyWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSet
 
 DGLE_RESULT CDummyWindow::Free()
 {
+	if (_hDC && ReleaseDC(_hWnd,_hDC) == FALSE)
+		LOG("Failed to release Device Context.", LT_ERROR);
+
+	if (DestroyWindow(_hWnd) == FALSE)
+	{
+		LOG("Can't destroy window.",LT_ERROR);
+		return S_FALSE;
+	}
+	
 	delete this;
+	
 	return S_OK;
 }

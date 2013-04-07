@@ -1027,10 +1027,9 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 			return E_ABORT;
 		}
 
-		locale::global(std::locale(""));	
+		LOG("Current locale: " + string(setlocale(LC_ALL, "")), LT_INFO);
+		
 		setlocale(LC_NUMERIC, "C");
-
-		LOG("Current locale: " + locale().name(), LT_INFO);
 
 		_stWin = stWindowParam;
 		_uiUpdateInterval = uiUpdateInterval;

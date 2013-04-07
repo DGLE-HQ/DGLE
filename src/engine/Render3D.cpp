@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.03.2013 (c)Korotkov Andrey
+\date		03.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -36,10 +36,6 @@ _bFrCalculated(false), _uiObjsDrawnCount(0)
 		_uiMaxLightsCount = 0;
 	}
 
-	_stCurState.isLightingEnabled = false;
-	_stCurState.stGlobalAmbient = TColor4(50, 50, 50, 255);
-	_stCurState.pCurMat = NULL;
-
 	int i_value;
 	
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, i_value);
@@ -56,6 +52,45 @@ CRender3D::~CRender3D()
 	Console()->UnRegCom("rnd3d_profiler");
 	Console()->UnRegCom("rnd3d_draw_axes");
 	Console()->UnRegCom("rnd3d_draw_lights");
+}
+
+void CRender3D::_SetDefaultStates()
+{
+	_stCurState.matrixStack.Clear(MatrixIdentity());
+	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
+
+	_stCurState.isLightingEnabled = false;
+	_stCurState.stGlobalAmbient = TColor4(50, 50, 50, 255);
+	
+	_stCurState.stFogDesc.bEnabled = false;
+	_stCurState.stFogDesc.fDensity = 1.f;
+	_stCurState.stFogDesc.stColor = ColorGray();
+	_stCurState.stFogDesc.fStart = 500.f;
+	_stCurState.stFogDesc.fEnd = 1000.f;
+
+	if (_pFFP)
+	{
+		_pFFP->ToggleGlobalLighting(_stCurState.isLightingEnabled);
+		_pFFP->SetGloablAmbientLight(_stCurState.stGlobalAmbient);
+		
+		_pFFP->SetFogEnabled(_stCurState.stFogDesc.bEnabled);
+		_pFFP->SetFogColor(_stCurState.stFogDesc.stColor);
+		_pFFP->ConfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd, _stCurState.stFogDesc.fDensity);
+	}
+
+	_stCurState.stBlendStateDesc = TBlendStateDesc();
+	_pCoreRenderer->SetBlendState(_stCurState.stBlendStateDesc);
+
+	_stCurState.stDepthStencilDesc = TDepthStencilDesc();
+	_pCoreRenderer->SetDepthStencilState(_stCurState.stDepthStencilDesc);
+
+	_stCurState.stRasterStateDesc = TRasterizerStateDesc();
+	_stCurState.stRasterStateDesc.eCullMode = PCM_BACK;
+	_pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
+	
+	_pCoreRenderer->SetColor(ColorWhite());
+	
+	Core()->pRender()->Unbind(EOT_UNKNOWN);
 }
 
 void CRender3D::DrawProfiler()
@@ -75,18 +110,10 @@ void CRender3D::BeginFrame()
 	_uiObjsDrawnCount = 0;
 	_uiLightsEnabledCount = 0;
 
-	_stCurState.matrixStack.Clear(MatrixIdentity());
-	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
-
 	while (!_stackStates.empty())
 		_stackStates.pop();
 	
-	_pCoreRenderer->SetBlendState(_stCurState.stBlendStateDesc);
-	_pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
-	_pCoreRenderer->SetDepthStencilState(_stCurState.stDepthStencilDesc);
-
-	_pCoreRenderer->SetColor(ColorWhite());
-	Core()->pRender()->Unbind(EOT_UNKNOWN);
+	_SetDefaultStates();
 }
 
 void CRender3D::EndFrame()
@@ -396,33 +423,33 @@ DGLE_RESULT DGLE_API CRender3D::GetMaterial(IMaterial *&prMat)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
+DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_BLENDING_EFFECT eMode)
 {
 	IN_3D_GUARD
 
 	switch(eMode)
 	{
-	case EBF_NORMAL:
+	case BE_NORMAL:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
 		_stCurState.stBlendStateDesc.eDstFactor = BF_ONE_MINUS_SRC_ALPHA;
 		break;
-	case EBF_ADD:
+	case BE_ADD:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
 		_stCurState.stBlendStateDesc.eDstFactor = BF_ONE;
 		break;
-	case EBF_MULT:
+	case BE_MULT:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_ZERO;
 		_stCurState.stBlendStateDesc.eDstFactor = BF_SRC_COLOR;
 		break;
-	case EBF_BLACK:
+	case BE_BLACK:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_SRC_COLOR;
 		_stCurState.stBlendStateDesc.eDstFactor = BF_ONE_MINUS_SRC_COLOR;
 		break;
-	case EBF_WHITE:
+	case BE_WHITE:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_ONE_MINUS_SRC_COLOR;
 		_stCurState.stBlendStateDesc.eDstFactor = BF_SRC_COLOR;
 		break;
-	case EBF_MASK:
+	case BE_MASK:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_DST_ALPHA;
 		_stCurState.stBlendStateDesc.eDstFactor = BF_ZERO;
 		break;
@@ -433,25 +460,25 @@ DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_EFFECT_BLENDING_FLAGS eMode)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::GetBlendMode(E_EFFECT_BLENDING_FLAGS &eMode)
+DGLE_RESULT DGLE_API CRender3D::GetBlendMode(E_BLENDING_EFFECT &eMode)
 {
 	if (_stCurState.stBlendStateDesc.eSrcFactor == BF_SRC_ALPHA && _stCurState.stBlendStateDesc.eDstFactor == BF_ONE_MINUS_SRC_ALPHA)
-		eMode = EBF_NORMAL;
+		eMode = BE_NORMAL;
 	else
 		if (_stCurState.stBlendStateDesc.eSrcFactor == BF_SRC_ALPHA && _stCurState.stBlendStateDesc.eDstFactor == BF_ONE)
-			eMode = EBF_ADD;
+			eMode = BE_ADD;
 		else
 			if (_stCurState.stBlendStateDesc.eSrcFactor == BF_ZERO && _stCurState.stBlendStateDesc.eDstFactor == BF_SRC_COLOR)
-				eMode = EBF_MULT;
+				eMode = BE_MULT;
 			else
 				if (_stCurState.stBlendStateDesc.eSrcFactor == BF_SRC_COLOR && _stCurState.stBlendStateDesc.eDstFactor == BF_ONE_MINUS_SRC_COLOR)
-					eMode = EBF_BLACK;
+					eMode = BE_BLACK;
 				else
 					if (_stCurState.stBlendStateDesc.eSrcFactor == BF_ONE_MINUS_SRC_COLOR && _stCurState.stBlendStateDesc.eDstFactor == BF_SRC_COLOR)
-						eMode = EBF_WHITE;
+						eMode = BE_WHITE;
 					else
 						if (_stCurState.stBlendStateDesc.eSrcFactor == BF_DST_ALPHA && _stCurState.stBlendStateDesc.eDstFactor == BF_ZERO)
-							eMode = EBF_MASK;
+							eMode = BE_MASK;
 							
 	return S_OK;
 }
@@ -727,7 +754,7 @@ DGLE_RESULT DGLE_API CRender3D::PopStates()
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CRender3D::GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_FLAG eFlag)
+DGLE_RESULT DGLE_API CRender3D::GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_MODE eFlag)
 {
 	IN_3D_GUARD
 
@@ -741,10 +768,10 @@ DGLE_RESULT DGLE_API CRender3D::GetPoint3(const TPoint2 &stPointOnScreen, TPoint
 
 	float win[3] = {stPointOnScreen.x, vport[3] - stPointOnScreen.y, 0.f};
 
-	if (eFlag & GP3F_FROM_FAR_PLANE)
+	if (eFlag & GP3M_FROM_FAR_PLANE)
 		win[2] = 1.f;
 	else
-		if (eFlag & GP3F_FROM_NEAR_PLANE)
+		if (eFlag & GP3M_FROM_NEAR_PLANE)
 			win[2] = 0.f;
 		else
 			if (FAILED(_pCoreRenderer->ReadFrameBuffer((uint)stPointOnScreen.x, (uint)stPointOnScreen.y, 1, 1, reinterpret_cast<uint8 *>(&win[2]), sizeof(float), TDF_DEPTH_COMPONENT32)))

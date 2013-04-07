@@ -1,99 +1,107 @@
---DGLE2 Models and Scenes converter V Beta 1
---(c)DRON 2010 (http://dron.deeprosoft.com/dgle2)
-utility MExport "DGLE Exporter"
+/**
+\author Korotkov Andrey aka DRON
+\date 07.04.2013 (c)Korotkov Andrey
+
+This file is a part of DGLE project and is distributed
+under the terms of the GNU Lesser General Public License.
+See "DGLE.h" for more details.
+*/
+-- 3ds Max 2008 and higher is supported.
+utility DGLE_Exporter "DGLE Exporter"
 (
-	
-	struct 	vertex(coord, normal, texcoord)
-	struct	mesh_info(vcount, fcount, textured)
-	
-	local
-	center_and_scale, build_faset, gm_optimize,
-	do_frame_anim, start_frame, end_frame, anim_step,
-	export_txt_append
-	
+	struct Vertex(coords, normal, texture)
 	-------------------------------------------------------------------------------------
-	label whtexp "Select what to export:"	
-	radiobuttons rb_ExScene labels:#("Entire scene","Selected objects only") default:2
-	button btn_export "Export" width:100
-	button btn_about "About" width:100
+	label lb_Caption "Select what to export:"
+	radiobuttons rb_ExportType labels: #("Entire scene", "Selected object(s)", "Skeleton animation") default: 2
+	button btn_Export "Export" width:100
+	button btn_About "About" width:100
 	-------------------------------------------------------------------------------------
-	function GetFName fname = 
+	function GetOnlyFileName fileName = 
 	(
-		curname = ""
-		for i = 1 to fname .count do
-		if fname[i]=="\\" then curname = "" else curname=curname+fname[i]
-		return curname
+		cur_name = ""
+		
+		for i = 1 to fileName.count do
+			if fileName[i] == "\\"
+				then cur_name = ""
+			else
+				cur_name = cur_name + fileName[i]
+		
+		return cur_name
 	)
 	-------------------------------------------------------------------------------------
-	function ExportMesh File meshObj buildFNormals scaleKoeff centerVec=
-	(	
-		vertices_all 	= #()
-			
-		progress 		= 0
-		max_progress 	= meshObj.numfaces
+	function ExportMesh handleFile meshObj doBuildFasetNormals doOptimize scaleCoeff centerVec txtAppend =
+	(
+		vertices_all = #()
+		progress = 0
+		max_progress = meshObj.numfaces
 		
-		if meshObj.numTVerts==0 then
+		if meshObj.numTVerts == 0 then
 			texture_presented = 0
 		else
 			texture_presented = 1
 		
 		print "Building triangles..."
-		progressStart ("Prepare data... " + export_txt_append)
-
-			for i = 1 to meshObj.numfaces do
-			(
-				f  = (GetFace meshObj i)
-				if texture_presented!=0 then
-					tf = (GetTVFace meshObj i)
-				
-				for j = 1 to 3 do
-				(
-						v 	= (GetVert meshObj f[j])
-						v	+= centerVec
-						v	*= scaleKoeff
-					
-						n 	= (GetNormal meshObj f[j])
+		progressStart ("Prepare data... " + txtAppend)
 		
-						tv = point3 0. 0. 0.
-						if texture_presented!=0 then
-							tv = (GetTVert meshObj tf[j])
-												
-						append vertices_all (vertex v n (point3 tv.x ((tv.y-1.)*-1.) 0.))
-				)
+		for i = 1 to meshObj.numfaces do
+		(
+			face = (GetFace meshObj i)
+			
+			if texture_presented != 0 then
+				tex_face = (GetTVFace meshObj i)
+			
+			for j = 1 to 3 do
+			(
+				v = (GetVert meshObj face[j])
 				
-				if buildFNormals then
-				(
-					wrkVertx1 = vertices_all[i*3-2].coord
-					wrkVertx2 = vertices_all[i*3-1].coord
-					wrkVertx3 = vertices_all[i*3].coord
-					v1 = point3 (wrkVertx1.x - wrkVertx2.x) (wrkVertx1.y - wrkVertx2.y) (wrkVertx1.z - wrkVertx2.z)
-					v2 = point3 (wrkVertx2.x - wrkVertx3.x) (wrkVertx2.y - wrkVertx3.y) (wrkVertx2.z - wrkVertx3.z)
-					faset_n = cross v1 v2
-					faset_n = normalize faset_n
-					vertices_all[i*3-2].normal 	= faset_n
-					vertices_all[i*3-1].normal 	= faset_n
-					vertices_all[i*3].normal 	= faset_n
-				)
-
-				progress+=1
-				if not progressUpdate (100.*progress/max_progress) then return mesh_info 0 0 0
-			)			
-
-		print ("Done. " + vertices_all.count as string + " triangles")	
+				v += centerVec
+				v *= scaleCoeff
+				
+				n = (GetNormal meshObj face[j])
+				
+				t_v = point3 0. 0. 0.
+				
+				if texture_presented != 0 then
+					t_v = (GetTVert meshObj tex_face[j])
+				
+				append vertices_all (Vertex v n (point3 t_v.x ((t_v.y - 1.) * -1.) 0.))
+			)
 			
-		vertices	= #()			
-		indexes	= #()
+			if doBuildFasetNormals then
+			(
+				work_vertex_1 = vertices_all[i * 3 - 2].coords
+				work_vertex_2 = vertices_all[i * 3 - 1].coords
+				work_vertex_3 = vertices_all[i * 3].coords
+				v_1 = point3 (work_vertex_1.x - work_vertex_2.x) (work_vertex_1.y - work_vertex_2.y) (work_vertex_1.z - work_vertex_2.z)
+				v_2 = point3 (work_vertex_2.x - work_vertex_3.x) (work_vertex_2.y - work_vertex_3.y) (work_vertex_2.z - work_vertex_3.z)
+				faset_n = cross v_1 v_2
+				faset_n = normalize faset_n
+				vertices_all[i * 3 - 2].normal = faset_n
+				vertices_all[i * 3 - 1].normal = faset_n
+				vertices_all[i * 3].normal = faset_n
+			)
 			
-		progress 		= 0
-		prev_progress	= 0
-		max_progress 	= vertices_all.count
+			progress += 1
+			
+			if not progressUpdate (100. * progress / max_progress) then
+				return false
+		)
+		
+		print ("Done, " + (vertices_all.count / 3) as string + " triangles.")
+		
+		vertices = #()
+		indices = #()
+		
+		progress = 0
+		prev_progress = 0
+		max_progress = vertices_all.count
 		
 		print "Building vertices and index buffers..."
-
-		if gm_optimize then
+		
+		if doOptimize then
 		(
-			progressStart ("Optimize data... " + export_txt_append)
-					
+			progressStart ("Optimize data... " + txtAppend)
+			
 			for i = 1 to vertices_all.count do
 			(
 				cur_vertex = vertices_all[i]
@@ -102,333 +110,437 @@ utility MExport "DGLE Exporter"
 				
 				while j <= vertices.count do
 				(
-					wrk_vertex = vertices[j]
+					work_vertex = vertices[j]
 					
-					if 	cur_vertex.coord.x ==wrk_vertex.coord.x and cur_vertex.coord.y == wrk_vertex.coord.y and cur_vertex.coord.z == wrk_vertex.coord.z and 
-						cur_vertex.normal.x == wrk_vertex.normal.x and cur_vertex.normal.y == wrk_vertex.normal.y and cur_vertex.normal.z == wrk_vertex.normal.z and
-						( (texture_presented==0) or (cur_vertex.texcoord.x == wrk_vertex.texcoord.x and cur_vertex.texcoord.y == wrk_vertex.texcoord.y) ) then exit
-							
+					if cur_vertex.coords.x == work_vertex.coords.x and cur_vertex.coords.y == work_vertex.coords.y and cur_vertex.coords.z == work_vertex.coords.z and
+						cur_vertex.normal.x == work_vertex.normal.x and cur_vertex.normal.y == work_vertex.normal.y and cur_vertex.normal.z == work_vertex.normal.z and
+						((texture_presented == 0) or (cur_vertex.texture.x == work_vertex.texture.x and cur_vertex.texture.y == work_vertex.texture.y)) then exit
+					
 					j += 1
 				)
 				
-				if j == vertices.count+1 then
+				if j == vertices.count + 1 then
 					append vertices cur_vertex
-
-				append indexes j
-
-				progress+=1
-				if not progressUpdate (100.*progress/max_progress) then return mesh_info 0 0 0
+				
+				append indices j
+				
+				progress += 1
+				
+				if not progressUpdate (100. * progress / max_progress) then
+					return false
 			)
 		)
 		else
 		(
-			progressStart ("Building buffers data... " + export_txt_append)
+			progressStart ("Building buffers data... " + txtAppend)
+			
 			for i = 1 to vertices_all.count do
 			(
 				append vertices vertices_all[i]
-				append indexes i
-				progress+=1
-				if not progressUpdate (100.*progress/max_progress) then return mesh_info 0 0 0
+				append indices i
+				progress += 1
+				
+				if not progressUpdate (100. * progress / max_progress) then
+					return false
 			)
 		)
-		print ("Done. " + vertices.count as string + " vertices")
-	
+		
+		print ("Done, " + vertices.count as string + " vertices.")
+		
 		print "Writing to file..."
-		progressStart ("Writing to file... " + export_txt_append)
-
-		writefloat	file meshObj.center.x
-		writefloat	file meshObj.center.y
-		writefloat	file meshObj.center.z
-
-		bbox = nodeLocalBoundingBox meshObj
-
-		writefloat	file (abs(bbox[2].x - bbox[1].x)/2)
-		writefloat	file (abs(bbox[2].y - bbox[1].y)/2)
-		writefloat	file (abs(bbox[2].z - bbox[1].z)/2)	
+		progressStart ("Writing to file... " + txtAppend)
+		
+		writebyte handleFile texture_presented
+		writebyte handleFile 0
+		writelong handleFile vertices.count #unsigned 
+		writelong handleFile indices.count #unsigned 
+		
+		writefloat handleFile (meshObj.center.x + centerVec.x)
+		writefloat handleFile (meshObj.center.y + centerVec.y)
+		writefloat handleFile (meshObj.center.z + centerVec.z)
+		
+		bounding_box = nodeLocalBoundingBox meshObj
+		
+		writefloat handleFile (abs(bounding_box[2].x - bounding_box[1].x) / 2. * scaleCoeff)
+		writefloat handleFile (abs(bounding_box[2].y - bounding_box[1].y) / 2. * scaleCoeff)
+		writefloat handleFile (abs(bounding_box[2].z - bounding_box[1].z) / 2. * scaleCoeff)
 		
 		for i = 1 to vertices.count do
 		(
-			writefloat file vertices[i].coord.x
-			writefloat file vertices[i].coord.y
-			writefloat file vertices[i].coord.z				
+			writefloat handleFile vertices[i].coords.x
+			writefloat handleFile vertices[i].coords.y
+			writefloat handleFile vertices[i].coords.z
 		)
-		if not progressUpdate 25 then return mesh_info 0 0 0
-
+		
+		if not progressUpdate 25 then
+			return false
+		
 		for i = 1 to vertices.count do
 		(
-			writefloat file vertices[i].normal.x
-			writefloat file vertices[i].normal.y
-			writefloat file vertices[i].normal.z		
+			writefloat handleFile vertices[i].normal.x
+			writefloat handleFile vertices[i].normal.y
+			writefloat handleFile vertices[i].normal.z
 		)
-		if not progressUpdate 50 then return mesh_info 0 0 0
-
-		if texture_presented!=0 then
+		
+		if not progressUpdate 50 then
+			return false
+		
+		if texture_presented != 0 then
 			for i = 1 to vertices.count do
 			(
-				writefloat file vertices[i].texcoord.x
-				writefloat file vertices[i].texcoord.y				
+				writefloat handleFile vertices[i].texture.x
+				writefloat handleFile vertices[i].texture.y
 			)
-		if not progressUpdate 75 then return mesh_info 0 0 0
-
-		write_long = vertices.count > 65535
-			
-		for i = 1 to indexes.count do
+		
+		if not progressUpdate 75 then
+			return false
+		
+		do_write_long = vertices.count > 65535
+		
+		for i = 1 to indices.count do
 		(
-			if  write_long then
-				writelong file (indexes[i] - 1)  #unsigned
-			else		
-				writeshort file (indexes[i] - 1)  #unsigned
+			if do_write_long then
+				writelong handleFile (indices[i] - 1) #unsigned
+			else
+				writeshort handleFile (indices[i] - 1) #unsigned
 		)
-
-		if not progressUpdate 100 then return mesh_info 0 0 0
-	
-		fflush file
-		print "Done."
-
-		return mesh_info vertices.count (indexes.count/3) texture_presented
+		
+		if not progressUpdate 100 then
+			return false
+		
+		fflush handleFile
+		
+		print "Done exporting mesh."
+		
+		return true
 	)
 	-------------------------------------------------------------------------------------
-	function SaveMeshToFile FileName meshObj buildFNormals doCenter doScale=
+	function ConvertObjToMesh tryMeshObj =
 	(
-		disableSceneRedraw()
-		
-		if SuperClassOf meshObj != GeometryClass then
-		(	
-			print "Error: Node is not a valid geometry class."
+		if SuperClassOf tryMeshObj != GeometryClass then
+		(
+			print "Error: Node is not a valid geometry class!"
 			return false
 		)
 		
-		if ClassOf meshObj != Editable_mesh then
+		if ClassOf tryMeshObj != Editable_mesh then
 		(
-			if canConvertTo meshObj TriMeshGeometry and yesNoCancelBox ("Convert object \""+meshObj.name+"\" to editable mesh?") == #yes then
-				convertToMesh meshObj
+			if canConvertTo tryMeshObj TriMeshGeometry and yesNoCancelBox ("Convert object \"" + tryMeshObj.name + "\" to editable mesh?") == #yes then
+				convertToMesh tryMeshObj
 			else
-			(	
-				print "Error: Can't convert to editable mesh."
+			(
+				print "Error: Can't convert to editable mesh!"
 				return false
 			)
 		)
 		
-		print ("Exporting mesh:"+meshObj.name)	
-	
-		scaleK = 1.
+		return true
+	)		
+	-------------------------------------------------------------------------------------
+	function SaveMeshToFile FileName meshObj doBuildFasetNormals doCenter doScale doOptimize doFrameAnim startFrame endFrame animStep txtAppend =
+	(
+		disableSceneRedraw()
+		
+		if not ConvertObjToMesh meshObj then
+		(
+			enableSceneRedraw()
+			return false
+		)
+				
+		print ("Exporting mesh: " + meshObj.name)
+		
+		scale_c = 1.
 		
 		if doScale then
 		(
-			bbox = nodeLocalBoundingBox meshObj
-			w = abs(bbox[2].x - bbox[1].x)
-			h  = abs(bbox[2].y - bbox[1].y)
-			d =  abs(bbox[2].z - bbox[1].z)
+			bounding_box = nodeLocalBoundingBox meshObj
+			w = abs(bounding_box[2].x - bounding_box[1].x)
+			h = abs(bounding_box[2].y - bounding_box[1].y)
+			d = abs(bounding_box[2].z - bounding_box[1].z)
 			m = w
-			if w<h then m = h
-			if m<d then m = d
-			scaleK = 1./m
+			if w < h then m = h
+			if m < d then m = d
+			scale_c = 1. / m
 		)
 		
-		cenVec = [0., 0. , 0.]
+		center_pos = [0., 0. , 0.]
 		
-		if(doCenter) then
-			cenVec =  [-meshObj.center.x, -meshObj.center.y, -meshObj.center.z]
-
+		if doCenter then
+			center_pos = [-meshObj.center.x, -meshObj.center.y, -meshObj.center.z]
+		
 		file = fopen FileName "wb"
+		
 		if file == undefined then
-		(		
-			print "Couldn't open file for writing !"
+		(
+			print "Error: Couldn't open file for writing !"
 			MessageBox "Couldn't open file for writing !"
 			return false
 		)
 		else
-		(	
-			--Define flags
-			flags = 0
-			if do_frame_anim then flags = 1
-				
-			writestring 	file "DMD 3.0 BIN"
-			fseek 		file 11 #seek_set
-			writelong	file flags  #unsigned --ExtFlags	
-			writebyte	file 0 #unsigned
-			writelong	file 0 #unsigned
-			writelong	file 0 #unsigned
-		
-			if flags == 1 then
-				writelong	file 0 #unsigned
-	
-			if do_frame_anim then
+		(
+			writestring file "DMD 3.1 BIN"
+			fseek file 11 #seek_set
+			writelong file 0 #unsigned
+			writelong file 1 #unsigned
+			
+			if doFrameAnim then
 			(
-				cur_frame = start_frame
-				while cur_frame <= end_frame do
+				cur_frame = startFrame
+				
+				while cur_frame <= endFrame do
 				(
 					slidertime = cur_frame
-					minfo = ExportMesh file meshObj buildFNormals scaleK cenVec
-					if (minfo.vcount + minfo.fcount + minfo.textured) == 0 then
+					
+					if not ExportMesh file meshObj doBuildFasetNormals doOptimize scale_c center_pos txtAppend then
 					(
 						fclose file
 						progressEnd()
 						enableSceneRedraw()
 						return false
 					)
-					cur_frame += anim_step
+					
+					cur_frame += animStep
 				)
 			)
 			else
-				minfo = ExportMesh file meshObj buildFNormals scaleK cenVec
+				ExportMesh file meshObj doBuildFasetNormals doOptimize scale_c center_pos txtAppend
 			
-			fseek 		file 15 #seek_set
-			writebyte	file minfo.textured
-			writelong	file minfo.vcount #unsigned 
-			writelong	file minfo.fcount #unsigned 
-
-			if flags == 1 then
-				writelong	file ((end_frame - start_frame)/anim_step) #unsigned
+			if doFrameAnim then
+			(
+				fseek file 15 #seek_set
+				writelong file ((endFrame - startFrame) / animStep) #unsigned
+			)
 			
 			fclose file
 			
 			progressEnd()
 		)
-
+		
 		print "Mesh export is done."
 		enableSceneRedraw()
-			
+		
 		return true
 	)
 	-------------------------------------------------------------------------------------
-	rollout roll_sce "Scene Export"
+	function ExportSelectedNodes doCenterAndScale doBuildFasetNormals doOptimize doFrameAnim startFrame endFrame animStep =
 	(
-		label lexptodir "Exporting scene to directory."
-
-		progressbar prog color:blue
-		button btn_dir "Save As..." width:100
-		
-		on btn_dir pressed do
+		if selection.count > 1 and doFrameAnim then
 		(
-		
-	
+			MessageBox "Animation export for multiple objects is not allowed!"
+			return false
 		)
-
-	)
-	-------------------------------------------------------------------------------------
-	function ExportSelectedNodes =
-	(
-		print "Model(s) exporting started..."
-
-		skipped 		= 0
-		i 				= 0
-		export_txt_append = ""
-
-		for node in selection do
-		(
-			export_txt_append = "(" + (i+1) as string + " of " + selection.count as string + ")"
-			
-			fname = GetSaveFileName types:"DMD Models Files (*.dmd)|*.dmd|All Files(*.*)|*.*|"
-		
-			if fname != undefined then
+		else
+			if selection.count == 0 then
 			(
-				if not SaveMeshToFile fname node build_faset center_and_scale center_and_scale then skipped += 1
+				MessageBox "You must select objects in scene to export!"
+				return false
+			)
+		
+		print "Model exporting started..."
+		
+		file_name = GetSaveFileName types: "DMD Models Files (*.dmd)|*.dmd|All Files(*.*)|*.*|"
+		
+		if file_name == undefined then
+		(
+			print "Error: Model filename is undefined!"
+			MessageBox "Model filename is undefined!"
+			return false
+		)
+		
+		if selection.count == 1 then
+		(
+			if SaveMeshToFile file_name ((selection as array)[1]) doBuildFasetNormals doCenterAndScale doCenterAndScale doOptimize doFrameAnim startFrame endFrame animStep "" then
+				print "Model exporting done."
+			else
+				print "Error: Model exporting failed!"
+		)
+		else
+		(
+			disableSceneRedraw()
+			
+			model_center = [0., 0., 0.]
+			model_bounding_box = [0., 0., 0.]
+			meshes = #()
+			
+			max_dem = [-3.40E38, -3.40E38, -3.40E38]
+			min_dem = [3.40E38, 3.40E38, 3.40E38]
+			
+			for node in selection do
+				if ConvertObjToMesh node then
+				(
+					append meshes node
+					
+					bounding_box = nodeLocalBoundingBox node
+					extents = [abs(bounding_box[2].x - bounding_box[1].x) / 2., abs(bounding_box[2].y - bounding_box[1].y) / 2., abs(bounding_box[2].z - bounding_box[1].z) / 2.]
+					center = node.center
+					
+					walls = #([center.x - extents.x, center.y, center.z], [center.x + extents.x, center.y, center.z], [center.x, center.y - extents.y, center.z], [center.x, center.y + extents.y, center.z], [center.x, center.y, center.z - extents.z], [center.x, center.y, center.z + extents.z])
+					
+					for wall in walls do
+					(
+						if max_dem.x < wall.x then max_dem.x = wall.x
+						if min_dem.x > wall.x then min_dem.x = wall.x
+						
+						if max_dem.y < wall.y then max_dem.y = wall.y
+						if min_dem.y > wall.y then min_dem.y = wall.y
+						
+						if max_dem.z < wall.z then max_dem.z = wall.z
+						if min_dem.z > wall.z then min_dem.z = wall.z
+					)
+				)
+			
+			model_center =  min_dem + (max_dem - min_dem) / 2.
+			model_bounding_box = max_dem - min_dem
+			
+			scale_c = 1.
+			center_pos = [0., 0., 0.]
+			
+			if doCenterAndScale then
+			(
+				m = model_bounding_box.x
+				if model_bounding_box.x < model_bounding_box.y then m = model_bounding_box.y
+				if m < model_bounding_box.z then m = model_bounding_box.z
+				scale_c = 1. / m
+				
+				center_pos = [-model_center.x, -model_center.y, -model_center.z]
+				
+				model_center += center_pos
+				model_bounding_box *= scale_c
+			)
+			
+			if meshes.count == 0 then
+			(
+				enableSceneRedraw()
+				
+				print "Warning: Nothing to export!"
+				
+				if selection.count != 0 then
+					MessageBox "Failed to export model! See MAXSript Listener for details."
+				
+				return false
+			)
+			
+			skipped = 0
+			cnt = 0
+			file = fopen file_name "wb"
+			
+			if file == undefined then
+			(
+				enableSceneRedraw()
+				print "Error: Couldn't open file for writing !"
+				MessageBox "Couldn't open file for writing !"
+				return false
 			)
 			else
 			(
-				print "Error: Model filename is undefined."
-				skipped += 1
+				writestring file "DMD 3.1 BIN"
+				fseek file 11 #seek_set
+				writelong file 1 #unsigned --MODEL_AABB
+				writelong file meshes.count #unsigned
+				
+				writefloat file model_center.x
+				writefloat file model_center.y
+				writefloat file model_center.z
+				
+				writefloat file (model_bounding_box.x / 2.)
+				writefloat file (model_bounding_box.y / 2.)
+				writefloat file (model_bounding_box.z / 2.)
+				
+				for mesh_obj in meshes do
+				(
+					txt_append = "(" + (cnt + 1) as string + " of " + meshes.count as string + ")"
+					
+					if not ExportMesh file mesh_obj doBuildFasetNormals doOptimize scale_c center_pos txt_append then
+						skipped += 1
+					
+					cnt += 1
+				)
 			)
 			
-			i += 1						
+			fclose file
+			
+			progressEnd()
+			print ("Model exporting done, " + skipped as string + " meshes of " + selection.count as string + " were skipped due errors.")
+			enableSceneRedraw()
 		)
 		
-		print ("Model(s) exporting done. " + skipped as string + " model(s) of " + selection.count as string + " skipped")
+		return true
 	)
-	-------------------------------------------------------------------------------------	
-	rollout roll_sel_m "Selected Mesh"
+	-------------------------------------------------------------------------------------
+	rollout roll_SelectedObjects "Selected Objects"
 	(
-		label lexpmesh "Exporting currently selected mesh."
+		label lb_SubCaption "Exporting selected object(s)"
 		
-		checkbox cb_CenScModel "Centre and scale mesh"
-		checkbox cb_BuildFN "Build faset normals"
-		checkbox cb_GMOptimize "Optimize geometry (slow)"
-	
-		checkbox cb_DoAnimation "Export animation"
+		checkbox cb_CenterAndScale "Centre and rescale model"
+		checkbox cb_BuildFasetNormals "Build faset normals"
+		checkbox cb_Optimize "Optimize geometry (slow)"
 		
-		radiobuttons rb_AnimType labels:#("Frame animation","Skeletal animation") default:1
+		checkbox cb_DoAnimation "Export frame animation"
 		
-		label lframes "Frames:"
-		spinner sp_start	"From:" range:[animationrange.start,animationrange.end,animationrange.start] type:#Integer
-		spinner sp_end	"To:" range:[animationrange.start,animationrange.end,animationrange.end] type:#Integer
-       	spinner sp_step	"Step:" range:[1,animationrange.end,1] type:#Integer
+		label lb_LabelFrames "Frames:"
+		spinner sp_Start "From:" range: [animationrange.start, animationrange.end, animationrange.start] type: #Integer
+		spinner sp_End "To:" range: [animationrange.start, animationrange.end, animationrange.end] type: #Integer
+		spinner sp_Step "Step:" range: [1, animationrange.end, 1] type: #Integer
 		
-		button btn_save "Save As..." width:100
-
-		on roll_sel_m open do
+		button btn_Save "Save As..." width:100
+		---------------------------------------------------------------------------------
+		on roll_SelectedObjects open do
 		(
-			cb_CenScModel.checked 	= true
-			cb_BuildFN.checked 			= false
-			sp_start.enabled 				= false
-			sp_end.enabled 				= false
-			sp_step.enabled 				= false
-			lframes.enabled 				= false
-			rb_AnimType.enabled 		= false
+			cb_CenterAndScale.checked = true
+			cb_BuildFasetNormals.checked = false
+			sp_Start.enabled = false
+			sp_End.enabled = false
+			sp_Step.enabled = false
+			lb_LabelFrames.enabled = false
 		)
-		
+		---------------------------------------------------------------------------------
 		on cb_DoAnimation changed state do
 		(
 			if cb_DoAnimation.checked then
 			(
-			sp_start.enabled 			= true
-			sp_end.enabled 			= true
-			sp_step.enabled 			= true
-			lframes.enabled 			= true
-			rb_AnimType.enabled 	= true
+				sp_Start.enabled = true
+				sp_End.enabled = true
+				sp_Step.enabled = true
+				lb_LabelFrames.enabled = true
 			)
 			else
 			(
-			sp_start.enabled 			= false
-			sp_end.enabled 			= false
-			sp_step.enabled 			= false		
-			lframes.enabled 			= false
-			rb_AnimType.enabled 	= false
+				sp_Start.enabled = false
+				sp_End.enabled = false
+				sp_Step.enabled = false
+				lb_LabelFrames.enabled = false
 			)
 		)
-		
-		on btn_save pressed do
-		(	
-			
-			if rb_AnimType.state == 2 then
-				MessageBox "Sorry, not done yet."
-			else
-			(		
-			center_and_scale =cb_CenScModel.checked
-			build_faset = cb_BuildFN.checked
-			gm_optimize = cb_GMOptimize.checked
-			start_frame = sp_start.value
-			end_frame = sp_end.value
-			anim_step = sp_step.value
-			do_frame_anim = ((rb_AnimType.state == 1) and cb_DoAnimation.checked)
-			DestroyDialog roll_sel_m	
-			ExportSelectedNodes()
-			)				
-		)
-		
-	)
-	-------------------------------------------------------------------------------------
-	on btn_export pressed do
-	(
-		case rb_ExScene.state of
+		---------------------------------------------------------------------------------
+		on btn_Save pressed do
 		(
-			1: MessageBox "Sorry, not done yet." --createDialog roll_sce		modal:true
-			2: createDialog roll_sel_m  modal:true
+			DestroyDialog roll_SelectedObjects
+			ExportSelectedNodes cb_CenterAndScale.checked cb_BuildFasetNormals.checked cb_Optimize.checked cb_DoAnimation.checked sp_Start.value sp_End.value sp_Step.value
 		)
 	)
 	-------------------------------------------------------------------------------------
-	rollout roll_about "About" width:200	
+	on btn_Export pressed do
 	(
-		label abl_1 "DMD Models and Scenes Exporter."
-		label abl_2 "V Beta 1"
-		label abl_3 "For DGLE2."
-		label abl_4 "(c)DRON 2010"	
-		label abl_5 "http://dron.deeprosoft.com/dgle2"
-		button btn_ok "Ok" width:50
-		on btn_ok pressed do
- 			DestroyDialog roll_about
+		case rb_ExportType.state of
+		(
+			1: MessageBox "Sorry, not done yet."
+			2: createDialog roll_SelectedObjects  modal: true
+			3: MessageBox "Sorry, not done yet."
+		)
 	)
-	on btn_about pressed do 
-		createDialog roll_about	modal:true
+	-------------------------------------------------------------------------------------
+	rollout roll_About "About" width:200
+	(
+		label lb_AboutCaption "DGLE Exporter v 0.3"
+		label lb_FormatTxt "Supports DSC, DMD and DSA formats."
+		label lb_URL "http://dgle.dronprogs.org/"
+		button btn_Ok "Ok" width: 50
+		---------------------------------------------------------------------------------
+		on btn_Ok pressed do
+			DestroyDialog roll_About
+	)
+	-------------------------------------------------------------------------------------
+	on btn_About pressed do 
+		createDialog roll_About modal: true
 	-------------------------------------------------------------------------------------
 ) 

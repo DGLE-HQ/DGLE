@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		03.03.2013 (c)Korotkov Andrey
+\date		07.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -18,8 +18,8 @@ See "DGLE.h" for more details.
 #include "Model.h"
 
 #ifdef PLATFORM_WINDOWS
-#include "ResFile.h"
-#include "..\..\build\windows\engine\resource.h"
+#	include "ResFile.h"
+#	include "..\..\build\windows\engine\resource.h"
 #endif
 
 using namespace std;
@@ -173,6 +173,8 @@ public:
 
 
 //CResource Manager//
+
+const char CResourceManager::sc_acFormatString[] = "DMD 3.1 BIN";
 
 CResourceManager::CResourceManager(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
@@ -443,6 +445,32 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEn
 	return E_INVALIDARG;
 }
 
+DGLE_RESULT DGLE_API CResourceManager::GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount)
+{
+	for (size_t i = 0; i < _resList.size(); ++i)
+		if (_resList[i].pObj == pObj)
+			if (!pcName || uiCharsCount == 0)
+			{
+				uiCharsCount = strlen(_resList[i].pcName) + 1;
+				return S_OK;
+			}
+			else
+			{
+				if (uiCharsCount <= strlen(_resList[i].pcName))
+				{
+					uiCharsCount = strlen(_resList[i].pcName) + 1;
+					strcpy(pcName, "");
+					return E_INVALIDARG;
+				}
+
+				strcpy(pcName, _resList[i].pcName);
+				
+				return S_OK;
+			}
+
+	return E_INVALIDARG;	
+}
+
 void CResourceManager::_AddResource(const char *pcName, IEngineBaseObject *pObj)
 {
 	if (pcName == NULL || strlen(pcName) == 0)
@@ -557,16 +585,16 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 		if (eAlignment == CRDA_ALIGNED_BY_4)
 			align = GetDataAlignmentIncrement(uiWidth, 3, 4);
 
-		uint ui_line_w = uiWidth*3 + align;
+		uint ui_line_w = uiWidth * 3 + align;
 			
 		for(uint j = 0; j < uiHeight; ++j)
 			for(uint i = 0; i < ui_line_w; ++i)
 				if (i%3 == 0)
 				{
 					uint8
-					ubt_tmp	= pData[ui_line_w*j + i];
-					pData[ui_line_w*j + i] = pData[ui_line_w*j + i + 2];
-					pData[ui_line_w*j + i + 2] = ubt_tmp;
+					ubt_tmp	= pData[ui_line_w * j + i];
+					pData[ui_line_w * j + i] = pData[ui_line_w * j + i + 2];
+					pData[ui_line_w * j + i + 2] = ubt_tmp;
 				}
 		return true;
 	}
@@ -578,9 +606,9 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 			for (uint i = 0; i < uiWidth*uiHeight; ++i)
 			{
 				uint8
-				ubt_tmp = pData[i*4];
-				pData[i*4] = pData[i*4 + 2];
-				pData[i*4 + 2] = ubt_tmp;
+				ubt_tmp = pData[i * 4];
+				pData[i * 4] = pData[i * 4 + 2];
+				pData[i * 4 + 2] = ubt_tmp;
 			}
 
 			return true;
@@ -607,18 +635,18 @@ uint CResourceManager::_GenerateScaleImage(const uint8 * const pDataIn, uint uiW
 		new_align = GetDataAlignmentIncrement(uiNewWidth, bytes_per_pix, 4);
 	}
 
-	uint data_size = uiNewHeight*(uiNewWidth*bytes_per_pix + new_align);
+	uint data_size = uiNewHeight * (uiNewWidth * bytes_per_pix + new_align);
 
 	if (prDataOut == NULL)
 		prDataOut = new uint8[data_size];
 
-	float x_factor = (float)uiNewWidth/(float)uiWidth, y_factor = (float)uiNewHeight/(float)uiHeight;
+	float x_factor = (float)uiNewWidth / (float)uiWidth, y_factor = (float)uiNewHeight / (float)uiHeight;
 	
 	for (int cy = 0; cy < (int)uiNewHeight; ++cy)
 		for (int cx = 0; cx < (int)uiNewWidth; ++cx)
 		{
-			int pixel = cy*(uiNewWidth*bytes_per_pix + new_align) + cx*bytes_per_pix;
-			int nearest_match = (int)(cy/y_factor)*(uiWidth*bytes_per_pix + cur_align) + (int)(cx/x_factor)*bytes_per_pix;
+			int pixel = cy * (uiNewWidth * bytes_per_pix + new_align) + cx * bytes_per_pix;
+			int nearest_match = (int)(cy / y_factor) * (uiWidth * bytes_per_pix + cur_align) + (int)(cx / x_factor) * bytes_per_pix;
 			for (int i = 0; i < bytes_per_pix; ++i)
 				prDataOut[pixel + i] = pDataIn[nearest_match + i];
 		}
@@ -642,7 +670,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 
 	uint8 bytes_per_pix = _GetBytesPerPixel(format);
 
-	int i_cur_w = (int)uiWidth*2, i_cur_h = (int)uiHeight*2;
+	int i_cur_w = (int)uiWidth * 2, i_cur_h = (int)uiHeight * 2;
 	uint data_size = 0, dat_offset = 0, dat_last_offset, cur_align = 0;
 
 	for (int i = 0; i <= i_mipmaps; ++i)
@@ -653,7 +681,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 		if (eAlignment == CRDA_ALIGNED_BY_4)
 			cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
 
-		data_size += i_cur_h*(i_cur_w*bytes_per_pix + cur_align);
+		data_size += i_cur_h * (i_cur_w * bytes_per_pix + cur_align);
 	}
 
 	i_cur_w = (int)uiWidth, i_cur_h = (int)uiHeight;
@@ -663,7 +691,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 	if (eAlignment == CRDA_ALIGNED_BY_4)
 		cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
 
-	dat_last_offset = uiHeight*(uiWidth*bytes_per_pix + cur_align);
+	dat_last_offset = uiHeight * (uiWidth * bytes_per_pix + cur_align);
 
 	memcpy(prDataOut, pDataIn, dat_last_offset);
 
@@ -702,7 +730,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 			return false;
 		else
 		{
-			uint data_size = uiWidth*uiHeight*_GetBytesPerPixel(eDataFormat);
+			uint data_size = uiWidth * uiHeight * _GetBytesPerPixel(eDataFormat);
 			p_data_in = new uint8 [data_size];
 			memset(p_data_in, 0, data_size);
 			need_delete_data_in = true;
@@ -756,13 +784,13 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 		i_new_w = i_max_tex_res;
 	else
 		if (!b_feature_supported)
-			i_new_w = 1 << (int)floor((logf((float)uiWidth)/logf(2.f)) + 0.5f);
+			i_new_w = 1 << (int)floor((logf((float)uiWidth) / logf(2.f)) + 0.5f);
 
 	if (uiHeight > (uint)i_max_tex_res)
 		i_new_h = i_max_tex_res;
 	else
 		if (!b_feature_supported)
-			i_new_h = 1 << (int)floor((logf((float)uiHeight)/logf(2.f)) + 0.5f);
+			i_new_h = 1 << (int)floor((logf((float)uiHeight) / logf(2.f)) + 0.5f);
 
 	bool b_need_scale = (i_new_w != uiWidth || i_new_h != uiHeight);
 
@@ -905,9 +933,9 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		pFile->Seek(st_header.ui8IdLength, FSSF_CURRENT, ui32_pos);
 
 	if (st_header.ui8ColorMapType != 0)
-		pFile->Seek((st_header.ui8ColorMapEntrySize/8 * st_header.ui16ColorMapLength), FSSF_CURRENT, ui32_pos);
+		pFile->Seek((st_header.ui8ColorMapEntrySize / 8 * st_header.ui16ColorMapLength), FSSF_CURRENT, ui32_pos);
 
-	int i_bytes_per_pixel = st_header.ui8PixelDepth/8;
+	int i_bytes_per_pixel = st_header.ui8PixelDepth / 8;
 	
 	int i_image_size = st_header.ui16ImageHeight * st_header.ui16ImageWidth * i_bytes_per_pixel;
 	
@@ -941,7 +969,7 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 					for (int counter = 1; counter < ui8_chunkheader; ++counter)
 					{
-						for (int elementCounter=0; elementCounter < i_bytes_per_pixel; ++elementCounter)
+						for (int elementCounter = 0; elementCounter < i_bytes_per_pixel; ++elementCounter)
 							p_data[i_current_byte + elementCounter] = p_data[i_data_offset + elementCounter];
 
 						i_current_byte += i_bytes_per_pixel;
@@ -973,9 +1001,9 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		
 			for (int x = 0; x < line_w; x += 3)
 			{
-				out[x]		= in[x + 2];
-				out[x + 1]	= in[x + 1];
-				out[x + 2]	= in[x];
+				out[x] = in[x + 2];
+				out[x + 1] = in[x + 1];
+				out[x + 2] = in[x];
 			}
 
 			if (!flip) out += line_w;
@@ -1079,7 +1107,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	if (ui_bitmap_length == 0)
 	{
 		uint8 ui8_add_bts = GetDataAlignmentIncrement(st_info_header.i32Width, 3, 4);
-		ui_bitmap_length = st_info_header.i32Height*(st_info_header.i32Width*3 + ui8_add_bts);
+		ui_bitmap_length = st_info_header.i32Height * (st_info_header.i32Width * 3 + ui8_add_bts);
 	}
 
 	uint8 *p_data = new uint8[ui_bitmap_length];
@@ -1093,12 +1121,12 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		return false;
 	}
 	
-	const int i_line_w = ui_bitmap_length/st_info_header.i32Height;
+	const int i_line_w = ui_bitmap_length / st_info_header.i32Height;
 	
 	uint8 *p_out = new uint8[ui_bitmap_length];
 	
 	for (int i = 0; i < st_info_header.i32Height; ++i)
-		memcpy((void*)&p_out[i*i_line_w], (void*)&p_data[ui_bitmap_length - (i + 1)*i_line_w], i_line_w);
+		memcpy((void*)&p_out[i * i_line_w], (void*)&p_data[ui_bitmap_length - (i + 1) * i_line_w], i_line_w);
 
 	delete[] p_data;
 
@@ -1229,8 +1257,8 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, ui
 
 		if (textured)
 		{
-			desc.uiTexCoordOffset = offset;
-			desc.uiTexCoordStride = interleave;
+			desc.uiTextureVertexOffset = offset;
+			desc.uiTextureVertexStride = interleave;
 			offset += 2 * sizeof(float);
 		}
 
@@ -1257,7 +1285,7 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, ui
 
 		if (textured)
 		{
-			desc.uiTexCoordOffset = offset;
+			desc.uiTextureVertexOffset = offset;
 			offset += 2 * uiNumVerts * sizeof(float);
 		}
 
@@ -1294,52 +1322,60 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 
 	if (ftype[0] != 'D' || ftype[1] != 'M' || ftype[2] != 'D')
 	{
-		LOG("Wrong DMD mesh file.", LT_ERROR);
+		LOG("Wrong DMD file.", LT_ERROR);
 		return false;
 	}
 
-	if (ftype[4] != '3' || ftype[5] != '.' || ftype[6] != '0')
+	if (ftype[4] != '3' || ftype[5] != '.' || ftype[6] != '1')
 	{
-		LOG("Incorrect DMD mesh version.", LT_ERROR);
+		LOG("Incorrect DMD file version.", LT_ERROR);
 		return false;
 	}
 
-	enum E_DMD_HEADER_FLAGS
+	E_DMD_HEADER_FLAGS ext_flags;
+	pFile->Read(&ext_flags, sizeof(E_DMD_HEADER_FLAGS), ui_read);
+
+	uint meshes_count;
+	pFile->Read(&meshes_count, sizeof(uint), ui_read);
+
+	if (meshes_count == 0)
 	{
-		DHF_MULTIMESH = 0x00000001
-	};
+		LOG("Zero meshes in DMD file.", LT_ERROR);
+		return false;
+	}
 
-#pragma pack(push, 1)
-	struct TDMDHeader
+	TPoint3 model_center;
+	TVector3 model_extents;
+
+	if (ext_flags & DHF_MODEL_AABB)
 	{
-		E_DMD_HEADER_FLAGS uiFlags;
-		bool	bTexCoords;
-		uint32	uiNumVerts;
-		uint32	uiNumFaces;
-	};
-#pragma pack(pop)
-
-	TDMDHeader header;
-
-	pFile->Read(&header, sizeof(TDMDHeader), ui_read);
-
-	const uint8 face_size = header.uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
-
-	const uint datasize = (header.uiNumVerts * sizeof(float) * 2 + header.uiNumFaces * face_size) * 3 + header.bTexCoords * header.uiNumVerts * sizeof(float) * 2;
-
-	uint mcount = 1;
-
-	if (header.uiFlags & DHF_MULTIMESH)
-		pFile->Read(&mcount, sizeof(uint), ui_read);
+		pFile->Read(&model_center.xyz, sizeof(TPoint3), ui_read);
+		pFile->Read(&model_extents.xyz, sizeof(TVector3), ui_read);
+	}
 
 	bool ret = false;
 
 	CModel *p_model = new CModel(InstIdx());
 
-	for (uint i = 0; i < mcount; ++i)
+	for (uint i = 0; i < meshes_count; ++i)
 	{
-		float points[6];
-		pFile->Read(&points, sizeof(float) * 6, ui_read);
+
+#pragma pack(push, 1)
+		struct TMeshHeader
+		{
+			bool isTextured, haveTangentSpace;
+			uint uiVertsCount, uiIdxsCount;
+			TPoint3 stCenter;
+			TVector3 stExtents;
+		};
+#pragma pack(pop)
+
+		TMeshHeader header;
+
+		pFile->Read(&header, sizeof(TMeshHeader), ui_read);
+
+		const uint8 idx_size = header.uiVertsCount > 65535 ? sizeof(uint32) : sizeof(uint16);
+		const uint datasize = header.uiVertsCount * sizeof(float) * 2 * 3 + header.uiIdxsCount * idx_size + header.isTextured * header.uiVertsCount * sizeof(float) * 2;
 
 		uint8 *data_in = new uint8[datasize];
 
@@ -1355,12 +1391,12 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 
 		E_MESH_CREATION_FLAGS cr_flags = MCF_NORMALS_PRESENTED;
 
-		if (header.bTexCoords)
+		if (header.isTextured)
 			(int&)cr_flags |= MCF_TEXTURE_COORDS_PRESENTED;
 
 		IMesh *p_mesh;
 
-		ret = _CreateMesh(p_mesh, data_in, datasize, header.uiNumVerts, header.uiNumFaces, TPoint3(points[0], points[1], points[2]), TVector3(points[3], points[4], points[5]), cr_flags, eLoadFlags);
+		ret = _CreateMesh(p_mesh, data_in, datasize, header.uiVertsCount, header.uiIdxsCount / 3, header.stCenter, header.stExtents, cr_flags, eLoadFlags);
 
 		delete[] data_in;
 
@@ -1371,7 +1407,10 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 			return ret;
 		}
 		else
-			p_model->AddMesh(p_mesh);
+			if (!(ext_flags & DHF_MODEL_AABB) && i == meshes_count - 1)
+				p_model->AddMesh(p_mesh);
+			else
+				p_model->AddMesh(p_mesh, model_center, model_extents);
 	}
 
 	prObj = p_model;

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		03.03.2013 (c)Korotkov Andrey
+\date		07.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -21,11 +21,14 @@ class CModel: public CInstancedObj, public IModel
 	std::vector<IMaterial *> _materials;
 
 	void _RecalculateBounds();
+	bool _SaveToFile(IFile *pFile);
 
 public:
 
 	CModel(uint uiInstIdx);
 	~CModel();
+
+	void AddMesh(IMesh *pMesh, const TPoint3 &stCenter, const TVector3 &stExtents);
 
 	DGLE_RESULT DGLE_API Draw();
 	DGLE_RESULT DGLE_API DrawMesh(uint uiMeshIdx);
@@ -41,6 +44,11 @@ public:
 	DGLE_RESULT DGLE_API RemoveMesh(IMesh *pMesh);
 	DGLE_RESULT DGLE_API ReplaceMesh(uint uiMeshIdx, IMesh *pMesh);
 
+	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar); // Command with uiCmd == 1 will save mesh to IFile, stVar should contain a pointer to IFile interface.
+	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar);
+	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount);
+
 	IENGINE_BASE_OBJECT_IMPLEMENTATION(EOT_MODEL)
-	IDGLE_BASE_IMPLEMENTATION(IModel, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))
+	IDGLE_BASE_GUID_IMPL(IModel)
+	IUNKNOWN_IMPL(INTERFACE_IMPL(IDGLE_Base, INTERFACE_IMPL(IModel, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))))
 };

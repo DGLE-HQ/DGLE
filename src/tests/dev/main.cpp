@@ -37,9 +37,6 @@ using namespace DGLE;
 #	error Unknown platform!
 #endif
 
-#include <gl/GL.h>
-#pragma comment(linker, "/defaultlib:opengl32.lib")
-
 #define APP_CAPTION	"DevTest"
 #define SCREEN_X 800
 #define SCREEN_Y 600
@@ -61,6 +58,7 @@ void DGLE_API Init(void *pParameter)
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)pResMan);
 	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pRender);
 
+	pRender->SetClearColor(ColorGray());
 	pRender->GetRender2D(pRender2D);
 	pRender->GetRender3D(pRender3D);
 

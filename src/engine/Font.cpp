@@ -114,8 +114,8 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 		_pBuffer[l_12 + i_12 + 2] = _pBuffer[l_12 + i_12]; _pBuffer[l_12 + i_12 + 3] = curb_y / (float)t_h;
 		_pBuffer[l_12 + i_12 + 4] = curb_x / (float)t_w; _pBuffer[l_12 + i_12 + 5] = _pBuffer[l_12 + i_12 + 1];
 		
-		_pBuffer[l_12 + i_12 + 6] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 7]  = _pBuffer[l_12 + i_12 + 1];
-		_pBuffer[l_12 + i_12 + 8] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 9]  = _pBuffer[l_12 + i_12 + 3];
+		_pBuffer[l_12 + i_12 + 6] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 7] = _pBuffer[l_12 + i_12 + 1];
+		_pBuffer[l_12 + i_12 + 8] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 9] = _pBuffer[l_12 + i_12 + 3];
 		_pBuffer[l_12 + i_12 + 10] = _pBuffer[l_12 + i_12 + 2]; _pBuffer[l_12 + i_12 + 11] = _pBuffer[l_12 + i_12 + 3];
 
 		x += curb_w * _fScale;
@@ -270,9 +270,9 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	desc.pData = (uint8 *)_pBuffer;
 	desc.uiVertexStride = 4 * sizeof(float);
-	desc.bVertexCoord2 = true;
-	desc.uiTexCoordOffset = 2 * sizeof(float);
-	desc.uiTexCoordStride = desc.uiVertexStride;
+	desc.bVertices2D = true;
+	desc.uiTextureVertexOffset = 2 * sizeof(float);
+	desc.uiTextureVertexStride = desc.uiVertexStride;
 
 	if (bVerticesColors)
 		desc.uiColorOffset = length * 24 * sizeof(float);
