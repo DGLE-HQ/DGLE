@@ -30,7 +30,7 @@ class CRender: public CInstancedObj, public IRender
 
 	void _SetPerspectiveMatrix(uint width, uint height);
 
-	static void DGLE_API _s_ConListFeatures(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConListFeatures(void *pParameter, const char *pcParam);
 
 public:
 

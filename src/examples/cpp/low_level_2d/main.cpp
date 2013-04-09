@@ -111,8 +111,8 @@ void DGLE_API Init(void *pParameter)
 	
 	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_forest_background.png", (IEngineBaseObject*&)pBg, TEXTURE_LOAD_DEFAULT_2D);
 	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_cloudy_night_sky.jpg", (IEngineBaseObject*&)pSky, TEXTURE_LOAD_DEFAULT_2D);
-	p_res_man->Load(RESOURCE_PATH"textures\\smoke.png", (IEngineBaseObject*&)pFog, TEXTURE_LOAD_DEFAULT_2D);
-	p_res_man->Load(RESOURCE_PATH"textures\\light.jpg", (IEngineBaseObject*&)pLightRound, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\smoke.png", (IEngineBaseObject*&)pFog, TEXTURE_LOAD_DEFAULT_2D);
+	p_res_man->Load(RESOURCE_PATH"sprites\\light.jpg", (IEngineBaseObject*&)pLightRound, TEXTURE_LOAD_DEFAULT_2D);
 
 	p_res_man->Load(RESOURCE_PATH"sprites\\vox.jpg", (IEngineBaseObject*&)pVox, TEXTURE_LOAD_DEFAULT_2D);
 	pVox->SetFrameSize(149, 149);

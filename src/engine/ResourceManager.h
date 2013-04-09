@@ -109,8 +109,9 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	void _ProfilerEventHandler() const;
 	void _ListResources() const;
 
-	static void DGLE_API _s_ConListFileFormats(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ConListResources(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConListFileFormats(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConListResources(void *pParameter, const char *pcParam);
+	
 	static bool DGLE_API _s_LoadTextureBMP(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter);
 	static bool DGLE_API _s_LoadTextureTGA(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter); 
 	static bool DGLE_API _s_LoadTextureDTX(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter); 

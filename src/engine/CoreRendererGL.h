@@ -100,7 +100,7 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	void _ProfilerEventHandler() const;
 	void _KillDeadFBOs();
 
-	static void DGLE_API _s_ConPrintGLExts(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConPrintGLExts(void *pParameter, const char *pcParam);
 	static void DGLE_API _s_EventsHandler(void *pParameter, IBaseEvent *pEvent);
 
 public:

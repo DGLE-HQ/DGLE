@@ -37,6 +37,7 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] Added IEvGoFullScreen event to hook engine fullscreen switch and GetDesktopResolution method to get current desktop resolution.
 [ + ] For IMesh added methods to recalculate normals, bounds and tangent space. Also added method to optimize mesh geometry and transform geometry by matrix.
 [ + ] Console utility to run engine from command line.
+[ + ] GetLastUpdateDeltaTime and GetElapsedTime IEngineCore methods.
 [ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
 [ * ] Renamed DrawSprite* methods of IRender2D interface.
 [ * ] IModel interface was reengineered.

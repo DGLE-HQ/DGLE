@@ -532,7 +532,7 @@ namespace DGLE
 	public:
 		virtual DGLE_RESULT DGLE_API Initialize() = 0;
 		virtual DGLE_RESULT DGLE_API Free() = 0;
-		virtual DGLE_RESULT DGLE_API Update(uint64 ui64DeltaTime) = 0;
+		virtual DGLE_RESULT DGLE_API Update(uint uiDeltaTime) = 0;
 		virtual DGLE_RESULT DGLE_API Render() = 0;
 		virtual DGLE_RESULT DGLE_API OnEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) = 0;
 	};
@@ -550,7 +550,7 @@ namespace DGLE
 	};
 
 	/** Type of engine log message.
-		\see IEngineCore::AddToLogEx
+		\see IEngineCore::WriteToLogEx
 	 */
 	enum E_LOG_TYPE
 	{
@@ -640,21 +640,22 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo) = 0;
 		virtual DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin) = 0;
 		virtual DGLE_RESULT DGLE_API GetFPS(uint &uiFPS) = 0;
-		virtual DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime) = 0;
+		virtual DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint &uiDeltaTime) = 0;
+		virtual DGLE_RESULT DGLE_API GetElapsedTime(uint64 &ui64ElapsedTime) = 0;
 		virtual DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle) = 0;
 
 		virtual DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin) = 0;
 		virtual DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight) = 0;
 		virtual DGLE_RESULT DGLE_API AllowPause(bool bAllow) = 0;
 
-		virtual DGLE_RESULT DGLE_API AddToLog(const char *pcTxt) = 0;
-		virtual DGLE_RESULT DGLE_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber) = 0;
+		virtual DGLE_RESULT DGLE_API WriteToLog(const char *pcTxt) = 0;
+		virtual DGLE_RESULT DGLE_API WriteToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber) = 0;
 
 		virtual DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine = false) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleExecute(const char *pcCommandTxt) = 0;
-		virtual DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter = NULL) = 0; 
-		virtual DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter = NULL) = 0; 
+		virtual DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam) = NULL, void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API ConsoleUnregister(const char *pcCommandName) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) = 0;

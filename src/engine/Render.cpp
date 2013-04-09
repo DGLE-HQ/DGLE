@@ -287,13 +287,17 @@ DGLE_RESULT DGLE_API CRender::GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType)
 	return S_OK;
 }
 
-void DGLE_API CRender::_s_ConListFeatures(void *pParameter, const char *pcParam)
+bool DGLE_API CRender::_s_ConListFeatures(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CRender, "No parameters expected.");
+		return false;
+	}
 	else
 	{
 		CON(CRender, PTHIS(CRender)->_strFeturesList.c_str());
 		CON(CRender, PTHIS(CRender)->_strMetricsList.c_str());
+		return true;
 	}
 }

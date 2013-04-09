@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.09.2011 (c)Korotkov Andrey
+\date		09.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -66,8 +66,8 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	TEngineWindow _stWin;
 
-	uint _uiUpdateInterval;
-	uint64 _ui64TimeOld;
+	uint _uiUpdateInterval, _uiTimeOld, _uiLastUpdateDeltaTime;
+	uint64 _ui64StartTime, _ui64PauseTime, _ui64PauseStartTime;
 	bool _bPause, _bWasFScreen;
 	char _pcApplicationCaption[_sc_AppCaptionMaxLength];
 
@@ -76,8 +76,8 @@ class CCore: public CInstancedObj, public IEngineCore
 	uint _uiFPSTimer, _uiFPSCount, _uiLastFPS,
 		_uiUPSCount, _uiLastUPS, _uiLastMemUsage;
 
-	uint64 _ui64FPSSumm, _ui64CyclesCount, _ui64RenderDelay,
-		_ui64UpdateDelay, _ui64LastUpdateDeltaTime;
+	uint64 _ui64FPSSumm, _ui64CyclesCount,
+		_ui64RenderDelay, _ui64UpdateDelay;
 
 	bool _bInDrawProfilers;
 	uint _uiProfilerCurTxtXOffset, _uiProfilerCurTxtYOffset,
@@ -128,12 +128,12 @@ class CCore: public CInstancedObj, public IEngineCore
 	static void DGLE_API _s_OnTimer(void *pParameter);
 	static void DGLE_API _s_MessageProc(void *pParameter, const TWindowMessage &stMsg);
 
-	static void DGLE_API _s_ConAutoPause(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ConPrintVersion(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ConFeatures(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ConListPlugs(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ConChangeMode(void *pParameter, const char *pcParam);	
-	static void DGLE_API _s_InstIdx(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConAutoPause(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConPrintVersion(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConFeatures(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConListPlugs(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConChangeMode(void *pParameter, const char *pcParam);	
+	static bool DGLE_API _s_InstIdx(void *pParameter, const char *pcParam);
 
 public:
 
@@ -189,21 +189,22 @@ public:
 	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo);
 	DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin);
 	DGLE_RESULT DGLE_API GetFPS(uint &uiFPS);
-	DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint64 &ui64DeltaTime);
+	DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint &uiDeltaTime);
+	DGLE_RESULT DGLE_API GetElapsedTime(uint64 &ui64ElapsedTime);
 	DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle);
 
 	DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin);
 	DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight);
 	DGLE_RESULT DGLE_API AllowPause(bool bAllow);
 
-	DGLE_RESULT DGLE_API AddToLog(const char *pcTxt);
-	DGLE_RESULT DGLE_API AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+	DGLE_RESULT DGLE_API WriteToLog(const char *pcTxt);
+	DGLE_RESULT DGLE_API WriteToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
 	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible);
 	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
 	DGLE_RESULT DGLE_API ConsoleExecute(const char* pcCommandTxt);
-	DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
-	DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter);
+	DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
+	DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter);
 	DGLE_RESULT DGLE_API ConsoleUnregister(const char* pcCommandName);
 
 	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize);

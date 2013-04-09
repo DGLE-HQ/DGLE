@@ -110,7 +110,7 @@ public:
 	virtual void OnCollision(CGameObject *pObjWith)
 	{}
 
-	// every object defines for itself if needs he collision check or not
+	// every object defines for itself if it needs collision check or not
 	virtual bool IsCollidable() const
 	{
 		return false;
@@ -298,6 +298,7 @@ public:
 	{
 		_objType = GOT_ASTEROID;
 
+		_uiCounter = rand() % 500; // to randomize asteroid drawing starting rotation angle
 		_iRenderLayer = 2;
 		_fSize = fSize;
 		_fColScale = 0.8f;
@@ -327,7 +328,7 @@ public:
 
 	void Draw()
 	{
-		_pRender2D->DrawMesh(_pMesh, _pTex, _stPos, TPoint3(_fSize, _fSize, _fSize), TVector3(0.6f, 0.2f, 0.4f), (float)_uiCounter, EF_DEFAULT, false);
+		_pRender2D->DrawMesh(_pMesh, _pTex, _stPos, TPoint3(_fSize, _fSize, _fSize), TVector3(0.6f, 0.2f, 0.4f), (float)_uiCounter * (250.f / _fSize), EF_DEFAULT, false);
 		CGameObject::Draw();
 	}
 
@@ -610,9 +611,7 @@ bool CGame::_IsPlayerExists() const
 {
 	for (size_t i = 0; i < _clObjects.size(); ++i)
 		if (_clObjects[i]->GetType() == CGameObject::GOT_PLAYER)
-		{
 			return true;
-		}
 
 	return false;
 }
@@ -621,9 +620,7 @@ bool CGame::_AreAsteroidsRemain() const
 {
 	for (size_t i = 0; i < _clObjects.size(); ++i)
 		if (_clObjects[i]->GetType() == CGameObject::GOT_ASTEROID)
-		{
 			return true;
-		}
 	
 	return false;
 }
@@ -674,7 +671,7 @@ DGLE_RESULT DGLE_API CGame::Free()
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CGame::Update(uint64 ui64DeltaTime)
+DGLE_RESULT DGLE_API CGame::Update(uint uiDeltaTime)
 {
 	bool is_pressed;
 

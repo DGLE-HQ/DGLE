@@ -13,23 +13,16 @@ See "DGLE.h" for more details.
 
 class CHookedWindow : public CInstancedObj, public IMainWindow
 {
-	HWND			 _hWnd,
-					 _hRootHWnd;
-	HDC				 _hDC;
-
-	bool			 _bNoMloopHook;
-	
-	TMsgProcDelegate
-					*_pDelMessageProc;
-	TProcDelegate	*_pDelMainLoop;
-
-	WNDPROC			 _stOldWindowProc,
-					 _stOldRootWindowProc;
-	
-	uint			 _uiUpdateTimer;
+	HWND _hWnd, _hRootHWnd;
+	HDC _hDC;
+	bool _bNoMloopHook;
+	TMsgProcDelegate *_pDelMessageProc;
+	TProcDelegate *_pDelMainLoop;
+	WNDPROC _stOldWindowProc, _stOldRootWindowProc;
+	uint _uiUpdateTimer;
 
 	void _KillWindow();
-	static void DGLE_API	_s_ConsoleQuit(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConsoleQuit(void *pParameter, const char *pcParam);
 	static LRESULT CALLBACK _s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK _s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

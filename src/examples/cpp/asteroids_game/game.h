@@ -42,7 +42,7 @@ class CGame : private IUserCallback, private IGameObjectManager
 	
 	DGLE_RESULT DGLE_API Initialize();
 	DGLE_RESULT DGLE_API Free();
-	DGLE_RESULT DGLE_API Update(uint64 ui64DeltaTime);
+	DGLE_RESULT DGLE_API Update(uint uiDeltaTime);
 	DGLE_RESULT DGLE_API Render();
 	DGLE_RESULT DGLE_API OnEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
 

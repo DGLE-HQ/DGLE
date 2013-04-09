@@ -27,14 +27,14 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	{
 		for (std::size_t i = 0; i < EngineInstances.size(); ++i)
 			if (EngineInstances[i].pclCore)
-				EngineInstances[i].pclCore->AddToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
+				EngineInstances[i].pclCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		return;
 	}
 	
 	if (uiInstIdx >= EngineInstances.size())
 		return;
 
-	EngineInstances[uiInstIdx].pclCore->AddToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
+	EngineInstances[uiInstIdx].pclCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
 bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)

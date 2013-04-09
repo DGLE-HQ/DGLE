@@ -37,7 +37,7 @@ class CBaseInput : public CInstancedObj, public CPlatformBaseInput
 	uint32 _AxisValue(uint32 Value, uint Min, uint Max);
 
 	void _PrintJoysList();
-	static void DGLE_API _s_PrintJoysList(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_PrintJoysList(void *pParameter, const char *pcParam);
 
 #endif
 

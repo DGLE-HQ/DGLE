@@ -33,9 +33,9 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 	bool _InitDevice(uint id);
 	void _PrintDevList();
 
-	static void DGLE_API _s_PrintDevList(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_PrintDevId(void *pParameter, const char *pcParam);
-	static void DGLE_API _s_ForceDevice(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_PrintDevList(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_PrintDevId(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ForceDevice(void *pParameter, const char *pcParam);
 	
 	static void CALLBACK _s_WaveCallback(HWAVEOUT hWaveOut, UINT uMsg, DWORD dwInstance, PWAVEHDR pWaveHdr, DWORD dwParam2);
 

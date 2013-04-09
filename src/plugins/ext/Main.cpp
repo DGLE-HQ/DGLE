@@ -19,7 +19,7 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	if (uiInstIdx == -1)
 	{
 		for (size_t i = 0; i < PlCores.size(); ++i)
-			PlCores[i]->_pEngineCore->AddToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
+			PlCores[i]->_pEngineCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		
 		return;
 	}
@@ -27,7 +27,7 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	if (uiInstIdx >= (uint)PlCores.size())
 		return;
 
-	PlCores[uiInstIdx]->_pEngineCore->AddToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
+	PlCores[uiInstIdx]->_pEngineCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
 void CALLBACK InitPlugin(IEngineCore *engineCore, IPlugin *&plugin)

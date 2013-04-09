@@ -13,17 +13,16 @@ See "DGLE.h" for more details.
 
 class CMainWindow : public CInstancedObj, public IMainWindow
 {
-	HINSTANCE			_hInst;
-	HWND				_hWnd;
-	HDC					_hDC;
-	TProcDelegate		*_pDelMainLoop;
-	TMsgProcDelegate	*_pDelMessageProc;
-	bool				_bFScreen;
-	bool				_bIsLooping;
+	HINSTANCE _hInst;
+	HWND _hWnd;
+	HDC _hDC;
+	TProcDelegate *_pDelMainLoop;
+	TMsgProcDelegate *_pDelMessageProc;
+	bool _bFScreen, _bIsLooping;
 
-	int WINAPI				_wWinMain(HINSTANCE hInstance);	
+	int WINAPI _wWinMain(HINSTANCE hInstance);	
 	static LRESULT DGLE_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static void DGLE_API	_s_ConsoleQuit(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConsoleQuit(void *pParameter, const char *pcParam);
 
 public:
 	

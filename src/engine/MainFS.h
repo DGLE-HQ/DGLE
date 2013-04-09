@@ -35,13 +35,13 @@ class CDCPFileSystem;
 
 class CMainFS: public CInstancedObj, public IMainFileSystem
 {
-	CHDDFileSystem		*_pHDDFS;
-	CDCPFileSystem      *_pDCPFS;
+	CHDDFileSystem *_pHDDFS;
+	CDCPFileSystem *_pDCPFS;
 
 	std::vector<TVFileSystem> _clVFileSystems;
 	std::string _strVFSsDescs;
 
-	static void DGLE_API _s_ConListVFS(void *pParameter, const char *pcParam);
+	static bool DGLE_API _s_ConListVFS(void *pParameter, const char *pcParam);
 	static void DGLE_API _s_FSDeleteCallback(void *pParameter, IFileSystem *pVFS);
 
 public:

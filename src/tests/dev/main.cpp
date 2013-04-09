@@ -84,8 +84,8 @@ void DGLE_API Update(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
-	pRender3D->MultMatrix(MatrixTranslate(TVector3(0.f, 0.f, -5.f)));
-	pRender3D->MultMatrix(MatrixRotate((float)uiCounter, TVector3(0.25f, 0.35f, 0.4f)));
+	pRender3D->MultMatrix(MatrixTranslate(TVector3(0.f, 0.f, -2.5f)));
+	pRender3D->MultMatrix(MatrixRotate((float)uiCounter, TVector3(0.2f, 0.4f, 0.1f)));
 
 	pTex->Bind();
 	pModel->Draw();
@@ -100,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	if (GetEngine(DLL_PATH, pEngineCore))
 	{
-		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngineWindow(SCREEN_X, SCREEN_Y, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, EIF_LOAD_ALL_PLUGINS)))
+		if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, APP_CAPTION, TEngineWindow(SCREEN_X, SCREEN_Y, false, false, MM_NONE, EWF_ALLOW_SIZEING), 33, (E_ENGINE_INIT_FLAGS)(EIF_LOAD_ALL_PLUGINS))))
 		{
 			pEngineCore->ConsoleVisible(true);
 			pEngineCore->ConsoleExecute("core_profiler 1");

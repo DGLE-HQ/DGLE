@@ -79,12 +79,18 @@ DGLE_RESULT DGLE_API CMainFS::GetRegisteredVirtualFileSystems(char *pcTxt, uint 
 	return S_OK;
 }
 
-void DGLE_API CMainFS::_s_ConListVFS(void *pParameter, const char *pcParam)
+bool DGLE_API CMainFS::_s_ConListVFS(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CMainFS, "No parameters expected.");
-	else 
+		return false;
+	}
+	else
+	{
 		CON(CMainFS, string("---Supported VFile Systems---\n" + PTHIS(CMainFS)->_strVFSsDescs + "-----------------------------").c_str());
+		return true;
+	}
 }
 
 void DGLE_API CMainFS::_s_FSDeleteCallback(void *pParameter, IFileSystem *pVFS)

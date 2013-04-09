@@ -1962,9 +1962,15 @@ void CCoreRendererGL::_ProfilerEventHandler() const
 	_pStateMan->ResetProfileData();
 }
 
-void DGLE_API CCoreRendererGL::_s_ConPrintGLExts(void *pParameter, const char *pcParam)
+bool DGLE_API CCoreRendererGL::_s_ConPrintGLExts(void *pParameter, const char *pcParam)
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
+
+	if (!write && strlen(pcParam) != 0)
+	{
+		CON(CCoreRendererGL, "Wrong command parametrs.");
+		return false;
+	}
 	
 	string res = string("------OpenGL Extensions------\n") + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\n-----------------------------";
 
@@ -1972,6 +1978,8 @@ void DGLE_API CCoreRendererGL::_s_ConPrintGLExts(void *pParameter, const char *p
 		LOG2(CCoreRendererGL, res, LT_INFO);
 	else
 		CON(CCoreRendererGL, res.c_str());
+
+	return true;
 }
 
 void DGLE_API CCoreRendererGL::_s_EventsHandler(void *pParameter, IBaseEvent *pEvent)

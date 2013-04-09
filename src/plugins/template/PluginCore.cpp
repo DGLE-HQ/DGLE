@@ -41,7 +41,7 @@ void CPluginCore::_Render()
 	//ToDo: Put your code here.
 }
 
-void CPluginCore::_Update(uint64 ui64DeltaTime)
+void CPluginCore::_Update(uint uiDeltaTime)
 {
 	//ToDo: Put your code here.
 }
@@ -111,7 +111,7 @@ void DGLE_API CPluginCore::_s_Render(void *pParametr)
 
 void DGLE_API CPluginCore::_s_Update(void *pParametr)
 {
-	uint64 dt;
+	uint dt;
 	((CPluginCore *)pParametr)->_pEngineCore->GetLastUpdateDeltaTime(dt);
 	((CPluginCore *)pParametr)->_Update(dt);
 }

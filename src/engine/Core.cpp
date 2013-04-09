@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.01.2013 (c)Korotkov Andrey
+\date		09.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -285,7 +285,8 @@ _pSplashWindow(NULL), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
 _bDoExit(false), _bInDrawProfilers(false), _bWasFScreen(false), _bRendering(false),
 _bStartedFlag(false), _bInitedFlag(false), _bQuitFlag(false),
 _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
-_bNeedApplyNewWnd(false), _ui64LastUpdateDeltaTime(0), _uiLastMemUsage(0),
+_bNeedApplyNewWnd(false), _uiLastUpdateDeltaTime(0), _uiLastMemUsage(0),
+_ui64StartTime(0), _ui64PauseTime(0),
 //Delegates initialization
 _clDelUpdate(uiInstIdx),
 _clDelRender(uiInstIdx),
@@ -552,6 +553,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		{
 			_pMainWindow->SetCaption(_pcApplicationCaption);
 			if (_pSound != NULL) _pSound->MasterPause(false);
+			_ui64PauseTime += GetPerfTimer() / 1000 - _ui64PauseStartTime;
 		}
 
 		break;
@@ -567,6 +569,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		{
 			_pMainWindow->SetCaption((string(_pcApplicationCaption) + " [Paused]").c_str());
 			if (_pSound != NULL) _pSound->MasterPause(true);
+			_ui64PauseStartTime = GetPerfTimer() / 1000;
 		}
 
 		if (_stWin.bFullScreen && !_bNeedApplyNewWnd)
@@ -678,7 +681,8 @@ void CCore::_MainLoop()
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return;
 
-	uint64 time	= GetPerfTimer() / 1000, time_delta = time - _ui64TimeOld;
+	uint time = (uint)(GetPerfTimer() / 1000),
+		time_delta = time - _uiTimeOld;
 
 	bool flag = false;
 
@@ -696,11 +700,12 @@ void CCore::_MainLoop()
 			cycles_cnt = _sc_MaxUpdateCycles;
 	}
 
-	_ui64LastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
-
 	if (cycles_cnt > 0)
+	{
+		_uiLastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
 		_ui64UpdateDelay = GetPerfTimer();
-
+	}
+	
 	for (uint i = 0; i < cycles_cnt; ++i)
 	{
 		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
@@ -726,19 +731,16 @@ void CCore::_MainLoop()
 		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
 		
 		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
-		{
-			if (cycles_cnt == 1)
-				_ui64TimeOld = time;
-		}
+			_uiTimeOld = time;
 		else
-			_ui64TimeOld = GetPerfTimer() / 1000 - time_delta % _uiUpdateInterval;
+			_uiTimeOld = time - time_delta % _uiUpdateInterval;
 	}
 
 	_RenderFrame();
 
 	Console()->LeaveThreadSafeSection();
 
-	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && (_uiLastFPS > _uiUpdateInterval || _bPause)) * 10 +
+	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _uiUpdateInterval && _uiLastFPS > 120) || _bPause)) * 8 +
 				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 6;
 
 	if (sleep > 0)
@@ -830,7 +832,7 @@ void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
 		switch(eProcType)
 		{
-		case EPT_UPDATE: _clUserCallbacks[i]->Update(_ui64LastUpdateDeltaTime); break;
+		case EPT_UPDATE: _clUserCallbacks[i]->Update(_uiLastUpdateDeltaTime); break;
 		case EPT_RENDER: _clUserCallbacks[i]->Render(); break;
 		case EPT_INIT: _clUserCallbacks[i]->Initialize(); break;
 		case EPT_FREE: _clUserCallbacks[i]->Free(); break;
@@ -1397,10 +1399,6 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 		LOG("Done.", LT_INFO);
 	}
 
-	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= 0;
-	_ui64FPSSumm = _ui64CyclesCount = 0;
-	_ui64TimeOld = GetPerfTimer() / 1000 - _uiUpdateInterval;
-
 	if (_pSplashWindow) 
 		_pSplashWindow->Free();
 
@@ -1409,6 +1407,11 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
+	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= 0;
+	_ui64FPSSumm = _ui64CyclesCount = 0;
+	_ui64StartTime = GetPerfTimer() / 1000;
+	_uiTimeOld = (uint)_ui64StartTime - _uiUpdateInterval;
+	
 	DGLE_RESULT hr = _pMainWindow->BeginMainLoop();
 
 	_bStartedFlag = SUCCEEDED(hr);
@@ -1445,8 +1448,7 @@ DGLE_RESULT DGLE_API CCore::QuitEngine()
 
 DGLE_RESULT DGLE_API CCore::AllowPause(bool bAllow)
 {
-	_iAllowPause = bAllow;
-	_s_ConAutoPause((void*)this, "");
+	_s_ConAutoPause((void*)this, bAllow ? "1" : "0");
 	return S_OK;
 }
 
@@ -1456,9 +1458,16 @@ DGLE_RESULT DGLE_API CCore::GetFPS(uint &uiFPS)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::GetLastUpdateDeltaTime(uint64 &ui64DeltaTime)
+DGLE_RESULT DGLE_API CCore::GetLastUpdateDeltaTime(uint &uiDeltaTime)
 {
-	ui64DeltaTime = _ui64LastUpdateDeltaTime;
+	uiDeltaTime = _uiLastUpdateDeltaTime;
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCore::GetElapsedTime(uint64 &ui64ElapsedTime)
+{
+	const uint64 tick = GetPerfTimer() / 1000;
+	ui64ElapsedTime = tick - _ui64StartTime - _ui64PauseTime - (_iAllowPause && _bPause ? tick - _ui64PauseStartTime : 0);
 	return S_OK;
 }
 
@@ -1600,24 +1609,33 @@ DGLE_RESULT DGLE_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, v
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::AddToLog(const char *pcTxt)
+DGLE_RESULT DGLE_API CCore::WriteToLog(const char *pcTxt)
 {
 	_LogWrite(pcTxt);
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::AddToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
+DGLE_RESULT DGLE_API CCore::WriteToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
 {
 	_LogWriteEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 	return S_OK;
 }
 
-void DGLE_API CCore::_s_InstIdx(void *pParameter, const char *pcParam)
+bool DGLE_API CCore::_s_InstIdx(void *pParameter, const char *pcParam)
 {
-	CON(CCore, (string("Instance Index is ") + IntToStr(PTHIS(CCore)->InstIdx()) + ".").c_str());
+	if (strlen(pcParam) != 0)
+	{
+		CON(CCore, "No parameters expected.");
+		return false;
+	}
+	else
+	{
+		CON(CCore, (string("Instance Index is ") + IntToStr(PTHIS(CCore)->InstIdx()) + ".").c_str());
+		return true;
+	}
 }
 
-void DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
+bool DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 
@@ -1677,34 +1695,56 @@ void DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
 		LOG2(CCore, res, LT_INFO);
 	else
 		CON(CCore, res.c_str());
+
+	return true;
 }
 
-void DGLE_API CCore::_s_ConPrintVersion(void *pParameter, const char *pcParam)
+bool DGLE_API CCore::_s_ConPrintVersion(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CCore, "No parameters expected.");
+		return false;
+	}
 	else 
+	{
 		CON(CCore, (string("Engine version: ")+string(DGLE_VERSION)).c_str());
+		return true;
+	}
 }
 
-void DGLE_API CCore::_s_ConAutoPause(void *pParameter, const char *pcParam)
+bool DGLE_API CCore::_s_ConAutoPause(void *pParameter, const char *pcParam)
 {
-	if (strlen(pcParam) != 0)
-		CON(CCore, "No parameters expected.");
-}
-
-void DGLE_API CCore::_s_ConListPlugs(void *pParameter, const char *pcParam)
-{
-	if (strlen(pcParam) != 0)
-		CON(CCore, "No parameters expected.");
+	if (PTHIS(CCore)->_bPause)
+	{
+		CON(CCore, "Value can not be changed while in engine is paused.");
+		return false;
+	}
 	else
-		PTHIS(CCore)->_PrintPluginsInfo();
+		return true;
 }
 
-void DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
+bool DGLE_API CCore::_s_ConListPlugs(void *pParameter, const char *pcParam)
+{
+	if (strlen(pcParam) != 0)
+	{
+		CON(CCore, "No parameters expected.");
+		return false;
+	}
+	else
+	{
+		PTHIS(CCore)->_PrintPluginsInfo();
+		return true;
+	}
+}
+
+bool DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) == 0)
+	{
 		CON(CCore, "Parameters expected.");
+		return false;
+	}
 	else
 	{
 		TEngineWindow wnd; int samples;
@@ -1716,12 +1756,15 @@ void DGLE_API CCore::_s_ConChangeMode(void *pParameter, const char *pcParam)
 		case 2: wnd.eMultisampling = MM_2X; break;
 		case 4: wnd.eMultisampling = MM_4X; break;
 		case 8: wnd.eMultisampling = MM_8X; break;
+		case 16: wnd.eMultisampling = MM_16X; break;
 		default: wnd.eMultisampling = MM_NONE;
 		}
 
 		wnd.uiFlags = PTHIS(CCore)->_stWin.uiFlags;
 		PTHIS(CCore)->_stWndToApply = wnd;
 		PTHIS(CCore)->_bNeedApplyNewWnd = true;
+
+		return true;
 	}
 }
 
@@ -1749,13 +1792,13 @@ DGLE_RESULT DGLE_API CCore::ConsoleExecute(const char *pcCommandTxt)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
+DGLE_RESULT DGLE_API CCore::ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
 	Console()->RegComProc(pcCommandName, pcCommandHelp, pProc, pParameter);
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, void (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
+DGLE_RESULT DGLE_API CCore::ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter)
 {
 	Console()->RegComVar(pcCommandName, pcCommandHelp, piVar, iMinValue, iMaxValue, pProc, pParameter);
 	return S_OK;

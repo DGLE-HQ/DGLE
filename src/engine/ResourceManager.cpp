@@ -371,20 +371,32 @@ DGLE_RESULT DGLE_API CResourceManager::UnregisterFileFormat(const char* pcExtens
 	return E_INVALIDARG;
 }
 
-void DGLE_API CResourceManager::_s_ConListFileFormats(void *pParameter, const char *pcParam)
+bool DGLE_API CResourceManager::_s_ConListFileFormats(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CResourceManager, "No parameters expected.");
-	else 
+		return false;
+	}
+	else
+	{
 		CON(CResourceManager, string("---Supported File Formats---\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
+		return true;
+	}
 }
 
-void DGLE_API CResourceManager::_s_ConListResources(void *pParameter, const char *pcParam)
+bool DGLE_API CResourceManager::_s_ConListResources(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CResourceManager, "No parameters expected.");
-	else 
+		return false;
+	}
+	else
+	{
 		PTHIS(CResourceManager)->_ListResources();
+		return true;
+	}
 }
 
 DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount)

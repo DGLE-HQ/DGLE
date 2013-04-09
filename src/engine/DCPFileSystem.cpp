@@ -598,11 +598,15 @@ void CDCPFileSystem::_Clean()
 	_clInfoTable.clear();
 }
 
-void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParameter, const char *pcParam)
+bool DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CDCPFileSystem, "No parameters expected.");
+		return false;
+	}
 	else
+	{
 		CON(CDCPFileSystem, "You can send some extra commands to DCP file system using ExecuteCommand, ExecuteTextCommand or ExecuteTextCommandEx methods of IFileSystem class or via \"dcp_exec_cmd\" console command.\n"
 		"Commands for ExecuteTextCommand method or console:\n"
 		"For these commands return value is boolean.\n"
@@ -618,12 +622,17 @@ void DGLE_API CDCPFileSystem::_s_ConCmdHelp(void *pParameter, const char *pcPara
 		"\"last_error\" - returns string with last error discription text.\n"
 		"Commands for ExecuteCommand method only:\n"
 		"-1 - deletes any memory cache data or junk.");
+		return true;
+	}
 }
 
-void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcParam)
+bool DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) == 0)
+	{
 		CON(CDCPFileSystem, "Parameters expected.");
+		return false;
+	}
 	else
 	{
 		string cmd(pcParam), param;
@@ -639,7 +648,10 @@ void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 		if (cmd == "list")
 		{
 			if (!PTHIS(CDCPFileSystem)->_pPackager)
+			{
 				CON(CDCPFileSystem, "Package not specified.");
+				return false;
+			}
 			else
 			{
 				string list = PTHIS(CDCPFileSystem)->_pPackager->GetFilesList();
@@ -649,15 +661,23 @@ void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 						list[i] = '\n';
 
 				CON(CDCPFileSystem, list.c_str());
+
+				return true;
 			}
 		}
 		else
 			if (cmd == "last_error")
 			{
 				if (!PTHIS(CDCPFileSystem)->_pPackager)
+				{
 					CON(CDCPFileSystem, "Package not specified.");
+					return false;
+				}
 				else
+				{
 					CON(CDCPFileSystem, PTHIS(CDCPFileSystem)->_pPackager->GetLastError().c_str());
+					return true;
+				}
 			}
 			else
 			{
@@ -672,12 +692,19 @@ void DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 						string res = PTHIS(CDCPFileSystem)->_pPackager->GetLastError();
 						if (res.empty()) res = "Wrong command arguments.";
 						CON(CDCPFileSystem, res.c_str());
+						return false;
 					}
 					else
+					{
 						CON(CDCPFileSystem, "Package not specified.");
+						return true;
+					}
 				}
 				else
+				{
 					CON(CDCPFileSystem, "Command executed succesfully.");
+					return true;
+				}
 			}
 	}
 }

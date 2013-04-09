@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.01.2013 (c)Korotkov Andrey
+\date		08.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -66,12 +66,18 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 	return (int) st_msg.wParam;
 }
 
-void DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
+bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CMainWindow, "No parameters expected.");
-	else 
+		return false;
+	}
+	else
+	{
 		::PostMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, NULL, NULL);
+		return true;
+	}
 }
 
 LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -125,6 +131,13 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			if (wParam == UPDATE_TIMER_ID)
 				this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_REDRAW));
 			break;
+
+		case WM_PAINT:
+			ValidateRect(this_ptr->_hWnd, NULL);
+			return 0;
+		
+		case WM_ERASEBKGND:
+			return 1;
 
 		default:
 			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(message, wParam, lParam));

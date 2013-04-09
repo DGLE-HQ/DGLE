@@ -152,12 +152,18 @@ void CBaseInput::_PrintJoysList()
 	Console()->Write(output.c_str());
 }
 
-void DGLE_API CBaseInput::_s_PrintJoysList(void *pParameter, const char *pcParam)
+bool DGLE_API CBaseInput::_s_PrintJoysList(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CBaseInput, "No parameters expected.");
+		return false;
+	}
 	else
+	{
 		PTHIS(CBaseInput)->_PrintJoysList();
+		return true;
+	}
 }
 
 #endif

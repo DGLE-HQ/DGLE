@@ -23,7 +23,7 @@ private:
 	int _iDrawProfiler;
 
 	void _Render();
-	void _Update(uint64 ui64DeltaTime);
+	void _Update(uint uiDeltaTime);
 	void _Init();
 	void _Free();
 	void _MsgProc(const TWindowMessage &stMsg);

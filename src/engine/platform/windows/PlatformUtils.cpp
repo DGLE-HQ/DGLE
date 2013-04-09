@@ -317,7 +317,7 @@ bool PlatformInit()
 {
 	LoadKeyboardLayout("00000409", KLF_ACTIVATE);
 
-	if(QueryPerformanceFrequency(&perfFreq) == FALSE)
+	if (QueryPerformanceFrequency(&perfFreq) == FALSE)
 		return false;
 
 	return true;
@@ -326,8 +326,12 @@ bool PlatformInit()
 uint64 GetPerfTimer()
 {
 	LARGE_INTEGER perf_counter;
+	
+	//DWORD prev_mask = SetThreadAffinityMask(GetCurrentThread(), 0x0001);
 	QueryPerformanceCounter(&perf_counter);
-	return (uint64)(1000000*perf_counter.QuadPart/perfFreq.QuadPart);
+	//SetThreadAffinityMask(GetCurrentThread(), prev_mask);
+	
+	return (uint64)(1000000 * perf_counter.QuadPart / perfFreq.QuadPart);
 }
 
 void OutputDebugTxt(const char *pcTxt)

@@ -239,37 +239,50 @@ void CBaseSound::_PrintDevList()
 	Console()->Write(output.c_str());
 }
 
-void DGLE_API CBaseSound::_s_PrintDevList(void *pParameter, const char *pcParam)
+bool DGLE_API CBaseSound::_s_PrintDevList(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CBaseSound, "No parameters expected.");
+		return false;
+	}
 	else
+	{
 		PTHIS(CBaseSound)->_PrintDevList();
-
+		return true;
+	}
 }
 
-void DGLE_API CBaseSound::_s_PrintDevId(void *pParameter, const char *pcParam)
+bool DGLE_API CBaseSound::_s_PrintDevId(void *pParameter, const char *pcParam)
 {
 	if (strlen(pcParam) != 0)
+	{
 		CON(CBaseSound, "No parameters expected.");
+		return false;
+	}
 	else
 	{
 		UINT id;
 		waveOutGetID(PTHIS(CBaseSound)->_hWaveOut, &id);
 		CON(CBaseSound, ("Using audio device with id " + UIntToStr(id) + ".").c_str());
+		return true;
 	}
 }
 
-void DGLE_API CBaseSound::_s_ForceDevice(void *pParameter, const char *pcParam)
+bool DGLE_API CBaseSound::_s_ForceDevice(void *pParameter, const char *pcParam)
 {
 	string param(pcParam);
 
 	if (param.find(' ') != string::npos)
+	{
 		CON(CBaseSound, "Only one parameter expected.");
+		return false;
+	}
 	else
 	{
 		PTHIS(CBaseSound)->CloseDevice();
 		PTHIS(CBaseSound)->_InitDevice(StrToUInt(param));
+		return true;
 	}
 }
 
