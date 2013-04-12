@@ -571,8 +571,9 @@ namespace DGLE
 		EIF_LOAD_ALL_PLUGINS		= 0x00000004,	/**< Engine will try to connect any found plugin files found in "plugins" folder near it. \note Ext plugin is connected automatically without this flag as well. */
 		EIF_FORCE_LIMIT_FPS			= 0x00000010,	/**< Engine will limit its FPS (frames per second) not to overload CPU and overheat GPU. \note Recommended for casual games, 2D and simple 3D games and desktop applications. */
 		EIF_FORCE_16_BIT_COLOR		= 0x00000020,	/**< Forces engine to use 16 bit color depth instead of 32 bit by default. \note Not recommended. */
-		EIF_ENABLE_FLOATING_UPDATE	= 0x00000040,	/**< By default engine uses fixed update mechanism, this means that engine will try to keep fixed update time interval, whenever it's possible. When this flag is set the update routine simply will be called once when delta time between updates is greater than update interval (for example, even if delta time is twice greater than update interval), so you should use delta time value. \see EPT_UPDATE, IEngineCore::GetLastUpdateDeltaTime */
-		EIF_FORCE_NO_WINDOW			= 0x00000100,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. \warning You must call IEngineCore::StartEngine and IEngineCore::QuitEngine routines for correct engine initialization and finalization. */
+		EIF_ENABLE_FLOATING_UPDATE	= 0x00000040,	/**< By default engine uses fixed update mechanism, this means that engine will try to keep fixed update time interval, whenever it's possible. When this flag is set the update routine simply will be called once when delta time between updates is greater than update interval (for example, even if delta time is twice greater than update interval), so you should use delta time value. \see EPT_UPDATE, IEngineCore::GetLastUpdateDeltaTime, EIF_ENABLE_PER_FRAME_UPDATE */
+		EIF_ENABLE_PER_FRAME_UPDATE	= 0x00000100,	/**< By default engine uses fixed update mechanism, this means that engine will try to keep fixed update time interval, whenever it's possible. When this flag is set the update routine simply will be called once before rendering of every frame, so you should use IEngineCore::GetElapsedTime and IEngineCore::GetTimer to manage application logic by yourself. \note In this case IEngineCore::GetLastUpdateDeltaTime will always return zero values on high FPS rates, so it is recommended to turn VSync on. \see TEngineWindow, EPT_UPDATE, EIF_ENABLE_FLOATING_UPDATE */
+		EIF_FORCE_NO_WINDOW			= 0x00000200,	/**< Engine will be initialized without window. There will be no rendering, input and update routines. Useful for tools and utilities. \warning You must call IEngineCore::StartEngine and IEngineCore::QuitEngine routines for correct engine initialization and finalization. */
 		EIF_NO_SPLASH				= 0x10000000	/**< This flag will disable engine splash screen. Splash screen is displayed to the user while engine prepare itself and while user initialization procedure is being processed. \note Turning off splash screen is not recommended because the user could be confused while being waiting application execution. */
 	};
 
@@ -581,7 +582,7 @@ namespace DGLE
 	{ 0x111bb884, 0x2ba6, 0x4e84, { 0x95, 0xa5, 0x5e, 0x47, 0x0, 0x30, 0x9c, 0xba } };
 
 	/** Main engine interface.
-		Pointer to this interface is retrieved directly from DGLE library.
+		Pointer to this interface is retrieved directly from the DGLE library.
 		\see DGLE_DYNAMIC_FUNC
 	 */
 	class IEngineCore : public IDGLE_Base
@@ -815,7 +816,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ClearColorBuffer() = 0;
 		virtual DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
 		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;
-		virtual DGLE_RESULT DGLE_API DisableScissor() = 0;
+		virtual DGLE_RESULT DGLE_API DisableScissor() = 0; // when using in 2D must be always inside Begin2D - End2D block
 		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0; // if not CRDF_FRAME_BUFFER than every SetRenderTarget(NULL) screen will be cleared
 		
 		virtual DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D) = 0;

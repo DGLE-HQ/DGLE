@@ -1835,6 +1835,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRasterizerState(const TRasterizerStateD
 	else
 	{
 		_pStateMan->glEnable(GL_CULL_FACE);
+		
 		if (stState.eCullMode == PCM_FRONT)
 			_pStateMan->glCullFace(GL_FRONT);
 		else

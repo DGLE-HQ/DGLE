@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		09.04.2013 (c)Korotkov Andrey
+\date		12.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -553,7 +553,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		{
 			_pMainWindow->SetCaption(_pcApplicationCaption);
 			if (_pSound != NULL) _pSound->MasterPause(false);
-			_ui64PauseTime += GetPerfTimer() / 1000 - _ui64PauseStartTime;
+			_ui64PauseTime += GetPerfTimer() - _ui64PauseStartTime;
 		}
 
 		break;
@@ -569,7 +569,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		{
 			_pMainWindow->SetCaption((string(_pcApplicationCaption) + " [Paused]").c_str());
 			if (_pSound != NULL) _pSound->MasterPause(true);
-			_ui64PauseStartTime = GetPerfTimer() / 1000;
+			_ui64PauseStartTime = GetPerfTimer();
 		}
 
 		if (_stWin.bFullScreen && !_bNeedApplyNewWnd)
@@ -681,28 +681,34 @@ void CCore::_MainLoop()
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return;
 
-	uint time = (uint)(GetPerfTimer() / 1000),
-		time_delta = time - _uiTimeOld;
+	uint64 time = GetPerfTimer();
+	uint time_delta = (uint)(time - _ui64TimeOld);
 
 	bool flag = false;
 
 	Console()->EnterThreadSafeSection();
 
 	uint cycles_cnt;
-		
-	if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
-		cycles_cnt = time_delta >= _uiUpdateInterval;
-	else
-	{
-		cycles_cnt = (uint)(time_delta / _uiUpdateInterval);
 
-		if (cycles_cnt > _sc_MaxUpdateCycles)
-			cycles_cnt = _sc_MaxUpdateCycles;
-	}
+	if (_eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
+		cycles_cnt = 1;
+		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
+			cycles_cnt = time_delta >= _uiUpdateInterval * 1000;
+		else
+		{
+			cycles_cnt = time_delta / (_uiUpdateInterval * 1000);
+
+			if (cycles_cnt > _sc_MaxUpdateCycles)
+				cycles_cnt = _sc_MaxUpdateCycles;
+		}
 
 	if (cycles_cnt > 0)
 	{
-		_uiLastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
+		if (_eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
+			_uiLastUpdateDeltaTime = _stWin.bVSync ? 200 / (_uiLastFPS / 5) : time_delta;
+		else
+			_uiLastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
+		
 		_ui64UpdateDelay = GetPerfTimer();
 	}
 	
@@ -730,10 +736,10 @@ void CCore::_MainLoop()
 	{
 		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
 		
-		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
-			_uiTimeOld = time;
+		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE || _eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
+			_ui64TimeOld = time;
 		else
-			_uiTimeOld = time - time_delta % _uiUpdateInterval;
+			_ui64TimeOld = time - time_delta % _uiUpdateInterval;
 	}
 
 	_RenderFrame();
@@ -1022,6 +1028,12 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		_eInitFlags = eInitFlags;
 
 		LOG("Initializing Engine...", LT_INFO);
+
+		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE && _eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
+		{
+			LOG("Setting both EIF_ENABLE_FLOATING_UPDATE and EIF_ENABLE_PER_FRAME_UPDATE is not allowed.", LT_FATAL);
+			return E_ABORT;
+		}
 
 		if (!PlatformInit())
 		{
@@ -1409,8 +1421,8 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= 0;
 	_ui64FPSSumm = _ui64CyclesCount = 0;
-	_ui64StartTime = GetPerfTimer() / 1000;
-	_uiTimeOld = (uint)_ui64StartTime - _uiUpdateInterval;
+	_ui64StartTime = GetPerfTimer();
+	_ui64TimeOld = _ui64StartTime - _uiUpdateInterval * 1000;
 	
 	DGLE_RESULT hr = _pMainWindow->BeginMainLoop();
 
@@ -1466,8 +1478,8 @@ DGLE_RESULT DGLE_API CCore::GetLastUpdateDeltaTime(uint &uiDeltaTime)
 
 DGLE_RESULT DGLE_API CCore::GetElapsedTime(uint64 &ui64ElapsedTime)
 {
-	const uint64 tick = GetPerfTimer() / 1000;
-	ui64ElapsedTime = tick - _ui64StartTime - _ui64PauseTime - (_iAllowPause && _bPause ? tick - _ui64PauseStartTime : 0);
+	const uint64 tick = GetPerfTimer();
+	ui64ElapsedTime = (tick - _ui64StartTime - _ui64PauseTime - (_iAllowPause && _bPause ? tick - _ui64PauseStartTime : 0)) / 1000;
 	return S_OK;
 }
 
@@ -1477,9 +1489,9 @@ DGLE_RESULT DGLE_API CCore::GetInstanceIndex(uint &uiIdx)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &uiTick)
+DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &ui64Tick)
 {
-	uiTick = GetPerfTimer() / 1000;
+	ui64Tick = GetPerfTimer() / 1000;
 	return S_OK;
 }
 

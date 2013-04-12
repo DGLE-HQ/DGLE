@@ -756,9 +756,11 @@ DGLE_RESULT DGLE_API CGame::Render()
 	}
 
 	// output score
-	char res[16];
-	sprintf_s(res, "%u", _uiScore);
-	_pFnt->Draw2DSimple(0, 0, ("Score:" + std::string(res)).c_str(), ColorWhite());
+	char res[7 + 16];
+	sprintf_s(res, "Score: %u", _uiScore);
+	uint w, h;
+	_pFnt->GetTextDimensions(res, w, h);
+	_pFnt->Draw2DSimple((GAME_VP_WIDTH - w) / 2, 0, res, ColorWhite());
 
 	return S_OK;
 }

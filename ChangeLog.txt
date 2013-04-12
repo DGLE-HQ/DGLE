@@ -38,11 +38,13 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] For IMesh added methods to recalculate normals, bounds and tangent space. Also added method to optimize mesh geometry and transform geometry by matrix.
 [ + ] Console utility to run engine from command line.
 [ + ] GetLastUpdateDeltaTime and GetElapsedTime IEngineCore methods.
+[ + ] Added ability to change logic of calling update routine by using EIF_ENABLE_PER_FRAME_UPDATE and EIF_ENABLE_FLOATING_UPDATE flags.
 [ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
 [ * ] Renamed DrawSprite* methods of IRender2D interface.
 [ * ] IModel interface was reengineered.
 [ * ] Improved DMD format to version 3.1, back compatibility was dropped.
 [ * ] Improved 3ds Max export script.
+[ * ] Engine examples are totally remade.
 [ - ] Some old stuff (like plugins for browsers) was dropped off.
 [ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
 [ - ] ICF_BLOCK_WINKEYS flag from method Configure of IInput interface.

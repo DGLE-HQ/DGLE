@@ -327,7 +327,7 @@ namespace DGLE
 		uint	uiWidth;	/**< Resolution width of client area. */
 		uint	uiHeight;	/**< Resolution height of client area. */
 		bool	bFullScreen;/**< Switch to fullscreen mode or not. */
-		bool	bVSync;		/**< Enable or not vertical synchronization (triple buffering). */
+		bool	bVSync;		/**< Enable or not vertical synchronization. */
 		E_MULTISAMPLING_MODE eMultisampling;/**< Fullscreen antialiasing samples count. */
 		E_ENGINE_WINDOW_FLAGS uiFlags;		/**< Additional settings. */
 

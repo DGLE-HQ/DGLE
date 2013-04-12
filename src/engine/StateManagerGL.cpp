@@ -35,8 +35,6 @@ inline uint8 CToggleState::GetCapIdx(GLenum cap) const
 		case GL_ALPHA_TEST: idx = 10; break;
 		case GL_SCISSOR_TEST: idx = 11; break;
 		case GL_CULL_FACE: idx = 12; break;
-		case GL_POINT_SMOOTH: idx = 13; break;
-		case GL_LINE_SMOOTH: idx = 14; break;
 		default:
 			UNDEFINED_CAP_FATAL(cap)
 	}
@@ -64,8 +62,6 @@ inline GLenum CToggleState::GetCap(uint8 idx) const
 		case 10: cap = GL_ALPHA_TEST; break;
 		case 11: cap = GL_SCISSOR_TEST; break;
 		case 12: cap = GL_CULL_FACE; break;
-		case 13: cap = GL_POINT_SMOOTH; break;
-		case 14: cap = GL_LINE_SMOOTH; break;
 		default:
 			UNDEFINED_CAP_FATAL(idx)
 	}

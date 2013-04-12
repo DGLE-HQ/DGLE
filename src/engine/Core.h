@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		09.04.2013 (c)Korotkov Andrey
+\date		12.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -66,8 +66,10 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	TEngineWindow _stWin;
 
-	uint _uiUpdateInterval, _uiTimeOld, _uiLastUpdateDeltaTime;
-	uint64 _ui64StartTime, _ui64PauseTime, _ui64PauseStartTime;
+	uint _uiUpdateInterval, _uiLastUpdateDeltaTime; // in milliseconds
+	uint64 _ui64TimeOld, _ui64StartTime, _ui64PauseTime, _ui64PauseStartTime,  // in microseconds
+		_ui64RenderDelay, _ui64UpdateDelay;
+
 	bool _bPause, _bWasFScreen;
 	char _pcApplicationCaption[_sc_AppCaptionMaxLength];
 
@@ -76,8 +78,7 @@ class CCore: public CInstancedObj, public IEngineCore
 	uint _uiFPSTimer, _uiFPSCount, _uiLastFPS,
 		_uiUPSCount, _uiLastUPS, _uiLastMemUsage;
 
-	uint64 _ui64FPSSumm, _ui64CyclesCount,
-		_ui64RenderDelay, _ui64UpdateDelay;
+	uint64 _ui64FPSSumm, _ui64CyclesCount;
 
 	bool _bInDrawProfilers;
 	uint _uiProfilerCurTxtXOffset, _uiProfilerCurTxtYOffset,
@@ -185,7 +186,7 @@ public:
 	DGLE_RESULT DGLE_API RenderFrame();
 	DGLE_RESULT DGLE_API RenderProfilerText(const char *pcTxt, const TColor4 &stColor);
 	DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx);
-	DGLE_RESULT DGLE_API GetTimer(uint64 &uiTick);
+	DGLE_RESULT DGLE_API GetTimer(uint64 &ui64Tick);
 	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo);
 	DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin);
 	DGLE_RESULT DGLE_API GetFPS(uint &uiFPS);
