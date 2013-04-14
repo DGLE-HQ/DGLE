@@ -266,6 +266,8 @@ DGLE_RESULT DGLE_API CRender::SetRenderTarget(ITexture* pTargetTex)
 	if (pTargetTex)
 		pTargetTex->GetCoreTexture(p_tex);
 	
+	_pRender2D->End2D(); // we need to be shure that Begin2D will recalculate matrix on any first 2D call
+
 	return _pCoreRenderer->SetRenderTarget(p_tex);
 }
 

@@ -147,12 +147,12 @@ public:
 
 		// draw planet
 		_pRender2D->DrawMesh(_pMeshPlanet, _pTexEarth, TPoint2(GAME_VP_WIDTH / 2.f, GAME_VP_HEIGHT / 2.f), TPoint3(350, 350, 350),
-			TPoint3(0.f, 1.f, 0.f), (float)_uiCounter / 2.f, EF_DEFAULT, false);
+			TPoint3(0.f, 1.f, 0.f), (float)_uiCounter / 4.f, EF_DEFAULT, false);
 
 		// draw atmosphere
 		_pRender2D->SetColorMix(TColor4(255, 255, 255, 150));
 		_pRender2D->DrawMesh(_pMeshPlanet, _pTexClouds, TPoint2(GAME_VP_WIDTH / 2.f, GAME_VP_HEIGHT / 2.f), TPoint3(375, 375, 375),
-			TPoint3(0.35f, -0.4f, 0.25f),(float)_uiCounter, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLOR_MIX), false, 90.f, true /* after rendering clear depth buffer */ );
+			TPoint3(0.35f, -0.4f, 0.25f),(float)_uiCounter / 2.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_COLOR_MIX), false, 90.f, true /* after rendering clear depth buffer */ );
 	}
 };
 

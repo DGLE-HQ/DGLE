@@ -331,7 +331,7 @@ uint64 GetPerfTimer()
 	QueryPerformanceCounter(&perf_counter);
 	//SetThreadAffinityMask(GetCurrentThread(), prev_mask);
 
-	return (1000000 * perf_counter.QuadPart) / perfFreq.QuadPart;
+	return 1000000 * perf_counter.QuadPart / perfFreq.QuadPart;
 }
 
 void OutputDebugTxt(const char *pcTxt)

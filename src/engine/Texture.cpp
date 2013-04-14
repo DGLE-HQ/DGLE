@@ -61,7 +61,7 @@ DGLE_RESULT DGLE_API CTexture::Draw2DSimple(int iX, int iY, uint uiFrameIndex)
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
 		return _pRender2D->DrawTexture((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), TRectF(0.f, 0.f, (float)_uiWidth, (float)_uiHeight), 0.f, EF_BLEND);
 	else
-		return _pRender2D->DrawTextureSprite((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiWidth, (float)_uiHeight), uiFrameIndex, 0.f, EF_BLEND);
+		return _pRender2D->DrawTextureSprite((ITexture *)this, TPoint2((float)iX, (float)iY), TPoint2((float)_uiFrameWidth, (float)_uiFrameHeight), uiFrameIndex, 0.f, EF_BLEND);
 }
 
 DGLE_RESULT DGLE_API CTexture::Draw2D(int iX, int iY, uint uiWidth, uint uiHeight, float fAngle, uint uiFrameIndex)

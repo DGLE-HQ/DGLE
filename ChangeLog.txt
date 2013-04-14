@@ -20,6 +20,7 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [!+!] Brand new GTK# GUI components and engine toolset.
 [!*!] Total engine reengineering, a lot of stuff was made from scratch.
 [!*!] Isolation of platform depended code.
+[!*!] Engine examples are totally remade.
 [ + ] BeginBatch/EndBatch IRender2D methods for custom batchs. Also added CullBoundingBox method.
 [ + ] Helper methods Draw2DSimple for IBitmapFont interface.
 [ + ] GetResourceByName and GetResourceName methods of interface IResourceManager.
@@ -39,12 +40,12 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [ + ] Console utility to run engine from command line.
 [ + ] GetLastUpdateDeltaTime and GetElapsedTime IEngineCore methods.
 [ + ] Added ability to change logic of calling update routine by using EIF_ENABLE_PER_FRAME_UPDATE and EIF_ENABLE_FLOATING_UPDATE flags.
+[ + ] EF_TILE_TEXTURE flag for IRender2D rendering texture ruitines.
 [ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
 [ * ] Renamed DrawSprite* methods of IRender2D interface.
 [ * ] IModel interface was reengineered.
 [ * ] Improved DMD format to version 3.1, back compatibility was dropped.
 [ * ] Improved 3ds Max export script.
-[ * ] Engine examples are totally remade.
 [ - ] Some old stuff (like plugins for browsers) was dropped off.
 [ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
 [ - ] ICF_BLOCK_WINKEYS flag from method Configure of IInput interface.

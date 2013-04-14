@@ -11,9 +11,6 @@ See "DGLE.h" for more details.
 
 #ifndef NO_BUILTIN_RENDERER
 
-#include "Render.h"
-#include "Render2D.h"
-
 using namespace std;
 
 //COpenGLBufferContainer
@@ -758,8 +755,6 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 	if (pTexture == NULL && _pCurRenderTarget != NULL) // swap image to texture
 	{
-		Core()->pRender()->pRender2D()->End2D();
-
 		E_TEXTURE_DATA_FORMAT fmt;
 		_pCurRenderTarget->GetFormat(fmt);
 		const bool depth_texture = fmt == TDF_DEPTH_COMPONENT24 || fmt == TDF_DEPTH_COMPONENT32;

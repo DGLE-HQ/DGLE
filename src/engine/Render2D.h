@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		05.03.2013 (c)Korotkov Andrey
+\date		13.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -25,7 +25,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 	std::vector<TVertex2> _batchAccumulator;
 	ICoreTexture *_pBatchCurTex;
 	E_CORE_RENDERER_DRAW_MODE _eBatchDrawMode;
-	bool _bBatchColor;
+	bool _bBatchColor, _bBatchAlphaTest, _bBatchBlending;
 	E_BATCH_MODE2D _batchMode, _batchPreProfilerMode;
 	bool _batchNeedToRefreshBatches;
 	std::vector<ICoreGeometryBuffer *> _pBatchBuffers;
@@ -38,7 +38,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 		_batchsCount, _batchMaxSize, _batchMinSize;
 
 	inline void _BatchFlush();
-	inline bool _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor);
+	inline bool _BatchSet(E_CORE_RENDERER_DRAW_MODE eDrawMode, ICoreTexture *pTex, bool bColor, bool bAlphaTest, bool bBlending);
 
 	bool _bInProfilerMode, _bCameraWasSet;
 	TMatrix4 _stCamTransform, _stPrevCamTransform;
@@ -54,7 +54,7 @@ class CRender2D: public CInstancedObj, public IRender2D
 	uint8 *_pPolyTrisBuffer;
 	uint _uiPolyTrisBufferSize;
 
-	float _fLineWidth;
+	uint _uiLineWidth, _uiPointSize;
 
 	TColor4 _stColormix, _astVerticesColors[4];
 
@@ -117,7 +117,7 @@ public:
 	DGLE_RESULT DGLE_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
-	DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
+	DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TVector2 &stRadius, uint uiQuality, const TColor4 &stColor, E_PRIMITIVE2D_FLAGS eFlags);
 	DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags);
 
 	DGLE_RESULT DGLE_API DrawTexture(ITexture *pTexture, const TPoint2 &stCoords, const TVector2 &stDimensions, float fAngle, E_EFFECT2D_FLAGS eFlags);

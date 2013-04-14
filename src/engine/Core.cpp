@@ -692,6 +692,7 @@ void CCore::_MainLoop()
 
 	if (_eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
 		cycles_cnt = 1;
+	else
 		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
 			cycles_cnt = time_delta >= _uiUpdateInterval * 1000;
 		else
@@ -705,7 +706,7 @@ void CCore::_MainLoop()
 	if (cycles_cnt > 0)
 	{
 		if (_eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
-			_uiLastUpdateDeltaTime = _stWin.bVSync ? 200 / (_uiLastFPS / 5) : time_delta;
+			_uiLastUpdateDeltaTime = _stWin.bVSync && _uiLastFPS >= 5 ? 200 / (_uiLastFPS / 5) : time_delta;
 		else
 			_uiLastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
 		
@@ -739,7 +740,7 @@ void CCore::_MainLoop()
 		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE || _eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
 			_ui64TimeOld = time;
 		else
-			_ui64TimeOld = time - time_delta % _uiUpdateInterval;
+			_ui64TimeOld = time - time_delta % (_uiUpdateInterval * 1000);
 	}
 
 	_RenderFrame();

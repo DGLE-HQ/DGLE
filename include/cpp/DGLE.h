@@ -847,7 +847,8 @@ namespace DGLE
 		EF_SCALE			= 0x00000040,  
 		EF_VERTICES_OFFSETS	= 0x00000080, 
 		EF_VERTICES_COLORS	= 0x00000100, 
-		EF_ROTATION_POINT	= 0x00000200
+		EF_ROTATION_POINT	= 0x00000200,
+		EF_TILE_TEXTURE		= 0x00000400
 	};
 
 	enum E_BATCH_MODE2D
@@ -887,7 +888,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DrawLine(const TPoint2 &stCoords1, const TPoint2 &stCoords2, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawRectangle(const TRectF &stRect, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawCircle(const TPoint2 &stCoords, uint uiRadius, uint uiQuality, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
-		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TPoint2 &stRadius, uint uiQuality, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
+		virtual DGLE_RESULT DGLE_API DrawEllipse(const TPoint2 &stCoords, const TVector2 &stRadius, uint uiQuality, const TColor4 &stColor = ColorWhite(), E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 		virtual DGLE_RESULT DGLE_API DrawPolygon(ITexture *pTexture, const TVertex2 *pstVertices, uint uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = PF_DEFAULT) = 0;
 
 		// 2D Sprites

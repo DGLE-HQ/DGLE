@@ -65,7 +65,7 @@ void DGLE_API Init(void *pParameter)
 	pResMan->Load(RESOURCE_PATH"sounds\\helicopter.wav", (IEngineBaseObject *&)pHelicopter);
 	pHelicopter->PlayEx(pHelicopterSndChan, SSP_LOOPED);
 
-	pResMan->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass, TEXTURE_LOAD_DEFAULT_2D);
+	pResMan->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass, (uint)(TLF_FILTERING_BILINEAR | TLF_COORDS_REPEAT));
 	pResMan->Load(RESOURCE_PATH"textures\\stone.tga", (IEngineBaseObject *&)pTexStone, TEXTURE_LOAD_DEFAULT_2D);
 	
 	pResMan->Load(RESOURCE_PATH"meshes\\house\\tex_diffuse.jpg", (IEngineBaseObject *&)pTexHouse, TEXTURE_LOAD_DEFAULT_3D);
@@ -162,9 +162,7 @@ void DGLE_API Render(void *pParameter)
 	pRender2D->ProjectScreenToCamera(stMouseOnScreen, stMouseInCamera);
 
 	// draw background textures
-	for(int i = -3; i < 5; ++i)
-		for(int j = -3; j < 5; ++j)
-			pTexGrass->Draw2DSimple(i * 256, j * 256);
+	pRender2D->DrawTexture(pTexGrass, TPoint2(-750.f, -750.f), TVector2(2000.f, 2000.f), 0.f, EF_TILE_TEXTURE);
 
 	// draw stone layer with per vertex blending
 	pRender2D->SetVerticesColors(TColor4(255, 255, 255, 0), ColorWhite(), ColorWhite(), TColor4(255, 255, 255, 0));

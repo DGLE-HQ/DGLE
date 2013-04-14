@@ -197,7 +197,7 @@ void DGLE_API Render(void *pParameter)
 
 	// Sometimes it's better to batch a lot of similar objects.
 	pRender2D->BeginBatch(); 
-	pRender2D->SetColorMix(TColor4(255, 255, 255, 64));
+	pRender2D->SetColorMix(ColorWhite(64));
 	for (uint i = 0; i < 22; ++i)
 		for (uint j = 0; j < 2; ++j)
 			pRender2D->DrawTexture(pFog,

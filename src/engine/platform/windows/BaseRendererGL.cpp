@@ -204,8 +204,8 @@ bool CBaseRendererGL::AdjustMode(TEngineWindow &stNewWin)
 		
 		if (stNewWin.bVSync)
 		{
-			if (swapint != 1)
-				wglSwapIntervalEXT(1);
+			if (swapint != 1 || (WGLEW_EXT_swap_control_tear && swapint != -1))
+				wglSwapIntervalEXT(WGLEW_EXT_swap_control_tear ? -1 : 1);
 		}
 		else
 			if (swapint != 0)
