@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		07.04.2013 (c)Korotkov Andrey
+\date		18.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -438,6 +438,12 @@ DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENGINE_OBJECT_TYPE e
 	return E_INVALIDARG;
 }
 
+DGLE_RESULT DGLE_API CResourceManager::GetResourcesCount(uint &uiCount)
+{
+	uiCount = _resList.size();
+	return S_OK;
+}
+
 DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEngineBaseObject *&prObj)
 {
 	prObj = NULL;
@@ -455,6 +461,18 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEn
 		}
 
 	return E_INVALIDARG;
+}
+
+DGLE_RESULT DGLE_API CResourceManager::GetResourceByIndex(uint uiIdx, IEngineBaseObject *&prObj)
+{
+	prObj = NULL;
+
+	if (uiIdx >= _resList.size())
+		return E_INVALIDARG;
+
+	prObj = _resList[uiIdx].pObj;
+	
+	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CResourceManager::GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount)
@@ -671,7 +689,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 	if (format > TDF_BGRA8)
 		return -1;
 
-	int i_mipmaps = 0, max_side = max(uiWidth, uiHeight)/2;
+	int i_mipmaps = 0, max_side = max(uiWidth, uiHeight) / 2;
 
 	//This loop is more correct because of NPOT textures than calculation like this: (int)(log((float)max(uiWidth, uiHeight))/log(2.f))
 	while (max_side > 0)
@@ -806,12 +824,16 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	bool b_need_scale = (i_new_w != uiWidth || i_new_h != uiHeight);
 
-	if (eCreationFlags & TCF_MIPMAPS_PRESENTED && (b_need_scale || b_been_swaped))
+	if (eCreationFlags & TCF_MIPMAPS_PRESENTED)
 	{
-		if (!(eCreationFlags & TLF_GENERATE_MIPMAPS))
-			(int &)eLoadFlags |= TLF_GENERATE_MIPMAPS;
-					
-		(int &)eCreationFlags &= ~TCF_MIPMAPS_PRESENTED;
+		if (eCreationFlags & TLF_GENERATE_MIPMAPS)
+			(int &)eCreationFlags &= ~TLF_GENERATE_MIPMAPS;
+
+		if (b_need_scale || b_been_swaped)
+		{
+			(int &)eCreationFlags &= ~TCF_MIPMAPS_PRESENTED;
+			(int &)eLoadFlags |= TLF_GENERATE_MIPMAPS;			
+		}
 	}
 
 	if (b_need_scale)

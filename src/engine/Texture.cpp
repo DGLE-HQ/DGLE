@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2013 (c)Korotkov Andrey
+\date		17.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,10 +13,10 @@ See "DGLE.h" for more details.
 #include "Render3D.h"
 
 const float c_fQuad[] = {
-	-0.5f, -0.5f, -0.5f, 0.5f,
-	 0.5f, -0.5f, 0.5f, 0.5f,
-	 0.f, 1.f, 0.f, 0.f,
-	 1.f, 1.f, 1.f, 0.f
+	-0.5f, -0.5f, 0.5f, -0.5f,
+	-0.5f, 0.5f, 0.5f, 0.5f,
+	 0.f, 1.f, 1.f, 1.f,
+	 0.f, 0.f, 1.f, 0.f
 	};
 
 CTexture::CTexture(uint uiInstIdx, ICoreTexture *pCoreTex, uint uiWidth, uint uiHeight):
@@ -50,6 +50,19 @@ DGLE_RESULT DGLE_API CTexture::GetFrameSize(uint &uiFrameWidth, uint &uiFrameHei
 	return S_OK;
 }
 
+DGLE_RESULT DGLE_API CTexture::FramesCount(uint &uiCount)
+{	
+	if (_uiFrameWidth + _uiFrameHeight == 0)
+	{
+		uiCount = 0;
+		return S_FALSE;
+	}
+
+	uiCount = (_uiWidth / _uiFrameWidth) * (_uiHeight / _uiFrameHeight);
+
+	return S_OK;
+}
+
 DGLE_RESULT DGLE_API CTexture::GetCoreTexture(ICoreTexture *&prCoreTex)
 {
 	prCoreTex = _pCoreTexture;
@@ -80,15 +93,14 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	else
 	{
-		float	tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
-				ty = (uiFrameIndex * _uiFrameWidth / _uiWidth * _uiFrameHeight) / (float)_uiHeight, 
-				tw = _uiFrameWidth/(float)_uiWidth,
-				th = _uiFrameHeight/(float)_uiHeight;
+		const float tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
+			ty = (uiFrameIndex * _uiFrameWidth / _uiWidth * _uiFrameHeight) / (float)_uiHeight,
+			tw = _uiFrameWidth / (float)_uiWidth, th = _uiFrameHeight / (float)_uiHeight;
 
 		_quad[8] = tx; _quad[9] = ty + th;
-		_quad[10] = tx;	_quad[11] = ty;
-		_quad[12] = tx + tw; _quad[13] = _quad[9];
-		_quad[14] = _quad[12]; _quad[15] = ty;
+		_quad[10] = tx + tw; _quad[11] = _quad[9];
+		_quad[12] = tx;	_quad[13] = ty;
+		_quad[14] = _quad[10]; _quad[15] = ty;
 
 		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	}

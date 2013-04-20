@@ -312,6 +312,16 @@ namespace DGLE
 		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
 		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
+
+		inline bool operator == (const TDrawDataDesc &desc) const
+		{
+			return pData == desc.pData && uiVertexStride == desc.uiVertexStride && bVertices2D == desc.bVertices2D &&
+				uiNormalOffset == desc.uiNormalOffset && uiNormalStride == desc.uiNormalStride && uiTextureVertexOffset == desc.uiTextureVertexOffset &&
+				uiTextureVertexStride == desc.uiTextureVertexStride && uiColorOffset == desc.uiColorOffset && uiColorStride == desc.uiColorStride &&
+				uiTangentOffset == desc.uiTangentOffset && uiBinormalOffset == desc.uiBinormalOffset && uiTangentStride == desc.uiTangentStride &&
+				uiBinormalStride == desc.uiBinormalStride && pAttribs == desc.pAttribs && pIndexBuffer == desc.pIndexBuffer && bIndexBuffer32 == desc.bIndexBuffer32;
+		}
+
 	};
 
 #ifdef STRUCT_ALIGNMENT_1
@@ -415,17 +425,23 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API MakeCurrent() = 0;
 		virtual DGLE_RESULT DGLE_API Present() = 0;
 		virtual DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API Clear(bool bColor = true, bool bDepth = true, bool bStencil = true) = 0;
 		virtual DGLE_RESULT DGLE_API SetViewport(uint x, uint y, uint width, uint height) = 0;
 		virtual DGLE_RESULT DGLE_API GetViewport(uint &x, uint &y, uint &width, uint &height) = 0;
-		virtual DGLE_RESULT DGLE_API SetScissor(uint x, uint y, uint width, uint height) = 0;
+		virtual DGLE_RESULT DGLE_API SetScissorRectangle(uint x, uint y, uint width, uint height) = 0;
+		virtual DGLE_RESULT DGLE_API GetScissorRectangle(uint &x, uint &y, uint &width, uint &height) = 0;
 		virtual DGLE_RESULT DGLE_API SetLineWidth(float fWidth) = 0;
+		virtual DGLE_RESULT DGLE_API GetLineWidth(float &fWidth) = 0;
 		virtual DGLE_RESULT DGLE_API SetPointSize(float fSize) = 0;
+		virtual DGLE_RESULT DGLE_API GetPointSize(float &fSize) = 0;
 		virtual DGLE_RESULT DGLE_API ReadFrameBuffer(uint uiX, uint uiY, uint uiWidth, uint uiHeight, uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
 		virtual DGLE_RESULT DGLE_API SetRenderTarget(ICoreTexture *pTexture) = 0; //no stencil for 32bit depth texture
+		virtual DGLE_RESULT DGLE_API GetRenderTarget(ICoreTexture *&prTexture) = 0;
 		virtual DGLE_RESULT DGLE_API CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags) = 0;
 		virtual DGLE_RESULT DGLE_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType) = 0;
 		virtual DGLE_RESULT DGLE_API ToggleStateFilter(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API InvalidateStateFilter() = 0;
 		virtual DGLE_RESULT DGLE_API PushStates() = 0;
 		virtual DGLE_RESULT DGLE_API PopStates() = 0;
 		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType = MT_MODELVIEW) = 0;
@@ -433,6 +449,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer) = 0;
 		virtual DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API ToggleBlendState(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API ToggleAlphaTestState(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetBlendState(const TBlendStateDesc &stState) = 0;
@@ -442,6 +459,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetRasterizerState(const TRasterizerStateDesc &stState) = 0;
 		virtual DGLE_RESULT DGLE_API GetRasterizerState(TRasterizerStateDesc &stState) = 0;
 		virtual DGLE_RESULT DGLE_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer = 0) = 0;
+		virtual DGLE_RESULT DGLE_API GetBindedTexture(ICoreTexture *&prTex, uint uiTextureLayer) = 0;
 		virtual DGLE_RESULT DGLE_API GetFixedFunctionPipelineAPI(IFixedFunctionPipeline *&prFFP) = 0;
 		virtual DGLE_RESULT DGLE_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue) = 0;
 		virtual DGLE_RESULT DGLE_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported) = 0;
@@ -475,20 +493,18 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API SetLightEnabled(uint uiIdx, bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetLightColor(uint uiIdx, const TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API SetLightPosition(uint uiIdx, const TPoint3 &stPosition) = 0;
 		virtual DGLE_RESULT DGLE_API SetLightIntensity(uint uiIdx, float fIntensity) = 0;
 		virtual DGLE_RESULT DGLE_API ConfigureDirectionalLight(uint uiIdx, const TVector3 &stDirection) = 0;
-		virtual DGLE_RESULT DGLE_API ConfigurePointLight(uint uiIdx, float fRange) = 0;
-		virtual DGLE_RESULT DGLE_API ConfigureSpotLight(uint uiIdx, const TVector3 &stDirection, float fRange, float fSpotAngle) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigurePointLight(uint uiIdx, const TPoint3 &stPosition, float fRange) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigureSpotLight(uint uiIdx, const TPoint3 &stPosition, const TVector3 &stDirection, float fRange, float fSpotAngle) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetLightEnabled(uint uiIdx, bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetLightColor(uint uiIdx, TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GetLightPosition(uint uiIdx, TPoint3 &stPosition) = 0;
 		virtual DGLE_RESULT DGLE_API GetLightIntensity(uint uiIdx, float &fIntensity) = 0;
 		virtual DGLE_RESULT DGLE_API GetLightType(uint uiIdx, E_LIGHT_TYPE &eType) = 0;
 		virtual DGLE_RESULT DGLE_API GetDirectionalLightConfiguration(uint uiIdx, TVector3 &stDirection) = 0;
-		virtual DGLE_RESULT DGLE_API GetPointLightConfiguration(uint uiIdx, float &fRange) = 0;
-		virtual DGLE_RESULT DGLE_API GetSpotLightConfiguration(uint uiIdx, TVector3 &stDirection, float &fRange, float &fSpotAngle) = 0;
+		virtual DGLE_RESULT DGLE_API GetPointLightConfiguration(uint uiIdx, TPoint3 &stPosition, float &fRange) = 0;
+		virtual DGLE_RESULT DGLE_API GetSpotLightConfiguration(uint uiIdx, TPoint3 &stPosition, TVector3 &stDirection, float &fRange, float &fSpotAngle) = 0;
 
 		virtual DGLE_RESULT DGLE_API SetFogEnabled(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) = 0;

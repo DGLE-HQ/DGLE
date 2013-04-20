@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2013 (c)Korotkov Andrey
+\date		14.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -107,16 +107,16 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 		_pBuffer[i_12 + 4] = x; _pBuffer[i_12 + 5] = y;
 		
 		_pBuffer[i_12 + 6] = x; _pBuffer[i_12 + 7] = y;
-		_pBuffer[i_12 + 8] = x; _pBuffer[i_12 + 9] = _pBuffer[i_12 + 3];
-		_pBuffer[i_12 + 10] = x + curb_w * _fScale; _pBuffer[i_12 + 11] = _pBuffer[i_12 + 3];
+		_pBuffer[i_12 + 8] = x + curb_w * _fScale; _pBuffer[i_12 + 9] = _pBuffer[i_12 + 3];
+		_pBuffer[i_12 + 10] = x; _pBuffer[i_12 + 11] = _pBuffer[i_12 + 3];
 
 		_pBuffer[l_12 + i_12] = (curb_x + curb_w) / (float)t_w; _pBuffer[l_12 + i_12 + 1] = (curb_y + curb_h) / (float)t_h;
 		_pBuffer[l_12 + i_12 + 2] = _pBuffer[l_12 + i_12]; _pBuffer[l_12 + i_12 + 3] = curb_y / (float)t_h;
 		_pBuffer[l_12 + i_12 + 4] = curb_x / (float)t_w; _pBuffer[l_12 + i_12 + 5] = _pBuffer[l_12 + i_12 + 1];
 		
 		_pBuffer[l_12 + i_12 + 6] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 7] = _pBuffer[l_12 + i_12 + 1];
-		_pBuffer[l_12 + i_12 + 8] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 9] = _pBuffer[l_12 + i_12 + 3];
-		_pBuffer[l_12 + i_12 + 10] = _pBuffer[l_12 + i_12 + 2]; _pBuffer[l_12 + i_12 + 11] = _pBuffer[l_12 + i_12 + 3];
+		_pBuffer[l_12 + i_12 + 8] = _pBuffer[l_12 + i_12 + 2]; _pBuffer[l_12 + i_12 + 9] = _pBuffer[l_12 + i_12 + 3];
+		_pBuffer[l_12 + i_12 + 10] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 11] = _pBuffer[l_12 + i_12 + 3];
 
 		x += curb_w * _fScale;
 	}

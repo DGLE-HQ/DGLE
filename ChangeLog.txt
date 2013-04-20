@@ -18,12 +18,12 @@ Initial release to GitHub and also fresh project start. Major engine reengineeri
 [!+!] Multi render support and totally new rendering subsystem.
 [!+!] Cross platform basic sound subsystem based on custom software mixer.
 [!+!] Brand new GTK# GUI components and engine toolset.
-[!*!] Total engine reengineering, a lot of stuff was made from scratch.
+[!*!] Total engine reengineering, a lot of stuff was made from the scratch.
 [!*!] Isolation of platform depended code.
 [!*!] Engine examples are totally remade.
 [ + ] BeginBatch/EndBatch IRender2D methods for custom batchs. Also added CullBoundingBox method.
 [ + ] Helper methods Draw2DSimple for IBitmapFont interface.
-[ + ] GetResourceByName and GetResourceName methods of interface IResourceManager.
+[ + ] GetResourceByName, GetResourceByIndex, GetResourcesCount and GetResourceName methods of interface IResourceManager.
 [ + ] Added some getters methods to IRender2D.
 [ + ] Added some advanced Draw, DrawBuffer and DrawBuffer3D methods to IRender2D for experienced users.
 [ + ] Interface IUserCallback allows to register callback classes in engine more simple.

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		07.04.2013 (c)Korotkov Andrey
+\date		20.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,7 +16,21 @@ CInstancedObj(uiInstIdx), _mat(NULL)
 CModel::~CModel()
 {
 	while (!_meshes.empty())
-		(*_meshes.begin())->Free();
+		(*_meshes.begin()).pMesh->Free();
+}
+
+bool CModel::_HaveMaterialWithBlending() const
+{
+	for (size_t i = 0; i < _meshes.size(); ++i)
+		if (_meshes[i].pMaterial)
+		{
+			bool enabled;
+			E_BLENDING_EFFECT effect;
+			_meshes[i].pMaterial->GetBlending(enabled, effect);
+			if (enabled) return true;
+		}
+
+	return false;
 }
 
 void CModel::_RecalculateBounds()
@@ -29,8 +43,8 @@ void CModel::_RecalculateBounds()
 		TPoint3 center;
 		TVector3 extents;
 
-		_meshes[i]->GetCenter(center);
-		_meshes[i]->GetExtents(extents);
+		_meshes[i].pMesh->GetCenter(center);
+		_meshes[i].pMesh->GetExtents(extents);
 
 		const TPoint3 walls[6] = {
 			TPoint3(center.x - extents.x, center.y, center.z), TPoint3(center.x + extents.x, center.y, center.z), TPoint3(center.x, center.y - extents.y, center.z),
@@ -84,7 +98,7 @@ bool CModel::_SaveToFile(IFile *pFile)
 		TVariant var;
 		var.SetPointer(pFile);
 		
-		if (FAILED(_meshes[i]->ExecuteCommand(1, var)) || !var.AsBool())
+		if (FAILED(_meshes[i].pMesh->ExecuteCommand(1, var)) || !var.AsBool())
 			ret = false;
 	}
 
@@ -94,8 +108,7 @@ bool CModel::_SaveToFile(IFile *pFile)
 void CModel::AddMesh(IMesh *pMesh, const TPoint3 &stCenter, const TVector3 &stExtents)
 {
 	pMesh->SetOwner(this);
-	_meshes.push_back(pMesh);
-	_materials.push_back(NULL);
+	_meshes.push_back(TMeshWithMat(pMesh));
 
 	_center = stCenter;
 	_extents = stExtents;
@@ -105,13 +118,13 @@ DGLE_RESULT DGLE_API CModel::Draw()
 {
 	for (size_t i = 0; i < _meshes.size(); ++i)
 	{
-		if (_materials[i])
-			_materials[i]->Bind();
+		if (_meshes[i].pMaterial)
+			_meshes[i].pMaterial->Bind();
 		else
 			if (_mat)
 				_mat->Bind();
 
-		_meshes[i]->Draw();
+		_meshes[i].pMesh->Draw();
 	}
 
 	return S_OK;
@@ -122,13 +135,13 @@ DGLE_RESULT DGLE_API CModel::DrawMesh(uint uiMeshIdx)
 	if (uiMeshIdx >= _meshes.size())
 		return E_INVALIDARG;
 
-	if (_materials[uiMeshIdx])
-		_materials[uiMeshIdx]->Bind();
+	if (_meshes[uiMeshIdx].pMaterial)
+		_meshes[uiMeshIdx].pMaterial->Bind();
 	else
 		if (_mat)
 			_mat->Bind();
 
-	_meshes[uiMeshIdx]->Draw();
+	_meshes[uiMeshIdx].pMesh->Draw();
 
 	return S_OK;
 }
@@ -156,7 +169,7 @@ DGLE_RESULT DGLE_API CModel::GetMesh(uint uiMeshIdx, IMesh *&prMesh)
 	if (uiMeshIdx >= _meshes.size())
 		return E_INVALIDARG;
 
-	prMesh = _meshes[uiMeshIdx];
+	prMesh = _meshes[uiMeshIdx].pMesh;
 
 	return S_OK;
 }
@@ -164,6 +177,13 @@ DGLE_RESULT DGLE_API CModel::GetMesh(uint uiMeshIdx, IMesh *&prMesh)
 DGLE_RESULT DGLE_API CModel::SetModelMaterial(IMaterial *pMaterial)
 {
 	_mat = pMaterial;
+	
+	bool is_blend; E_BLENDING_EFFECT effect;
+	pMaterial->GetBlending(is_blend, effect);
+
+	if (is_blend || _HaveMaterialWithBlending())
+		std::sort(_meshes.begin(), _meshes.end(), CMatSort(is_blend));
+	
 	return S_OK;
 }
 
@@ -178,7 +198,15 @@ DGLE_RESULT DGLE_API CModel::SetMeshMaterial(uint uiMeshIdx, IMaterial *pMateria
 	if (uiMeshIdx >= _meshes.size())
 		return E_INVALIDARG;
 
-	_materials[uiMeshIdx] = pMaterial;
+	_meshes[uiMeshIdx].pMaterial = pMaterial;
+
+	bool is_blend = false; E_BLENDING_EFFECT effect;
+	
+	if (pMaterial)
+		pMaterial->GetBlending(is_blend, effect);
+
+	if (is_blend || _HaveMaterialWithBlending())
+		std::sort(_meshes.begin(), _meshes.end(), CMatSort(is_blend));
 
 	return S_OK;
 }
@@ -188,7 +216,7 @@ DGLE_RESULT DGLE_API CModel::GetMeshMaterial(uint uiMeshIdx, IMaterial *&prMater
 	if (uiMeshIdx >= _meshes.size())
 		return E_INVALIDARG;
 
-	prMaterial = _materials[uiMeshIdx];
+	prMaterial = _meshes[uiMeshIdx].pMaterial;
 
 	return S_OK;
 }
@@ -196,8 +224,7 @@ DGLE_RESULT DGLE_API CModel::GetMeshMaterial(uint uiMeshIdx, IMaterial *&prMater
 DGLE_RESULT DGLE_API CModel::AddMesh(IMesh *pMesh)
 {
 	pMesh->SetOwner(this);
-	_meshes.push_back(pMesh);
-	_materials.push_back(NULL);
+	_meshes.push_back(TMeshWithMat(pMesh));
 
 	_RecalculateBounds();
 	
@@ -207,11 +234,9 @@ DGLE_RESULT DGLE_API CModel::AddMesh(IMesh *pMesh)
 DGLE_RESULT DGLE_API CModel::RemoveMesh(IMesh *pMesh)
 {
 	for (size_t i = 0; i < _meshes.size(); ++i)
-		if (pMesh == _meshes[i])
+		if (pMesh == _meshes[i].pMesh)
 		{
 			_meshes.erase(_meshes.begin() + i);
-			_materials.erase(_materials.begin() + i);
-
 			return S_OK;
 		}
 
@@ -223,14 +248,14 @@ DGLE_RESULT DGLE_API CModel::ReplaceMesh(uint uiMeshIdx, IMesh *pMesh)
 	if (uiMeshIdx >= _meshes.size())
 		return E_INVALIDARG;
 
-	if (_meshes[uiMeshIdx] != pMesh)
+	if (_meshes[uiMeshIdx].pMesh != pMesh)
 	{
-		_meshes[uiMeshIdx]->SetOwner(NULL);
-		_meshes[uiMeshIdx]->Free();
+		_meshes[uiMeshIdx].pMesh->SetOwner(NULL);
+		_meshes[uiMeshIdx].pMesh->Free(); // ToDo: may cause problems without reference counter and if we try to set same mesh to another index
 	}
 
 	pMesh->SetOwner(this);
-	_meshes[uiMeshIdx] = pMesh;
+	_meshes[uiMeshIdx].pMesh = pMesh;
 
 	_RecalculateBounds();
 
@@ -257,11 +282,13 @@ DGLE_RESULT DGLE_API CModel::ExecuteTextCommandEx(const char *pcCommand, char *p
 {
 	if (!pcCommand)
 		return E_INVALIDARG;
+	
 	if (!pcResult)
 	{
 		uiCharsCount = 1;
 		return S_OK;
 	}
+
 	if (uiCharsCount < 1)
 		return E_INVALIDARG;
 	else
@@ -270,7 +297,9 @@ DGLE_RESULT DGLE_API CModel::ExecuteTextCommandEx(const char *pcCommand, char *p
 			strcpy(pcResult, "");
 		else
 			pcResult = NULL;
+
 		uiCharsCount = 0;
+
 		return E_NOTIMPL;
 	}
 }

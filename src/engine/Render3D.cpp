@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		03.04.2013 (c)Korotkov Andrey
+\date		19.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,6 +13,7 @@ See "DGLE.h" for more details.
 #include "Render2D.h"
 
 #define IN_3D_GUARD if (Core()->pRender()->pRender2D()->In2DMode()) Core()->pRender()->pRender2D()->End2D();
+#define INVALID_MATERIAL reinterpret_cast<IMaterial *>(0xDEADBEAF)
 
 CRender3D::CRender3D(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _iProfilerState(0),
@@ -39,8 +40,8 @@ _bFrCalculated(false), _uiObjsDrawnCount(0)
 	int i_value;
 	
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, i_value);
-	_uiMaxTextsCount = (uint)i_value;
-	_stCurState.pCurTexs.resize(_uiMaxTextsCount, NULL);
+	_uiMaxTexUnits = (uint)i_value;
+	_stCurState.pCurTexs.resize(_uiMaxTexUnits, NULL);
 
 	Console()->RegComVar("rnd3d_profiler", "Displays Render 3D subsystems profiler.", &_iProfilerState, 0, 1);
 	Console()->RegComVar("rnd3d_draw_axes", "Draws coordinate axes for every object on screen.", &_iDrawAxes, 0, 1);
@@ -54,8 +55,32 @@ CRender3D::~CRender3D()
 	Console()->UnRegCom("rnd3d_draw_lights");
 }
 
-void CRender3D::_SetDefaultStates()
+void CRender3D::_SetPerspectiveMatrix(uint width, uint height)
 {
+	const float aspect = (float)width / (float)height,
+		top = _stCurState.fZNear * tanf(_stCurState.fFovAngle * (float)M_PI / 360.f),
+		bottom = -top,
+		left = bottom * aspect,
+		right = top * aspect;
+
+	_pCoreRenderer->SetMatrix(TMatrix4(
+		2.f * _stCurState.fZNear / (right - left), 0.f, (right + left) / (right - left), 0.f,
+		0.f, 2.f * _stCurState.fZNear / (top - bottom), (top + bottom) / (top - bottom), 0.f,
+		0.f, 0.f, -(_stCurState.fZFar + _stCurState.fZNear) / (_stCurState.fZFar - _stCurState.fZNear), -1.f,
+		0.f, 0.f, -2.f * _stCurState.fZFar * _stCurState.fZNear / (_stCurState.fZFar - _stCurState.fZNear), 0.f
+		), MT_PROJECTION);
+}
+
+void CRender3D::SetDefaultStates()
+{
+	uint vp_x, vp_y, vp_width, vp_height;
+	_pCoreRenderer->GetViewport(vp_x, vp_y, vp_width, vp_height);
+	
+	_stCurState.fFovAngle = 60.f;
+	_stCurState.fZNear = 0.25f;
+	_stCurState.fZFar = 1000.f;
+	_SetPerspectiveMatrix(vp_width, vp_height);
+
 	_stCurState.matrixStack.Clear(MatrixIdentity());
 	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
 
@@ -78,6 +103,7 @@ void CRender3D::_SetDefaultStates()
 		_pFFP->ConfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd, _stCurState.stFogDesc.fDensity);
 	}
 
+	_stCurState.eBlendingMode = BE_NORMAL;
 	_stCurState.stBlendStateDesc = TBlendStateDesc();
 	_pCoreRenderer->SetBlendState(_stCurState.stBlendStateDesc);
 
@@ -88,8 +114,11 @@ void CRender3D::_SetDefaultStates()
 	_stCurState.stRasterStateDesc.eCullMode = PCM_BACK;
 	_pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
 	
-	_pCoreRenderer->SetColor(ColorWhite());
+	_stCurState.stColor = ColorWhite();
+	_pCoreRenderer->SetColor(_stCurState.stColor);
 	
+	_stCurState.pCurMat = INVALID_MATERIAL;
+
 	Core()->pRender()->Unbind(EOT_UNKNOWN);
 }
 
@@ -112,8 +141,9 @@ void CRender3D::BeginFrame()
 
 	while (!_stackStates.empty())
 		_stackStates.pop();
-	
-	_SetDefaultStates();
+
+	_stCurState.matrixStack.Clear(MatrixIdentity());
+	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
 }
 
 void CRender3D::EndFrame()
@@ -121,12 +151,40 @@ void CRender3D::EndFrame()
 	_ui64DrawDelay = GetPerfTimer() - _ui64DrawDelay - Core()->pRender()->pRender2D()->GetAverallDelay();
 }
 
+void CRender3D::OnResize(uint uiWidth, uint uiHeight)
+{
+	_SetPerspectiveMatrix(uiWidth, uiHeight);
+}
+
 void CRender3D::RefreshBatchData()
-{}
+{
+	// for the future needs
+}
 
 void CRender3D::UnbindMaterial()
 {
-	_stCurState.pCurMat = NULL;
+	BindMaterial(Core()->pResMan()->pIDefaultMaterial());
+	_stCurState.pCurMat = INVALID_MATERIAL;
+}
+
+DGLE_RESULT DGLE_API CRender3D::SetColor(const TColor4 &stColor)
+{
+	IN_3D_GUARD
+	
+	if (_stCurState.stColor == stColor)
+		return S_OK;
+
+	_stCurState.pCurMat = INVALID_MATERIAL;
+	_stCurState.stColor = stColor;
+	_pCoreRenderer->SetColor(stColor);
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender3D::GetColor(TColor4 &stColor)
+{
+	stColor = _stCurState.stColor;
+	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
@@ -135,8 +193,6 @@ DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 
 	if (_stCurState.pCurMat == pMat)
 		return S_OK;
-
-	_stCurState.pCurMat = pMat;
 
 	if (pMat == NULL)
 		BindMaterial(Core()->pResMan()->pIDefaultMaterial());
@@ -162,12 +218,26 @@ DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 		if (!_stCurState.isLightingEnabled)
 			_pCoreRenderer->SetColor(diff_col);
 
+		bool is_blending; E_BLENDING_EFFECT e_blending_mode;
+		pMat->GetBlending(is_blending, e_blending_mode);
+
+		ToggleBlending(is_blending);
+		SetBlendMode(e_blending_mode);
+
+		bool is_alphatest; float alpha_treshold;
+		pMat->GetAlphaTest(is_alphatest, alpha_treshold);
+
+		ToggleAlphaTest(is_alphatest);
+		SetAlphaTreshold(alpha_treshold);
+
 		if (_pFFP)
 		{
 			_pFFP->SetMaterialDiffuseColor(diff_col);
 			_pFFP->SetMaterialShininess(shininess);
 			_pFFP->SetMaterialSpecularColor(spec_col);
 		}
+
+		_stCurState.pCurMat = pMat;
 	}
 
 	return S_OK;
@@ -175,18 +245,23 @@ DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 
 void CRender3D::UnbindTextures()
 {
-	memset(&_stCurState.pCurTexs[0], NULL, _stCurState.pCurTexs.size() * sizeof(ITexture *));
+	for (uint i = _uiMaxTexUnits; i != 0; --i)
+		_pCoreRenderer->BindTexture(NULL, i - 1);
+
+	memset(&_stCurState.pCurTexs[0], NULL, _stCurState.pCurTexs.size() * sizeof(ITexture*));
 }
 
 DGLE_RESULT DGLE_API CRender3D::BindTexture(ITexture *pTex, uint uiTextureLayer)
 {
 	IN_3D_GUARD
 	
-	if (uiTextureLayer >= _uiMaxTextsCount)
+	if (uiTextureLayer >= _uiMaxTexUnits)
 		return E_INVALIDARG;
 
 	if (_stCurState.pCurTexs[uiTextureLayer] == pTex)
 		return S_OK;
+
+	_stCurState.pCurMat = INVALID_MATERIAL;
 
 	_stCurState.pCurTexs[uiTextureLayer] = pTex;
 
@@ -335,13 +410,12 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 	{
 		_pFFP->SetLightEnabled(idx, light.bEnabled);
 		_pFFP->SetLightColor(idx, light.stDiffCol);
-		_pFFP->SetLightPosition(idx, light.stPos);
 		_pFFP->SetLightIntensity(idx, light.fIntensity);
 
 		switch (light.eType)
 		{
 		case LT_POINT:
-			_pFFP->ConfigurePointLight(idx, light.fRange);
+			_pFFP->ConfigurePointLight(idx, light.stPos, light.fRange);
 			break;
 
 		case LT_DIRECTIONAL:
@@ -349,7 +423,7 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 			break;
 
 		case LT_SPOT:
-			_pFFP->ConfigureSpotLight(idx, light.stDir, light.fRange, light.fAngle);
+			_pFFP->ConfigureSpotLight(idx, light.stPos, light.stDir, light.fRange, light.fAngle);
 			break;
 		}
 	}
@@ -391,14 +465,23 @@ DGLE_RESULT DGLE_API CRender3D::SetPerspective(float fFovAngle, float fZNear, fl
 {
 	IN_3D_GUARD
 
-	Core()->pRender()->SetPerspective(fFovAngle, fZNear, fZFar);
+	_stCurState.fFovAngle = fFovAngle;
+	_stCurState.fZNear = fZNear;
+	_stCurState.fZFar = fZFar;
+
+	uint x, y, width, height;
+	_pCoreRenderer->GetViewport(x, y, width, height);
+	_SetPerspectiveMatrix(width, height);
 	
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CRender3D::GetPerspective(float &fFovAngle, float &fZNear, float &fZFar)
 {
-	Core()->pRender()->GetPerspective(fFovAngle, fZNear, fZFar);
+	fFovAngle = _stCurState.fFovAngle;
+	fZNear = _stCurState.fZNear;
+	fZFar = _stCurState.fZFar;
+	
 	return S_OK;
 }
 	
@@ -406,7 +489,7 @@ DGLE_RESULT DGLE_API CRender3D::GetTexture(ITexture *&prTex, uint uiTextureLayer
 {
 	IN_3D_GUARD
 
-	if (uiTextureLayer >= _uiMaxTextsCount)
+	if (uiTextureLayer >= _uiMaxTexUnits)
 		return E_INVALIDARG;
 
 	prTex = _stCurState.pCurTexs[uiTextureLayer];
@@ -423,9 +506,35 @@ DGLE_RESULT DGLE_API CRender3D::GetMaterial(IMaterial *&prMat)
 	return S_OK;
 }
 
+DGLE_RESULT DGLE_API CRender3D::ToggleBlending(bool bEnabled)
+{
+	IN_3D_GUARD
+	
+	if (_stCurState.stBlendStateDesc.bEnabled == bEnabled)
+		return S_OK;
+
+	_stCurState.pCurMat = INVALID_MATERIAL;
+	_stCurState.stBlendStateDesc.bEnabled = bEnabled;
+	_pCoreRenderer->ToggleBlendState(bEnabled);
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender3D::IsBlendingEnabled(bool &bEnabled)
+{
+	bEnabled = _stCurState.stBlendStateDesc.bEnabled;
+	return S_OK;
+}
+
 DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_BLENDING_EFFECT eMode)
 {
 	IN_3D_GUARD
+
+	if (_stCurState.eBlendingMode == eMode)
+		return S_OK;
+
+	_stCurState.pCurMat = INVALID_MATERIAL;
+	_stCurState.eBlendingMode = eMode;
 
 	switch(eMode)
 	{
@@ -479,6 +588,8 @@ DGLE_RESULT DGLE_API CRender3D::GetBlendMode(E_BLENDING_EFFECT &eMode)
 					else
 						if (_stCurState.stBlendStateDesc.eSrcFactor == BF_DST_ALPHA && _stCurState.stBlendStateDesc.eDstFactor == BF_ZERO)
 							eMode = BE_MASK;
+						else
+							return E_FAIL;
 							
 	return S_OK;
 }
@@ -487,8 +598,12 @@ DGLE_RESULT DGLE_API CRender3D::ToggleAlphaTest(bool bEnabled)
 {
 	IN_3D_GUARD
 	
+	if (_stCurState.stRasterStateDesc.bAlphaTestEnabled == bEnabled)
+		return S_OK;
+
+	_stCurState.pCurMat = INVALID_MATERIAL;
 	_stCurState.stRasterStateDesc.bAlphaTestEnabled = bEnabled;
-	_pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
+	_pCoreRenderer->ToggleAlphaTestState(bEnabled);
 	
 	return S_OK;
 }
@@ -497,6 +612,10 @@ DGLE_RESULT DGLE_API CRender3D::SetAlphaTreshold(float fTreshold)
 {
 	IN_3D_GUARD
 
+	if (_stCurState.stRasterStateDesc.fAlphaTestRefValue == fTreshold)
+		return S_OK;
+
+	_stCurState.pCurMat = INVALID_MATERIAL;
 	_stCurState.stRasterStateDesc.fAlphaTestRefValue = fTreshold;
 	_pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
 	
@@ -537,6 +656,22 @@ DGLE_RESULT DGLE_API CRender3D::ToggleDepthTest(bool bEnabled)
 DGLE_RESULT DGLE_API CRender3D::IsDepthTestEnabled(bool &bEnabled)
 {
 	bEnabled = _stCurState.stDepthStencilDesc.bDepthTestEnabled;
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender3D::ToggleBackfaceCulling(bool bEnabled)
+{
+	IN_3D_GUARD
+
+	 _stCurState.stRasterStateDesc.eCullMode = bEnabled ? PCM_BACK : PCM_NONE;
+	 _pCoreRenderer->SetRasterizerState(_stCurState.stRasterStateDesc);
+	
+	 return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender3D::IsBackfaceCullingEnabled(bool &bEnabled)
+{
+	bEnabled = _stCurState.stRasterStateDesc.eCullMode != PCM_NONE;
 	return S_OK;
 }
 
@@ -730,6 +865,15 @@ DGLE_RESULT DGLE_API CRender3D::PopMatrix()
 	
 	_stCurState.matrixStack.Pop();
 	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CRender3D::ResetStates()
+{
+	IN_3D_GUARD
+
+	SetDefaultStates();
 
 	return S_OK;
 }

@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		23.03.2013 (c)Andrey Korotkov
+\date		20.04.2013 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -8,6 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "CoreRendererGL.h"
+#include "ResourceManager.h"
 
 #ifndef NO_BUILTIN_RENDERER
 
@@ -594,11 +595,13 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
 	else
 		_pFFP = NULL;
 
-	_stCurrentState.clActivatedTexUnits.resize(_iMaxTexUnits);
+	SetBlendState(TBlendStateDesc());
+	SetDepthStencilState(TDepthStencilDesc());
+	SetRasterizerState(TRasterizerStateDesc());
 
-	SetBlendState(_stCurrentState.stBlendDesc);
-	SetDepthStencilState(_stCurrentState.stDepthStencilDesc);
-	SetRasterizerState(_stCurrentState.stRasterDesc);
+	SetMatrix(MatrixIdentity(), MT_TEXTURE);
+	SetMatrix(MatrixIdentity(), MT_PROJECTION);
+	SetMatrix(MatrixIdentity(), MT_MODELVIEW);
 
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_EventsHandler, this);
 	Core()->AddEventListener(ET_ON_PER_SECOND_TIMER, _s_EventsHandler, this);
@@ -664,7 +667,16 @@ DGLE_RESULT DGLE_API CCoreRendererGL::MakeCurrent()
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetClearColor(const TColor4 &stColor)
 {
-	glClearColor(stColor.r, stColor.g, stColor.b, stColor.a);
+	_pStateMan->glClearColor(stColor.r, stColor.g, stColor.b, stColor.a);
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::GetClearColor(TColor4 &stColor)
+{
+	GLfloat color[4];
+	_pStateMan->glGetFloatv(GL_COLOR_CLEAR_VALUE, color);
+	stColor = color;
+
 	return S_OK;
 }
 
@@ -683,22 +695,41 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Clear(bool bColor, bool bDepth, bool bSten
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetViewport(uint x, uint y, uint width, uint height)
 {
-	_stCurrentState.iViewPortX = x; _stCurrentState.iViewPortY = y;
-	_stCurrentState.iViewPortWidth = width; _stCurrentState.iViewPortHeight = height;
-	glViewport(x, y, width, height);
+	_pStateMan->glViewport(x, y, width, height);
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::GetViewport(uint &x, uint &y, uint &width, uint &height)
 {
-	x = _stCurrentState.iViewPortX; y = _stCurrentState.iViewPortY;
-	width = _stCurrentState.iViewPortWidth; height = _stCurrentState.iViewPortHeight;
+	GLint vp[4];
+	_pStateMan->glGetIntegerv(GL_VIEWPORT, vp);
+	x = vp[0]; y = vp[1];
+	width = vp[2]; height = vp[3];
+
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::SetScissor(uint x, uint y, uint width, uint height)
+DGLE_RESULT DGLE_API CCoreRendererGL::SetScissorRectangle(uint x, uint y, uint width, uint height)
 {
-	glScissor(_stCurrentState.iViewPortX + x, (int)(_stCurrentState.iViewPortHeight - y - height), width, height);
+	GLint vp[4];
+	_pStateMan->glGetIntegerv(GL_VIEWPORT, vp);
+	
+	_pStateMan->glScissor(vp[0] + x, (int)(vp[3] - y - height), width, height);
+	
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::GetScissorRectangle(uint &x, uint &y, uint &width, uint &height)
+{
+	GLint vp[4], scissor_box[4];
+	_pStateMan->glGetIntegerv(GL_VIEWPORT, vp);
+	_pStateMan->glGetIntegerv(GL_SCISSOR_BOX, scissor_box);
+
+	x = scissor_box[0] - vp[0];
+	y = vp[3] - scissor_box[1] - scissor_box[3];
+	width = scissor_box[2];
+	height = scissor_box[3];
+
 	return S_OK;
 }
 
@@ -708,9 +739,27 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetLineWidth(float fWidth)
 	return S_OK;
 }
 
+DGLE_RESULT DGLE_API CCoreRendererGL::GetLineWidth(float &fWidth)
+{
+	GLfloat value;
+	_pStateMan->glGetFloatv(GL_LINE_WIDTH, &value);
+	fWidth = value;
+
+	return S_OK;
+}
+
 DGLE_RESULT DGLE_API CCoreRendererGL::SetPointSize(float fSize)
 {
 	_pStateMan->glPointSize(fSize);
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::GetPointSize(float &fSize)
+{
+	GLfloat value;
+	_pStateMan->glGetFloatv(GL_POINT_SIZE, &value);
+	fSize = value;
+
 	return S_OK;
 }
 
@@ -743,7 +792,10 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ReadFrameBuffer(uint uiX, uint uiY, uint u
 	if (uiDataSize < uiWidth * uiHeight * bytes)
 		return E_INVALIDARG;
 	
-	glReadPixels(uiX, _stCurrentState.iViewPortHeight - uiY, uiWidth, uiHeight, format, eDataFormat == TDF_DEPTH_COMPONENT32 ? GL_FLOAT : GL_UNSIGNED_BYTE, pData);
+	GLint vp[4];
+	_pStateMan->glGetIntegerv(GL_VIEWPORT, vp);
+	
+	glReadPixels(uiX, vp[3] - uiY, uiWidth, uiHeight, format, eDataFormat == TDF_DEPTH_COMPONENT32 ? GL_FLOAT : GL_UNSIGNED_BYTE, pData);
 
 	return S_OK;
 }
@@ -982,8 +1034,14 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 			_pCurRenderTarget = pTexture;
 		}
 		else
-			return E_INVALIDARG;
+			return S_FALSE;
 
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::GetRenderTarget(ICoreTexture *&prTexture)
+{
+	prTexture = _pCurRenderTarget;
 	return S_OK;
 }
 
@@ -1235,7 +1293,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 	{
 		if ((eLoadFlags & TLF_GENERATE_MIPMAPS) && (b_is_compressed || (!GLEW_SGIS_generate_mipmap && !GLEW_ARB_framebuffer_object)))
 		{
-			(int &)eLoadFlags |= TLF_GENERATE_MIPMAPS;
+			(int &)eLoadFlags &= ~TLF_GENERATE_MIPMAPS;
 			ret = S_FALSE;
 		}
 
@@ -1243,7 +1301,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
 		if (b_is_compressed)
-			glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex_format, uiWidth, uiHeight, 0, ((uiWidth + 3)/4)*((uiHeight + 3)/4)*bytes_per_pixel, (void*)pData);
+			glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex_format, uiWidth, uiHeight, 0, ((uiWidth + 3) / 4) * ((uiHeight + 3) / 4) * bytes_per_pixel, (void *)pData);
 		else
 			glTexImage2D(GL_TEXTURE_2D, 0, tex_internal_format, uiWidth, uiHeight, 0, tex_format, GL_UNSIGNED_BYTE, (void*)pData);
 
@@ -1377,58 +1435,52 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ToggleStateFilter(bool bEnabled)
 {
 	_bStateFilterEnabled = bEnabled;
 	_pStateMan = bEnabled ? (_pCachedStateMan->~CStateManager(), new(_pCachedStateMan) CStateManager<true>(InstIdx(), _iMaxTexUnits), static_cast<IStateManager *>(_pCachedStateMan)) : &_clPassThroughStateMan;
+	
+	if (_pFFP)
+		_pFFP->ToggleStateFilter(bEnabled);
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::InvalidateStateFilter()
+{
+	if (!_bStateFilterEnabled)
+		return S_FALSE;
+	
+	ToggleStateFilter(false);
+	ToggleStateFilter(true);
+
+	_uiDrawCount = -1; // invalidate draw filtering
+
+	if (_pFFP)
+		_pFFP->InvalidateStateFilter();
+
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::PushStates()
 {
 	_pStateMan->Push();
-	_clStatesStack.push(_stCurrentState);
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::PopStates()
 {
-	if (_clStatesStack.empty())
-		return E_ABORT;
-	
 	_pStateMan->Pop();
-
-	_stCurrentState = _clStatesStack.top();
-	
-	SetMatrix(_stCurrentState.stTextureMat, MT_TEXTURE);
-	SetMatrix(_stCurrentState.stProjectionMat, MT_PROJECTION);
-	SetMatrix(_stCurrentState.stModelviewMat, MT_MODELVIEW);
-
-	_clStatesStack.pop();
-
 	_uiDrawCount = -1; // invalidate draw filtering
-
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetMatrix(const TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType)
 {
-	if (eMatType != MT_MODELVIEW)
-	{
-		if (eMatType == MT_PROJECTION)
-			glMatrixMode(GL_PROJECTION);
-		else
-			if (eMatType == MT_TEXTURE)
-				glMatrixMode(GL_TEXTURE);
-	}
-
 	switch (eMatType)
 	{
-	case MT_MODELVIEW: _stCurrentState.stModelviewMat = stMatrix; break;
-	case MT_PROJECTION: _stCurrentState.stProjectionMat = stMatrix; break;
-	case MT_TEXTURE: _stCurrentState.stTextureMat = stMatrix; break;
+	case MT_MODELVIEW: _pStateMan->glMatrixMode(GL_MODELVIEW); break;
+	case MT_PROJECTION: _pStateMan->glMatrixMode(GL_PROJECTION); break;
+	case MT_TEXTURE: _pStateMan->glMatrixMode(GL_TEXTURE); break;
 	}
-
-	glLoadMatrixf(stMatrix._1D);
-
-	if (eMatType != MT_MODELVIEW)
-		glMatrixMode(GL_MODELVIEW);
+	
+	_pStateMan->glLoadMatrixf(stMatrix._1D);
 
 	return S_OK;
 }
@@ -1437,9 +1489,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetMatrix(TMatrix4x4 &stMatrix, E_MATRIX_T
 {
 	switch (eMatType)
 	{
-	case MT_MODELVIEW: stMatrix = _stCurrentState.stModelviewMat; break;
-	case MT_PROJECTION: stMatrix = _stCurrentState.stProjectionMat; break;
-	case MT_TEXTURE: stMatrix = _stCurrentState.stTextureMat; break;
+	case MT_MODELVIEW: _pStateMan->glGetFloatv(GL_MODELVIEW_MATRIX, stMatrix._1D); break;
+	case MT_PROJECTION: _pStateMan->glGetFloatv(GL_PROJECTION_MATRIX, stMatrix._1D); break;
+	case MT_TEXTURE: _pStateMan->glGetFloatv(GL_TEXTURE_MATRIX, stMatrix._1D); break;
 	}
 
 	return S_OK;
@@ -1482,6 +1534,10 @@ FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, 
 	if (_bVerticesBufferBindedFlag || uiCount > _sc_uiMaxVerticesCountForLegacy || stDrawDesc.pIndexBuffer != NULL ||
 		(stDrawDesc.uiTangentOffset != -1 || stDrawDesc.uiBinormalOffset != -1 || stDrawDesc.pAttribs))
 		return false;
+
+	GLfloat prev_color[4];
+	if (stDrawDesc.uiColorOffset != -1)
+		_pStateMan->glGetFloatv(GL_CURRENT_COLOR, prev_color);
 
 	const float * const data = (float *)stDrawDesc.pData;
 
@@ -1543,7 +1599,7 @@ FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, 
 	glEnd();
 
 	if (stDrawDesc.uiColorOffset != -1)
-		glColor4f(_stCurrentState.stColor.r, _stCurrentState.stColor.g, _stCurrentState.stColor.b, _stCurrentState.stColor.a);
+		glColor4fv(prev_color);
 
 	return true;
 }
@@ -1567,7 +1623,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Draw(const TDrawDataDesc &stDrawDesc, E_CO
 	}
 
 	if (!_bStateFilterEnabled || (
-			((!_bVerticesBufferBindedFlag || _pCurBindedBuffer == _pLastDrawnBuffer) && ( eMode != _eDrawMode || uiCount != _uiDrawCount || memcmp(&stDrawDesc, &_stDrawDataDesc, sizeof(TDrawDataDesc)) != 0 )) ||
+			((!_bVerticesBufferBindedFlag || _pCurBindedBuffer == _pLastDrawnBuffer) && ( eMode != _eDrawMode || uiCount != _uiDrawCount || !(stDrawDesc == _stDrawDataDesc) )) ||
 			(_bVerticesBufferBindedFlag && _pCurBindedBuffer != _pLastDrawnBuffer)
 			))
 	{
@@ -1674,14 +1730,20 @@ DGLE_RESULT DGLE_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 DGLE_RESULT DGLE_API CCoreRendererGL::SetColor(const TColor4 &stColor)
 {
 	_pStateMan->glColor4f(stColor.r, stColor.g, stColor.b, stColor.a);
-	_stCurrentState.stColor = stColor;
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::GetColor(TColor4 &stColor)
+{
+	GLfloat color[4];
+	_pStateMan->glGetFloatv(GL_CURRENT_COLOR, color);
+	stColor = color;
+
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::ToggleBlendState(bool bEnabled)
 {
-	_stCurrentState.stBlendDesc.bEnabled = bEnabled;
-
 	if (bEnabled)
 		_pStateMan->glEnable(GL_BLEND);
 	else
@@ -1692,8 +1754,6 @@ DGLE_RESULT DGLE_API CCoreRendererGL::ToggleBlendState(bool bEnabled)
 
 DGLE_RESULT DGLE_API CCoreRendererGL::ToggleAlphaTestState(bool bEnabled)
 {
-	_stCurrentState.stRasterDesc.bAlphaTestEnabled = bEnabled;
-
 	if (bEnabled)
 		_pStateMan->glEnable(GL_ALPHA_TEST);
 	else
@@ -1719,6 +1779,23 @@ inline GLenum CCoreRendererGL::_GetGLBlendFactor(E_BLEND_FACTOR factor) const
 	return GL_ZERO;
 }
 
+inline E_BLEND_FACTOR CCoreRendererGL::_GetEngBlendFactor(GLenum factor) const
+{
+	switch (factor)
+	{
+	case GL_ZERO: return BF_ZERO;
+	case GL_ONE: return BF_ONE;
+	case GL_SRC_COLOR: return BF_SRC_COLOR;
+	case GL_SRC_ALPHA: return BF_SRC_ALPHA;
+	case GL_DST_COLOR: return BF_DST_COLOR;
+	case GL_DST_ALPHA: return BF_DST_ALPHA;
+	case GL_ONE_MINUS_SRC_COLOR: return BF_ONE_MINUS_SRC_COLOR;
+	case GL_ONE_MINUS_SRC_ALPHA: return BF_ONE_MINUS_SRC_ALPHA;
+	}
+
+	return BF_ZERO;
+}
+
 DGLE_RESULT DGLE_API CCoreRendererGL::SetBlendState(const TBlendStateDesc &stState)
 {
 	if (stState.bEnabled)
@@ -1728,14 +1805,20 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetBlendState(const TBlendStateDesc &stSta
 
 	_pStateMan->glBlendFunc(_GetGLBlendFactor(stState.eSrcFactor), _GetGLBlendFactor(stState.eDstFactor));
 
-	_stCurrentState.stBlendDesc = stState;
-
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::GetBlendState(TBlendStateDesc &stState)
 {
-	stState = _stCurrentState.stBlendDesc;
+	stState.bEnabled = _pStateMan->glIsEnabled(GL_BLEND) == GL_TRUE;
+	
+	GLint src, dst;
+	_pStateMan->glGetIntegerv(GL_BLEND_SRC, &src);
+	_pStateMan->glGetIntegerv(GL_BLEND_DST, &dst);
+
+	stState.eSrcFactor = _GetEngBlendFactor(src);
+	stState.eDstFactor = _GetEngBlendFactor(dst);
+
 	return S_OK;
 }
 
@@ -1756,29 +1839,75 @@ inline GLenum CCoreRendererGL::_GetGLComparsionMode(E_COMPARISON_FUNC mode) cons
 	return GL_NEVER;
 }
 
+inline E_COMPARISON_FUNC CCoreRendererGL::_GetEngComparsionMode(GLenum mode) const
+{
+	switch (mode)
+	{
+	case GL_NEVER: return CF_NEVER;
+	case GL_LESS: return CF_LESS;
+	case GL_EQUAL: return CF_EQUAL;
+	case GL_LEQUAL: return CF_LESS_EQUAL;
+	case GL_GREATER: return CF_GREATER;
+	case GL_NOTEQUAL: return CF_NOT_EQUAL;
+	case GL_GEQUAL: return CF_GREATER_EQUAL;
+	case GL_ALWAYS: return CF_ALWAYS;
+	}
+
+	return CF_NEVER;
+}
+
 DGLE_RESULT DGLE_API CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTextureLayer)
 {
 	if (uiTextureLayer > (uint)_iMaxTexUnits)
 		return E_INVALIDARG;
 
-	if (pTex == NULL && !_stCurrentState.clActivatedTexUnits[uiTextureLayer])
-		return S_OK;
-
 	if (_iMaxTexUnits != 1)
 		_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB + uiTextureLayer);
 	
 	if (pTex == NULL)
-	{
 		_pStateMan->glBindTexture(GL_TEXTURE_2D, 0);
-		_stCurrentState.clActivatedTexUnits[uiTextureLayer] = false;
-	}
 	else
-	{
 		_pStateMan->glBindTexture(GL_TEXTURE_2D, ((CCoreTexture*)pTex)->GetTex());
-		_stCurrentState.clActivatedTexUnits[uiTextureLayer] = true;
-	}
 
 	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CCoreRendererGL::GetBindedTexture(ICoreTexture *&prTex, uint uiTextureLayer)
+{
+	if (uiTextureLayer > (uint)_iMaxTexUnits)
+		return E_INVALIDARG;
+	
+	if (_iMaxTexUnits != 1)
+		_pStateMan->glActiveTextureARB(GL_TEXTURE0_ARB + uiTextureLayer);
+
+	GLint tex_id;
+	_pStateMan->glGetIntegerv(GL_TEXTURE_2D_BINDING_EXT, &tex_id);
+
+	uint count;
+	Core()->pResMan()->GetResourcesCount(count);
+
+	for (uint i = 0; i < count; ++i)
+	{
+		IEngineBaseObject *p_obj;
+		Core()->pResMan()->GetResourceByIndex(i, p_obj);
+		
+		E_ENGINE_OBJECT_TYPE type;
+		p_obj->GetType(type);
+
+		if (type == EOT_TEXTURE)
+		{
+			ICoreTexture *p_ctex;
+			((ITexture *)p_obj)->GetCoreTexture(p_ctex);
+			
+			if (((CCoreTexture*)p_ctex)->GetTex() == tex_id)
+			{
+				prTex = p_ctex;
+				return S_OK;
+			}
+		}
+	}
+
+	return E_FAIL;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::SetDepthStencilState(const TDepthStencilDesc &stState)
@@ -1795,14 +1924,21 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetDepthStencilState(const TDepthStencilDe
 
 	_pStateMan->glDepthFunc(_GetGLComparsionMode(stState.eDepthFunc));
 
-	_stCurrentState.stDepthStencilDesc = stState;
-
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::GetDepthStencilState(TDepthStencilDesc &stState)
 {
-	stState = _stCurrentState.stDepthStencilDesc;
+	stState.bDepthTestEnabled = _pStateMan->glIsEnabled(GL_DEPTH_TEST) == GL_TRUE;
+	
+	GLboolean wmask;
+	_pStateMan->glGetBooleanv(GL_DEPTH_WRITEMASK, &wmask);
+	stState.bWriteToDepthBuffer = wmask == GL_TRUE;
+
+	GLint dfunc;
+	_pStateMan->glGetIntegerv(GL_DEPTH_FUNC, &dfunc);
+	stState.eDepthFunc = _GetEngComparsionMode(dfunc);
+
 	return S_OK;
 }
 
@@ -1842,14 +1978,36 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRasterizerState(const TRasterizerStateD
 	else
 		_pStateMan->glFrontFace(GL_CW);
 
-	_stCurrentState.stRasterDesc = stState;
-
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::GetRasterizerState(TRasterizerStateDesc &stState)
 {
-	stState = _stCurrentState.stRasterDesc;
+	stState.bAlphaTestEnabled = _pStateMan->glIsEnabled(GL_ALPHA_TEST) == GL_TRUE;
+
+	GLint i_v; GLfloat f_v;
+	_pStateMan->glGetIntegerv(GL_ALPHA_TEST_FUNC, &i_v);
+	_pStateMan->glGetFloatv(GL_ALPHA_TEST_REF, &f_v);
+
+	stState.eAlphaTestFunc = _GetEngComparsionMode(i_v);
+	stState.fAlphaTestRefValue = f_v;
+
+	stState.bScissorEnabled = _pStateMan->glIsEnabled(GL_SCISSOR_TEST) == GL_TRUE;
+
+	_pStateMan->glGetIntegerv(GL_POLYGON_MODE, &i_v);
+	stState.bWireframe = i_v == GL_LINE;
+
+	if (_pStateMan->glIsEnabled(GL_CULL_FACE) == GL_TRUE)
+	{
+		_pStateMan->glGetIntegerv(GL_CULL_FACE_MODE, &i_v);
+		stState.eCullMode = i_v == GL_FRONT ? PCM_FRONT : PCM_BACK;
+	}
+	else
+		stState.eCullMode = PCM_NONE;
+	
+	_pStateMan->glGetIntegerv(GL_FRONT_FACE, &i_v);
+	stState.bFrontCounterClockwise = i_v == GL_CCW;
+
 	return S_OK;
 }
 

@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		05.05.2012 (c)Andrey Korotkov
+\date		20.04.2013 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -71,44 +71,44 @@ inline GLenum CToggleState::GetCap(uint8 idx) const
 
 inline void CToggleState::glEnable(GLenum cap)
 {
-	++_profileData.glEnableProfileData.overallCallCount;
+	++_profileData.glEnable.overallCallCount;
 	if (_bState[GetCapIdx(cap)] != GL_TRUE)
 	{
 		_bState[GetCapIdx(cap)] = GL_TRUE;
-		++_profileData.glEnableProfileData.unfilteredCallCount;
+		++_profileData.glEnable.unfilteredCallCount;
 		::glEnable(cap);
 	}
 }
 
 inline void CToggleState::glDisable(GLenum cap)
 {
-	++_profileData.glDisableProfileData.overallCallCount;
+	++_profileData.glDisable.overallCallCount;
 	if (_bState[GetCapIdx(cap)] != GL_FALSE)
 	{
 		_bState[GetCapIdx(cap)] = GL_FALSE;
-		++_profileData.glDisableProfileData.unfilteredCallCount;
+		++_profileData.glDisable.unfilteredCallCount;
 		::glDisable(cap);
 	}
 }
 
 inline void CToggleState::glEnableClientState(GLenum array)
 {
-	++_profileData.glEnableClientStateProfileData.overallCallCount;
+	++_profileData.glEnableClientState.overallCallCount;
 	if (_bState[GetCapIdx(array)] != GL_TRUE)
 	{
 		_bState[GetCapIdx(array)] = GL_TRUE;
-		++_profileData.glEnableClientStateProfileData.unfilteredCallCount;
+		++_profileData.glEnableClientState.unfilteredCallCount;
 		::glEnableClientState(array);
 	}
 }
 
 inline void CToggleState::glDisableClientState(GLenum array)
 {
-	++_profileData.glDisableClientStateProfileData.overallCallCount;
+	++_profileData.glDisableClientState.overallCallCount;
 	if (_bState[GetCapIdx(array)] != GL_FALSE)
 	{
 		_bState[GetCapIdx(array)] = GL_FALSE;
-		++_profileData.glDisableClientStateProfileData.unfilteredCallCount;
+		++_profileData.glDisableClientState.unfilteredCallCount;
 		::glDisableClientState(array);
 	}
 }
@@ -144,44 +144,43 @@ inline void CToggleState::glDisableVertexAttribArrayARB(GLuint index)
 inline void CToggleState::Set(const CToggleState &previous)
 {
 	for (int i = 0; i < _sc_uiStatesCount; ++i)
-	{
-		if (_bState[i] == previous._bState[i] || _bState[i] == -1) continue;
-
-		if (i < 4) //GL_X_ARRAY
+		if (_bState[i] != previous._bState[i] && _bState[i] != 255)
 		{
-			if (_bState[i] == GL_TRUE)
+			if (i < 4) //GL_X_ARRAY
 			{
-				++_profileData.glEnableClientStateProfileData.unfilteredCallCount;
-				++_profileData.glEnableClientStateProfileData.overallCallCount;
-				::glEnableClientState(GetCap(i));
+				if (_bState[i] == GL_TRUE)
+				{
+					++_profileData.glEnableClientState.unfilteredCallCount;
+					++_profileData.glEnableClientState.overallCallCount;
+					::glEnableClientState(GetCap(i));
+				}
+				else
+				{
+					++_profileData.glDisableClientState.unfilteredCallCount;
+					++_profileData.glDisableClientState.overallCallCount;
+					::glDisableClientState(GetCap(i));
+				}
 			}
 			else
-			{
-				++_profileData.glDisableClientStateProfileData.unfilteredCallCount;
-				++_profileData.glDisableClientStateProfileData.overallCallCount;
-				::glDisableClientState(GetCap(i));
-			}
+				if (_bState[i] == GL_TRUE)
+				{
+					++_profileData.glEnable.unfilteredCallCount;
+					++_profileData.glEnable.overallCallCount;
+					::glEnable(GetCap(i));
+				}
+				else
+				{
+					++_profileData.glDisable.unfilteredCallCount;
+					++_profileData.glDisable.overallCallCount;
+					::glDisable(GetCap(i));
+				}
 		}
-		else
-			if (_bState[i] == GL_TRUE)
-			{
-				++_profileData.glEnableProfileData.unfilteredCallCount;
-				++_profileData.glEnableProfileData.overallCallCount;
-				::glEnable(GetCap(i));
-			}
-			else
-			{
-				++_profileData.glDisableProfileData.unfilteredCallCount;
-				++_profileData.glDisableProfileData.overallCallCount;
-				::glDisable(GetCap(i));
-			}
-	}
 
 	if (!GLEW_ARB_vertex_shader)
 		return;
 
 	for (int i = 0; i < _iMaxAttribs; ++i)
-		if (_bAttrib[i] != previous._bAttrib[i])
+		if (_bAttrib[i] != previous._bAttrib[i] && _bAttrib[i] != 255)
 		{
 			if (_bAttrib[i] == GL_TRUE)
 			{
@@ -200,7 +199,10 @@ inline void CToggleState::Set(const CToggleState &previous)
 
 inline GLboolean CToggleState::glIsEnabled(GLenum cap) const
 {
-	return _bState[GetCapIdx(cap)];
+	if (_bState[GetCapIdx(cap)] != 255)
+		return _bState[GetCapIdx(cap)];
+	else
+		return ::glIsEnabled(cap);
 }
 
 inline void CToggleState::glGetVertexAttribiv(GLuint index, GLenum pname, GLint *params) const
@@ -211,9 +213,10 @@ inline void CToggleState::glGetVertexAttribiv(GLuint index, GLenum pname, GLint 
 	if (index >= _sc_uiMaxVertexAttribs)
 		UNDEFINED_CAP_FATAL(GL_VERTEX_ATTRIB_ARRAY_ENABLED_ARB);
 
-	GLint val = _bAttrib[index];
-
-	memcpy(params, &val, sizeof(GLint));
+	if (_bAttrib[index] != 255)
+		*params = _bAttrib[index];
+	else
+		::glGetVertexAttribiv(index, pname, params);
 }
 
 inline void CModeState::glFrontFace(GLenum mode)
@@ -258,22 +261,40 @@ inline void CModeState::glDepthMask(GLboolean flag)
 
 inline void CModeState::glGetBooleanv(GLenum pname, GLboolean *params) const
 {
-	GLboolean result = _mode[3]; //GL_DEPTH_WRITEMASK
-	memcpy(params, &result, sizeof(GLboolean));
+	if (_mode[3] != ~0)
+		*params = _mode[3]; //GL_DEPTH_WRITEMASK
+	else
+		::glGetBooleanv(pname, params);
 }
 
 inline void CModeState::glGetIntegerv(GLenum pname, GLint *params) const
 {
-	GLint result;
-
 	switch(pname)
 	{
-	case GL_FRONT_FACE: result = _mode[0]; break;
-	case GL_CULL_FACE_MODE: result = _mode[1]; break;
-	case GL_DEPTH_FUNC: result = _mode[2]; break;
+	case GL_FRONT_FACE:
+		if (_mode[0] != ~0)
+		{
+			*params = _mode[0];
+			return;
+		}
+		break;
+	case GL_CULL_FACE_MODE:
+		if (_mode[1] != ~0)
+		{
+			*params = _mode[1];
+			return;
+		}
+		break;
+	case GL_DEPTH_FUNC:
+		if (_mode[2] != ~0)
+		{
+			*params = _mode[2];
+			return;
+		}
+		break;
 	}
 
-	memcpy(params, &result, sizeof(GLint));
+	::glGetIntegerv(pname, params);
 }
 
 inline void CModeState::Set(const CModeState &previous)
@@ -283,25 +304,25 @@ inline void CModeState::Set(const CModeState &previous)
 	++_profileData.glDepthFunc.overallCallCount;
 	++_profileData.glDepthMask.overallCallCount;
 
-	if (_mode[0] != previous._mode[0])
+	if (_mode[0] != previous._mode[0] && _mode[0] != ~0)
 	{
 		++_profileData.glFrontFace.unfilteredCallCount;
 		::glFrontFace(_mode[0]);
 	}
 
-	if (_mode[1] != previous._mode[1])
+	if (_mode[1] != previous._mode[1] && _mode[1] != ~0)
 	{
 		++_profileData.glCullFace.unfilteredCallCount;
 		::glCullFace(_mode[1]);
 	}
 
-	if (_mode[2] != previous._mode[2])
+	if (_mode[2] != previous._mode[2] && _mode[2] != ~0)
 	{
 		++_profileData.glDepthFunc.unfilteredCallCount;
 		::glDepthFunc(_mode[2]);
 	}
 
-	if (_mode[3] != previous._mode[3])
+	if (_mode[3] != previous._mode[3] && _mode[3] != ~0)
 	{
 		++_profileData.glDepthMask.unfilteredCallCount;
 		::glDepthMask(_mode[3]);
@@ -333,13 +354,13 @@ inline void CBindBufferState::Set(const CBindBufferState &previous)
 	_profileData.glBindBufferARB.overallCallCount += 2;
 
 
-	if (_uiArrayBuffer != previous._uiArrayBuffer)
+	if (_uiArrayBuffer != previous._uiArrayBuffer && _uiArrayBuffer != ~0)
 	{
 		++_profileData.glBindBufferARB.unfilteredCallCount;
 		::glBindBufferARB(GL_ARRAY_BUFFER_ARB, _uiArrayBuffer);
 	}
 
-	if (_uiElementBuffer != previous._uiElementBuffer)
+	if (_uiElementBuffer != previous._uiElementBuffer && _uiElementBuffer != ~0)
 	{
 		++_profileData.glBindBufferARB.unfilteredCallCount;
 		::glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiElementBuffer);
@@ -366,18 +387,41 @@ inline void CValueState::glPointSize(GLfloat size)
 	}
 }
 
+inline void CValueState::glGetFloatv(GLenum pname, GLfloat *params) const
+{
+	switch (pname)
+	{
+	case GL_POINT_SIZE:
+		if (_fPointSize != (std::numeric_limits<float>::infinity)())
+		{
+			*params = _fPointSize;
+			return;
+		}
+		break;
+	case GL_LINE_WIDTH:
+		if (_fLineWidth != (std::numeric_limits<float>::infinity)())
+		{
+			*params = _fLineWidth;
+			return;
+		}
+		break;
+	}
+
+	::glGetFloatv(pname, params);
+}
+
 inline void CValueState::Set(const CValueState &previous)
 {
 	++_profileData.glLineWidth.overallCallCount;
 	++_profileData.glPointSize.overallCallCount;
 
-	if (_fLineWidth != previous._fLineWidth)
+	if (_fLineWidth != previous._fLineWidth && _fLineWidth != (std::numeric_limits<float>::infinity)())
 	{
 		++_profileData.glLineWidth.unfilteredCallCount;
 		::glLineWidth(_fLineWidth);
 	}
 
-	if (_fPointSize != previous._fPointSize)
+	if (_fPointSize != previous._fPointSize && _fPointSize != (std::numeric_limits<float>::infinity)())
 	{
 		++_profileData.glPointSize.unfilteredCallCount;
 		::glPointSize(_fPointSize);
@@ -399,102 +443,358 @@ inline void CPolygonModeState::glPolygonMode(GLenum face, GLenum mode)
 
 inline void CPolygonModeState::glGetIntegerv(GLenum pname, GLint *params) const
 {
-	GLint result = _mode; //GL_POLYGON_MODE
-	memcpy(params, &result, sizeof(GLint));
+	if (_mode != ~0)
+		*params = _mode; //GL_POLYGON_MODE
+	else
+		::glGetIntegerv(pname, params);
 }
 
 inline void CPolygonModeState::Set(const CPolygonModeState &previous)
 {
 	++_profileData.glPolygonMode.overallCallCount;
 	
-	if (_mode != previous._mode)
+	if (_mode != previous._mode && _mode != ~0)
 	{
 		++_profileData.glPolygonMode.unfilteredCallCount;
 		::glPolygonMode(GL_FRONT_AND_BACK, _mode);
 	}
 }
 
+inline void CViewportState::glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	++_profileData.glViewport.overallCallCount;
+	
+	if (x != _viewport[0] || y != _viewport[1] || width != _viewport[2] || height != _viewport[3])
+	{
+		++_profileData.glViewport.unfilteredCallCount;
+		::glViewport(_viewport[0] = x, _viewport[1] = y, _viewport[2] = width, _viewport[3] = height);
+	}
+}
+
+inline void CViewportState::glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	++_profileData.glScissor.overallCallCount;
+	
+	if (x != _scissor[0] || y != _scissor[1] || width != _scissor[2] || height != _scissor[3])
+	{
+		++_profileData.glScissor.unfilteredCallCount;
+		::glScissor(_scissor[0] = x, _scissor[1] = y, _scissor[2] = width, _scissor[3] = height);
+	}
+}
+
+inline void CViewportState::glGetIntegerv(GLenum pname, GLint *params) const
+{
+	if (pname == GL_VIEWPORT)
+	{
+		if (_viewport[0] != ~0)
+		{
+			params[0] = _viewport[0];
+			params[1] = _viewport[1];
+			params[2] = _viewport[2];
+			params[3] = _viewport[3];
+			return;
+		}
+	}
+	else
+		if (_scissor[0] != ~0)
+		{
+			params[0] = _scissor[0];
+			params[1] = _scissor[1];
+			params[2] = _scissor[2];
+			params[3] = _scissor[3];
+			return;
+		}
+
+	::glGetIntegerv(pname, params);
+}
+
+inline void CViewportState::Set(const CViewportState &previous)
+{
+	++_profileData.glViewport.overallCallCount;
+	
+	if ((_viewport[0] != previous._viewport[0] || _viewport[1] != previous._viewport[1] ||
+		_viewport[2] != previous._viewport[2] || _viewport[3] != previous._viewport[3]) &&
+		_viewport[0] != ~0)
+	{
+		++_profileData.glViewport.unfilteredCallCount;
+		::glViewport(_viewport[0], _viewport[1], _viewport[2], _viewport[3]);
+	}
+
+	++_profileData.glScissor.overallCallCount;
+	
+	if ((_scissor[0] != previous._scissor[0] || _scissor[1] != previous._scissor[1] ||
+		_scissor[2] != previous._scissor[2] || _scissor[3] != previous._scissor[3]) &&
+		_scissor[0] != ~0)
+	{
+		++_profileData.glScissor.unfilteredCallCount;
+		::glScissor(_scissor[0], _scissor[1], _scissor[2], _scissor[3]);
+	}
+}
+
+inline void CMatrixState::glLoadMatrixf(const GLfloat *m)
+{
+	++_profileData.glLoadMatrixf.overallCallCount;
+	++_profileData.glLoadMatrixf.unfilteredCallCount;
+
+	::glLoadMatrixf(m);
+
+	GLfloat *mat;
+
+	switch (_mode)
+	{
+	case GL_PROJECTION: mat = _proj; break;
+	case GL_TEXTURE: mat = _tex; break;
+	case GL_MODELVIEW: mat = _mview; break;
+	}
+
+	mat[0] = m[0]; mat[1] = m[1]; mat[2] = m[2]; mat[3] = m[3];
+	mat[4] = m[4]; mat[5] = m[5]; mat[6] = m[6]; mat[7] = m[7];
+	mat[8] = m[8]; mat[9] = m[9]; mat[10] = m[10]; mat[11] = m[11];
+	mat[12] = m[12]; mat[13] = m[13]; mat[14] = m[14]; mat[15] = m[15];
+}
+
+inline void CMatrixState::glMatrixMode(GLenum mode)
+{
+	++_profileData.glMatrixMode.overallCallCount;
+	
+	if (_mode != mode)
+	{
+		++_profileData.glMatrixMode.unfilteredCallCount;
+		::glMatrixMode(_mode = mode);
+	}
+}
+
+inline void CMatrixState::glGetIntegerv(GLenum pname, GLint *params) const
+{
+	if (_mode != ~0)
+		*params = _mode; //GL_MATRIX_MODE 
+	else
+		::glGetIntegerv(pname, params);
+}
+
+inline void CMatrixState::glGetFloatv(GLenum pname, GLfloat *params) const
+{
+	const GLfloat *m;
+
+	switch (pname)
+	{
+	case GL_PROJECTION_MATRIX:
+		if (_proj[0] != (std::numeric_limits<float>::infinity)())
+		{
+			m = _proj;
+			goto copy;
+			return;
+		}
+		break;
+	case GL_TEXTURE_MATRIX:
+		if (_tex[0] != (std::numeric_limits<float>::infinity)())
+		{
+			m = _tex;
+			goto copy;
+			return;
+		}
+		break;
+	case GL_MODELVIEW_MATRIX:
+		if (_mview[0] != (std::numeric_limits<float>::infinity)())
+		{
+			m = _mview;
+			goto copy;
+			return;
+		}
+		break;
+	}
+
+	::glGetFloatv(pname, params);
+
+	return;
+
+copy:
+	params[0] = m[0]; params[1] = m[1]; params[2] = m[2]; params[3] = m[3];
+	params[4] = m[4]; params[5] = m[5]; params[6] = m[6]; params[7] = m[7];
+	params[8] = m[8]; params[9] = m[9]; params[10] = m[10]; params[11] = m[11];
+	params[12] = m[12]; params[13] = m[13]; params[14] = m[14]; params[15] = m[15];
+}
+
+inline void CMatrixState::Set(const CMatrixState &previous)
+{
+	_profileData.glLoadMatrixf.overallCallCount += 3;
+	_profileData.glMatrixMode.overallCallCount += 4;
+	
+	if (_tex[0] != (std::numeric_limits<float>::infinity)())
+	{
+		++_profileData.glMatrixMode.unfilteredCallCount;
+		++_profileData.glLoadMatrixf.unfilteredCallCount;
+		::glMatrixMode(GL_TEXTURE);
+		::glLoadMatrixf(_tex);
+	}
+
+	if (_proj[0] != (std::numeric_limits<float>::infinity)())
+	{
+		++_profileData.glMatrixMode.unfilteredCallCount;
+		++_profileData.glLoadMatrixf.unfilteredCallCount;
+		::glMatrixMode(GL_PROJECTION);
+		::glLoadMatrixf(_proj);
+	}
+
+	if (_mview[0] != (std::numeric_limits<float>::infinity)())
+	{
+		++_profileData.glMatrixMode.unfilteredCallCount;
+		++_profileData.glLoadMatrixf.unfilteredCallCount;
+		::glMatrixMode(GL_MODELVIEW);
+		::glLoadMatrixf(_mview);
+	}
+	
+	if (_mode != GL_MODELVIEW && _mode != ~0)
+	{
+		++_profileData.glMatrixMode.unfilteredCallCount;
+		::glMatrixMode(_mode);
+	}
+}
+
 inline void CBlendFuncState::glBlendFunc(GLenum sfactor, GLenum dfactor)
 {
-	++_profileData.glBlendFuncProfileData.overallCallCount;
+	++_profileData.glBlendFunc.overallCallCount;
 	if (sfactor != _srcFactor || dfactor != _dstFactor)
 	{
-		++_profileData.glBlendFuncProfileData.unfilteredCallCount;
+		++_profileData.glBlendFunc.unfilteredCallCount;
 		::glBlendFunc(_srcFactor = sfactor, _dstFactor = dfactor);
 	}
 }
 
 inline void CBlendFuncState::glGetIntegerv(GLenum pname, GLint *params) const
 {
-	GLint result = _srcFactor; //GL_BLEND_SRC
+	if (pname == GL_BLEND_DST)
+	{
+		if (_dstFactor != ~0)
+		{
+			*params = _dstFactor;
+			return;
+		}
+	}
+	else //GL_BLEND_SRC
+		if (_srcFactor != ~0)
+		{
+			*params = _srcFactor;
+			return;
+		}
 
-	if (pname == GL_BLEND_DST) result = _dstFactor;
-
-	memcpy(params, &result, sizeof(GLint));
+	::glGetIntegerv(pname, params);
 }
 
 inline void CBlendFuncState::Set(const CBlendFuncState &previous)
 {
-	++_profileData.glBlendFuncProfileData.overallCallCount;
+	++_profileData.glBlendFunc.overallCallCount;
 
-	if (_srcFactor != previous._srcFactor || _dstFactor != previous._dstFactor)
+	if ((_srcFactor != previous._srcFactor || _dstFactor != previous._dstFactor) && (_srcFactor != ~0 && _dstFactor != ~0))
 	{
-		++_profileData.glBlendFuncProfileData.unfilteredCallCount;
+		++_profileData.glBlendFunc.unfilteredCallCount;
 		::glBlendFunc(_srcFactor, _dstFactor);
 	}
 }
 
 inline void CAlphaFuncState::glAlphaFunc(GLenum func, GLclampf ref)
 {
-	++_profileData.glAlphaFuncProfileData.overallCallCount;
+	++_profileData.glAlphaFunc.overallCallCount;
 	if (func != _func || ref != _ref)
 	{
-		++_profileData.glAlphaFuncProfileData.unfilteredCallCount;
+		++_profileData.glAlphaFunc.unfilteredCallCount;
 		::glAlphaFunc(_func = func, _ref = ref);
 	}
 }
 
 inline void CAlphaFuncState::glGetIntegerv(GLenum pname, GLint *params) const
 {
-	GLint result = _func; //GL_ALPHA_TEST_FUNC
-	memcpy(params, &result, sizeof(GLint));
+	if (_func != ~0)
+		*params = _func; //GL_ALPHA_TEST_FUNC
+	else
+		::glGetIntegerv(pname, params);
 }
 
 inline void CAlphaFuncState::glGetFloatv(GLenum pname, GLfloat *params) const
 {
-	GLfloat result = _ref; //GL_ALPHA_TEST_REF
-	memcpy(params, &result, sizeof(GLfloat));
+	if (_ref != (std::numeric_limits<float>::infinity)())
+		*params = _ref; //GL_ALPHA_TEST_REF
+	else
+		::glGetFloatv(pname, params);
 }
 
 inline void CAlphaFuncState::Set(const CAlphaFuncState &previous)
 {
-	++_profileData.glAlphaFuncProfileData.overallCallCount;
+	++_profileData.glAlphaFunc.overallCallCount;
 
-	if (_func != previous._func || _ref != previous._ref)
+	if ((_func != previous._func || _ref != previous._ref) && (_func != ~0 && _ref != (std::numeric_limits<float>::infinity)()))
 	{
-		++_profileData.glAlphaFuncProfileData.unfilteredCallCount;
+		++_profileData.glAlphaFunc.unfilteredCallCount;
 		::glAlphaFunc(_func, _ref);
 	}
 }
 
 inline void CColorState::glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-	++_profileData.glColor4fProfileData.overallCallCount;
-	if (red != _red || green != _green || blue != _blue || alpha != _alpha)
+	++_profileData.glColor4f.overallCallCount;
+	if (red != _color[0] || green != _color[1] || blue != _color[2] || alpha != _color[3])
 	{
-		++_profileData.glColor4fProfileData.unfilteredCallCount;
-		::glColor4f(_red = red, _green = green, _blue = blue, _alpha = alpha);
+		++_profileData.glColor4f.unfilteredCallCount;
+		::glColor4f(_color[0] = red, _color[1] = green, _color[2] = blue, _color[3] = alpha);
 	}
+}
+
+inline void CColorState::glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+{
+	++_profileData.glClearColor.overallCallCount;
+	if (red != _clearColor[0] || green != _clearColor[1] || blue != _clearColor[2] || alpha != _clearColor[3])
+	{
+		++_profileData.glClearColor.unfilteredCallCount;
+		::glClearColor(_clearColor[0] = red, _clearColor[1] = green, _clearColor[2] = blue, _clearColor[3] = alpha);
+	}
+}
+
+inline void CColorState::glGetFloatv(GLenum pname, GLfloat *params) const
+{
+	if (pname == GL_COLOR_CLEAR_VALUE)
+	{
+		if (_clearColor[0] != (std::numeric_limits<float>::infinity)())
+		{
+			params[0] = _clearColor[0];
+			params[1] = _clearColor[1];
+			params[2] = _clearColor[2];
+			params[3] = _clearColor[3];
+			return;
+		}
+	}
+	else //GL_CURRENT_COLOR
+		if (_color[0] != (std::numeric_limits<float>::infinity)())
+		{
+			params[0] = _color[0];
+			params[1] = _color[1];
+			params[2] = _color[2];
+			params[3] = _color[3];
+			return;
+		}
+
+	::glGetFloatv(pname, params);
 }
 
 inline void CColorState::Set(const CColorState &previous)
 {
-	++_profileData.glColor4fProfileData.overallCallCount;
+	++_profileData.glColor4f.overallCallCount;
 
-	if (_alpha != previous._alpha || _red != previous._red || _green != previous._green || _blue != previous._blue)
+	if ((_color[3] != previous._color[3] || _color[2] != previous._color[2] ||
+		_color[1] != previous._color[1] || _color[0] != previous._color[0]) &&
+		_color[0] != (std::numeric_limits<float>::infinity)())
 	{
-		++_profileData.glColor4fProfileData.unfilteredCallCount;
-		::glColor4f(_red, _green, _blue, _alpha);
+		++_profileData.glColor4f.unfilteredCallCount;
+		::glColor4f(_color[0], _color[1], _color[2], _color[3]);
+	}
+
+	++_profileData.glClearColor.overallCallCount;
+
+	if ((_clearColor[0] != previous._clearColor[0] || _clearColor[1] != previous._clearColor[1] ||
+		_clearColor[2] != previous._clearColor[2] || _clearColor[3] != previous._clearColor[3]) &&
+		_clearColor[0] != (std::numeric_limits<float>::infinity)())
+	{
+		++_profileData.glClearColor.unfilteredCallCount;
+		::glClearColor(_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]);
 	}
 }
 
@@ -503,49 +803,49 @@ inline void CTextureState::glBindTexture(GLenum target, GLuint texture)
 	if (target != GL_TEXTURE_2D)
 		UNDEFINED_CAP_FATAL(target)
 
-	++_profileData.glBindTextureProfileData.overallCallCount;
+	++_profileData.glBindTexture.overallCallCount;
 
 	if (_textureUnit == ~0)
 	{
 		if (GLEW_ARB_multitexture || GLEW_ARB_shading_language_100)
-				::glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, (GLint *)&_textureUnit);
+			::glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, (GLint *)&_textureUnit);
 		else
-				_textureUnit = GL_TEXTURE0_ARB;
+			_textureUnit = GL_TEXTURE0_ARB;
 	}
 
 	TTexture &cur_texture =_textures[_textureUnit - GL_TEXTURE0_ARB];
 
 	if (texture != cur_texture.texture)
 	{
-		++_profileData.glBindTextureProfileData.unfilteredCallCount;
+		++_profileData.glBindTexture.unfilteredCallCount;
 		::glBindTexture(target, cur_texture.texture = texture);
 		
 		if (!GLEW_ARB_shading_language_100 && _textureUnit != GL_TEXTURE0_ARB)
 		{
-			if (texture != 0 && !_textures[_textureUnit - GL_TEXTURE0_ARB].enabled)
+			if (texture != 0 && !cur_texture.enabled)
 			{
-				_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = true;
+				cur_texture.enabled = true;
 				::glEnable(GL_TEXTURE_2D);
 			}
 			else
-				if (texture == 0 && _textures[_textureUnit - GL_TEXTURE0_ARB].enabled)
+				if (texture == 0 && cur_texture.enabled)
 				{
-					_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = false;
+					cur_texture.enabled = false;
 					::glDisable(GL_TEXTURE_2D);
 				}
 		}
 		else
-			_textures[_textureUnit - GL_TEXTURE0_ARB].enabled = texture != 0;
+			cur_texture.enabled = texture != 0;
 	}
 }
 
 inline void CTextureState::glActiveTextureARB(GLenum texture)
 {
-	++_profileData.glActiveTextureARBProfileData.overallCallCount;
+	++_profileData.glActiveTextureARB.overallCallCount;
 
 	if (texture != _textureUnit)
 	{
-		++_profileData.glActiveTextureARBProfileData.unfilteredCallCount;
+		++_profileData.glActiveTextureARB.unfilteredCallCount;
 		::glActiveTextureARB(_textureUnit = texture);
 	}
 }
@@ -553,43 +853,69 @@ inline void CTextureState::glActiveTextureARB(GLenum texture)
 inline void CTextureState::Set(const CTextureState &previous)
 {
 	for (int i = (int)_textures.size() - 1; i > -1; --i)
-	{
-		if (_textures[i].texture == ~0 || (_textures[i].enabled == previous._textures[i].enabled && _textures[i].texture == previous._textures[i].texture))
-			continue;
-
-		glActiveTextureARB(GL_TEXTURE0_ARB + i);
-
-		if (!GLEW_ARB_shading_language_100 && i != 0)
+		if (!(_textures[i].texture == ~0 || (_textures[i].enabled == previous._textures[i].enabled && _textures[i].texture == previous._textures[i].texture)))
 		{
-			if (_textures[i].enabled)
-				::glEnable(GL_TEXTURE_2D);
-			else
-				::glDisable(GL_TEXTURE_2D);
+			glActiveTextureARB(GL_TEXTURE0_ARB + i);
+
+			if (!GLEW_ARB_shading_language_100 && i != 0)
+			{
+				if (_textures[i].enabled)
+					::glEnable(GL_TEXTURE_2D);
+				else
+					::glDisable(GL_TEXTURE_2D);
+			}
+
+			::glBindTexture(GL_TEXTURE_2D, _textures[i].texture);
+		}
+}
+
+inline void CTextureState::glGetIntegerv(GLenum pname, GLint *params) const
+{
+	if (pname == GL_TEXTURE_2D_BINDING_EXT)
+	{
+		if (_textures[_textureUnit - GL_TEXTURE0_ARB].texture != ~0)
+		{
+			*params = _textures[_textureUnit - GL_TEXTURE0_ARB].texture;
+			return;
+		}
+	}
+	else //GL_ACTIVE_TEXTURE_ARB
+		if (_textureUnit != ~0)
+		{
+			*params = _textureUnit;
+			return;
 		}
 
-		::glBindTexture(GL_TEXTURE_2D, _textures[i].texture);
-	}
+	::glGetIntegerv(pname, params);
 }
 
 inline void CProgramState::glUseProgramObjectARB(GLhandleARB programObj)
 {
-	++_profileData.glUseProgramObjectARBProfileData.overallCallCount;
+	++_profileData.glUseProgramObjectARB.overallCallCount;
 	if (programObj != _programObj)
 	{
-		++_profileData.glUseProgramObjectARBProfileData.unfilteredCallCount;
+		++_profileData.glUseProgramObjectARB.unfilteredCallCount;
 		::glUseProgramObjectARB(_programObj = programObj);
 	}
+}
+
+inline void CProgramState::glGetIntegerv(GLenum pname, GLint *params) const
+{
+	if (_programObj != ~0)
+		*params = _programObj; //GL_CURRENT_PROGRAM
+	else
+		::glGetIntegerv(pname, params);
 }
 
 inline void CProgramState::Set(const CProgramState &previous)
 {
 	if (GLEW_ARB_shader_objects)
 	{
-		++_profileData.glUseProgramObjectARBProfileData.overallCallCount;
+		++_profileData.glUseProgramObjectARB.overallCallCount;
 		
-		if (_programObj != previous._programObj)
+		if (_programObj != previous._programObj && _programObj != ~0)
 		{
-			++_profileData.glUseProgramObjectARBProfileData.unfilteredCallCount;
+			++_profileData.glUseProgramObjectARB.unfilteredCallCount;
 			::glUseProgramObjectARB(_programObj);
 		}
 	}
@@ -677,6 +1003,11 @@ void CStateManager<false>::glColor4f(GLfloat red, GLfloat green, GLfloat blue, G
 	::glColor4f(red, green, blue, alpha);
 }
 
+void CStateManager<false>::glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+{
+	::glClearColor(red, green, blue, alpha);
+}
+
 void CStateManager<false>::glBindTexture(GLenum target, GLuint texture)
 {
 	::glBindTexture(target, texture);
@@ -688,6 +1019,16 @@ void CStateManager<false>::glActiveTextureARB(GLenum texture)
 	
 	// This is not very good solution but for compatibility with cached state manager.
 	if (!GLEW_ARB_shading_language_100 && texture != GL_TEXTURE0_ARB) ::glEnable(GL_TEXTURE_2D);
+}
+
+void CStateManager<false>::glLoadMatrixf(const GLfloat *m)
+{
+	::glLoadMatrixf(m);
+}
+
+void CStateManager<false>::glMatrixMode(GLenum mode)
+{
+	::glMatrixMode(mode);
 }
 
 void CStateManager<false>::glUseProgramObjectARB(GLhandleARB programObj)
@@ -708,6 +1049,16 @@ void CStateManager<false>::glCullFace(GLenum mode)
 void CStateManager<false>::glPolygonMode(GLenum face, GLenum mode)
 {
 	::glPolygonMode(face, mode);
+}
+
+void CStateManager<false>::glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	::glViewport(x, y, width, height);
+}
+
+void CStateManager<false>::glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	::glScissor(x, y, width, height);
 }
 
 void CStateManager<false>::glDepthFunc(GLenum func)
@@ -767,6 +1118,7 @@ void CStateManager<true>::Pop()
 	_curState.textureState.Set(prev.textureState);
 	_curState.programState.Set(prev.programState);
 	_curState.polygonModeState.Set(prev.polygonModeState);
+	_curState.viewportState.Set(prev.viewportState);
 	_curState.modeState.Set(prev.modeState);
 	_curState.bindBufferState.Set(prev.bindBufferState);
 	_curState.valueState.Set(prev.valueState);
@@ -831,6 +1183,20 @@ void CStateManager<true>::glGetIntegerv(GLenum pname, GLint *params) const
 	case GL_ALPHA_TEST_FUNC:
 		_curState.alphaFuncState.glGetIntegerv(pname, params);
 		break;
+	case GL_VIEWPORT:
+	case GL_SCISSOR_BOX:
+		_curState.viewportState.glGetIntegerv(pname, params);
+		break;
+	case GL_MATRIX_MODE:
+		_curState.matrixState.glGetIntegerv(pname, params);
+		break;
+	case GL_TEXTURE_2D_BINDING_EXT:
+	case GL_ACTIVE_TEXTURE:
+		_curState.textureState.glGetIntegerv(pname, params);
+		break;
+	case GL_CURRENT_PROGRAM:
+		_curState.programState.glGetIntegerv(pname, params);
+		break;
 	default:
 		UNDEFINED_CAP_FATAL(pname)
 	}
@@ -842,6 +1208,19 @@ void CStateManager<true>::glGetFloatv(GLenum pname, GLfloat *params) const
 	{
 	case GL_ALPHA_TEST_REF:
 		_curState.alphaFuncState.glGetFloatv(pname, params);
+		break;
+	case GL_LINE_WIDTH:
+	case GL_POINT_SIZE:
+		_curState.valueState.glGetFloatv(pname, params);
+		break;
+	case GL_CURRENT_COLOR:
+	case GL_COLOR_CLEAR_VALUE:
+		_curState.colorState.glGetFloatv(pname, params);
+		break;
+	case GL_PROJECTION_MATRIX:
+	case GL_TEXTURE_MATRIX:
+	case GL_MODELVIEW_MATRIX:
+		_curState.matrixState.glGetFloatv(pname, params);
 		break;
 	default:
 		UNDEFINED_CAP_FATAL(pname)
@@ -875,6 +1254,11 @@ void CStateManager<true>::glColor4f(GLfloat red, GLfloat green, GLfloat blue, GL
 	_curState.colorState.glColor4f(red, green, blue, alpha);
 }
 
+void CStateManager<true>::glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+{
+	_curState.colorState.glClearColor(red, green, blue, alpha);
+}
+
 void CStateManager<true>::glBindTexture(GLenum target, GLuint texture)
 {
 	_curState.textureState.glBindTexture(target, texture);
@@ -883,6 +1267,16 @@ void CStateManager<true>::glBindTexture(GLenum target, GLuint texture)
 void CStateManager<true>::glActiveTextureARB(GLenum texture)
 {
 	_curState.textureState.glActiveTextureARB(texture);
+}
+
+void CStateManager<true>::glLoadMatrixf(const GLfloat *m)
+{
+	_curState.matrixState.glLoadMatrixf(m);
+}
+
+void CStateManager<true>::glMatrixMode(GLenum mode)
+{
+	_curState.matrixState.glMatrixMode(mode);
 }
 
 void CStateManager<true>::glUseProgramObjectARB(GLhandleARB programObj)
@@ -903,6 +1297,16 @@ void CStateManager<true>::glCullFace(GLenum mode)
 void CStateManager<true>::glPolygonMode(GLenum face, GLenum mode)
 {
 	_curState.polygonModeState.glPolygonMode(face, mode);
+}
+
+void CStateManager<true>::glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	_curState.viewportState.glViewport(x, y, width, height);
+}
+
+void CStateManager<true>::glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	_curState.viewportState.glScissor(x, y, width, height);
 }
 
 void CStateManager<true>::glDepthFunc(GLenum func)
@@ -947,24 +1351,29 @@ void CStateManager<true>::_OutputFunctionProfileData(const string &functionName,
 void CStateManager<true>::OutputProfileData()
 {
 	Core()->RenderProfilerText("OpenGL functions calls (unfiltered/overall)", ColorWhite());
-	_OutputFunctionProfileData("glEnable...................", _profileData.toggleStateProfileData.glEnableProfileData);
-	_OutputFunctionProfileData("glDisable..................", _profileData.toggleStateProfileData.glDisableProfileData);
-	_OutputFunctionProfileData("glEnableClientState........", _profileData.toggleStateProfileData.glEnableClientStateProfileData);
-	_OutputFunctionProfileData("glDisableClientState.......", _profileData.toggleStateProfileData.glDisableClientStateProfileData);
+	_OutputFunctionProfileData("glEnable...................", _profileData.toggleStateProfileData.glEnable);
+	_OutputFunctionProfileData("glDisable..................", _profileData.toggleStateProfileData.glDisable);
+	_OutputFunctionProfileData("glEnableClientState........", _profileData.toggleStateProfileData.glEnableClientState);
+	_OutputFunctionProfileData("glDisableClientState.......", _profileData.toggleStateProfileData.glDisableClientState);
 	_OutputFunctionProfileData("glEnableVertexAttribArray..", _profileData.toggleStateProfileData.glEnableVertexAttribArrayARB);
 	_OutputFunctionProfileData("glDisableVertexAttribArray.", _profileData.toggleStateProfileData.glDisableVertexAttribArrayARB);
-	_OutputFunctionProfileData("glBlendFunc................", _profileData.blendFuncStateProfileData.glBlendFuncProfileData);
-	_OutputFunctionProfileData("glAlphaFunc................", _profileData.alphaFuncStateProfileData.glAlphaFuncProfileData);
-	_OutputFunctionProfileData("glColor4f..................", _profileData.colorStateProfileData.glColor4fProfileData);
-	_OutputFunctionProfileData("glBindTexture..............", _profileData.textureStateProfileData.glBindTextureProfileData);
-	_OutputFunctionProfileData("glActiveTexture............", _profileData.textureStateProfileData.glActiveTextureARBProfileData);
-	_OutputFunctionProfileData("glUseProgramObject.........", _profileData.programStateProfileData.glUseProgramObjectARBProfileData);
+	_OutputFunctionProfileData("glBlendFunc................", _profileData.blendFuncStateProfileData.glBlendFunc);
+	_OutputFunctionProfileData("glAlphaFunc................", _profileData.alphaFuncStateProfileData.glAlphaFunc);
+	_OutputFunctionProfileData("glColor4f..................", _profileData.colorStateProfileData.glColor4f);
+	_OutputFunctionProfileData("glClearColor...............", _profileData.colorStateProfileData.glClearColor);
+	_OutputFunctionProfileData("glBindBuffer...............", _profileData.bindBufferStateProfilerData.glBindBufferARB);
+	_OutputFunctionProfileData("glBindTexture..............", _profileData.textureStateProfileData.glBindTexture);
+	_OutputFunctionProfileData("glActiveTexture............", _profileData.textureStateProfileData.glActiveTextureARB);
+	_OutputFunctionProfileData("glUseProgramObject.........", _profileData.programStateProfileData.glUseProgramObjectARB);
+	_OutputFunctionProfileData("glLoadMatrixf..............", _profileData.matrxStateProfilerData.glLoadMatrixf);
+	_OutputFunctionProfileData("glMatrixMode...............", _profileData.matrxStateProfilerData.glMatrixMode);	
 	_OutputFunctionProfileData("glPolygonMode..............", _profileData.polygonModeStateProfileData.glPolygonMode);
 	_OutputFunctionProfileData("glCullFace.................", _profileData.modeStateProfilerData.glCullFace);
 	_OutputFunctionProfileData("glFrontFace................", _profileData.modeStateProfilerData.glFrontFace);
 	_OutputFunctionProfileData("glDepthFunc................", _profileData.modeStateProfilerData.glDepthFunc);
 	_OutputFunctionProfileData("glDepthMask................", _profileData.modeStateProfilerData.glDepthMask);
-	_OutputFunctionProfileData("glBindBuffer...............", _profileData.bindBufferStateProfilerData.glBindBufferARB);
+	_OutputFunctionProfileData("glViewport.................", _profileData.viewportStateProfileData.glViewport);
+	_OutputFunctionProfileData("glScissor..................", _profileData.viewportStateProfileData.glScissor);
 	_OutputFunctionProfileData("glLineWidth................", _profileData.valueStateProfilerData.glLineWidth);
 	_OutputFunctionProfileData("glPointSize................", _profileData.valueStateProfilerData.glPointSize);
 }
@@ -974,19 +1383,24 @@ void CStateManager<true>::OutputProfileSummary()
 	::TProfileData summary;
 
 	summary.unfilteredCallCount =
-		_profileData.toggleStateProfileData.glEnableProfileData.unfilteredCallCount +
-		_profileData.toggleStateProfileData.glDisableProfileData.unfilteredCallCount +
-		_profileData.toggleStateProfileData.glEnableClientStateProfileData.unfilteredCallCount +
-		_profileData.toggleStateProfileData.glDisableClientStateProfileData.unfilteredCallCount +
+		_profileData.toggleStateProfileData.glEnable.unfilteredCallCount +
+		_profileData.toggleStateProfileData.glDisable.unfilteredCallCount +
+		_profileData.toggleStateProfileData.glEnableClientState.unfilteredCallCount +
+		_profileData.toggleStateProfileData.glDisableClientState.unfilteredCallCount +
 		_profileData.toggleStateProfileData.glEnableVertexAttribArrayARB.unfilteredCallCount +
 		_profileData.toggleStateProfileData.glDisableVertexAttribArrayARB.unfilteredCallCount +
-		_profileData.blendFuncStateProfileData.glBlendFuncProfileData.unfilteredCallCount +
-		_profileData.alphaFuncStateProfileData.glAlphaFuncProfileData.unfilteredCallCount +
-		_profileData.colorStateProfileData.glColor4fProfileData.unfilteredCallCount +
-		_profileData.textureStateProfileData.glBindTextureProfileData.unfilteredCallCount +
-		_profileData.textureStateProfileData.glActiveTextureARBProfileData.unfilteredCallCount +
-		_profileData.programStateProfileData.glUseProgramObjectARBProfileData.unfilteredCallCount +
-		_profileData.polygonModeStateProfileData.glPolygonMode.unfilteredCallCount + 
+		_profileData.blendFuncStateProfileData.glBlendFunc.unfilteredCallCount +
+		_profileData.alphaFuncStateProfileData.glAlphaFunc.unfilteredCallCount +
+		_profileData.colorStateProfileData.glColor4f.unfilteredCallCount +
+		_profileData.colorStateProfileData.glClearColor.unfilteredCallCount +
+		_profileData.textureStateProfileData.glBindTexture.unfilteredCallCount +
+		_profileData.textureStateProfileData.glActiveTextureARB.unfilteredCallCount +
+		_profileData.programStateProfileData.glUseProgramObjectARB.unfilteredCallCount +
+		_profileData.polygonModeStateProfileData.glPolygonMode.unfilteredCallCount +
+		_profileData.viewportStateProfileData.glViewport.unfilteredCallCount +
+		_profileData.viewportStateProfileData.glScissor.unfilteredCallCount +
+		_profileData.matrxStateProfilerData.glLoadMatrixf.unfilteredCallCount +
+		_profileData.matrxStateProfilerData.glMatrixMode.unfilteredCallCount +
 		_profileData.modeStateProfilerData.glCullFace.unfilteredCallCount + 
 		_profileData.modeStateProfilerData.glFrontFace.unfilteredCallCount + 
 		_profileData.modeStateProfilerData.glDepthFunc.unfilteredCallCount + 
@@ -996,19 +1410,24 @@ void CStateManager<true>::OutputProfileSummary()
 		_profileData.bindBufferStateProfilerData.glBindBufferARB.unfilteredCallCount;
 
 	summary.overallCallCount =
-		_profileData.toggleStateProfileData.glEnableProfileData.overallCallCount +
-		_profileData.toggleStateProfileData.glDisableProfileData.overallCallCount +
-		_profileData.toggleStateProfileData.glEnableClientStateProfileData.overallCallCount +
-		_profileData.toggleStateProfileData.glDisableClientStateProfileData.overallCallCount +
+		_profileData.toggleStateProfileData.glEnable.overallCallCount +
+		_profileData.toggleStateProfileData.glDisable.overallCallCount +
+		_profileData.toggleStateProfileData.glEnableClientState.overallCallCount +
+		_profileData.toggleStateProfileData.glDisableClientState.overallCallCount +
 		_profileData.toggleStateProfileData.glEnableVertexAttribArrayARB.overallCallCount +
 		_profileData.toggleStateProfileData.glDisableVertexAttribArrayARB.overallCallCount +
-		_profileData.blendFuncStateProfileData.glBlendFuncProfileData.overallCallCount +
-		_profileData.alphaFuncStateProfileData.glAlphaFuncProfileData.overallCallCount +
-		_profileData.colorStateProfileData.glColor4fProfileData.overallCallCount +
-		_profileData.textureStateProfileData.glBindTextureProfileData.overallCallCount +
-		_profileData.textureStateProfileData.glActiveTextureARBProfileData.overallCallCount +
-		_profileData.programStateProfileData.glUseProgramObjectARBProfileData.overallCallCount +
-		_profileData.polygonModeStateProfileData.glPolygonMode.overallCallCount + 
+		_profileData.blendFuncStateProfileData.glBlendFunc.overallCallCount +
+		_profileData.alphaFuncStateProfileData.glAlphaFunc.overallCallCount +
+		_profileData.colorStateProfileData.glColor4f.overallCallCount +
+		_profileData.colorStateProfileData.glClearColor.overallCallCount +
+		_profileData.textureStateProfileData.glBindTexture.overallCallCount +
+		_profileData.textureStateProfileData.glActiveTextureARB.overallCallCount +
+		_profileData.programStateProfileData.glUseProgramObjectARB.overallCallCount +
+		_profileData.polygonModeStateProfileData.glPolygonMode.overallCallCount +
+		_profileData.viewportStateProfileData.glViewport.overallCallCount +
+		_profileData.matrxStateProfilerData.glLoadMatrixf.overallCallCount +
+		_profileData.matrxStateProfilerData.glMatrixMode.overallCallCount +
+		_profileData.viewportStateProfileData.glScissor.overallCallCount +
 		_profileData.modeStateProfilerData.glCullFace.overallCallCount + 
 		_profileData.modeStateProfilerData.glFrontFace.overallCallCount + 
 		_profileData.modeStateProfilerData.glDepthFunc.overallCallCount + 

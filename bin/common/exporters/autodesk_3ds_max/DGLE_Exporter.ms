@@ -1,6 +1,6 @@
 /**
 \author Korotkov Andrey aka DRON
-\date 07.04.2013 (c)Korotkov Andrey
+\date 15.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -155,9 +155,9 @@ utility DGLE_Exporter "DGLE Exporter"
 		writelong handleFile vertices.count #unsigned 
 		writelong handleFile indices.count #unsigned 
 		
-		writefloat handleFile (meshObj.center.x + centerVec.x)
-		writefloat handleFile (meshObj.center.y + centerVec.y)
-		writefloat handleFile (meshObj.center.z + centerVec.z)
+		writefloat handleFile ((meshObj.center.x + centerVec.x) * scaleCoeff)
+		writefloat handleFile ((meshObj.center.y + centerVec.y) * scaleCoeff)
+		writefloat handleFile ((meshObj.center.z + centerVec.z) * scaleCoeff)
 		
 		bounding_box = nodeLocalBoundingBox meshObj
 		
@@ -237,6 +237,21 @@ utility DGLE_Exporter "DGLE Exporter"
 		return true
 	)		
 	-------------------------------------------------------------------------------------
+	function GetMeshMaxDemension meshObj =
+	(
+		bounding_box = nodeLocalBoundingBox meshObj
+		
+		w = abs(bounding_box[2].x - bounding_box[1].x)
+		h = abs(bounding_box[2].y - bounding_box[1].y)
+		d = abs(bounding_box[2].z - bounding_box[1].z)
+		
+		m = w
+		if w < h then m = h
+		if m < d then m = d
+		
+		return m
+	)
+	-------------------------------------------------------------------------------------
 	function SaveMeshToFile FileName meshObj doBuildFasetNormals doCenter doScale doOptimize doFrameAnim startFrame endFrame animStep txtAppend =
 	(
 		disableSceneRedraw()
@@ -253,14 +268,33 @@ utility DGLE_Exporter "DGLE Exporter"
 		
 		if doScale then
 		(
-			bounding_box = nodeLocalBoundingBox meshObj
-			w = abs(bounding_box[2].x - bounding_box[1].x)
-			h = abs(bounding_box[2].y - bounding_box[1].y)
-			d = abs(bounding_box[2].z - bounding_box[1].z)
-			m = w
-			if w < h then m = h
-			if m < d then m = d
-			scale_c = 1. / m
+			if doFrameAnim then
+			(
+				cur_frame = startFrame
+				
+				m = -3.40E38
+				idx = 0
+				
+				while cur_frame <= endFrame do
+				(
+					slidertime = cur_frame
+					
+					t = GetMeshMaxDemension meshObj
+					
+					if t > m then
+					(
+						idx = cur_frame
+						m = t
+					)
+					
+					cur_frame += animStep
+				)
+				
+				slidertime = idx
+				scale_c = 1. / m
+			)
+			else
+				scale_c = 1. / (GetMeshMaxDemension meshObj)
 		)
 		
 		center_pos = [0., 0. , 0.]

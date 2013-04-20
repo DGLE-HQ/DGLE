@@ -22,7 +22,7 @@ DGLE_DYNAMIC_FUNC
 #define GAME_VP_WIDTH	800u
 #define GAME_VP_HEIGHT	600u
 
-// screen resolution
+// real screen resolution
 #define SCREEN_WIDTH	1024u
 #define SCREEN_HEIGHT	768u
 
@@ -32,22 +32,21 @@ IInput *pInput = NULL;
 IRender2D *pRender2D = NULL;
 
 // textures
-ITexture *pBg = NULL, *pSky = NULL, *pFog = NULL, *pTexGirl = NULL, *pLight = NULL,
-	*pLightRound = NULL, *pOwl = NULL, *pVox = NULL;
+ITexture *pBg, *pSky, *pFog, *pTexGirl, *pLight, *pLightRound, *pOwl, *pVox;
 
-IBitmapFont *pFont = NULL;
+IBitmapFont *pFont;
 
-ISoundSample *pSndOwl = NULL, *pForestAmbient = NULL;
-ISoundChannel *pChannelAmbientLoop = NULL;
+ISoundSample *pSndOwl, *pForestAmbient;
+ISoundChannel *pChannelAmbientLoop;
 
 // lights positions
 TPoint2 lights[] =
 {
 	TPoint2(0.f, 0.f),
-	TPoint2(750.f,315.f),
-	TPoint2(1000.f,450.f),
-	TPoint2(1010.f,650.f),
-	TPoint2(150.f,550.f)
+	TPoint2(750.f, 315.f),
+	TPoint2(1000.f, 450.f),
+	TPoint2(1010.f, 650.f),
+	TPoint2(150.f, 550.f)
 };
 
 int counter = 800;
@@ -61,7 +60,7 @@ TPoint2 stMousePos;
 bool owlGoLeft = false;
 float owlX = -200.f;
 
-// event callback on switching to fullscreen event
+// callback on switching to fullscreen event
 void DGLE_API OnFullScreenEvent(void *pParameter, IBaseEvent *pEvent)
 {
 	IEvGoFullScreen *p_event = (IEvGoFullScreen *)pEvent;
@@ -180,13 +179,15 @@ void DGLE_API Update(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
-	pRender2D->Begin2D();
+	pRender2D->Begin2D(); // not necessary but a good style
 
 	// draw static sky background
 	pRender2D->DrawTexture(pSky, TPoint2(), TVector2(GAME_VP_WIDTH, GAME_VP_HEIGHT));
 
+	// Draw background scene.
+	// We devide camera position here to add some paralax effect.
 	
-	// draw background
+	// draw background image
 	pRender2D->SetCamera(TPoint2(cameraPosition.x / 1.5f, cameraPosition.y / 1.5f), cameraAngle, TPoint2(cameraScale, cameraScale));
 	pRender2D->SetBlendMode(BE_NORMAL);
 	pRender2D->DrawTextureCropped(pBg, TPoint2(-200.f, 150.f), TVector2(1399.f, 517.f), TRectF(0.f, 905.f, 1399.f, 517.f), 0.f, EF_BLEND);
@@ -245,14 +246,16 @@ void DGLE_API Render(void *pParameter)
 	pRender2D->AbsoluteToResolutionCorrect(stMousePos, pos);
 	
 	// draw sprite effect at cursor position
+	pRender2D->SetBlendMode(BE_ADD); // we already set this mode above but for more clearness
 	pRender2D->DrawTextureSprite(pVox, TPoint2(pos.x - 37, pos.y - 37), TVector2(75.f, 75.f), (counter / 2) % 16, 0.f, EF_BLEND);
 
 	// draw help text at the bottom of the screen
 	uint tw, th;
 	pFont->GetTextDimensions(HELP_TEXT, tw, th);
+	pRender2D->SetBlendMode(BE_NORMAL);
 	pFont->Draw2D((float)((GAME_VP_WIDTH - tw) / 2), (float)(GAME_VP_HEIGHT - th), HELP_TEXT);
 
-	pRender2D->End2D();
+	pRender2D->End2D(); // not necessary but a good style
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

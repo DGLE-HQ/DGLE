@@ -23,7 +23,9 @@ IInput *pInput = NULL;
 
 // pointers to engine objects
 IBitmapFont *pFont = NULL;
-ITexture *pTex = NULL;
+ITexture *pTex = NULL, *pTexSprite = NULL;
+
+uint counter = 0;
 
 void DGLE_API Init(void *pParameter)
 {
@@ -34,13 +36,19 @@ void DGLE_API Init(void *pParameter)
 	IResourceManager *p_res_man;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)p_res_man);
 
-	p_res_man->GetDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject *&)pFont);
+	p_res_man->GetDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject *&)pFont); // getting default font
 	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_cloudy_night_sky.jpg", (IEngineBaseObject *&)pTex, TEXTURE_LOAD_DEFAULT_2D);
+
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_owl.png", (IEngineBaseObject*&)pTexSprite, TEXTURE_LOAD_DEFAULT_2D);
+	pTexSprite->SetFrameSize(48, 128); // single animation frame setup
 }
 
 void DGLE_API Free(void *pParameter)
 {
 	// You may free application data here.
+
+	pTex->Free();
+	pTexSprite->Free();
 }
 
 void DGLE_API Update(void *pParameter)
@@ -53,6 +61,8 @@ void DGLE_API Update(void *pParameter)
 
 	if (is_pressed)
 		pEngineCore->QuitEngine(); // exit engine main loop
+
+	++counter;
 }
 
 void DGLE_API Render(void *pParameter)
@@ -62,10 +72,18 @@ void DGLE_API Render(void *pParameter)
 	// stretch background texture to fit screen
 	pTex->Draw2D(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+	uint width, height;
+	
 	// render text at the center of the screen
-	uint font_width, font_height;
-	pFont->GetTextDimensions(APP_CAPTION, font_width, font_height);
-	pFont->Draw2DSimple((SCREEN_WIDTH - font_width) / 2, (SCREEN_HEIGHT - font_height) / 2, APP_CAPTION, ColorWhite());
+	const char txt[] = "Hello, world!";
+	pFont->GetTextDimensions(txt, width, height);
+	pFont->Draw2DSimple((SCREEN_WIDTH - width) / 2, (SCREEN_HEIGHT - height) / 2, txt, ColorWhite());
+
+	// render animated sprite
+	pTexSprite->GetFrameSize(width, height);
+	uint frames_count;
+	pTexSprite->FramesCount(frames_count);
+	pTexSprite->Draw2DSimple((SCREEN_WIDTH - width) / 2, 5, (counter / 2) % frames_count);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

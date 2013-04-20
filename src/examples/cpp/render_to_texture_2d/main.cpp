@@ -27,11 +27,10 @@ IInput *pInput = NULL;
 IRender *pRender = NULL;
 IRender2D *pRender2D = NULL;
 
-ITexture *pTexLight = NULL, *pTexBg = NULL, *pTexTarget[3],
-	*pTexBug = NULL, *pTexBugCorpse = NULL, *pTexSmoke = NULL,
-	*pTexBlood = NULL;
+ITexture *pTexLight, *pTexBg, *pTexTarget[3], *pTexBug,
+	*pTexBugCorpse, *pTexSmoke, *pTexBlood;
 
-ISoundSample *pSndDeath = NULL;
+ISoundSample *pSndDeath;
 
 uint uiCounter = 0;
 
@@ -75,6 +74,7 @@ void DGLE_API Init(void *pParameter)
 	
 	pTexBug->SetFrameSize(52, 42);
 
+	// create three empty textures to render in, one (number 2) for final and two (numbers 0 and 1) for intermediate renders
 	for (uint i = 0; i < 3; ++i)
 		p_res_man->CreateTexture(pTexTarget[i], NULL, SCREEN_WIDTH, SCREEN_HEIGHT, TDF_RGB8, TCF_DEFAULT, (E_TEXTURE_LOAD_FLAGS)(TLF_FILTERING_BILINEAR | TLF_COORDS_CLAMP));
 
@@ -88,20 +88,21 @@ void Clear()
 	for (size_t i = 0; i < 100; ++i)
 		bugs.push_back(TBug(TPoint2((float)(rand() % SCREEN_WIDTH), (float)(rand() % SCREEN_HEIGHT))));
 
-	// render background image to texture the first time
+	// render clear background image to texture for the first time
 	for (uint i = 0; i < 2; ++i)
 	{
 		pRender->SetRenderTarget(pTexTarget[i]);
 		pRender2D->DrawTexture(pTexBg, TPoint2(), screenSize, 0.f, (E_EFFECT2D_FLAGS)(EF_BLEND | EF_TILE_TEXTURE));
 	}
 
-	pRender->SetRenderTarget(NULL);
+	pRender->SetRenderTarget(NULL); // switch back for rendering to the screen
 }
 
 void DGLE_API Update(void *pParameter)
 {
-	// render to existing texture another old one and some new corpses
-	// we must switch between two textures
+	// We must switch between two textures, because we can't call DrawTexture for texture which is current render target.
+	
+	// Firstly rendering previous background texture with new bugs corpses and trails.
 	pRender->SetRenderTarget(pTexTarget[uiCounter % 2]);
 	
 	pRender2D->DrawTexture(pTexTarget[!(uiCounter % 2)], TPoint2(), screenSize, 0.f, EF_FLIP_VERTICALLY);
@@ -133,7 +134,8 @@ void DGLE_API Update(void *pParameter)
 			++iter;
 		}
 
-	// render scene texture wit bugs
+	// Secondly rendering background texture with moving bugs.
+
 	pRender->SetRenderTarget(pTexTarget[2]);
 	
 	pRender2D->DrawTexture(pTexTarget[uiCounter % 2], TPoint2(), screenSize, 0.f, EF_FLIP_VERTICALLY);
@@ -163,7 +165,7 @@ void DGLE_API Update(void *pParameter)
 
 	pRender->SetRenderTarget(NULL);
 
-	// input
+	// process user input here
 
 	TMouseStates ms;
 	pInput->GetMouseStates(ms);

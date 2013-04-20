@@ -26,10 +26,10 @@ IRender *pRender = NULL;
 IRender2D *pRender2D = NULL;
 
 TColor4 stRandomCol;
-IBitmapFont *pFont = NULL, *pFontBold = NULL, *pFontHard = NULL;
-ITexture *pTexGrass = NULL, *pTexGirl = NULL, *pTexTankBody = NULL, *pTexTankTurret = NULL,
-	*pTexLight = NULL, *pTexPlanet = NULL, *pTexMask = NULL, *pTexBg = NULL, *pTexPlanetRenderIn = NULL,
-	*pTexLightRound = NULL, *pTexAnimWater[11], *pTexJellyFish = NULL;
+IBitmapFont *pFont, *pFontBold, *pFontHard;
+ITexture *pTexGrass, *pTexGirl, *pTexTankBody, *pTexTankTurret,
+	*pTexLight, *pTexPlanet, *pTexMask, *pTexBg, *pTexPlanetRenderIn,
+	*pTexLightRound, *pTexAnimWater[11], *pTexJellyFish;
 
 std::vector<TVertex2> waterWaves;
 
@@ -80,9 +80,12 @@ void DGLE_API Init(void *pParameter)
 
 void RenderPlanetInToTexture()
 {
-	pRender->SetClearColor(ColorWhite(0)); // set clear color here because SetRenderTarget will clear color buffer
+	pRender->SetClearColor(ColorWhite(0)); // set clear color here because SetRenderTarget will clear color buffer for us
+	
 	pRender->SetRenderTarget(pTexPlanetRenderIn);
 	
+	pRender2D->Begin2D();
+
 	pRender2D->DrawTexture(pTexMask, TPoint2(), TVector2(256.f, 256.f), 0.f, EF_BLEND);
 	
 	pRender2D->SetBlendMode(BE_MASK);
@@ -95,13 +98,16 @@ void RenderPlanetInToTexture()
 	
 	pRender2D->DrawTriangles(pTexPlanet, quad, 6, PF_FILL);
 
+	pRender2D->End2D();
+
 	pRender->SetClearColor(ColorOfficialBlack()); // set clear color back
+	
 	pRender->SetRenderTarget(NULL);
 }
 
 void DGLE_API Update(void *pParameter)
 {
-	// render into texture for advanced example part
+	// render into the texture for advanced example part
 	RenderPlanetInToTexture();
 
 	// create water polygon for advanced example part

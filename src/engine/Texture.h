@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2013 (c)Korotkov Andrey
+\date		17.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,7 +31,8 @@ public:
 	DGLE_RESULT DGLE_API GetDimensions(uint &uiWidth, uint &uiHeight);
 	DGLE_RESULT DGLE_API SetFrameSize(uint uiFrameWidth, uint uiFrameHeight);
 	DGLE_RESULT DGLE_API GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight);
-	
+	DGLE_RESULT DGLE_API FramesCount(uint &uiCount);
+
 	DGLE_RESULT DGLE_API GetCoreTexture(ICoreTexture *&prCoreTex);
 	
 	DGLE_RESULT DGLE_API Draw2DSimple(int iX, int iY, uint uiFrameIndex);

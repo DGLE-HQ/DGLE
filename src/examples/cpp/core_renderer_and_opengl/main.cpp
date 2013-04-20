@@ -27,8 +27,8 @@ DGLE_DYNAMIC_FUNC
 IEngineCore *pEngineCore = NULL;
 ICoreRenderer *pCoreRenderer = NULL;
 
-IMesh *pMesh = NULL;
-ITexture *pTex = NULL;
+IMesh *pMesh;
+ITexture *pTex;
 
 uint uiCounter = 0;
 
@@ -43,6 +43,7 @@ void DGLE_API Init(void *pParameter)
 		pEngineCore->WriteToLogEx("This example will work only with Legacy OpenGL renderer!", LT_FATAL, __FILE__, __LINE__);
 
 	// Consider of turning off state manager, because our direct OpenGL calls could interrupt it in some cases.
+	// But it is highly not recommended!
 	//pCoreRenderer->ToggleStateFilter(false);
 
 	IResourceManager *p_res_man;
@@ -87,6 +88,10 @@ void DGLE_API Render(void *pParameter)
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
+
+	// If you've corrupted engine pipeline somehow, you may want to invalidate state manager.
+	// And remember that IRender3D can also cache some states.
+	//pCoreRenderer->InvalidateStateFilter();
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

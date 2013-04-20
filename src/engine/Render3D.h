@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.03.2013 (c)Korotkov Andrey
+\date		19.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -21,9 +21,11 @@ class CRender3D: public CInstancedObj, public IRender3D
 
 	struct TState
 	{
-		TMatrix4x4Stack matrixStack;
+		float fFovAngle, fZNear, fZFar;
+		TMatrix4x4Stack matrixStack;		
 		bool isLightingEnabled;
-		TColor4 stGlobalAmbient;
+		TColor4 stGlobalAmbient, stColor;
+		E_BLENDING_EFFECT eBlendingMode;
 		TBlendStateDesc stBlendStateDesc;
 		TRasterizerStateDesc stRasterStateDesc;
 		TDepthStencilDesc stDepthStencilDesc;
@@ -52,7 +54,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 		
 	} _stCurState;
 
-	uint _uiMaxLightsCount, _uiMaxTextsCount,
+	uint _uiMaxLightsCount, _uiMaxTexUnits,
 		_uiLightsEnabledCount;
 
 	std::stack<TState> _stackStates;
@@ -62,7 +64,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 
 	IFixedFunctionPipeline *_pFFP;
 
-	void _SetDefaultStates();
+	void _SetPerspectiveMatrix(uint width, uint height);
 	void _DrawLight(uint idx);
 
 public:
@@ -70,8 +72,10 @@ public:
 	CRender3D(uint uiInstIdx);
 	~CRender3D();
 
+	void SetDefaultStates();
 	void BeginFrame();
 	void EndFrame();
+	void OnResize(uint uiWidth, uint uiHeight);
 	void DrawProfiler();
 	
 	void UnbindMaterial();
@@ -99,6 +103,8 @@ public:
 	DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat);
 	DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat);
 
+	DGLE_RESULT DGLE_API ToggleBlending(bool bEnabled);
+	DGLE_RESULT DGLE_API IsBlendingEnabled(bool &bEnabled);
 	DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode);
 	DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode);
 
@@ -110,6 +116,9 @@ public:
 	DGLE_RESULT DGLE_API ClearDepthBuffer();
 	DGLE_RESULT DGLE_API ToggleDepthTest(bool bEnabled);
 	DGLE_RESULT DGLE_API IsDepthTestEnabled(bool &bEnabled);
+
+	DGLE_RESULT DGLE_API ToggleBackfaceCulling(bool bEnabled);
+	DGLE_RESULT DGLE_API IsBackfaceCullingEnabled(bool &bEnabled);
 
 	DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer);
@@ -131,6 +140,7 @@ public:
 
 	DGLE_RESULT DGLE_API DrawAxes(float fSize, bool bNoDepthTest);
 
+	DGLE_RESULT DGLE_API ResetStates();
 	DGLE_RESULT DGLE_API PushStates();
 	DGLE_RESULT DGLE_API PopStates();
 

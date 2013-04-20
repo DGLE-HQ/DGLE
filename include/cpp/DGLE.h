@@ -766,8 +766,10 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API GetResourceByIndex(uint uiIdx, IEngineBaseObject *&prObj) = 0;
 		virtual DGLE_RESULT DGLE_API GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj) = 0;
+		virtual DGLE_RESULT DGLE_API GetResourcesCount(uint &uiCount) = 0;
 
 		virtual DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT, const char *pcName = "") = 0;
 		virtual DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags = RES_LOAD_DEFAULT, const char *pcName = "") = 0;
@@ -817,7 +819,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType) = 0; //use EOT_UNKNOWN to unbind all
 		virtual DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) = 0;
 		virtual DGLE_RESULT DGLE_API DisableScissor() = 0; // when using in 2D must be always inside Begin2D - End2D block
-		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture* pTargetTex = NULL) = 0; // if not CRDF_FRAME_BUFFER than every SetRenderTarget(NULL) screen will be cleared
+		virtual DGLE_RESULT DGLE_API GetScissor(bool &bEnabled, TRectF &stArea) = 0;
+		virtual DGLE_RESULT DGLE_API SetRenderTarget(ITexture *pTargetTex = NULL) = 0;
+		virtual DGLE_RESULT DGLE_API GetRenderTarget(ITexture *&prTargetTex) = 0;
 		
 		virtual DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D) = 0;
 		virtual DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D) = 0;
@@ -933,6 +937,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetPerspective(float fFovAngle, float fZNear, float fZFar) = 0;
 		virtual DGLE_RESULT DGLE_API GetPerspective(float &fFovAngle, float &fZNear, float &fZFar) = 0;
 
+		virtual DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor) = 0;
+		virtual DGLE_RESULT DGLE_API GetColor(TColor4 &stColor) = 0;
+
 		virtual DGLE_RESULT DGLE_API BindTexture(ITexture *pTex, uint uiTextureLayer) = 0;
 		virtual DGLE_RESULT DGLE_API GetTexture(ITexture *&prTex, uint uiTextureLayer) = 0;
 
@@ -942,6 +949,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat) = 0;
 		virtual DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat) = 0;
 
+		virtual DGLE_RESULT DGLE_API ToggleBlending(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API IsBlendingEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode = BE_NORMAL) = 0;
 		virtual DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode) = 0;
 
@@ -953,6 +962,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ClearDepthBuffer() = 0;
 		virtual DGLE_RESULT DGLE_API ToggleDepthTest(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API IsDepthTestEnabled(bool &bEnabled) = 0;
+
+		virtual DGLE_RESULT DGLE_API ToggleBackfaceCulling(bool bEnabled) = 0;
+		virtual DGLE_RESULT DGLE_API IsBackfaceCullingEnabled(bool &bEnabled) = 0;
 
 		virtual DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer) = 0;
@@ -974,6 +986,7 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API DrawAxes(float fSize = 1.f, bool bNoDepthTest = false) = 0;
 
+		virtual DGLE_RESULT DGLE_API ResetStates() = 0; 
 		virtual DGLE_RESULT DGLE_API PushStates() = 0;
 		virtual DGLE_RESULT DGLE_API PopStates() = 0;
 
@@ -1042,6 +1055,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetDimensions(uint &uiWidth, uint &uiHeight) = 0;
 		virtual DGLE_RESULT DGLE_API SetFrameSize(uint uiFrameWidth, uint uiFrameHeight) = 0;
 		virtual DGLE_RESULT DGLE_API GetFrameSize(uint &uiFrameWidth, uint &uiFrameHeight) = 0;
+		virtual DGLE_RESULT DGLE_API FramesCount(uint &uiCount) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetCoreTexture(ICoreTexture *&prCoreTex) = 0;
 
@@ -1065,11 +1079,15 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API SetSpecularColor(const TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API SetShininess(float fShininess) = 0;
 		virtual DGLE_RESULT DGLE_API SetDiffuseTexture(ITexture *pTexture) = 0;
+		virtual DGLE_RESULT DGLE_API SetBlending(bool bEnabled, E_BLENDING_EFFECT eMode) = 0;
+		virtual DGLE_RESULT DGLE_API SetAlphaTest(bool bEnabled, float fTreshold) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetDiffuseColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetSpecularColor(TColor4 &stColor) = 0;
 		virtual DGLE_RESULT DGLE_API GetShininess(float &fShininess) = 0;
 		virtual DGLE_RESULT DGLE_API GetDiffuseTexture(ITexture *&prTexture) = 0;
+		virtual DGLE_RESULT DGLE_API GetBlending(bool &bEnabled, E_BLENDING_EFFECT &eMode) = 0;
+		virtual DGLE_RESULT DGLE_API GetAlphaTest(bool &bEnabled, float &fTreshold) = 0;
 
 		virtual DGLE_RESULT DGLE_API Bind() = 0;
 	};

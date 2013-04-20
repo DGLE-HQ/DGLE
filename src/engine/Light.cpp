@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "Render3D.h"
 
 CLight::CLight(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _bEnabled(true), _eType(LT_SPOT),
+CInstancedObj(uiInstIdx), _bEnabled(true), _eType(LT_DIRECTIONAL),
 _stMainCol(ColorWhite()), _stPos(TPoint3()), _stDir(TVector3(0.f, 0.f, 1.f)),
 _fRange(100.f), _fIntensity(1.f), _fAngle(90.f)
 {}

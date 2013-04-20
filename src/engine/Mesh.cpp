@@ -657,11 +657,13 @@ DGLE_RESULT DGLE_API CMesh::ExecuteTextCommandEx(const char *pcCommand, char *pc
 {
 	if (!pcCommand)
 		return E_INVALIDARG;
+
 	if (!pcResult)
 	{
 		uiCharsCount = 1;
 		return S_OK;
 	}
+
 	if (uiCharsCount < 1)
 		return E_INVALIDARG;
 	else
@@ -670,7 +672,9 @@ DGLE_RESULT DGLE_API CMesh::ExecuteTextCommandEx(const char *pcCommand, char *pc
 			strcpy(pcResult, "");
 		else
 			pcResult = NULL;
+
 		uiCharsCount = 0;
+
 		return E_NOTIMPL;
 	}
 }

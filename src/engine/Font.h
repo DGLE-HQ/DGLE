@@ -27,9 +27,8 @@ public:
 	
 	struct TFontHeader
 	{
-		uint8	bitDepth;
-		uint32	texWidth,
-				texHeight;
+		uint8 bitDepth;
+		uint32 texWidth, texHeight;
 	};
 #pragma pack(pop)
 

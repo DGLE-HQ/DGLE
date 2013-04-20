@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		05.05.2011 (c)Andrey Korotkov
+\date		19.04.2013 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -29,10 +29,10 @@ public:
 	struct TProfileData
 	{
 		::TProfileData
-			glEnableProfileData,
-			glDisableProfileData,
-			glEnableClientStateProfileData,
-			glDisableClientStateProfileData,
+			glEnable,
+			glDisable,
+			glEnableClientState,
+			glDisableClientState,
 			glEnableVertexAttribArrayARB,
 			glDisableVertexAttribArrayARB;
 	};
@@ -48,8 +48,8 @@ public:
 				_iMaxAttribs = _sc_uiMaxVertexAttribs;
 		}
 
-		memset(_bState, 255, sizeof(GLboolean)*_sc_uiStatesCount);
-		memset(_bAttrib, 0, sizeof(GLboolean)*_sc_uiMaxVertexAttribs);
+		memset(_bState, 255, sizeof(GLboolean) * _sc_uiStatesCount);
+		memset(_bAttrib, 255, sizeof(GLboolean) * _sc_uiMaxVertexAttribs);
 	}
 
 	inline void glEnable(GLenum cap);
@@ -90,15 +90,15 @@ public:
 	};
 
 	inline CValueState(TProfileData &profileData):
-	_profileData(profileData)
-	{
-		_fLineWidth = 1.f;
-		_fPointSize = 1.f;
-	}
+	_profileData(profileData),
+	_fLineWidth((std::numeric_limits<float>::infinity)()),
+	_fPointSize((std::numeric_limits<float>::infinity)())
+	{}
 
 	inline void glLineWidth(GLfloat width);
-	inline void glPointSize(GLfloat size);
-	
+	inline void glPointSize(GLfloat size);	
+	inline void glGetFloatv(GLenum pname, GLfloat *params) const;
+
 	inline void Set(const CValueState &previous);
 
 	inline CValueState &operator =(const CValueState &right)
@@ -129,10 +129,7 @@ public:
 	inline CModeState(TProfileData &profileData):
 	_profileData(profileData)
 	{
-		_mode[0] = GL_CCW;
-		_mode[1] = GL_BACK;
-		_mode[2] = GL_LESS;
-		_mode[3] = GL_TRUE;
+		memset(_mode, ~0, _sc_uiModeCount * sizeof(GLenum));
 	}
 
 	inline void glFrontFace(GLenum mode);
@@ -163,11 +160,9 @@ public:
 	};
 
 	inline CBindBufferState(uint uiInstIdx, TProfileData &profileData):
-	CInstancedObj(uiInstIdx), _profileData(profileData)
-	{
-		_uiArrayBuffer = 0;
-		_uiElementBuffer = 0;
-	}
+	CInstancedObj(uiInstIdx), _profileData(profileData),
+	_uiArrayBuffer(~0), _uiElementBuffer(~0)
+	{}
 
 	inline void glBindBufferARB(GLenum target, GLuint buffer);
 	
@@ -193,7 +188,7 @@ public:
 	};
 
 	inline CPolygonModeState(uint uiInstIdx, TProfileData &profileData):
-	CInstancedObj(uiInstIdx), _mode(GL_FILL), _profileData(profileData)
+	CInstancedObj(uiInstIdx), _profileData(profileData), _mode(~0)
 	{}
 
 	inline void glPolygonMode(GLenum face, GLenum mode);
@@ -211,17 +206,86 @@ private:
 	TProfileData &_profileData;
 };
 
+class CViewportState : public CInstancedObj
+{
+public:
+	struct TProfileData
+	{
+		::TProfileData glViewport,
+			glScissor;
+	};
+
+	inline CViewportState(uint uiInstIdx, TProfileData &profileData):
+	CInstancedObj(uiInstIdx), _profileData(profileData)
+	{
+		assert(typeid(GLint) == typeid(GLsizei));
+		memset(_viewport, ~0, 4 * sizeof(GLint));
+		memset(_scissor, ~0, 4 * sizeof(GLint));
+	}
+
+	inline void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+	inline void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
+	inline void glGetIntegerv(GLenum pname, GLint *params) const;
+
+	inline void Set(const CViewportState &previous);
+
+	inline CViewportState &operator =(const CViewportState &right)
+	{
+		return *this;
+	}
+private:
+	GLint _viewport[4], _scissor[4];
+	TProfileData &_profileData;
+};
+
+class CMatrixState : public CInstancedObj
+{
+public:
+	struct TProfileData
+	{
+		::TProfileData glLoadMatrixf, glMatrixMode;
+	};
+
+	inline CMatrixState(uint uiInstIdx, TProfileData &profileData):
+	CInstancedObj(uiInstIdx), _profileData(profileData), _mode(~0)
+	{
+		memset(_proj, ~0, 16 * sizeof(GLfloat));
+		memset(_mview, ~0, 16 * sizeof(GLfloat));
+		memset(_tex, ~0, 16 * sizeof(GLfloat));
+		
+		_proj[0] = (std::numeric_limits<float>::infinity)();
+		_mview[0] = (std::numeric_limits<float>::infinity)();
+		_tex[0] = (std::numeric_limits<float>::infinity)();
+	}
+
+	inline void glLoadMatrixf(const GLfloat *m);
+	inline void glMatrixMode(GLenum mode);
+	inline void glGetFloatv(GLenum pname, GLfloat *params) const;
+	inline void glGetIntegerv(GLenum pname, GLint *params) const;
+
+	inline void Set(const CMatrixState &previous);
+
+	inline CMatrixState &operator =(const CMatrixState &right)
+	{
+		return *this;
+	}
+private:
+	GLenum _mode;
+	GLfloat _proj[16], _mview[16], _tex[16];
+	TProfileData &_profileData;
+};
+
 class CBlendFuncState
 {
 public:
 	struct TProfileData
 	{
 		::TProfileData
-			glBlendFuncProfileData;
+			glBlendFunc;
 	};
 
 	inline CBlendFuncState(TProfileData &profileData):
-	_profileData(profileData), _srcFactor(GL_ONE), _dstFactor(GL_ZERO)
+	_profileData(profileData), _srcFactor(~0), _dstFactor(~0)
 	{}
 
 	inline void glBlendFunc(GLenum sfactor, GLenum dfactor);
@@ -236,7 +300,7 @@ public:
 		return *this;
 	}
 private:
-	GLenum 	_srcFactor, _dstFactor;
+	GLenum _srcFactor, _dstFactor;
 	TProfileData &_profileData;
 };
 
@@ -245,11 +309,11 @@ class CAlphaFuncState
 public:
 	struct TProfileData
 	{
-		::TProfileData glAlphaFuncProfileData;
+		::TProfileData glAlphaFunc;
 	};
 
 	inline CAlphaFuncState(TProfileData &profileData):
-	_profileData(profileData), _func(GL_ALWAYS), _ref(0.f)
+	_profileData(profileData), _func(~0), _ref((std::numeric_limits<float>::infinity)())
 	{}
 
 	inline void glAlphaFunc(GLenum func, GLclampf ref);
@@ -266,7 +330,7 @@ public:
 		return *this;
 	}
 private:
-	GLenum 	 _func;
+	GLenum  _func;
 	GLclampf _ref;
 	TProfileData &_profileData;
 };
@@ -276,29 +340,39 @@ class CColorState
 public:
 	struct TProfileData
 	{
-		::TProfileData glColor4fProfileData;
+		::TProfileData glColor4f,
+			glClearColor;
 	};
 
 	inline CColorState(TProfileData &profileData):
 	_profileData(profileData)
 	{
-		_red = _green = _blue = _alpha = 1.f;
+		_color[0] = _color[1] = _color[2] = _color[3] = (std::numeric_limits<float>::infinity)();
+		_clearColor[0] = _clearColor[1] = _clearColor[2] = _clearColor[3] = (std::numeric_limits<float>::infinity)();
 	}
 
 	inline void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+	inline void glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+	inline void glGetFloatv(GLenum pname, GLfloat *params) const;
 
 	inline void Set(const CColorState &previous);
 
 	inline CColorState &operator =(const CColorState &right)
 	{
-		_red = right._red;
-		_green = right._green;
-		_blue = right._blue;
-		_alpha = right._alpha;
+		_color[0] = right._color[0];
+		_color[1] = right._color[1];
+		_color[2] = right._color[2];		
+		_color[3] = right._color[3];
+		
+		_clearColor[0] = right._clearColor[0];
+		_clearColor[1] = right._clearColor[1];
+		_clearColor[2] = right._clearColor[2];
+		_clearColor[3] = right._clearColor[3];
+		
 		return *this;
 	}
 private:
-	GLfloat _red, _green, _blue, _alpha;
+	GLfloat _color[4], _clearColor[4];
 	TProfileData &_profileData;
 };
 
@@ -308,20 +382,19 @@ public:
 	struct TProfileData
 	{
 		::TProfileData
-			glBindTextureProfileData,
-			glActiveTextureARBProfileData;
+			glBindTexture,
+			glActiveTextureARB;
 	};
 
 	inline CTextureState(uint uiInstIdx, GLint maxTextureUnits, TProfileData &profileData):
-	CInstancedObj(uiInstIdx),
-	_textures(maxTextureUnits),
-	_textureUnit(maxTextureUnits == 1 ? GL_TEXTURE0_ARB/*aviods ::glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, (GLint *)&_textureUnit) call in CTextureState::glBindTexture() if multitexturing does not supported*/ : ~0),
-	_profileData(profileData)
+	CInstancedObj(uiInstIdx), _textures(maxTextureUnits), _profileData(profileData),
+	_textureUnit(maxTextureUnits == 1 ? GL_TEXTURE0_ARB/*aviods ::glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, (GLint *)&_textureUnit) call in CTextureState::glBindTexture() if multitexturing does not supported*/ : ~0)
 	{}
 
 	inline void glBindTexture(GLenum target, GLuint texture);
 	inline void glActiveTextureARB(GLenum texture);
-	
+	inline void glGetIntegerv(GLenum pname, GLint *params) const;
+
 	inline void Set(const CTextureState &previous);
 
 	inline CTextureState &operator =(const CTextureState &right)
@@ -338,7 +411,7 @@ private:
 		bool enabled;
 	};
 	std::vector<TTexture> _textures;
-	GLenum 	_textureUnit;
+	GLenum _textureUnit;
 	TProfileData &_profileData;
 };
 
@@ -347,12 +420,15 @@ class CProgramState
 public:
 	struct TProfileData
 	{
-		::TProfileData glUseProgramObjectARBProfileData;
+		::TProfileData glUseProgramObjectARB;
 	};
 
-	inline CProgramState(TProfileData &profileData): _programObj(~0), _profileData(profileData) {}
+	inline CProgramState(TProfileData &profileData):
+	_profileData(profileData), _programObj(~0)
+	{}
 
 	inline void glUseProgramObjectARB(GLhandleARB programObj);
+	inline void glGetIntegerv(GLenum pname, GLint *params) const;
 
 	inline void Set(const CProgramState &previous);
 
@@ -386,12 +462,17 @@ public:
 	virtual void glBlendFunc(GLenum sfactor, GLenum dfactor) = 0;
 	virtual void glAlphaFunc(GLenum func, GLclampf ref) = 0;
 	virtual void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha) = 0;
+	virtual void glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha) = 0;
 	virtual void glBindTexture(GLenum target, GLuint texture) = 0;
 	virtual void glActiveTextureARB(GLenum texture) = 0;
+	virtual void glLoadMatrixf(const GLfloat *m) = 0;
+	virtual void glMatrixMode(GLenum mode) = 0;
 	virtual void glUseProgramObjectARB(GLhandleARB programObj) = 0;
 	virtual void glFrontFace(GLenum mode) = 0;
 	virtual void glCullFace(GLenum mode) = 0;
 	virtual void glPolygonMode(GLenum face, GLenum mode) = 0;
+	virtual void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) = 0;
+	virtual void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) = 0;
 	virtual void glDepthFunc(GLenum func) = 0;
 	virtual void glDepthMask(GLboolean flag) = 0;
 	virtual void glLineWidth(GLfloat width) = 0;
@@ -429,12 +510,17 @@ public:
 	void glGetBooleanv(GLenum pname, GLboolean *params) const;
 	void glAlphaFunc(GLenum func, GLclampf ref);
 	void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+	void glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 	void glBindTexture(GLenum target, GLuint texture);
 	void glActiveTextureARB(GLenum texture);
+	void glLoadMatrixf(const GLfloat *m);
+	void glMatrixMode(GLenum mode);
 	void glUseProgramObjectARB(GLhandleARB programObj);
 	void glFrontFace(GLenum mode);
 	void glCullFace(GLenum mode);
 	void glPolygonMode(GLenum face, GLenum mode);
+	void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+	void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
 	void glDepthFunc(GLenum func);
 	void glDepthMask(GLboolean flag);
 	void glLineWidth(GLfloat width);
@@ -471,12 +557,17 @@ public:
 	void glBlendFunc(GLenum sfactor, GLenum dfactor);
 	void glAlphaFunc(GLenum func, GLclampf ref);
 	void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+	void glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 	void glBindTexture(GLenum target, GLuint texture);
 	void glActiveTextureARB(GLenum texture);
+	void glLoadMatrixf(const GLfloat *m);
+	void glMatrixMode(GLenum mode);
 	void glUseProgramObjectARB(GLhandleARB programObj);
 	void glFrontFace(GLenum mode);
 	void glCullFace(GLenum mode);
 	void glPolygonMode(GLenum face, GLenum mode);
+	void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+	void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
 	void glDepthFunc(GLenum func);
 	void glDepthMask(GLboolean flag);
 	void glLineWidth(GLfloat width);
@@ -497,6 +588,8 @@ private:
 		CTextureState::		TProfileData textureStateProfileData;
 		CProgramState::		TProfileData programStateProfileData;
 		CPolygonModeState:: TProfileData polygonModeStateProfileData;
+		CViewportState::	TProfileData viewportStateProfileData;
+		CMatrixState::		TProfileData matrxStateProfilerData;
 		CModeState::		TProfileData modeStateProfilerData;
 		CValueState::		TProfileData valueStateProfilerData;
 		CBindBufferState::	TProfileData bindBufferStateProfilerData;
@@ -512,18 +605,22 @@ private:
 		textureState(uiInstIdx, maxTextureUnits, profileData.textureStateProfileData),
 		programState(profileData.programStateProfileData),
 		polygonModeState(uiInstIdx, profileData.polygonModeStateProfileData),
+		viewportState(uiInstIdx, profileData.viewportStateProfileData),
+		matrixState(uiInstIdx, profileData.matrxStateProfilerData),
 		modeState(profileData.modeStateProfilerData),
 		valueState(profileData.valueStateProfilerData),
 		bindBufferState(uiInstIdx, profileData.bindBufferStateProfilerData)
 		{}
 
-		CToggleState	toggleState;
-		CBlendFuncState	blendFuncState;
+		CToggleState toggleState;
+		CBlendFuncState blendFuncState;
 		CAlphaFuncState alphaFuncState;
-		CColorState		colorState;
-		CTextureState	textureState;
-		CProgramState	programState;
+		CColorState colorState;
+		CTextureState textureState;
+		CProgramState programState;
 		CPolygonModeState polygonModeState;
+		CViewportState viewportState;
+		CMatrixState matrixState;
 		CModeState modeState;
 		CBindBufferState bindBufferState;
 		CValueState valueState;

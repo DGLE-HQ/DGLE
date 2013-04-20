@@ -19,7 +19,6 @@ See "DGLE.h" for more details.
 #include "CoreRendererGL.h"
 #include "Render.h"
 #include "Render2D.h"
-#include "Render3D.h"
 
 using namespace std;
 
@@ -718,10 +717,7 @@ void CCore::_MainLoop()
 		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
 		{
 			if (i == cycles_cnt - 1)
-			{
-				_pRender->pRender2D()->RefreshBatchData();
-				_pRender->pRender3D()->RefreshBatchData();
-			}
+				_pRender->RefreshBatchData();
 
 			_clDelUpdate.Invoke();
 			
@@ -748,7 +744,7 @@ void CCore::_MainLoop()
 	Console()->LeaveThreadSafeSection();
 
 	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _uiUpdateInterval && _uiLastFPS > 120) || _bPause)) * 8 +
-				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && _ui64CyclesCount < 4) * 6;
+				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && cycles_cnt < 2) * 6;
 
 	if (sleep > 0)
 		Suspend(sleep);
@@ -762,8 +758,7 @@ void CCore::_RenderFrame()
 
 	_ui64RenderDelay = GetPerfTimer();
 
-	_pRender->pRender3D()->BeginFrame();
-	_pRender->pRender2D()->BeginFrame();
+	_pRender->BeginFrame();
 
 	CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
 
@@ -773,8 +768,7 @@ void CCore::_RenderFrame()
 
 	CastEvent(ET_AFTER_RENDER, (IBaseEvent*)&CBaseEvent(ET_AFTER_RENDER));
 
-	_pRender->pRender2D()->EndFrame();
-	_pRender->pRender3D()->EndFrame();
+	_pRender->EndFrame();
 	
 	_ui64RenderDelay = GetPerfTimer() - _ui64RenderDelay;
 
@@ -803,8 +797,7 @@ void CCore::_RenderFrame()
 				RenderProfilerText(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), ColorWhite());
 		}
 				
-		_pRender->pRender2D()->DrawProfiler();
-		_pRender->pRender3D()->DrawProfiler();
+		_pRender->DrawProfiler();
 
 		CastEvent(ET_ON_PROFILER_DRAW, (IBaseEvent*)&CBaseEvent(ET_ON_PROFILER_DRAW));
 
@@ -1400,6 +1393,8 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return E_ABORT;
+
+	_pRender->SetDefaultStates();
 
 	if (!_clDelInit.IsNull() || !_clUserCallbacks.empty()) 
 	{

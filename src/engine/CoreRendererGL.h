@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		23.03.2013 (c)Andrey Korotkov
+\date		20.04.2013 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -19,28 +19,6 @@ See "DGLE.h" for more details.
 
 #include "FixedFunctionPipelineGL.h"
 #include "StateManagerGL.h"
-
-struct TState
-{
-	std::vector<bool> clActivatedTexUnits;
-	GLint iViewPortX, iViewPortY, iViewPortWidth, iViewPortHeight;
-
-	TBlendStateDesc stBlendDesc;
-	TDepthStencilDesc stDepthStencilDesc;
-	TRasterizerStateDesc stRasterDesc;
-
-	TMatrix4 stModelviewMat, stProjectionMat, stTextureMat;
-
-	TColor4 stColor;
-
-	TState(): clActivatedTexUnits(32),
-	iViewPortX(0), iViewPortY(0), iViewPortWidth(0), iViewPortHeight(0)
-	{
-		stModelviewMat = MatrixIdentity();
-		stProjectionMat = MatrixIdentity();
-		stTextureMat = MatrixIdentity();
-	}
-};
 
 class CCoreGeometryBuffer;
 
@@ -74,9 +52,6 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 
 	int _iProfilerState;
 
-	std::stack<TState> _clStatesStack;
-	TState _stCurrentState;
-
 	TDrawDataDesc _stDrawDataDesc;
 	E_CORE_RENDERER_DRAW_MODE _eDrawMode;
 	uint _uiDrawCount;
@@ -90,13 +65,19 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	bool _bVerticesBufferBindedFlag, _bIndexesBufferBindedFlag;
 
 	bool _bStateFilterEnabled;
-	uint _uiUnfilteredDrawSetups, _uiOverallDrawSetups, _uiOverallDrawCalls, _uiOverallTrianglesCount;
+	uint _uiUnfilteredDrawSetups, _uiOverallDrawSetups,
+		_uiOverallDrawCalls, _uiOverallTrianglesCount;
 
 	inline GLenum _GetGLBlendFactor(E_BLEND_FACTOR factor) const;
+	inline E_BLEND_FACTOR _GetEngBlendFactor(GLenum factor) const;
+	
 	inline GLenum _GetGLComparsionMode(E_COMPARISON_FUNC mode) const;
+	inline E_COMPARISON_FUNC _GetEngComparsionMode(GLenum mode) const;
+	
 	inline GLenum _GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) const;
 	__forceinline bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	inline void _TriangleStatistics(E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
+	
 	void _ProfilerEventHandler() const;
 	void _KillDeadFBOs();
 
@@ -118,17 +99,23 @@ public:
 	DGLE_RESULT DGLE_API Present();
 
 	DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor);
+	DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor);
 	DGLE_RESULT DGLE_API Clear(bool bColor, bool bDepth, bool bStencil);
 	DGLE_RESULT DGLE_API SetViewport(uint x, uint y, uint width, uint height);
 	DGLE_RESULT DGLE_API GetViewport(uint &x, uint &y, uint &width, uint &height);
-	DGLE_RESULT DGLE_API SetScissor(uint x, uint y, uint width, uint height);
+	DGLE_RESULT DGLE_API SetScissorRectangle(uint x, uint y, uint width, uint height);
+	DGLE_RESULT DGLE_API GetScissorRectangle(uint &x, uint &y, uint &width, uint &height);
 	DGLE_RESULT DGLE_API SetLineWidth(float fWidth);
+	DGLE_RESULT DGLE_API GetLineWidth(float &fWidth);
 	DGLE_RESULT DGLE_API SetPointSize(float fSize);
+	DGLE_RESULT DGLE_API GetPointSize(float &fSize);
 	DGLE_RESULT DGLE_API ReadFrameBuffer(uint uiX, uint uiY, uint uiWidth, uint uiHeight, uint8 *pData, uint uiDataSize, E_TEXTURE_DATA_FORMAT eDataFormat);
 	DGLE_RESULT DGLE_API SetRenderTarget(ICoreTexture *pTexture);
+	DGLE_RESULT DGLE_API GetRenderTarget(ICoreTexture *&prTexture);
 	DGLE_RESULT DGLE_API CreateTexture(ICoreTexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags);
 	DGLE_RESULT DGLE_API CreateGeometryBuffer(ICoreGeometryBuffer *&prBuffer, const TDrawDataDesc &stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType);
 	DGLE_RESULT DGLE_API ToggleStateFilter(bool bEnabled);
+	DGLE_RESULT DGLE_API InvalidateStateFilter();
 	DGLE_RESULT DGLE_API PushStates();
 	DGLE_RESULT DGLE_API PopStates();
 	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix, E_MATRIX_TYPE eMatType);
@@ -136,6 +123,7 @@ public:
 	DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer);
 	DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor);
+	DGLE_RESULT DGLE_API GetColor(TColor4 &stColor);
 	DGLE_RESULT DGLE_API ToggleBlendState(bool bEnabled);
 	DGLE_RESULT DGLE_API ToggleAlphaTestState(bool bEnabled);
 	DGLE_RESULT DGLE_API SetBlendState(const TBlendStateDesc &stState);
@@ -145,6 +133,7 @@ public:
 	DGLE_RESULT DGLE_API SetRasterizerState(const TRasterizerStateDesc &stState);
 	DGLE_RESULT DGLE_API GetRasterizerState(TRasterizerStateDesc &stState);
 	DGLE_RESULT DGLE_API BindTexture(ICoreTexture *pTex, uint uiTextureLayer);
+	DGLE_RESULT DGLE_API GetBindedTexture(ICoreTexture *&prTex, uint uiTextureLayer);
 	DGLE_RESULT DGLE_API GetFixedFunctionPipelineAPI(IFixedFunctionPipeline *&prFFP);
 	DGLE_RESULT DGLE_API GetDeviceMetric(E_CORE_RENDERER_METRIC_TYPE eMetric, int &iValue);
 	DGLE_RESULT DGLE_API IsFeatureSupported(E_CORE_RENDERER_FEATURE_TYPE eFeature, bool &bIsSupported);

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		14.04.2013 (c)Korotkov Andrey
+\date		20.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -22,6 +22,22 @@ using namespace std;
 #define _2D_BATCH_DUMMY_DRAW_CALL_EXIT if ((_batchMode != BM_DISABLED || _bInLocalBatchMode) && !do_batch_update) return S_OK;
 
 #define IN_2D_GUARD if (!_bIn2D && !_bInProfilerMode) Begin2D();
+
+#define COPY_VERTEX_TO_BUFFER(buffer, start_idx, vertex) \
+buffer[start_idx + 0] = vertex.data[0];\
+buffer[start_idx + 1] = vertex.data[1];\
+buffer[start_idx + 2] = vertex.data[2];\
+buffer[start_idx + 3] = vertex.data[3];\
+buffer[start_idx + 4] = vertex.data[4];\
+buffer[start_idx + 5] = vertex.data[5];\
+buffer[start_idx + 6] = vertex.data[6];\
+buffer[start_idx + 7] = vertex.data[7];
+
+#define COPY_COLOR_TO_BUFFER(buffer, start_idx, color) \
+buffer[start_idx + 0] = color.rgba[0];\
+buffer[start_idx + 1] = color.rgba[1];\
+buffer[start_idx + 2] = color.rgba[2];\
+buffer[start_idx + 3] = color.rgba[3];
 
 CRender2D::CRender2D(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
@@ -126,6 +142,8 @@ void CRender2D::_SetDefaultStates()
 	_astVerticesOffset[0] = _astVerticesOffset[1] = _astVerticesOffset[2] = _astVerticesOffset[3] = TPoint2();
 	_stColormix = ColorWhite();
 
+	Core()->pRender()->Unbind(EOT_UNKNOWN);
+
 	_pCoreRenderer->SetColor(ColorWhite());
 	
 	_uiPointSize = 1;
@@ -134,8 +152,6 @@ void CRender2D::_SetDefaultStates()
 	_uiLineWidth = 1;
 	_pCoreRenderer->SetLineWidth(1.f);
 	
-	Core()->pRender()->Unbind(EOT_UNKNOWN);
-
 	TDepthStencilDesc ds_desc;
 	ds_desc.bDepthTestEnabled = false;
 	_pCoreRenderer->SetDepthStencilState(ds_desc);
@@ -172,7 +188,10 @@ FORCE_INLINE bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) c
 		}
 	}
 	else
-		memcpy(&vrtcs[0], &vertices[0], 8 * sizeof(float));
+	{
+		vrtcs[0] = vertices[0]; vrtcs[1] = vertices[1]; vrtcs[2] = vertices[2]; vrtcs[3] = vertices[3];
+		vrtcs[4] = vertices[4]; vrtcs[5] = vertices[5]; vrtcs[6] = vertices[6]; vrtcs[7] = vertices[7];
+	}
 
 	if (_iDoDrawBBoxes == 1 && (_batchMode == BM_DISABLED && !_bInLocalBatchMode))
 	{
@@ -418,10 +437,10 @@ inline void CRender2D::_BatchFlush()
 void CRender2D::_Set2DProjMatrix(uint width, uint height)
 {
 	_pCoreRenderer->SetMatrix(TMatrix4(
-		2.f / (float)width, 0.f,				  0.f, 0.f,
-		0.f,				-2.f / (float)height, 0.f, 0.f,
-		0.f,				0.f,				 -1.f, 0.f,
-		-1.f,				1.f,				  0.f, 1.f
+		2.f / (float)width, 0.f, 0.f, 0.f,
+		0.f, -2.f / (float)height, 0.f, 0.f,
+		0.f, 0.f, -1.f, 0.f,
+		-1.f, 1.f, 0.f, 1.f
 		), MT_PROJECTION);
 }
 
@@ -429,10 +448,7 @@ DGLE_RESULT DGLE_API CRender2D::Begin2D()
 {
 	if (_bIn2D)
 		return E_FAIL;
-	
-	_bIn2D = true;
-	_bCameraWasSet = false;
-		
+			
 	_ui64DrawDelay = GetPerfTimer();
 
 	_pCoreRenderer->PushStates();
@@ -489,6 +505,9 @@ DGLE_RESULT DGLE_API CRender2D::Begin2D()
 	_pCoreRenderer->GetMatrix(_stPrevModelViewMat);
 
 	_pCoreRenderer->SetMatrix(MatrixIdentity());
+
+	_bIn2D = true;
+	_bCameraWasSet = false;
 
 	return S_OK;
 }
@@ -902,42 +921,41 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 			if (eFlags & PF_VERTICES_COLORS)
 				if (eFlags & PF_FILL)
 				{
-					const TVertex2 triangles[] = {TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
-							TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
-							TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
-							TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
-							TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
-							TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a)};
-					
+					const uint idx = _batchAccumulator.size();
 					_batchAccumulator.resize(_batchAccumulator.size() + 6);
-					memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
+					
+					_batchAccumulator[idx + 0] = TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a);
+					_batchAccumulator[idx + 1] = TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a);
+					_batchAccumulator[idx + 2] = TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a);
+					_batchAccumulator[idx + 3] = TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a);
+					_batchAccumulator[idx + 4] = TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a);
+					_batchAccumulator[idx + 5] = TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a);
 				}
 				else
 				{
-					const TVertex2 triangles[] = {TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
-							TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
-							TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
-							TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
-							TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
-							TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a),
-							TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a),
-							TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a)
-					};
-					
+					const uint idx = _batchAccumulator.size();
 					_batchAccumulator.resize(_batchAccumulator.size() + 8);
-					memcpy(&_batchAccumulator[_batchAccumulator.size() - 8], triangles, 8 * sizeof(TVertex2));
+
+					_batchAccumulator[idx + 0] = TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a);
+					_batchAccumulator[idx + 1] = TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a);
+					_batchAccumulator[idx + 2] = TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a);
+					_batchAccumulator[idx + 3] = TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a);
+					_batchAccumulator[idx + 4] = TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a);
+					_batchAccumulator[idx + 5] = TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a);
+					_batchAccumulator[idx + 6] = TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a);
+					_batchAccumulator[idx + 7] = TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a);
 				}
 			else
 			{
-				const TVertex2 triangles[] = {TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
-						TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
-						TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
-						TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
-						TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a),
-						TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a)};
-					
+				const uint idx = _batchAccumulator.size();
 				_batchAccumulator.resize(_batchAccumulator.size() + 6);
-				memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
+
+				_batchAccumulator[idx + 0] = TVertex2(_pBuffer[0], _pBuffer[1], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a);
+				_batchAccumulator[idx + 1] = TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a);
+				_batchAccumulator[idx + 2] = TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a);
+				_batchAccumulator[idx + 3] = TVertex2(_pBuffer[2], _pBuffer[3], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a);
+				_batchAccumulator[idx + 4] = TVertex2(_pBuffer[4], _pBuffer[5], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a);
+				_batchAccumulator[idx + 5] = TVertex2(_pBuffer[6], _pBuffer[7], 0.f, 0.f, stColor.r, stColor.g, stColor.b, stColor.a);
 
 				if (!(eFlags & PF_FILL))
 				{
@@ -962,7 +980,12 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 		if(eFlags & PF_VERTICES_COLORS)
 		{
 			if (eFlags & PF_FILL)
-				memcpy(&_pBuffer[10], _astVerticesColors, 4 * sizeof(TColor4));
+			{
+				COPY_COLOR_TO_BUFFER(_pBuffer, 10, _astVerticesColors[0])
+				COPY_COLOR_TO_BUFFER(_pBuffer, 14, _astVerticesColors[1])
+				COPY_COLOR_TO_BUFFER(_pBuffer, 18, _astVerticesColors[2])
+				COPY_COLOR_TO_BUFFER(_pBuffer, 22, _astVerticesColors[3])
+			}
 			else
 			{
 				_pBuffer[10] = _astVerticesColors[2].r; _pBuffer[11] = _astVerticesColors[2].g; _pBuffer[12] = _astVerticesColors[2].b; _pBuffer[13] = _astVerticesColors[2].a;
@@ -1428,7 +1451,11 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 
 			for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
 				for (uint8 v = 0; v < 3; ++v)
-					memcpy(&_pBuffer[tri_idx * 8 * 3 + v * 8], pstVertices[tris[tri_idx].index[v]].data, sizeof(TVertex2));
+				{
+					const uint idx_1 = tri_idx * 8 * 3 + v * 8;
+					const uint16 idx_2 = tris[tri_idx].index[v];
+					COPY_VERTEX_TO_BUFFER(_pBuffer, idx_1, pstVertices[idx_2])
+				}
 
 			TDrawDataDesc desc;
 
@@ -1472,7 +1499,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 			}
 
 			memcpy(_pBuffer, pstVertices, uiVerticesCount * sizeof(TVertex2));
-			memcpy(&_pBuffer[uiVerticesCount * 8], pstVertices, sizeof(TVertex2));
+			COPY_VERTEX_TO_BUFFER(_pBuffer, uiVerticesCount * 8, pstVertices[0])
 
 			TDrawDataDesc desc;
 
@@ -1568,12 +1595,18 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 
 			for (uint i = 0; i < uiVerticesCount; ++i)
 			{
-				memcpy(&_pBuffer[i * 8 * 2], &pstVertices[i], sizeof(TVertex2));
+				const uint idx_1 = i * 8 * 2;
+				
+				COPY_VERTEX_TO_BUFFER(_pBuffer, idx_1, pstVertices[i])
+
+				uint idx_2;
 
 				if (i != 0 && (i + 1) % 3 == 0)
-					memcpy(&_pBuffer[i * 8 * 2 + 8], &pstVertices[i - 2], sizeof(TVertex2));
+					idx_2 = i - 2;
 				else
-					memcpy(&_pBuffer[i * 8 * 2 + 8], &pstVertices[i + 1], sizeof(TVertex2));
+					idx_2 = i + 1;
+
+				COPY_VERTEX_TO_BUFFER(_pBuffer, idx_1 + 8, pstVertices[idx_2])
 			}
 
 			desc.pData = (uint8 *)_pBuffer;
@@ -1667,10 +1700,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 		near_top = -near_bottom;
 
 	const TMatrix4 new_proj(
-		2.f * z_near / (near_right - near_left),			 0.f,												 0.f,										0.f,
-		0.f,												 2.f * z_near / (near_top - near_bottom),			 0.f,										0.f,
-		(near_right + near_left) / (near_right - near_left), (near_top + near_bottom) / (near_top - near_bottom),-(z_far + z_near) / (z_far - z_near),		-1.f,
-		0.f,												 0.f,												 -2.f * z_far * z_near / (z_far - z_near),	0.f);
+		2.f * z_near / (near_right - near_left), 0.f, 0.f, 0.f,
+		0.f, 2.f * z_near / (near_top - near_bottom), 0.f, 0.f,
+		(near_right + near_left) / (near_right - near_left), (near_top + near_bottom) / (near_top - near_bottom), -(z_far + z_near) / (z_far - z_near), -1.f,
+		0.f, 0.f, -2.f * z_far * z_near / (z_far - z_near), 0.f);
 	
 	TMatrix4 new_mview;
 
@@ -2193,15 +2226,15 @@ FORCE_INLINE DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &co
 			{
 				if (flags & EF_VERTICES_COLORS)
 				{
-					const TVertex2 triangles[] = {TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a),
-						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11], _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
-						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
-						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11], _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a),
-						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a),
-						TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12], _pBuffer[11], _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a)};
-					
+					const uint idx = _batchAccumulator.size();
 					_batchAccumulator.resize(_batchAccumulator.size() + 6);
-					memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
+
+					_batchAccumulator[idx + 0] = TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a);
+					_batchAccumulator[idx + 1] = TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11], _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a);
+					_batchAccumulator[idx + 2] = TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a);
+					_batchAccumulator[idx + 3] = TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8],	_pBuffer[11], _astVerticesColors[1].r, _astVerticesColors[1].g, _astVerticesColors[1].b, _astVerticesColors[1].a);
+					_batchAccumulator[idx + 4] = TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a);
+					_batchAccumulator[idx + 5] = TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12], _pBuffer[11], _astVerticesColors[3].r, _astVerticesColors[3].g, _astVerticesColors[3].b, _astVerticesColors[3].a);
 				}
 				else
 				{
@@ -2210,15 +2243,15 @@ FORCE_INLINE DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &co
 					if (flags & EF_COLOR_MIX)
 						col = _stColormix;
 
-					const TVertex2 triangles[] = {TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], col.r, col.g, col.b, col.a),
-						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11], col.r, col.g, col.b, col.a),
-						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r, col.g, col.b, col.a),
-						TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11], col.r, col.g, col.b, col.a),
-						TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], col.r, col.g, col.b, col.a),
-						TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12], _pBuffer[11], col.r, col.g, col.b, col.a)};
-					
+					const uint idx = _batchAccumulator.size();
 					_batchAccumulator.resize(_batchAccumulator.size() + 6);
-					memcpy(&_batchAccumulator[_batchAccumulator.size() - 6], triangles, 6 * sizeof(TVertex2));
+
+					_batchAccumulator[idx + 0] = TVertex2(_pBuffer[2], _pBuffer[3], _pBuffer[8], _pBuffer[9], col.r, col.g, col.b, col.a);
+					_batchAccumulator[idx + 1] = TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11], col.r, col.g, col.b, col.a);
+					_batchAccumulator[idx + 2] = TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12],_pBuffer[9], col.r, col.g, col.b, col.a);
+					_batchAccumulator[idx + 3] = TVertex2(_pBuffer[4], _pBuffer[5], _pBuffer[8], _pBuffer[11], col.r, col.g, col.b, col.a);
+					_batchAccumulator[idx + 4] = TVertex2(_pBuffer[0], _pBuffer[1], _pBuffer[12], _pBuffer[9], col.r, col.g, col.b, col.a);
+					_batchAccumulator[idx + 5] = TVertex2(_pBuffer[6], _pBuffer[7], _pBuffer[12], _pBuffer[11], col.r, col.g, col.b, col.a);
 				}
 			}
 	else
@@ -2239,7 +2272,10 @@ FORCE_INLINE DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &co
 		if (flags & EF_VERTICES_COLORS)
 		{
 			desc.uiColorOffset = 16 * sizeof(float);
-			memcpy(&_pBuffer[16], _astVerticesColors, 4 * sizeof(TColor4));
+			COPY_COLOR_TO_BUFFER(_pBuffer, 16, _astVerticesColors[0])
+			COPY_COLOR_TO_BUFFER(_pBuffer, 20, _astVerticesColors[1])
+			COPY_COLOR_TO_BUFFER(_pBuffer, 24, _astVerticesColors[2])
+			COPY_COLOR_TO_BUFFER(_pBuffer, 28, _astVerticesColors[3])
 		}
 
 		_pCoreRenderer->Draw(desc, CRDM_TRIANGLE_STRIP, 4);

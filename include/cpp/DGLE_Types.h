@@ -386,6 +386,13 @@ namespace DGLE
 
 	};
 
+	//Helper functions and macroses//
+
+	inline float signf(float f)
+	{
+		return f > 0.f ? 1.f : (f == 0.f ? 0.f : -1.f);
+	}
+	
 	#define RGBA(r, g, b, a) ((uint32)(((uint8)(r) | ((uint32)((uint8)(g)) << 8)) | (((uint32)(uint8)(b)) << 16) | (((uint32)(uint8)(a)) << 24)))
 
 	/** Describes color in engine. Color is four component based. Each component is float, value can vary from 0.0 to 1.0.*/
@@ -1084,24 +1091,24 @@ namespace DGLE
 			
 			for (r = i + 1; r < 4; ++r)
 			{
-				float cur_ABS = fabs(rows[r][i]);
-				if (cur_ABS > major)
+				const float cur_abs = fabs(rows[r][i]);
+				if (cur_abs > major)
 				{
-					major=cur_ABS;
-					row_num=r;
+					major = cur_abs;
+					row_num = r;
 				}
 			}
 			
 			if (row_num != i)
 			{
-				(int &)rows[i]			^= (int)rows[row_num];
-				(int &)rows[row_num]	^= (int)rows[i];
-				(int &)rows[i]			^= (int)rows[row_num];
+				(int &)rows[i] ^= (int)rows[row_num];
+				(int &)rows[row_num] ^= (int)rows[i];
+				(int &)rows[i] ^= (int)rows[row_num];
 			}
 			
 			for (r = i + 1; r < 4; ++r)
 			{
-				float factor=rows[r][i] / rows[i][i];
+				const float factor = rows[r][i] / rows[i][i];
 				for (int c = i; c < 8; ++c)
 					rows[r][c] -= factor * rows[i][c];
 			}
@@ -1109,7 +1116,7 @@ namespace DGLE
 		for (i = 3; i > 0; --i)
 			for (r = 0; r < i; ++r) 
 			{
-				float factor=rows[r][i] / rows[i][i];
+				const float factor = rows[r][i] / rows[i][i];
 				for (int c = 4; c < 8; ++c)
 					rows[r][c] -= factor * rows[i][c];
 			}
@@ -1172,9 +1179,9 @@ namespace DGLE
 	inline TMatrix4x4 MatrixBillboard(const TMatrix4x4 &stMatrix)
 	{
 		return TMatrix4x4(
-			TVector3(stMatrix._2D[0][0], stMatrix._2D[1][0], stMatrix._2D[2][0]).Length(), 0.f, 0.f, stMatrix._2D[0][3],
-			0.f, TVector3(stMatrix._2D[0][1], stMatrix._2D[1][1], stMatrix._2D[2][1]).Length(), 0.f, stMatrix._2D[1][3],
-			0.f, 0.f, TVector3(stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2]).Length(), stMatrix._2D[2][3],
+			signf(stMatrix._2D[0][0]) * TVector3(stMatrix._2D[0][0], stMatrix._2D[1][0], stMatrix._2D[2][0]).Length(), 0.f, 0.f, stMatrix._2D[0][3],
+			0.f, signf(stMatrix._2D[1][1]) * TVector3(stMatrix._2D[0][1], stMatrix._2D[1][1], stMatrix._2D[2][1]).Length(), 0.f, stMatrix._2D[1][3],
+			0.f, 0.f, signf(stMatrix._2D[2][2]) * TVector3(stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2]).Length(), stMatrix._2D[2][3],
 			stMatrix._2D[3][0],	stMatrix._2D[3][1],	stMatrix._2D[3][2],	stMatrix._2D[3][3]);
 	}
 
