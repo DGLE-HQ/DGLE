@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.04.2013 (c)Korotkov Andrey
+\date		20.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,9 +15,11 @@ See "DGLE.h" for more details.
 const float c_fQuad[] = {
 	-0.5f, -0.5f, 0.5f, -0.5f,
 	-0.5f, 0.5f, 0.5f, 0.5f,
-	 0.f, 1.f, 1.f, 1.f,
-	 0.f, 0.f, 1.f, 0.f
-	};
+	0.f, 1.f, 1.f, 1.f,
+	0.f, 0.f, 1.f, 0.f,
+	0.f, 0.f, 1.f, 0.f, 0.f, 1.f,
+	0.f, 0.f, 1.f, 0.f, 0.f, 1.f
+};
 
 CTexture::CTexture(uint uiInstIdx, ICoreTexture *pCoreTex, uint uiWidth, uint uiHeight):
 CInstancedObj(uiInstIdx),
@@ -25,7 +27,7 @@ _pCoreTexture(pCoreTex),
 _uiWidth(uiWidth), _uiHeight(uiHeight),
 _uiFrameWidth(0), _uiFrameHeight(0)
 {
-	memcpy(_quad, c_fQuad, sizeof(float) * 8);
+	memcpy(_quad, c_fQuad, sizeof(float) * 28);
 
 	_pRender2D = Core()->pRender()->pRender2D();
 	_pRender3D = Core()->pRender()->pRender3D();
@@ -90,7 +92,7 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 	Bind(0);
 
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 16 * sizeof(float), 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	else
 	{
 		const float tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
@@ -102,7 +104,7 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 		_quad[12] = tx;	_quad[13] = ty;
 		_quad[14] = _quad[10]; _quad[15] = ty;
 
-		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 16 * sizeof(float), 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	}
 
 	return S_OK;

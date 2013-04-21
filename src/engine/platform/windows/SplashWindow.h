@@ -13,14 +13,14 @@ See "DGLE.h" for more details.
 
 class CSplashWindow : public CInstancedObj, public ISplashWindow
 {
-	bool		_bInSeparateThread;
-	HWND		_hOwnerWndHwnd;
-	HWND		_hWnd;
-	HBITMAP		_hBmp;
-	char		*_pcBmpFile;
+	bool _bInSeparateThread;
+	HWND _hOwnerWndHwnd,
+		_hWnd;
+	HBITMAP _hBmp;
+	char *_pcBmpFile;
 
-	bool		 _CreateWindow();
-	void		 _DestroyWindow();
+	bool _CreateWindow();
+	void _DestroyWindow();
 	
 	static DWORD WINAPI _s_ThreadProc(LPVOID lpParameter);
 

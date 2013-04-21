@@ -67,10 +67,9 @@ class CConsole;
 
 struct TEngInstance
 {
-	E_GET_ENGINE_FLAGS
-				eGetEngFlags;
-	CConsole	*pclConsole;
-	CCore		*pclCore;
+	E_GET_ENGINE_FLAGS eGetEngFlags;
+	CConsole *pclConsole;
+	CCore *pclCore;
 
 	TEngInstance():
 		eGetEngFlags(GEF_DEFAULT),
@@ -141,7 +140,7 @@ public:
 
 // Defines //
 
-#define DGLE_VERSION (string(_DGLE_VER_" (")+string(__TIMESTAMP__)+string(")")).c_str()
+#define DGLE_VERSION (string(_DGLE_VER_" (") + string(__TIMESTAMP__) + string(")")).c_str()
 
 // Externs //
 
@@ -162,25 +161,25 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	+ " " + FloatToStrFmt(m._2D[3][0]) + "," + FloatToStrFmt(m._2D[3][1]) + "," + FloatToStrFmt(m._2D[3][2]) + "," + FloatToStrFmt(m._2D[3][3]) + "]").c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
 
 #define IENGINE_BASE_OBJECT_IMPLEMENTATION(object_type) \
-	DGLE_RESULT DGLE_API Free()\
+DGLE_RESULT DGLE_API Free()\
+{\
+	bool can_delete;\
+	Core()->pResMan()->RemoveResource(this, can_delete);\
+	if (can_delete)\
 	{\
-		bool can_delete;\
-		Core()->pResMan()->RemoveResource(this, can_delete);\
-		if (can_delete)\
-		{\
-			delete this;\
-			return S_OK;\
-		}\
-		else\
-			return S_FALSE;\
-	}\
-	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType)\
-	{\
-		eObjType = object_type;\
+		delete this;\
 		return S_OK;\
 	}\
-	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType)\
-	{\
-		uiObjUnknownType = -1;\
+	else\
 		return S_FALSE;\
-	}
+}\
+DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType)\
+{\
+	eObjType = object_type;\
+	return S_OK;\
+}\
+DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType)\
+{\
+	uiObjUnknownType = -1;\
+	return S_FALSE;\
+}

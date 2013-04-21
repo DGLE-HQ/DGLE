@@ -23,7 +23,8 @@ struct TProfileData
 
 class CToggleState : public CInstancedObj
 {
-	static const uint8 _sc_uiStatesCount = 15, _sc_uiMaxVertexAttribs = 16;
+	static const uint8 _sc_uiStatesCount = 13, // depends on CToggleState::GetCapIdx supported caps count
+		_sc_uiMaxVertexAttribs = 16;
 
 public:
 	struct TProfileData
@@ -66,8 +67,8 @@ public:
 	inline CToggleState &operator =(const CToggleState &right)
 	{
 		_iMaxAttribs = right._iMaxAttribs;
-		memcpy(_bState, right._bState, sizeof(GLboolean)*_sc_uiStatesCount);
-		memcpy(_bAttrib, right._bAttrib, sizeof(GLboolean)*_sc_uiMaxVertexAttribs);
+		memcpy(_bState, right._bState, sizeof(GLboolean) * _sc_uiStatesCount);
+		memcpy(_bAttrib, right._bAttrib, sizeof(GLboolean) * _sc_uiMaxVertexAttribs);
 		return *this;
 	}
 private:

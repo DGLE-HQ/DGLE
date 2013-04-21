@@ -204,7 +204,7 @@ FORCE_INLINE bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) c
 		_pCoreRenderer->SetColor(ColorWhite()); 
 		_pCoreRenderer->SetLineWidth(1.f);
 		
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs, -1, true), CRDM_LINE_STRIP, 5);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs, -1, -1, true), CRDM_LINE_STRIP, 5);
 		
 		_pCoreRenderer->SetLineWidth((float)_uiLineWidth);
 
@@ -794,7 +794,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 	{
 		_pCoreRenderer->SetColor(stColor);
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy, -1, true), CRDM_POINTS, 1);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy, -1, -1, true), CRDM_POINTS, 1);
 		
 		++_uiObjsDrawnCount;
 	}
@@ -853,7 +853,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 		_pBuffer[0] = stCoords1.x; _pBuffer[1] = stCoords1.y;
 		_pBuffer[2] = stCoords2.x; _pBuffer[3] = stCoords2.y;
 
-		TDrawDataDesc desc((uint8*)_pBuffer, -1, true);
+		TDrawDataDesc desc((uint8*)_pBuffer, -1, -1, true);
 
 		if (eFlags & PF_VERTICES_COLORS)
 		{
@@ -975,7 +975,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 			_pBuffer[4] = _pBuffer[8]; _pBuffer[5] = _pBuffer[9];
 		}
 
-		TDrawDataDesc desc((uint8*)_pBuffer, -1, true);
+		TDrawDataDesc desc((uint8*)_pBuffer, -1, -1, true);
 
 		if(eFlags & PF_VERTICES_COLORS)
 		{
@@ -1092,7 +1092,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawEllipse(const TPoint2 &stCoords, const TVect
 			_pBuffer[3 + i * 2] = stCoords.y + stRadius.y * sinf(i * k * (float)M_PI / 180.f);
 		}
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2], -1, true), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)&_pBuffer[eFlags & PF_FILL ? 0 : 2], -1, -1, true), eFlags & PF_FILL ? CRDM_TRIANGLE_FAN : CRDM_LINE_STRIP, eFlags & PF_FILL ? uiQuality + 2 : uiQuality + 1);
 
 		++_uiObjsDrawnCount;
 	}
@@ -2267,7 +2267,7 @@ FORCE_INLINE DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &co
 		_pBuffer[14] = _pBuffer[12];
 		_pBuffer[15] = _pBuffer[11];
 
-		TDrawDataDesc desc((uint8 *)_pBuffer, 8 * sizeof(float), true);
+		TDrawDataDesc desc((uint8 *)_pBuffer, -1, 8 * sizeof(float), true);
 		
 		if (flags & EF_VERTICES_COLORS)
 		{

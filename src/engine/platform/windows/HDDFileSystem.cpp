@@ -84,7 +84,7 @@ DGLE_RESULT DGLE_API CHDDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 {
 	prFile = NULL;
 
-	if (pcName[strlen(pcName)-1] == '\\') //if directory
+	if (pcName[strlen(pcName) - 1] == '\\') //if directory
 		return CreateDirectoryA(pcName, NULL) == 0 ? S_FALSE : S_OK;
 
 	prFile = new CHDDFile(InstIdx(), pcName, eFlags);
@@ -96,7 +96,7 @@ DGLE_RESULT DGLE_API CHDDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 
 DGLE_RESULT DGLE_API CHDDFileSystem::DeleteFile(const char *pcName)
 {
-	if (pcName[strlen(pcName)-1] == '\\') //if directory
+	if (pcName[strlen(pcName) - 1] == '\\') //if directory
 		return RemoveDirectoryA(pcName) == 0 ? S_FALSE : S_OK;
 
 	return ::DeleteFile(pcName) == 0 ? S_FALSE : S_OK;
@@ -104,7 +104,7 @@ DGLE_RESULT DGLE_API CHDDFileSystem::DeleteFile(const char *pcName)
 
 DGLE_RESULT DGLE_API CHDDFileSystem::FileExists(const char *pcName, bool &bExists)
 {
-	if (pcName[strlen(pcName)-1] == '\\') //if directory
+	if (pcName[strlen(pcName) - 1] == '\\') //if directory
 	{
 		struct _stat statBuffer;
 		bExists = (_stat(pcName, &statBuffer) == 0 && statBuffer.st_mode & S_IFDIR); 

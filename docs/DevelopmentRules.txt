@@ -149,7 +149,7 @@
 
 10. In classes private members must go first, then goes private methods and then goes all public methods. Try not to use public members and friend classes.
     
-11. If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail dgle@dronprogs.org but before, please, think a little bit and try
+11. If you are not shure that you have done right, don't be afraid, feel free to contact developers by e-mail hello@dglengine.org but before, please, think a little bit and try
     to make right decision concerning the style and principles of code around.
     
 ===================================== C# ======================================

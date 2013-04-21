@@ -13,12 +13,11 @@ See "DGLE.h" for more details.
 
 struct TConEntry
 {
-	char	*pcName;
-	char	*pcHelp;
-	void	*pParameter;
-	int		*piVar;
-	int		 iMinValue,
-			 iMaxValue;
+	char *pcName;
+	char *pcHelp;
+	void *pParameter;
+	int *piVar,
+		iMinValue, iMaxValue;
 
 	bool(DGLE_API *pProc)(void *pParameter, const char *pcParam);
 

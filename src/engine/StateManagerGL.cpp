@@ -544,7 +544,8 @@ inline void CMatrixState::glLoadMatrixf(const GLfloat *m)
 	{
 	case GL_PROJECTION: mat = _proj; break;
 	case GL_TEXTURE: mat = _tex; break;
-	case GL_MODELVIEW: mat = _mview; break;
+	default:
+		mat = _mview;
 	}
 
 	mat[0] = m[0]; mat[1] = m[1]; mat[2] = m[2]; mat[3] = m[3];

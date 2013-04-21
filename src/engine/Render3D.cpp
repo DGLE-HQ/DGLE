@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2013 (c)Korotkov Andrey
+\date		20.04.2013 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -189,6 +189,8 @@ DGLE_RESULT DGLE_API CRender3D::GetColor(TColor4 &stColor)
 
 DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 {
+	// ToDo: Increase speed!
+
 	IN_3D_GUARD
 
 	if (_stCurState.pCurMat == pMat)
@@ -207,7 +209,10 @@ DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 		if (p_diff_tex)
 			p_diff_tex->Bind(0);
 		else
+		{
+			_stCurState.pCurTexs[0] = NULL;
 			_pCoreRenderer->BindTexture(NULL, 0);
+		}
 
 		float shininess;
 		pMat->GetShininess(shininess);
@@ -245,6 +250,7 @@ DGLE_RESULT DGLE_API CRender3D::BindMaterial(IMaterial *pMat)
 
 void CRender3D::UnbindTextures()
 {
+	// ToDo: Must be improved, will be slow for 16+ texture units.
 	for (uint i = _uiMaxTexUnits; i != 0; --i)
 		_pCoreRenderer->BindTexture(NULL, i - 1);
 
@@ -303,7 +309,8 @@ void CRender3D::_DrawLight(uint idx)
 
 	_pCoreRenderer->SetPointSize(10.f);
 	_pCoreRenderer->SetColor(_stCurState.pCurLights[idx].stDiffCol);
-	PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_stCurState.pCurLights[idx].stPos.xyz), CRDM_POINTS, 1));
+	
+	PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_stCurState.pCurLights[idx].stPos.xyz, -1, -1, false), CRDM_POINTS, 1));
 
 	const TPoint3 &pos = _stCurState.pCurLights[idx].stPos;
 	const TVector3 &dir = _stCurState.pCurLights[idx].stDir;
@@ -315,7 +322,7 @@ void CRender3D::_DrawLight(uint idx)
 			pos.x, -range + pos.y, pos.z, pos.x, range + pos.y, pos.z,
 			pos.x, pos.y, -range + pos.z, pos.x, pos.y, range + pos.z};
 
-		PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)cross), CRDM_LINES, 6));
+		PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)cross, -1, -1, false), CRDM_LINES, 6));
 	}
 	else
 		if (_stCurState.pCurLights[idx].eType == LT_DIRECTIONAL)
@@ -323,7 +330,7 @@ void CRender3D::_DrawLight(uint idx)
 			const float direction[] = {range * dir.x + pos.x, range * dir.y + pos.y, range * dir.z + pos.z,
 				-range * dir.x + pos.x, -range * dir.y + pos.y, -range * dir.z + pos.z};
 			
-			PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)direction), CRDM_LINES, 2));
+			PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)direction, -1, -1, false), CRDM_LINES, 2));
 		}
 		else
 		{
@@ -338,7 +345,7 @@ void CRender3D::_DrawLight(uint idx)
 
 			PushMatrix();
 
-			if (dir.y < 0.999f)
+			if (fabs(dir.y) < 0.999f)
 			{
 				TVector3 right = dir.Cross(TVector3(0.f, 1.f, 0.f));
 				right.Normalize();
@@ -350,9 +357,14 @@ void CRender3D::_DrawLight(uint idx)
 					0.f, 0.f, 0.f, 1.f) * MatrixTranslate(pos));
 			}
 			else
+			{
 				MultMatrix(MatrixTranslate(pos));
+				
+				if (dir.y < 0.f)
+					MultMatrix(MatrixScale(TVector3(1.f, -1.f, 1.f)));
+			}
 
-			PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)spot), CRDM_LINES, 10));
+			PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)spot, -1, -1, false), CRDM_LINES, 10));
 
 			PopMatrix();
 		}
@@ -363,6 +375,8 @@ void CRender3D::_DrawLight(uint idx)
 		_stCurState.pCurTexs[0]->GetCoreTexture(p_core_tex);
 		_pCoreRenderer->BindTexture(p_core_tex, 0);
 	}
+	
+	_pCoreRenderer->SetColor(_stCurState.stColor);
 
 	if (light)
 		ToggleLighting(true);
@@ -370,6 +384,8 @@ void CRender3D::_DrawLight(uint idx)
 
 DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 {
+	// ToDo: Increase speed!
+
 	IN_3D_GUARD
 
 	if (!pLight)
@@ -781,7 +797,7 @@ DGLE_RESULT DGLE_API CRender3D::SetMatrix(const TMatrix4x4 &stMatrix)
 	IN_3D_GUARD
 
 	_stCurState.matrixStack.Top() = stMatrix;
-	_pCoreRenderer->SetMatrix(_stCurState.matrixStack.Top());
+	_pCoreRenderer->SetMatrix(stMatrix);
 
 	return S_OK;
 }

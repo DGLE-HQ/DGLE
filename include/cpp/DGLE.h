@@ -73,10 +73,10 @@ Also we would be happy for any donations to support futher project development.
 
 \section additional_sec Additional help and information
 
-Visit official DGLE engine website http://dgle.dronprogs.org/ for additional information.
+Visit official DGLE engine website http://dglengine.org/ for additional information.
 There you can download latest version, gain help, support project or just say your opinion or ask question at official DGLE forum ( http://forum.dronprogs.org/viewforum.php?f=3 ).
 
-Feel free to write directly to project leader on e-mail dgle@dronprogs.org.
+Feel free to write directly to project leader on e-mail hello@dglengine.org.
 
 \example HelloWorld.cpp
 This is simplest DGLE application for Windows.

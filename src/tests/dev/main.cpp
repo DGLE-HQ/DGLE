@@ -6,7 +6,14 @@
 //==============================================================================================================================//
 
 #include <DGLE.h>
+
+#define OPENGL_LEGACY_BASE_OBJECTS
+#include <DGLE_CoreRenderer.h>
+
 #include <string>
+
+#pragma comment(linker, "/defaultlib:opengl32.lib")
+#pragma message("Linking with \"opengl32.lib\".")
 
 DGLE_DYNAMIC_FUNC
 
@@ -44,6 +51,7 @@ using namespace DGLE;
 IEngineCore *pEngineCore = NULL;
 IInput *pInput = NULL;
 IResourceManager *pResMan = NULL;
+ICoreRenderer *pCoreRenderer = NULL;
 IRender *pRender = NULL;
 IRender2D *pRender2D = NULL;
 IRender3D *pRender3D = NULL;
@@ -56,7 +64,10 @@ void DGLE_API Init(void *pParameter)
 {
 	pEngineCore->GetSubSystem(ESS_INPUT, (IEngineSubSystem *&)pInput);
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)pResMan);
+	pEngineCore->GetSubSystem(ESS_CORE_RENDERER, (IEngineSubSystem *&)pCoreRenderer);
 	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pRender);
+
+	//pCoreRenderer->ToggleStateFilter(false);
 
 	pRender->SetClearColor(ColorGray());
 	pRender->GetRender2D(pRender2D);
@@ -84,6 +95,11 @@ void DGLE_API Update(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
+/*
+	for (uint i = 0; i < 10000; ++i)
+		//glLoadMatrixf(MatrixIdentity()._1D);
+		pRender3D->SetMatrix(MatrixIdentity());
+*/
 	pRender3D->MultMatrix(MatrixTranslate(TVector3(0.f, 0.f, -2.5f)));
 	pRender3D->MultMatrix(MatrixRotate((float)uiCounter, TVector3(0.2f, 0.4f, 0.1f)));
 

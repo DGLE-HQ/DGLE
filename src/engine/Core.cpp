@@ -308,7 +308,7 @@ _clDelOnFPSTimer(uiInstIdx)
 
 		_clLogFile << "DGLE Engine Log File" << endl;
 		_clLogFile << "Version: "<< DGLE_VERSION << endl;
-		_clLogFile << "Visit http://dgle.dronprogs.org/ for more information." << endl;
+		_clLogFile << "Visit http://dglengine.org/ for more information." << endl;
 		_clLogFile << "Log Started at " << time.ui16Day << "." << time.ui16Month << "." << time.ui16Year << "." << endl;
 	}
 }

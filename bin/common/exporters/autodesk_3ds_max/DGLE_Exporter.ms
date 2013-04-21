@@ -567,7 +567,7 @@ utility DGLE_Exporter "DGLE Exporter"
 	(
 		label lb_AboutCaption "DGLE Exporter v 0.3"
 		label lb_FormatTxt "Supports DSC, DMD and DSA formats."
-		label lb_URL "http://dgle.dronprogs.org/"
+		label lb_URL "http://dglengine.org/"
 		button btn_Ok "Ok" width: 50
 		---------------------------------------------------------------------------------
 		on btn_Ok pressed do

@@ -304,10 +304,10 @@ namespace DGLE
 		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 
-		inline TDrawDataDesc(uint8 *pDataPointer, uint uiTexCoordDataOffset = -1, bool bTwoCoordsPerVertex = false):
-		pData(pDataPointer), uiVertexStride(0), bVertices2D(bTwoCoordsPerVertex),
-		uiNormalOffset(-1), uiNormalStride(0),
-		uiTextureVertexOffset(uiTexCoordDataOffset), uiTextureVertexStride(0),
+		inline TDrawDataDesc(uint8 *pDataPointer, uint uiNormalDataOffset, uint uiTextureVertexDataOffset, bool bIs2D):
+		pData(pDataPointer), uiVertexStride(0), bVertices2D(bIs2D),
+		uiNormalOffset(uiNormalDataOffset), uiNormalStride(0),
+		uiTextureVertexOffset(uiTextureVertexDataOffset), uiTextureVertexStride(0),
 		uiColorOffset(-1), uiColorStride(0),
 		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
 		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)

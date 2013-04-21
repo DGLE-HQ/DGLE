@@ -15,12 +15,11 @@ extern HMODULE hModule;
 
 class CResFile: public CInstancedObj, public IFile
 {
-	char		_acName[MAX_PATH];
-	uint32		_ui32Pos,
-				_ui32Size;
-	bool		_bOpened;
-	HGLOBAL		_hRes;
-	LPVOID		_pData;
+	char _acName[MAX_PATH];
+	uint32 _ui32Pos, _ui32Size;
+	bool _bOpened;
+	HGLOBAL _hRes;
+	LPVOID _pData;
 
 public:
 

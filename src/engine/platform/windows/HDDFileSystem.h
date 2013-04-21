@@ -13,8 +13,8 @@ See "DGLE.h" for more details.
 
 class CHDDFileIterator: public CInstancedObj, public IFileIterator
 {
-	char	_acName[MAX_PATH];
-	HANDLE	_fileHandle;
+	char _acName[MAX_PATH];
+	HANDLE _fileHandle;
 
 public:
 	

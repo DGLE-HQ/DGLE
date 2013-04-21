@@ -51,9 +51,9 @@ catch(...)\
 namespace DGLE
 {
 
-typedef void	(DGLE_API *TPProc)(void *pParameter),
-				(DGLE_API *TPEventProc)(void *pParameter, IBaseEvent *pEvent),
-				(DGLE_API *TPMsgProc)(void *pParameter, const TWindowMessage &stMsg);
+typedef void (DGLE_API *TPProc)(void *pParameter),
+	(DGLE_API *TPEventProc)(void *pParameter, IBaseEvent *pEvent),
+	(DGLE_API *TPMsgProc)(void *pParameter, const TWindowMessage &stMsg);
 
 template<typename F>
 class CFunctorImpl;

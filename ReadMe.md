@@ -2,7 +2,7 @@
 
 ## Introduction
 
-[DGLE](http://dgle.dronprogs.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+[DGLE](http://dglengine.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
 ### Project mission
 The goal of the project is to provide developers with flexible & extendable cross platform easy-to-learn professional technology, capable of building any 2D/3D
@@ -17,9 +17,9 @@ Now officially this means: *Dynamite Groovy Lightweight Engine* that is more cor
 Sometimes engine is named *DGLEngine* or *DGLE engine*, both variants are also correct.
 
 ### More information
-See [gallery](http://dgle.dronprogs.org/dgle_gallery) for screenshots of projects based on this engine.
+See [gallery](http://dglengine.org/gallery) for screenshots of projects based on this engine.
 
-Visit [official website](http://dgle.dronprogs.org) for more details on this project and also plugins, articles, tutorials, examples and forum.
+Visit [official website](http://dglengine.org) for more details on this project and also plugins, articles, tutorials, examples and forum.
 
 ## Features
 
@@ -103,7 +103,7 @@ Also if you want to participate in the project development process you must read
 
 ## Documentation
 
-You can find engine API documentation [here](http://dgle.dronprogs.org/api_help/index.html).
+You can find engine API documentation [here](http://dglengine.org/api_help/index.html).
 
 ## License
 
@@ -153,6 +153,6 @@ All DeeProSoft employees for project support
 
 ## Contacts
 
-Visit [http://dgle.dronprogs.org](http://dgle.dronprogs.org) for more details.
+Visit [http://dglengine.org](http://dglengine.org) for more details.
 
-Feel free to mail us [dgle@dronprogs.org](mailto:dgle@dronprogs.org) with any questions.
+Feel free to mail us [hello@dglengine.org](mailto:hello@dglengine.org) with any questions.

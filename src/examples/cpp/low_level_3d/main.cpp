@@ -1,4 +1,5 @@
 #include <DGLE.h>
+#include <DGLE_CoreRenderer.h> // add this header for some low-level rendering methods
 
 using namespace DGLE;
 
@@ -18,7 +19,7 @@ DGLE_DYNAMIC_FUNC
 #define SCREEN_HEIGHT	768u
 
 IEngineCore *pEngineCore = NULL;
-IRender *pRender = NULL;
+ICoreRenderer *pCoreRenderer = NULL;
 IRender3D *pRender3D = NULL;
 
 ITexture *pTexGrass, *pTexTree1, *pTexTree2, *pTexTree3, *pTexOwl, *pTexZard;
@@ -34,38 +35,55 @@ float owlX = -2.f;
 
 uint uiCounter = 0;
 
+// Float array with four vertices describing a plane in 3D space.
+// These four vertices will generate two triangles, we will use CRDM_TRIANGLE_STRIP mode to do it.
+const float c_afPlane[] = {
+	// vertices
+	/*v1 = */ -0.5f, -0.5f, 0.f, /*v2 = */ 0.5f, -0.5f, 0.f,
+	/*v3 = */ -0.5f,  0.5f, 0.f, /*v4 = */ 0.5f,  0.5f, 0.f,
+	// normals
+	/*n1 = */ 0.f, 0.f, 1.f, /*n2 = */ 0.f, 0.f, 1.f,
+	/*n3 = */ 0.f, 0.f, 1.f, /*n4 = */ 0.f, 0.f, 1.f,
+	// texture vertices
+	/*t1 = */ 0.f, 1.f, /*t2 = */ 1.f, 1.f,
+	/*t3 = */ 0.f, 0.f, /*t4 = */ 1.f, 0.f
+};
+
 void DGLE_API Init(void *pParameter)
 {
-	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)pRender);
-	pRender->GetRender3D(pRender3D);
-	pRender->SetClearColor(ColorGray());
+	pEngineCore->GetSubSystem(ESS_CORE_RENDERER, (IEngineSubSystem *&)pCoreRenderer);
+
+	IRender *p_render;
+	pEngineCore->GetSubSystem(ESS_RENDER, (IEngineSubSystem *&)p_render);
+	p_render->GetRender3D(pRender3D);
+	p_render->SetClearColor(ColorGray());
 
 	IResourceManager *p_res_man;
 	pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)p_res_man);
 
-	const uint load_3d_flags = (uint)(TLF_FILTERING_ANISOTROPIC | TLF_ANISOTROPY_4X | TLF_GENERATE_MIPMAPS | TLF_COORDS_CLAMP);
+	const uint load_3d_flags = (uint)(TLF_FILTERING_ANISOTROPIC | TLF_ANISOTROPY_4X | TLF_GENERATE_MIPMAPS);
 
 	p_res_man->Load(RESOURCE_PATH"fonts\\Times_New_Roman_18_Bold.dft", (IEngineBaseObject *&)pFont);
-	p_res_man->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass, load_3d_flags);
+	p_res_man->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass, load_3d_flags | TLF_COORDS_REPEAT /* cause we will tile this texture */ );
 
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_owl.png", (IEngineBaseObject*&)pTexOwl, load_3d_flags);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_owl.png", (IEngineBaseObject*&)pTexOwl, load_3d_flags | TLF_COORDS_CLAMP);
 	pTexOwl->SetFrameSize(48, 128);
 
-	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_1.png", (IEngineBaseObject *&)pTexTree1, load_3d_flags);
+	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_1.png", (IEngineBaseObject *&)pTexTree1, load_3d_flags | TLF_COORDS_CLAMP);
 	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_1.dmd", (IEngineBaseObject *&)pMeshTree1, MMLF_FORCE_MODEL_TO_MESH);
 
-	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_2.png", (IEngineBaseObject *&)pTexTree2, load_3d_flags);
+	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_2.png", (IEngineBaseObject *&)pTexTree2, load_3d_flags | TLF_COORDS_CLAMP);
 	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_2.dmd", (IEngineBaseObject *&)pMeshTree2, MMLF_FORCE_MODEL_TO_MESH);
 
-	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_3.png", (IEngineBaseObject *&)pTexTree3, load_3d_flags);
+	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_3.png", (IEngineBaseObject *&)pTexTree3, load_3d_flags | TLF_COORDS_CLAMP);
 	p_res_man->Load(RESOURCE_PATH"meshes\\trees\\tree_3.dmd", (IEngineBaseObject *&)pMeshTree3, MMLF_FORCE_MODEL_TO_MESH);
 
-	p_res_man->Load(RESOURCE_PATH"meshes\\zard\\zard_diff.dds", (IEngineBaseObject *&)pTexZard, load_3d_flags);
+	p_res_man->Load(RESOURCE_PATH"meshes\\zard\\zard_diff.dds", (IEngineBaseObject *&)pTexZard, load_3d_flags | TLF_COORDS_CLAMP);
 	p_res_man->Load(RESOURCE_PATH"meshes\\zard\\zard_walk.dmd", (IEngineBaseObject *&)pModelZard);
 
 	// add some fog to the scene
 	pRender3D->SetFogColor(ColorGray());
-	pRender3D->SetLinearFogBounds(1.25f, 4.f);
+	pRender3D->SetLinearFogBounds(1.5f, 4.f);
 	pRender3D->ToggleFog(true);
 }
 
@@ -108,19 +126,34 @@ void DGLE_API Render(void *pParameter)
 	// Draw entire scene.
 
 	// draw tiled grass floor
-	for (int i = -4; i < 4; ++i)
-		for (int j = -4; j < 4; ++j)
-		{
-			pRender3D->PushMatrix(); // save current matrix
-			
-			pRender3D->MultMatrix( // multiplicates current matrix with given one
-				MatrixRotate(-90.f, TVector3(1.f, 0.f, 0.f)) *
-				MatrixTranslate(TVector3((float)i, 0.f, (float)j)));
-			
-			pTexGrass->Draw3D(); // fast way to render texture as square plane with size 1.0
 
-			pRender3D->PopMatrix(); // return previous matrix
-		}
+	// Some low-level things will be shown below, mainly for education purpose.
+	// Of course, there is a way to do the same thing without using low-level API.
+
+	pRender3D->PushMatrix(); // save current matrix
+	
+	// multiplicates current matrix with given one
+	pRender3D->MultMatrix(MatrixScale(TVector3(8.f, 8.f, 8.f)) * 
+		MatrixRotate(-90.f, TVector3(1.f, 0.f, 0.f))
+		); 
+			
+	pCoreRenderer->SetMatrix(MatrixScale(TVector3(8.f, 8.f, 8.f)), MT_TEXTURE); // a simple way to tile texture
+
+	// Here is the way for instant rendering of any custom geometry.
+	
+	TDrawDataDesc desc;
+	desc.pData = (uint8 *)c_afPlane;
+	desc.uiNormalOffset = 12 * sizeof(float);
+	desc.uiTextureVertexOffset = 24 * sizeof(float);
+	
+	pTexGrass->Bind(); // current texture setup
+	pRender3D->Draw(desc, CRDM_TRIANGLE_STRIP, 4);
+
+	pCoreRenderer->SetMatrix(MatrixIdentity(), MT_TEXTURE); // return texture matrix to its normal state
+
+	pRender3D->PopMatrix(); // return previous matrix
+
+	// Ok, that's all with low-level things in this example.
 
 	// turn off backface culling because of trees leaves (they will look better) and sprites rendering (we want txt and owl to be visible from both sides)
 	pRender3D->ToggleBackfaceCulling(false);
@@ -214,7 +247,7 @@ void DGLE_API Render(void *pParameter)
 		cur_matrix)
 		);
 	
-	pTexOwl->Draw3D((uiCounter / 2) % 15);
+	pTexOwl->Draw3D((uiCounter / 2) % 15); // fast way to render texture as square plane with size 1.0
 	
 	pRender3D->PopMatrix();
 

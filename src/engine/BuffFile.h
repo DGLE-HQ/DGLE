@@ -14,10 +14,9 @@ See "DGLE.h" for more details.
 class CBuffFile: public IFile
 {
 	std::string _strFileName;
-	uint32		_ui32Pos,
-				_ui32Size;
-	uint8		*_pData;
-	bool		_bDelData;
+	uint32 _ui32Pos, _ui32Size;
+	uint8 *_pData;
+	bool _bDelData;
 
 public:
 

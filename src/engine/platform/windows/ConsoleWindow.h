@@ -13,26 +13,24 @@ See "DGLE.h" for more details.
 
 class CConsoleWindow : public IConsoleWindow
 {
-	static const uint	_sc_uiTmpBufferSize = 256;
-	static const uint	_sc_uiMaxConsoleTxtLength = 30000;
+	static const uint _sc_uiTmpBufferSize = 256;
+	static const uint _sc_uiMaxConsoleTxtLength = 30000;
 
-	HINSTANCE			_hInst;
-	std::string			_strOnCreate;
-	bool				_bIsLooping;
-	int					_iX, _iY, _iWidth, _iHeight;
-	bool				_bVisible;
-	int					_iPrevLineSize;
-	bool				_bToPrevLineActive;
-	HWND				_hWnd,
-						_hMemo,
-						_hEdit;
-	HFONT				_hFont;
-	CRITICAL_SECTION	_cs;
-	HANDLE				_hThreadHandle;
-	DWORD				_threadId;
-	void			   *_pOldEditProc;
+	HINSTANCE _hInst;
+	std::string	_strOnCreate;
+	bool _bIsLooping;
+	int	_iX, _iY, _iWidth, _iHeight;
+	bool _bVisible;
+	int	_iPrevLineSize;
+	bool _bToPrevLineActive;
+	HWND _hWnd, _hMemo, _hEdit;
+	HFONT _hFont;
+	CRITICAL_SECTION _cs;
+	HANDLE _hThreadHandle;
+	DWORD _threadId;
+	void *_pOldEditProc;
 	
-	CConsole		   *_pConsole;
+	CConsole *_pConsole;
 
 	void (DGLE_API *_pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand); 
 

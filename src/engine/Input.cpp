@@ -25,18 +25,18 @@ _pcBuffer(NULL)
 
 	memset(_abKeys, 0, 256*sizeof(bool));
 
-	_stMsts.iDeltaX			= 0;
-	_stMsts.iDeltaY			= 0;
-	_stMsts.iX				= 0;
-	_stMsts.iY				= 0;
-	_stMsts.iDeltaWheel		= 0;
-	_stMsts.bLeftButton		= false;
-	_stMsts.bRightButton	= false;
-	_stMsts.bMiddleButton	= false;
+	_stMsts.iDeltaX	= 0;
+	_stMsts.iDeltaY = 0;
+	_stMsts.iX = 0;
+	_stMsts.iY = 0;
+	_stMsts.iDeltaWheel = 0;
+	_stMsts.bLeftButton = false;
+	_stMsts.bRightButton = false;
+	_stMsts.bMiddleButton = false;
 
-	_bExclusive				= false;
-	_bHideCursor			= true;
-	_bCurBeyond				= false;
+	_bExclusive = false;
+	_bHideCursor = true;
+	_bCurBeyond = false;
 
 	LOG("Input Subsystem initialized.", LT_INFO);
 }

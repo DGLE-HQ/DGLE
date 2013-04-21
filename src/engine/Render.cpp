@@ -226,6 +226,9 @@ DGLE_RESULT DGLE_API CRender::Unbind(E_ENGINE_OBJECT_TYPE eType)
 
 DGLE_RESULT DGLE_API CRender::EnableScissor(const TRectF &stArea)
 {
+	if (_pRender2D->In2DMode())
+		_pRender2D->InvalidateBatchData();
+
 	TRasterizerStateDesc desc;
 	_pCoreRenderer->GetRasterizerState(desc);
 	

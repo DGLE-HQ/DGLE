@@ -15,9 +15,9 @@ class CInstancedObj;
 
 class CHDDFile: public CInstancedObj, public IFile
 {
-	int		_iFile;
-	char	_acName[MAX_PATH],
-			_acPath[MAX_PATH];
+	int	_iFile;
+	char _acName[MAX_PATH],
+		_acPath[MAX_PATH];
 
 public:
 

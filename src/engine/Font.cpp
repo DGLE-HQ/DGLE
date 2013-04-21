@@ -121,7 +121,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 		x += curb_w * _fScale;
 	}
 
-	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, (uint)l_12 * sizeof(float), true), CRDM_TRIANGLES, (uint)length * 6);
+	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, -1, (uint)l_12 * sizeof(float), true), CRDM_TRIANGLES, (uint)length * 6);
 
 	return S_OK;
 }
