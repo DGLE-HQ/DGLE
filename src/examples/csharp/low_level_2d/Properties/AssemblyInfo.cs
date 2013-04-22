@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("low_level_2d")]
-[assembly: AssemblyDescription("Assembly wrapper upon DGLE for .Net/Mono languages.")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Andrey Korotkov")]
-[assembly: AssemblyProduct("DGLESharp")]
+[assembly: AssemblyProduct("low_level_2d")]
 [assembly: AssemblyCopyright("Copyright © Andrey Korotkov 2012")]
 [assembly: AssemblyTrademark("DGLE")]
 [assembly: AssemblyCulture("")]
