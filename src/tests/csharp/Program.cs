@@ -6,12 +6,12 @@ namespace CSharpTest
 {
     class Program
     {
-        static IEngineCore core = null;
-        static IResourceManager resman = null;
-        static IRender render = null;
-        static IInput input = null;
+        const uint SCREEN_WIDTH = 320;
+        const uint SCREEN_HEIGHT = 240;
 
-        static uint counter = 0;
+        static IEngineCore engCore = null;
+        static IInput engInput = null;
+        static IBitmapFont mainFont = null;
 
         static DSubscriber delInit = null;
         static DSubscriber delFree = null;
@@ -22,14 +22,16 @@ namespace CSharpTest
         {
             IEngineSubSystem subSys = null;
 
-            core.GetSubSystem(E_ENGINE_SUB_SYSTEM.ESS_RESOURCE_MANAGER, out subSys);
+            IResourceManager resman;
+            engCore.GetSubSystem(E_ENGINE_SUB_SYSTEM.ESS_RESOURCE_MANAGER, out subSys);
             resman = (IResourceManager)subSys;
 
-            core.GetSubSystem(E_ENGINE_SUB_SYSTEM.ESS_RENDER, out subSys);
-            render = (IRender)subSys;
+            IEngineBaseObject obj;
+            resman.GetDefaultResource(E_ENGINE_OBJECT_TYPE.EOT_BITMAP_FONT, out obj);
+            mainFont = (IBitmapFont)obj;
 
-            core.GetSubSystem(E_ENGINE_SUB_SYSTEM.ESS_INPUT, out subSys);
-            input = (IInput)subSys;
+            engCore.GetSubSystem(E_ENGINE_SUB_SYSTEM.ESS_INPUT, out subSys);
+            engInput = (IInput)subSys;
         }
 
         static void Free(IntPtr pParam)
@@ -39,42 +41,44 @@ namespace CSharpTest
 
         static void Update(IntPtr pParam)
         {
-            bool keyPrsd;
+            bool isKeyPressed;
 
-            input.GetKey(E_KEYBOARD_KEY_CODES.KEY_ESCAPE, out keyPrsd);
-            if (keyPrsd)
-                core.QuitEngine();
-
-            ++counter;
+            engInput.GetKey(E_KEYBOARD_KEY_CODES.KEY_ESCAPE, out isKeyPressed);
+            if (isKeyPressed)
+                engCore.QuitEngine();
         }
 
         static void Render(IntPtr pParam)
         {
-
+            string txt = "Hello, world!";
+            TColor4 color = TColor4.ColorWhite();
+            uint w, h;
+            
+            mainFont.GetTextDimensions(txt, out w, out h);
+            mainFont.Draw2DSimple((int)((SCREEN_WIDTH - w) / 2), (int)((SCREEN_HEIGHT - h) / 2), txt, ref color);
         }
 
         [STAThread]
         static void Main()
         {
-            if (Engine.GetEngine("..\\DGLE.dll", out core))
+            if (Engine.GetEngine("..\\DGLE.dll", out engCore))
             {
-                TEngWindow eng_win = TEngWindow.Default;
-                core.InitializeEngine(IntPtr.Zero, Application.ProductName, ref eng_win, 33, E_ENGINE_INIT_FLAGS.EIF_DEFAULT);
+                TEngineWindow engWin = new TEngineWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+                engCore.InitializeEngine(IntPtr.Zero, Application.ProductName, ref engWin, 33, E_ENGINE_INIT_FLAGS.EIF_DEFAULT);
 
-                core.ConsoleVisible(true);
-                core.ConsoleExec("core_fps_in_caption 1");
+                engCore.ConsoleVisible(true);
 
                 delInit = Init;
                 delFree = Free;
                 delUpdate = Update;
                 delRender = Render;
 
-                //pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, delInit, IntPtr.Zero);
-                //pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, delFree, IntPtr.Zero);
-                //pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, delUpdate, IntPtr.Zero);
-                //pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, delRender, IntPtr.Zero);
+                engCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, delInit, IntPtr.Zero);
+                engCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, delFree, IntPtr.Zero);
+                engCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, delUpdate, IntPtr.Zero);
+                engCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, delRender, IntPtr.Zero);
 
-                core.StartEngine();
+                engCore.StartEngine();
                 
                 Engine.FreeEngine();
             }

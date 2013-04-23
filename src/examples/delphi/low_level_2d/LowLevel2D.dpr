@@ -3,8 +3,8 @@ program low_level_2d;
 uses
   Windows,      
   DGLE in '..\..\..\..\include\delphi\DGLE.pas',
-  DGLE_types in '..\..\..\..\include\delphi\DGLE_types.pas',
-  DGLE_base in '..\..\..\..\include\delphi\DGLE_base.pas';
+  DGLE_Types in '..\..\..\..\include\delphi\DGLE_Types.pas',
+  DGLE_Base in '..\..\..\..\include\delphi\DGLE_Base.pas';
 
 //outputpath ..\..\..\..\..\bin\examples\delphi\
 

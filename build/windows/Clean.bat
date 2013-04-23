@@ -31,9 +31,11 @@ call :removeProjJunkCPP "plugins\ext"
 :: Tests
 
 call :removeBinJunkCPP "tests"
+
 call :removeProjJunkCPP "tests\dev"
 
 call :removeBinJunkCSharp "tests"
+
 call :removeProjJunkCSharp "tests\csharp"
 
 :: Utils

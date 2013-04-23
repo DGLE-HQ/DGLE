@@ -306,7 +306,7 @@ _clDelOnFPSTimer(uiInstIdx)
 		TSysTimeAndDate time;
 		GetLocalTimaAndDate(time);
 
-		_clLogFile << "DGLE Engine Log File" << endl;
+		_clLogFile << "DGLEngine Log File" << endl;
 		_clLogFile << "Version: "<< DGLE_VERSION << endl;
 		_clLogFile << "Visit http://dglengine.org/ for more information." << endl;
 		_clLogFile << "Log Started at " << time.ui16Day << "." << time.ui16Month << "." << time.ui16Year << "." << endl;

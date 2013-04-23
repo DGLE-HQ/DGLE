@@ -2,7 +2,7 @@ program d3DIn2D;
 uses
   Windows, Math,
   DGLE in 'DGLE.pas',
-  DGLE_types in 'DGLE_types.pas',
+  DGLE_Types in 'DGLE_Types.pas',
   DGLE_Base in 'DGLE_Base.pas',
   DGLE_CoreRenderer in 'DGLE_CoreRenderer.pas';
 

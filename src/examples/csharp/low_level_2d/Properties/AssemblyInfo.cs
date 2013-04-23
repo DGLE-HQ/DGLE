@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("low_level_2d")]
+[assembly: AssemblyTitle("LowLevel2D")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Andrey Korotkov")]
-[assembly: AssemblyProduct("low_level_2d")]
-[assembly: AssemblyCopyright("Copyright © Andrey Korotkov 2012")]
+[assembly: AssemblyProduct("LowLevel2D")]
+[assembly: AssemblyCopyright("Copyright © Andrey Korotkov 2013")]
 [assembly: AssemblyTrademark("DGLE")]
 [assembly: AssemblyCulture("")]
 

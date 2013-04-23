@@ -295,7 +295,7 @@ namespace DGLE
     public interface IUserCallback : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, out TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
