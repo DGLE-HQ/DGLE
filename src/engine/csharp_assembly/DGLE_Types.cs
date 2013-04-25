@@ -31,116 +31,117 @@ namespace DGLE
         DVT_DATA
     };
 
-    public struct TVariant // should be rewritten // phomm
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TVariant
     {
+        [MarshalAsAttribute(UnmanagedType.I4)]
         private E_DGLE_VARIANT_TYPE _type;
-        private int _i;
-        private float _f;
-        private IntPtr? _p; // it is nullable for all operations to be ok, is nullable ok ? // phomm
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 8)]
+        private byte[] _data;
+
+        public static readonly TVariant Zero;
 
         public void Clear()
         {
             _type = E_DGLE_VARIANT_TYPE.DVT_UNKNOWN;
-            _i = 0;
-            _f = 0.0f;
-            _p = null;
+            _data = new byte[8];
         }
 
-        public void SetInt(int iVal)
+        public static explicit operator TVariant(int value)
         {
-            Clear();
-            _type = E_DGLE_VARIANT_TYPE.DVT_INT;
-            _i = iVal;
+            TVariant v = new TVariant();
+            v._type = E_DGLE_VARIANT_TYPE.DVT_INT;
+            v._data = new byte[8];
+            byte[] data = BitConverter.GetBytes(value);
+            Array.Copy(data, v._data, data.Length);
+            return v;
         }
 
-        public void SetFloat(float fVal)
+        public static explicit operator TVariant(float value)
         {
-            Clear();
-            _type = E_DGLE_VARIANT_TYPE.DVT_FLOAT;
-            _f = fVal;
+            TVariant v = new TVariant();
+            v._type = E_DGLE_VARIANT_TYPE.DVT_FLOAT;
+            v._data = new byte[8];
+            byte[] data = BitConverter.GetBytes(value);
+            Array.Copy(data, v._data, data.Length);
+            return v;
         }
 
-        public void SetBool(bool bVal)
+        public static explicit operator TVariant(bool value)
         {
-            Clear();
-            _type = E_DGLE_VARIANT_TYPE.DVT_BOOL;
-            _i = bVal ? 1 : 0;
+            TVariant v = new TVariant();
+            v._type = E_DGLE_VARIANT_TYPE.DVT_BOOL;
+            v._data = new byte[8];
+            byte[] data = BitConverter.GetBytes(value);
+            Array.Copy(data, v._data, data.Length);
+            return v;
         }
 
-        public void SetPointer(IntPtr pointer)
+        public static explicit operator TVariant(IntPtr value)
         {
-            Clear();
-            _type = E_DGLE_VARIANT_TYPE.DVT_POINTER;
-            _p = pointer;
+            TVariant v = new TVariant();
+            v._type = E_DGLE_VARIANT_TYPE.DVT_POINTER;
+            v._data = new byte[8];
+            byte[] data = BitConverter.GetBytes((int)value);
+            Array.Copy(data, v._data, data.Length);
+            return v;
         }
 
-        public void SetData(/*[MarshalAs(UnmanagedType.LPArray)] byte[]*/ IntPtr pData, uint uiDataSize)
+        public void SetData(IntPtr pData, uint uiDataSize)
         {
-            Clear();
             _type = E_DGLE_VARIANT_TYPE.DVT_DATA;
-            _p = (IntPtr)pData;
-            _i = (int)uiDataSize;
+            _data = new byte[8];
+            byte[] data = BitConverter.GetBytes((int)pData);
+            Array.Copy(data, _data, data.Length);
+            byte[] dataSize = BitConverter.GetBytes((int)pData);
+            Array.Copy(dataSize, 0, _data, _data.Length, dataSize.Length);
         }
 
-        public int AsInt()
+        public static explicit operator int(TVariant v)
         {
-            if (_type != E_DGLE_VARIANT_TYPE.DVT_INT)
+            if (v._type != E_DGLE_VARIANT_TYPE.DVT_INT)
                 return 0;
-            else
-                return _i;
+
+            return BitConverter.ToInt32(v._data, 0);
         }
 
-        public float AsFloat()
+        public static explicit operator float(TVariant v)
         {
-            if (_type != E_DGLE_VARIANT_TYPE.DVT_FLOAT)
-                return 0.0f;
-            else
-                return _f;
+            if (v._type != E_DGLE_VARIANT_TYPE.DVT_FLOAT)
+                return 0.0F;
+
+            return BitConverter.ToSingle(v._data, 0);
         }
 
-        public bool AsBool()
+        public static explicit operator bool(TVariant v)
         {
-            if (_type != E_DGLE_VARIANT_TYPE.DVT_BOOL)
+            if (v._type != E_DGLE_VARIANT_TYPE.DVT_BOOL)
                 return false;
-            else
-                return _i == 1;
+
+            return BitConverter.ToBoolean(v._data, 0);
         }
 
-        public IntPtr? AsPointer()
+        public static explicit operator IntPtr(TVariant v)
         {
-            if (_type != E_DGLE_VARIANT_TYPE.DVT_POINTER)
-                return null;
-            else
-                return _p;
+            if (v._type != E_DGLE_VARIANT_TYPE.DVT_POINTER)
+                return IntPtr.Zero;
+
+            return Marshal.ReadIntPtr(Marshal.UnsafeAddrOfPinnedArrayElement(v._data, 0));
         }
 
-        public void GetData(/*[MarshalAs(UnmanagedType.LPArray)] byte[]*/ IntPtr? pData, out uint uiDataSize)
+        public void GetData(out IntPtr pData, out uint uiDataSize)
         {
             if (_type != E_DGLE_VARIANT_TYPE.DVT_DATA)
             {
-                pData = null;
+                pData = IntPtr.Zero;
                 uiDataSize = 0;
             }
             else
             {
-                pData = _p;
-                uiDataSize = (uint)_i;
+                pData = Marshal.ReadIntPtr(Marshal.UnsafeAddrOfPinnedArrayElement(_data, 0));
+                uiDataSize = (uint)Marshal.ReadInt32(Marshal.UnsafeAddrOfPinnedArrayElement(_data, 4));
             }
         }
-
-        public E_DGLE_VARIANT_TYPE GetType()
-        {
-            return _type;
-        }
-
-        public static implicit operator int(TVariant v) { return v._i; }
-
-        public static implicit operator float(TVariant v) { return v._f; }
-
-        public static implicit operator bool(TVariant v) { return v._i == 1; }
-
-        public static implicit operator IntPtr?(TVariant v) { return v._p; }
-
     }
 
     public enum E_WINDOW_MESSAGE_TYPE

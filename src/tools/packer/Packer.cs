@@ -70,20 +70,20 @@ namespace Packer
 			public void New()
 			{
 				Console.WriteLine("Create");
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar("create", ref arg);
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand("create", ref arg);
 				GetLastError(arg);
 			}
 			
 			public bool Open(string filename)
 			{
 				Console.WriteLine("Open " + filename);
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar(
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand(
 					String.Format("{0} {1}", "open", filename),
 					ref arg);
 				GetLastError(arg);
-				return arg.AsBool();
+				return (bool) arg;
 			}
 			
 			public string[] ListFiles()
@@ -91,7 +91,7 @@ namespace Packer
 				Console.WriteLine("List");
 				
 				string filenames = MarshalUtils.MarshalString((pnt, length) => { 
-					fileSystem.ExecCmdStr("list", pnt, out length);
+					fileSystem.ExecuteTextCommandEx("list", pnt, out length);
 					return length;
 				});
 				
@@ -106,19 +106,19 @@ namespace Packer
 				else
 					filename += "." + Extension.ToLower();
 				Console.WriteLine("Save as " + filename);
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar(
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand(
 					String.Format("{0} {1}", "save", filename),
 					ref arg);
 				GetLastError(arg);
-				return arg.AsBool();
+				return (bool) arg;
 			}
 			
 			public void Close()
 			{
 				Console.WriteLine("Close");
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar("close", ref arg);
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand("close", ref arg);
 				GetLastError(arg);
 			}
 			
@@ -126,45 +126,45 @@ namespace Packer
 			{
 				Console.WriteLine("Add " + item.HDDPath);
 				Console.WriteLine("As " + item.FullName);
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar(
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand(
 					String.Format("{0} {1};{2}", "add", item.HDDPath, item.Directory),
 					ref arg);
 				GetLastError(arg);
-				return arg.AsBool();
+				return (bool) arg;
 			}
 			
 			public bool Remove(Item item)
 			{
 				Console.WriteLine("Remove " + item.FullName);
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar(
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand(
 					String.Format("{0} {1}", "remove", item.FullName),
 					ref arg);
 				GetLastError(arg);
-				return arg.AsBool();
+				return (bool) arg;
 			}
 			
 			public bool Extract(Item item, string newFilename)
 			{
 				Console.WriteLine("Extract " + item.FullName);
 				Console.WriteLine("To " + newFilename);
-				TVariant arg = new TVariant();
-				fileSystem.ExecCmdVar(
+				TVariant arg = TVariant.Zero;
+				fileSystem.ExecuteTextCommand(
 					String.Format("{0} {1};{2}", "extract", item.FullName, newFilename),
 					ref arg);
 				GetLastError(arg);
-				return arg.AsBool();
+				return (bool) arg;
 			}
 			
 			private void GetLastError(TVariant arg)
 			{
-				if (arg.AsBool()) {
+				if ((bool) arg) {
 					LastError = "";
 					return;
 				}
 				LastError = MarshalUtils.MarshalString((pnt, length) => { 
-					fileSystem.ExecCmdStr("last_error", pnt, out length);
+					fileSystem.ExecuteTextCommandEx("last_error", pnt, out length);
 					return length;
 				});
 				Console.WriteLine(LastError);

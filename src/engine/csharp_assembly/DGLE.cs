@@ -26,8 +26,8 @@ namespace DGLE
     public interface IDGLE_Base
     {
         void GetGUID(out Guid guid);
-        void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
     }
 
@@ -49,8 +49,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -65,8 +65,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -85,8 +85,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -123,8 +123,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -156,8 +156,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -171,8 +171,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -191,8 +191,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -211,8 +211,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -234,8 +234,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -253,8 +253,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -273,8 +273,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -296,8 +296,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(out Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -351,8 +351,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -492,8 +492,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -557,8 +557,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -625,8 +625,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -702,8 +702,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -790,8 +790,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -830,8 +830,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -863,8 +863,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -898,8 +898,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -928,8 +928,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -963,8 +963,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -998,8 +998,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1029,8 +1029,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1060,8 +1060,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1102,8 +1102,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1136,8 +1136,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1155,8 +1155,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1186,8 +1186,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1199,8 +1199,8 @@ namespace DGLE
         void GetVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, out IFileSystem prVFS);
         void RegisterVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, [MarshalAs(UnmanagedType.LPStr)] string pcDescription, IFileSystem prVFS, [MarshalAs(UnmanagedType.FunctionPtr)] DFSDeleteCallback pProc, IntPtr pParameter);
         void UnregisterVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension);
-        void GetRegisteredVirtualFileSystems([MarshalAs(UnmanagedType.LPStr)] string pcTxt, out uint uiCharsCount);
-        void GetVirtualFileSystemDescription([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, [MarshalAs(UnmanagedType.LPStr)] string pcTxt, out uint uiCharsCount);
+        void GetRegisteredVirtualFileSystems(IntPtr pcTxt, out uint uiCharsCount);
+        void GetVirtualFileSystemDescription([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, IntPtr pcTxt, out uint uiCharsCount);
     };
 
     public enum E_FIND_FLAGS
@@ -1231,8 +1231,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1254,8 +1254,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 
@@ -1272,8 +1272,8 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
-        new void ExecuteCommand(uint uiCmd, out TVariant stVar);
-        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, out TVariant stVar);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
         #endregion
 

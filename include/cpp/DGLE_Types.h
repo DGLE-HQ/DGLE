@@ -181,7 +181,7 @@ namespace DGLE
 
 		inline int AsInt() const
 		{
-			if (_type != VT_INT)
+			if (_type != DVT_INT)
 				return 0;
 			else
 			{

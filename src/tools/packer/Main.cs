@@ -78,10 +78,10 @@ namespace Packer
 			Core = pEngineCore;
 
 			// init dgle with force no window
-			TEngWindow eng_win = new TEngWindow();
+			TEngineWindow eng_win = new TEngineWindow();
 			Core.InitializeEngine(
 				IntPtr.Zero, appName, ref eng_win, 33, 
-				E_ENGINE_INIT_FLAGS.EIF_FORCE_NO_WINDOW | E_ENGINE_INIT_FLAGS.EIF_FORCE_NO_SPLASH);
+				E_ENGINE_INIT_FLAGS.EIF_FORCE_NO_WINDOW | E_ENGINE_INIT_FLAGS.EIF_NO_SPLASH);
 			//Core.ConsoleVisible(false);
 
 			// init virtual file systems from dgle
