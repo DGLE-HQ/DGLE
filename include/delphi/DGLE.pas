@@ -20,7 +20,7 @@ interface
 {$ENDIF}
 
 
-uses Windows, DGLE_Types, DGLE_Base, DGLE_CoreRenderer;
+uses Windows, DGLE_types, DGLE_Base, DGLE_CoreRenderer;
 
 const
     _DGLE_VER_            = '2:0.3.0';
@@ -193,7 +193,7 @@ const
     EF_VERTICES_OFFSETS           = $00000080;
     EF_VERTICES_COLORS            = $00000100;
     EF_ROTATION_POINT             = $00000200;
- 		EF_TILE_TEXTURE		            = $00000400;
+     EF_TILE_TEXTURE                = $00000400;
 
 {Render3D interface FLAGS}
 
@@ -412,7 +412,7 @@ type
     function CreateTexture(out prTex: ITexture; const pubtData: PByte; uiWidth, uiHeight :Cardinal; eDataFormat: E_TEXTURE_DATA_FORMAT; eCreationFlags: {E_TEXTURE_CREATION_FLAGS} Integer;
       eLoadFlags: {E_TEXTURE_LOAD_FLAGS} Integer; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateMaterial(out prMaterial: IMaterial; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
- 		function CreateLight(out prLight: ILight; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
+     function CreateLight(out prLight: ILight; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateMesh(out prMesh: IMesh; const pubtData: PByte; uiDataSize, uiNumVerts, uiNumFaces: Cardinal; eCreationFlags: {E_MESH_CREATION_FLAGS} Integer;
       eLoadFlags: {E_MESH_MODEL_LOAD_FLAGS} Integer; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateModel(out prModel: IModel; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
@@ -428,9 +428,9 @@ type
 
     function GetResourceByFileName(const pcName: PAnsiChar; out prObj: IEngineBaseObject): DGLE_RESULT; stdcall;
     function GetResourceByIndex(uiIdx: Cardinal; out prObj: IEngineBaseObject): DGLE_RESULT; stdcall;
-		function GetResourceName(pObj: IEngineBaseObject; const pcName: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall;
-		function GetDefaultResource(eObjType: E_ENGINE_OBJECT_TYPE; out prObj: IEngineBaseObject): DGLE_RESULT; stdcall;
-		function GetResourcesCount(out uiCount: Cardinal): DGLE_RESULT; stdcall;
+    function GetResourceName(pObj: IEngineBaseObject; const pcName: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall;
+    function GetDefaultResource(eObjType: E_ENGINE_OBJECT_TYPE; out prObj: IEngineBaseObject): DGLE_RESULT; stdcall;
+    function GetResourcesCount(out uiCount: Cardinal): DGLE_RESULT; stdcall;
 
     function Load(const pcFileName: PAnsiChar; out prObj: IEngineBaseObject; uiLoadFlags: Cardinal = RES_LOAD_DEFAULT; const pcName: PAnsiChar = nil): DGLE_RESULT; stdcall;
     function LoadEx(pFile: IFile; out prObj: IEngineBaseObject; uiLoadFlags: Cardinal = RES_LOAD_DEFAULT; const pcName: PAnsiChar = nil): DGLE_RESULT; stdcall;
@@ -456,7 +456,7 @@ type
     function EnableScissor(const stArea: TRectf): DGLE_RESULT; stdcall;
     function DisableScissor(): DGLE_RESULT; stdcall;
     function GetScissor(out bEnabled: Boolean; out stArea: TRectF): DGLE_RESULT; stdcall;
-		function SetRenderTarget(pTargetTex: ITexture): DGLE_RESULT; stdcall;
+    function SetRenderTarget(pTargetTex: ITexture): DGLE_RESULT; stdcall;
     function GetRenderTarget(out prTargetTex: ITexture): DGLE_RESULT; stdcall;
 
     function GetRender2D(out prRender2D: IRender2D): DGLE_RESULT; stdcall;
@@ -482,7 +482,7 @@ type
     function SetCamera(const stCenter: TPoint2; fAngle: Single; const stScale: TVector2): DGLE_RESULT; stdcall;
     function ResetCamera(): DGLE_RESULT; stdcall;
     function UnprojectCameraToScreen(const stCameraCoord: TPoint2; out stScreenCoord: TPoint2): DGLE_RESULT; stdcall;
-		function ProjectScreenToCamera(const stScreenCoord: TPoint2; out stCameraCoord: TPoint2): DGLE_RESULT; stdcall;
+    function ProjectScreenToCamera(const stScreenCoord: TPoint2; out stCameraCoord: TPoint2): DGLE_RESULT; stdcall;
     function CullBoundingBox(const stBBox: TRectF; fAngle: Single; out bCull: Boolean): DGLE_RESULT; stdcall;
 
     // 2D Primitives
@@ -536,18 +536,19 @@ type
     function GetPerspective(out fFovAngle, fZNear, fZFar: Single): DGLE_RESULT; stdcall;
 
     function SetColor(const stColor: TColor4): DGLE_RESULT; stdcall;
-		function GetColor(out stColor: TColor4): DGLE_RESULT; stdcall;
+    function GetColor(out stColor: TColor4): DGLE_RESULT; stdcall;
 
     function BindTexture(pTex: ITexture; uiTextureLayer: Cardinal): DGLE_RESULT; stdcall;
-		function GetTexture(out prTex: ITexture; uiTextureLayer: Cardinal): DGLE_RESULT; stdcall;
+    function GetTexture(out prTex: ITexture; uiTextureLayer: Cardinal): DGLE_RESULT; stdcall;
 
-		function UpdateLight(pLight: ILight): DGLE_RESULT; stdcall;
+    function GetMaxLightsPerPassCount(out uiCount: Cardinal): DGLE_RESULT; stdcall;
+    function UpdateLight(pLight: ILight): DGLE_RESULT; stdcall;
 
-		function BindMaterial(pMat: IMaterial): DGLE_RESULT; stdcall;
-		function GetMaterial(out prMat: IMaterial): DGLE_RESULT; stdcall;
+    function BindMaterial(pMat: IMaterial): DGLE_RESULT; stdcall;
+    function GetMaterial(out prMat: IMaterial): DGLE_RESULT; stdcall;
 
     function ToggleBlending(bEnabled: Boolean): DGLE_RESULT; stdcall;
-		function IsBlendingEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
+    function IsBlendingEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
     function SetBlendMode(eMode: E_BLENDING_EFFECT = BE_NORMAL): DGLE_RESULT; stdcall;
     function GetBlendMode(out eMode: E_BLENDING_EFFECT): DGLE_RESULT; stdcall;
 
@@ -561,24 +562,24 @@ type
     function IsDepthTestEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
 
     function ToggleBackfaceCulling(bEnabled: Boolean): DGLE_RESULT; stdcall;
-		function IsBackfaceCullingEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
+    function IsBackfaceCullingEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
 
     function Draw(const stDrawDesc: TDrawDataDesc; eMode: E_CORE_RENDERER_DRAW_MODE; uiCount: Cardinal): DGLE_RESULT; stdcall;
-		function DrawBuffer(pBuffer: ICoreGeometryBuffer): DGLE_RESULT; stdcall;
+    function DrawBuffer(pBuffer: ICoreGeometryBuffer): DGLE_RESULT; stdcall;
 
     function ToggleFog(bEnabled: Boolean): DGLE_RESULT; stdcall;
     function SetLinearFogBounds(fStart, fEnd: Single): DGLE_RESULT; stdcall;
     function SetFogColor(const stColor: TColor4): DGLE_RESULT; stdcall;
     function SetFogDensity(fDensity: Single): DGLE_RESULT; stdcall;
-    function GetLinearFogBounds(out fStart, fEnd: Single): DGLE_RESULT; stdcall;
     function IsFogEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
+    function GetLinearFogBounds(out fStart, fEnd: Single): DGLE_RESULT; stdcall;
     function GetFogColor(out stColor: TColor4): DGLE_RESULT; stdcall;
     function GetFogDensity(out fDensity: Single): DGLE_RESULT; stdcall;
 
-    function SetMatrix(const stMatrix: TMatrix4x4; bMult: Boolean = true): DGLE_RESULT; stdcall;
+    function SetMatrix(const stMatrix: TMatrix4x4): DGLE_RESULT; stdcall;
     function MultMatrix(const stMatrix: TMatrix4x4): DGLE_RESULT; stdcall;
-		function PushMatrix(): DGLE_RESULT; stdcall;
-		function PopMatrix(): DGLE_RESULT; stdcall;
+    function PushMatrix(): DGLE_RESULT; stdcall;
+    function PopMatrix(): DGLE_RESULT; stdcall;
     function GetMatrix(out stMatrix: TMatrix4x4): DGLE_RESULT; stdcall;
 
     function DrawAxes(fSize: Single = 1.0; bNoDepthTest: Boolean = false): DGLE_RESULT; stdcall;
@@ -604,7 +605,7 @@ type
 
 //Light interface//
 
-  ILight = interface(IDGLE_Base)
+  ILight = interface(IEngineBaseObject)
   ['{EB73AC84-A465-4554-994D-8BED29744C9D}']
 
     function SetEnabled(bEnabled: Boolean): DGLE_RESULT; stdcall;
@@ -661,14 +662,14 @@ type
     function SetShininess(fShininess: Single): DGLE_RESULT; stdcall;
     function SetDiffuseTexture(pTexture: ITexture): DGLE_RESULT; stdcall;
     function SetBlending(bEnabled: Boolean; eMode: E_BLENDING_EFFECT): DGLE_RESULT; stdcall;
-		function SetAlphaTest(bEnabled: Boolean; fTreshold: Single): DGLE_RESULT; stdcall;
+    function SetAlphaTest(bEnabled: Boolean; fTreshold: Single): DGLE_RESULT; stdcall;
 
     function GetDiffuseColor(out stColor: TColor4): DGLE_RESULT; stdcall;
     function GetSpecularColor(out stColor: TColor4): DGLE_RESULT; stdcall;
     function GetShininess(out fShininess: Single): DGLE_RESULT; stdcall;
     function GetDiffuseTexture(out prTexture: ITexture): DGLE_RESULT; stdcall;
     function GetBlending(out bEnabled: Boolean; out eMode: E_BLENDING_EFFECT): DGLE_RESULT; stdcall;
-		function GetAlphaTest(out bEnabled: Boolean; out fTreshold: Single): DGLE_RESULT; stdcall;
+    function GetAlphaTest(out bEnabled: Boolean; out fTreshold: Single): DGLE_RESULT; stdcall;
 
     function Bind(): DGLE_RESULT; stdcall;
 

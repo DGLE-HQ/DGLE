@@ -12,7 +12,7 @@ This header is a part of DGLE_SDK.
 \see    DGLE.pas
 }
 
-unit DGLE_Types;
+unit DGLE_types;
 
 interface
 
@@ -304,8 +304,8 @@ type
     procedure Push;
     procedure Pop;
     property Top: TMatrix4x4 read GetTop write SetTop;
-    procedure Mult1(const transform: TMatrix4x4);
-    procedure Mult2(const transform: TMatrix4x4);
+    procedure MultGLobal(const transform: TMatrix4x4);
+    procedure MultLocal(const transform: TMatrix4x4);
   end;
 
   TMouseStates = packed record
@@ -2041,12 +2041,12 @@ begin
   Stack.Push(Value);
 end;
 
-procedure TTransformStack.Mult1(const transform: TMatrix4x4);
+procedure TTransformStack.MultGlobal(const transform: TMatrix4x4);
 begin
   stack.Push(MatrixMul(stack.Pop, transform));
 end;
 
-procedure TTransformStack.Mult2(const transform: TMatrix4x4);
+procedure TTransformStack.MultLocal(const transform: TMatrix4x4);
 begin
   stack.Push(MatrixMul(transform, stack.Pop));
 end;
@@ -2077,12 +2077,12 @@ begin
   Result := stack[High(stack)];
 end;
 
-procedure TTransformStack.Mult1(const transform: TMatrix);
+procedure TTransformStack.MultGlobal(const transform: TMatrix);
 begin
   stack[High(stack)] := MatrixMul(stack[High(stack)], transform);
 end;
 
-procedure TTransformStack.Mult2(const transform: TMatrix);
+procedure TTransformStack.MultLocal(const transform: TMatrix);
 begin
   stack[High(stack)] := MatrixMul(transform, stack[High(stack)]);
 end;
