@@ -26,7 +26,7 @@ Visit [official website](http://dglengine.org) for more details on this project 
 * Full cross platform.
 * Plugin based architecture with micro-core principles.
 * Flexible and highly extensible via plugins.
-* Multi render support: OpenGL (1.x-2.x and 4.x), OpenGL ES (1.1, 2.0 and 3.0), Direct3D (9.0c and 11.1).
+* Multi render support: OpenGL (1.x - 2.x and 4.x), OpenGL ES (1.1, 2.0 and 3.0), Direct3D (9.0c and 11.1).
 * Have set of visual editors for rapid application development. Also for non programmers.
 * Provides all necessary API for development high quality 2D and 3D real-time applications.
 * Flexible abstraction levels allow you to programming without any restrictions from API.
@@ -97,13 +97,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 You can find more examples in the *"src/examples"* folder. Also for other supported languages.
 
-You can find build instructions [here](DGLE/blob/master/docs/HowToBuild.txt).
+You can find build instructions [here](https://raw.github.com/DGLE-HQ/DGLE/master/docs/HowToBuild.txt).
 
-Also if you want to participate in the project development process you must read and understand [Development Rules](DGLE/blob/master/docs/DevelopmentRules.txt).
+Also if you want to participate in the project development process you must read and understand [Development Rules](https://raw.github.com/DGLE-HQ/DGLE/master/docs/DevelopmentRules.txt).
 
 ## Documentation
 
-You can find engine API documentation [here](http://dglengine.org/api_help/index.html).
+You can find engine API documentation [here](http://dglengine.org/api/index.html).
 
 ## License
 
@@ -113,7 +113,7 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 
 Compiled and ready to use latest cross platform SDK always could be found [here](http://dglengine.org/downloads).
 
-See [ChangeLog](DGLE/blob/master/ChangeLog.txt) for full list of changes.
+See [ChangeLog](https://raw.github.com/DGLE-HQ/DGLE/master/ChangeLog.txt) for full list of changes.
 
 ## Credits
 
@@ -138,6 +138,8 @@ Semen Kotlyarov aka Kimer (plugins and tools development)
 Ilya Sivkov aka Sin (DCP packs and minor additional programming)
 
 Svyatoslav Lobov aka FascioRoma (GUI components development)
+
+Vlad Phomskiy aka phomm (Delphi/C# headers and examples)
 
 ### Special Thanks
 
