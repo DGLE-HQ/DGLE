@@ -16,7 +16,7 @@ public:
 	virtual void RemoveObject(CGameObject *pObj) = 0;
 };
 
-class CGame : private IUserCallback, private IGameObjectManager
+class CGame : private IEngineCallback, private IGameObjectManager
 {	
 	IEngineCore *_pEngineCore;
 	IInput *_pInput;
@@ -51,5 +51,5 @@ public:
 	CGame(IEngineCore *pEngineCore);
 	~CGame();
 
-	IDGLE_BASE_IMPLEMENTATION(IUserCallback, INTERFACE_IMPL_END)
+	IDGLE_BASE_IMPLEMENTATION(IEngineCallback, INTERFACE_IMPL_END)
 };

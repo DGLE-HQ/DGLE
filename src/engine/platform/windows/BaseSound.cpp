@@ -59,7 +59,7 @@ void CALLBACK CBaseSound::_s_WaveCallback(HWAVEOUT hWaveOut, UINT uMsg, DWORD dw
 uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 {
 	uint res = -1;
-	_devices.clear();
+	_vecDevices.clear();
 	
 	UINT count = waveOutGetNumDevs();
 
@@ -82,7 +82,7 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 
-		_devices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + UIntToStr(i) + " name: \"" + name + "\"");
+		_vecDevices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + UIntToStr(i) + " name: \"" + name + "\"");
 	}
 
 	return res;
@@ -149,10 +149,10 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 
 	dev_id = _FindDevice(_stWaveFormat);
 
-	LOG("Found " + UIntToStr(_devices.size()) + " output audio devices.", LT_INFO);
+	LOG("Found " + UIntToStr(_vecDevices.size()) + " output audio devices.", LT_INFO);
 
-	for (size_t i = 0; i < _devices.size(); ++i)
-		LOG(_devices[i], LT_INFO);
+	for (size_t i = 0; i < _vecDevices.size(); ++i)
+		LOG(_vecDevices[i], LT_INFO);
 
 	if (dev_id == -1)
 	{
@@ -226,12 +226,12 @@ void CBaseSound::_PrintDevList()
 {
 	string output("There is no audio output devices in system.");
 
-	if (!_devices.empty())
+	if (!_vecDevices.empty())
 	{
 		output = "--------- Audio Devices ---------\n";
 
-		for (size_t i = 0; i < _devices.size(); ++i)
-			output += _devices[i] + "\n";
+		for (size_t i = 0; i < _vecDevices.size(); ++i)
+			output += _vecDevices[i] + "\n";
 
 		output += "---------------------------------\n";
 	}

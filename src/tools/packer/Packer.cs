@@ -22,10 +22,9 @@ namespace Packer
 		{
 			public string Name { get; set; }
 			public string Directory { get; set; }
-			public string FullName {
-				get {
-					return Directory + Name + (IsFolder ? @"\" : "");
-				}
+			public string FullName
+			{
+				get { return Directory + Name + (IsFolder ? @"\" : ""); }
 			}
 			public bool IsFolder { get; set; }
 			public bool IsRoot { get; private set;}
@@ -61,7 +60,8 @@ namespace Packer
 			public string Description { get; private set; }
 			public string LastError { get; private set; }
 
-			public VirtualFileSystem(IFileSystem fileSystem, string extension, string description) {
+			public VirtualFileSystem(IFileSystem fileSystem, string extension, string description)
+			{
 				this.fileSystem = fileSystem;
 				this.Extension = extension;
 				this.Description = description;
@@ -105,6 +105,7 @@ namespace Packer
 					filename = Path.ChangeExtension(filename, "." + Extension.ToLower());
 				else
 					filename += "." + Extension.ToLower();
+
 				Console.WriteLine("Save as " + filename);
 				TVariant arg = TVariant.Zero;
 				fileSystem.ExecuteTextCommand(
@@ -159,7 +160,8 @@ namespace Packer
 			
 			private void GetLastError(TVariant arg)
 			{
-				if ((bool) arg) {
+				if ((bool) arg)
+				{
 					LastError = "";
 					return;
 				}
@@ -172,11 +174,7 @@ namespace Packer
 		}
 
 		public static Dictionary<String, VirtualFileSystem> SupportedFileSystems { get; private set; }
-		public static string[] SupportedExtensions {
-			get {
-				return SupportedFileSystems.Keys.ToArray();
-			}
-		}
+		public static string[] SupportedExtensions { get { return SupportedFileSystems.Keys.ToArray(); } }
 
 		public static void Init()
 		{
@@ -199,8 +197,7 @@ namespace Packer
 					return length;
 				});
 
-				SupportedFileSystems.Add(ext, new VirtualFileSystem(
-					fileSystem, ext, desc));
+				SupportedFileSystems.Add(ext, new VirtualFileSystem(fileSystem, ext, desc));
 			});
 		}
 

@@ -33,11 +33,17 @@
 *.jpg	binary
 *.bmp	binary
 *.tga	binary
+*.gif	binary
 *.dcp	binary
+*.zip	binary
 *.dft	binary
 *.dmd	binary
+*.dtx	binary
+*.dds	binary
 *.exe	binary
 *.dll	binary
 *.bin	binary
 *.max	binary
 *.wav	binary
+*.ogg	binary
+*.dsp	binary

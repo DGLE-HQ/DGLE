@@ -27,7 +27,7 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 	void *_pParameter;
 	CRITICAL_SECTION _cs;
 	bool _bDeviceClosingFlag;
-	std::vector<std::string> _devices;
+	std::vector<std::string> _vecDevices;
 
 	uint _FindDevice(const WAVEFORMATEX &stFormat);
 	bool _InitDevice(uint id);

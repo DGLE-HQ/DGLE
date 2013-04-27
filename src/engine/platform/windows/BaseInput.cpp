@@ -47,15 +47,15 @@ CInstancedObj(uiInstIdx)
 		JOYINFO info;
 
 		if (strlen(caps.szPname) > 0 && joyGetPos(i, &info) != JOYERR_UNPLUGGED)
-			_clJoyCaps.push_back(TJoystick(i, caps));
+			_vecJoyCaps.push_back(TJoystick(i, caps));
 	}
 
-	if (!_clJoyCaps.empty())
+	if (!_vecJoyCaps.empty())
 	{
-		LOG("Found " + UIntToStr(_clJoyCaps.size()) + " connected joystick" + (_clJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
+		LOG("Found " + UIntToStr(_vecJoyCaps.size()) + " connected joystick" + (_vecJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
 
-		for (size_t i = 0; i < _clJoyCaps.size(); ++i)
-			LOG("Joystick with id: " + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"", LT_INFO);
+		for (size_t i = 0; i < _vecJoyCaps.size(); ++i)
+			LOG("Joystick with id: " + UIntToStr(i) + " name: \"" + string(_vecJoyCaps[i].info.szPname) + "\"", LT_INFO);
 	}
 
 	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
@@ -120,8 +120,8 @@ void CBaseInput::ClipCursor(uint left, uint top, uint right, uint bottom)
 
 uint CBaseInput::_GetJoyIdx(uint id)
 {
-	for (uint i = 0; i < _clJoyCaps.size(); ++i)
-		if (_clJoyCaps[i].id ==id)
+	for (uint i = 0; i < _vecJoyCaps.size(); ++i)
+		if (_vecJoyCaps[i].id ==id)
 			return i;
 	
 	return -1;
@@ -139,12 +139,12 @@ void CBaseInput::_PrintJoysList()
 {
 	string output("There is no connected joysticks.");
 
-	if (!_clJoyCaps.empty())
+	if (!_vecJoyCaps.empty())
 	{
 		output = "----------- Joysticks -----------\n";
 
-		for (size_t i = 0; i < _clJoyCaps.size(); ++i)
-			output += "id: " + UIntToStr(i) + " name: \"" + string(_clJoyCaps[i].info.szPname) + "\"\n";
+		for (size_t i = 0; i < _vecJoyCaps.size(); ++i)
+			output += "id: " + UIntToStr(i) + " name: \"" + string(_vecJoyCaps[i].info.szPname) + "\"\n";
 
 		output += "---------------------------------\n";
 	}
@@ -189,7 +189,7 @@ uint CBaseInput::JoysticksCount()
 
 #else
 
-	return _clJoyCaps.size();
+	return _vecJoyCaps.size();
 
 #endif
 }
@@ -203,7 +203,7 @@ string CBaseInput::GetJoystickName(uint id)
 	if (idx == -1)
 		return string();
 	else
-		return string(_clJoyCaps[idx].info.szPname);
+		return string(_vecJoyCaps[idx].info.szPname);
 
 #else
 
@@ -224,7 +224,7 @@ TJoystickStates CBaseInput::GetJoystickStates(uint id)
 
 	if (idx != -1)
 	{
-		const TJoystick &joy = _clJoyCaps[idx];
+		const TJoystick &joy = _vecJoyCaps[idx];
 		
 		JOYINFOEX info;
 		memset(&info, 0, sizeof(JOYINFOEX));

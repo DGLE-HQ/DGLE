@@ -7,8 +7,8 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 using System;
-using Gtk;
 using System.Collections.Generic;
+using Gtk;
 
 namespace Template
 {
@@ -25,11 +25,9 @@ namespace Template
 	{
 		public static void Main(string[] args)
 		{
-			if (!Gui.ThemeHelper.CheckGtk ())
-				return;
-			Gui.ThemeHelper.ApplyCustomTheme (args);
-
-			Application.Init ("Template", ref args);
+			if (!Gui.ThemeHelper.CheckGtk()) return;
+			Gui.ThemeHelper.ApplyCustomTheme(args);
+			Application.Init("Template", ref args);
 			TemplateWindow win = new TemplateWindow();
 			win.Show();
 			Application.Run ();

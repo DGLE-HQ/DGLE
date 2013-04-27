@@ -292,7 +292,7 @@ namespace DGLE
 
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("371B1338-BB25-4B8C-BD6A-BCDF241CC52C")]
-    public interface IUserCallback : IDGLE_Base
+    public interface IEngineCallback : IDGLE_Base
     {
         #region IDGLE_Base
         new void GetGUID(out Guid guid);
@@ -368,8 +368,8 @@ namespace DGLE
         void DisconnectPlugin(IPlugin pPlugin);
         void GetPlugin([MarshalAs(UnmanagedType.LPStr)] string pcPluginName, out IPlugin prPlugin);
 
-        void AddUserCallback(IUserCallback pUserCallback);
-        void RemoveUserCallback(IUserCallback pUserCallback);
+        void AddEngineCallback(IEngineCallback pEngineCallback);
+        void RemoveEngineCallback(IEngineCallback pEngineCallback);
 
         void AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc, IntPtr pParam);
         void RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, [MarshalAs(UnmanagedType.FunctionPtr)] DSubscriber pProc, IntPtr pParam);

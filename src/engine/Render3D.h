@@ -43,7 +43,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 
 			ILight *pLight;
 		};
-		std::vector<TLight> pCurLights;
+		std::vector<TLight> vecCurLights;
 
 		struct TFogDescriptor
 		{

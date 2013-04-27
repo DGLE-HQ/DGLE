@@ -4,7 +4,7 @@ using namespace DGLE;
 
 DGLE_DYNAMIC_FUNC // Include GetEngine and FreeEngine functions to load engine library at runtime.
 
-#define APP_CAPTION "Hello World"
+#define APP_CAPTION "Hello World!"
 
 #ifdef _DEBUG
 #	define DLL_PATH "..\\..\\..\\..\\bin\\windows\\DGLE.dll"
@@ -75,7 +75,7 @@ void DGLE_API Render(void *pParameter)
 	uint width, height;
 	
 	// render text at the center of the screen
-	const char txt[] = "Hello, world!";
+	const char txt[] = APP_CAPTION;
 	pFont->GetTextDimensions(txt, width, height);
 	pFont->Draw2DSimple((SCREEN_WIDTH - width) / 2, (SCREEN_HEIGHT - height) / 2, txt, ColorWhite());
 

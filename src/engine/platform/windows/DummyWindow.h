@@ -13,9 +13,9 @@ See "DGLE.h" for more details.
 
 class CDummyWindow : public CInstancedObj, public IMainWindow
 {
-	HWND				_hWnd;
-	HDC					_hDC;
-	TMsgProcDelegate	*_pDelMessageProc;
+	HWND _hWnd;
+	HDC _hDC;
+	TMsgProcDelegate *_pDelMessageProc;
 
 public:
 	

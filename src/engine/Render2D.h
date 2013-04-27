@@ -22,13 +22,13 @@ class CRender2D: public CInstancedObj, public IRender2D
 	
 	static const uint _sc_uiMaxBatchsPerFrame = 64;
 
-	std::vector<TVertex2> _batchAccumulator;
+	std::vector<TVertex2> _vecBatchAccumulator;
 	ICoreTexture *_pBatchCurTex;
 	E_CORE_RENDERER_DRAW_MODE _eBatchDrawMode;
 	bool _bBatchColor, _bBatchAlphaTest, _bBatchBlending;
 	E_BATCH_MODE2D _batchMode, _batchPreProfilerMode;
 	bool _batchNeedToRefreshBatches;
-	std::vector<ICoreGeometryBuffer *> _pBatchBuffers;
+	std::vector<ICoreGeometryBuffer *> _vecBatchBuffers;
 	uint _batchBufferCurCounter;
 	bool _batchBufferReadyToRender;
 	

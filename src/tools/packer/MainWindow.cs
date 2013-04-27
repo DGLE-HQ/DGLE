@@ -18,8 +18,8 @@ using System.Threading;
 using Gtk;
 using Gui;
 
-namespace Packer {
-
+namespace Packer
+{
 	public partial class MainWindow: Gui.CustomWindow
 	{
 		private long LARGE_FILE_SIZE = 10485760;
@@ -73,9 +73,8 @@ namespace Packer {
 					return 1;
 				else if (null == itemA && null == itemB)
 					return 0;
-				else {
+				else
 					return itemA.Name.CompareTo(itemB.Name);
-				}
 			});
 			folderStore.SetSortColumnId(0, SortType.Ascending);
 		}
@@ -103,7 +102,8 @@ namespace Packer {
 						fileSystem.Close();
 					fileSystem = null;
 
-					if (Packer.Create(ext, out fileSystem)) {
+					if (Packer.Create(ext, out fileSystem))
+					{
 						fileSystem.New();
 						ChangePackActionSensitive(true);
 					}
@@ -113,7 +113,7 @@ namespace Packer {
 					"activate", 
 					this.UIManager.AccelGroup, 
 					new AccelKey((Gdk.Key) Gdk.Key.Parse(typeof(Gdk.Key), ext[0].ToString().ToLower()),
-				             Gdk.ModifierType.ControlMask, AccelFlags.Visible));
+							 Gdk.ModifierType.ControlMask, AccelFlags.Visible));
 
 				newSubMenu.Append(menuItem);
 			});
@@ -133,7 +133,6 @@ namespace Packer {
 				currentFolder = TreeIter.Zero;
 				folderStore.Clear();
 				packStore.Clear();
-				//UnsetDestDnd();
 			};
 
 			// exit app
@@ -191,11 +190,10 @@ namespace Packer {
 				if (!item.IsFolder)
 					return;
 				
-				if (item.IsRoot) {
+				if (item.IsRoot)
 					UpFolderAction(currentFolder);
-				} else {
+				else
 					DownFolderAction(FindInPack(item));
-				}
 			};
 
 			packTreeView.AddEvents((int) (Gdk.EventMask.KeyPressMask));
@@ -228,7 +226,8 @@ namespace Packer {
 				string[] files = data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
 				// try to open pack
-				if (fileSystem == null) {
+				if (fileSystem == null)
+				{
 					if (files.Length == 1)
 						OpenPack(files.Select(
 							(path) => path.StartsWith("file:///") ? path.Substring(8) : path).First()
@@ -241,14 +240,15 @@ namespace Packer {
 
 				files.Select((path) => path.StartsWith("file:///") ? path.Substring(8) : path).ToList()
 					.ForEach((path) => {
-						if (Directory.Exists(path)) {
+						if (Directory.Exists(path))
+						{
 							Packer.Item folderItem = NewItem(currentFolder, path);
 							TreeIter folderIter = AppendItem(currentFolder, folderItem);
 							AppendFolders(folderIter, path);
 						}
-						else if (File.Exists(path)) {
-							AppendFile(currentFolder, path);
-						}
+						else
+							if (File.Exists(path))
+								AppendFile(currentFolder, path);
 					});
 			};
 		}
@@ -485,12 +485,14 @@ namespace Packer {
 			AppendFiles(destIter, path);
 		}
 		
-		private void AppendFiles(TreeIter destIter, string path) {
+		private void AppendFiles(TreeIter destIter, string path)
+		{
 			Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).ToList()
 				.ForEach(file => AppendFile(destIter, file));
 		}
 
-		private void AppendFile(TreeIter destIter, string filename) {
+		private void AppendFile(TreeIter destIter, string filename)
+		{
 			WaitWindow popup = new WaitWindow(this, "Adding", filename);
 			if (new FileInfo(filename).Length >= LARGE_FILE_SIZE)
 				popup.Show();
@@ -526,11 +528,10 @@ namespace Packer {
 				return existIter;
 			
 			// add item to list store of current folder
-			if (parent.Equals(currentFolder)) {
+			if (parent.Equals(currentFolder))
 				packTreeView.SelectAndFocus(
 					folderStore.AppendValues(item.IsFolder ? folderIcon : fileIcon, item.Name, item)
 				);
-			}
 			
 			// add item to tree store of current pack
 			if (TreeIter.Zero.Equals(parent))
@@ -596,7 +597,8 @@ namespace Packer {
 			List<TreeIter> selectedInFolder = packTreeView.GetSelected().ToList();
 			Packer.Item firstItem = folderStore.GetValue(selectedInFolder.First(), 2) as Packer.Item;
 
-			if (selectedCount == 1 && !firstItem.IsFolder) {
+			if (selectedCount == 1 && !firstItem.IsFolder)
+			{
 
 				TreeIter iterInPack = FindInPack(firstItem);
 
@@ -616,8 +618,9 @@ namespace Packer {
 				dlg.Cancel += (sender, e) => dlg.Destroy();
 				dlg.Show();
 
-			} else {
-
+			}
+			else
+			{
 				CustomFileChooserDialog dlg = new CustomFileChooserDialog(	
 					this, "Extract from pack", FileChooserAction.SelectFolder);
 
@@ -627,12 +630,11 @@ namespace Packer {
 						Packer.Item item = folderStore.GetValue(iter, 2) as Packer.Item;
 						TreeIter iterInPack = FindInPack(item);
 
-						if (item.IsFolder) {
+						if (item.IsFolder)
 							ExtractFolder(iterInPack, dlg.FileChooser.Filename);
-						} else {
+						else
 							ExtractFile(iterInPack, dlg.FileChooser.Filename + 
-							            System.IO.Path.DirectorySeparatorChar + item.Name);
-						}
+										System.IO.Path.DirectorySeparatorChar + item.Name);
 					});
 
 					dlg.Destroy();
@@ -655,12 +657,11 @@ namespace Packer {
 				packStore.GetTopIters().ToList().ForEach((iterInPack) => {
 					Packer.Item item = packStore.GetValue(iterInPack, 0) as Packer.Item;
 					
-					if (item.IsFolder) {
+					if (item.IsFolder)
 						ExtractFolder(iterInPack, dlg.FileChooser.Filename);
-					} else {
+					else
 						ExtractFile(iterInPack, dlg.FileChooser.Filename + 
-						            System.IO.Path.DirectorySeparatorChar + item.Name);
-					}
+									System.IO.Path.DirectorySeparatorChar + item.Name);
 				});
 				
 				dlg.Destroy();
@@ -703,19 +704,19 @@ namespace Packer {
 			
 			if (item.IsRoot)
 				return;
-			
-			else if (item.IsFolder) {
-				try {
-					DirectoryInfo info = Directory.CreateDirectory(
-						path + System.IO.Path.DirectorySeparatorChar + item.Name);
-					packStore.GetChilds(iter).ToList().ForEach((child) => {
-						ExtractFolder(child, info.FullName);
-					});
-				} catch {
-				}
-			} else {
-				ExtractFile(iter, path + System.IO.Path.DirectorySeparatorChar + item.Name);
-			}
+			else
+				if (item.IsFolder)
+					try
+					{
+						DirectoryInfo info = Directory.CreateDirectory(
+							path + System.IO.Path.DirectorySeparatorChar + item.Name);
+						packStore.GetChilds(iter).ToList().ForEach((child) => {
+							ExtractFolder(child, info.FullName);
+						});
+					}
+					catch { }
+				else
+					ExtractFile(iter, path + System.IO.Path.DirectorySeparatorChar + item.Name);
 		}
 		#endregion Extract action
 
@@ -727,22 +728,21 @@ namespace Packer {
 			TreeIter child;
 			if (TreeIter.Zero.Equals(parent))
 				packStore.GetIterFirst(out child);
-			else {
+			else
+			{
 				packStore.IterChildren(out child, parent);
 
 				Packer.Item root = new Packer.Item(true);
 				folderStore.AppendValues(root.IsFolder ? folderIcon : fileIcon, root.Name, root);
 			}
 
-			if (!TreeIter.Zero.Equals(child)) {
-				do {
+			if (!TreeIter.Zero.Equals(child))
+				do
+				{
 					Packer.Item item = packStore.GetValue(child, 0) as Packer.Item;
-
 					folderStore.AppendValues(item.IsFolder ? folderIcon : fileIcon, item.Name, item);
-				} while(packStore.IterNext(ref child));
-			}
-
-
+				}
+				while (packStore.IterNext(ref child));
 		}
 
 		private TreeIter FindInCurrentFolder(Packer.Item item)
@@ -751,7 +751,8 @@ namespace Packer {
 			TreeIter foundIter = TreeIter.Zero;
 			folderStore.Foreach((model, path, iter) => {
 				Packer.Item foundItem = folderStore.GetValue(iter, 2) as Packer.Item;
-				if (foundItem.FullName.CompareTo(item.FullName) == 0) {
+				if (foundItem.FullName.CompareTo(item.FullName) == 0)
+				{
 					foundIter = iter;
 					return true;
 				}
@@ -767,7 +768,8 @@ namespace Packer {
 			TreeIter foundIter = TreeIter.Zero;
 			packStore.Foreach((model, path, iter) => {
 				Packer.Item foundItem = packStore.GetValue(iter, 0) as Packer.Item;
-				if (item.FullName.CompareTo(foundItem.FullName) == 0) {
+				if (item.FullName.CompareTo(foundItem.FullName) == 0)
+				{
 					foundIter = iter;
 					return true;
 				}
@@ -779,7 +781,8 @@ namespace Packer {
 		private Packer.Item NewItem(TreeIter parent, string path)
 		{
 			Packer.Item item = new Packer.Item(path);
-			if (!TreeIter.Zero.Equals(parent)) {
+			if (!TreeIter.Zero.Equals(parent))
+			{
 				Packer.Item parentItem = packStore.GetValue(parent, 0) as Packer.Item;
 				item.Directory = parentItem.FullName;
 			}

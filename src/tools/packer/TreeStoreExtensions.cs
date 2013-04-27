@@ -18,12 +18,13 @@ namespace Packer
 		public static IEnumerable<TreeIter> GetFullTree(this TreeStore store)
 		{
 			TreeIter iter;
-			if (store.GetIterFirst(out iter)) {
-				do {
+			if (store.GetIterFirst(out iter))
+				do
+				{
 					foreach(TreeIter child in store.GetTree(iter))
 						yield return child;
-				} while (store.IterNext(ref iter));
-			}
+				}
+				while (store.IterNext(ref iter));
 		}
 		
 		public static IEnumerable<TreeIter> GetTree(this TreeStore store, TreeIter parent)
@@ -35,28 +36,32 @@ namespace Packer
 		
 		public static IEnumerable<TreeIter> GetAllChilds(this TreeStore store, TreeIter parent)
 		{
-			if (store.IterHasChild(parent)) {
+			if (store.IterHasChild(parent))
+			{
 				TreeIter child;
-				if (store.IterChildren(out child, parent)) {
-					do {
+				if (store.IterChildren(out child, parent)) 
+					do
+					{
 						yield return child;
 						foreach(TreeIter iter in store.GetAllChilds(child))
 							yield return iter;
-					} while (store.IterNext(ref child));
-				}
+					}
+					while (store.IterNext(ref child));
 			}
 			yield break;
 		}
 		
 		public static IEnumerable<TreeIter> GetChilds(this TreeStore store, TreeIter parent)
 		{
-			if (store.IterHasChild(parent)) {
+			if (store.IterHasChild(parent))
+			{
 				TreeIter child;
-				if (store.IterChildren(out child, parent)) {
-					do {
+				if (store.IterChildren(out child, parent))
+					do
+					{
 						yield return child;
-					} while (store.IterNext(ref child));
-				}
+					}
+					while (store.IterNext(ref child));
 			}
 			yield break;
 		}
@@ -64,11 +69,12 @@ namespace Packer
 		public static IEnumerable<TreeIter> GetTopIters(this TreeStore store)
 		{
 			TreeIter iter;
-			if (store.GetIterFirst(out iter)) {
-				do {
+			if (store.GetIterFirst(out iter))
+				do
+				{
 					yield return iter;
-				} while (store.IterNext(ref iter));
-			}
+				}
+				while (store.IterNext(ref iter));
 		}
 	}
 }

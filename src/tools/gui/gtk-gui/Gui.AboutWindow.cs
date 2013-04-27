@@ -14,7 +14,7 @@ namespace Gui
 			global::Stetic.Gui.Initialize (this);
 			// Widget Gui.AboutWindow
 			this.WidthRequest = 300;
-			this.HeightRequest = 200;
+			this.HeightRequest = 225;
 			this.Name = "Gui.AboutWindow";
 			this.Title = global::Mono.Unix.Catalog.GetString ("About");
 			this.TypeHint = ((global::Gdk.WindowTypeHint)(1));

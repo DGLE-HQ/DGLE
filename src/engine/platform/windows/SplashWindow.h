@@ -14,8 +14,7 @@ See "DGLE.h" for more details.
 class CSplashWindow : public CInstancedObj, public ISplashWindow
 {
 	bool _bInSeparateThread;
-	HWND _hOwnerWndHwnd,
-		_hWnd;
+	HWND _hOwnerWndHwnd, _hWnd;
 	HBITMAP _hBmp;
 	char *_pcBmpFile;
 

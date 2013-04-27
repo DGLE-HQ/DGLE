@@ -13,11 +13,12 @@ namespace DGLE
 {
 	public class MarshalUtils
 	{
-		public static string MarshalString(System.Func<IntPtr, uint, uint> action, uint length = 0) {
-			
+		public static string MarshalString(System.Func<IntPtr, uint, uint> action, uint length = 0)
+		{	
 			string marshalString = "";
 			IntPtr pnt = IntPtr.Zero;
-			try {
+			try
+			{
 				if (length == 0)
 					length = action(pnt, length);
 				int size = Marshal.SystemDefaultCharSize * (int)length;
@@ -25,9 +26,13 @@ namespace DGLE
 				length = action(pnt, length);
 				if (length > 0 && !IntPtr.Zero.Equals(pnt))
 					marshalString = Marshal.PtrToStringAnsi(pnt);
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				marshalString = e.Message;
-			} finally {
+			}
+			finally
+			{
 				Marshal.FreeHGlobal(pnt);
 			}
 			

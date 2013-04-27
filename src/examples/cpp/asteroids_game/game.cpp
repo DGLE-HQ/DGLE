@@ -562,7 +562,7 @@ public:
 CGame::CGame(IEngineCore *pEngineCore) :
 _pEngineCore(pEngineCore), _pInput(NULL), _iDebug(0)
 {
-	_pEngineCore->AddUserCallback(this);
+	_pEngineCore->AddEngineCallback(this);
 	_pEngineCore->ConsoleRegisterVariable("game_debug", "Display game debug information.", &_iDebug, 0, 1);
 }
 

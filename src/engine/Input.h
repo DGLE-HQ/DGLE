@@ -26,7 +26,7 @@ class CInput: private CBaseInput, public IInput
 
 	bool		 _bIsTxtInput;
 	char		*_pcBuffer;
-	std::string	 _clInputTxt;
+	std::string	 _strInputTxt;
 	uint		 _uiBufSize;
 
 	bool		 _abKeys[256];

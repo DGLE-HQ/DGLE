@@ -66,11 +66,11 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	ICoreRenderer *_pCoreRenderer;
 
 	std::string _strFileFormatsDescs;
-	std::vector<TFileFormat>_clFileFormats;
+	std::vector<TFileFormat> _vecFileFormats;
 
 	uint _uiResIdxCounter;
-	std::vector<TResource> _resList;
-	std::vector<TDefaultRes>_defRes;
+	std::vector<TResource> _vecList;
+	std::vector<TDefaultRes> _vecDefRes;
 
 	ITexture *_pDefTex;
 	IMaterial *_pDefMaterial;

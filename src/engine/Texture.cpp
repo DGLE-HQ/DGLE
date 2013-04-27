@@ -12,13 +12,11 @@ See "DGLE.h" for more details.
 #include "Render2D.h"
 #include "Render3D.h"
 
-const float c_fQuad[] = {
+const float c_afQuad[] = {
 	-0.5f, -0.5f, 0.5f, -0.5f,
 	-0.5f, 0.5f, 0.5f, 0.5f,
 	0.f, 1.f, 1.f, 1.f,
-	0.f, 0.f, 1.f, 0.f,
-	0.f, 0.f, 1.f, 0.f, 0.f, 1.f,
-	0.f, 0.f, 1.f, 0.f, 0.f, 1.f
+	0.f, 0.f, 1.f, 0.f
 };
 
 CTexture::CTexture(uint uiInstIdx, ICoreTexture *pCoreTex, uint uiWidth, uint uiHeight):
@@ -27,7 +25,7 @@ _pCoreTexture(pCoreTex),
 _uiWidth(uiWidth), _uiHeight(uiHeight),
 _uiFrameWidth(0), _uiFrameHeight(0)
 {
-	memcpy(_quad, c_fQuad, sizeof(float) * 28);
+	memcpy(_afQuad, c_afQuad, sizeof(float) * 16);
 
 	_pRender2D = Core()->pRender()->pRender2D();
 	_pRender3D = Core()->pRender()->pRender3D();
@@ -92,19 +90,19 @@ DGLE_RESULT DGLE_API CTexture::Draw3D(uint uiFrameIndex)
 	Bind(0);
 
 	if (_uiFrameWidth + _uiFrameHeight + uiFrameIndex == 0)
-		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_fQuad, 16 * sizeof(float), 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)c_afQuad, -1, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	else
 	{
 		const float tx = (uiFrameIndex * _uiFrameWidth % _uiWidth) / (float)_uiWidth,
 			ty = (uiFrameIndex * _uiFrameWidth / _uiWidth * _uiFrameHeight) / (float)_uiHeight,
 			tw = _uiFrameWidth / (float)_uiWidth, th = _uiFrameHeight / (float)_uiHeight;
 
-		_quad[8] = tx; _quad[9] = ty + th;
-		_quad[10] = tx + tw; _quad[11] = _quad[9];
-		_quad[12] = tx;	_quad[13] = ty;
-		_quad[14] = _quad[10]; _quad[15] = ty;
+		_afQuad[8] = tx; _afQuad[9] = ty + th;
+		_afQuad[10] = tx + tw; _afQuad[11] = _afQuad[9];
+		_afQuad[12] = tx; _afQuad[13] = ty;
+		_afQuad[14] = _afQuad[10]; _afQuad[15] = ty;
 
-		_pRender3D->Draw(TDrawDataDesc((uint8 *)_quad, 16 * sizeof(float), 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
+		_pRender3D->Draw(TDrawDataDesc((uint8 *)_afQuad, -1, 8 * sizeof(float), true), CRDM_TRIANGLE_STRIP, 4);
 	}
 
 	return S_OK;

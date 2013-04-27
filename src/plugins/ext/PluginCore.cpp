@@ -327,42 +327,42 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 
 	struct D3D_PixelFormat
 	{
-		int dwSize;
-		int dwFlags;
-		int dwFourCC;
-		int dwRGBBitCount;
-		int dwRBitMask, dwGBitMask, dwBBitMask;
-		int dwRGBAlphaBitMask;
+		int32 dwSize;
+		int32 dwFlags;
+		int32 dwFourCC;
+		int32 dwRGBBitCount;
+		int32 dwRBitMask, dwGBitMask, dwBBitMask;
+		int32 dwRGBAlphaBitMask;
 	};
  
 	struct D3D_Caps2
 	{
-		int dwCaps1;
-		int dwCaps2;
-		int Reserved[2];
+		int32 dwCaps1;
+		int32 dwCaps2;
+		int32 Reserved[2];
 	};
 
 	struct D3D_SurfaceDesc2
 	{
-		int dwSize;
-		int dwFlags;
-		int dwHeight;
-		int dwWidth;
-		int dwPitchOrLinearSize;
-		int dwDepth;
-		int dwMipMapCount;
-		int dwReserved1[11];
+		int32 dwSize;
+		int32 dwFlags;
+		int32 dwHeight;
+		int32 dwWidth;
+		int32 dwPitchOrLinearSize;
+		int32 dwDepth;
+		int32 dwMipMapCount;
+		int32 dwReserved1[11];
 		D3D_PixelFormat ddpfPixelFormat;
 		D3D_Caps2 ddsCaps;
-		int dwReserved2;
+		int32 dwReserved2;
 	} header;
 
 	// Reading from file
 
 	uint read;
 
-	int magic;
-	pFile->Read(&magic, sizeof(int), read);
+	int32 magic;
+	pFile->Read(&magic, sizeof(int32), read);
 
 	if (magic != MAGIC_DDS)
 	{
@@ -402,7 +402,7 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 
 	if (header.ddpfPixelFormat.dwFlags == DDPF_FOURCC)
 	{
-		const int &four_cc = header.ddpfPixelFormat.dwFourCC;
+		const int32 &four_cc = header.ddpfPixelFormat.dwFourCC;
 		
 		b_compressed = true;
 		

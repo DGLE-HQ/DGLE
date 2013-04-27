@@ -57,7 +57,7 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	uint _uiDrawCount;
 
 	uint uiPrevVpX, uiPrevVpY, uiPrevVpWidth, uiPrevVpHeight; 
-	std::vector<TFrameBuffer> _clFrameBuffers;
+	std::vector<TFrameBuffer> _vecFrameBuffers;
 	ICoreTexture *_pCurRenderTarget;
 	uint _uiCurFrameBufferIdx;
 
@@ -75,7 +75,7 @@ class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
 	inline E_COMPARISON_FUNC _GetEngComparsionMode(GLenum mode) const;
 	
 	inline GLenum _GetGLDrawMode(E_CORE_RENDERER_DRAW_MODE eMode) const;
-	__forceinline bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
+	FORCE_INLINE bool _LegacyDraw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	inline void _TriangleStatistics(E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
 	
 	void _ProfilerEventHandler() const;

@@ -13,11 +13,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("GuiWidgets")]
-[assembly: AssemblyDescription("DGLE2 GUI Widgets Library")]
+[assembly: AssemblyDescription("DGLE GUI Widgets Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DGLE2GUIWidgetsLibrary")]
-[assembly: AssemblyCopyright("MIKE")]
+[assembly: AssemblyProduct("DGLEGUIWidgetsLibrary")]
+[assembly: AssemblyCopyright("Andrey Korotkov")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -21,7 +21,7 @@ class CTexture: public CInstancedObj, public ITexture
 	CRender3D *_pRender3D;
 	ICoreTexture *_pCoreTexture;
 	uint _uiWidth, _uiHeight, _uiFrameWidth, _uiFrameHeight;
-	float _quad[28];
+	float _afQuad[28];
 
 public:
 

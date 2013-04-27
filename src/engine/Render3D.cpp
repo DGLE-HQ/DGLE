@@ -284,11 +284,11 @@ DGLE_RESULT DGLE_API CRender3D::BindTexture(ITexture *pTex, uint uiTextureLayer)
 void CRender3D::UnbindLights()
 {
 	if (_pFFP)
-		for (size_t i = 0; i < _stCurState.pCurLights.size(); ++i)
-			if (_stCurState.pCurLights[i].bEnabled)
+		for (size_t i = 0; i < _stCurState.vecCurLights.size(); ++i)
+			if (_stCurState.vecCurLights[i].bEnabled)
 				_pFFP->SetLightEnabled(i, false);
 	
-	_stCurState.pCurLights.clear();
+	_stCurState.vecCurLights.clear();
 }
 
 DGLE_RESULT DGLE_API CRender3D::GetMaxLightsPerPassCount(uint &uiCount)
@@ -308,15 +308,15 @@ void CRender3D::_DrawLight(uint idx)
 		_pCoreRenderer->BindTexture(NULL, 0);
 
 	_pCoreRenderer->SetPointSize(10.f);
-	_pCoreRenderer->SetColor(_stCurState.pCurLights[idx].stDiffCol);
+	_pCoreRenderer->SetColor(_stCurState.vecCurLights[idx].stDiffCol);
 	
-	PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_stCurState.pCurLights[idx].stPos.xyz, -1, -1, false), CRDM_POINTS, 1));
+	PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)_stCurState.vecCurLights[idx].stPos.xyz, -1, -1, false), CRDM_POINTS, 1));
 
-	const TPoint3 &pos = _stCurState.pCurLights[idx].stPos;
-	const TVector3 &dir = _stCurState.pCurLights[idx].stDir;
-	const float &range = _stCurState.pCurLights[idx].fRange;
+	const TPoint3 &pos = _stCurState.vecCurLights[idx].stPos;
+	const TVector3 &dir = _stCurState.vecCurLights[idx].stDir;
+	const float &range = _stCurState.vecCurLights[idx].fRange;
 
-	if (_stCurState.pCurLights[idx].eType == LT_POINT)
+	if (_stCurState.vecCurLights[idx].eType == LT_POINT)
 	{
 		const float cross[] = {-range + pos.x, pos.y, pos.z, range + pos.x, pos.y, pos.z,
 			pos.x, -range + pos.y, pos.z, pos.x, range + pos.y, pos.z,
@@ -325,7 +325,7 @@ void CRender3D::_DrawLight(uint idx)
 		PARANOIC_CHECK_RES(_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)cross, -1, -1, false), CRDM_LINES, 6));
 	}
 	else
-		if (_stCurState.pCurLights[idx].eType == LT_DIRECTIONAL)
+		if (_stCurState.vecCurLights[idx].eType == LT_DIRECTIONAL)
 		{
 			const float direction[] = {range * dir.x + pos.x, range * dir.y + pos.y, range * dir.z + pos.z,
 				-range * dir.x + pos.x, -range * dir.y + pos.y, -range * dir.z + pos.z};
@@ -334,7 +334,7 @@ void CRender3D::_DrawLight(uint idx)
 		}
 		else
 		{
-			const float angle = ((float)M_PI - _stCurState.pCurLights[idx].fAngle * (float)M_PI / 180.f) / 2.f,
+			const float angle = ((float)M_PI - _stCurState.vecCurLights[idx].fAngle * (float)M_PI / 180.f) / 2.f,
 				rsin = range * sinf(angle), rcos = range * cosf(angle),
 				spot[] = {0.f, 0.f, 0.f, 0.f, range, 0.f,
 				0.f, 0.f, 0.f, rcos, rsin, 0.f,
@@ -393,8 +393,8 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 
 	uint idx = -1;
 
-	for (size_t i = 0; i < _stCurState.pCurLights.size(); ++i)
-		if (_stCurState.pCurLights[i].pLight == pLight || !_stCurState.pCurLights[i].bEnabled)
+	for (size_t i = 0; i < _stCurState.vecCurLights.size(); ++i)
+		if (_stCurState.vecCurLights[i].pLight == pLight || !_stCurState.vecCurLights[i].bEnabled)
 		{
 			idx = i;
 			break;
@@ -405,11 +405,11 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 
 	if (idx == -1)
 	{
-		_stCurState.pCurLights.push_back(TState::TLight());
+		_stCurState.vecCurLights.push_back(TState::TLight());
 		idx = _uiLightsEnabledCount++;
 	}
 
-	TState::TLight &light = _stCurState.pCurLights[idx];
+	TState::TLight &light = _stCurState.vecCurLights[idx];
 
 	pLight->GetEnabled(light.bEnabled);
 	pLight->GetColor(light.stDiffCol);

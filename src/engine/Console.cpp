@@ -85,13 +85,13 @@ CInstancedObj(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 
 CConsole::~CConsole()
 {
-	for(uint i = 0; i<_commands.size(); ++i)
+	for(uint i = 0; i<_vecCommands.size(); ++i)
 	{
-		delete[] _commands[i].pcName;
-		delete[] _commands[i].pcHelp;
+		delete[] _vecCommands[i].pcName;
+		delete[] _vecCommands[i].pcHelp;
 	}
 
-	_commands.clear();
+	_vecCommands.clear();
 
 	_pConsoleWindow->Free();
 }
@@ -113,13 +113,13 @@ bool CConsole::_Help(const char* pcParam)
 		if (par[par.length() - 1] == ' ')
 			par.erase(par.length() - 1, 1);
 
-		for (size_t i = 0; i < _commands.size(); ++i)
-		 if (ToLowerCase(par) == string(_commands[i].pcName))
+		for (size_t i = 0; i < _vecCommands.size(); ++i)
+		 if (ToLowerCase(par) == string(_vecCommands[i].pcName))
 		 {
-			 if (strlen(_commands[i].pcHelp) == 0)
+			 if (strlen(_vecCommands[i].pcHelp) == 0)
 				Write(string("Help for command \"" + par + "\" is not presented.").c_str());
 			 else
-				Write(_commands[i].pcHelp);
+				Write(_vecCommands[i].pcHelp);
 			 
 			 return true;
 		 }
@@ -138,20 +138,20 @@ void CConsole::Exec(const char* pcCommand)
 	
 	_ProcessConCmd(ToLowerCase(command));
 
-	_prevCommands.push_back(command);
-	_iPrevMarker = _prevCommands.size();
+	_vecPrevCommands.push_back(command);
+	_iPrevMarker = _vecPrevCommands.size();
 }
 
 void CConsole::_Cmdlist()
 {
 	string lst = "----------Commands List----------\n";
 
-	if (!_commands.empty())
+	if (!_vecCommands.empty())
 	{
-		for (size_t i = 0; i < _commands.size(); ++i)
-			lst += " >" + string(_commands[i].pcName) + "\n";
+		for (size_t i = 0; i < _vecCommands.size(); ++i)
+			lst += " >" + string(_vecCommands[i].pcName) + "\n";
 		
-		lst += string("------" + UIntToStr((uint)_commands.size()) + " registered commands-----" + (_commands.size() < 100 ? "-" : "") + "\n");
+		lst += string("------" + UIntToStr((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + "\n");
 		
 		Write(lst.c_str());
 	}
@@ -204,45 +204,45 @@ void CConsole::_OnCmdPrev()
 	if (_iPrevMarker < 0)
 		_iPrevMarker = 0;
 
-	if ((uint)_iPrevMarker < _prevCommands.size())
-		_pConsoleWindow->SetEditTxt(_prevCommands[_iPrevMarker].c_str());
+	if ((uint)_iPrevMarker < _vecPrevCommands.size())
+		_pConsoleWindow->SetEditTxt(_vecPrevCommands[_iPrevMarker].c_str());
 }
 
 void CConsole::_OnCmdNext()
 {
 	++_iPrevMarker;
 
-	if ((uint)_iPrevMarker >= _prevCommands.size())
+	if ((uint)_iPrevMarker >= _vecPrevCommands.size())
 	{
-		_iPrevMarker = _prevCommands.size() - 1;
+		_iPrevMarker = _vecPrevCommands.size() - 1;
 		_pConsoleWindow->SetEditTxt("");
 	}
 	else
-		_pConsoleWindow->SetEditTxt(_prevCommands[_iPrevMarker].c_str());
+		_pConsoleWindow->SetEditTxt(_vecPrevCommands[_iPrevMarker].c_str());
 }
 
-bool CConsole::_ProcessConCmd(const std::string &command)
+bool CConsole::_ProcessConCmd(const std::string &strCommand)
 {
 	string cmd, param;
 	
-	string::size_type pos = command.find_first_of(' ');
+	string::size_type pos = strCommand.find_first_of(' ');
 		
 	if (pos != string::npos)
 	{
-		param = command.substr(pos + 1, command.size() - pos - 1);
-		cmd = command.substr(0, pos);
+		param = strCommand.substr(pos + 1, strCommand.size() - pos - 1);
+		cmd = strCommand.substr(0, pos);
 	}
 	else
-		cmd = command;
+		cmd = strCommand;
 	
-	for (size_t i = 0; i < _commands.size(); ++i)
-		if (cmd == _commands[i].pcName)
+	for (size_t i = 0; i < _vecCommands.size(); ++i)
+		if (cmd == _vecCommands[i].pcName)
 		{
-			if (_commands[i].piVar == NULL)
+			if (_vecCommands[i].piVar == NULL)
 			{
 				_pConsoleWindow->EnterThreadSafeSection();
 
-				if (!(*_commands[i].pProc)(_commands[i].pParameter, param.c_str()))
+				if (!(*_vecCommands[i].pProc)(_vecCommands[i].pParameter, param.c_str()))
 					Write("Failed to execute command.");
 
 				_pConsoleWindow->LeaveThreadSafeSection();
@@ -251,8 +251,8 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 			{
 				if (param.empty())
 				{
-					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_commands[i].piVar) + " .\n"
-						"Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
+					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_vecCommands[i].piVar) + " .\n"
+						"Value may vary from " + IntToStr(_vecCommands[i].iMinValue) + " up to " + IntToStr(_vecCommands[i].iMaxValue) + ".").c_str());
 				}
 				else
 				{
@@ -261,20 +261,20 @@ bool CConsole::_ProcessConCmd(const std::string &command)
 					if (t == 0 && param != "0")
 						Write(("\"" + param + "\" is not a valid integer value.").c_str());
 					else
-						if (t < _commands[i].iMinValue || t > _commands[i].iMaxValue)
-							Write(("Value may vary from " + IntToStr(_commands[i].iMinValue) + " up to " + IntToStr(_commands[i].iMaxValue) + ".").c_str());
+						if (t < _vecCommands[i].iMinValue || t > _vecCommands[i].iMaxValue)
+							Write(("Value may vary from " + IntToStr(_vecCommands[i].iMinValue) + " up to " + IntToStr(_vecCommands[i].iMaxValue) + ".").c_str());
 						else
 						{
 							_pConsoleWindow->EnterThreadSafeSection();
 							
 							bool res = true;
 
-							if (_commands[i].pProc != NULL)
-								res = (*_commands[i].pProc)(_commands[i].pParameter, param.c_str());
+							if (_vecCommands[i].pProc != NULL)
+								res = (*_vecCommands[i].pProc)(_vecCommands[i].pParameter, param.c_str());
 							
 							if (res)
 							{
-								*_commands[i].piVar = t;
+								*_vecCommands[i].piVar = t;
 								Write((ToUpperCase(cmd) + " is set to " + IntToStr(t) + ".").c_str());
 							}
 
@@ -295,15 +295,15 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 	string cmds = "----\n", cmd = ToLowerCase(pcParam);
 	int count = 0, idx = 0;
 	
-	for (size_t i = 0; i < _commands.size(); ++i)
+	for (size_t i = 0; i < _vecCommands.size(); ++i)
 	{	
 		bool flag = true;
 	
-		if (cmd.length() > strlen(_commands[i].pcName))
+		if (cmd.length() > strlen(_vecCommands[i].pcName))
 			flag = false;
 		else
 			for (uint j = 0; j < cmd.length(); ++j)
-				if (cmd[j] != _commands[i].pcName[j])
+				if (cmd[j] != _vecCommands[i].pcName[j])
 				{
 					flag = false;
 					break;
@@ -313,13 +313,13 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 		{
 			++count;
 			idx = (int)i;
-			cmds += " >"+string(_commands[i].pcName) + "\n";
+			cmds += " >"+string(_vecCommands[i].pcName) + "\n";
 		}
 	}
 		cmds+="----";
 		
 		if (count == 1) 
-			_pConsoleWindow->SetEditTxt((string(_commands[idx].pcName) + " ").c_str());
+			_pConsoleWindow->SetEditTxt((string(_vecCommands[idx].pcName) + " ").c_str());
 		else
 			if (count > 1)
 				Write(cmds.c_str());
@@ -329,13 +329,13 @@ bool CConsole::UnRegCom(const char *pcName)
 {
 	string cmd = ToLowerCase(pcName);
 	
-	for (size_t i = 0; i < _commands.size(); ++i)
-		if (strcmp(_commands[i].pcName, cmd.c_str()) == 0)
+	for (size_t i = 0; i < _vecCommands.size(); ++i)
+		if (strcmp(_vecCommands[i].pcName, cmd.c_str()) == 0)
 		{
-			delete[] _commands[i].pcName;
-			delete[] _commands[i].pcHelp;
+			delete[] _vecCommands[i].pcName;
+			delete[] _vecCommands[i].pcHelp;
 			
-			_commands.erase(_commands.begin() + i);
+			_vecCommands.erase(_vecCommands.begin() + i);
 			
 			return true;
 		}
@@ -359,9 +359,9 @@ void CConsole::RegComProc(const char *pcName, const char *pcHelp, bool (DGLE_API
 	t.iMinValue	= 0;
 	t.pParameter	= pParameter;
 	
-	_commands.push_back(t);
+	_vecCommands.push_back(t);
 	
-	sort(_commands.begin(), _commands.end());
+	sort(_vecCommands.begin(), _vecCommands.end());
 }
 
 void CConsole::RegComVar(const char *pcName, const char *pcHelp, int *piVar, int iMin, int iMax, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) 
@@ -380,9 +380,9 @@ void CConsole::RegComVar(const char *pcName, const char *pcHelp, int *piVar, int
 	t.iMinValue	= iMin;
 	t.pParameter	= pParameter;
 	
-	_commands.push_back(t);	
+	_vecCommands.push_back(t);	
 	
-	sort(_commands.begin(), _commands.end());
+	sort(_vecCommands.begin(), _vecCommands.end());
 }
 
 bool CConsole::_SetPos(const char* pcParam)

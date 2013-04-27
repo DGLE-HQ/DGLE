@@ -2,7 +2,7 @@
 \file		DGLE.h
 \author		Korotkov Andrey aka DRON
 \version	2:0.3.0
-\date		XX.XX.2012 (c)Korotkov Andrey
+\date		27.04.2013 (c)Korotkov Andrey
 
 \brief		Main DGLE engine header.
 
@@ -117,7 +117,7 @@ This is simplest DGLE application for Windows.
 /** Defines DGLE version string. 
 	\warning Do not edit!
 */
-#define _DGLE_VER_	"2:0.3.0"
+#define _DGLE_VER_ "2:0.3.0"
  
 /** Defines DGLE version integer. 
 	\warning Do not edit!
@@ -524,10 +524,10 @@ namespace DGLE
 //Main Engine System//
 
 	// {371B1338-BB25-4B8C-BD6A-BCDF241CC52C}
-	static const GUID IID_IUserCallback = 
+	static const GUID IID_IEngineCallback = 
 	{ 0x371b1338, 0xbb25, 0x4b8c, { 0xbd, 0x6a, 0xbc, 0xdf, 0x24, 0x1c, 0xc5, 0x2c } };
 
-	class IUserCallback : public IDGLE_Base
+	class IEngineCallback : public IDGLE_Base
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API Initialize() = 0;
@@ -622,8 +622,8 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin) = 0;
 		virtual DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) = 0;
 
-		virtual DGLE_RESULT DGLE_API AddUserCallback(IUserCallback *pUserCallback) = 0;
-		virtual DGLE_RESULT DGLE_API RemoveUserCallback(IUserCallback *pUserCallback) = 0;
+		virtual DGLE_RESULT DGLE_API AddEngineCallback(IEngineCallback *pEngineCallback) = 0;
+		virtual DGLE_RESULT DGLE_API RemoveEngineCallback(IEngineCallback *pEngineCallback) = 0;
 
 		virtual DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter = NULL) = 0;

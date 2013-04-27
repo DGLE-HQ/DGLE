@@ -11,30 +11,30 @@ See "DGLE.h" for more details.
 
 bool bTerminate = false;
 
-std::vector<TEngInstance> EngineInstances;
+std::vector<TEngInstance> vecEngineInstances;
 
 TEngInstance* EngineInstance(uint uiInstIdx)
 {
-	if (uiInstIdx >= EngineInstances.size())
+	if (uiInstIdx >= vecEngineInstances.size())
 		return NULL;
 
-	return &EngineInstances[uiInstIdx];
+	return &vecEngineInstances[uiInstIdx];
 }
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
 {
 	if (uiInstIdx == -1)
 	{
-		for (std::size_t i = 0; i < EngineInstances.size(); ++i)
-			if (EngineInstances[i].pclCore)
-				EngineInstances[i].pclCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
+		for (std::size_t i = 0; i < vecEngineInstances.size(); ++i)
+			if (vecEngineInstances[i].pclCore)
+				vecEngineInstances[i].pclCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		return;
 	}
 	
-	if (uiInstIdx >= EngineInstances.size())
+	if (uiInstIdx >= vecEngineInstances.size())
 		return;
 
-	EngineInstances[uiInstIdx].pclCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
+	vecEngineInstances[uiInstIdx].pclCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
 bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
@@ -45,18 +45,18 @@ bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags,
 		return false;
 	}
 
-	EngineInstances.push_back(TEngInstance());
+	vecEngineInstances.push_back(TEngInstance());
 
-	size_t cur_id = EngineInstances.size() - 1;
+	size_t cur_id = vecEngineInstances.size() - 1;
 
-	EngineInstances[cur_id].eGetEngFlags = eFlags;
-	EngineInstances[cur_id].pclConsole = new CConsole(cur_id);
-	EngineInstances[cur_id].pclCore = new CCore(cur_id);
+	vecEngineInstances[cur_id].eGetEngFlags = eFlags;
+	vecEngineInstances[cur_id].pclConsole = new CConsole(cur_id);
+	vecEngineInstances[cur_id].pclCore = new CCore(cur_id);
 
 	if (eFlags & GEF_FORCE_QUIT)
 		bTerminate = true;
 
-	pEngineCore = (IEngineCore*)(EngineInstances[cur_id].pclCore);
+	pEngineCore = (IEngineCore*)(vecEngineInstances[cur_id].pclCore);
 
 	return true;
 }
@@ -66,14 +66,14 @@ bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
 	if (!pEngineCore)
 		return false;
 
-	for (std::size_t i = 0; i < EngineInstances.size(); ++i)
-		if (pEngineCore == EngineInstances[i].pclCore)
+	for (std::size_t i = 0; i < vecEngineInstances.size(); ++i)
+		if (pEngineCore == vecEngineInstances[i].pclCore)
 		{
-			delete EngineInstances[i].pclCore;
-			EngineInstances[i].pclCore = NULL;
+			delete vecEngineInstances[i].pclCore;
+			vecEngineInstances[i].pclCore = NULL;
 			
-			delete EngineInstances[i].pclConsole;
-			EngineInstances[i].pclConsole = NULL;
+			delete vecEngineInstances[i].pclConsole;
+			vecEngineInstances[i].pclConsole = NULL;
 			
 			return true;
 		}
@@ -105,19 +105,19 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 	case DLL_PROCESS_DETACH:
 		
-		for(size_t i = 0; i < EngineInstances.size(); ++i)
+		for(size_t i = 0; i < vecEngineInstances.size(); ++i)
 		{
-			if(EngineInstances[i].pclCore)
+			if(vecEngineInstances[i].pclCore)
 			{
-				delete EngineInstances[i].pclCore;
-				EngineInstances[i].pclCore = NULL;
+				delete vecEngineInstances[i].pclCore;
+				vecEngineInstances[i].pclCore = NULL;
 			}
 
-			if(EngineInstances[i].pclConsole)
-				delete EngineInstances[i].pclConsole;
+			if(vecEngineInstances[i].pclConsole)
+				delete vecEngineInstances[i].pclConsole;
 		}
 
-		EngineInstances.clear();
+		vecEngineInstances.clear();
 
 		if(bTerminate)
 			TerminateProcess(GetCurrentProcess(), 1);

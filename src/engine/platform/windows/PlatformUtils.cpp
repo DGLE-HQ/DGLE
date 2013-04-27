@@ -35,7 +35,7 @@ extern HMODULE hModule;
 namespace DGLE
 {
 
-LARGE_INTEGER	perfFreq;
+LARGE_INTEGER perfFreq;
 
 TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 {

@@ -12,42 +12,42 @@ See "DGLE.h" for more details.
 
 HMODULE hModule	= NULL;
 
-std::vector<CPluginCore*> PlCores;
+std::vector<CPluginCore*> vecPluginCores;
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
 {
 	if (uiInstIdx == -1)
 	{
-		for (size_t i = 0; i < PlCores.size(); ++i)
-			PlCores[i]->_pEngineCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
+		for (size_t i = 0; i < vecPluginCores.size(); ++i)
+			vecPluginCores[i]->_pEngineCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		
 		return;
 	}
 
-	if (uiInstIdx >= (uint)PlCores.size())
+	if (uiInstIdx >= (uint)vecPluginCores.size())
 		return;
 
-	PlCores[uiInstIdx]->_pEngineCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
+	vecPluginCores[uiInstIdx]->_pEngineCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
 void CALLBACK InitPlugin(IEngineCore *engineCore, IPlugin *&plugin)
 {
-	PlCores.push_back(NULL);
+	vecPluginCores.push_back(NULL);
 	
-	uint cur_idx = (uint)PlCores.size() - 1;
+	uint cur_idx = (uint)vecPluginCores.size() - 1;
 
-	PlCores[cur_idx] = new CPluginCore(engineCore);
+	vecPluginCores[cur_idx] = new CPluginCore(engineCore);
 
-	plugin = (IPlugin*)(PlCores[cur_idx]);
+	plugin = (IPlugin*)(vecPluginCores[cur_idx]);
 }
 
 void CALLBACK FreePlugin(IPlugin *plugin)
 {
-	for (size_t i = 0; i < PlCores.size(); ++i)
-		if(plugin == PlCores[i])
+	for (size_t i = 0; i < vecPluginCores.size(); ++i)
+		if(plugin == vecPluginCores[i])
 		{
-			delete PlCores[i];
-			PlCores.erase(PlCores.begin() + i);
+			delete vecPluginCores[i];
+			vecPluginCores.erase(vecPluginCores.begin() + i);
 			return;
 		}
 }
@@ -63,9 +63,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		::hModule = hModule;
 		break;
 	case DLL_PROCESS_DETACH:
-		for (size_t i = 0; i < PlCores.size(); i++)
-			delete PlCores[i];
-		PlCores.clear();
+		for (size_t i = 0; i < vecPluginCores.size(); i++)
+			delete vecPluginCores[i];
+		vecPluginCores.clear();
 		break;
 	}
 	return TRUE;

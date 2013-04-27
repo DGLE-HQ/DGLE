@@ -179,7 +179,7 @@ namespace FontTool
 			dlg.FileChooser.SelectMultiple = false;
 			
 			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
-				filter.Name = "DGLE2 Bitmap Fonts";
+				filter.Name = "DGLE Bitmap Fonts";
 				filter.AddMimeType ("font/dft");
 				filter.AddPattern ("*.dft");
 				dlg.FileChooser.AddFilter (filter);

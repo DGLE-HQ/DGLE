@@ -629,20 +629,20 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 
 	if (GLEW_EXT_framebuffer_object)
 	{
-		for (size_t i = 0; i < _clFrameBuffers.size(); ++i)
+		for (size_t i = 0; i < _vecFrameBuffers.size(); ++i)
 		{
-			glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBObject);
+			glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBObject);
 			
-			if (_clFrameBuffers[i].uiFBBlitObject != 0)
-				glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBBlitObject);
+			if (_vecFrameBuffers[i].uiFBBlitObject != 0)
+				glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBBlitObject);
 			
-			if (_clFrameBuffers[i].uiRBObjectColor != 0)
-				glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			if (_vecFrameBuffers[i].uiRBObjectColor != 0)
+				glDeleteRenderbuffersEXT(1, &_vecFrameBuffers[i].uiRBObjectColor);
 			
-			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectDepthStencil);
+			glDeleteRenderbuffersEXT(1, &_vecFrameBuffers[i].uiRBObjectDepthStencil);
 		}
 
-		_clFrameBuffers.clear();
+		_vecFrameBuffers.clear();
 	}
 
 	delete _pFFP;
@@ -814,12 +814,12 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 		uint width, height;
 		_pCurRenderTarget->GetSize(width, height);
 
-		if ((GLEW_EXT_framebuffer_object && GL_EXT_packed_depth_stencil) && _uiCurFrameBufferIdx != -1 && _clFrameBuffers[_uiCurFrameBufferIdx].bValid)
+		if ((GLEW_EXT_framebuffer_object && GL_EXT_packed_depth_stencil) && _uiCurFrameBufferIdx != -1 && _vecFrameBuffers[_uiCurFrameBufferIdx].bValid)
 		{
-			if (GLEW_EXT_framebuffer_multisample && _clFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject != 0)
+			if (GLEW_EXT_framebuffer_multisample && _vecFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject != 0)
 			{
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, _clFrameBuffers[_uiCurFrameBufferIdx].uiFBObject);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, _clFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject);
+				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, _vecFrameBuffers[_uiCurFrameBufferIdx].uiFBObject);
+				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, _vecFrameBuffers[_uiCurFrameBufferIdx].uiFBBlitObject);
 				
 				if (depth_texture)
 					glBlitFramebufferEXT(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
@@ -891,11 +891,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 				uint fbo_id = -1;
 
-				for (size_t i = 0; i < _clFrameBuffers.size(); ++i)
-					if (_clFrameBuffers[i].uiWidth == width && _clFrameBuffers[i].uiHeight == height &&
-						((!depth_texture && _clFrameBuffers[i].uiRBObjectColor != 0) ||
-						(depth_texture && _clFrameBuffers[i].uiRBObjectColor == 0 &&
-						((fmt == TDF_DEPTH_COMPONENT24 && _clFrameBuffers[i].isDepthStencil) || (fmt == TDF_DEPTH_COMPONENT32 && !_clFrameBuffers[i].isDepthStencil)))))
+				for (size_t i = 0; i < _vecFrameBuffers.size(); ++i)
+					if (_vecFrameBuffers[i].uiWidth == width && _vecFrameBuffers[i].uiHeight == height &&
+						((!depth_texture && _vecFrameBuffers[i].uiRBObjectColor != 0) ||
+						(depth_texture && _vecFrameBuffers[i].uiRBObjectColor == 0 &&
+						((fmt == TDF_DEPTH_COMPONENT24 && _vecFrameBuffers[i].isDepthStencil) || (fmt == TDF_DEPTH_COMPONENT32 && !_vecFrameBuffers[i].isDepthStencil)))))
 					{
 						fbo_id = i;
 						break;
@@ -985,28 +985,28 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 					}
 					else
 					{
-						_uiCurFrameBufferIdx = _clFrameBuffers.size();
+						_uiCurFrameBufferIdx = _vecFrameBuffers.size();
 						
 						if (do_multisample)
 							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBObject);
 					}
 
 					fbo.uiIdleTime = 0;
-					_clFrameBuffers.push_back(fbo);
+					_vecFrameBuffers.push_back(fbo);
 				}
 				else // use already created FBO
-					if (_clFrameBuffers[fbo_id].bValid)
+					if (_vecFrameBuffers[fbo_id].bValid)
 					{
 						_uiCurFrameBufferIdx = fbo_id;
 
-						_clFrameBuffers[fbo_id].uiIdleTime = 0;
+						_vecFrameBuffers[fbo_id].uiIdleTime = 0;
 
-						const bool do_multisample = GLEW_EXT_framebuffer_multisample && _clFrameBuffers[fbo_id].uiFBBlitObject != 0;
+						const bool do_multisample = GLEW_EXT_framebuffer_multisample && _vecFrameBuffers[fbo_id].uiFBBlitObject != 0;
 
 						if (do_multisample)
-							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBBlitObject);
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _vecFrameBuffers[fbo_id].uiFBBlitObject);
 						else
-							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBObject);
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _vecFrameBuffers[fbo_id].uiFBObject);
 
 						if (depth_texture)
 							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, tex_id, 0);
@@ -1014,7 +1014,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 							glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_id, 0);
 					
 						if (do_multisample)
-							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _clFrameBuffers[fbo_id].uiFBObject);
+							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _vecFrameBuffers[fbo_id].uiFBObject);
 					}
 					else
 						_uiCurFrameBufferIdx = -1;
@@ -1048,23 +1048,23 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetRenderTarget(ICoreTexture *&prTexture)
 void CCoreRendererGL::_KillDeadFBOs()
 {
 	size_t i = 0;
-	while (i < _clFrameBuffers.size())
+	while (i < _vecFrameBuffers.size())
 	{
-		++_clFrameBuffers[i].uiIdleTime;
+		++_vecFrameBuffers[i].uiIdleTime;
 
-		if (_clFrameBuffers.size() > _sc_uiFBOMaxCacheSize && _clFrameBuffers[i].uiIdleTime > _sc_uiMaxFBOIdleTime)
+		if (_vecFrameBuffers.size() > _sc_uiFBOMaxCacheSize && _vecFrameBuffers[i].uiIdleTime > _sc_uiMaxFBOIdleTime)
 		{
-			glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBObject);
+			glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBObject);
 			
-			if(_clFrameBuffers[i].uiFBBlitObject != 0)
-				glDeleteFramebuffersEXT(1, &_clFrameBuffers[i].uiFBBlitObject);
+			if(_vecFrameBuffers[i].uiFBBlitObject != 0)
+				glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBBlitObject);
 			
-			if (_clFrameBuffers[i].uiRBObjectColor != 0)
-				glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectColor);
+			if (_vecFrameBuffers[i].uiRBObjectColor != 0)
+				glDeleteRenderbuffersEXT(1, &_vecFrameBuffers[i].uiRBObjectColor);
 			
-			glDeleteRenderbuffersEXT(1, &_clFrameBuffers[i].uiRBObjectDepthStencil);
+			glDeleteRenderbuffersEXT(1, &_vecFrameBuffers[i].uiRBObjectDepthStencil);
 			
-			_clFrameBuffers.erase(_clFrameBuffers.begin() + i);
+			_vecFrameBuffers.erase(_vecFrameBuffers.begin() + i);
 		}
 		else
 			++i;
@@ -1552,8 +1552,24 @@ FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, 
 			color_stride = stDrawDesc.uiColorStride == 0 ? 4 : stDrawDesc.uiColorStride / sizeof(float),
 			normals_stride = stDrawDesc.uiNormalStride == 0 ? 3 : stDrawDesc.uiNormalStride / sizeof(float);
 
-	if (uiCount == 4 && stDrawDesc.bVertices2D && stDrawDesc.uiNormalOffset == -1) // most common case for 2D
+	if (uiCount == 4 && stDrawDesc.bVertices2D && stDrawDesc.uiNormalOffset == -1) // most common case for single texture rendering
 	{
+		if (stDrawDesc.uiTextureVertexOffset != -1 && stDrawDesc.uiColorOffset == -1) // most common for 2D
+		{
+			glTexCoord2fv(&data[tex_offset]);	
+			glVertex2fv(&data[0]);
+
+			glTexCoord2fv(&data[tex_offset + tex_stride]);	
+			glVertex2fv(&data[vert_stride]);
+
+			glTexCoord2fv(&data[tex_offset + 2 * tex_stride]);	
+			glVertex2fv(&data[2 * vert_stride]);
+
+			glTexCoord2fv(&data[tex_offset + 3 * tex_stride]);	
+			glVertex2fv(&data[3 * vert_stride]);
+		}
+		else
+		{
 			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset]);	
 			if (stDrawDesc.uiColorOffset != -1)
@@ -1570,13 +1586,14 @@ FORCE_INLINE bool CCoreRendererGL::_LegacyDraw(const TDrawDataDesc &stDrawDesc, 
 				glTexCoord2fv(&data[tex_offset + 2 * tex_stride]);	
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset + 2 * color_stride]);
-			glVertex2fv(&data[2*vert_stride]);
+			glVertex2fv(&data[2 * vert_stride]);
 
 			if (stDrawDesc.uiTextureVertexOffset != -1)
 				glTexCoord2fv(&data[tex_offset + 3 * tex_stride]);	
 			if (stDrawDesc.uiColorOffset != -1)
 				glColor4fv(&data[color_offset + 3 * color_stride]);
-			glVertex2fv(&data[3*vert_stride]);
+			glVertex2fv(&data[3 * vert_stride]);
+		}
 	}
 	else
 		for (uint i = 0; i < uiCount; ++i)

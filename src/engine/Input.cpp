@@ -220,13 +220,13 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 			if (_bIsTxtInput)
 			{
 				if (stMsg.ui32Param1 > 31)
-					_clInputTxt += (char)stMsg.ui32Param1;
+					_strInputTxt += (char)stMsg.ui32Param1;
 				else
-					if (stMsg.ui32Param1 == 8 /*Backspace*/ && _clInputTxt.length() > 0) 
-						_clInputTxt.erase(_clInputTxt.length() - 1, 1);
+					if (stMsg.ui32Param1 == 8 /*Backspace*/ && _strInputTxt.length() > 0) 
+						_strInputTxt.erase(_strInputTxt.length() - 1, 1);
 				
-				if (_uiBufSize > _clInputTxt.size())
-					strcpy(_pcBuffer, _clInputTxt.c_str());
+				if (_uiBufSize > _strInputTxt.size())
+					strcpy(_pcBuffer, _strInputTxt.c_str());
 				else 
 					EndTextInput();
 			}
@@ -279,7 +279,7 @@ DGLE_RESULT DGLE_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
 	_pcBuffer		= cBuffer;
 	_uiBufSize		= uiBufferSize;
 	_bIsTxtInput	= true;
-	_clInputTxt		= "";
+	_strInputTxt		= "";
 	strcpy(_pcBuffer, "");
 	
 	return S_OK;

@@ -13,10 +13,10 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("FontTool")]
-[assembly: AssemblyDescription("DGLE2 Font Tool App")]
+[assembly: AssemblyDescription("DGLE Font Tool App")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DGLE2FontToolApp")]
+[assembly: AssemblyProduct("DGLEFontToolApp")]
 [assembly: AssemblyCopyright("MIKE")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

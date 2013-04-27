@@ -82,14 +82,17 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 	
 	float x = -(float)strwidth * 0.5f, y = -(float)strheight * 0.5f;
 
-	const uint l_12 = length * 12;
+	const uint floats_per_char = 12 /* vertices */ + 12 /* texture coords */,
+		line_floats_cnt = length * floats_per_char;
 
-	if (_uiBufferSize < l_12 * 2)
+	if (_uiBufferSize < line_floats_cnt)
 	{
-		_uiBufferSize = l_12 * 2;
+		_uiBufferSize = line_floats_cnt;
 		delete[] _pBuffer;
 		_pBuffer = new float[_uiBufferSize];
 	}
+
+	const uint tex_coords_offset = line_floats_cnt / 2;
 
 	for (size_t i = 0; i < length; ++i)
 	{
@@ -100,28 +103,28 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 			&curb_w = _astChars[ch].w,
 			&curb_h = _astChars[ch].h;
 
-		const uint i_12 = i * 12;
+		const uint char_step = i * (floats_per_char / 2);
 
-		_pBuffer[i_12] = x + curb_w * _fScale; _pBuffer[i_12 + 1] = y;
-		_pBuffer[i_12 + 2] = x + curb_w * _fScale; _pBuffer[i_12 + 3] = y + curb_h * _fScale;
-		_pBuffer[i_12 + 4] = x; _pBuffer[i_12 + 5] = y;
+		_pBuffer[char_step] = x + curb_w * _fScale; _pBuffer[char_step + 1] = y;
+		_pBuffer[char_step + 2] = x + curb_w * _fScale; _pBuffer[char_step + 3] = y + curb_h * _fScale;
+		_pBuffer[char_step + 4] = x; _pBuffer[char_step + 5] = y;
 		
-		_pBuffer[i_12 + 6] = x; _pBuffer[i_12 + 7] = y;
-		_pBuffer[i_12 + 8] = x + curb_w * _fScale; _pBuffer[i_12 + 9] = _pBuffer[i_12 + 3];
-		_pBuffer[i_12 + 10] = x; _pBuffer[i_12 + 11] = _pBuffer[i_12 + 3];
+		_pBuffer[char_step + 6] = x; _pBuffer[char_step + 7] = y;
+		_pBuffer[char_step + 8] = x + curb_w * _fScale; _pBuffer[char_step + 9] = _pBuffer[char_step + 3];
+		_pBuffer[char_step + 10] = x; _pBuffer[char_step + 11] = _pBuffer[char_step + 3];
 
-		_pBuffer[l_12 + i_12] = (curb_x + curb_w) / (float)t_w; _pBuffer[l_12 + i_12 + 1] = (curb_y + curb_h) / (float)t_h;
-		_pBuffer[l_12 + i_12 + 2] = _pBuffer[l_12 + i_12]; _pBuffer[l_12 + i_12 + 3] = curb_y / (float)t_h;
-		_pBuffer[l_12 + i_12 + 4] = curb_x / (float)t_w; _pBuffer[l_12 + i_12 + 5] = _pBuffer[l_12 + i_12 + 1];
+		_pBuffer[tex_coords_offset + char_step] = (curb_x + curb_w) / (float)t_w; _pBuffer[tex_coords_offset + char_step + 1] = (curb_y + curb_h) / (float)t_h;
+		_pBuffer[tex_coords_offset + char_step + 2] = _pBuffer[tex_coords_offset + char_step]; _pBuffer[tex_coords_offset + char_step + 3] = curb_y / (float)t_h;
+		_pBuffer[tex_coords_offset + char_step + 4] = curb_x / (float)t_w; _pBuffer[tex_coords_offset + char_step + 5] = _pBuffer[tex_coords_offset + char_step + 1];
 		
-		_pBuffer[l_12 + i_12 + 6] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 7] = _pBuffer[l_12 + i_12 + 1];
-		_pBuffer[l_12 + i_12 + 8] = _pBuffer[l_12 + i_12 + 2]; _pBuffer[l_12 + i_12 + 9] = _pBuffer[l_12 + i_12 + 3];
-		_pBuffer[l_12 + i_12 + 10] = _pBuffer[l_12 + i_12 + 4]; _pBuffer[l_12 + i_12 + 11] = _pBuffer[l_12 + i_12 + 3];
+		_pBuffer[tex_coords_offset + char_step + 6] = _pBuffer[tex_coords_offset + char_step + 4]; _pBuffer[tex_coords_offset + char_step + 7] = _pBuffer[tex_coords_offset + char_step + 1];
+		_pBuffer[tex_coords_offset + char_step + 8] = _pBuffer[tex_coords_offset + char_step + 2]; _pBuffer[tex_coords_offset + char_step + 9] = _pBuffer[tex_coords_offset + char_step + 3];
+		_pBuffer[tex_coords_offset + char_step + 10] = _pBuffer[tex_coords_offset + char_step + 4]; _pBuffer[tex_coords_offset + char_step + 11] = _pBuffer[tex_coords_offset + char_step + 3];
 
 		x += curb_w * _fScale;
 	}
 
-	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, -1, (uint)l_12 * sizeof(float), true), CRDM_TRIANGLES, (uint)length * 6);
+	_pRender3D->Draw(TDrawDataDesc((uint8 *)_pBuffer, -1, tex_coords_offset * sizeof(float), true), CRDM_TRIANGLES, (uint)length * 6);
 
 	return S_OK;
 }

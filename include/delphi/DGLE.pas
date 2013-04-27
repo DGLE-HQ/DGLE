@@ -320,7 +320,7 @@ type
 
 //Main Engine System//
 
-  IUserCallback = interface(IDGLE_Base)
+  IEngineCallback = interface(IDGLE_Base)
   ['{371B1338-BB25-4B8C-BD6A-BCDF241CC52C}']
 
     function Initialize(): DGLE_RESULT; stdcall;
@@ -353,8 +353,8 @@ type
     function DisconnectPlugin(pPlugin: IPlugin): DGLE_RESULT; stdcall;
     function GetPlugin(const pcPluginName: PAnsiChar; out prPlugin: IPlugin): DGLE_RESULT; stdcall;
 
-    function AddUserCallback(pUserCallback: IUserCallback): DGLE_RESULT; stdcall;
-    function RemoveUserCallback(pUserCallback: IUserCallback): DGLE_RESULT; stdcall;
+    function AddEngineCallback(pEngineCallback: IEngineCallback): DGLE_RESULT; stdcall;
+    function RemoveEngineCallback(pEngineCallback: IEngineCallback): DGLE_RESULT; stdcall;
 
     function AddProcedure(eProcType: E_ENGINE_PROCEDURE_TYPE; pProc: TProcedure; pParameter: Pointer = nil): DGLE_RESULT; stdcall;
     function RemoveProcedure(eProcType: E_ENGINE_PROCEDURE_TYPE; pProc: TProcedure; pParameter: Pointer = nil): DGLE_RESULT; stdcall;

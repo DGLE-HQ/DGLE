@@ -1,55 +1,56 @@
-[ * ]	- bugfix or minor enhancement
-[!*!]	- critical bugfix or major enhancement
-[ + ]	- new feature added
-[!+!]	- new major feature added
-[ - ]	- removed
+[ * ]   - bugfix or minor enhancement
+[!*!]   - critical bugfix or major enhancement
+[ + ]   - new feature added
+[!+!]   - new major feature added
+[ - ]   - removed
 (WinXP) - platform name for changes which influence only one platform
-#	- means that subject is not yet finished
-*	- means that subject is not yet commited
+#       - means that subject is not yet finished
+*       - means that subject is not yet in master branch
 
 ===============================================================================
 
-Version: 2:0.3.0 Release date: 22.10.2012
+Version: 2:0.3.0 Release date: 28.04.2013
 
 -----------------------
 
-Initial release to GitHub and also fresh project start. Major engine reengineering.
+Initial release on GitHub and also fresh project start after a long pause.
+Major engine reengineering. Almost everything was rewritten from scratch.
+A lot of refactoring was made for those parts which were not been rewritten.
+Engine API was improved a lot of new methods were added and innumerable minor fixes were made.
+Engine stability and reliability was strongly increased.
+For now engine and toolset are fully functional only under Windows.
+Current codebase is a great basis for further approach.
 
-[!+!] Multi render support and totally new rendering subsystem.
-[!+!] Cross platform basic sound subsystem based on custom software mixer.
-[!+!] Brand new GTK# GUI components and engine toolset.
-[!*!] Total engine reengineering, a lot of stuff was made from the scratch.
-[!*!] Isolation of platform depended code.
-[!*!] Engine examples are totally remade.
-[ + ] BeginBatch/EndBatch IRender2D methods for custom batchs. Also added CullBoundingBox method.
-[ + ] Helper methods Draw2DSimple for IBitmapFont interface.
-[ + ] GetResourceByName, GetResourceByIndex, GetResourcesCount and GetResourceName methods of interface IResourceManager.
-[ + ] Added some getters methods to IRender2D.
-[ + ] Added some advanced Draw, DrawBuffer and DrawBuffer3D methods to IRender2D for experienced users.
-[ + ] Interface IUserCallback allows to register callback classes in engine more simple.
-[ + ] Added joysticks and gamepads support.
-[ + ] Brand new FontTool for engine fonts generation.
-[ + ] Universal Packer tool which is working with any virtual file system supported by engine.
-[ + ] ColorPicker tool.
-[ + ] Added console commands for DCP virtual filesystem. Ability to manage packages. Console commands starts with dcp_*.
-[ + ] Added some functions for fundamental engine interface IDGLE_Base to give more flexibility to extend interfaces via extra commands.
-[ + ] Methods ResolutionCorrectToAbsolute and AbsoluteToResolutionCorrect of interface IRender2D. These methods will help to obtain correct coordinates when resolution correction is turned on.
-[ + ] Methods ProjectScreenToCamera and UnprojectCameraToScreen of interface IRender2D. These methods will help to obtain correct coordinates when 2D camera is set.
-[ + ] Added IEvGoFullScreen event to hook engine fullscreen switch and GetDesktopResolution method to get current desktop resolution.
-[ + ] For IMesh added methods to recalculate normals, bounds and tangent space. Also added method to optimize mesh geometry and transform geometry by matrix.
-[ + ] Console utility to run engine from command line.
-[ + ] GetLastUpdateDeltaTime and GetElapsedTime IEngineCore methods.
-[ + ] Added ability to change logic of calling update routine by using EIF_ENABLE_PER_FRAME_UPDATE and EIF_ENABLE_FLOATING_UPDATE flags.
-[ + ] EF_TILE_TEXTURE flag for IRender2D rendering texture ruitines.
-[ * ] Now engine differs left and right Ctrl, Alt and Shift. Also Alt-Enter combination work much better.
-[ * ] Renamed DrawSprite* methods of IRender2D interface.
-[ * ] IModel interface was reengineered.
-[ * ] Improved DMD format to version 3.1, back compatibility was dropped.
-[ * ] Improved 3ds Max export script.
-[ - ] Some old stuff (like plugins for browsers) was dropped off.
-[ - ] No editors and almost no 3D in this version also no third-party plugins. Functionallity will start to return in nearest next releases.
-[ - ] ICF_BLOCK_WINKEYS flag from method Configure of IInput interface.
-[ - ] Draw2DRect method of IBitmapFont cause it is high level method of some higher abstraction level not low level.
+[!+!] Multi render support and totally new core rendering subsystem with flexible and fast architecture (API is presented in "DGLE_CoreRenderer.h"). Now legacy OpenGL implementation is presented.
+[!+!] Brand new cross platform basic sound subsystem based on custom software sound mixer with thin platform dependent layer.
+[!+!] Brand new GTK# GUI components and engine toolset including font generator, universal packager (working with any virtual file system supported by engine) and color picker.
+[!+!] Engine examples are totally remade (9 brand new examples added).
+[!+!] A lot of various console commands for debugging and profiling were added.
+[!*!] Isolation of platform depended code. Thin abstraction layer was created.
+[!*!] Render 3D subsystem (including IRender3D, IMesh, IModel, ILight and IMaterial) was rewritten, API was greatly improved.
+[!*!] Render 2D subsystem (including IRender2D, ITexture and IBitmapFont) was improved, performance was increased, and API was modified.
+[ + ] Ability to load custom splash window picture.
+[ + ] Some mathematical routines for engine basic structures in "DGLE_Types.h".
+[ + ] Some additional helper methods and getters to IRender2D, ITexture, IBitmapFont and other engine objects interfaces.
+[ + ] CullBoundingBox, ResolutionCorrectToAbsolute and AbsoluteToResolutionCorrect, ProjectScreenToCamera and UnprojectCameraToScreen method to IRender2D. Also some advanced Draw, DrawBuffer and DrawBuffer3D methods for experienced users were added.
+[ + ] GetResourceByName, GetResourceByIndex, GetResourcesCount and GetResourceName methods to IResourceManager interface.
+[ + ] IEngineCallback interface allows to register callback classes in engine.
+[ + ] Joysticks and gamepads support.
+[ + ] Console commands for DCP virtual filesystem. Ability to manage packages via API and console (console commands starts with "dcp_").
+[ + ] Some functions for fundamental engine interface IDGLE_Base were added to give more flexibility for extending interfaces via extra commands.
+[ + ] IEvGoFullScreen event to hook engine fullscreen switch and GetDesktopResolution method to get current desktop resolution.
+[ + ] IMesh methods to recalculate normals, bounds and tangent space. Also added method to optimize mesh geometry and transform geometry by matrix.
+[ + ] Console utility to run engine from command promt, useful for automatisation.
+[ + ] GetLastUpdateDeltaTime and GetElapsedTime IEngineCore methods. Also improved internal engine timings.
+[ + ] Ability to change logic of calling update routine by using EIF_ENABLE_PER_FRAME_UPDATE and EIF_ENABLE_FLOATING_UPDATE flags.
+[ + ] EF_TILE_TEXTURE flag for IRender2D texture rendering ruitines.
+[ * ] Engine and console windows behavior was improved. Also Alt-Enter combination works much better.
+[ * ] Render2D batching routine was improved, also added ability for local bathing (BeginBatch and EndBatch IRender2D methods).
+[ * ] Now engine differs left and right Ctrl, Alt and Shift.
+[ * ] Improved DMD file format up to version 3.1, backward compatibility was dropped.
+[ * ] Improved 3ds Max export script and some bugfixes.
+[ - ] Some old stuff (like browsers plugins) was dropped off. Some will return after reengineering.
+[ - ] No editors and almost no 3D in this version, also no third-party plugins. Functionallity will start to return in nearest next releases.
 
 And really much much more!
 

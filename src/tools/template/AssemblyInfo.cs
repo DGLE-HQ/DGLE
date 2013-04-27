@@ -13,11 +13,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("ToolTemplate")]
-[assembly: AssemblyDescription("DGLE2 Tool Template App")]
+[assembly: AssemblyDescription("DGLE Tool Template App")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DGLE2ToolTemplateApp")]
-[assembly: AssemblyCopyright("MIKE")]
+[assembly: AssemblyProduct("DGLEToolTemplateApp")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

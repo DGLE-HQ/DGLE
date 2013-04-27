@@ -3,7 +3,7 @@
 -----------
 
 There is no automake tools for now.
-So use IDE to build project.
+So use IDE to build the project.
 We use most common IDE for each platform.
 You can find solutions and projects files in "build/<your platform>/" folder.
 

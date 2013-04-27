@@ -16,7 +16,7 @@ void DGLE_API Init(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
-	pFont->Draw2D(0, 0, "Hello, World!");
+	pFont->Draw2D(0, 0, "Hello World!");
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

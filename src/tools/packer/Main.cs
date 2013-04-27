@@ -19,18 +19,15 @@ namespace Packer
 	{
 		internal static string[] Authors = new string[]
 		{
-			"Engine File Subsystems:",
-			"Andrey Korotkov aka DRON",
-			"Interface:",
 			"Shestakov Mikhail aka MIKE"
 		};
 
-		internal static string[] Lines = new string[] {
-			"\n*External resources*",
-			"Some icons are taken from Mark James Silk library http://www.famfamfam.com."
+		internal static string[] Lines = new string[]
+		{
+			""
 		};
-
-		internal static Gdk.Size Size = new Gdk.Size(400, 300);
+		
+		internal static Gdk.Size Size = new Gdk.Size(400, 250);
 	}
 
 	class Program
@@ -53,7 +50,8 @@ namespace Packer
 			Application.Init(appName, ref args);
 
 			// check windows platform
-			if (!Gui.PlatformUtils.IsWindows) {
+			if (!Gui.PlatformUtils.IsWindows)
+			{
 				CustomMessageDialog dlg = new CustomMessageDialog(
 					null, MessageType.Error,
 					"Your OS is not supported on this version!");
@@ -65,7 +63,8 @@ namespace Packer
 
 			// load dgle
 			IEngineCore pEngineCore = null;
-			if (!Engine.GetEngine(DLL_PATH, out pEngineCore)) {
+			if (!Engine.GetEngine(DLL_PATH, out pEngineCore))
+			{
 				CustomMessageDialog dlg = new CustomMessageDialog(
 					null, MessageType.Error,
 					"Couldn't load \"{0}\"!", DLL_NAME);
@@ -85,9 +84,12 @@ namespace Packer
 			//Core.ConsoleVisible(false);
 
 			// init virtual file systems from dgle
-			try {
+			try
+			{
 				Packer.Init();
-			} catch {
+			}
+			catch
+			{
 				CustomMessageDialog dlg = new CustomMessageDialog(
 					null, MessageType.Error, ButtonsType.Ok, 
 					"Failed to load file systems from DGLE!");
@@ -129,7 +131,8 @@ namespace Packer
 			Application.Quit();
 		}
 
-		public static void Main(string[] args) {
+		public static void Main(string[] args)
+		{
 			if (Init(args))
 				Start();
 		}

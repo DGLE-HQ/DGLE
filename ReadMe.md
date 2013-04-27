@@ -1,4 +1,4 @@
-<p align="left"><img src="https://github.com/megaDRONe86/DGLE/blob/master/misc/dgle2_logo.png?raw=true"></p>
+<p align="left"><img src="https://raw.github.com/DGLE-HQ/DGLE/master/misc/dgle2_logo.png"></p>
 
 ## Introduction
 
@@ -75,7 +75,7 @@ void DGLE_API Init(void *pParametr)
 
 void DGLE_API Render(void *pParametr)
 {
-	pFont->Draw2D(0, 0, "Hello, World!");
+	pFont->Draw2D(0, 0, "Hello World!");
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
@@ -111,7 +111,7 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 
 ## Latest SDK version
 
-Compiled and ready to use latest cross platform SDK always could be found [here](https://github.com/megaDRONe86/DGLE/downloads). 
+Compiled and ready to use latest cross platform SDK always could be found [here](http://dglengine.org/downloads).
 
 See [ChangeLog](DGLE/blob/master/ChangeLog.txt) for full list of changes.
 

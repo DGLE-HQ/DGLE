@@ -31,7 +31,7 @@ class CBaseInput : public CInstancedObj, public CPlatformBaseInput
 		TJoystick(uint num, const JOYCAPS &caps) : id(num), info(caps) {}
 	};
 
-	std::vector<TJoystick> _clJoyCaps;
+	std::vector<TJoystick> _vecJoyCaps;
 
 	uint _GetJoyIdx(uint id);
 	uint32 _AxisValue(uint32 Value, uint Min, uint Max);

@@ -16,15 +16,14 @@ struct TConEntry
 	char *pcName;
 	char *pcHelp;
 	void *pParameter;
-	int *piVar,
-		iMinValue, iMaxValue;
+	int *piVar, iMinValue, iMaxValue;
 
 	bool(DGLE_API *pProc)(void *pParameter, const char *pcParam);
 
 	bool operator < (const TConEntry &entry) const
 	{
-		std::string s1(pcName), s2(entry.pcName);
-		return std::lexicographical_compare(s1.begin(), s1.end(), s2.begin(), s2.end());
+		std::string s_1(pcName), s_2(entry.pcName);
+		return std::lexicographical_compare(s_1.begin(), s_1.end(), s_2.begin(), s_2.end());
 	}
 
 };
@@ -32,11 +31,11 @@ struct TConEntry
 class CConsole : public CInstancedObj
 {
 	IConsoleWindow *_pConsoleWindow;
-	std::vector<TConEntry>	_commands;
-	std::vector<std::string> _prevCommands;
+	std::vector<TConEntry>	_vecCommands;
+	std::vector<std::string> _vecPrevCommands;
 	int _iPrevMarker;
 
-	bool _ProcessConCmd(const std::string &command);
+	bool _ProcessConCmd(const std::string &strCommand);
 	void _OnCmdComplete(const char *pcParam);
 	void _OnCmdPrev();
 	void _OnCmdNext();

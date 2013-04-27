@@ -48,9 +48,9 @@ class CCore: public CInstancedObj, public IEngineCore
 		_clDelMLoop, _clDelOnFPSTimer;
 	TMsgProcDelegate _clDelMProc;
 
-	std::vector<IUserCallback *> _clUserCallbacks;
+	std::vector<IEngineCallback *> _vecEngineCallbacks;
 
-	std::vector<TEvent> _clEvents;
+	std::vector<TEvent> _vecEvents;
 
 	std::fstream _clLogFile;
 	uint _uiLogWarningsCount, _uiLogErrorsCount;
@@ -100,9 +100,9 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	bool _bBuiltInSound, _bBuiltInRenderer, _bBuiltInInput;
 
-	std::vector<std::string> _clPluginInitList;
-	std::vector<TPlugin> _clPlugins;
-	bool _LoadPlugin(const std::string &clFileName, IPlugin *&prPlugin);
+	std::vector<std::string> _vecPluginInitList;
+	std::vector<TPlugin> _vecPlugins;
+	bool _LoadPlugin(const std::string &strFileName, IPlugin *&prPlugin);
 	bool _UnloadPlugin(IPlugin *pPlugin);
 	void _PrintPluginsInfo();
 
@@ -171,8 +171,8 @@ public:
 	DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin);
 	DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin);
 
-	DGLE_RESULT DGLE_API AddUserCallback(IUserCallback *pUserCallback);
-	DGLE_RESULT DGLE_API RemoveUserCallback(IUserCallback *pUserCallback);
+	DGLE_RESULT DGLE_API AddEngineCallback(IEngineCallback *pEngineCallback);
+	DGLE_RESULT DGLE_API RemoveEngineCallback(IEngineCallback *pEngineCallback);
 
 	DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter);
 	DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter);

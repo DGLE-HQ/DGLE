@@ -464,7 +464,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pCoreRenderer->MakeCurrent();
 
-		if (!_clDelFree.IsNull() || !_clUserCallbacks.empty()) 
+		if (!_clDelFree.IsNull() || !_vecEngineCallbacks.empty()) 
 		{
 			LOG("Calling user finalization procedure...", LT_INFO);
 			
@@ -477,19 +477,19 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		i = 0;
 
-		while (i < _clPlugins.size())
+		while (i < _vecPlugins.size())
 		{
 			char *p_name;
 			uint chars_cnt;
 
-			_clPlugins[i].pPlugin->GetPluginInterfaceName(NULL, chars_cnt);
+			_vecPlugins[i].pPlugin->GetPluginInterfaceName(NULL, chars_cnt);
 
 			p_name = new char[chars_cnt];
 
-			_clPlugins[i].pPlugin->GetPluginInterfaceName(p_name, chars_cnt);
+			_vecPlugins[i].pPlugin->GetPluginInterfaceName(p_name, chars_cnt);
 					
 			if (strcmp(p_name, "ISubSystemPlugin") != 0)
-				_UnloadPlugin(_clPlugins[i].pPlugin);
+				_UnloadPlugin(_vecPlugins[i].pPlugin);
 			else
 				++i;
 
@@ -512,8 +512,8 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pCoreRenderer->Finalize();
 
-		while (!_clPlugins.empty())
-			_UnloadPlugin(_clPlugins.begin()->pPlugin);
+		while (!_vecPlugins.empty())
+			_UnloadPlugin(_vecPlugins.begin()->pPlugin);
 
 #ifndef NO_BUILTIN_INPUT
 		if (_bBuiltInInput)
@@ -534,10 +534,10 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pMainWindow->Free();
 
-		for (i = 0; i < _clEvents.size(); ++i)
-			delete _clEvents[i].pDEvent;
+		for (i = 0; i < _vecEvents.size(); ++i)
+			delete _vecEvents[i].pDEvent;
 
-		_clEvents.clear();
+		_vecEvents.clear();
 
 		break;
 
@@ -714,7 +714,7 @@ void CCore::_MainLoop()
 	
 	for (uint i = 0; i < cycles_cnt; ++i)
 	{
-		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_clUserCallbacks.empty()) && !_bQuitFlag) 
+		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_vecEngineCallbacks.empty()) && !_bQuitFlag) 
 		{
 			if (i == cycles_cnt - 1)
 				_pRender->RefreshBatchData();
@@ -825,17 +825,17 @@ DGLE_RESULT DGLE_API CCore::RenderFrame()
 
 void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 {
-	if (_clUserCallbacks.empty())
+	if (_vecEngineCallbacks.empty())
 		return;
 
 	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
-	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
+	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
 		switch(eProcType)
 		{
-		case EPT_UPDATE: _clUserCallbacks[i]->Update(_uiLastUpdateDeltaTime); break;
-		case EPT_RENDER: _clUserCallbacks[i]->Render(); break;
-		case EPT_INIT: _clUserCallbacks[i]->Initialize(); break;
-		case EPT_FREE: _clUserCallbacks[i]->Free(); break;
+		case EPT_UPDATE: _vecEngineCallbacks[i]->Update(_uiLastUpdateDeltaTime); break;
+		case EPT_RENDER: _vecEngineCallbacks[i]->Render(); break;
+		case EPT_INIT: _vecEngineCallbacks[i]->Initialize(); break;
+		case EPT_FREE: _vecEngineCallbacks[i]->Free(); break;
 		}
 	)
 }
@@ -885,13 +885,13 @@ DGLE_RESULT DGLE_API CCore::DisconnectPlugin(IPlugin *pPlugin)
 
 DGLE_RESULT DGLE_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlugin)
 {
-	for (size_t i = 0; i < _clPlugins.size(); ++i)
+	for (size_t i = 0; i < _vecPlugins.size(); ++i)
 	{
 		TPluginInfo info;
-		_clPlugins[i].pPlugin->GetPluginInfo(info);
+		_vecPlugins[i].pPlugin->GetPluginInfo(info);
 		if (strcmp(pcPluginName,info.cName) == 0)
 		{
-			prPlugin = _clPlugins[i].pPlugin;
+			prPlugin = _vecPlugins[i].pPlugin;
 			return S_OK;
 		}
 	}
@@ -901,43 +901,43 @@ DGLE_RESULT DGLE_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlug
 
 bool CCore::_UnloadPlugin(IPlugin *pPlugin)
 {
-	for (size_t i = 0; i < _clPlugins.size(); ++i)
-		if (_clPlugins[i].pPlugin == pPlugin)
+	for (size_t i = 0; i < _vecPlugins.size(); ++i)
+		if (_vecPlugins[i].pPlugin == pPlugin)
 		{
 			TPluginInfo info;
-			_clPlugins[i].pPlugin->GetPluginInfo(info);
+			_vecPlugins[i].pPlugin->GetPluginInfo(info);
 
 			void (DGLE_API *pFreePlugin)(IPlugin *plugin) = NULL;
 
-			pFreePlugin = reinterpret_cast<void (DGLE_API *)(IPlugin *)>(GetProcAddress(_clPlugins[i].tLib,("FreePlugin")));
+			pFreePlugin = reinterpret_cast<void (DGLE_API *)(IPlugin *)>(GetProcAddress(_vecPlugins[i].tLib,("FreePlugin")));
 
 			if (pFreePlugin)
-				(*pFreePlugin)(_clPlugins[i].pPlugin);
+				(*pFreePlugin)(_vecPlugins[i].pPlugin);
 			
-			if (!ReleaseDynamicLib(_clPlugins[i].tLib))
+			if (!ReleaseDynamicLib(_vecPlugins[i].tLib))
 				LOG("Can't free \"" + string(info.cName) + "\" plugin library.", LT_ERROR);
 			else
 				LOG("Plugin \"" + string(info.cName) + "\" disconnected succesfully.", LT_INFO);
 			
-			_clPlugins.erase(_clPlugins.begin() + i);
+			_vecPlugins.erase(_vecPlugins.begin() + i);
 			return true;
 		}
 
 	return false;
 }
 
-bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
+bool CCore::_LoadPlugin(const string &strFileName, IPlugin *&prPlugin)
 {
 	prPlugin = NULL;
 	TPlugin tmp;
 	tmp.tLib = NULL;
 	tmp.pPlugin = NULL;
 	
-	tmp.tLib = LoadDynamicLib(clFileName.c_str());
+	tmp.tLib = LoadDynamicLib(strFileName.c_str());
 	
 	if (!tmp.tLib)
 	{
-		LOG("Can't load plugin from library \"" + clFileName + "\".", LT_ERROR);
+		LOG("Can't load plugin from library \"" + strFileName + "\".", LT_ERROR);
 		return false;
 	}
 
@@ -946,7 +946,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	if (!pInitPlugin)
 	{
-		LOG("Library \"" + clFileName + "\" is not a valid DGLE plugin.", LT_ERROR);
+		LOG("Library \"" + strFileName + "\" is not a valid DGLE plugin.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
 		return false;
 	}
@@ -955,7 +955,7 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	if (!tmp.pPlugin)
 	{
-		LOG("Failed to retrieve plugin interface from library \"" + clFileName + "\".", LT_ERROR);
+		LOG("Failed to retrieve plugin interface from library \"" + strFileName + "\".", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
 		return false;
 	}
@@ -965,12 +965,12 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 
 	if (info.ui8PluginSDKVersion != _DGLE_PLUGIN_SDK_VER_)
 	{
-		LOG("Plugin \"" + clFileName + "\" SDK version differs from engine version.", LT_ERROR);
+		LOG("Plugin \"" + strFileName + "\" SDK version differs from engine version.", LT_ERROR);
 		ReleaseDynamicLib(tmp.tLib);
 		return false;
 	}
 
-	_clPlugins.push_back(tmp);
+	_vecPlugins.push_back(tmp);
 
 	prPlugin = tmp.pPlugin;
 
@@ -983,10 +983,10 @@ bool CCore::_LoadPlugin(const string &clFileName, IPlugin *&prPlugin)
 void CCore::_PrintPluginsInfo()
 {
 	string tmp = "------Connected Plugins------\n";
-	for (size_t i = 0; i < _clPlugins.size(); ++i)
+	for (size_t i = 0; i < _vecPlugins.size(); ++i)
 	{
 		TPluginInfo info;
-		_clPlugins[i].pPlugin->GetPluginInfo(info);
+		_vecPlugins[i].pPlugin->GetPluginInfo(info);
 		tmp += "- " + string(info.cName) + " " + string(info.cVersion) + " by " + string(info.cVendor) + "\n";
 	}
 	tmp += "-----------------------------";
@@ -1010,7 +1010,7 @@ DGLE_RESULT DGLE_API CCore::AddPluginToInitializationList(const char *pcFileName
 	if (_bInitedFlag)
 		return S_FALSE;
 
-	_clPluginInitList.push_back(pcFileName);
+	_vecPluginInitList.push_back(pcFileName);
 
 	return S_OK;
 }
@@ -1074,7 +1074,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 
 		if (_eInitFlags & EIF_LOAD_ALL_PLUGINS)
 		{
-			if (!FindFilesInDir((eng_path + "plugins\\*"PLUGIN_FILE_EXTENSION).c_str(), _clPluginInitList))
+			if (!FindFilesInDir((eng_path + "plugins\\*"PLUGIN_FILE_EXTENSION).c_str(), _vecPluginInitList))
 				LOG("Plugin search routine fails.", LT_ERROR);
 		}
 		else
@@ -1084,7 +1084,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 			for (int i = 0; i < _countof(ext_fnames); ++i)
 				if (_access(ext_fnames[i].c_str(), 0) != -1)
 				{
-					_clPluginInitList.push_back(ext_fnames[i]);
+					_vecPluginInitList.push_back(ext_fnames[i]);
 					break;
 				}
 		}
@@ -1122,20 +1122,20 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		_clDelMLoop.Add(&_s_MainLoop, (void*)this);
 		_clDelMProc.Add(&_s_MessageProc, (void*)this);
 
-		if (!_clPluginInitList.empty())
+		if (!_vecPluginInitList.empty())
 		{
-			for (size_t i = 0; i < _clPluginInitList.size(); ++i)
-				for (size_t j = i + 1; j < _clPluginInitList.size(); ++j)
-					if (ToUpperCase(GetOnlyFileName(_clPluginInitList[i].c_str())) == ToUpperCase(GetOnlyFileName(_clPluginInitList[j].c_str())))
+			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
+				for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
+					if (ToUpperCase(GetOnlyFileName(_vecPluginInitList[i].c_str())) == ToUpperCase(GetOnlyFileName(_vecPluginInitList[j].c_str())))
 					{
-						_clPluginInitList.erase(_clPluginInitList.begin() + j);
-						LOG("Found duplicated plugin \"" + GetOnlyFileName(_clPluginInitList[i].c_str()) + "\" in plugins initialization list.", LT_WARNING);
+						_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
+						LOG("Found duplicated plugin \"" + GetOnlyFileName(_vecPluginInitList[i].c_str()) + "\" in plugins initialization list.", LT_WARNING);
 					}
 
-			for (size_t i = 0; i < _clPluginInitList.size(); ++i)
+			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
 			{
 				IPlugin *plugin;
-				if (S_OK == ConnectPlugin(_clPluginInitList[i].c_str(), plugin))
+				if (S_OK == ConnectPlugin(_vecPluginInitList[i].c_str(), plugin))
 				{
 					char *p_name;
 					uint chars_cnt;
@@ -1396,7 +1396,7 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_pRender->SetDefaultStates();
 
-	if (!_clDelInit.IsNull() || !_clUserCallbacks.empty()) 
+	if (!_clDelInit.IsNull() || !_vecEngineCallbacks.empty()) 
 	{
 		LOG("Calling user initialization procedure...", LT_INFO);
 		
@@ -1493,18 +1493,18 @@ DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &ui64Tick)
 
 DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {
-	for (size_t i = 0; i < _clEvents.size(); ++i)
-		if (eEventType == _clEvents[i].eType)
+	for (size_t i = 0; i < _vecEvents.size(); ++i)
+		if (eEventType == _vecEvents[i].eType)
 		{
-			if (!_clEvents[i].pDEvent->IsNull())
-				_clEvents[i].pDEvent->Invoke(pEvent);
+			if (!_vecEvents[i].pDEvent->IsNull())
+				_vecEvents[i].pDEvent->Invoke(pEvent);
 			
 			break;
 		}
 
 	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
-	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
-		_clUserCallbacks[i]->OnEvent(eEventType, pEvent);
+	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
+		_vecEngineCallbacks[i]->OnEvent(eEventType, pEvent);
 	)
 	
 	return S_OK;
@@ -1515,10 +1515,10 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 	if (eEventType == ET_BEFORE_INITIALIZATION && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
 	
-	for (size_t i = 0; i < _clEvents.size(); ++i)
-		if (eEventType == _clEvents[i].eType)
+	for (size_t i = 0; i < _vecEvents.size(); ++i)
+		if (eEventType == _vecEvents[i].eType)
 		{
-			_clEvents[i].pDEvent->Add(pListnerProc, pParameter);
+			_vecEvents[i].pDEvent->Add(pListnerProc, pParameter);
 			return S_OK;
 		}
 
@@ -1528,40 +1528,40 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 	new_event.pDEvent->Add(pListnerProc, pParameter);
 	new_event.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
-	_clEvents.push_back(new_event);
+	_vecEvents.push_back(new_event);
 
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
-	for (size_t i = 0; i < _clEvents.size(); ++i)
-		if (eEventType == _clEvents[i].eType)
+	for (size_t i = 0; i < _vecEvents.size(); ++i)
+		if (eEventType == _vecEvents[i].eType)
 		{
-			_clEvents[i].pDEvent->Remove(pListnerProc, pParameter);
+			_vecEvents[i].pDEvent->Remove(pListnerProc, pParameter);
 			return S_OK;
 		}
 
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CCore::AddUserCallback(IUserCallback *pUserCallback)
+DGLE_RESULT DGLE_API CCore::AddEngineCallback(IEngineCallback *pEngineCallback)
 {
-	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
-		if (_clUserCallbacks[i] == pUserCallback)
+	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
+		if (_vecEngineCallbacks[i] == pEngineCallback)
 			return S_FALSE;
 
-	_clUserCallbacks.push_back(pUserCallback);
+	_vecEngineCallbacks.push_back(pEngineCallback);
 
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::RemoveUserCallback(IUserCallback *pUserCallback)
+DGLE_RESULT DGLE_API CCore::RemoveEngineCallback(IEngineCallback *pEngineCallback)
 {
-	for (size_t i = 0; i < _clUserCallbacks.size(); ++i)
-		if (_clUserCallbacks[i] == pUserCallback)
+	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
+		if (_vecEngineCallbacks[i] == pEngineCallback)
 		{
-			_clUserCallbacks.erase(_clUserCallbacks.begin() + i);
+			_vecEngineCallbacks.erase(_vecEngineCallbacks.begin() + i);
 			return S_OK;
 		}
 

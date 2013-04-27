@@ -317,12 +317,12 @@ CResourceManager::~CResourceManager()
 
 void CResourceManager::FreeAllResources()
 {
-	_clFileFormats.clear();
+	_vecFileFormats.clear();
 
-	while (!_resList.empty())
+	while (!_vecList.empty())
 	{
-		delete[] _resList.begin()->pcName;
-		_resList.begin()->pObj->Free();
+		delete[] _vecList.begin()->pcName;
+		_vecList.begin()->pObj->Free();
 	}
 
 	delete (CMesh*)_pDefMesh;
@@ -342,17 +342,17 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterDefaultResource(E_ENGINE_OBJECT_T
 	if (eObjType == EOT_UNKNOWN)
 		return E_INVALIDARG;
 
-	_defRes.push_back(TDefaultRes(eObjType, pObj));
+	_vecDefRes.push_back(TDefaultRes(eObjType, pObj));
 	
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CResourceManager::UnregisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj)
 {
-	for (size_t i = 0; i < _defRes.size(); ++i)
-		if (_defRes[i].type == eObjType && _defRes[i].pBaseObj == pObj)
+	for (size_t i = 0; i < _vecDefRes.size(); ++i)
+		if (_vecDefRes[i].type == eObjType && _vecDefRes[i].pBaseObj == pObj)
 		{
-			_defRes.erase(_defRes.begin() + i);
+			_vecDefRes.erase(_vecDefRes.begin() + i);
 			return S_OK;
 		}
 
@@ -361,10 +361,10 @@ DGLE_RESULT DGLE_API CResourceManager::UnregisterDefaultResource(E_ENGINE_OBJECT
 
 DGLE_RESULT DGLE_API CResourceManager::UnregisterFileFormat(const char* pcExtension)
 {
-	for (size_t i = 0; i < _clFileFormats.size(); ++i)
-		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
+	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
+		if (_vecFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
-			_clFileFormats.erase(_clFileFormats.begin()+i);
+			_vecFileFormats.erase(_vecFileFormats.begin()+i);
 			return S_OK;
 		}
 
@@ -403,8 +403,8 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 {
 	string exts;
 
-	for (size_t i = 0; i < _clFileFormats.size(); ++i)
-		exts += _clFileFormats[i].ext + ";";
+	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
+		exts += _vecFileFormats[i].ext + ";";
 
 	if (!pcTxt)
 	{
@@ -426,10 +426,10 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 
 DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj)
 {
-	for (int i = (int)_defRes.size() - 1; i > -1; --i)
-		if (eObjType == _defRes[i].type)
+	for (int i = (int)_vecDefRes.size() - 1; i > -1; --i)
+		if (eObjType == _vecDefRes[i].type)
 		{
-			prObj = _defRes[i].pBaseObj;
+			prObj = _vecDefRes[i].pBaseObj;
 			return S_OK;
 		}
 
@@ -440,7 +440,7 @@ DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENGINE_OBJECT_TYPE e
 
 DGLE_RESULT DGLE_API CResourceManager::GetResourcesCount(uint &uiCount)
 {
-	uiCount = _resList.size();
+	uiCount = _vecList.size();
 	return S_OK;
 }
 
@@ -453,10 +453,10 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEn
 
 	uint32 hash = GetCRC32((uint8*)pcName, (uint32)strlen(pcName) * sizeof(char));
 
-	for (size_t i = 0; i < _resList.size(); ++i)
-		if (_resList[i].nameHash == hash)
+	for (size_t i = 0; i < _vecList.size(); ++i)
+		if (_vecList[i].nameHash == hash)
 		{
-			prObj = _resList[i].pObj;
+			prObj = _vecList[i].pObj;
 			return S_OK;
 		}
 
@@ -467,33 +467,33 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByIndex(uint uiIdx, IEngineBas
 {
 	prObj = NULL;
 
-	if (uiIdx >= _resList.size())
+	if (uiIdx >= _vecList.size())
 		return E_INVALIDARG;
 
-	prObj = _resList[uiIdx].pObj;
+	prObj = _vecList[uiIdx].pObj;
 	
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CResourceManager::GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount)
 {
-	for (size_t i = 0; i < _resList.size(); ++i)
-		if (_resList[i].pObj == pObj)
+	for (size_t i = 0; i < _vecList.size(); ++i)
+		if (_vecList[i].pObj == pObj)
 			if (!pcName || uiCharsCount == 0)
 			{
-				uiCharsCount = strlen(_resList[i].pcName) + 1;
+				uiCharsCount = strlen(_vecList[i].pcName) + 1;
 				return S_OK;
 			}
 			else
 			{
-				if (uiCharsCount <= strlen(_resList[i].pcName))
+				if (uiCharsCount <= strlen(_vecList[i].pcName))
 				{
-					uiCharsCount = strlen(_resList[i].pcName) + 1;
+					uiCharsCount = strlen(_vecList[i].pcName) + 1;
 					strcpy(pcName, "");
 					return E_INVALIDARG;
 				}
 
-				strcpy(pcName, _resList[i].pcName);
+				strcpy(pcName, _vecList[i].pcName);
 				
 				return S_OK;
 			}
@@ -505,11 +505,11 @@ void CResourceManager::_AddResource(const char *pcName, IEngineBaseObject *pObj)
 {
 	if (pcName == NULL || strlen(pcName) == 0)
 	{
-		_resList.push_back(TResource(("Res_" + IntToStr(_uiResIdxCounter)).c_str(), pObj));
+		_vecList.push_back(TResource(("Res_" + IntToStr(_uiResIdxCounter)).c_str(), pObj));
 		++_uiResIdxCounter;
 	}
 	else
-		_resList.push_back(TResource(pcName, pObj));
+		_vecList.push_back(TResource(pcName, pObj));
 }
 
 inline uint8 CResourceManager::_GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format)
@@ -915,8 +915,8 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter)
 {
-	for (size_t i = 0; i<_clFileFormats.size(); ++i)
-		if (_clFileFormats[i].ext == string(pcExtension) && _clFileFormats[i].type == eObjType)
+	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
+		if (_vecFileFormats[i].ext == string(pcExtension) && _vecFileFormats[i].type == eObjType)
 			LOG("File format with extension \"" + string(pcExtension) + "\" was overrided.", LT_WARNING);
 
 	TFileFormat tff;
@@ -927,7 +927,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 	tff.pLoadProc = pLoadProc;
 	tff.pParameter = pParameter;
 
-	_clFileFormats.push_back(tff);
+	_vecFileFormats.push_back(tff);
 
 	_strFileFormatsDescs += string("- " + ToUpperCase(string(pcExtension)) + " " + string(pcDiscription) + "\n");
 
@@ -1194,12 +1194,12 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 #pragma pack(push, 1)
 	struct TDTXHeader
 	{
-		uint32	uiCount;
+		uint32	ui32Count;
 		uint8	ui8Format;
-		uint32	uiWidth;
-		uint32	uiHeight;
+		uint32	ui32Width;
+		uint32	ui32Height;
 		bool	bMip;
-		uint32	uiDataSize;
+		uint32	ui32DataSize;
 	};
 #pragma pack(pop)
 
@@ -1225,18 +1225,18 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	if (header.bMip)
 		flags = TCF_MIPMAPS_PRESENTED;
 
-	uint8 *data_in = new uint8[header.uiDataSize];
+	uint8 *data_in = new uint8[header.ui32DataSize];
 
-	pFile->Read(data_in, header.uiDataSize, ui_read);
+	pFile->Read(data_in, header.ui32DataSize, ui_read);
 
-	if (ui_read != header.uiDataSize)
+	if (ui_read != header.ui32DataSize)
 	{
 		LOG("Error(s) while reading DTX texture data.", LT_ERROR);
 		delete[] data_in;
 		return false;
 	}
 
-	const bool ret = _CreateTexture(prTex, data_in, header.uiWidth, header.uiHeight, format, flags, eFlags);
+	const bool ret = _CreateTexture(prTex, data_in, header.ui32Width, header.ui32Height, format, flags, eFlags);
 
 	delete[] data_in;
 
@@ -1398,7 +1398,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 		struct TMeshHeader
 		{
 			bool isTextured, haveTangentSpace;
-			uint uiVertsCount, uiIdxsCount;
+			uint32 ui32VertsCount, ui32IdxsCount;
 			TPoint3 stCenter;
 			TVector3 stExtents;
 		};
@@ -1408,8 +1408,8 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 
 		pFile->Read(&header, sizeof(TMeshHeader), ui_read);
 
-		const uint8 idx_size = header.uiVertsCount > 65535 ? sizeof(uint32) : sizeof(uint16);
-		const uint datasize = header.uiVertsCount * sizeof(float) * 2 * 3 + header.uiIdxsCount * idx_size + header.isTextured * header.uiVertsCount * sizeof(float) * 2;
+		const uint8 idx_size = header.ui32VertsCount > 65535 ? sizeof(uint32) : sizeof(uint16);
+		const uint datasize = header.ui32VertsCount * sizeof(float) * 2 * 3 + header.ui32IdxsCount * idx_size + header.isTextured * header.ui32VertsCount * sizeof(float) * 2;
 
 		uint8 *data_in = new uint8[datasize];
 
@@ -1430,7 +1430,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 
 		IMesh *p_mesh;
 
-		ret = _CreateMesh(p_mesh, data_in, datasize, header.uiVertsCount, header.uiIdxsCount / 3, header.stCenter, header.stExtents, cr_flags, eLoadFlags);
+		ret = _CreateMesh(p_mesh, data_in, datasize, header.ui32VertsCount, header.ui32IdxsCount / 3, header.stCenter, header.stExtents, cr_flags, eLoadFlags);
 
 		delete[] data_in;
 
@@ -1477,17 +1477,17 @@ void CResourceManager::_ProfilerEventHandler() const
 	Core()->RenderProfilerText("== Resource Man. Profiler ==", color);
 
 	if (_iProfilerState > 0)
-		Core()->RenderProfilerText(("Resources loaded: " + UIntToStr((uint)_resList.size())).c_str(), color);
+		Core()->RenderProfilerText(("Resources loaded: " + UIntToStr((uint)_vecList.size())).c_str(), color);
 
 	if (_iProfilerState > 1)
 	{
 		uint cnt[_sc_EngObjTypeCount];
 		memset(cnt, 0, _sc_EngObjTypeCount * sizeof(uint));
 
-		for (size_t i = 0; i < _resList.size(); ++i)
+		for (size_t i = 0; i < _vecList.size(); ++i)
 		{
 			E_ENGINE_OBJECT_TYPE type;
-			_resList[i].pObj->GetType(type);
+			_vecList[i].pObj->GetType(type);
 			++cnt[type];
 		}
 
@@ -1513,13 +1513,13 @@ void CResourceManager::_ListResources() const
 {
 	string res;
 
-	for (size_t i = 0; i < _resList.size(); ++i)
+	for (size_t i = 0; i < _vecList.size(); ++i)
 	{
 		E_ENGINE_OBJECT_TYPE type;
-		_resList[i].pObj->GetType(type);
+		_vecList[i].pObj->GetType(type);
 		string name;
 		_s_GetObjTypeName(type, name);
-		res += string(_resList[i].pcName) + "[" + name + "]\n";
+		res += string(_vecList[i].pcName) + "[" + name + "]\n";
 	}
 
 	if(!res.empty())
@@ -1637,8 +1637,8 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 	{
 		uint16	ui16FormatTag;
 		uint16	ui16Channels;
-		uint	uiSamplesPerSec;
-		uint	uiAvgBytesPerSec;
+		uint32	ui32SamplesPerSec;
+		uint32	ui32AvgBytesPerSec;
 		uint16	ui16BlockAlign;
 		uint16	ui16BitsPerSample;
 	};
@@ -1687,7 +1687,8 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 
 	pFile->Read(&st_format, sizeof(TWaveFormatEx), ui_read);
 	
-	if ((st_format.ui16Channels != 1 || st_format.ui16Channels != 2) && (st_format.ui16BitsPerSample != 8 && st_format.ui16BitsPerSample != 16) || (st_format.uiSamplesPerSec != 11025 && st_format.uiSamplesPerSec != 22050 && st_format.uiSamplesPerSec != 44100))
+	if ((st_format.ui16Channels != 1 || st_format.ui16Channels != 2) &&
+		(st_format.ui16BitsPerSample != 8 && st_format.ui16BitsPerSample != 16) || (st_format.ui32SamplesPerSec != 11025 && st_format.ui32SamplesPerSec != 22050 && st_format.ui32SamplesPerSec != 44100))
 	{
 		LOG("Unsupported sound data format. Only 8 or 16 bits per sample with 11025, 22050 or 44100 frequency formats are supported.", LT_ERROR);
 		return false;
@@ -1730,7 +1731,7 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 		return false;
 	}
 
-	prSSample = (ISoundSample*)(new CSoundSample(InstIdx(), st_format.uiSamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
+	prSSample = (ISoundSample*)(new CSoundSample(InstIdx(), st_format.ui32SamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
 
 	return true;
 }
@@ -1901,8 +1902,8 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 
 	string file_ext = ToUpperCase(GetFileExt(pcFileName));
 
-	for (size_t i = 0; i<_clFileFormats.size(); ++i)
-		if ((eObjType == EOT_UNKNOWN || _clFileFormats[i].type == eObjType) && _clFileFormats[i].ext == file_ext)
+	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
+		if ((eObjType == EOT_UNKNOWN || _vecFileFormats[i].type == eObjType) && _vecFileFormats[i].ext == file_ext)
 		{
 			ret = (uint)i;
 			break;
@@ -1911,7 +1912,7 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 	if (ret == -1)
 		prObj = (IEngineBaseObject*&)_pBObjDummy;
 	else
-		switch (_clFileFormats[ret].type)
+		switch (_vecFileFormats[ret].type)
 		{
 		case EOT_SOUND_SAMPLE:
 			GetDefaultResource(uiLoadFlags & SSLF_LOAD_AS_MUSIC ? EOT_MUSIC : EOT_SOUND_SAMPLE, prObj);
@@ -1922,7 +1923,7 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 			break;
 
 		default:
-			GetDefaultResource(_clFileFormats[ret].type, prObj);
+			GetDefaultResource(_vecFileFormats[ret].type, prObj);
 		}		
 
 	return ret;
@@ -1930,10 +1931,10 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 
 DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType)
 {
-	for (size_t i = 0; i < _clFileFormats.size(); ++i)
-		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
+	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
+		if (_vecFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
-			eType = _clFileFormats[i].type;
+			eType = _vecFileFormats[i].type;
 			return S_OK;
 		}
 
@@ -1944,23 +1945,23 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension,
 
 DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount)
 {
-	for (size_t i = 0; i < _clFileFormats.size(); ++i)
-		if (_clFileFormats[i].ext == ToUpperCase(string(pcExtension)))
+	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
+		if (_vecFileFormats[i].ext == ToUpperCase(string(pcExtension)))
 		{
 			if (!pcTxt)
 			{
-				uiCharsCount = _clFileFormats[i].discr.size() + 1;
+				uiCharsCount = _vecFileFormats[i].discr.size() + 1;
 				return S_OK;
 			}
 
-			if (_clFileFormats[i].discr.size() >= uiCharsCount)
+			if (_vecFileFormats[i].discr.size() >= uiCharsCount)
 			{
-				uiCharsCount = _clFileFormats[i].discr.size() + 1;
+				uiCharsCount = _vecFileFormats[i].discr.size() + 1;
 				strcpy(pcTxt, "");
 				return E_INVALIDARG;
 			}
 
-			strcpy(pcTxt, _clFileFormats[i].discr.c_str());
+			strcpy(pcTxt, _vecFileFormats[i].discr.c_str());
 
 			return S_OK;
 		}
@@ -1999,12 +2000,12 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 		return S_FALSE;
 	}
 
-	bool ret = (*_clFileFormats[uiFFIdx].pLoadProc)(pFile, prObj, uiLoadFlags, _clFileFormats[uiFFIdx].pParameter);
+	bool ret = (*_vecFileFormats[uiFFIdx].pLoadProc)(pFile, prObj, uiLoadFlags, _vecFileFormats[uiFFIdx].pParameter);
 
 	if (!ret)
 		LOG("Error(s) while loading file \"" + string(pcFileName) + "\".", LT_ERROR);
 	else
-		_resList.push_back(TResource(pcName == NULL || strlen(pcName) == 0 ? pcFileName : pcName, prObj));
+		_vecList.push_back(TResource(pcName == NULL || strlen(pcName) == 0 ? pcFileName : pcName, prObj));
 
 	return ret ? S_OK : S_FALSE;
 }
@@ -2097,8 +2098,8 @@ DGLE_RESULT DGLE_API CResourceManager::FreeResource(IEngineBaseObject *&prObj)
 
 DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngineBaseObject *pObj)
 {
-	for (size_t i = 0; i < _resList.size(); ++i)
-		if (_resList[i].pObj == pObj)
+	for (size_t i = 0; i < _vecList.size(); ++i)
+		if (_vecList[i].pObj == pObj)
 			return E_INVALIDARG;
 
 	_AddResource(pcName, pObj);
@@ -2108,18 +2109,18 @@ DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngineBa
 
 DGLE_RESULT DGLE_API CResourceManager::RemoveResource(IEngineBaseObject *pObj, bool &bCanDelete)
 {
-	for (size_t i = 0; i < _resList.size(); ++i)
-		if (_resList[i].pObj == pObj)
+	for (size_t i = 0; i < _vecList.size(); ++i)
+		if (_vecList[i].pObj == pObj)
 		{
 			bCanDelete = true;
-			_resList.erase(_resList.begin() + i);
+			_vecList.erase(_vecList.begin() + i);
 			return S_OK;
 		}
 
 	bCanDelete = true;
 
-	for (size_t i = 0; i < _defRes.size(); ++i)
-		if (pObj == _defRes[i].pBaseObj)
+	for (size_t i = 0; i < _vecDefRes.size(); ++i)
+		if (pObj == _vecDefRes[i].pBaseObj)
 			bCanDelete = false;
 	
 	return S_FALSE;
