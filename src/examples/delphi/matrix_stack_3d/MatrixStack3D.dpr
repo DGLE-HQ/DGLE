@@ -1,20 +1,20 @@
-program matrix_stack_3d;
+program MatrixStack3D;
 
 uses
   Windows,
   SysUtils,
   Math,
-  DGLE in '..\..\..\..\Include\Delphi3\DGLE.pas',
-  DGLE_Base in '..\..\..\..\Include\Delphi3\DGLE_Base.pas',
-  DGLE_CoreRenderer in '..\..\..\..\Include\Delphi3\DGLE_CoreRenderer.pas',
-  DGLE_Types in '..\..\..\..\Include\Delphi3\DGLE_types.pas';
+  DGLE in '..\..\..\..\include\delphi\DGLE.pas',
+  DGLE_Base in '..\..\..\..\include\delphi\DGLE_Base.pas',
+  DGLE_CoreRenderer in '..\..\..\..\include\delphi\DGLE_CoreRenderer.pas',
+  DGLE_Types in '..\..\..\..\include\delphi\DGLE_Types.pas';
 
 const
-  APP_CAPTION   = 'matrix_stack_3d';
+  APP_CAPTION   = 'MatrixStack3D';
   DLL_PATH      = '..\..\..\DGLE.dll';
-	RESOURCE_PATH = '..\..\..\..\resources\';
-  SCREEN_WIDTH	= 1280;
-  SCREEN_HEIGHT	= 800;
+  RESOURCE_PATH = '..\..\..\..\resources\';
+  SCREEN_WIDTH  = 1280;
+  SCREEN_HEIGHT = 800;
 var
 
   transform    : TTransformStack;

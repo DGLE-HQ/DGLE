@@ -12,7 +12,7 @@ This header is a part of DGLE_SDK.
 \see    DGLE.pas
 }
 
-unit DGLE_types;
+unit DGLE_Types;
 
 interface
 

@@ -1,11 +1,11 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{2a92ee15-b2fd-490b-8f82-0797c7d6c6a8}</ProjectGuid>
-    <MainSource>matrix_stack_3d.dpr</MainSource>
+    <MainSource>MatrixStack3D.dpr</MainSource>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>..\..\..\..\bin\examples\delphi\matrix_stack_3d\matrix_stack_3d.exe</DCC_DependencyCheckOutputName>
+    <DCC_DependencyCheckOutputName>..\..\..\..\bin\examples\delphi\matrix_stack_3d\MatrixStack3D.exe</DCC_DependencyCheckOutputName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Version>7.0</Version>
@@ -17,7 +17,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Version>7.0</Version>
     <DCC_Define>DEBUG</DCC_Define>
-    <DCC_ExeOutput>..\..\..\..\bin\examples\delphi\matrix_stack_3d</DCC_ExeOutput>
+    <DCC_ExeOutput>..\..\..\..\bin\examples\delphi\MatrixStack3D</DCC_ExeOutput>
   </PropertyGroup>
   <ProjectExtensions>
     <Borland.Personality>Delphi.Personality</Borland.Personality>
@@ -56,13 +56,13 @@
       <VersionInfoKeys Name="Comments"></VersionInfoKeys>
     </VersionInfoKeys>
     <Source>
-      <Source Name="MainSource">matrix_stack_3d.dpr</Source>
+      <Source Name="MainSource">MatrixStack3D.dpr</Source>
     </Source>
   </Delphi.Personality> </BorlandProject></BorlandProject>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
   <ItemGroup>
-    <DelphiCompile Include="matrix_stack_3d.dpr">
+    <DelphiCompile Include="MatrixStack3D.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
     <DCCReference Include="..\..\..\..\Include\Delphi3\DGLE.pas" />

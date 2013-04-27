@@ -20,7 +20,7 @@ interface
 {$ENDIF}
 
 
-uses Windows, DGLE_types, DGLE_Base, DGLE_CoreRenderer;
+uses Windows, DGLE_Types, DGLE_Base, DGLE_CoreRenderer;
 
 const
     _DGLE_VER_            = '2:0.3.0';

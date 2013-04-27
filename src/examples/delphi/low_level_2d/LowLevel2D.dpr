@@ -1,4 +1,4 @@
-program low_level_2d;
+program LowLevel2D;
 
 uses
   Windows,      

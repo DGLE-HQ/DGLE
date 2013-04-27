@@ -1,10 +1,10 @@
-program d3DIn2D;
+program 3DIn2D;
 uses
   Windows, Math,
-  DGLE in 'DGLE.pas',
-  DGLE_Types in 'DGLE_Types.pas',
-  DGLE_Base in 'DGLE_Base.pas',
-  DGLE_CoreRenderer in 'DGLE_CoreRenderer.pas';
+  DGLE in '..\..\..\..\include\delphi\DGLE.pas',
+  DGLE_Types in '..\..\..\..\include\delphi\DGLE_Types.pas',
+  DGLE_Base in '..\..\..\..\include\delphi\DGLE_Base.pas',
+  DGLE_CoreRenderer in '..\..\..\..\include\delphi\DGLE_CoreRenderer.pas';
 
   {$I include.inc}
 
