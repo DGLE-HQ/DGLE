@@ -1154,35 +1154,46 @@ namespace DGLE
     {
         public TTransformStack(ref TMatrix4x4 base_transform)
         {
-            Push(base_transform);
+            base.Push(base_transform);
         }
-        public void Push()
+
+        new public void Push()
         {
             base.Push(Peek());
         }
+
         new public void Pop()
         {
             base.Pop();
         }
-        public TMatrix4x4 Top()
+
+        public TMatrix4x4 Top
         {
-            return Peek();
+            get
+            {
+                return Peek();
+            }
+            set
+            {
+                base.Pop();
+                base.Push(value);
+            }
         }
 
-        public void Mult1(ref TMatrix4x4 transform)
+        public void MultGlobal(ref TMatrix4x4 transform)
         {
-            TMatrix4x4 matrix = Top();
-            matrix *= transform;
-        }
-        public void Mult2(ref TMatrix4x4 transform)
-        {
-            TMatrix4x4 matrix = Top();
-            matrix = transform * matrix;
+            Top *= transform;
         }
 
-        public void Clear(ref TMatrix4x4 transform)
+        public void MultLocal(ref TMatrix4x4 transform)
+        {
+            Top = transform * Top;
+        }
+
+        new public void Clear(ref TMatrix4x4 transform)
         {
             base.Clear();
+            base.Push(transform);
         }
     };
 

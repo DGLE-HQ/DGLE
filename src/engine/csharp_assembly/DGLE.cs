@@ -522,7 +522,6 @@ namespace DGLE
         void GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, out IEngineBaseObject prObj);
         void GetResourcesCount(uint uiCount);
 
-
         void Load([MarshalAs(UnmanagedType.LPStr)] string pcFileName, out IEngineBaseObject prObj, uint uiLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "");
         void LoadEx(IFile pFile, out IEngineBaseObject prObj, uint uiLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "");
 
@@ -713,7 +712,6 @@ namespace DGLE
         void SetColor(ref TColor4 stColor);
         void GetColor(out TColor4 stColor);
 
-
         void BindTexture(ITexture pTex, uint uiTextureLayer);
         void GetTexture(out ITexture prTex, uint uiTextureLayer);
 
@@ -730,7 +728,7 @@ namespace DGLE
 
         void ToggleAlphaTest([MarshalAs(UnmanagedType.U1)] bool bEnabled);
         void SetAlphaTreshold(float fValue);
-        void IsAlphaTestEnabled([MarshalAs(UnmanagedType.U1)] out bool bEnabled);
+        void IsAlphaTestEnabled([MarshalAs(UnmanagedType.U1)] out bool bEnabled); 
         void GetAlphaTreshold(out float fValue);
 
         void ClearDepthBuffer();
@@ -752,7 +750,10 @@ namespace DGLE
         void GetLinearFogBounds(out float fStart, out float fEnd);
         void GetFogDensity(out float fDensity);
 
-        void SetMatrix(ref TMatrix4x4 stMatrix, [MarshalAs(UnmanagedType.U1)] bool bMult);
+        void SetMatrix(ref TMatrix4x4 stMatrix);
+        void MultMatrix(ref TMatrix4x4 stMatrix);
+        void PushMatrix();
+        void PopMatrix();
         void GetMatrix(out TMatrix4x4 stMatrix);
 
         void DrawAxis(float fSize = 1f, [MarshalAs(UnmanagedType.U1)] bool bNoDepthTest = false);
@@ -786,13 +787,19 @@ namespace DGLE
 
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("EB73AC84-A465-4554-994D-8BED29744C9D")]
-    public interface ILight : IDGLE_Base
+    public interface ILight : IEngineBaseObject
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+        #endregion
+
+        #region IEngBaseObj
+        new void Free();
+        new void GetType(out E_ENGINE_OBJECT_TYPE eEngObjType);
+        new void GetUnknownType(out uint uiObjUnknownType);
         #endregion
 
         void SetEnabled([MarshalAs(UnmanagedType.U1)] bool bEnabled);
@@ -850,7 +857,7 @@ namespace DGLE
 
         void Draw2DSimple(Int32 iX, Int32 iY, UInt32 uiFrameIndex);
         void Draw2D(Int32 iX, Int32 iY, UInt32 uiWidth, UInt32 uiHeight, float fAnglef, UInt32 uiFrameIndex);
-        void Draw3D(UInt32 uiFrameIndex);
+        void Draw3D(UInt32 uiFrameIndex = 0);
 
         void Bind(UInt32 uiTextureLayer);
     };
@@ -876,12 +883,14 @@ namespace DGLE
 
         void SetDiffuseColor(ref TColor4 stColor);
         void SetSpecularColor(ref TColor4 stColor);
+        void SetShininess(float fShininess);
         void SetDiffuseTexture(ITexture pTexture);
         void SetBlending([MarshalAs(UnmanagedType.U1)] bool bEnabled, E_BLENDING_EFFECT eMode);
         void SetAlphaTest([MarshalAs(UnmanagedType.U1)] bool bEnabled, float fTreshold);
 
         void GetDiffuseColor(out TColor4 stColor);
         void GetSpecularColor(out TColor4 stColor);
+        void GetShininess(out float fShininess);
         void GetDiffuseTexture(out ITexture prTexture);
         void GetBlending([MarshalAs(UnmanagedType.U1)] out bool bEnabled, out E_BLENDING_EFFECT eMode);
         void GetAlphaTest([MarshalAs(UnmanagedType.U1)] out bool bEnabled, out float fTreshold);

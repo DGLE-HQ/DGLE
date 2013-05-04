@@ -139,7 +139,7 @@ Ilya Sivkov aka Sin (DCP packs and minor additional programming)
 
 Svyatoslav Lobov aka FascioRoma (GUI components development)
 
-Vlad Phomskiy aka phomm (Delphi/C# headers and examples)
+Vlad Fomin aka phomm (Delphi/C# headers and examples)
 
 ### Special Thanks
 
