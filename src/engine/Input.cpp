@@ -14,29 +14,16 @@ using namespace std;
 #ifndef NO_BUILTIN_INPUT
 
 CInput::CInput(uint uiInstIdx):
-CBaseInput(uiInstIdx),
-_bFocused(false),
-_bIsTxtInput(false),
-_pcBuffer(NULL)
+CBaseInput(uiInstIdx), _bFocused(false),
+_bIsTxtInput(false), _pcBuffer(NULL),
+_bExclusive(false), _bHideCursor(false), _bCurBeyond(false)
 {
 	Core()->pDMessageProc()->Add(&_s_MessageProc, (void*)this);
 	Core()->pDMLoopProc()->Add(&_s_Loop, (void*)this);
 	Core()->AddProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 
-	memset(_abKeys, 0, 256*sizeof(bool));
-
-	_stMsts.iDeltaX	= 0;
-	_stMsts.iDeltaY = 0;
-	_stMsts.iX = 0;
-	_stMsts.iY = 0;
-	_stMsts.iDeltaWheel = 0;
-	_stMsts.bLeftButton = false;
-	_stMsts.bRightButton = false;
-	_stMsts.bMiddleButton = false;
-
-	_bExclusive = false;
-	_bHideCursor = true;
-	_bCurBeyond = false;
+	memset(_abKeys, 0, 256 * sizeof(bool));
+	memset(&_stMsts, 0, sizeof(TMouseStates));
 
 	LOG("Input Subsystem initialized.", LT_INFO);
 }
@@ -276,10 +263,10 @@ DGLE_RESULT DGLE_API CInput::GetKeyName(E_KEYBOARD_KEY_CODES eKey, uchar &cAscii
 
 DGLE_RESULT DGLE_API CInput::BeginTextInput(char *cBuffer, uint uiBufferSize)
 {
-	_pcBuffer		= cBuffer;
-	_uiBufSize		= uiBufferSize;
-	_bIsTxtInput	= true;
-	_strInputTxt		= "";
+	_pcBuffer = cBuffer;
+	_uiBufSize = uiBufferSize;
+	_bIsTxtInput = true;
+	_strInputTxt = "";
 	strcpy(_pcBuffer, "");
 	
 	return S_OK;

@@ -136,19 +136,19 @@ TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		return TWindowMessage(WMT_MOUSE_DOWN, 0);
 
 	case WM_MBUTTONDOWN:
-		return TWindowMessage(WMT_MOUSE_DOWN, 3);
+		return TWindowMessage(WMT_MOUSE_DOWN, 2);
 
 	case WM_RBUTTONDOWN:
-		return TWindowMessage(WMT_MOUSE_DOWN, 2);
+		return TWindowMessage(WMT_MOUSE_DOWN, 1);
 
 	case WM_LBUTTONUP:
 		return TWindowMessage(WMT_MOUSE_UP, 0);
 
 	case WM_MBUTTONUP:
-		return TWindowMessage(WMT_MOUSE_UP, 3);
+		return TWindowMessage(WMT_MOUSE_UP, 2);
 
 	case WM_RBUTTONUP:
-		return TWindowMessage(WMT_MOUSE_UP, 2);
+		return TWindowMessage(WMT_MOUSE_UP, 1);
 
 	case WM_MOUSEWHEEL: 
 		int delta;
@@ -261,7 +261,7 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 		if (msg.ui32Param1 == 0)
 			Msg = WM_LBUTTONDOWN;
 		else
-			if (msg.ui32Param1 == 2)
+			if (msg.ui32Param1 == 1)
 					Msg = WM_RBUTTONDOWN;
 				else
 					Msg = WM_MBUTTONDOWN;
@@ -273,7 +273,7 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 		if (msg.ui32Param1 == 0)
 			Msg = WM_LBUTTONUP;
 		else
-			if (msg.ui32Param1 == 2)
+			if (msg.ui32Param1 == 1)
 					Msg = WM_RBUTTONUP;
 				else
 					Msg = WM_MBUTTONUP;
@@ -284,7 +284,7 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 	case WMT_MOUSE_WHEEL:
 		Msg = WM_MOUSEWHEEL;
 		if (msg.pParam3)
-			wParam = MAKEWPARAM(0,*(int*)msg.pParam3);
+			wParam = MAKEWPARAM(0, *(int*)msg.pParam3);
 		else
 			wParam = 0;
 		lParam = 0;
