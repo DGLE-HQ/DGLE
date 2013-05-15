@@ -20,17 +20,17 @@ namespace Template
 		};
 	}
 
-
 	class MainClass
 	{
 		public static void Main(string[] args)
 		{
-			if (!Gui.ThemeHelper.CheckGtk()) return;
+			if (!Gui.ThemeHelper.CheckGtk())
+				return;
 			Gui.ThemeHelper.ApplyCustomTheme(args);
 			Application.Init("Template", ref args);
 			TemplateWindow win = new TemplateWindow();
 			win.Show();
-			Application.Run ();
+			Application.Run();
 		}
 	}
 }

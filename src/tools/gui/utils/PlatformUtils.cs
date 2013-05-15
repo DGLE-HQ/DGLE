@@ -14,43 +14,46 @@ namespace Gui
 	// from mono develop
 	public static class PlatformUtils
 	{
-		static PlatformUtils ()
+		static PlatformUtils()
 		{
 			IsWindows = System.IO.Path.DirectorySeparatorChar == '\\';
 			IsMac = !IsWindows && IsRunningOnMac();
 			IsX11 = !IsMac && System.Environment.OSVersion.Platform == PlatformID.Unix;
 		}
-		
-		// for mono 2.0 compatibility
-		private static bool isMac;
-		public static bool IsMac { get { return isMac; } private set { isMac = value; } }
-		private static bool isX11;
-		public static bool IsX11 { get { return isX11; } private set { isX11 = value; } }
-		private static bool isWindows;
-		public static bool IsWindows { get { return isWindows; } private set { isWindows = value; } }
-		
+
+		public static bool IsMac { get; private set; }
+
+		public static bool IsX11 { get; private set; }
+
+		public static bool IsWindows { get; private set; }
 		//From Managed.Windows.Forms/XplatUI
-		static bool IsRunningOnMac ()
+		static bool IsRunningOnMac()
 		{
 			IntPtr buf = IntPtr.Zero;
-			try {
-				buf = Marshal.AllocHGlobal (8192);
+			try
+			{
+				buf = Marshal.AllocHGlobal(8192);
 				// This is a hacktastic way of getting sysname from uname ()
-				if (uname (buf) == 0) {
-					string os = Marshal.PtrToStringAnsi (buf);
+				if (uname(buf) == 0)
+				{
+					string os = Marshal.PtrToStringAnsi(buf);
 					if (os == "Darwin")
 						return true;
 				}
-			} catch {
-			} finally {
+			}
+			catch
+			{
+			}
+			finally
+			{
 				if (buf != IntPtr.Zero)
-					Marshal.FreeHGlobal (buf);
+					Marshal.FreeHGlobal(buf);
 			}
 			
 			return false;
 		}
-		
+
 		[DllImport ("libc")]
-		static extern int uname (IntPtr buf);
+		static extern int uname(IntPtr buf);
 	}
 }

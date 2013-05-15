@@ -22,16 +22,16 @@ namespace Packer
 {
 	public partial class MainWindow: Gui.CustomWindow
 	{
-		private long LARGE_FILE_SIZE = 10485760;
 		private Packer.VirtualFileSystem fileSystem;
 		private TreeStore packStore;
 		private TreeIter currentFolder = TreeIter.Zero;
 		private ListStore folderStore;
-
 		private readonly Gdk.Pixbuf folderIcon = 
 			Gdk.PixbufLoader.LoadFromResource("Packer.resources.folder.png").Pixbuf;
 		private readonly Gdk.Pixbuf fileIcon = 
 			Gdk.PixbufLoader.LoadFromResource("Packer.resources.page_white.png").Pixbuf;
+
+		private WaitWindow waitWindow;
 
 		public MainWindow(): base (WindowType.Toplevel)
 		{
@@ -59,11 +59,13 @@ namespace Packer
 			packTreeView.AppendColumn("Icon", new CellRendererPixbuf(), "pixbuf", 0);
 			packTreeView.AppendColumn("Name", new CellRendererText(), "text", 1);
 
-			folderStore.SetSortFunc(0, (model, a, b) => {
+			folderStore.SetSortFunc(0, (model, a, b) =>
+			{
 				Packer.Item itemA = model.GetValue(a, 2) as Packer.Item;
 				Packer.Item itemB = model.GetValue(b, 2) as Packer.Item;
 
-				var ItemCost = new Func<Packer.Item, int>((item) => {
+				var ItemCost = new Func<Packer.Item, int>(item =>
+				{
 					return (null == item ? 0 : (item.IsFolder ? (item.IsRoot ? 3 : 2) : 1));
 				});
 
@@ -86,18 +88,19 @@ namespace Packer
 				new AboutWindow(this, About.Authors, About.Lines, About.Size).Show();
 
 			// show supported extensions
-			SupportedFormatsAction.Activated += (sender, e) => {
+			SupportedFormatsAction.Activated += (sender, e) =>
 				new SupportedFormatsWindow(this).Show();
-			};
 
 			// create new pack
 			MenuItem newMenuItem = this.UIManager.GetWidget(@"/mainMenuBar/FileAction/NewAction") as MenuItem;
 			Menu newSubMenu = new Menu();
 			newMenuItem.Submenu = newSubMenu;
 
-			Packer.SupportedExtensions.ToList().ForEach(ext => {
+			Packer.SupportedExtensions.ToList().ForEach(ext =>
+			{
 				Gtk.Action action = new Gtk.Action(String.Format("New{0}Action", ext), ext);
-				action.Activated+= (sender, e) => {
+				action.Activated+= (sender, e) =>
+				{
 					if (fileSystem != null)
 						fileSystem.Close();
 					fileSystem = null;
@@ -125,7 +128,8 @@ namespace Packer
 			SaveAction.Activated += (sender, e) => HandleSaveAction();
 
 			// close pack and exit
-			CloseAction.Activated += (sender, e) => {
+			CloseAction.Activated += (sender, e) =>
+			{
 				if (fileSystem != null)
 					fileSystem.Close();
 				fileSystem = null;
@@ -156,7 +160,8 @@ namespace Packer
 
 		private void InitKeyControl()
 		{
-			var UpFolderAction = new Action<TreeIter>((iter) => {
+			var UpFolderAction = new Action<TreeIter>(iter =>
+			{
 				if (TreeIter.Zero.Equals(iter))
 					return;
 
@@ -170,7 +175,8 @@ namespace Packer
 				packTreeView.SelectAndFocus(selectedInFolder);
 			});
 
-			var DownFolderAction = new Action<TreeIter>((iter) => {
+			var DownFolderAction = new Action<TreeIter>(iter =>
+			{
 				if (TreeIter.Zero.Equals(iter))
 					return;
 
@@ -182,8 +188,8 @@ namespace Packer
 				packTreeView.SelectAndFocus(selectedInFolder);
 			});
 
-			packTreeView.RowActivated += (o, args) => {
-				
+			packTreeView.RowActivated += (o, args) =>
+			{	
 				TreeIter selectedInFolder;
 				folderStore.GetIter(out selectedInFolder, args.Path);
 				Packer.Item item = folderStore.GetValue(selectedInFolder, 2) as Packer.Item;
@@ -198,7 +204,8 @@ namespace Packer
 
 			packTreeView.AddEvents((int) (Gdk.EventMask.KeyPressMask));
 
-			packTreeView.KeyReleaseEvent += (o, args) => {
+			packTreeView.KeyReleaseEvent += (o, args) =>
+			{
 				if (args.Event.Key == Gdk.Key.BackSpace)
 					UpFolderAction(currentFolder);
 
@@ -212,14 +219,12 @@ namespace Packer
 			Drag.DestSet(
 				packTreeView, 
 				DestDefaults.All,
-				new TargetEntry[] {
-					new TargetEntry("text/uri-list", TargetFlags.OtherApp, 0)
-				},
-				Gdk.DragAction.Copy
-			);
+				new TargetEntry[] { new TargetEntry("text/uri-list", TargetFlags.OtherApp, 0) },
+				Gdk.DragAction.Copy);
 
-			packTreeView.DragDataReceived += (o, args) => {
-				string data = Encoding.UTF8.GetString(args.SelectionData.Data, 0, args.SelectionData.Length-1);
+			packTreeView.DragDataReceived += (o, args) =>
+			{
+				string data = Encoding.UTF8.GetString(args.SelectionData.Data, 0, args.SelectionData.Length - 1);
 				data = Uri.UnescapeDataString(data);
 				Drag.Finish(args.Context, true, false, args.Time);
 
@@ -230,16 +235,16 @@ namespace Packer
 				{
 					if (files.Length == 1)
 						OpenPack(files.Select(
-							(path) => path.StartsWith("file:///") ? path.Substring(8) : path).First()
-						);
+							path => path.StartsWith("file:///") ? path.Substring(8) : path).First());
 
 					return;
 				}
 
 				packTreeView.Selection.UnselectAll();
 
-				files.Select((path) => path.StartsWith("file:///") ? path.Substring(8) : path).ToList()
-					.ForEach((path) => {
+				files.Select(path => path.StartsWith("file:///") ? path.Substring(8) : path).ToList()
+					.ForEach(path =>
+					{
 						if (Directory.Exists(path))
 						{
 							Packer.Item folderItem = NewItem(currentFolder, path);
@@ -277,15 +282,18 @@ namespace Packer
 				new CustomFileChooserDialog(this, "Open pack", FileChooserAction.Open);
 			dlg.FileChooser.SelectMultiple = false;
 
-			Packer.SupportedExtensions.ToList().ForEach(ext => {
-				using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+			Packer.SupportedExtensions.ToList().ForEach(ext =>
+			{
+				using (Gtk.FileFilter filter = new Gtk.FileFilter())
+				{
 					filter.Name = ext.ToUpper();
 					filter.AddPattern("*." + ext);
 					dlg.FileChooser.AddFilter(filter);
 				}
 			});
 			
-			dlg.Ok += (sender, e) => {
+			dlg.Ok += (sender, e) =>
+			{
 				if (fileSystem != null)
 					fileSystem.Close();
 				fileSystem = null;
@@ -299,30 +307,37 @@ namespace Packer
 
 		private void OpenPack(string filename)
 		{
-			if (Packer.Create(System.IO.Path.GetExtension(filename), out fileSystem)) {
+			if (Packer.Create(System.IO.Path.GetExtension(filename), out fileSystem))
+			{
 				
-				WaitWindow popup = new WaitWindow(this, "Opening", filename);
-				if (new FileInfo(filename).Length >= LARGE_FILE_SIZE)
-					popup.Show();
+				waitWindow = new WaitWindow(this, "Opening", filename);
+				waitWindow.Show();
 				
-				ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
-					RebuildPackTree(fileSystem.ListFiles());
-					ChangePackActionSensitive(true);
-					popup.Destroy();
+				ThreadNotify done = new ThreadNotify(new ReadyEvent(() =>
+				{
+					waitWindow.Destroy();
+					waitWindow = null;
 				}));
 				
-				ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
-					popup.Destroy();
+				ThreadNotify error = new ThreadNotify(new ReadyEvent(() =>
+				{
+					waitWindow.Destroy();
+					waitWindow = null;
 					
 					CustomMessageDialog msg = 
 						new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
-					msg.Show();
-					msg.Ok += (sender1, e1) => msg.Destroy();
+					msg.Run();
+					msg.Destroy();
 				}));
 				
-				new Thread(new ThreadStart(() => {
+				new Thread(new ThreadStart(() =>
+				{
 					if (fileSystem.Open(filename))
+					{
+						RebuildPackTree(fileSystem.ListFiles());
+						ChangePackActionSensitive(true);
 						done.WakeupMain();
+					}
 					else
 						error.WakeupMain();
 				})).Start();
@@ -335,31 +350,32 @@ namespace Packer
 			folderStore.Clear();
 			currentFolder = TreeIter.Zero;
 
-			filenames
-				.Where((filename) => filename != null && filename.Length > 0).ToList()
-				.ForEach((filename) => {
-						Packer.Item fileItem = new Packer.Item();
-						fileItem.Name = System.IO.Path.GetFileName(filename);
-						fileItem.Directory = filename.Replace(fileItem.Name, "");
+			filenames.Where(filename => filename != null && filename.Length > 0).ToList()
+				.ForEach(filename =>
+				{
+					Packer.Item fileItem = new Packer.Item();
+					fileItem.Name = System.IO.Path.GetFileName(filename);
+					fileItem.Directory = System.IO.Path.GetDirectoryName(filename) + "\\";
 
-						List<string> folders = fileItem.Directory.Split('\\')
-							.Where((folder) => folder != null && folder.Length > 0).ToList();
+					List<string> folders = fileItem.Directory.Split('\\')
+						.Where(folder => folder != null && folder.Length > 0).ToList();
 
-						TreeIter lastFolderIter = TreeIter.Zero;
-						Packer.Item lastFolderItem = new Packer.Item();
-						lastFolderItem.IsFolder = true;
-						folders.ForEach((folder) => {
-							Packer.Item folderItem = new Packer.Item();
-							folderItem.Name = folder;
-							folderItem.Directory = lastFolderItem.FullName;
-							folderItem.IsFolder = true;
+					TreeIter lastFolderIter = TreeIter.Zero;
+					Packer.Item lastFolderItem = new Packer.Item();
+					lastFolderItem.IsFolder = true;
+					folders.ForEach(folder =>
+					{
+						Packer.Item folderItem = new Packer.Item();
+						folderItem.Name = folder;
+						folderItem.Directory = lastFolderItem.FullName;
+						folderItem.IsFolder = true;
 
-							lastFolderIter = AppendItem(lastFolderIter, folderItem);
-							lastFolderItem = folderItem;
-						});
-
-						AppendItem(lastFolderIter, fileItem);
+						lastFolderIter = AppendItem(lastFolderIter, folderItem);
+						lastFolderItem = folderItem;
 					});
+
+					AppendItem(lastFolderIter, fileItem);
+				});
 
 			RefreshFolderView(currentFolder);
 			TreeIter selected;
@@ -378,38 +394,46 @@ namespace Packer
 				new CustomFileChooserDialog(this, "Save pack", FileChooserAction.Save);
 			dlg.FileChooser.SelectMultiple = false;
 			
-			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+			using (Gtk.FileFilter filter = new Gtk.FileFilter())
+			{
 				filter.Name = fileSystem.Extension.ToUpper();
 				filter.AddPattern("*." + fileSystem.Extension.ToLower());
 				dlg.FileChooser.AddFilter(filter);
 			}
 			
-			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+			using (Gtk.FileFilter filter = new Gtk.FileFilter())
+			{
 				filter.Name = "All";
 				filter.AddPattern("*.*");
 				dlg.FileChooser.AddFilter(filter);
 			}
 			
-			dlg.Ok += (sender, e) => {
+			dlg.Ok += (sender, e) =>
+			{
 				string filename = dlg.FileChooser.Filename;
 
-				WaitWindow popup = new WaitWindow(this, "Saving", filename);
-				popup.Show();
+				waitWindow = new WaitWindow(this, "Saving", filename);
+				waitWindow.Show();
 				
-				ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
-					popup.Destroy();
+				ThreadNotify done = new ThreadNotify(new ReadyEvent(() =>
+				{
+					waitWindow.Destroy();
+					waitWindow = null;
 				}));
 				
-				ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
-					popup.Destroy();
+				ThreadNotify error = new ThreadNotify(new ReadyEvent(() =>
+				{
+					waitWindow.Destroy();
+					waitWindow = null;
 					
 					CustomMessageDialog msg = 
 						new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
-					msg.Show();
-					msg.Ok += (sender1, e1) => msg.Destroy();
+					msg.Run();
+					msg.Destroy();
 				}));
 				
-				new Thread(new ThreadStart(() => {
+				new Thread(new ThreadStart(() =>
+				{
 					if (fileSystem.Save(filename))
 						done.WakeupMain();
 					else
@@ -433,17 +457,33 @@ namespace Packer
 				new CustomFileChooserDialog(this, "Add files to pack", FileChooserAction.Open);
 			dlg.FileChooser.SelectMultiple = true;
 			
-			using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+			using (Gtk.FileFilter filter = new Gtk.FileFilter())
+			{
 				filter.Name = "All";
 				filter.AddPattern("*.*");
 				dlg.FileChooser.AddFilter(filter);
 			}
 			
-			dlg.Ok += (sender, e) => {
+			dlg.Ok += (sender, e) =>
+			{
 				packTreeView.Selection.UnselectAll();
-				dlg.FileChooser.Filenames.ToList()
-					.ForEach(file => AppendFile(currentFolder, file));
-				dlg.Destroy();
+
+				waitWindow = new WaitWindow(this, "Adding", "");
+				waitWindow.Show();
+
+				ThreadNotify done = new ThreadNotify(new ReadyEvent(() =>
+				{
+					dlg.Destroy();
+					waitWindow.Destroy();
+					waitWindow = null;
+				}));
+
+				new Thread(new ThreadStart(() =>
+				{
+					dlg.FileChooser.Filenames.ToList().ForEach(
+						file => AppendFile(currentFolder, file));
+					done.WakeupMain();
+				})).Start();
 			};
 			dlg.Cancel += (sender, e) => dlg.Destroy();
 			dlg.Show();
@@ -457,15 +497,30 @@ namespace Packer
 			CustomFileChooserDialog dlg = 
 				new CustomFileChooserDialog(this, "Add folder to pack", FileChooserAction.SelectFolder);
 
-			dlg.Ok += (sender, e) => {
+			dlg.Ok += (sender, e) =>
+			{
 				packTreeView.Selection.UnselectAll();
-				string path = dlg.FileChooser.Filename;
-				Packer.Item folderItem = NewItem(currentFolder, path);
-				TreeIter folderIter = AppendItem(currentFolder, folderItem);
-				if (!TreeIter.Zero.Equals(folderIter))
-					AppendFolders(folderIter, folderItem.HDDPath);
 
-				dlg.Destroy();
+				waitWindow = new WaitWindow(this, "Adding", "");
+				waitWindow.Show();
+
+				ThreadNotify done = new ThreadNotify(new ReadyEvent(() =>
+				{
+					waitWindow.Destroy();
+					waitWindow = null;
+				}));
+
+				new Thread(new ThreadStart(() =>
+				{
+					string path = dlg.FileChooser.Filename;
+					dlg.Destroy();
+
+					Packer.Item folderItem = NewItem(currentFolder, path);
+					TreeIter folderIter = AppendItem(currentFolder, folderItem);
+					if (!TreeIter.Zero.Equals(folderIter))
+						AppendFolders(folderIter, folderItem.HDDPath);
+					done.WakeupMain();
+				})).Start();
 			};
 			dlg.Cancel += (sender, e) => dlg.Destroy();
 			dlg.Show();
@@ -475,63 +530,69 @@ namespace Packer
 		#region Append item
 		private void AppendFolders(TreeIter destIter, string path)
 		{
-			Directory.EnumerateDirectories(path, "*", SearchOption.TopDirectoryOnly).ToList()
-				.ForEach(folder => {
-					Packer.Item folderItem = NewItem(destIter, folder);
-					TreeIter folderIter = AppendItem(destIter, folderItem);
-					AppendFolders(folderIter, folder);
-				});
-			
-			AppendFiles(destIter, path);
+			try
+			{
+				Directory.EnumerateDirectories(path, "*", SearchOption.TopDirectoryOnly).ToList()
+					.ForEach(folder =>
+					{
+						Packer.Item folderItem = NewItem(destIter, folder);
+						TreeIter folderIter = AppendItem(destIter, folderItem);
+						AppendFolders(folderIter, folder);
+					});
+
+				AppendFiles(destIter, path);
+			}
+			catch(UnauthorizedAccessException)
+			{
+				CustomMessageDialog msg = 
+					new CustomMessageDialog(this, MessageType.Error, String.Format("Access denied to {0}", path));
+				msg.Run();
+				msg.Destroy();
+			}
 		}
-		
+
 		private void AppendFiles(TreeIter destIter, string path)
 		{
-			Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).ToList()
-				.ForEach(file => AppendFile(destIter, file));
+			try
+			{
+				Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).ToList()
+					.ForEach(file => AppendFile(destIter, file));
+			}
+			catch(UnauthorizedAccessException)
+			{
+				CustomMessageDialog msg = 
+					new CustomMessageDialog(this, MessageType.Error, String.Format("Access denied to {0}", path));
+				msg.Run();
+				msg.Destroy();
+			}
 		}
 
 		private void AppendFile(TreeIter destIter, string filename)
 		{
-			WaitWindow popup = new WaitWindow(this, "Adding", filename);
-			if (new FileInfo(filename).Length >= LARGE_FILE_SIZE)
-				popup.Show();
+			Gtk.Application.Invoke((sender, e) => waitWindow.FileText = filename);
 
 			Packer.Item fileItem = NewItem(destIter, filename);
-
-			ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
+			if (fileSystem.Add(fileItem))
 				AppendItem(destIter, fileItem);
-				popup.Destroy();
-			}));
-
-			ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
-				popup.Destroy();
-
+			else
+			{
 				CustomMessageDialog msg = 
 					new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
-				msg.Show();
-				msg.Ok += (sender, e) => msg.Destroy();
-			}));
-
-			new Thread(new ThreadStart(() => {
-				if (fileSystem.Add(fileItem))
-					done.WakeupMain();
-				else
-					error.WakeupMain();
-			})).Start();
+				msg.Run();
+				msg.Destroy();
+			}
 		}
-		
+
 		private TreeIter AppendItem(TreeIter parent, Packer.Item item)
 		{
-			TreeIter existIter = FindInPack(item);
+			TreeIter existIter = FindInPack(parent, item);
 			if (!TreeIter.Zero.Equals(existIter))
 				return existIter;
 			
 			// add item to list store of current folder
 			if (parent.Equals(currentFolder))
 				packTreeView.SelectAndFocus(
-					folderStore.AppendValues(item.IsFolder ? folderIcon : fileIcon, item.Name, item)
-				);
+					folderStore.AppendValues(item.IsFolder ? folderIcon : fileIcon, item.Name, item));
 			
 			// add item to tree store of current pack
 			if (TreeIter.Zero.Equals(parent))
@@ -553,10 +614,11 @@ namespace Packer
 				return;
 
 			TreePath path = folderStore.GetPath(selectedIters.Last());
-			for(int i = 0; i < selectedIters.Count - 1; i++)
+			for (int i = 0; i < selectedIters.Count - 1; i++)
 				path.Prev();
 
-			selectedIters.ForEach(selectedInFolder => {
+			selectedIters.ForEach(selectedInFolder =>
+			{
 				if (TreeIter.Zero.Equals(selectedInFolder))
 					return;
 
@@ -565,10 +627,12 @@ namespace Packer
 					return;
 				
 				TreeIter selectedInPack = FindInPack(selectedItem);
-				if (!TreeIter.Zero.Equals(selectedInPack)) {
+				if (!TreeIter.Zero.Equals(selectedInPack))
+				{
 					List<TreeIter> iterInPack = packStore.GetTree(selectedInPack).ToList();
 					iterInPack.Select(iter => packStore.GetValue(iter, 0) as Packer.Item).ToList()
-						.ForEach(item => {
+						.ForEach(item =>
+						{
 							if (!item.IsFolder)
 								fileSystem.Remove(item);
 						});
@@ -605,13 +669,15 @@ namespace Packer
 				CustomFileChooserDialog dlg = new CustomFileChooserDialog(this, "Extract file from pack", FileChooserAction.Save);
 				dlg.FileChooser.CurrentName = firstItem.Name;
 
-				using (Gtk.FileFilter filter = new Gtk.FileFilter()) {
+				using (Gtk.FileFilter filter = new Gtk.FileFilter())
+				{
 					filter.Name = "All";
 					filter.AddPattern("*.*");
 					dlg.FileChooser.AddFilter(filter);
 				}
 
-				dlg.Ok += (sender, e) => {
+				dlg.Ok += (sender, e) =>
+				{
 					ExtractFile(iterInPack, dlg.FileChooser.Filename);
 					dlg.Destroy();
 				};
@@ -621,12 +687,14 @@ namespace Packer
 			}
 			else
 			{
-				CustomFileChooserDialog dlg = new CustomFileChooserDialog(	
+				CustomFileChooserDialog dlg = new CustomFileChooserDialog(
 					this, "Extract from pack", FileChooserAction.SelectFolder);
 
-				dlg.Ok += (sender, e) => {
+				dlg.Ok += (sender, e) =>
+				{
 
-					selectedInFolder.ForEach((iter) => {
+					selectedInFolder.ForEach(iter =>
+					{
 						Packer.Item item = folderStore.GetValue(iter, 2) as Packer.Item;
 						TreeIter iterInPack = FindInPack(item);
 
@@ -652,9 +720,11 @@ namespace Packer
 			CustomFileChooserDialog dlg = new CustomFileChooserDialog(
 				this, "Extract pack", FileChooserAction.SelectFolder);
 			
-			dlg.Ok += (sender, e) => {
+			dlg.Ok += (sender, e) =>
+			{
 
-				packStore.GetTopIters().ToList().ForEach((iterInPack) => {
+				packStore.GetTopIters().ToList().ForEach(iterInPack =>
+				{
 					Packer.Item item = packStore.GetValue(iterInPack, 0) as Packer.Item;
 					
 					if (item.IsFolder)
@@ -672,51 +742,57 @@ namespace Packer
 
 		private void ExtractFile(TreeIter iter, string filename)
 		{
-			WaitWindow popup = new WaitWindow(this, "Extracting", filename);
-			popup.Show();
+			waitWindow = new WaitWindow(this, "Extracting", filename);
+			waitWindow.Show();
 
-			Packer.Item item = packStore.GetValue(iter, 0) as Packer.Item;
-
-			ThreadNotify done = new ThreadNotify(new ReadyEvent(() => {
-				popup.Destroy();
+			ThreadNotify done = new ThreadNotify(new ReadyEvent(() =>
+			{
+				waitWindow.Destroy();
+				waitWindow = null;
 			}));
 			
-			ThreadNotify error = new ThreadNotify(new ReadyEvent(() => {
-				popup.Destroy();
+			ThreadNotify error = new ThreadNotify(new ReadyEvent(() =>
+			{
+				waitWindow.Destroy();
+				waitWindow = null;
 				
 				CustomMessageDialog msg = 
 					new CustomMessageDialog(this, MessageType.Error, fileSystem.LastError);
-				msg.Show();
-				msg.Ok += (sender1, e1) => msg.Destroy();
+				msg.Run();
+				msg.Destroy();
 			}));
-			
-			new Thread(new ThreadStart(() => {
+
+			Packer.Item item = packStore.GetValue(iter, 0) as Packer.Item;
+			new Thread(new ThreadStart(() =>
+			{
 				if (fileSystem.Extract(item, filename))
 					done.WakeupMain();
 				else
 					error.WakeupMain();
 			})).Start();
 		}
-		
+
 		private void ExtractFolder(TreeIter iter, string path)
 		{
 			Packer.Item item = packStore.GetValue(iter, 0) as Packer.Item;
 			
 			if (item.IsRoot)
 				return;
+			else if (item.IsFolder)
+			{
+				try
+				{
+					DirectoryInfo info = Directory.CreateDirectory(
+						path + System.IO.Path.DirectorySeparatorChar + item.Name);
+					packStore.GetChilds(iter).ToList().ForEach(child =>
+						ExtractFolder(child, info.FullName));
+				}
+				catch
+				{
+				}
+			}
 			else
-				if (item.IsFolder)
-					try
-					{
-						DirectoryInfo info = Directory.CreateDirectory(
-							path + System.IO.Path.DirectorySeparatorChar + item.Name);
-						packStore.GetChilds(iter).ToList().ForEach((child) => {
-							ExtractFolder(child, info.FullName);
-						});
-					}
-					catch { }
-				else
-					ExtractFile(iter, path + System.IO.Path.DirectorySeparatorChar + item.Name);
+				ExtractFile(iter, path + System.IO.Path.DirectorySeparatorChar + item.Name);
 		}
 		#endregion Extract action
 
@@ -749,7 +825,8 @@ namespace Packer
 		{
 			// find iter in list store of current folder
 			TreeIter foundIter = TreeIter.Zero;
-			folderStore.Foreach((model, path, iter) => {
+			folderStore.Foreach((model, path, iter) =>
+			{
 				Packer.Item foundItem = folderStore.GetValue(iter, 2) as Packer.Item;
 				if (foundItem.FullName.CompareTo(item.FullName) == 0)
 				{
@@ -766,7 +843,8 @@ namespace Packer
 		{
 			// find iter in tree store of current pack
 			TreeIter foundIter = TreeIter.Zero;
-			packStore.Foreach((model, path, iter) => {
+			packStore.Foreach((model, path, iter) =>
+			{
 				Packer.Item foundItem = packStore.GetValue(iter, 0) as Packer.Item;
 				if (item.FullName.CompareTo(foundItem.FullName) == 0)
 				{
@@ -776,6 +854,28 @@ namespace Packer
 				return false;
 			});
 			return foundIter;
+		}
+
+		private TreeIter FindInPack(TreeIter parent, Packer.Item item)
+		{
+			List<TreeIter> childIters = null;
+			if (TreeIter.Zero.Equals(parent))
+				childIters = packStore.GetTopIters().ToList();
+			else
+				childIters = packStore.GetChilds(parent).ToList();
+
+			var foundIters = childIters.Where(iter =>
+			{
+				Packer.Item foundItem = packStore.GetValue(iter, 0) as Packer.Item;
+				if (item.FullName.CompareTo(foundItem.FullName) == 0)
+					return true;
+				return false;
+			});
+
+			if (foundIters.Any())
+				return foundIters.First();
+			else
+				return TreeIter.Zero;
 		}
 
 		private Packer.Item NewItem(TreeIter parent, string path)

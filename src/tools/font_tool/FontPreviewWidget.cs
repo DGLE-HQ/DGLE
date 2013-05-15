@@ -13,50 +13,46 @@ namespace FontTool
 	[System.ComponentModel.ToolboxItem(true)]
 	public class FontPreviewWidget : Gtk.DrawingArea
 	{
-		public Gdk.Size PreviewSize {
+		public Gdk.Size PreviewSize
+		{
 			get { return size; }
 		}
 
-		public long FileSize {
-			get { return fileSize; }
-		}
+		public long FileSize { get; private set; }
 
-		public DftUtil DftUtil {
-			get { return dftUtil; }
-		}
+		public DftUtil DftUtil { get; private set; }
 
-		private DftUtil dftUtil;
 		private Gdk.Pixbuf tablePreviewBuf;
 		private Gdk.Size size = Gdk.Size.Empty;
-		private long fileSize = 0;
 
-		public FontPreviewWidget ()
+		public FontPreviewWidget()
 		{
-			this.dftUtil = new DftUtil ();
+			this.DftUtil = new DftUtil();
 		}
 
-		public void BuildPreview (FontService fontService)
+		public void BuildPreview(FontService fontService)
 		{
-			tablePreviewBuf = dftUtil.BuildImage (fontService);
-			base.SetSizeRequest (tablePreviewBuf.Width, tablePreviewBuf.Height);
-			size = new Gdk.Size (tablePreviewBuf.Width, tablePreviewBuf.Height);
-			fileSize = dftUtil.CalcFileSize (tablePreviewBuf);
-			base.QueueDraw ();
+			tablePreviewBuf = DftUtil.BuildImage(fontService);
+			base.SetSizeRequest(tablePreviewBuf.Width, tablePreviewBuf.Height);
+			size = new Gdk.Size(tablePreviewBuf.Width, tablePreviewBuf.Height);
+			FileSize = DftUtil.CalcFileSize(tablePreviewBuf);
+			base.QueueDraw();
 		}
 
-		protected override bool OnExposeEvent (Gdk.EventExpose ev)
+		protected override bool OnExposeEvent(Gdk.EventExpose ev)
 		{
-			if (null != tablePreviewBuf) {
-				tablePreviewBuf.RenderToDrawable (
+			if (null != tablePreviewBuf)
+			{
+				tablePreviewBuf.RenderToDrawable(
 					base.GdkWindow, 
-					base.Style.BackgroundGC (Gtk.StateType.Normal), 
+					base.Style.BackgroundGC(Gtk.StateType.Normal), 
 					0, 0, 0, 0, -1, -1, 
 					Gdk.RgbDither.Normal, 0, 0);
 			
 				return true;
-			} else {
-				return base.OnExposeEvent (ev);
 			}
+			else
+				return base.OnExposeEvent(ev);
 		}
 	}
 }

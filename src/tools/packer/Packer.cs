@@ -21,28 +21,33 @@ namespace Packer
 		public class Item
 		{
 			public string Name { get; set; }
+
 			public string Directory { get; set; }
+
 			public string FullName
 			{
 				get { return Directory + Name + (IsFolder ? @"\" : ""); }
 			}
+
 			public bool IsFolder { get; set; }
-			public bool IsRoot { get; private set;}
+
+			public bool IsRoot { get; private set; }
+
 			public string HDDPath { get; set; }
-			
+
 			public Item()
 			{
 				this.IsFolder = false;
 				this.IsRoot = false;
 			}
-			
+
 			public Item(bool isRoot)
 			{
 				this.Name = "..";
 				this.IsFolder = true;
 				this.IsRoot = isRoot;
 			}
-			
+
 			public Item(string hddPath)
 			{
 				this.HDDPath = hddPath;
@@ -56,8 +61,11 @@ namespace Packer
 		public class VirtualFileSystem
 		{
 			private IFileSystem fileSystem;
+
 			public string Extension { get; private set; }
+
 			public string Description { get; private set; }
+
 			public string LastError { get; private set; }
 
 			public VirtualFileSystem(IFileSystem fileSystem, string extension, string description)
@@ -74,7 +82,7 @@ namespace Packer
 				fileSystem.ExecuteTextCommand("create", ref arg);
 				GetLastError(arg);
 			}
-			
+
 			public bool Open(string filename)
 			{
 				Console.WriteLine("Open " + filename);
@@ -83,9 +91,9 @@ namespace Packer
 					String.Format("{0} {1}", "open", filename),
 					ref arg);
 				GetLastError(arg);
-				return (bool) arg;
+				return (bool)arg;
 			}
-			
+
 			public string[] ListFiles()
 			{
 				Console.WriteLine("List");
@@ -98,7 +106,7 @@ namespace Packer
 				Console.WriteLine(filenames);
 				return filenames.Split(';');
 			}
-			
+
 			public bool Save(string filename)
 			{
 				if (Path.HasExtension(filename))
@@ -112,9 +120,9 @@ namespace Packer
 					String.Format("{0} {1}", "save", filename),
 					ref arg);
 				GetLastError(arg);
-				return (bool) arg;
+				return (bool)arg;
 			}
-			
+
 			public void Close()
 			{
 				Console.WriteLine("Close");
@@ -122,7 +130,7 @@ namespace Packer
 				fileSystem.ExecuteTextCommand("close", ref arg);
 				GetLastError(arg);
 			}
-			
+
 			public bool Add(Item item)
 			{
 				Console.WriteLine("Add " + item.HDDPath);
@@ -132,9 +140,9 @@ namespace Packer
 					String.Format("{0} {1};{2}", "add", item.HDDPath, item.Directory),
 					ref arg);
 				GetLastError(arg);
-				return (bool) arg;
+				return (bool)arg;
 			}
-			
+
 			public bool Remove(Item item)
 			{
 				Console.WriteLine("Remove " + item.FullName);
@@ -143,9 +151,9 @@ namespace Packer
 					String.Format("{0} {1}", "remove", item.FullName),
 					ref arg);
 				GetLastError(arg);
-				return (bool) arg;
+				return (bool)arg;
 			}
-			
+
 			public bool Extract(Item item, string newFilename)
 			{
 				Console.WriteLine("Extract " + item.FullName);
@@ -155,17 +163,18 @@ namespace Packer
 					String.Format("{0} {1};{2}", "extract", item.FullName, newFilename),
 					ref arg);
 				GetLastError(arg);
-				return (bool) arg;
+				return (bool)arg;
 			}
-			
+
 			private void GetLastError(TVariant arg)
 			{
-				if ((bool) arg)
+				if ((bool)arg)
 				{
 					LastError = "";
 					return;
 				}
-				LastError = MarshalUtils.MarshalString((pnt, length) => { 
+				LastError = MarshalUtils.MarshalString((pnt, length) =>
+				{ 
 					fileSystem.ExecuteTextCommandEx("last_error", pnt, out length);
 					return length;
 				});
@@ -174,7 +183,11 @@ namespace Packer
 		}
 
 		public static Dictionary<String, VirtualFileSystem> SupportedFileSystems { get; private set; }
-		public static string[] SupportedExtensions { get { return SupportedFileSystems.Keys.ToArray(); } }
+
+		public static string[] SupportedExtensions
+		{
+			get { return SupportedFileSystems.Keys.ToArray(); }
+		}
 
 		public static void Init()
 		{
@@ -182,17 +195,20 @@ namespace Packer
 			Program.Core.GetSubSystem(E_ENGINE_SUB_SYSTEM.ESS_FILE_SYSTEM, out subSystem);
 			IMainFileSystem mainFileSystem = subSystem as DGLE.IMainFileSystem;
 
-			String[] registredFileSystems = MarshalUtils.MarshalString((pnt, length) => {
+			String[] registredFileSystems = MarshalUtils.MarshalString((pnt, length) =>
+			{
 				mainFileSystem.GetRegisteredVirtualFileSystems(pnt, out length);
 				return length;
 			}).Split(';').ToList().Where(name => name.Trim().Length > 0).ToArray();
 
 			SupportedFileSystems = new Dictionary<string, VirtualFileSystem>(registredFileSystems.Length);
-			registredFileSystems.ToList().ForEach(ext => {
+			registredFileSystems.ToList().ForEach(ext =>
+			{
 				IFileSystem fileSystem;
 				mainFileSystem.GetVirtualFileSystem(ext, out fileSystem);
 
-				string desc = MarshalUtils.MarshalString((pnt, length) => {
+				string desc = MarshalUtils.MarshalString((pnt, length) =>
+				{
 					mainFileSystem.GetVirtualFileSystemDescription(ext, pnt, out length);
 					return length;
 				});
@@ -204,7 +220,8 @@ namespace Packer
 		public static bool Create(string extension, out VirtualFileSystem fileSystem)
 		{
 			return SupportedFileSystems.TryGetValue(
-				extension.Replace(".", "").ToUpper(), out fileSystem);
+				extension.Replace(".", "").ToUpper(), 
+				out fileSystem);
 		}
 	}
 }

@@ -14,9 +14,11 @@ namespace Gui
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct GdkEventAny
 	{
-		public int type;	// GdkEventType
-		public IntPtr window;	// GdkWindow
-		public sbyte send_event;
+		// GdkEventType
+		public int type;
+		// GdkWindow
+		public IntPtr window;
+		public sbyte sendEvent;
 		
 		public Gdk.EventType Type
 		{
@@ -27,13 +29,13 @@ namespace Gui
 		public Gdk.Window Window
 		{
 			set { window = value == null ? IntPtr.Zero : value.Handle; }
-			get { return window == IntPtr.Zero ? null : new Gdk.Window (window); }
+			get { return window == IntPtr.Zero ? null : new Gdk.Window(window); }
 		}
 		
 		public bool SendEvent
 		{
-			set { send_event = value ? (sbyte)1 : (sbyte)0; }
-			get { return send_event != 0; }
+			set { sendEvent = value ? (sbyte)1 : (sbyte)0; }
+			get { return sendEvent != 0; }
 		}
 	};
 }

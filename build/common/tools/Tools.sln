@@ -176,19 +176,32 @@ Global
 		$25.inheritsScope = text/plain
 		$25.scope = text/plain
 		$0.TextStylePolicy = $26
-		$26.FileWidth = 120
 		$26.TabsToSpaces = False
-		$26.EolMarker = Unix
 		$26.inheritsSet = VisualStudio
 		$26.inheritsScope = text/plain
 		$26.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $27
 		$27.IndentSwitchBody = True
+		$27.AnonymousMethodBraceStyle = NextLine
+		$27.PropertyBraceStyle = NextLine
+		$27.PropertyGetBraceStyle = NextLine
+		$27.PropertySetBraceStyle = NextLine
+		$27.EventBraceStyle = NextLine
+		$27.EventAddBraceStyle = NextLine
+		$27.EventRemoveBraceStyle = NextLine
+		$27.StatementBraceStyle = NextLine
+		$27.ElseNewLinePlacement = NewLine
+		$27.CatchNewLinePlacement = NewLine
+		$27.FinallyNewLinePlacement = NewLine
+		$27.WhileNewLinePlacement = DoNotCare
+		$27.ArrayInitializerWrapping = DoNotChange
+		$27.ArrayInitializerBraceStyle = NextLine
 		$27.BeforeMethodDeclarationParentheses = False
 		$27.BeforeMethodCallParentheses = False
 		$27.BeforeConstructorDeclarationParentheses = False
 		$27.BeforeDelegateDeclarationParentheses = False
 		$27.NewParentheses = False
+		$27.SpacesBeforeBrackets = False
 		$27.inheritsSet = Mono
 		$27.inheritsScope = text/x-csharp
 		$27.scope = text/x-csharp
@@ -197,6 +210,11 @@ Global
 		$0.DotNetNamingPolicy = $29
 		$29.DirectoryNamespaceAssociation = None
 		$29.ResourceNamePolicy = FileFormatDefault
+		$0.ChangeLogPolicy = $30
+		$30.UpdateMode = None
+		$30.MessageStyle = $31
+		$31.LineAlign = 0
+		$30.inheritsSet = Mono
 		outputpath = ..\..\..\bin\windows\tools
 	EndGlobalSection
 EndGlobal

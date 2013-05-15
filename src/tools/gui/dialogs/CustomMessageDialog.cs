@@ -14,35 +14,39 @@ namespace Gui
 	{
 		private static int ICON_SIZE = 48;
 
-		public string Text {
+		public string Text
+		{
 			get { return lText.Text; }
 			set { lText.Text = value; }
 		}
 
-		public Gtk.MessageType MessageType {
+		public Gtk.MessageType MessageType
+		{
 			get { return messageType; }
-			set {
+			set
+			{
 				messageType = value;
 				SetIcon();
 			}
 		}
+		private Gtk.MessageType messageType;
 
-		public Gtk.ButtonsType ButtonsType {
+		public Gtk.ButtonsType ButtonsType
+		{
 			get { return buttonsType; }
-			set {
+			set
+			{
 				buttonsType = value;
 				SetButtons();
 			}
 		}
+		private Gtk.ButtonsType buttonsType;
 
-		public event EventHandler Ok;		
+		public event EventHandler Ok;
 		public event EventHandler Cancel;
 		public event EventHandler Close;
 		public event EventHandler Yes;
 		public event EventHandler No;
-
-		public Gtk.ButtonsType buttonsType;
-		private Gtk.MessageType messageType;
 
 		public CustomMessageDialog(
 			Gtk.Window parent, 
@@ -63,7 +67,6 @@ namespace Gui
 		{
 		}
 
-
 		public CustomMessageDialog(
 			Gtk.Window parent, 
 			Gtk.MessageType messageType, 
@@ -83,11 +86,14 @@ namespace Gui
 		{
 			this.Build();
 
-			if (parent != null) {
+			if (parent != null)
+			{
 				base.TransientFor = parent;
 				base.SetPosition(Gtk.WindowPosition.CenterOnParent);
 				base.Decorated = parent.Decorated;
-			} else {
+			}
+			else
+			{
 				base.SetPosition(Gtk.WindowPosition.Center);
 			}
 			base.KeepAbove = true;
@@ -99,7 +105,8 @@ namespace Gui
 
 			this.btnPositive.Clicked += HandlePositiveClicked;
 			this.btnNegative.Clicked += HandleNegativeClicked;
-			this.DeleteEvent += delegate(object o, Gtk.DeleteEventArgs args) {
+			this.DeleteEvent += delegate(object o, Gtk.DeleteEventArgs args)
+			{
 				if (btnNegative.Visible)
 					this.btnNegative.Click();
 				else
@@ -131,9 +138,10 @@ namespace Gui
 
 		private void SetIcon()
 		{
-			if ((int)messageType < 0 || (int)messageType >= (int)Gtk.MessageType.Other) {
+			if ((int)messageType < 0 || (int)messageType >= (int)Gtk.MessageType.Other)
 				this.imageType.Pixbuf = null;
-			} else {
+			else
+			{
 				string iconName = String.Format("gtk-dialog-{0}", messageType.ToString()).ToLower();
 				if (null != Gtk.IconTheme.Default.LookupIcon(iconName, ICON_SIZE, Gtk.IconLookupFlags.UseBuiltin))
 					this.imageType.Pixbuf =
@@ -145,35 +153,49 @@ namespace Gui
 
 		private void SetButtons()
 		{
-			switch(buttonsType) {
-			case Gtk.ButtonsType.Ok:
-				btnPositive.Label = "Ok";
-				btnNegative.Visible = false;
-				btnNegative.Sensitive = false;
-				break;
-			case Gtk.ButtonsType.Close:
-				btnPositive.Visible = false;
-				btnPositive.Sensitive = false;
-				btnNegative.Label = "Close";
-				break;
-			case Gtk.ButtonsType.Cancel:
-				btnPositive.Visible = false;
-				btnPositive.Sensitive = false;
-				btnNegative.Label = "Cancel";
-				break;
-			case Gtk.ButtonsType.OkCancel:
-				btnPositive.Label = "Ok";
-				btnNegative.Label = "Cancel";
-				break;
-			case Gtk.ButtonsType.YesNo:
-				btnPositive.Label = "Yes";
-				btnNegative.Label = "No";
-				break;
-			default:
-				this.hbtnboxAction.Visible = false;
-				this.hbtnboxAction.Sensitive = false;
-				break;
+			switch (buttonsType)
+			{
+				case Gtk.ButtonsType.Ok:
+					btnPositive.Label = "Ok";
+					btnNegative.Visible = false;
+					btnNegative.Sensitive = false;
+					break;
+				case Gtk.ButtonsType.Close:
+					btnPositive.Visible = false;
+					btnPositive.Sensitive = false;
+					btnNegative.Label = "Close";
+					break;
+				case Gtk.ButtonsType.Cancel:
+					btnPositive.Visible = false;
+					btnPositive.Sensitive = false;
+					btnNegative.Label = "Cancel";
+					break;
+				case Gtk.ButtonsType.OkCancel:
+					btnPositive.Label = "Ok";
+					btnNegative.Label = "Cancel";
+					break;
+				case Gtk.ButtonsType.YesNo:
+					btnPositive.Label = "Yes";
+					btnNegative.Label = "No";
+					break;
+				default:
+					this.hbtnboxAction.Visible = false;
+					this.hbtnboxAction.Sensitive = false;
+					break;
 			}
+		}
+
+		public void Run()
+		{
+			Gtk.Application.Invoke((sender, e) => this.Show());
+			do
+			{
+				while (Gtk.Application.EventsPending())
+					Gtk.Application.RunIteration();
+
+				System.Threading.Thread.Sleep(50); 
+			}
+			while(this.Visible);
 		}
 	}
 }

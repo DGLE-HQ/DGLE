@@ -26,24 +26,18 @@ namespace Gui
 			E_BOTTOM_RIGHT_CONER = 10
 		}
 		
-		public static readonly Dictionary<SizingSideType, Gdk.CursorType> CursorTypeMaps = GetCurstorTypeMaps ();
-		// static initialization doesn't work on .net 2.0
-		private static Dictionary<SizingSideType, Gdk.CursorType> GetCurstorTypeMaps ()
+		public static readonly Dictionary<SizingSideType, Gdk.CursorType> CursorTypeMaps = new Dictionary<SizingSideType, Gdk.CursorType>()
 		{
-			Dictionary<SizingSideType, Gdk.CursorType> сursorTypeMaps = 
-				new Dictionary<SizingSideType, Gdk.CursorType>();
-			сursorTypeMaps.Add (SizingSideType.E_NONE, Gdk.CursorType.Arrow);
-			сursorTypeMaps.Add (SizingSideType.E_LEFT_SIDE, Gdk.CursorType.LeftSide);
-			сursorTypeMaps.Add (SizingSideType.E_RIGHT_SIDE, Gdk.CursorType.RightSide);
-			сursorTypeMaps.Add (SizingSideType.E_TOP_SIDE, Gdk.CursorType.TopSide);
-			сursorTypeMaps.Add (SizingSideType.E_TOP_LEFT_CONER, Gdk.CursorType.TopLeftCorner);
-			сursorTypeMaps.Add (SizingSideType.E_TOP_RIGHT_CONER, Gdk.CursorType.TopRightCorner);
-			сursorTypeMaps.Add (SizingSideType.E_BOTTOM_SIDE, Gdk.CursorType.BottomSide);
-			сursorTypeMaps.Add (SizingSideType.E_BOTTOM_LEFT_CONER, Gdk.CursorType.BottomLeftCorner);
-			сursorTypeMaps.Add (SizingSideType.E_BOTTOM_RIGHT_CONER, Gdk.CursorType.BottomRightCorner);
-			
-			return сursorTypeMaps;
-		}
+			{ SizingSideType.E_NONE, Gdk.CursorType.Arrow },
+			{ SizingSideType.E_LEFT_SIDE, Gdk.CursorType.LeftSide },
+			{ SizingSideType.E_RIGHT_SIDE, Gdk.CursorType.RightSide },
+			{ SizingSideType.E_TOP_SIDE, Gdk.CursorType.TopSide },
+			{ SizingSideType.E_TOP_LEFT_CONER, Gdk.CursorType.TopLeftCorner },
+			{ SizingSideType.E_TOP_RIGHT_CONER, Gdk.CursorType.TopRightCorner },
+			{ SizingSideType.E_BOTTOM_SIDE, Gdk.CursorType.BottomSide },
+			{ SizingSideType.E_BOTTOM_LEFT_CONER, Gdk.CursorType.BottomLeftCorner },
+			{ SizingSideType.E_BOTTOM_RIGHT_CONER, Gdk.CursorType.BottomRightCorner }
+		};
 	}
 }
 

@@ -21,26 +21,24 @@ namespace Template
 
 			this.DeleteEvent += HandleDeleteEvent;
 
-			this.CustomStyleAction.Activated += delegate(object sender, EventArgs e) {
+			this.CustomStyleAction.Activated += (sender, e) => {
 				if (this.CustomStyleAction.Active)
 					base.Decorated = false;
 			};
 
-			this.DecoratedCustomStyleAction.Activated += delegate(object sender, EventArgs e) {
+			this.DecoratedCustomStyleAction.Activated += (sender, e) => {
 				if (this.DecoratedCustomStyleAction.Active)
 					base.Decorated = true;
 			};
 
-			this.CloseAction.Activated += delegate(object sender, EventArgs e) {
+			this.CloseAction.Activated += (sender, e) =>
 				Gtk.Application.Quit();
-			};
 
-			this.AboutAction.Activated += delegate(object sender, EventArgs e) {
+			this.AboutAction.Activated += (sender, e) =>
 				new Gui.AboutWindow(this, About.Authors).Show();
-			};
 		}
 
-		private void HandleDeleteEvent (object o, Gtk.DeleteEventArgs args)
+		private void HandleDeleteEvent(object o, Gtk.DeleteEventArgs args)
 		{
 			Gtk.Application.Quit();
 			args.RetVal = true;

@@ -9,7 +9,7 @@ namespace Gui
 		private global::Gtk.HBox hboxButtons;
 		private global::Gtk.Button btnCancel;
 		private global::Gtk.Button btnOk;
-		
+
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);

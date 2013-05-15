@@ -12,8 +12,25 @@ namespace Packer
 {
 	public partial class WaitWindow : Gui.CustomWindow
 	{
+		public string ActionText
+		{
+			get { return Title; }
+			set { Title = value; }
+		}
+
+		public string FileText
+		{
+			get { return lFile.Text; }
+			set { lFile.Text = value; }
+		}
+
+		public WaitWindow(Gtk.Window parent) :
+			this(parent, "", "")
+		{
+		}
+
 		public WaitWindow(Gtk.Window parent, string action, string file) : 
-				base(Gtk.WindowType.Toplevel)
+			base(Gtk.WindowType.Toplevel)
 		{
 			this.Build();
 
@@ -22,9 +39,10 @@ namespace Packer
 			base.Decorated = parent.Decorated;
 			base.Title = action;
 
-			base.DeleteEvent += (o, args) => {
+			base.DeleteEvent += (o, args) =>
+			{
 				// prevent closing
-				args.RetVal = false;
+				args.RetVal = true;
 			};
 
 			lFile.Text = System.IO.Path.GetFileName(file);

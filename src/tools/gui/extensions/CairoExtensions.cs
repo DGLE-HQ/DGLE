@@ -12,16 +12,16 @@ namespace Gui
 {
 	public class CairoExtensions
 	{
-		public static Cairo.Color AlphaBlend (Cairo.Color ca, Cairo.Color cb, double alpha)
+		public static Cairo.Color AlphaBlend(Cairo.Color ca, Cairo.Color cb, double alpha)
 		{
-			return new Cairo.Color (
+			return new Cairo.Color(
 				(1.0 - alpha) * ca.R + alpha * cb.R,
 				(1.0 - alpha) * ca.G + alpha * cb.G,
 				(1.0 - alpha) * ca.B + alpha * cb.B);
 		}
 		public static Gdk.Color CairoColorToGdkColor(Cairo.Color color)
 		{
-			return new Gdk.Color ((byte)(color.R * 255), (byte)(color.G * 255), (byte)(color.B * 255));
+			return new Gdk.Color((byte)(color.R * 255), (byte)(color.G * 255), (byte)(color.B * 255));
 		}
 		
 		public static Cairo.Color GdkColorToCairoColor(Gdk.Color color)
@@ -38,14 +38,14 @@ namespace Gui
 				alpha);
 		}
 		
-		public static Cairo.Color RgbToColor (uint rgbColor)
+		public static Cairo.Color RgbToColor(uint rgbColor)
 		{
-			return RgbaToColor ((rgbColor << 8) | 0x000000ff);
+			return RgbaToColor((rgbColor << 8) | 0x000000ff);
 		}
 		
-		public static Cairo.Color RgbaToColor (uint rgbaColor)
+		public static Cairo.Color RgbaToColor(uint rgbaColor)
 		{
-			return new Cairo.Color (
+			return new Cairo.Color(
 				(byte)(rgbaColor >> 24) / 255.0,
 				(byte)(rgbaColor >> 16) / 255.0,
 				(byte)(rgbaColor >> 8) / 255.0,

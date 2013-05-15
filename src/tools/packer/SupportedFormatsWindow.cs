@@ -41,9 +41,9 @@ namespace Packer
 			TreeViewColumn columnDesc = formatsView.AppendColumn("Description", new CellRendererText(), "text", 1);
 			columnDesc.Sizing = TreeViewColumnSizing.Autosize;
 
-			Packer.SupportedFileSystems.Values.ToList().ForEach(fileSystem => {
-				formatsStore.AppendValues(fileSystem.Extension, fileSystem.Description);
-			});
+			Packer.SupportedFileSystems.Values.ToList().ForEach(fileSystem =>
+				formatsStore.AppendValues(fileSystem.Extension, fileSystem.Description)
+			);
 		}
 	}
 }

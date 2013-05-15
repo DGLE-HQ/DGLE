@@ -17,8 +17,8 @@ namespace Packer
 	{
 		public static IEnumerable<TreeIter> GetSelected(this TreeView tree)
 		{
-			return tree.Selection.GetSelectedRows().ToList()
-				.Select(path => {
+			return tree.Selection.GetSelectedRows().ToList().Select(path =>
+				{
 					TreeIter selectedIter;
 					if (tree.Model.GetIter(out selectedIter, path))
 						return selectedIter;

@@ -12,10 +12,9 @@ namespace Gui
 {
 	public partial class CustomFileChooserDialog : Gui.CustomWindow
 	{
-		public Gtk.FileChooserWidget FileChooser {
-			get {
-				return fileChooser;
-			}
+		public Gtk.FileChooserWidget FileChooser
+		{
+			get { return fileChooser; }
 		}
 
 		public event EventHandler Ok;
@@ -26,14 +25,12 @@ namespace Gui
 			if (fileChooser.Filename == null || fileChooser.Filename.Length == 0)
 				return;
 
-			this.Hide();
 			if (Ok != null)
 				Ok(sender, e);
 		}
 
 		protected virtual void OnCancel(object sender, EventArgs e)
 		{
-			this.Hide();
 			if (Cancel != null)
 				Cancel(sender, e);
 		}
@@ -58,22 +55,21 @@ namespace Gui
 
 			// hack for correct expand file chooser
 			Gtk.Expander expander = GetFileChooserExpander(this.fileChooser);
-			if (expander != null) {
+			if (expander != null)
+			{
 				base.AllowGrow = expander.Expanded;
-				expander.Activated += delegate(object sender, EventArgs e) {
+				expander.Activated += (sender, e) =>
+				{
 					base.AllowGrow = expander.Expanded;
-					if (expander.Expanded) {
+					if (expander.Expanded)
 						base.Resize(base.DefaultWidth, base.DefaultHeight);
-					}
 				};
 			}
 
 			this.btnOk.Clicked += OnOk;
 			this.btnCancel.Clicked += OnCancel;
-
-			this.DeleteEvent += delegate(object o, Gtk.DeleteEventArgs args) {
+			this.DeleteEvent += (o, args) =>
 				this.btnCancel.Click();
-			};
 		}
 
 		private Gtk.Expander GetFileChooserExpander(Gtk.Container parent)
@@ -81,8 +77,10 @@ namespace Gui
 			if (parent is Gtk.Expander)
 				return parent as Gtk.Expander;
 
-			foreach (Gtk.Widget child in parent.AllChildren) {
-				if (child is Gtk.Container) {
+			foreach (Gtk.Widget child in parent.AllChildren)
+			{
+				if (child is Gtk.Container)
+				{
 					Gtk.Container container = child as Gtk.Container; 
 					Gtk.Expander expander = GetFileChooserExpander(container); 
 					if (expander != null)
@@ -91,7 +89,7 @@ namespace Gui
 			}
 
 			return null;
-		} 
+		}
 	}
 }
 

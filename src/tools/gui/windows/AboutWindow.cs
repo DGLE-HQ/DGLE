@@ -33,16 +33,19 @@ namespace Gui
 			Assembly assembly = Assembly.GetEntryAssembly();
 			AssemblyName assemblyName = assembly.GetName();
 
-			this.textviewAbout.Buffer.Text = String.Format("{0} v{1}.{2}\n", 
-			                           assemblyName.Name,
-			                           assemblyName.Version.Major,
-			                           assemblyName.Version.Minor);
+			this.textviewAbout.Buffer.Text = String.Format(
+				"{0} v{1}.{2}\n", 
+				assemblyName.Name,
+				assemblyName.Version.Major,
+				assemblyName.Version.Minor);
 
 			this.textviewAbout.Buffer.Text += "\n*Authors*\n";
-			foreach(string author in authors) {
+			foreach (string author in authors)
+			{
 				this.textviewAbout.Buffer.Text += String.Format("{0}\n", author);
 			}
-			foreach(string line in lines) {
+			foreach (string line in lines)
+			{
 				this.textviewAbout.Buffer.Text += String.Format("{0}\n", line);
 			}
 		}

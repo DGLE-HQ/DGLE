@@ -48,7 +48,7 @@ namespace FontTool
 		private global::Gtk.Label lFileSize;
 		private global::Gtk.Button btnPrevSettings;
 		private global::Gtk.Label label2;
-		
+
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
@@ -92,7 +92,7 @@ namespace FontTool
 			this.PlatformStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Platform");
 			w1.Add (this.PlatformStyleAction, null);
 			this.DecoratedCustomStyleAction = new global::Gtk.RadioAction ("DecoratedCustomStyleAction", global::Mono.Unix.Catalog.GetString ("Decorated DGLE2"), null, null, 0);
-			this.DecoratedCustomStyleAction.Group = this.PlatformStyleAction.Group;
+			this.DecoratedCustomStyleAction.Group = this.CustomStyleAction.Group;
 			this.DecoratedCustomStyleAction.Sensitive = false;
 			this.DecoratedCustomStyleAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Decorated DGLE2");
 			this.DecoratedCustomStyleAction.Visible = false;

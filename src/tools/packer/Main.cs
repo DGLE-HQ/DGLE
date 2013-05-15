@@ -21,12 +21,10 @@ namespace Packer
 		{
 			"Shestakov Mikhail aka MIKE"
 		};
-
 		internal static string[] Lines = new string[]
 		{
 			""
 		};
-		
 		internal static Gdk.Size Size = new Gdk.Size(400, 250);
 	}
 
@@ -93,7 +91,8 @@ namespace Packer
 				CustomMessageDialog dlg = new CustomMessageDialog(
 					null, MessageType.Error, ButtonsType.Ok, 
 					"Failed to load file systems from DGLE!");
-				dlg.Ok += (sender, e) => Program.Stop();
+				dlg.Ok += (sender, e) =>
+					Program.Stop();
 				dlg.Show();
 				
 				return false;
@@ -102,7 +101,8 @@ namespace Packer
 			// init main win
 			MainWindow win = new MainWindow();
 			win.Show();
-			win.DeleteEvent += (o, a) => {
+			win.DeleteEvent += (o, a) =>
+			{
 				Stop();
 				a.RetVal = true;
 			};

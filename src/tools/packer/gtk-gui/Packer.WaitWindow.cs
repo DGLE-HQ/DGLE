@@ -7,7 +7,7 @@ namespace Packer
 		private global::Gtk.VBox vbox1;
 		private global::Gtk.Image imgAnimation;
 		private global::Gtk.Label lFile;
-		
+
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);

@@ -56,7 +56,6 @@
     <Compile Include="gtk-gui\Gui.AboutWindow.cs" />
     <Compile Include="gtk-gui\Gui.CustomFileChooserDialog.cs" />
     <Compile Include="gtk-gui\Gui.CustomMessageDialog.cs" />
-    <Compile Include="addins\Options.cs" />
     <Compile Include="extensions\CairoExtensions.cs" />
     <Compile Include="windows\AboutWindow.cs" />
     <Compile Include="windows\CustomWindow.cs" />
@@ -77,4 +76,11 @@
     <EmbeddedResource Include="resources\minimize_button.png" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="resources\" />
+    <Folder Include="extensions\" />
+    <Folder Include="windows\" />
+    <Folder Include="utils\" />
+    <Folder Include="dialogs\" />
+  </ItemGroup>
 </Project>

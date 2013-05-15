@@ -40,7 +40,7 @@ style "clearlooks-default" {
 	GtkScrollbar::has_forward_stepper = 0
 	GtkScrollbar::has_secondary_backward_stepper = 0
 	GtkScrollbar::has_secondary_forward_stepper = 0
-	GtkScrollbar::slider_width = 6
+	GtkScrollbar::slider_width = 12
 	GtkScrollbar::stepper_size = 6
 	GtkScrollbar::stepper_spacing = 0
   
