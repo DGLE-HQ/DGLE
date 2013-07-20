@@ -251,7 +251,7 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 			{
 				if (param.empty())
 				{
-					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_vecCommands[i].piVar) + " .\n"
+					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_vecCommands[i].piVar) + ".\n"
 						"Value may vary from " + IntToStr(_vecCommands[i].iMinValue) + " up to " + IntToStr(_vecCommands[i].iMaxValue) + ".").c_str());
 				}
 				else

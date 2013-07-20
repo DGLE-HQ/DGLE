@@ -575,7 +575,7 @@ DGLE_RESULT DGLE_API CRender2D::SetResolutionCorrection(uint uiResX, uint uiResY
 	_iResCorWidth = uiResX;
 	_iResCorHeight = uiResY;
 	_bResCorConstProp = bConstaintProportions;
-	_fResCorCoef = (float)_iResCorWidth/(float)_iResCorHeight;
+	_fResCorCoef = (float)_iResCorWidth / (float)_iResCorHeight;
 
 	return S_OK;
 }
@@ -727,7 +727,7 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 		_pBuffer[7]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
 	}
 
-	int prev = _iDoDrawBBoxes;
+	const int prev = _iDoDrawBBoxes;
 	_iDoDrawBBoxes = 0;
 
 	bCull = !BBoxInScreen(_pBuffer, false);

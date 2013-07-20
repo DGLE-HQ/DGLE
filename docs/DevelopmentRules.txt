@@ -193,8 +193,7 @@ uint8 *p_ui8_data1, *p_data1;
 |   MyGame.h    |
 -----------------
 
-#ifndef _MY_GAME_H
-#define _MY_GAME_H
+#pragma once
 
 #include "DGLE.h"
 using namespace DGLE;
@@ -229,8 +228,6 @@ public:
 };
 
 bool InitGame(const char *pcArguments, uint uiArgsCount);
-    
-#endif // _MY_GAME_H
 
 -----------------
 |  MyGame.cpp   |

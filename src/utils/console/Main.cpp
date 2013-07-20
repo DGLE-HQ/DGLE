@@ -70,7 +70,7 @@ void DGLE_API Init(void *pParameter)
 	
 	if (params->empty())
 		cout << "No arguments given." << endl
-			<< "You can give this application an argument list, where any new command must be started with \">\" symbol. For example \">dcp_exec_cmd create >dcp_exec_cmd save my_pack.dcp\"." << endl;
+			<< "You can give this application an argument list, where any new command must be started with \">\" symbol. For example \">dcp_exec_cmd create>dcp_exec_cmd save my_pack.dcp\"." << endl;
 	else
 		for (size_t i = 0; i < params->size(); ++i)
 			pEngineCore->ConsoleExecute((*params)[i].c_str());
