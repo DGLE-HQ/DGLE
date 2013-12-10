@@ -69,7 +69,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 If you are using DGLE in your project and you like it. Please do not remove DGLE splash screen
 and paste the link to the official DGLE website in your program credits section or elsewhere.
 It is the easiest way you can say "Thank you for your work!" to DGLE project developers.
-Also we would be happy for any donations to support futher project development.
+Also we would be happy for any donations to support further project development.
 
 \section additional_sec Additional help and information
 
@@ -325,7 +325,7 @@ namespace DGLE
 
 		/** In case object type is EOT_UNKNOWN, you can use this function to get specific object type id.
 			\param[out] uiObjUnknownType Integer with unique object type index. Meaning of these indexes must be provided by the developer of specific object type.
-			\return Returnes DGLE_Types.h::S_FALSE if object is not of EOT_UNKNOWN type and DGLE_Types.h::S_OK otherwise.	
+			\return Returns DGLE_Types.h::S_FALSE if object is not of EOT_UNKNOWN type and DGLE_Types.h::S_OK otherwise.	
 		*/
 		virtual DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) = 0;
 	};
@@ -471,6 +471,7 @@ namespace DGLE
 			\param[out] stWinMsg Structure with current message information.
 		 */
 		virtual DGLE_RESULT DGLE_API GetMessage(TWindowMessage &stWinMsg) = 0;
+		virtual DGLE_RESULT DGLE_API SetMessage(const TWindowMessage &stWinMsg) = 0;
 	};
 
 	// {2B6D2547-716E-490c-B1F1-422CB428738F}
@@ -499,7 +500,7 @@ namespace DGLE
 	static const GUID IID_IEvGoFullScreen = 
 	{ 0xcec9184c, 0x74d9, 0x4739, { 0xbf, 0x48, 0xbb, 0x80, 0x4, 0x67, 0x66, 0x5b } };
 
-	/** Event occures when engine is going fullscreen or go back to windowed mode from fullscreen mode.
+	/** Event occurs when engine is going fullscreen or go back to windowed mode from fullscreen mode.
 		On this event you can adjust display resolution.
 		\note If you want to prevent engine from going fullscreen mode on hotkey combination see EWF_RESTRICT_FULLSCREEN_HOTKEY flag.
 		\see ET_ON_FULLSCREEN, IBaseEvent, EWF_RESTRICT_FULLSCREEN_HOTKEY
@@ -602,7 +603,7 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API AddPluginToInitializationList(const char *pcFileName) = 0;	
 
 		/** Initialize engine and all of its subroutines. Also creates main engine window.
-		 \param[in] tHandle Handle of some already created window control to render in or NULL in case to let engine create it's own window.
+		 \param[in] tHandle Handle of some already created window control to render in or NULL in case to let engine create its own window.
 		 \param[in] pcApplicationName Caption of main engine window.
 		 \param[in] stWindowParam Structure with some window properties.
 		 \param[in] uiUpdateInterval Interval in milliseconds between calling of user update routine. \see EPT_UPDATE

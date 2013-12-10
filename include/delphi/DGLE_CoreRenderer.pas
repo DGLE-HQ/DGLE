@@ -1,8 +1,8 @@
 {
-\file    DGLE_CoreRenderer.pas
-\author    Korotkov Andrey aka DRON
+\file     DGLE_CoreRenderer.pas
+\author   Korotkov Andrey aka DRON
 \version  2:0.3.0
-\date    xx.xx.2012 (c)Korotkov Andrey
+\date     xx.xx.2012 (c)Korotkov Andrey
 
 \brief    This header provides interface of low-level DGLE rendering API.
 
@@ -19,19 +19,21 @@ interface
 {$ENDIF}
 
 uses
-  DGLE_types, DGLE_Base;
+  DGLE_Types, DGLE_Base;
 
 type
 
   E_CORE_RENDERER_TYPE =
   (
     CRT_UNKNOWN                             = 0,
-    CRT_OPENGL_LEGACY                       = 1,
+    CRT_OPENGL_LEGACY                       = 1
+    { future needs
     CRT_OPENGL_4_1                          = 2,
     CRT_OPENGL_ES_1_1                       = 3,
     CRT_OPENGL_ES_2_0                       = 4,
     CRT_DIRECT_3D_9_0c                      = 5,
     CRT_DIRECT_3D_11                        = 6
+    }
   );
 
   E_CORE_RENDERER_FEATURE_TYPE =
@@ -70,9 +72,8 @@ type
   E_CORE_RENDERER_METRIC_TYPE =
   (
     CRMT_MAX_TEXTURE_RESOLUTION             = 0,
-    CRMT_MAX_ANISOTROPY_LEVEL               = 1,
-    CRMT_MAX_LIGHTS_PER_PASS                = 2,
-    CRMT_MAX_TEXTURE_LAYERS                 = 3
+    CRMT_MAX_TEXTURE_LAYERS                 = 1,
+    CRMT_MAX_ANISOTROPY_LEVEL               = 2
   );
 
   E_COMPARISON_FUNC =
@@ -235,15 +236,14 @@ TRasterizerStateDesc = record
   bWireframe: Boolean;
 
   eCullMode: E_POLYGON_CULL_MODE;
-
   bFrontCounterClockwise: Boolean;
 
   bScissorEnabled: Boolean;
 
   bAlphaTestEnabled: Boolean;
   eAlphaTestFunc: E_COMPARISON_FUNC;
-
   fAlphaTestRefValue: Single;
+
 { For future needs.
   iDepthBias: Integer;
   fDepthBiasClamp: Single;
@@ -418,6 +418,7 @@ IFixedFunctionPipeline = interface(IDGLE_Base)
   function ToggleGlobalLighting(bEnabled: Boolean): DGLE_RESULT; stdcall;
   function SetGloablAmbientLight(const stColor: TColor4): DGLE_RESULT; stdcall;
 
+  function GetMaxLightsPerPassCount(out uiCount: Cardinal): DGLE_RESULT; stdcall;
   function IsGlobalLightingEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
   function GetGloablAmbientLight(out stColor: TColor4): DGLE_RESULT; stdcall;
 
@@ -457,27 +458,27 @@ implementation
 
 function BlendStateDesc(): TBlendStateDesc;
 begin
-  Result.bEnabled := False;
-  Result.eSrcFactor := BF_SRC_ALPHA;
-  Result.eDstFactor := BF_ONE_MINUS_SRC_ALPHA;
+  Result.bEnabled               := False;
+  Result.eSrcFactor             := BF_SRC_ALPHA;
+  Result.eDstFactor             := BF_ONE_MINUS_SRC_ALPHA;
 end;
 
 function DepthStencilDesc(): TDepthStencilDesc;
 begin
-  Result.bDepthTestEnabled := True;
-  Result.bWriteToDepthBuffer := True;
-  Result.eDepthFunc := CF_LESS_EQUAL;
+  Result.bDepthTestEnabled      := True;
+  Result.bWriteToDepthBuffer    := True;
+  Result.eDepthFunc             := CF_LESS_EQUAL;
 end;
 
 function RasterizerStateDesc(): TRasterizerStateDesc;
 begin
-  Result.bWireframe := False;
-  Result.eCullMode := PCM_NONE;
+  Result.bWireframe             := False;
+  Result.eCullMode              := PCM_NONE;
   Result.bFrontCounterClockwise := True;
-  Result.bScissorEnabled := False;
-  Result.bAlphaTestEnabled := False;
-  Result.eAlphaTestFunc := CF_GREATER;
-  Result.fAlphaTestRefValue := 0.25;
+  Result.bScissorEnabled        := False;
+  Result.bAlphaTestEnabled      := False;
+  Result.eAlphaTestFunc         := CF_GREATER;
+  Result.fAlphaTestRefValue     := 0.25;
 end;
 
 function DrawDataAttributes(): TDrawDataAttributes;
@@ -485,47 +486,47 @@ var
   i: Integer;
 begin
   for i := 0 to 7 do
-    Result.uiAttribOffset[i] := minus1;
+    Result.uiAttribOffset[i]    := Minus1;
 end;
 
 function DrawDataDesc(): TDrawDataDesc;
 begin
-  Result.pData            := nil;
-  Result.uiVertexStride   := 0;
-  Result.bVertices2D      := False;
-  Result.uiNormalOffset   := minus1;
-  Result.uiNormalStride   := 0;
-  Result.uiTextureVertexOffset := minus1;
-  Result.uiTextureVertexStride := 0;
-  Result.uiColorOffset    := minus1;
-  Result.uiColorStride    := 0;
-  Result.uiTangentOffset  := minus1;
-  Result.uiBinormalOffset := minus1;
-  Result.uiTangentStride  := 0;
-  Result.uiBinormalStride := 0;
-  Result.pIndexBuffer     := nil;
-  Result.bIndexBuffer32   := False;
-  Result.pAttribs         := nil;
+  Result.pData                  := nil;
+  Result.uiVertexStride         := 0;
+  Result.bVertices2D            := False;
+  Result.uiNormalOffset         := Minus1;
+  Result.uiNormalStride         := 0;
+  Result.uiTextureVertexOffset  := Minus1;
+  Result.uiTextureVertexStride  := 0;
+  Result.uiColorOffset          := Minus1;
+  Result.uiColorStride          := 0;
+  Result.uiTangentOffset        := Minus1;
+  Result.uiBinormalOffset       := Minus1;
+  Result.uiTangentStride        := 0;
+  Result.uiBinormalStride       := 0;
+  Result.pIndexBuffer           := nil;
+  Result.bIndexBuffer32         := False;
+  Result.pAttribs               := nil;
 end;
 
 function DrawDataDesc(pDataPointer: Pointer; uiNormalDataOffset: Cardinal; uiTextureVertexDataOffset: Cardinal; bIs2d: Boolean): TDrawDataDesc;
 begin
-  Result.pData            := pDataPointer;
-  Result.uiVertexStride   := 0;
-  Result.bVertices2D      := bIs2d;
-  Result.uiNormalOffset   := uiNormalDataOffset;
-  Result.uiNormalStride   := 0;
-  Result.uiTextureVertexOffset := uiTextureVertexDataOffset;
-  Result.uiTextureVertexStride := 0;
-  Result.uiColorOffset    := minus1;
-  Result.uiColorStride    := 0;
-  Result.uiTangentOffset  := minus1;
-  Result.uiBinormalOffset := minus1;
-  Result.uiTangentStride  := 0;
-  Result.uiBinormalStride := 0;
-  Result.pIndexBuffer     := nil;
-  Result.bIndexBuffer32   := False;
-  Result.pAttribs         := nil;
+  Result.pData                  := pDataPointer;
+  Result.uiVertexStride         := 0;
+  Result.bVertices2D            := bIs2d;
+  Result.uiNormalOffset         := uiNormalDataOffset;
+  Result.uiNormalStride         := 0;
+  Result.uiTextureVertexOffset  := uiTextureVertexDataOffset;
+  Result.uiTextureVertexStride  := 0;
+  Result.uiColorOffset          := Minus1;
+  Result.uiColorStride          := 0;
+  Result.uiTangentOffset        := Minus1;
+  Result.uiBinormalOffset       := Minus1;
+  Result.uiTangentStride        := 0;
+  Result.uiBinormalStride       := 0;
+  Result.pIndexBuffer           := nil;
+  Result.bIndexBuffer32         := False;
+  Result.pAttribs               := nil;
 end;
 
 {$IF CompilerVersion >= 18}

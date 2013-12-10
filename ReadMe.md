@@ -27,10 +27,10 @@ Visit [official website](http://dglengine.org) for more details on this project 
 * Plugin based architecture with micro-core principles.
 * Flexible and highly extensible via plugins.
 * Multi render support: OpenGL (1.x - 2.x and 4.x), OpenGL ES (1.1, 2.0 and 3.0), Direct3D (9.0c and 11.1).
-* Have set of visual editors for rapid application development. Also for non programmers.
+* Set of visual editors for rapid application development. Also for non-programmers.
 * Provides all necessary API for development high quality 2D and 3D real-time applications.
-* Flexible abstraction levels allow you to programming without any restrictions from API.
-* Made by experienced in game development professionals for you with LoVe!
+* Flexible abstraction levels allow you programming without any restrictions from API.
+* Made by experienced in game development professionals for you with Love!
 
 ## Supported Platforms
 

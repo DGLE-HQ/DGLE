@@ -111,7 +111,7 @@ public:
 		_TFunc tmp;
 		tmp.pParameter = pParameter;
 		tmp.pFunc = pFunc;
-		_funcList.push_back(tmp);
+		_funcList.insert(_funcList.begin(), tmp);
 	}
 
 	void Remove(T1 pFunc, void *pParameter)

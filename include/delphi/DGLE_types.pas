@@ -1,15 +1,13 @@
 {
-\file    DGLE2_types.pas
-\author    Korotkov Andrey aka DRON
+\file     DGLE_Types.pas
+\author   Korotkov Andrey aka DRON
 \version  2:0.3.0
-\date    XX.XX.2012 (c)Korotkov Andrey
+\date     XX.XX.2012 (c)Korotkov Andrey
 
 \brief    Engine types definition header.
 
 This header is a part of DGLE_SDK.
 
-\warning  Don't include this header directly, include "DGLE.pas" instead.
-\see    DGLE.pas
 }
 
 unit DGLE_Types;
@@ -18,8 +16,8 @@ interface
 
 {$I include.inc}
 
-{$ifndef DGLE_TYPES}
-{$define DGLE_TYPES}
+{$IFNDEF DGLE_TYPES}
+{$DEFINE DGLE_TYPES}
 {$ENDIF}
 
 uses
@@ -49,8 +47,7 @@ const
   MM_16X   = $00000008;//**< 16xMSAA */
 
 type
-//  E_KEYBOARD_KEY_CODES  = integer;
-//  E_DGLE_VARIANT_TYPE   = integer;
+
   E_WINDOW_MESSAGE_TYPE =
   (
     WMT_UNKNOWN     = 0,
@@ -75,8 +72,6 @@ type
     WMT_MOUSE_WHEEL = 19
   );
 
-type
-
 // Variant data type definiton //
 
   E_DGLE_VARIANT_TYPE =
@@ -89,25 +84,23 @@ type
     DVT_DATA    = 5
   );
 
-type
-
   DGLE_RESULT = Integer;
 
-  TWindowHandle    = HWND;
-  TWindowDrawHandle     = HDC;
-  TCRndrInitResults   = Boolean;
+  TWindowHandle     = HWND;
+  TWindowDrawHandle = HDC;
+  TCRndrInitResults = Boolean;
 
   GLUInt = Cardinal;
 
-  PByte   = Pointer;
+  PByte  = Pointer;
 
   TEngineWindow = packed record
-    uiWidth      : Cardinal;
-    uiHeight    : Cardinal;
-    bFullScreen  : Boolean;
-    bVSync      : Boolean;
-    eMultiSampling  : {E_MULTISAMPLING_MODE} Cardinal;
-    uiFlags      : {ENG_WINDOW_FLAGS} Cardinal;
+    uiWidth           : Cardinal;
+    uiHeight          : Cardinal;
+    bFullScreen       : Boolean;
+    bVSync            : Boolean;
+    eMultiSampling    : {E_MULTISAMPLING_MODE} Cardinal;
+    uiFlags           : {ENG_WINDOW_FLAGS} Cardinal;
   {$IF COMPILERVERSION >= 18}
     constructor Create(var dummy);                      overload;
     constructor Create(uiWidth, uiHeight : Integer; bFullScreen : Boolean;
@@ -117,34 +110,34 @@ type
   end;
 //  end;
 
-  TSystemInfo = packed record
+ TSystemInfo = packed record
     cOSName           : array[0..127] of AnsiChar;
-    cCPUName         : array[0..127] of AnsiChar;
-    uiCPUCount       : Cardinal;
-    uiCPUFrequency   : Cardinal;
-    uiRAMTotal       : Cardinal;
-    uiRAMAvailable   : Cardinal;
-    cVideocardName   : array[0..127] of AnsiChar;
-    uiVideocardCount : Cardinal;
-    uiVideocardRAM   : Cardinal;
+    cCPUName          : array[0..127] of AnsiChar;
+    uiCPUCount        : Cardinal;
+    uiCPUFrequency    : Cardinal;
+    uiRAMTotal        : Cardinal;
+    uiRAMAvailable    : Cardinal;
+    cVideocardName    : array[0..127] of AnsiChar;
+    uiVideocardCount  : Cardinal;
+    uiVideocardRAM    : Cardinal;
   end;
 
   TPluginInfo = packed record
-    ui8PluginSDKVersion  : Byte;
-    cName          : array[0..127] of AnsiChar;
-    cVersion      : array[0..64] of AnsiChar;
-    cVendor        : array[0..127] of AnsiChar;
-    cDescription  : array[0..256] of AnsiChar;
+    ui8PluginSDKVersion : Byte;
+    cName             : array[0..127] of AnsiChar;
+    cVersion          : array[0..64]  of AnsiChar;
+    cVendor           : array[0..127] of AnsiChar;
+    cDescription      : array[0..256] of AnsiChar;
   {$IF COMPILERVERSION >= 18}
     constructor Create(var dummy);
   {$IFEND}
   end;
 
   TWindowMessage = record
-    eMsgType: E_WINDOW_MESSAGE_TYPE; //**< Window message type identifier. */
-    ui32Param1: Cardinal;  //**< Message first parametr. */
-    ui32Param2: Cardinal;  //**< Message second parametr. */
-    pParam3: Pointer;  //**< Message third parametr. Points to specific message data. */
+    eMsgType          : E_WINDOW_MESSAGE_TYPE;
+    ui32Param1        : Cardinal;
+    ui32Param2        : Cardinal;
+    pParam3           : Pointer;
   {$IF COMPILERVERSION >= 18}
     constructor Create(var dummy);                      overload;
     constructor Create(msg: E_WINDOW_MESSAGE_TYPE; param1: Cardinal = 0;
@@ -180,6 +173,7 @@ type
   {$IF COMPILERVERSION >= 18}
     constructor Create (var dummy);                                                overload;
     constructor Create (x, y, z : Single);                                         overload;
+    constructor Create (all : Single);                                             overload;
     constructor Create (const Floats: Array of Single);                            overload;
     function Dot(const stPoint: TPoint3): Single;                                  inline;
     function Cross(const stPoint: TPoint3): TPoint3;                               inline;
@@ -208,14 +202,15 @@ type
       0: (_1D : array[0..2] of Single);
       1: (x, y, z : Single);
   end;
-  PPoint3 = ^TPoint3;
+  PPoint3  = ^TPoint3;
   TVector3 = TPoint3;
-  TVec3 = TPoint3;
+  TVec3    = TPoint3;
 
   TPoint2 = packed record
   {$IF COMPILERVERSION >= 18}
     constructor Create (var dummy);                                                overload;
     constructor Create (x, y : Single);                                            overload;
+    constructor Create (all : Single);                                             overload;
     constructor Create (const Floats: Array of Single);                            overload;
     function Dot(const stPoint: TPoint2): Single;                                  inline;
     function Cross(const stPoint: TPoint2): Single;                                inline;
@@ -243,9 +238,9 @@ type
       0: (_1D : array[0..1] of Single);
       1: (x, y : Single);
   end;
-  PPoint2 = ^TPoint2;
+  PPoint2  = ^TPoint2;
   TVector2 = TPoint2;
-  TVec2 = TPoint2;
+  TVec2    = TPoint2;
 
   TVertex2 = packed record
     case byte of
@@ -282,30 +277,33 @@ type
       0: (_1D : array[0..15] of Single);
       1: (_2D : array[0..3, 0..3] of Single);
   end;
-  PMatrix = ^TMatrix4x4;
-  TMatrix = TMatrix4x4;
-  TMat4 = TMatrix4x4;
+  PMatrix  = ^TMatrix4x4;
+  TMatrix  = TMatrix4x4;
+  TMat4    = TMatrix4x4;
   TMatrix4 = TMatrix4x4;
 
 
   TTransformStack = class
   private
-{$IF COMPILERVERSION >= 20}
-    stack: TStack<TMatrix>;
-{$ELSE}
-    stack: array of TMatrix;
-{$IFEND}
-    Constructor Create; overload;
-    function GetTop: TMatrix4x4;
+  {$IF COMPILERVERSION >= 20}
+    Stack: TStack<TMatrix>;
+  {$ELSE}
+    Stack: array of TMatrix;
+  {$IFEND}
+    constructor Create(); overload;
+    function GetTop(): TMatrix4x4;
     procedure SetTop(const Value: TMatrix4x4);
   public
-    Constructor Create(const base_transform: TMatrix4x4); overload;
+    constructor Create(const base_transform: TMatrix4x4); overload;
+  {$IF COMPILERVERSION >= 20}
+    destructor Destroy(); override;
+  {$IFEND}
     procedure Clear(const base_transform: TMatrix4x4);
-    procedure Push;
-    procedure Pop;
-    property Top: TMatrix4x4 read GetTop write SetTop;
+    procedure Push();
+    procedure Pop();
     procedure MultGLobal(const transform: TMatrix4x4);
     procedure MultLocal(const transform: TMatrix4x4);
+    property Top: TMatrix4x4 read GetTop write SetTop;
   end;
 
   TMouseStates = packed record
@@ -320,25 +318,25 @@ type
   end;
 
   TKeyboardStates = packed record
-    bCapsLock  : Boolean;
-    bShiftL    : Boolean;
-    bShiftR    : Boolean;
-    bCtrlL     : Boolean;
-    bCtrlR     : Boolean;
-    bAltL      : Boolean;
-    bAltR      : Boolean;
+    bCapsLock     : Boolean;
+    bShiftL       : Boolean;
+    bShiftR       : Boolean;
+    bCtrlL        : Boolean;
+    bCtrlR        : Boolean;
+    bAltL         : Boolean;
+    bAltR         : Boolean;
   end;
 
   TJoystickStates = packed record
-    uiButtonsCount: Cardinal;  //**< Count of available joystick buttons. */
-    bButtons: array[0..31] of Boolean;  //**< Array of joystick buttons states (pressed or not). */
-    iXAxes : Integer;        //**< X-axis position. Value varies -100 to 100. */
-    iYAxes : Integer;        //**< Y-axis position. Value varies -100 to 100. */
-    iZAxes : Integer;        //**< Z-axis position. Value varies -100 to 100. */
-    iRAxes : Integer;      //**< Current position of the rudder or fourth joystick axis. Value varies -100 to 100. */
-    iUAxes : Integer;      //**< Current fifth axis position. Value varies -100 to 100. */
-    iVAxes : Integer;      //**< Current sixth axis position. Value varies -100 to 100. */
-    iPOV   : Integer;      //**< Point-Of-View direction. */
+    uiButtonsCount: Cardinal;
+    bButtons      : array[0..31] of Boolean;
+    iXAxes        : Integer;    
+    iYAxes        : Integer;    
+    iZAxes        : Integer;    
+    iRAxes        : Integer;    
+    iUAxes        : Integer;    
+    iVAxes        : Integer;    
+    iPOV          : Integer;    
   end;
 
    TVariant = record
@@ -350,24 +348,22 @@ type
     class operator Implicit(AVar: TVariant): Boolean; inline;
     class operator Implicit(AVar: TVariant): Pointer; inline;
   {$IFEND}
-  {$IF COMPILERVERSION < 18}
-  end;
-  {$IFEND}
-    procedure Clear({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND});                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetInt({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}iVal: Integer);         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetFloat({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}fVal: Single);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetBool({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}bVal: Boolean);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetPointer({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pPointer: Pointer); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pData: Pointer; uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsInt({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Integer;                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsFloat({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Single;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsBool({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Boolean;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsPointer({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Pointer;            {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure GetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function GetType({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): E_DGLE_VARIANT_TYPE;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
   {$IF COMPILERVERSION >= 18}
-  end;
+    procedure Clear();                                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    procedure SetInt(iVal: Integer);                                 {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    procedure SetFloat(fVal: Single);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    procedure SetBool(bVal: Boolean);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    procedure SetPointer(pPointer: Pointer);                         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    procedure SetData(pData: Pointer; uiDataSize: Cardinal);         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    function AsInt(): Integer;                                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    function AsFloat(): Single;                                      {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    function AsBool(): Boolean;                                      {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    function AsPointer(): Pointer;                                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    procedure GetData(out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+    function GetType(): E_DGLE_VARIANT_TYPE;                         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
   {$IFEND}
+  end;
+
 type
 
   E_KEYBOARD_KEY_CODES =
@@ -499,36 +495,40 @@ function Color4(color : Cardinal; alpha : Byte = 255): TColor4;             over
 function Color4(): TColor4;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function Color4(const rgba: array of Single): TColor4;                      overload;
 
-function ColorClear(alpha: Byte = 255)         : TColor4;
-function ColorWhite(alpha: Byte = 255)         : TColor4;
-function ColorBlack(alpha: Byte = 255)         : TColor4;
-function ColorRed(alpha: Byte = 255)           : TColor4;
-function ColorGreen(alpha: Byte = 255)         : TColor4;
-function ColorBlue(alpha: Byte = 255)          : TColor4;
+function ColorRGB(Color: TColor4): Cardinal;                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorRGBA(Color: TColor4): Cardinal;                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+                                                                            {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorClear(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorWhite(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorBlack(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorRed(alpha: Byte = 255)           : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorGreen(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorBlue(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
-function ColorAqua(alpha: Byte = 255)          : TColor4;
-function ColorBrown(alpha: Byte = 255)         : TColor4;
-function ColorCyan(alpha: Byte = 255)          : TColor4;
-function ColorFuchsia(alpha: Byte = 255)       : TColor4;
-function ColorGray(alpha: Byte = 255)          : TColor4;
-function ColorGrey(alpha: Byte = 255)          : TColor4;
-function ColorMagenta(alpha: Byte = 255)       : TColor4;
-function ColorMaroon(alpha: Byte = 255)        : TColor4;
-function ColorNavy(alpha: Byte = 255)          : TColor4;
-function ColorOlive(alpha: Byte = 255)         : TColor4;
-function ColorOrange(alpha: Byte = 255)        : TColor4;
-function ColorPink(alpha: Byte = 255)          : TColor4;
-function ColorPurple(alpha: Byte = 255)        : TColor4;
-function ColorSilver(alpha: Byte = 255)        : TColor4;
-function ColorTeal(alpha: Byte = 255)          : TColor4;
-function ColorViolet(alpha: Byte = 255)        : TColor4;
-function ColorYellow(alpha: Byte = 255)        : TColor4;
+function ColorAqua(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorBrown(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorCyan(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorFuchsia(alpha: Byte = 255)       : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorGray(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorGrey(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorMagenta(alpha: Byte = 255)       : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorMaroon(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorNavy(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorOlive(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorOrange(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorPink(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorPurple(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorSilver(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorTeal(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorViolet(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorYellow(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
-function ColorOfficialOrange(alpha: Byte = 255): TColor4;
-function ColorOfficialBlack(alpha: Byte = 255) : TColor4;
+function ColorOfficialOrange(alpha: Byte = 255): TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorOfficialBlack(alpha: Byte = 255) : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
 function Point2(): TPoint2;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function Point2(x,y : Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point2(all : Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function Point2(const Floats: Array of Single): TPoint2;                    overload;
 
 // TPoint2 operators
@@ -555,6 +555,7 @@ function Reflect(const stLeft, normal : TPoint2): TPoint2;                  over
 
 function Point3(): TPoint3;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function Point3(x,y,z : Single): TPoint3;                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point3(all : Single): TPoint3;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function Point3(const Floats: array of Single): TPoint3;                    overload;
 
 // TPoint3 operators
@@ -600,22 +601,35 @@ function MatrixTranslate(const fVec : TPoint3): TMatrix4x4;                 {$IF
 function MatrixRotate(angle : Single; const stAxis : TPoint3): TMatrix4x4;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 // Matrix operators
-function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixAdd(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixMul(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixSub(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixAdd(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixDiv(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixMul(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3; overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint2): TPoint2; overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ApplyToVector(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixAdd(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixMul(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixSub(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixAdd(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixDiv(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixMul(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint2): TPoint2;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ApplyToVector(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
 
-function EngWindow(): TEngineWindow;                                      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function EngWindow(): TEngineWindow;                                                overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function EngWindow(uiWidth, uiHeight: Integer; bFullScreen: Boolean;
   bVSync: Boolean = False; eMSampling: {E_MULTISAMPLING_MODE}Cardinal = MM_NONE;
-  uiFlags: {ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow;        overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+  uiFlags: {ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure Clear(var AVar: TVariant);                                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure SetInt(var AVar: TVariant; iVal: Integer);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure SetFloat(var AVar: TVariant; fVal: Single);                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure SetBool(var AVar: TVariant; bVal: Boolean);                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure SetPointer(var AVar: TVariant; pPointer: Pointer);                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure SetData(var AVar: TVariant; pData: Pointer; uiDataSize: Cardinal);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function AsInt(var AVar: TVariant): Integer;                                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function AsFloat(var AVar: TVariant): Single;                                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function AsBool(var AVar: TVariant): Boolean;                                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function AsPointer(var AVar: TVariant): Pointer;                                    {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure GetData(var AVar: TVariant;out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function GetType(var AVar: TVariant): E_DGLE_VARIANT_TYPE;                          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+
 
 implementation
 
@@ -641,9 +655,9 @@ end;
 
 function Color4(color : Cardinal; alpha : Byte = 255): TColor4; overload;
 begin
-  Result.r := Byte(color shr 16)/255.;
+  Result.r := Byte(color)/255.;
   Result.g := Byte(color shr 8)/255.;
-  Result.b := Byte(color)/255.;
+  Result.b := Byte(color shr 16)/255.;
   Result.a := alpha/255.;
 end;
 
@@ -661,6 +675,16 @@ begin
   Result.g := rgba[1];
   Result.b := rgba[2];
   Result.a := rgba[3];
+end;
+
+function ColorRGB(Color: TColor4): Cardinal;                                
+begin
+  Result := Round($FF * Color.r) + (Round($FF * Color.g) shl 8) + (Round($FF * Color.b) shl 16);
+end;
+
+function ColorRGBA(Color: TColor4): Cardinal;
+begin
+  Result := ColorRGB(Color) + (Round($FF * Color.a) shl 24);
 end;
 
 {$IF COMPILERVERSION >= 18}
@@ -706,12 +730,12 @@ end;
 
 function TColor4.ColorRGB(): Cardinal;
 begin
-  Result := Round($FF * r + $FFFF * g + $FFFFFF * b);
+  Result := Round($FF * r) + (Round($FF * g) shl 8) + (Round($FF * b) shl 16);
 end;
 
 function TColor4.ColorRGBA(): Cardinal;
 begin
-  Result := Round($FF * r + $FFFF * g + $FFFFFF * b + $FFFFFFFF * a);
+  Result := ColorRGB + (Round($FF * a) shl 24);
 end;
 {$IFEND}
 
@@ -859,10 +883,16 @@ begin
   Result.y := y;
 end;
 
+function Point2(all : Single): TPoint2; overload;
+begin
+  Result.x := all;
+  Result.y := all;
+end;
+
 function Point2(const Floats: array of Single): TPoint2; overload;
 begin
-  Result.x := Floats[0];
-  Result.y := Floats[1];
+  Result.x := Floats[Low(Floats)];
+  Result.y := Floats[Low(Floats) + 1];
 end;
 
 function Add(const stLeft, stRight: TPoint2): TPoint2;
@@ -908,42 +938,42 @@ end;
 {$IF COMPILERVERSION >= 20}
 class operator TPoint2.Add(const stLeft, stRight: TPoint2): TPoint2;
 begin
-  Result := Point2(stLeft.x + stRight.x, stLeft.y + stRight.y);
+  Result := DGLE_Types.Add(stLeft, stRight);
 end;
 
 class operator TPoint2.Subtract(const stLeft, stRight: TPoint2): TPoint2;
 begin
-  Result := Point2(stLeft.x - stRight.x, stLeft.y - stRight.y);
+  Result := DGLE_Types.Subtract(stLeft, stRight);
 end;
 
 class operator TPoint2.Multiply(const stLeft, stRight: TPoint2): TPoint2;
 begin
-  Result := Point2(stLeft.x * stRight.x, stLeft.y * stRight.y);
+  Result := DGLE_Types.Multiply(stLeft, stRight);
 end;
 
 class operator TPoint2.Divide(const stLeft, stRight: TPoint2): TPoint2;
 begin
-  Result := Point2(stLeft.x / stRight.x, stLeft.y / stRight.y);
+  Result := DGLE_Types.Divide(stLeft, stRight);
 end;
 
 class operator TPoint2.Add(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
-  Result := Point2(stLeft.x + fRight, stLeft.y + fRight);
+  Result := DGLE_Types.Add(stLeft, fRight);
 end;
 
 class operator TPoint2.Subtract(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
-  Result := Point2(stLeft.x - fRight, stLeft.y - fRight);
+  Result := DGLE_Types.Subtract(stLeft, fRight);
 end;
 
 class operator TPoint2.Multiply(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
-  Result := Point2(stLeft.x * fRight, stLeft.y * fRight);
+  Result := DGLE_Types.Multiply(stLeft, fRight);
 end;
 
 class operator TPoint2.Divide(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
-  Result := Point2(stLeft.x / fRight, stLeft.y / fRight);
+  Result := DGLE_Types.Divide(stLeft, fRight);
 end;
 {$IFEND}
 
@@ -959,7 +989,7 @@ end;
 
 function DistTo(const stLeft, stRight: TPoint2): Single;
 begin
-  Result := Sqrt((stRight.x - stLeft.x)*(stRight.x - stLeft.x) + (stRight.y - stLeft.y)*(stRight.y - stLeft.y));
+  Result := Sqrt(Sqr(stRight.x - stLeft.x) + Sqr(stRight.y - stLeft.y));
 end;
 
 function DistToQ(const stLeft, stRight: TPoint2): Single;
@@ -969,7 +999,7 @@ end;
 
 function LengthQ(stPoint: TPoint2): Single;
 begin
-  Result := stPoint.x * stPoint.x + stPoint.y * stPoint.y;
+  Result := Sqr(stPoint.x) + Sqr(stPoint.y);
 end;
 
 function Length(const stPoint: TPoint2): Single;
@@ -996,90 +1026,91 @@ function Rotate(const stLeft: TPoint2; fAngle: Single): TPoint2;
 var
   s, c: Single;
 begin
-  s := sin(fAngle);
-  c := cos(fAngle);
+  s := Sin(fAngle);
+  c := Cos(fAngle);
   Result := Point2(stLeft.x * c - stLeft.y * s, stLeft.x * s + stLeft.y * c);
 end;
 
 function Reflect(const stLeft, normal : TPoint2): TPoint2;
 begin
-  Result := Subtract(stLeft, Multiply(normal, Dot(stLeft,normal)* 2));
+  Result := Subtract(stLeft, Multiply(normal, Dot(stLeft, normal) * 2));
 end;
 
 {$IF COMPILERVERSION >= 18}
-constructor TPoint2.Create (var dummy);
+constructor TPoint2.Create(var dummy);
 begin
   Self := Point2();
 end;
 
-constructor TPoint2.Create (x, y : Single);
+constructor TPoint2.Create(x, y : Single);
 begin
   Self := Point2(x, y);
 end;
 
-constructor TPoint2.Create (const Floats: Array of Single);
+constructor TPoint2.Create(all : Single);
+begin
+  Self := Point2(all);
+end;
+
+constructor TPoint2.Create(const Floats: Array of Single);
 begin
   Self := Point2(Floats);
 end;
 
 function TPoint2.Dot(const stPoint: TPoint2): Single;
 begin
-  Result := x * stPoint.x + y * stPoint.y;
+  Result := DGLE_Types.Dot(Self, stPoint);
 end;
 
 function TPoint2.Cross(const stPoint: TPoint2): Single;
 begin
-  Result := x * stPoint.y - stPoint.x * y;
+  Result := DGLE_Types.Cross(Self, stPoint);
 end;
 
 function TPoint2.DistTo(const stPoint: TPoint2): Single;
 begin
-  Result := Sqrt((stPoint.x - x)*(stPoint.x - x) + (stPoint.y - y)*(stPoint.y - y));
+  Result := DGLE_Types.DistTo(Self, stPoint);
 end;
 
 function TPoint2.DistToQ(const stPoint: TPoint2): Single;
 begin
-  Result := Subtract(stPoint, self).LengthQ();
+  Result := DGLE_Types.DistToQ(Self, stPoint);
 end;
 
 function TPoint2.LengthQ(): Single;
 begin
-  Result := x*x + y*y;
+  Result := DGLE_Types.LengthQ(Self);
 end;
 
 function TPoint2.Length(): Single;
 begin
-  Result := Sqrt(LengthQ());
+  Result := DGLE_Types.Length(Self);
 end;
 
 function TPoint2.Normalize(): TPoint2;
 begin
-  Self := Divide(Self, Self.Length());
+  Self := DGLE_Types.Normalize(Self);
   Result := Self;
 end;
 
 function TPoint2.Lerp(const stPoint: TPoint2; coeff: Single): TPoint2;
 begin
-  Result := Add(Self, Multiply(Subtract(stPoint, Self), coeff));
+  Result := DGLE_Types.Lerp(Self, stPoint, coeff);
 end;
 
 function TPoint2.Angle(const stPoint: TPoint2): Single;
 begin
-  Result := ArcTan2(x * stPoint.y - y * stPoint.x, x * stPoint.x + y * stPoint.y);
+  Result := DGLE_Types.Angle(Self, stPoint);
 end;
 
 function TPoint2.Rotate(fAngle: Single): TPoint2;
-var
-  s, c: Single;
 begin
-  s := sin(fAngle);
-  c := cos(fAngle);
-  Result := Point2(x * c - y * s, x * s + y * c);
+  Result := DGLE_Types.Rotate(Self, fAngle);
 end;
 
 function TPoint2.Reflect(const normal : TPoint2): TPoint2;
 begin
-  Result := Subtract(Self, Multiply(normal, Dot(normal) * 2));
+  Result := DGLE_Types.Reflect(Self, normal);
 end;
 {$IFEND}
 
@@ -1097,11 +1128,18 @@ begin
   Result.z := z;
 end;
 
+function Point3(all : Single): TPoint3; overload;
+begin
+  Result.x := all;
+  Result.y := all;
+  Result.z := all;
+end;
+
 function Point3(const Floats: array of Single): TPoint3; overload;
 begin
-  Result.x := Floats[0];
-  Result.y := Floats[1];
-  Result.z := Floats[2];
+  Result.x := Floats[Low(Floats)];
+  Result.y := Floats[Low(Floats) + 1];
+  Result.z := Floats[Low(Floats) + 2];
 end;
 
 function Add(const stLeft, stRight: TPoint3): TPoint3;
@@ -1147,42 +1185,42 @@ end;
 {$IF COMPILERVERSION >= 20}
 class operator TPoint3.Add(const stLeft, stRight: TPoint3): TPoint3;
 begin
-  Result := Point3(stLeft.x + stRight.x, stLeft.y + stRight.y, stLeft.z + stRight.z);
+  Result := DGLE_Types.Add(stLeft, stRight);
 end;
 
 class operator TPoint3.Subtract(const stLeft, stRight: TPoint3): TPoint3;
 begin
-  Result := Point3(stLeft.x - stRight.x, stLeft.y - stRight.y, stLeft.z - stRight.z);
+  Result := DGLE_Types.Subtract(stLeft, stRight);
 end;
 
 class operator TPoint3.Multiply(const stLeft, stRight: TPoint3): TPoint3;
 begin
-  Result := Point3(stLeft.x * stRight.x, stLeft.y * stRight.y, stLeft.z * stRight.z);
+  Result := DGLE_Types.Multiply(stLeft, stRight);
 end;
 
 class operator TPoint3.Divide(const stLeft, stRight: TPoint3): TPoint3;
 begin
-  Result := Point3(stLeft.x / stRight.x, stLeft.y / stRight.y, stLeft.z / stRight.z);
+  Result := DGLE_Types.Divide(stLeft, stRight);
 end;
 
 class operator TPoint3.Add(const stLeft: TPoint3;const  fRight: Single): TPoint3;
 begin
-  Result := Point3(stLeft.x + fRight, stLeft.y + fRight, stLeft.z + fRight);
+  Result := DGLE_Types.Add(stLeft, fRight);
 end;
 
 class operator TPoint3.Subtract(const stLeft: TPoint3; const fRight: Single): TPoint3;
 begin
-  Result := Point3(stLeft.x - fRight, stLeft.y - fRight, stLeft.z - fRight);
+  Result := DGLE_Types.Subtract(stLeft, fRight);
 end;
 
 class operator TPoint3.Multiply(const stLeft: TPoint3; const fRight: Single): TPoint3;
 begin
-  Result := Point3(stLeft.x * fRight, stLeft.y * fRight, stLeft.z * fRight);
+  Result := DGLE_Types.Multiply(stLeft, fRight);
 end;
 
 class operator TPoint3.Divide(const stLeft: TPoint3; const fRight: Single): TPoint3;
 begin
-  Result := Point3(stLeft.x / fRight, stLeft.y / fRight, stLeft.z / fRight);
+  Result := DGLE_Types.Divide(stLeft, fRight);
 end;
 {$IFEND}
 
@@ -1198,12 +1236,12 @@ end;
 
 function FlatDistTo(const stLeft, stRight: TPoint3): Single;
 begin
-  Result := Sqrt((stRight.x - stLeft.x)*(stRight.x - stLeft.x) + (stRight.y - stLeft.y)*(stRight.y - stLeft.y));
+  Result := Sqrt(Sqr(stRight.x - stLeft.x) + Sqr(stRight.y - stLeft.y));
 end;
 
 function DistTo(const stLeft, stRight: TPoint3): Single;
 begin
-  Result := Sqrt((stRight.x - stLeft.x)*(stRight.x - stLeft.x) + (stRight.y - stLeft.y)*(stRight.y - stLeft.y) + (stRight.z - stLeft.z)*(stRight.z - stLeft.z));
+  Result := Sqrt(Sqr(stRight.x - stLeft.x) + Sqr(stRight.y - stLeft.y) + Sqr(stRight.z - stLeft.z));
 end;
 
 function DistToQ(const stLeft, stRight: TPoint3): Single;
@@ -1213,7 +1251,7 @@ end;
 
 function LengthQ(const stPoint: TPoint3): Single;
 begin
-  Result := stPoint.x * stPoint.x + stPoint.y * stPoint.y + stPoint.y * stPoint.y;
+  Result := Sqr(stPoint.x) + Sqr(stPoint.y) + Sqr(stPoint.z);
 end;
 
 function Length(const stPoint: TPoint3): Single;
@@ -1265,6 +1303,11 @@ begin
   Self := Point3(x, y, z);
 end;
 
+constructor TPoint3.Create (all : Single);
+begin
+  Self := Point3(all);
+end;
+
 constructor TPoint3.Create (const Floats: Array of Single);
 begin
   Self := Point3(Floats);
@@ -1272,71 +1315,63 @@ end;
 
 function TPoint3.Dot(const stPoint: TPoint3): Single;
 begin
-  Result := x * stPoint.x + y * stPoint.y;
+  Result := DGLE_Types.Dot(Self, stPoint);
 end;
 
 function TPoint3.Cross(const stPoint: TPoint3): TPoint3;
 begin
-  Result := Point3(y * stPoint.z - z * stPoint.y, z * stPoint.x - x * stPoint.z, x * stPoint.y - y * stPoint.x);
+  Result := DGLE_Types.Cross(Self, stPoint);
 end;
 
 function TPoint3.FlatDistTo(const stPoint: TPoint3): Single;
 begin
-  Result := Sqrt((stPoint.x - x)*(stPoint.x - x) + (stPoint.y - y)*(stPoint.y - y));
+  Result := DGLE_Types.FlatDistTo(Self, stPoint);
 end;
 
 function TPoint3.DistTo(const stPoint: TPoint3): Single;
 begin
-  Result := Sqrt((stPoint.x - x)*(stPoint.x - x) + (stPoint.y - y)*(stPoint.y - y) + (stPoint.z - z)*(stPoint.z - z));
+  Result := DGLE_Types.DistTo(Self, stPoint);
 end;
 
 function TPoint3.DistToQ(const stPoint: TPoint3): Single;
 begin
-  Result := Subtract(stPoint, self).LengthQ();
+  Result := DGLE_Types.DistToQ(Self, stPoint);
 end;
 
 function TPoint3.LengthQ(): Single;
 begin
-  Result := x*x + y*y + z*z;
+  Result := DGLE_Types.LengthQ(Self);
 end;
 
 function TPoint3.Length(): Single;
 begin
-  Result := Sqrt(LengthQ());
+  Result := DGLE_Types.Length(Self);
 end;
 
 function TPoint3.Normalize(): TPoint3;
 begin
-  Self := Divide(Self, Self.Length());
+  Self := DGLE_Types.Normalize(Self);
   Result := Self;
 end;
 
 function TPoint3.Lerp(const stPoint: TPoint3; coeff: Single): TPoint3;
 begin
-  Result := Add(Self, Multiply(Subtract(stPoint, Self), coeff));
+  Result := DGLE_Types.Lerp(Self, stPoint, coeff);
 end;
 
 function TPoint3.Angle(const stPoint: TPoint3): Single;
 begin
-  Result := ArcCos(Dot(stPoint)/ Sqrt(LengthQ() * stPoint.LengthQ()));
+  Result := DGLE_Types.Angle(Self, stPoint);
 end;
 
 function TPoint3.Rotate(const Axis: TPoint3; fAngle: Single): TPoint3;
-var
-  s, c: Single;
-  v: array[0..2] of TPoint3;
 begin
-  s := sin(fAngle);
-  c := cos(fAngle);
-  v[0] := Multiply(Axis, Dot(Axis));
-  v[1] := Subtract(Self, v[0]);
-  v[2] := DGLE_types.Cross(Axis, v[1]);
-  Result := Point3(v[0].x + v[1].x * c + v[2].x * s, v[0].y + v[1].y * c + v[2].y * s, v[0].z + v[1].z * c + v[2].z * s);
+  Result := DGLE_Types.Rotate(Self, Axis, fAngle);
 end;
 
 function TPoint3.Reflect(const normal : TPoint3): TPoint3;
 begin
-  Result := Subtract(Self, Multiply(normal, Dot(normal) * 2));
+  Result := DGLE_Types.Reflect(Self, normal);
 end;
 {$IFEND}
 
@@ -1434,22 +1469,22 @@ end;
 
 function TRectF.IntersectRect(const stRect: TRectf):Boolean;
 begin
-  Result := DGLE_types.IntersectRect(Self, stRect);
+  Result := DGLE_Types.IntersectRect(Self, stRect);
 end;
 
 function TRectF.PointInRect(const stPoint: TPoint2):Boolean;
 begin
-  Result := DGLE_types.PointInRect(stPoint, Self);
+  Result := DGLE_Types.PointInRect(stPoint, Self);
 end;
 
 function TRectF.RectInRect(const stRect: TRectf): Boolean;
 begin
-  Result := DGLE_types.RectInRect(Self, stRect);
+  Result := DGLE_Types.RectInRect(Self, stRect);
 end;
 
 function TRectF.GetIntersectionRect(const stRect: TRectf): TRectf;
 begin
-  Result := DGLE_types.GetIntersectionRect(Self, stRect);
+  Result := DGLE_Types.GetIntersectionRect(Self, stRect);
 end;
 {$IFEND}
 
@@ -1656,7 +1691,7 @@ end;
 
 function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   Result._2D[3, 0] := stMatrix._2D[3, 0];
   Result._2D[3, 1] := stMatrix._2D[3, 1];
   Result._2D[3, 2] := stMatrix._2D[3, 2];
@@ -1669,32 +1704,37 @@ begin
   Result._2D[2, 2] := Sign(stMatrix._2D[2, 2]) * Length(Point3(stMatrix._2D[0, 2], stMatrix._2D[1, 2], stMatrix._2D[2, 2]));
 end;
 
-function MatrixSub (const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   for i := 0 to 15 do
   begin
     Result._1D[i] := stLeftMatrix._1D[i] - stRightMatrix._1D[i];
   end;
 end;
 
-function MatrixAdd (const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+function MatrixAdd(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
 var
   i: Integer;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   for i := 0 to 15 do
   begin
     Result._1D[i] := stLeftMatrix._1D[i] + stRightMatrix._1D[i];
   end;
 end;
 
-function MatrixMul (const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+function MatrixMul(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
 //var
 //  i, j, k: Integer;
 begin
-  Result := Matrix;
+  Result := Matrix();
+  
+//  for i := 0 to 3 do
+//    for j := 0 to 3 do
+//      for k := 0 to 3 do
+//        Result._2D[i][j] := Result._2D[i][j] + stLeftMatrix._2D[i][k] * stRightMatrix._2D[k][j];
 
 {This BLOCK of code, instead of cycle, makes very nice performance improvement}
 
@@ -1778,48 +1818,42 @@ begin
     stLeftMatrix._2D[3][1] * stRightMatrix._2D[1][3] +
     stLeftMatrix._2D[3][2] * stRightMatrix._2D[2][3] +
     stLeftMatrix._2D[3][3] * stRightMatrix._2D[3][3];
-
-
-//  for i := 0 to 3 do
-//    for j := 0 to 3 do
-//      for k := 0 to 3 do
-//        Result._2D[i][j] := Result._2D[i][j] + stLeftMatrix._2D[i][k] * stRightMatrix._2D[k][j];
 end;
 
-function MatrixSub (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+function MatrixSub(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   for i := 0 to 15 do
   begin
     Result._1D[i] := stLeftMatrix._1D[i] - right;
   end;
 end;
 
-function MatrixAdd (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+function MatrixAdd(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   for i := 0 to 15 do
   begin
     Result._1D[i] := stLeftMatrix._1D[i] + right;
   end;
 end;
 
-function MatrixDiv (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+function MatrixDiv(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   for i := 0 to 15 do
   begin
     Result._1D[i] := stLeftMatrix._1D[i] / right;
   end;
 end;
 
-function MatrixMul (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+function MatrixMul(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
+  Result := Matrix();
   for i := 0 to 15 do
   begin
     Result._1D[i] := stLeftMatrix._1D[i] * right;
@@ -1847,168 +1881,57 @@ begin
 end;
 
 {$IF COMPILERVERSION >= 20}
-class operator TMatrix4x4.Subtract (const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-var i: Integer;
-begin
-  Result := MatrixIdentity();
-  for i := 0 to 15 do
-  begin
-    Result._1D[i] := stLeftMatrix._1D[i] - stRightMatrix._1D[i];
-  end;
-end;
-
-class operator TMatrix4x4.Add (const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+class operator TMatrix4x4.Add(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
 var
   i: Integer;
 begin
-  Result := MatrixIdentity();
-  for i := 0 to 15 do
-  begin
-    Result._1D[i] := stLeftMatrix._1D[i] + stRightMatrix._1D[i];
-  end;
+  Result := DGLE_Types.Add(Self, stRightMatrix);
 end;
 
-class operator TMatrix4x4.Multiply (const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-//var
-//  i, j, k: Integer;
-begin
-  Result := Matrix;
-
-{This BLOCK of code, instead of cycle, makes very nice performance improvement}
-
-  Result._2D[0][0] :=
-    stLeftMatrix._2D[0][0] * stRightMatrix._2D[0][0] +
-    stLeftMatrix._2D[0][1] * stRightMatrix._2D[1][0] +
-    stLeftMatrix._2D[0][2] * stRightMatrix._2D[2][0] +
-    stLeftMatrix._2D[0][3] * stRightMatrix._2D[3][0];
-  Result._2D[1][0] :=
-    stLeftMatrix._2D[1][0] * stRightMatrix._2D[0][0] +
-    stLeftMatrix._2D[1][1] * stRightMatrix._2D[1][0] +
-    stLeftMatrix._2D[1][2] * stRightMatrix._2D[2][0] +
-    stLeftMatrix._2D[1][3] * stRightMatrix._2D[3][0];
-  Result._2D[2][0] :=
-    stLeftMatrix._2D[2][0] * stRightMatrix._2D[0][0] +
-    stLeftMatrix._2D[2][1] * stRightMatrix._2D[1][0] +
-    stLeftMatrix._2D[2][2] * stRightMatrix._2D[2][0] +
-    stLeftMatrix._2D[2][3] * stRightMatrix._2D[3][0];
-  Result._2D[3][0] :=
-    stLeftMatrix._2D[3][0] * stRightMatrix._2D[0][0] +
-    stLeftMatrix._2D[3][1] * stRightMatrix._2D[1][0] +
-    stLeftMatrix._2D[3][2] * stRightMatrix._2D[2][0] +
-    stLeftMatrix._2D[3][3] * stRightMatrix._2D[3][0];
-  Result._2D[0][1] :=
-    stLeftMatrix._2D[0][0] * stRightMatrix._2D[0][1] +
-    stLeftMatrix._2D[0][1] * stRightMatrix._2D[1][1] +
-    stLeftMatrix._2D[0][2] * stRightMatrix._2D[2][1] +
-    stLeftMatrix._2D[0][3] * stRightMatrix._2D[3][1];
-  Result._2D[1][1] :=
-    stLeftMatrix._2D[1][0] * stRightMatrix._2D[0][1] +
-    stLeftMatrix._2D[1][1] * stRightMatrix._2D[1][1] +
-    stLeftMatrix._2D[1][2] * stRightMatrix._2D[2][1] +
-    stLeftMatrix._2D[1][3] * stRightMatrix._2D[3][1];
-  Result._2D[2][1] :=
-    stLeftMatrix._2D[2][0] * stRightMatrix._2D[0][1] +
-    stLeftMatrix._2D[2][1] * stRightMatrix._2D[1][1] +
-    stLeftMatrix._2D[2][2] * stRightMatrix._2D[2][1] +
-    stLeftMatrix._2D[2][3] * stRightMatrix._2D[3][1];
-  Result._2D[3][1] :=
-    stLeftMatrix._2D[3][0] * stRightMatrix._2D[0][1] +
-    stLeftMatrix._2D[3][1] * stRightMatrix._2D[1][1] +
-    stLeftMatrix._2D[3][2] * stRightMatrix._2D[2][1] +
-    stLeftMatrix._2D[3][3] * stRightMatrix._2D[3][1];
-  Result._2D[0][2] :=
-    stLeftMatrix._2D[0][0] * stRightMatrix._2D[0][2] +
-    stLeftMatrix._2D[0][1] * stRightMatrix._2D[1][2] +
-    stLeftMatrix._2D[0][2] * stRightMatrix._2D[2][2] +
-    stLeftMatrix._2D[0][3] * stRightMatrix._2D[3][2];
-  Result._2D[1][2] :=
-    stLeftMatrix._2D[1][0] * stRightMatrix._2D[0][2] +
-    stLeftMatrix._2D[1][1] * stRightMatrix._2D[1][2] +
-    stLeftMatrix._2D[1][2] * stRightMatrix._2D[2][2] +
-    stLeftMatrix._2D[1][3] * stRightMatrix._2D[3][2];
-  Result._2D[2][2] :=
-    stLeftMatrix._2D[2][0] * stRightMatrix._2D[0][2] +
-    stLeftMatrix._2D[2][1] * stRightMatrix._2D[1][2] +
-    stLeftMatrix._2D[2][2] * stRightMatrix._2D[2][2] +
-    stLeftMatrix._2D[2][3] * stRightMatrix._2D[3][2];
-  Result._2D[3][2] :=
-    stLeftMatrix._2D[3][0] * stRightMatrix._2D[0][2] +
-    stLeftMatrix._2D[3][1] * stRightMatrix._2D[1][2] +
-    stLeftMatrix._2D[3][2] * stRightMatrix._2D[2][2] +
-    stLeftMatrix._2D[3][3] * stRightMatrix._2D[3][2];
-  Result._2D[0][3] :=
-    stLeftMatrix._2D[0][0] * stRightMatrix._2D[0][3] +
-    stLeftMatrix._2D[0][1] * stRightMatrix._2D[1][3] +
-    stLeftMatrix._2D[0][2] * stRightMatrix._2D[2][3] +
-    stLeftMatrix._2D[0][3] * stRightMatrix._2D[3][3];
-  Result._2D[1][3] :=
-    stLeftMatrix._2D[1][0] * stRightMatrix._2D[0][3] +
-    stLeftMatrix._2D[1][1] * stRightMatrix._2D[1][3] +
-    stLeftMatrix._2D[1][2] * stRightMatrix._2D[2][3] +
-    stLeftMatrix._2D[1][3] * stRightMatrix._2D[3][3];
-  Result._2D[2][3] :=
-    stLeftMatrix._2D[2][0] * stRightMatrix._2D[0][3] +
-    stLeftMatrix._2D[2][1] * stRightMatrix._2D[1][3] +
-    stLeftMatrix._2D[2][2] * stRightMatrix._2D[2][3] +
-    stLeftMatrix._2D[2][3] * stRightMatrix._2D[3][3];
-  Result._2D[3][3] :=
-    stLeftMatrix._2D[3][0] * stRightMatrix._2D[0][3] +
-    stLeftMatrix._2D[3][1] * stRightMatrix._2D[1][3] +
-    stLeftMatrix._2D[3][2] * stRightMatrix._2D[2][3] +
-    stLeftMatrix._2D[3][3] * stRightMatrix._2D[3][3];
-
-
-//  for i := 0 to 3 do
-//    for j := 0 to 3 do
-//      for k := 0 to 3 do
-//        Result._2D[i][j] := Result._2D[i][j] + stLeftMatrix._2D[i][k] * stRightMatrix._2D[k][j];
-end;
-
-class operator TMatrix4x4.Subtract (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+class operator TMatrix4x4.Subtract(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
-  for i := 0 to 15 do
-  begin
-    Result._1D[i] := stLeftMatrix._1D[i] - right;
-  end;
+  Result := DGLE_Types.Subtract(Self, stRightMatrix);
 end;
 
-class operator TMatrix4x4.Add (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+class operator TMatrix4x4.Multiply(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+begin
+  Result := DGLE_Types.Multiply(Self, stRightMatrix);
+end;
+
+class operator TMatrix4x4.Add(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
-  for i := 0 to 15 do
-  begin
-    Result._1D[i] := stLeftMatrix._1D[i] + right;
-  end;
+  Result := DGLE_Types.Add(Self, right);
 end;
 
-class operator TMatrix4x4.Divide (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+class operator TMatrix4x4.Subtract(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := MatrixIdentity();
-  for i := 0 to 15 do
-  begin
-    Result._1D[i] := stLeftMatrix._1D[i] / right;
-  end;
+  Result := DGLE_Types.Subtract(Self, right);
 end;
 
-class operator TMatrix4x4.Multiply (const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+class operator TMatrix4x4.Divide(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
 var i: Integer;
 begin
-  Result := Matrix
+  Result := DGLE_Types.Divide(Self, right);
 end;
 
-constructor TTransformStack.Create;
+class operator TMatrix4x4.Multiply(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+var i: Integer;
+begin
+  Result := DGLE_Types.Multiply(Self, right);
+end;
+
+constructor TTransformStack.Create();
 begin
   inherited;
-  stack := TStack<TMatrix>.Create();
+  Stack := TStack<TMatrix>.Create();
 end;
 
 procedure TTransformStack.Clear(const base_transform: TMatrix4x4);
 begin
-  while stack.Count <> 0  do
+  while Stack.Count <> 0  do
     Pop();
   SetTop(base_transform);
 end;
@@ -2016,92 +1939,97 @@ end;
 constructor TTransformStack.Create(const base_transform: TMatrix4x4);
 begin
   Create;
-  stack.Push(base_transform);
+  Stack.Push(base_transform);
 end;
 
-procedure TTransformStack.Push;
+destructor TTransformStack.Destroy();
 begin
-  stack.Push(stack.Peek());
+  Stack.Free();
+  inherited;
 end;
 
-procedure TTransformStack.Pop;
+procedure TTransformStack.Push();
 begin
-if stack.Count > 1 then
-  stack.Pop();
+  Stack.Push(Stack.Peek());
 end;
 
-function TTransformStack.GetTop: TMatrix4x4;
+procedure TTransformStack.Pop();
 begin
-    Result := stack.Peek();
+  if Stack.Count > 1 then
+    Stack.Pop();
+end;
+
+function TTransformStack.GetTop(): TMatrix4x4;
+begin
+  Result := Stack.Peek();
 end;
 
 procedure TTransformStack.SetTop(const Value: TMatrix4x4) ;
 begin
-  stack.Pop();
+  Stack.Pop();
   Stack.Push(Value);
 end;
 
 procedure TTransformStack.MultGlobal(const transform: TMatrix4x4);
 begin
-  stack.Push(MatrixMul(stack.Pop, transform));
+  Stack.Push(MatrixMul(Stack.Pop(), transform));
 end;
 
 procedure TTransformStack.MultLocal(const transform: TMatrix4x4);
 begin
-  stack.Push(MatrixMul(transform, stack.Pop));
+  Stack.Push(MatrixMul(transform, Stack.Pop()));
 end;
 
 {$ELSE}
 
-constructor TTransformStack.Create;
+constructor TTransformStack.Create();
 begin
   inherited;
-    SetLength(stack, 0);
+  SetLength(Stack, 0);
 end;
 
 procedure TTransformStack.Clear(const base_transform: TMatrix4x4);
 begin
-  SetLength(stack, 1);
+  SetLength(Stack, 1);
   SetTop(base_transform);
 end;
 
 constructor TTransformStack.Create(const base_transform: TMatrix4x4);
 begin
-  Create;
-  SetLength(stack, 1);
-  stack[0] := base_transform;
+  SetLength(Stack, 1);
+  Stack[0] := base_transform;
 end;
 
-function TTransformStack.GetTop: TMatrix4x4;
+function TTransformStack.GetTop(): TMatrix4x4;
 begin
-  Result := stack[High(stack)];
+  Result := Stack[High(Stack)];
 end;
 
 procedure TTransformStack.MultGlobal(const transform: TMatrix);
 begin
-  stack[High(stack)] := MatrixMul(stack[High(stack)], transform);
+  Stack[High(Stack)] := MatrixMul(Stack[High(Stack)], transform);
 end;
 
 procedure TTransformStack.MultLocal(const transform: TMatrix);
 begin
-  stack[High(stack)] := MatrixMul(transform, stack[High(stack)]);
+  Stack[High(Stack)] := MatrixMul(transform, Stack[High(Stack)]);
 end;
 
-procedure TTransformStack.Pop;
+procedure TTransformStack.Pop();
 begin
-if(System.Length(stack) > 1) then
-  SetLength(stack, System.Length(stack) - 1);
+  if(System.Length(Stack) > 1) then
+    SetLength(Stack, System.Length(Stack) - 1);
 end;
 
-procedure TTransformStack.Push;
+procedure TTransformStack.Push();
 begin
-  SetLength(stack, System.Length(stack) + 1);
-  stack[High(stack)] := stack[High(stack) - 1];
+  SetLength(Stack, System.Length(Stack) + 1);
+  Stack[High(Stack)] := Stack[High(Stack) - 1];
 end;
 
 procedure TTransformStack.SetTop(const Value: TMatrix4x4);
 begin
-  stack[High(stack)] := Value;
+  Stack[High(Stack)] := Value;
 end;
 
 {$IFEND}
@@ -2184,9 +2112,11 @@ begin
   Result.pParam3    := param3;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}Clear({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND});
+
+
+procedure Clear(var AVar: TVariant);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   begin
     _type := DVT_UNKNOWN;
     if Assigned(_Data) then
@@ -2195,33 +2125,33 @@ begin
   end;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetInt({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}iVal: Integer);
+procedure SetInt(var AVar: TVariant; iVal: Integer);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   begin
-    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    DGLE_Types.Clear(AVar);
     _type := DVT_INT;
     GetMem(_Data, SizeOf(Integer));
     CopyMemory(_Data, @iVal, SizeOf(Integer));
   end;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetFloat({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}fVal: Single);
+procedure SetFloat(var AVar: TVariant; fVal: Single);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   begin
-    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    DGLE_Types.Clear(AVar);
     _type := DVT_FLOAT;
     GetMem(_Data, SizeOf(Single));
     CopyMemory(_Data, @fVal, SizeOf(Single));
   end;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetBool({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}bVal: Boolean);
+procedure SetBool(var AVar: TVariant; bVal: Boolean);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   begin
-    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    DGLE_Types.Clear(AVar);
     _type := DVT_BOOL;
     GetMem(_Data, SizeOf(LongBool));
     if bVal then
@@ -2231,21 +2161,21 @@ begin
   end;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetPointer({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pPointer: Pointer);
+procedure SetPointer(var AVar: TVariant; pPointer: Pointer);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do 
   begin
-    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    DGLE_Types.Clear(AVar);
     _type := DVT_POINTER;
     _Data := pPointer;
   end;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}SetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}pData: Pointer; uiDataSize: Cardinal);
+procedure SetData(var AVar: TVariant; pData: Pointer; uiDataSize: Cardinal);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   begin
-    Clear({$IF COMPILERVERSION < 18}AVar{$IFEND});
+    DGLE_Types.Clear(AVar);
     _type := DVT_DATA;
     GetMem(_Data, uiDataSize + SizeOf(Integer));
     CopyMemory(_Data, @uiDataSize, SizeOf(Integer));
@@ -2253,45 +2183,45 @@ begin
   end;
 end;
 
-function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsInt({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Integer;
+function AsInt(var AVar: TVariant): Integer;
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   if (_type <> DVT_INT) then
     Result := 0
   else
     CopyMemory(@Result, _Data, SizeOf(Integer));
 end;
 
-function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsFloat({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Single;
+function AsFloat(var AVar: TVariant): Single;
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   if (_type <> DVT_FLOAT) then
     Result := 0.
   else
     CopyMemory(@Result, _Data, SizeOf(Single));
 end;
 
-function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsBool({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Boolean;
+function AsBool(var AVar: TVariant): Boolean;
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   if (_type <> DVT_BOOL) then
     Result := False
   else
     Result := not (PInteger(_Data)^ = 0);
 end;
 
-function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}AsPointer({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): Pointer;
+function AsPointer(var AVar: TVariant): Pointer;
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   if (_type <> DVT_POINTER) then
     Result := nil
   else
     Result := _Data;
 end;
 
-procedure {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}GetData({$IF COMPILERVERSION < 18}var AVar: TVariant;{$IFEND}out pData: Pointer; out uiDataSize: Cardinal);
+procedure GetData(var AVar: TVariant; out pData: Pointer; out uiDataSize: Cardinal);
 begin
-  {$IF COMPILERVERSION < 18}with AVar do {$IFEND}
+  with AVar do
   if (_type <> DVT_DATA) then
   begin
     pData := nil;
@@ -2306,29 +2236,92 @@ begin
   end;
 end;
 
-function {$IF COMPILERVERSION >= 18}TVariant.{$IFEND}GetType({$IF COMPILERVERSION < 18}var AVar: TVariant{$IFEND}): E_DGLE_VARIANT_TYPE;
+function GetType(var AVar: TVariant): E_DGLE_VARIANT_TYPE;
 begin
-  Result := {$IF COMPILERVERSION < 18}AVar.{$IFEND}_type;
+  Result := AVar._type;
 end;
+
+{$IF COMPILERVERSION >= 18}
+
+procedure TVariant.Clear();
+begin
+  DGLE_Types.Clear(Self);
+end;
+
+procedure TVariant.SetInt(iVal: Integer);
+begin
+  DGLE_Types.SetInt(Self, iVal);
+end;
+
+procedure TVariant.SetFloat(fVal: Single);
+begin
+  DGLE_Types.SetFloat(Self, fVal);
+end;
+
+procedure TVariant.SetBool(bVal: Boolean);
+begin
+  DGLE_Types.SetBool(Self, bVal);
+end;
+
+procedure TVariant.SetPointer(pPointer: Pointer);
+begin
+  DGLE_Types.SetPointer(Self, pPointer);
+end;
+
+procedure TVariant.SetData(pData: Pointer; uiDataSize: Cardinal);
+begin
+  DGLE_Types.SetData(Self, pData, uiDataSize);
+end;
+
+function TVariant.AsInt(): Integer;
+begin
+  DGLE_Types.AsInt(Self);
+end;
+
+function TVariant.AsFloat(): Single;
+begin
+  DGLE_Types.AsFloat(Self);
+end;
+
+function TVariant.AsBool(): Boolean;
+begin
+  DGLE_Types.AsBool(Self);
+end;
+
+function TVariant.AsPointer(): Pointer;
+begin
+  DGLE_Types.AsPointer(Self);
+end;
+
+procedure TVariant.GetData(out pData: Pointer; out uiDataSize: Cardinal);
+begin
+  DGLE_Types.GetData(Self, pData, uiDataSize);
+end;
+
+function TVariant.GetType(): E_DGLE_VARIANT_TYPE;
+begin
+  Result := _type;
+end;
+{$IFEND}
 
 {$IF COMPILERVERSION >= 20}
 class operator TVariant.Implicit(AVar: TVariant): Integer;
 begin
-  Result := AVar.AsInt;
+  Result := AVar.AsInt();
 end;
 
 class operator TVariant.Implicit(AVar: TVariant): Single;
 begin
-  Result := AVar.AsFloat;
+  Result := AVar.AsFloat();
 end;
 
 class operator TVariant.Implicit(AVar: TVariant): Boolean;
 begin
-  Result := AVar.AsBool;
+  Result := AVar.AsBool();
 end;
 class operator TVariant.Implicit(AVar: TVariant): Pointer;
 begin
-  Result := AVar.AsPointer;
+  Result := AVar.AsPointer();
 end;
 {$IFEND}
 

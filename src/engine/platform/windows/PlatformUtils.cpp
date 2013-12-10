@@ -153,7 +153,7 @@ TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL: 
 		int delta;
 		delta = GET_WHEEL_DELTA_WPARAM(wParam);
-		return TWindowMessage(WMT_MOUSE_WHEEL, 0, 0, &delta);
+		return TWindowMessage(WMT_MOUSE_WHEEL, 0, 0, (PINT)delta);
 
 	default: 
 		MSG msg;

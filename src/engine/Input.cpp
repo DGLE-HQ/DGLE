@@ -198,7 +198,7 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 
 		case WMT_MOUSE_WHEEL: 
 			
-			_stMsts.iDeltaWheel = *((int*)stMsg.pParam3);
+			_stMsts.iDeltaWheel = (int)stMsg.pParam3;
 			
 			break;
 

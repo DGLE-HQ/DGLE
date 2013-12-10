@@ -105,6 +105,12 @@ public:
 		return S_OK;
 	}
 
+	DGLE_RESULT DGLE_API SetMessage(const TWindowMessage &stWinMsg)
+	{
+		_stMessage = stWinMsg;
+		return S_OK;
+	}
+
 	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_WINDOW_MESSAGE;
@@ -443,8 +449,12 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 void CCore::_MessageProc(const TWindowMessage &stMsg)
 {
 	size_t i;
-
-	switch (stMsg.eMessage)
+	CEvWinMessage Ev = CEvWinMessage(stMsg);
+	CastEvent(ET_ON_WINDOW_MESSAGE, (IBaseEvent*)&Ev); 
+	TWindowMessage stTmpMsg;
+	Ev.GetMessage(stTmpMsg);
+	
+	switch (stTmpMsg.eMessage)
 	{
 	case WMT_REDRAW:
 
@@ -634,8 +644,6 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		break;
 	}
-
-	CastEvent(ET_ON_WINDOW_MESSAGE, (IBaseEvent*)&CEvWinMessage(stMsg));
 }
 
 void CCore::_OnTimer()
