@@ -11,10 +11,15 @@ You can find solutions and projects files in "build/<your platform>/" folder.
   Windows
 -----------
 
-To build engine for Windows you should have at least Microsoft Visual Studio 2010 Express for C++ and C# or any later version.
+To build engine for Windows you should have at least Microsoft Visual Studio 2010 Express
+for C++ and C# or any later version.
+Is better to have DirectX SDK installed (engine uses August 2009 version or any later).
+If you don't want to use DirectX SDK you should uncomment "#define NO_DIRECTX" line
+in "src/engine/Common.h" but some features could be unavailable.
+
+To build tools you must install "Gtk# for .NET" (2.10.x or later) from here:
+http://www.go-mono.com/mono-downloads .
 You can use MonoDevelop as well for building .Net utilities and tools.
-Is better to have DirectX SDK installed, engine uses August 2009 version. If you don't want to use DirectX SDK you should uncomment
-"#define NO_DIRECTX" line in "src/engine/Common.h" but some features could be unavailable.
 
 ===============================================================================
    Linux
