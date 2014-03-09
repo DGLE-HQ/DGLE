@@ -448,13 +448,16 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 
 void CCore::_MessageProc(const TWindowMessage &stMsg)
 {
-	size_t i;
-	CEvWinMessage Ev = CEvWinMessage(stMsg);
-	CastEvent(ET_ON_WINDOW_MESSAGE, (IBaseEvent*)&Ev); 
-	TWindowMessage stTmpMsg;
-	Ev.GetMessage(stTmpMsg);
+	CEvWinMessage msg_hook_event = CEvWinMessage(stMsg);
 	
-	switch (stTmpMsg.eMessage)
+	CastEvent(ET_ON_WINDOW_MESSAGE, (IBaseEvent*)&msg_hook_event); 
+	
+	TWindowMessage msg;
+	msg_hook_event.GetMessage(msg);
+	
+	size_t i;
+	
+	switch (msg.eMessage)
 	{
 	case WMT_REDRAW:
 
@@ -553,7 +556,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_ACTIVATED:
 
-		if (stMsg.ui32Param1 == 1)
+		if (msg.ui32Param1 == 1)
 			break;
 
 		_bPause = false;	
@@ -569,7 +572,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_DEACTIVATED:
 
-		if (stMsg.ui32Param1 == 1)
+		if (msg.ui32Param1 == 1)
 			break;
 
 		_bPause = true;
@@ -604,8 +607,8 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_SIZE:
 
-		_stWin.uiWidth = stMsg.ui32Param1;
-		_stWin.uiHeight = stMsg.ui32Param2;
+		_stWin.uiWidth = msg.ui32Param1;
+		_stWin.uiHeight = msg.ui32Param2;
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
 		break;
@@ -614,14 +617,14 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		if (!(_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY))
 		{
-			if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
+			if (msg.ui32Param1 == c_eFScreenKeyFirst[0] || msg.ui32Param1 == c_eFScreenKeyFirst[1])
 				_bCmdKeyIsPressed = false;
 
-			if (stMsg.ui32Param1 == c_eFScreenKeySecond)
+			if (msg.ui32Param1 == c_eFScreenKeySecond)
 				_bFScreenKeyIsPressed = false;
 		}
 
-		if (stMsg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
+		if (msg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
 			Console()->Visible(true);
 
 		break;
@@ -631,7 +634,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		if (_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY)
 			break;
 
-		if (stMsg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
+		if (msg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
 		{
 			_bFScreenKeyIsPressed = true;
 			_stWndToApply = _stWin;
@@ -639,7 +642,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 			_ChangeWinMode(_stWndToApply, false);
 		}
 
-		if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
+		if (msg.ui32Param1 == c_eFScreenKeyFirst[0] || msg.ui32Param1 == c_eFScreenKeyFirst[1])
 			_bCmdKeyIsPressed = true;
 
 		break;
