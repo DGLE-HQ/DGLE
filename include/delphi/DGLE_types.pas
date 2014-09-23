@@ -1699,9 +1699,9 @@ begin
   Result._2D[1, 3] := stMatrix._2D[1, 3];
   Result._2D[2, 3] := stMatrix._2D[2, 3];
   Result._2D[3, 3] := stMatrix._2D[3, 3];
-  Result._2D[0, 0] := Sign(stMatrix._2D[0, 0]) * Length(Point3(stMatrix._2D[0, 0], stMatrix._2D[1, 0], stMatrix._2D[2, 0]));
-  Result._2D[1, 1] := Sign(stMatrix._2D[1, 1]) * Length(Point3(stMatrix._2D[0, 1], stMatrix._2D[1, 1], stMatrix._2D[2, 1]));
-  Result._2D[2, 2] := Sign(stMatrix._2D[2, 2]) * Length(Point3(stMatrix._2D[0, 2], stMatrix._2D[1, 2], stMatrix._2D[2, 2]));
+  Result._2D[0, 0] := Length(Point3(stMatrix._2D[0, 0], stMatrix._2D[1, 0], stMatrix._2D[2, 0]));
+  Result._2D[1, 1] := Length(Point3(stMatrix._2D[0, 1], stMatrix._2D[1, 1], stMatrix._2D[2, 1]));
+  Result._2D[2, 2] := Length(Point3(stMatrix._2D[0, 2], stMatrix._2D[1, 2], stMatrix._2D[2, 2]));
 end;
 
 function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;

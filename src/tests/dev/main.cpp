@@ -95,11 +95,6 @@ void DGLE_API Update(void *pParameter)
 
 void DGLE_API Render(void *pParameter)
 {
-/*
-	for (uint i = 0; i < 10000; ++i)
-		//glLoadMatrixf(MatrixIdentity()._1D);
-		pRender3D->SetMatrix(MatrixIdentity());
-*/
 	pRender3D->MultMatrix(MatrixTranslate(TVector3(0.f, 0.f, -2.5f)));
 	pRender3D->MultMatrix(MatrixRotate((float)uiCounter, TVector3(0.2f, 0.4f, 0.1f)));
 

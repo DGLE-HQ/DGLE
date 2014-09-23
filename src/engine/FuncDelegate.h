@@ -111,8 +111,7 @@ public:
 		_TFunc tmp;
 		tmp.pParameter = pParameter;
 		tmp.pFunc = pFunc;
-		_funcList.insert(_funcList.begin(), tmp); // ToDo: was change for mouse wheel to work correct but need to be reconsidered cause can possible create errors in future.
-		//_funcList.push_back(tmp);
+		_funcList.push_back(tmp);
 	}
 
 	void Remove(T1 pFunc, void *pParameter)

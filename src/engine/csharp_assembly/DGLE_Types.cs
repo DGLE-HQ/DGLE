@@ -1143,9 +1143,9 @@ namespace DGLE
         public static TMatrix4x4 MatrixBillboard(TMatrix4x4 stMatrix)
         {
             return new TMatrix4x4(
-                Math.Sign(stMatrix._00) * new TPoint3(stMatrix._00, stMatrix._10, stMatrix._20).Length(), 0f, 0f, stMatrix._03,
-                0f, Math.Sign(stMatrix._11) * new TPoint3(stMatrix._01, stMatrix._11, stMatrix._21).Length(), 0f, stMatrix._13,
-                0f, 0f, Math.Sign(stMatrix._22) * new TPoint3(stMatrix._02, stMatrix._12, stMatrix._22).Length(), stMatrix._23,
+                new TPoint3(stMatrix._00, stMatrix._10, stMatrix._20).Length(), 0f, 0f, stMatrix._03,
+                0f, new TPoint3(stMatrix._01, stMatrix._11, stMatrix._21).Length(), 0f, stMatrix._13,
+                0f, 0f, new TPoint3(stMatrix._02, stMatrix._12, stMatrix._22).Length(), stMatrix._23,
                 stMatrix._30, stMatrix._31, stMatrix._32, stMatrix._33);
         }
     };

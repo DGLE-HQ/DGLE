@@ -241,8 +241,10 @@ void DGLE_API Render(void *pParameter)
 	
 	// now we set new current matrix
 	pRender3D->SetMatrix(			
+		MatrixScale(TVector3((owlGoLeft ? -1.f : 1.f), 1.f, 1.f)) * // the way to mirror sprite picture
+		
 		MatrixBillboard( // this function will remove any rotation from given matrix
-		MatrixScale(TVector3((owlGoLeft ? -1.f : 1.f) /* the way to mirror sprite picture */ * 0.35f, 0.35f, 0.35f)) *
+		MatrixScale(TVector3(0.35f, 0.35f, 0.35f)) *
 		MatrixTranslate(TVector3(owlX, 1.f, -0.35f)) *
 		cur_matrix)
 		);

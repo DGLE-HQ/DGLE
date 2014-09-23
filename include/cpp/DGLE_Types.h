@@ -1179,9 +1179,9 @@ namespace DGLE
 	inline TMatrix4x4 MatrixBillboard(const TMatrix4x4 &stMatrix)
 	{
 		return TMatrix4x4(
-			signf(stMatrix._2D[0][0]) * TVector3(stMatrix._2D[0][0], stMatrix._2D[1][0], stMatrix._2D[2][0]).Length(), 0.f, 0.f, stMatrix._2D[0][3],
-			0.f, signf(stMatrix._2D[1][1]) * TVector3(stMatrix._2D[0][1], stMatrix._2D[1][1], stMatrix._2D[2][1]).Length(), 0.f, stMatrix._2D[1][3],
-			0.f, 0.f, signf(stMatrix._2D[2][2]) * TVector3(stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2]).Length(), stMatrix._2D[2][3],
+			TVector3(stMatrix._2D[0][0], stMatrix._2D[1][0], stMatrix._2D[2][0]).Length(), 0.f, 0.f, stMatrix._2D[0][3],
+			0.f, TVector3(stMatrix._2D[0][1], stMatrix._2D[1][1], stMatrix._2D[2][1]).Length(), 0.f, stMatrix._2D[1][3],
+			0.f, 0.f, TVector3(stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2]).Length(), stMatrix._2D[2][3],
 			stMatrix._2D[3][0],	stMatrix._2D[3][1],	stMatrix._2D[3][2],	stMatrix._2D[3][3]);
 	}
 
