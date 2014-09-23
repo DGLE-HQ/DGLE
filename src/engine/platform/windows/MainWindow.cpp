@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		08.04.2013 (c)Korotkov Andrey
+\date		24.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -63,7 +63,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 
 	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
 
-	return (int) st_msg.wParam;
+	return (int)st_msg.wParam;
 }
 
 bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
@@ -430,12 +430,18 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 		}
 	}
 
+	bool is_visible = IsWindowVisible(_hWnd) == TRUE;
+
 	SetWindowPos(_hWnd, HWND_TOP, top_x, top_y, rc.right - rc.left, rc.bottom - rc.top, SWP_FRAMECHANGED |
-		(IsWindowVisible(_hWnd) == FALSE && IsIconic(_hWnd) == FALSE ? SWP_SHOWWINDOW : SWP_NOACTIVATE));
+		(!is_visible && IsIconic(_hWnd) == FALSE ? SWP_SHOWWINDOW : SWP_NOACTIVATE));
 
 	if (bSetFocus)
 	{
 		SetForegroundWindow(_hWnd);
+
+		if (!is_visible)
+			_pDelMessageProc->Invoke(TWindowMessage(WMT_PRESENT));
+
 		SetCursorPos(top_x + (rc.right - rc.left) / 2, top_y + (rc.bottom - rc.top) / 2);
 	}
 

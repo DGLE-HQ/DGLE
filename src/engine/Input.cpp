@@ -127,11 +127,11 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 			if (!_bFocused)
 				break;
 			
-			memset(_abKeys, 0, 256*sizeof(bool));
-			_stMsts.bLeftButton		= false;
-			_stMsts.bRightButton	= false;
-			_stMsts.bMiddleButton	= false;
-			_bFocused				= false;
+			memset(_abKeys, 0, 256 * sizeof(bool));
+			_stMsts.bLeftButton = false;
+			_stMsts.bRightButton = false;
+			_stMsts.bMiddleButton = false;
+			_bFocused = false;
 			
 			if (_bExclusive)
 				ClipCursor(0, 0, 0, 0);

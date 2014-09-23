@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.02.2013 (c)Korotkov Andrey
+\date		24.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -546,8 +546,16 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 									str += "Server 2012 ";
 							}
 							else
-								if (osvi.wProductType == VER_NT_WORKSTATION)
-									str += "Server";
+								if (osvi.dwMinorVersion == 3)
+								{
+									if (osvi.wProductType == VER_NT_WORKSTATION)
+										str += "8.1 ";
+									else
+										str += "Server 2012 R2";
+								}
+								else
+									if (osvi.wProductType == VER_NT_WORKSTATION)
+										str += "Server";
 
 					DWORD os_type;
 					typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
