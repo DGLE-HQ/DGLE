@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.09.2012 (c)Korotkov Andrey
+\date		25.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -101,7 +101,8 @@ void CInput::_Update()
 	_uiOldMouseX = _stMsts.iX;
 	_uiOldMouseY = _stMsts.iY;
 	
-	_stMsts.iDeltaWheel = 0;
+	_stMsts.iDeltaWheel = _iDeltaWheel;
+	_iDeltaWheel = 0;
 }
 
 void CInput::_ClipCursor()
@@ -165,6 +166,14 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 			
 			break;
 
+		case WMT_MOUSE_LEAVE:
+
+			_stMsts.bLeftButton = false;
+			_stMsts.bRightButton = false;
+			_stMsts.bMiddleButton = false;
+
+			break;
+
 		case WMT_MOUSE_MOVE:	
 			
 			_stMsts.iX = stMsg.ui32Param1;
@@ -198,7 +207,7 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 
 		case WMT_MOUSE_WHEEL: 
 			
-			_stMsts.iDeltaWheel = (int)stMsg.pParam3;
+			_iDeltaWheel = (int)stMsg.pParam3;
 			
 			break;
 

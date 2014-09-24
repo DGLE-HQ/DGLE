@@ -162,6 +162,7 @@ namespace DGLE
         WMT_KEY_UP,
         WMT_KEY_DOWN,
         WMT_ENTER_CHAR,
+		WMT_MOUSE_LEAVE,
         WMT_MOUSE_MOVE,
         WMT_MOUSE_DOWN,
         WMT_MOUSE_UP,

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.09.2014 (c)Korotkov Andrey
+\date		25.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -132,6 +132,9 @@ TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		return TWindowMessage(WMT_MOUSE_MOVE, LOWORD(lParam), HIWORD(lParam));
 
+	case WM_NCMOUSELEAVE:
+		return TWindowMessage(WMT_MOUSE_LEAVE);
+
 	case WM_LBUTTONDOWN:
 		return TWindowMessage(WMT_MOUSE_DOWN, 0);
 
@@ -215,6 +218,12 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 		Msg = WM_SIZE;
 		wParam = SIZE_MINIMIZED;
 		lParam = MAKELPARAM((WORD)msg.ui32Param1, (WORD)msg.ui32Param2);
+		break;
+
+	case WMT_MOUSE_LEAVE:
+		Msg = WM_NCMOUSELEAVE;
+		wParam = 0;
+		lParam = 0;
 		break;
 
 	case WMT_MOVE:
@@ -498,23 +507,23 @@ HRESULT GetStringValue(IDxDiagContainer* pObject, WCHAR* wstrName, TCHAR* strVal
 
 BOOL IsWindowsVersionOrGreater(DWORD major, DWORD minor)
 {
-    OSVERSIONINFOEX osvi = {sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0};
-    ULONGLONG const condition_mask = VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL), VER_MINORVERSION, VER_GREATER_EQUAL);
+	OSVERSIONINFOEX osvi = {sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0};
+	ULONGLONG const condition_mask = VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL), VER_MINORVERSION, VER_GREATER_EQUAL);
 
-    osvi.dwMajorVersion = major;
-    osvi.dwMinorVersion = minor;
+	osvi.dwMajorVersion = major;
+	osvi.dwMinorVersion = minor;
 
-    return VerifyVersionInfo(&osvi, VER_MAJORVERSION | VER_MINORVERSION, condition_mask);
+	return VerifyVersionInfo(&osvi, VER_MAJORVERSION | VER_MINORVERSION, condition_mask);
 }
 
 BOOL EqualsProductType(BYTE productType)
 {
-    OSVERSIONINFOEX osvi;
-    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    osvi.wProductType = productType;
-    ULONGLONG condition_mask = VerSetConditionMask(0, VER_PRODUCT_TYPE, VER_EQUAL);
-    return VerifyVersionInfo(&osvi, VER_PRODUCT_TYPE, condition_mask);
+	OSVERSIONINFOEX osvi;
+	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	osvi.wProductType = productType;
+	ULONGLONG condition_mask = VerSetConditionMask(0, VER_PRODUCT_TYPE, VER_EQUAL);
+	return VerifyVersionInfo(&osvi, VER_PRODUCT_TYPE, condition_mask);
 }
 
 void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
@@ -552,7 +561,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 			osvi.dwMajorVersion = StrToInt(ver.substr(0, pos));
 			osvi.dwMinorVersion = StrToInt(ver.substr(pos + 1, ver.size() - pos - 1));
 		}
-		
+
 		if (ret != ERROR_SUCCESS || osvi.dwMajorVersion == 0)
 			for (uint32 i = osvi.dwMajorVersion; i < osvi.dwMajorVersion + 3; ++i)
 				for (uint32 j = 0; j < 6; ++j)
@@ -642,12 +651,6 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 										str += "8.1 ";
 									else
 										str += "Server 2012 R2";
-								}
-								else
-									if (osvi.wProductType == VER_NT_WORKSTATION)
-										str += " 8.1 ";
-									else
-										str += " Server 2012 R2 ";
 								}
 								else
 									if (osvi.wProductType != VER_NT_WORKSTATION)
@@ -857,8 +860,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	stat.dwLength = sizeof(stat);
 	GlobalMemoryStatusEx(&stat);
 
-	uint64	ram_free = (uint64)ceil(stat.ullAvailPhys / 1024.0 / 1024.0),
-			ram_total = (uint64)ceil(stat.ullTotalPhys / 1024.0 / 1024.0);
+	uint64 ram_free = (uint64)ceil(stat.ullAvailPhys / 1024.0 / 1024.0),
+	ram_total = (uint64)ceil(stat.ullTotalPhys / 1024.0 / 1024.0);
 
 	str = "RAM Total: " + UInt64ToStr(ram_total) + " MiB";
 	result += str + "\n\t";

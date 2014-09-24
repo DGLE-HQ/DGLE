@@ -66,10 +66,11 @@ type
     WMT_KEY_UP      = 13,
     WMT_KEY_DOWN    = 14,
     WMT_ENTER_CHAR  = 15,
-    WMT_MOUSE_MOVE  = 16,
-    WMT_MOUSE_DOWN  = 17,
-    WMT_MOUSE_UP    = 18,
-    WMT_MOUSE_WHEEL = 19
+	WMT_MOUSE_LEAVE	= 16,
+    WMT_MOUSE_MOVE  = 17,
+    WMT_MOUSE_DOWN  = 18,
+    WMT_MOUSE_UP    = 19,
+    WMT_MOUSE_WHEEL = 20
   );
 
 // Variant data type definiton //

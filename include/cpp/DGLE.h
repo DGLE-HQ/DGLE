@@ -1,7 +1,7 @@
 /**
 \file		DGLE.h
 \author		Korotkov Andrey aka DRON
-\version	2:0.3.0
+\version	2:0.3.5
 \date		27.04.2013 (c)Korotkov Andrey
 
 \brief		Main DGLE engine header.
@@ -117,7 +117,7 @@ This is simplest DGLE application for Windows.
 /** Defines DGLE version string. 
 	\warning Do not edit!
 */
-#define _DGLE_VER_ "2:0.3.0"
+#define _DGLE_VER_ "2:0.3.5"
  
 /** Defines DGLE version integer. 
 	\warning Do not edit!

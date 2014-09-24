@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.09.2012 (c)Korotkov Andrey
+\date		25.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,7 +31,7 @@ class CInput: private CBaseInput, public IInput
 
 	bool		 _abKeys[256];
 	TMouseStates _stMsts;
-	int			 _uiOldMouseX, _uiOldMouseY;
+	int			 _uiOldMouseX, _uiOldMouseY, _iDeltaWheel;
 
 	void		 _ClipCursor();
 	void		 _MessageProc(const TWindowMessage &stMsg);
