@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.02.2013 (c)Korotkov Andrey
+\date		24.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -496,19 +496,109 @@ HRESULT GetStringValue(IDxDiagContainer* pObject, WCHAR* wstrName, TCHAR* strVal
 }
 #endif
 
+BOOL IsWindowsVersionOrGreater(DWORD major, DWORD minor)
+{
+    OSVERSIONINFOEX osvi = {sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0};
+    ULONGLONG const condition_mask = VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL), VER_MINORVERSION, VER_GREATER_EQUAL);
+
+    osvi.dwMajorVersion = major;
+    osvi.dwMinorVersion = minor;
+
+    return VerifyVersionInfo(&osvi, VER_MAJORVERSION | VER_MINORVERSION, condition_mask);
+}
+
+BOOL EqualsProductType(BYTE productType)
+{
+    OSVERSIONINFOEX osvi;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    osvi.wProductType = productType;
+    ULONGLONG condition_mask = VerSetConditionMask(0, VER_PRODUCT_TYPE, VER_EQUAL);
+    return VerifyVersionInfo(&osvi, VER_PRODUCT_TYPE, condition_mask);
+}
+
 void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 {
 	string result = "System Information\n\t";
 
 	OSVERSIONINFOEX osvi;
-	bool is_ok = true;
-
-	string str = "Operating System: ";
-
 	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
-	is_ok = GetVersionEx((OSVERSIONINFO *) &osvi) != 0;
+	bool is_ok = true;
+
+	if (IsWindowsVersionOrGreater(6, 3) != FALSE) // if is Windows 8.1 or greater avoid deprecated API
+	{
+		osvi.dwPlatformId = VER_PLATFORM_WIN32_NT;
+		osvi.wProductType = EqualsProductType(VER_NT_WORKSTATION) != FALSE ? VER_NT_WORKSTATION : VER_NT_SERVER;
+		
+		HKEY h_key;
+		uint32 dw_type;
+		uint32 dw_size;
+
+		int32 ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &h_key);
+
+		dw_size = 0;
+		ret = RegQueryValueEx(h_key, "CurrentVersion", NULL, &dw_type, NULL, &dw_size);
+		_ASSERT(dw_size > 0);
+
+		char *tmp_string = new char[dw_size];
+		ret = RegQueryValueEx(h_key, "CurrentVersion", NULL, &dw_type, (LPBYTE)tmp_string, &dw_size);
+
+		if (ret == ERROR_SUCCESS)
+		{
+			string ver(tmp_string);
+			const string::size_type pos = ver.find_first_of('.');
+			osvi.dwMajorVersion = StrToInt(ver.substr(0, pos));
+			osvi.dwMinorVersion = StrToInt(ver.substr(pos + 1, ver.size() - pos - 1));
+		}
+		
+		if (ret != ERROR_SUCCESS || osvi.dwMajorVersion == 0)
+			for (uint32 i = osvi.dwMajorVersion; i < osvi.dwMajorVersion + 3; ++i)
+				for (uint32 j = 0; j < 6; ++j)
+					if (IsWindowsVersionOrGreater(i, j) != FALSE)
+					{
+						if (i > osvi.dwMajorVersion)
+						{
+							osvi.dwMajorVersion = i;
+							osvi.dwMinorVersion = j;
+						}
+						else
+							if (j > osvi.dwMinorVersion)
+								osvi.dwMinorVersion = j;
+					}
+
+		delete[] tmp_string;
+
+		dw_size = 0;
+		ret = RegQueryValueEx(h_key, "CSDVersion", NULL, &dw_type, NULL, &dw_size);
+
+		if (ret == ERROR_SUCCESS)
+		{
+			_ASSERT(dw_size > 0);
+
+			if (dw_size <= sizeof(osvi.szCSDVersion))
+				RegQueryValueEx(h_key, "CSDVersion", NULL, &dw_type, (LPBYTE)osvi.szCSDVersion, &dw_size);
+		}
+
+		dw_size = 0;
+		ret = RegQueryValueEx(h_key, "CurrentBuildNumber", NULL, &dw_type, NULL, &dw_size);
+		_ASSERT(dw_size > 0);
+
+		tmp_string = new char[dw_size];
+		ret = RegQueryValueEx(h_key, "CurrentBuildNumber", NULL, &dw_type, (LPBYTE)tmp_string, &dw_size);
+
+		if (ret == ERROR_SUCCESS)
+			osvi.dwBuildNumber = StrToInt(string(tmp_string));
+
+		delete[] tmp_string;
+
+		RegCloseKey(h_key);
+	}
+	else
+		is_ok = GetVersionEx((OSVERSIONINFO*)&osvi) != FALSE;
+
+	string str = "Operating System: ";
 
 	if (!is_ok) 
 		str += "Couldn't get OS version!"; 
@@ -518,41 +608,49 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		{	
 				str += IntToStr(osvi.dwMajorVersion) + "." + IntToStr(osvi.dwMinorVersion) + " ";
 				
-				str += "\"Microsoft Windows ";
+				str += "\"Microsoft Windows";
 
 				if (osvi.dwMajorVersion == 6)
 				{
 					if (osvi.dwMinorVersion == 0)
 					{
 						if (osvi.wProductType == VER_NT_WORKSTATION)
-							str += "Vista ";
+							str += " Vista ";
 						else
-							str += "Server 2008 ";
+							str += " Server 2008 ";
 					}
 					else
 						if (osvi.dwMinorVersion == 1)
 						{
 							if (osvi.wProductType == VER_NT_WORKSTATION)
-								str += "7 ";
+								str += " 7 ";
 							else
-								str += "Server 2008 R2 ";
+								str += " Server 2008 R2 ";
 						}
 						else
 							if (osvi.dwMinorVersion == 2)
 							{
 								if (osvi.wProductType == VER_NT_WORKSTATION)
-									str += "8 ";
+									str += " 8 ";
 								else
-									str += "Server 2012 ";
+									str += " Server 2012 ";
 							}
 							else
-								if (osvi.wProductType == VER_NT_WORKSTATION)
-									str += "Server";
+								if (osvi.dwMinorVersion == 3)
+								{
+									if (osvi.wProductType == VER_NT_WORKSTATION)
+										str += " 8.1 ";
+									else
+										str += " Server 2012 R2 ";
+								}
+								else
+									if (osvi.wProductType != VER_NT_WORKSTATION)
+										str += " Server ";
 
 					DWORD os_type;
 					typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 					PGPI p_gpi;
-					p_gpi = (PGPI)GetProcAddress(GetModuleHandleA("kernel32.dll"), "GetProductInfo");
+					p_gpi = (PGPI)GetProcAddress(GetModuleHandle("kernel32.dll"), "GetProductInfo");
 					
 					if (p_gpi(osvi.dwMajorVersion, osvi.dwMinorVersion, 0, 0, &os_type) != 0)
 						switch ( os_type )
@@ -663,11 +761,11 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 								}
 								else							
-									if (osvi.wProductType == VER_NT_WORKSTATION)
+									if (osvi.wProductType != VER_NT_WORKSTATION)
 										str += "Server";
 					}
 
-				str+= "\" " + (string)osvi.szCSDVersion + " (Build " + IntToStr(osvi.dwBuildNumber) + ")";
+				str += "\"" + (strlen(osvi.szCSDVersion) > 0 ? " " + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + IntToStr(osvi.dwBuildNumber) + ")" : "");
 
 				if (osvi.dwMajorVersion >= 6)
 				{
@@ -677,7 +775,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 					typedef BOOL (WINAPI *PISWOW64)(HANDLE, PBOOL);
 					PISWOW64 p_is_wow;
 					BOOL b_is_wow = FALSE;
-					p_is_wow = (PISWOW64)GetProcAddress(GetModuleHandleA("kernel32"),"IsWow64Process");
+					p_is_wow = (PISWOW64)GetProcAddress(GetModuleHandle("kernel32"),"IsWow64Process");
 					if (NULL != p_is_wow) p_is_wow(GetCurrentProcess(), &b_is_wow);
 
 					if (b_is_wow)
@@ -687,7 +785,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 #endif
 				}
 
-		} else 
+		}
+		else 
 			str += "Unsupported or unknown Microsoft Windows version.";
 
 		result += str + "\n\t";
@@ -801,7 +900,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		hr = p_container->GetNumberOfChildContainers(&nInstanceCount);
 
 		if(nInstanceCount > 1)
-			str+="(Count: " + IntToStr(nInstanceCount)+") ";
+			str += "(Count: " + IntToStr(nInstanceCount)+") ";
 
 		stSysInfo.uiVideocardCount = nInstanceCount;
 
