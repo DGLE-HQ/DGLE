@@ -17,7 +17,7 @@ interface
 {$I include.inc}
 
 {$IFNDEF DGLE_TYPES}
-{$DEFINE DGLE_TYPES}
+  {$DEFINE DGLE_TYPES}
 {$ENDIF}
 
 uses
@@ -66,7 +66,7 @@ type
     WMT_KEY_UP      = 13,
     WMT_KEY_DOWN    = 14,
     WMT_ENTER_CHAR  = 15,
-	WMT_MOUSE_LEAVE	= 16,
+    WMT_MOUSE_LEAVE = 16,
     WMT_MOUSE_MOVE  = 17,
     WMT_MOUSE_DOWN  = 18,
     WMT_MOUSE_UP    = 19,
@@ -109,7 +109,6 @@ type
       uiFlags:{ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT); overload;
   {$IFEND}
   end;
-//  end;
 
  TSystemInfo = packed record
     cOSName           : array[0..127] of AnsiChar;
@@ -134,7 +133,7 @@ type
   {$IFEND}
   end;
 
-  TWindowMessage = record
+  TWindowMessage = packed record
     eMsgType          : E_WINDOW_MESSAGE_TYPE;
     ui32Param1        : Cardinal;
     ui32Param2        : Cardinal;
@@ -340,7 +339,7 @@ type
     iPOV          : Integer;    
   end;
 
-   TVariant = record
+   TVariant = packed record
     _type: E_DGLE_VARIANT_TYPE;
     _Data: Pointer;
   {$IF COMPILERVERSION >= 20}
@@ -614,8 +613,8 @@ function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint2): TPoint2
 function ApplyToVector(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
 
-function EngWindow(): TEngineWindow;                                                overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function EngWindow(uiWidth, uiHeight: Integer; bFullScreen: Boolean;
+function EngineWindow(): TEngineWindow;                                             overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function EngineWindow(uiWidth, uiHeight: Integer; bFullScreen: Boolean;
   bVSync: Boolean = False; eMSampling: {E_MULTISAMPLING_MODE}Cardinal = MM_NONE;
   uiFlags: {ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 procedure Clear(var AVar: TVariant);                                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
@@ -1555,10 +1554,10 @@ begin
   for i := 0 to 3 do
   begin
     row_num := i;
-    major := Abs(rows[i, i]);
+    major := Abs(rows[i]^[i]);
     for r := i + 1 to 3 do
     begin
-      cur_ABS := Abs(rows[r, i]);
+      cur_ABS := Abs(rows[r]^[i]);
       if cur_ABS > major then
       begin
         major := cur_ABS;
@@ -1573,37 +1572,37 @@ begin
     end;
     for r := i + 1 to 3 do
     begin
-      factor := rows[r, i] / rows[i, i];
-      for c := i to 7 do rows[r, c] := rows[r, c] - factor * rows[i, c];
+      factor := rows[r]^[i] / rows[i]^[i];
+      for c := i to 7 do rows[r]^[c] := rows[r]^[c] - factor * rows[i]^[c];
     end;
   end;
 
   for i := 3 downto 1 do
     for r := 0 to i - 1 do
     begin
-      factor := rows[r, i] / rows[i, i];
-      for c := 4 to 7 do rows[r, c] := rows[r, c] - factor * rows[i, c];
+      factor := rows[r]^[i] / rows[i]^[i];
+      for c := 4 to 7 do rows[r]^[c] := rows[r]^[c] - factor * rows[i]^[c];
     end;
 
-  Result._2D[0, 0] := rows[0, 4] / rows[0, 0];
-  Result._2D[0, 1] := rows[0, 5] / rows[0, 0];
-  Result._2D[0, 2] := rows[0, 6] / rows[0, 0];
-  Result._2D[0, 3] := rows[0, 7] / rows[0, 0];
+  Result._2D[0, 0] := rows[0]^[4] / rows[0]^[0];
+  Result._2D[0, 1] := rows[0]^[5] / rows[0]^[0];
+  Result._2D[0, 2] := rows[0]^[6] / rows[0]^[0];
+  Result._2D[0, 3] := rows[0]^[7] / rows[0]^[0];
 
-  Result._2D[1, 0] := rows[1, 4] / rows[1, 1];
-  Result._2D[1, 1] := rows[1, 5] / rows[1, 1];
-  Result._2D[1, 2] := rows[1, 6] / rows[1, 1];
-  Result._2D[1, 3] := rows[1, 7] / rows[1, 1];
+  Result._2D[1, 0] := rows[1]^[4] / rows[1]^[1];
+  Result._2D[1, 1] := rows[1]^[5] / rows[1]^[1];
+  Result._2D[1, 2] := rows[1]^[6] / rows[1]^[1];
+  Result._2D[1, 3] := rows[1]^[7] / rows[1]^[1];
 
-  Result._2D[2, 0] := rows[2, 4] / rows[2, 2];
-  Result._2D[2, 1] := rows[2, 5] / rows[2, 2];
-  Result._2D[2, 2] := rows[2, 6] / rows[2, 2];
-  Result._2D[2, 3] := rows[2, 7] / rows[2, 2];
+  Result._2D[2, 0] := rows[2]^[4] / rows[2]^[2];
+  Result._2D[2, 1] := rows[2]^[5] / rows[2]^[2];
+  Result._2D[2, 2] := rows[2]^[6] / rows[2]^[2];
+  Result._2D[2, 3] := rows[2]^[7] / rows[2]^[2];
 
-  Result._2D[3, 0] := rows[3, 4] / rows[3, 3];
-  Result._2D[3, 1] := rows[3, 5] / rows[3, 3];
-  Result._2D[3, 2] := rows[3, 6] / rows[3, 3];
-  Result._2D[3, 3] := rows[3, 7] / rows[3, 3];
+  Result._2D[3, 0] := rows[3]^[4] / rows[3]^[3];
+  Result._2D[3, 1] := rows[3]^[5] / rows[3]^[3];
+  Result._2D[3, 2] := rows[3]^[6] / rows[3]^[3];
+  Result._2D[3, 3] := rows[3]^[7] / rows[3]^[3];
 end;
 
 function MatrixTranspose(const stMatrix : TMatrix4x4): TMatrix4x4;
@@ -1634,7 +1633,7 @@ begin
   Result := MatrixScale(Point3(1.0,1.0,1.0));
 end;
 
-function MatrixScale(const fVec : TPoint3): TMatrix4x4; overload;
+function MatrixScale(const fVec : TPoint3): TMatrix4x4; 
 begin
   Result._2D[0, 0] := fVec.x;
   Result._2D[0, 1] := 0.0;
@@ -1883,14 +1882,11 @@ end;
 
 {$IF COMPILERVERSION >= 20}
 class operator TMatrix4x4.Add(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-var
-  i: Integer;
 begin
   Result := DGLE_Types.Add(Self, stRightMatrix);
 end;
 
 class operator TMatrix4x4.Subtract(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-var i: Integer;
 begin
   Result := DGLE_Types.Subtract(Self, stRightMatrix);
 end;
@@ -1901,25 +1897,21 @@ begin
 end;
 
 class operator TMatrix4x4.Add(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-var i: Integer;
 begin
   Result := DGLE_Types.Add(Self, right);
 end;
 
 class operator TMatrix4x4.Subtract(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-var i: Integer;
 begin
   Result := DGLE_Types.Subtract(Self, right);
 end;
 
 class operator TMatrix4x4.Divide(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-var i: Integer;
 begin
   Result := DGLE_Types.Divide(Self, right);
 end;
 
 class operator TMatrix4x4.Multiply(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-var i: Integer;
 begin
   Result := DGLE_Types.Multiply(Self, right);
 end;
@@ -2035,7 +2027,7 @@ end;
 
 {$IFEND}
 
-function EngWindow(): TEngineWindow; overload;
+function EngineWindow(): TEngineWindow; overload;
 begin
   Result.uiWidth        := 800;
   Result.uiHeight       := 600;
@@ -2045,7 +2037,7 @@ begin
   Result.uiFlags        := EWF_DEFAULT;
 end;
 
-function EngWindow(uiWidth, uiHeight : Integer; bFullScreen : Boolean;
+function EngineWindow(uiWidth, uiHeight : Integer; bFullScreen : Boolean;
   bVSync : Boolean = False; eMSampling: {E_MULTISAMPLING_MODE} Cardinal = MM_NONE;
   uiFlags:{ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow; overload;
 begin
@@ -2060,14 +2052,14 @@ end;
 {$IF COMPILERVERSION >= 18}
 constructor TEngineWindow.Create(var dummy);
 begin
-  Self := EngWindow();
+  Self := EngineWindow();
 end;
 
 constructor TEngineWindow.Create(uiWidth, uiHeight : Integer; bFullScreen : Boolean;
   bVSync : Boolean = False; eMSampling: {E_MULTISAMPLING_MODE} Cardinal = MM_NONE;
   uiFlags:{ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT);
 begin
-  Self := EngWindow(uiWidth, uiHeight, bFullScreen, bVSync, eMSampling, uiFlags);
+  Self := EngineWindow(uiWidth, uiHeight, bFullScreen, bVSync, eMSampling, uiFlags);
 end;
 {$IFEND}
 
@@ -2276,22 +2268,22 @@ end;
 
 function TVariant.AsInt(): Integer;
 begin
-  DGLE_Types.AsInt(Self);
+  Result := DGLE_Types.AsInt(Self);
 end;
 
 function TVariant.AsFloat(): Single;
 begin
-  DGLE_Types.AsFloat(Self);
+  Result := DGLE_Types.AsFloat(Self);
 end;
 
 function TVariant.AsBool(): Boolean;
 begin
-  DGLE_Types.AsBool(Self);
+  Result := DGLE_Types.AsBool(Self);
 end;
 
 function TVariant.AsPointer(): Pointer;
 begin
-  DGLE_Types.AsPointer(Self);
+  Result := DGLE_Types.AsPointer(Self);
 end;
 
 procedure TVariant.GetData(out pData: Pointer; out uiDataSize: Cardinal);

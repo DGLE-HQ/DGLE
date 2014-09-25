@@ -14,11 +14,11 @@ const
   RESOURCE_PATH = '..\..\..\..\resources\';
 
 // This example is made for 800X600 screen resolution.
-  GAME_VP_WIDTH	= 800;
-  GAME_VP_HEIGHT =	600;
+  GAME_VP_WIDTH = 800;
+  GAME_VP_HEIGHT = 600;
 // Screen resolution
-  SCREEN_WIDTH =	1024;
-  SCREEN_HEIGHT =	768;
+  SCREEN_WIDTH = 1024;
+  SCREEN_HEIGHT = 768;
   HELP_TEXT : PAnsiChar = 'You can resize this window to see it''s behavior or go fullscreen by pressing "Alt + Enter" keys.';
 
 var                                                          
@@ -77,9 +77,9 @@ begin
   pEngineCore.GetSubsystem( ESS_INPUT,  IEngineSubSystem( pInput ) );
   pRender.GetRender2D( pRender2D );
   // Background clear color setup.
-	pRender.SetClearColor(Color4(38, 38, 55, 255));
+  pRender.SetClearColor(Color4(38, 38, 55, 255));
   // This example adapted only for 800X600 resolution, if even resolution will be higher it won't effect it.
-	pRender2D.SetResolutionCorrection(GAME_VP_WIDTH, GAME_VP_HEIGHT);
+  pRender2D.SetResolutionCorrection(GAME_VP_WIDTH, GAME_VP_HEIGHT);
 
   
   pInput.Configure( ICF_HIDE_CURSOR );
@@ -95,8 +95,8 @@ begin
 
   pResMan.Load( RESOURCE_PATH + 'sprites\cartoon_forest_background.png',    IEngineBaseObject( pBg ),     TEXTURE_LOAD_DEFAULT_2D );
   pResMan.Load( RESOURCE_PATH + 'sprites\cartoon_cloudy_night_sky.jpg',   IEngineBaseObject( pSky ),    TEXTURE_LOAD_DEFAULT_2D );
-  pResMan.Load( RESOURCE_PATH + 'textures\smoke.png',   IEngineBaseObject( pFog ),    TEXTURE_LOAD_DEFAULT_2D );
-  pResMan.Load( RESOURCE_PATH + 'textures\light.jpg', IEngineBaseObject( pLightRound ), TEXTURE_LOAD_DEFAULT_2D );
+  pResMan.Load( RESOURCE_PATH + 'sprites\smoke.png',   IEngineBaseObject( pFog ),    TEXTURE_LOAD_DEFAULT_2D );
+  pResMan.Load( RESOURCE_PATH + 'sprites\light.jpg', IEngineBaseObject( pLightRound ), TEXTURE_LOAD_DEFAULT_2D );
 
   pResMan.Load( RESOURCE_PATH + 'sprites\cartoon_anime_girl.png', IEngineBaseObject( pTexGirl ), TEXTURE_LOAD_DEFAULT_2D );
   pTexGirl.SetFrameSize( 55, 117 );
@@ -188,7 +188,7 @@ begin
   pRender2D.SetBlendMode( BE_ADD );
 
   // Sometimes it's better to batch a lot of similar objects.
-	pRender2D.BeginBatch();
+  pRender2D.BeginBatch();
 
   pRender2D.SetColorMix( Color4( 255, 255, 255, 64 ) );
 
@@ -216,7 +216,7 @@ begin
     OwlEffFlag := EF_FLIP_HORIZONTALLY
   else
     OwlEffFlag := EF_DEFAULT;
-	pRender2D.DrawTextureSprite(pOwl, Point2(owlX, 425.0), Point2(48.0, 128.0), (counter div 3) mod 15, 0.0, EF_BLEND or EF_COLOR_MIX or OwlEffFlag);
+  pRender2D.DrawTextureSprite(pOwl, Point2(owlX, 425.0), Point2(48.0, 128.0), (counter div 3) mod 15, 0.0, EF_BLEND or EF_COLOR_MIX or OwlEffFlag);
 
   // Draw tree
 
@@ -289,7 +289,7 @@ end;
 begin
   if( GetEngine( DLL_PATH, pEngineCore ) ) then
   begin
-    if( SUCCEEDED( pEngineCore.InitializeEngine( 0, APP_CAPT, EngWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false, false, MM_NONE, EWF_ALLOW_SIZEING) ) ) ) then
+    if( SUCCEEDED( pEngineCore.InitializeEngine( 0, APP_CAPT, EngineWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false, false, MM_NONE, EWF_ALLOW_SIZEING) ) ) ) then
     begin
       pEngineCore.ConsoleVisible(True);
       pEngineCore.AddProcedure( EPT_INIT,     @Init );

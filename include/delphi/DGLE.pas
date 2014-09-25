@@ -16,7 +16,7 @@ interface
 {$I include.inc}
 
 {$IFNDEF DGLE_HEADER}
-{$DEFINE DGLE_HEADER}
+  {$DEFINE DGLE_HEADER}
 {$ENDIF}
 
 
@@ -476,8 +476,8 @@ type
     function EndBatch(): DGLE_RESULT; stdcall;
     function NeedToUpdateBatchData(out bNeedUpdate: Boolean): DGLE_RESULT; stdcall;
     function SetResolutionCorrection(uiResX, uiResY: Cardinal; bConstantProportions: Boolean = True): DGLE_RESULT; stdcall; //Set resx and resy to current screen size to turn off correction
-    function ResolutionCorrectToAbsolute(const stLogicCoord, stAbsoluteCoord: TPoint2): DGLE_RESULT; stdcall;
-    function AbsoluteToResolutionCorrect(const stAbsoluteCoord, stLogicCoord: TPoint2): DGLE_RESULT; stdcall;
+    function ResolutionCorrectToAbsolute(const stLogicCoord: TPoint2; out stAbsoluteCoord: TPoint2): DGLE_RESULT; stdcall;
+    function AbsoluteToResolutionCorrect(const stAbsoluteCoord: TPoint2; out stLogicCoord: TPoint2): DGLE_RESULT; stdcall;
     function SetCamera(const stCenter: TPoint2; fAngle: Single; const stScale: TVector2): DGLE_RESULT; stdcall;
     function ResetCamera(): DGLE_RESULT; stdcall;
     function UnprojectCameraToScreen(const stCameraCoord: TPoint2; out stScreenCoord: TPoint2): DGLE_RESULT; stdcall;
@@ -882,10 +882,6 @@ const
   GEF_FORCE_NO_LOG_FILE    = $00000002;
   GEF_FORCE_QUIT           = $00000004;
 
-var
-  hServer      : THandle = 0;
-  pCreateEngine  : Function(out pEngineCore: IEngineCore; eFlags: {E_GET_ENGINE_FLAGS}Integer; ubtSDKVer: byte): Boolean; stdcall;
-  pFreeEngine    : Function(pEngineCore: IEngineCore): Boolean; stdcall;
 
 function CreateEngine(out pEngineCore: IEngineCore; eFlags: {E_GET_ENGINE_FLAGS}Integer = GEF_DEFAULT): Boolean;
 function GetEngine(pcDllFileName: AnsiString; out pEngineCore :IEngineCore; eFlags: {E_GET_ENGINE_FLAGS}Integer = GEF_DEFAULT): Boolean;
@@ -896,16 +892,27 @@ implementation
 uses
   Windows;
 
+type
+  TCreateEngineFunc = Function(out pEngineCore: IEngineCore; eFlags: {E_GET_ENGINE_FLAGS}Integer; ubtSDKVer: byte): Boolean; stdcall;
+  TFreeEngineFunc = Function(pEngineCore: IEngineCore): Boolean; stdcall;
+
+var
+  hServer        : THandle = 0;
+  pCreateEngine  : TCreateEngineFunc;
+  pFreeEngine    : TFreeEngineFunc;
+  
 function CreateEngine(out pEngineCore: IEngineCore; eFlags: {E_GET_ENGINE_FLAGS}Integer = GEF_DEFAULT): Boolean;
 begin
   Result := false;
-  if @pCreateEngine = nil then Exit;
+  if @pCreateEngine = nil then
+    Exit;
   Result := pCreateEngine(pEngineCore, eFlags, _DGLE_SDK_VER_);
 end;
 
 function FreeEngine(pEngineCore: IEngineCore = nil; bFreeDLL: Boolean = true): Boolean;
 begin
-  if pEngineCore <> nil then pFreeEngine(pEngineCore);
+  if pEngineCore <> nil then 
+    pFreeEngine(pEngineCore);
   if bFreeDLL and(hServer <> 0) then
   begin
     FreeLibrary(hServer);
@@ -917,6 +924,10 @@ begin
 end;
 
 function GetEngine(pcDllFileName: AnsiString; out pEngineCore: IEngineCore; eFlags: {E_GET_ENGINE_FLAGS}Integer = GEF_DEFAULT): Boolean;
+  function FunctionUnassigned(pf: PPointer): Boolean;
+  begin
+    Result := pf{$IFDEF FPC_OBJFPC}^{$ENDIF} = nil; 
+  end;
 begin
   Result := false;
   if hServer = 0 then
@@ -929,18 +940,19 @@ begin
       if hServer = 0 then Exit;
     end;
     
-    if (@pCreateEngine = nil)and(@pFreeEngine = nil) then
+    if FunctionUnassigned(@pCreateEngine) and FunctionUnassigned(@pFreeEngine) then
     begin
-      pCreateEngine := GetProcAddress(hServer,'CreateEngine');
-      pFreeEngine := GetProcAddress(hServer,'FreeEngine');
-      if (@pCreateEngine = nil)or(@pFreeEngine = nil) then
+      pCreateEngine := TCreateEngineFunc(GetProcAddress(hServer,'CreateEngine'));
+      pFreeEngine := TFreeEngineFunc(GetProcAddress(hServer,'FreeEngine'));
+      if FunctionUnassigned(@pCreateEngine) or FunctionUnassigned(@pFreeEngine) then
       begin
         FreeLibrary(hServer);
         hServer := 0;
       end;
     end;
   end;
-  if hServer <> 0 then Result := CreateEngine(pEngineCore, eFlags);  
+  if hServer <> 0 then
+    Result := CreateEngine(pEngineCore, eFlags);
 end;
 
 begin
