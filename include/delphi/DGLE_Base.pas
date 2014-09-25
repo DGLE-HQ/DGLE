@@ -13,7 +13,7 @@ interface
 {$I include.inc}
 
 {$IFNDEF DGLE_CRENDERER}
-{$DEFINE DGLE_CRENDERER}
+  {$DEFINE DGLE_CRENDERER}
 {$ENDIF}
 
 uses

@@ -1,5 +1,5 @@
 {$IFDEF FPC}
- {$MODE DELPHI}
+// {$MODE OBJFPC}
  {$MACRO ON}
  {$DEFINE COMPILERVERSION := 12} // assume FPC is like Delphi4
 {$ENDIF}

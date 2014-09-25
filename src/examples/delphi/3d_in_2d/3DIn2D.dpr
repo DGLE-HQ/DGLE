@@ -1,4 +1,5 @@
-program 3DIn2D;
+program _3DIn2D;
+
 uses
   Windows, Math,
   DGLE in '..\..\..\..\include\delphi\DGLE.pas',
@@ -15,8 +16,8 @@ const
   APP_CAPTION = 'Sample 3DIn2D';
   DLL_PATH = '..\..\..\..\bin\windows\DGLE.dll';
 RESPATH = '..\..\..\..\resources\';
-  SCREEN_WIDTH	= 1024;
-  SCREEN_HEIGHT	= 768;
+  SCREEN_WIDTH  = 1024;
+  SCREEN_HEIGHT  = 768;
   meshfilenames: array[soHouse..soCopter] of AnsiString =
   (
     'meshes\house\house.dmd',
@@ -58,10 +59,10 @@ var
 // This function creates texture and renders models shadow to it.
 procedure RenderMeshToTexture(var pTex: ITexture; pMesh: IMesh; pMeshTex: ITexture);
 begin
-	pResMan.CreateTexture(pTex, nil, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
-	pRender.SetRenderTarget(pTex);
-	pRender2D.DrawMesh(pMesh, pMeshTex, Point2(128, 128), Point3(256, 256, 1), Point3());
-	pRender.SetRenderTarget(nil); // switch back to on-screen drawing
+  pResMan.CreateTexture(pTex, nil, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
+  pRender.SetRenderTarget(pTex);
+  pRender2D.DrawMesh(pMesh, pMeshTex, Point2(128, 128), Point3(256, 256, 1), Point3());
+  pRender.SetRenderTarget(nil); // switch back to on-screen drawing
 end;
 
 procedure Init(pParametr: Pointer); stdcall;
@@ -84,17 +85,17 @@ begin
     RenderMeshToTexture(pshadows[i], pMeshes[i], pTextures[i]);
   end;
 
-  pResMan.Load(RESPATH + 'grass.jpg', IEngineBaseObject(pTextures[soGrass]), TLF_FILTERING_BILINEAR or TLF_COORDS_REPEAT);
+  pResMan.Load(RESPATH + 'textures\grass.jpg', IEngineBaseObject(pTextures[soGrass]), TLF_FILTERING_BILINEAR or TLF_COORDS_REPEAT);
   pResMan.Load(RESPATH + 'textures\stone.tga', IEngineBaseObject(pTextures[soStone]));
   pResMan.Load(RESPATH + 'sprites\zombie.png', IEngineBaseObject(pTextures[soZombie]), TEXTURE_LOAD_DEFAULT_2D);
   pTextures[soZombie].SetFrameSize(256, 256);
-  pResMan.Load(RESPATH + 'meshs\copter\propeller.png', IEngineBaseObject(pTextures[soRotor]), TEXTURE_LOAD_DEFAULT_2D);
+  pResMan.Load(RESPATH + 'meshes\copter\propeller.png', IEngineBaseObject(pTextures[soRotor]), TEXTURE_LOAD_DEFAULT_2D);
 
   // render rotor shadow
-	pResMan.CreateTexture(pShadows[soRotor], nil, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
-	pRender.SetRenderTarget(pShadows[soRotor]);
-	pRender2D.DrawCircle(Point2(128, 128), 100, 64, ColorWhite(), PF_FILL);
-	pRender.SetRenderTarget(nil);
+  pResMan.CreateTexture(pShadows[soRotor], nil, 256, 256, TDF_RGBA8, TCF_DEFAULT, TLF_FILTERING_BILINEAR);
+  pRender.SetRenderTarget(pShadows[soRotor]);
+  pRender2D.DrawCircle(Point2(128, 128), 100, 64, ColorWhite(), PF_FILL);
+  pRender.SetRenderTarget(nil);
 
   stCopterPos:= Point2(400, 200);
   stZombiePos:= Point2(10, 400);
@@ -114,7 +115,7 @@ begin
     pResMan.FreeResource(IEngineBaseObject(pMeshes[i]));
     pMeshes[i] := nil;
   end;
-  for I := Low(TSceneObjects) to sorotor do
+  for I := Low(TSceneObjects) to soRotor do
   begin
     pResMan.FreeResource(IEngineBaseObject(pShadows[i]));
     pShadows[i] := nil;
@@ -134,12 +135,12 @@ var
   ms: TMouseStates;
   prsd: Boolean;
 begin
-	pInp.GetKey(KEY_ESCAPE, prsd);
-	if prsd then
+  pInp.GetKey(KEY_ESCAPE, prsd);
+  if prsd then
   begin
-		pEngineCore.QuitEngine();
-		Exit;
-	End;
+    pEngineCore.QuitEngine();
+    Exit;
+  End;
 
   fCopterAngle := fCopterAngle + 0.5;
   stCopterPos.x := stCopterPos.x + Cos(DegToRad(fCopterAngle)) * 4;
@@ -147,30 +148,30 @@ begin
   pHelicopterSndChan.SetPan(Trunc((stCopterPos.x + 60 - 460) * 0.2));
 
   if (bFrameForward) then
-		fZombieAnimFrame := fZombieAnimFrame + 0.3
-	else
-		fZombieAnimFrame := fZombieAnimFrame - 0.3;
+    fZombieAnimFrame := fZombieAnimFrame + 0.3
+  else
+    fZombieAnimFrame := fZombieAnimFrame - 0.3;
 
-	if bFrameForward and (Round(fZombieAnimFrame) = 15) then
-		bFrameForward := false
-	else
-		if not bFrameForward and (Round(fZombieAnimFrame) = 0) then
-			bFrameForward := true;
+  if bFrameForward and (Round(fZombieAnimFrame) = 15) then
+    bFrameForward := False
+  else
+    if not bFrameForward and (Round(fZombieAnimFrame) = 0) then
+      bFrameForward := True;
 
   pInp.GetMouseStates(ms);
   stMouseOnScreen := Point2(ms.iX, ms.iY);
 
-	fZombieAngle := RadToDeg(arctan2(stMouseInCamera.y - (stZombiePos.y + 64),
+  fZombieAngle := RadToDeg(arctan2(stMouseInCamera.y - (stZombiePos.y + 64),
     stMouseInCamera.x - (stZombiePos.x + 64)));
 
-	stZombiePos := Add(stZombiePos, Point2(cos(degTORAD(fZombieAngle)) * 0.75, Sin(degTORAD(fZombieAngle)) * 0.75));
+  stZombiePos := Add(stZombiePos, Point2(cos(degTORAD(fZombieAngle)) * 0.75, Sin(degTORAD(fZombieAngle)) * 0.75));
 
   inc(counter);
 end;
 
 procedure Render(pParametr: Pointer); stdcall;
 var
-  I, J: Integer;
+  I, J, Eff: Integer;
   X, Y: Cardinal;
   PtAxis: TPoint3;
   RotorPos, StoneDim: TPoint2;
@@ -180,49 +181,46 @@ begin
 
   pRender2D.SetCamera(Point2(350 + cos(Counter / 200) * 200, 350 + sin(Counter / 200) * 80), sin(Counter / 50) * 15, Point2(1, 1));
 
-	// conver our on-screen mouse coordinates to camera space
-	pRender2D.ProjectScreenToCamera(stMouseOnScreen, stMouseInCamera);
+  // convert our on-screen mouse coordinates to camera space
+  pRender2D.ProjectScreenToCamera(stMouseOnScreen, stMouseInCamera);
 
-  pTextures[soStone].GetDimension(X, Y);
+  pTextures[soStone].GetDimensions(X, Y);
   StoneDim := Point2(X, Y);
-  pTextures[soGrass].GetDimension(X, Y);
+  pTextures[soGrass].GetDimensions(X, Y);
 
-//  for I := -3 to 4 do
-//    for J := -3 to 4 do
-//      pTextures[soGrass].Draw2DSimple(i * X, j * Y);
-	pRender2D.DrawTexture(pTextures[soGrass], Point2(-750, -750), Point2(2000, 2000), 0, EF_TILE_TEXTURE);
+  pRender2D.DrawTexture(pTextures[soGrass], Point2(-750, -750), Point2(2000, 2000), 0, EF_TILE_TEXTURE);
 
   // draw stone layer with per vertex blending
   Col := ColorWhite(0);
-	pRender2D.SetVerticesColors(Col, ColorWhite(), ColorWhite(), Col);
-	pRender2D.DrawTexture(pTextures[soStone], Point2(0, 225), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
+  pRender2D.SetVerticesColors(Col, ColorWhite(), ColorWhite(), Col);
+  pRender2D.DrawTexture(pTextures[soStone], Point2(0, 225), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
 
-	pRender2D.SetVerticesColors(ColorWhite(), Col, Col, ColorWhite());
-	pRender2D.DrawTexture(pTextures[soStone], Point2(0 + StoneDim.X, 225), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
+  pRender2D.SetVerticesColors(ColorWhite(), Col, Col, ColorWhite());
+  pRender2D.DrawTexture(pTextures[soStone], Point2(0 + StoneDim.X, 225), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
 
-	pRender2D.SetVerticesColors(ColorWhite(), Col, Col, Col);
-	pRender2D.DrawTexture(pTextures[soStone], Point2(0 + StoneDim.X, 225 + StoneDim.Y), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
+  pRender2D.SetVerticesColors(ColorWhite(), Col, Col, Col);
+  pRender2D.DrawTexture(pTextures[soStone], Point2(0 + StoneDim.X, 225 + StoneDim.Y), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
 
-	pRender2D.SetVerticesColors(Col, ColorWhite(), Col, Col);
-	pRender2D.DrawTexture(pTextures[soStone], Point2(0, 225 + StoneDim.Y), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
+  pRender2D.SetVerticesColors(Col, ColorWhite(), Col, Col);
+  pRender2D.DrawTexture(pTextures[soStone], Point2(0, 225 + StoneDim.Y), StoneDim, 0, (EF_VERTICES_COLORS or EF_BLEND));
 
-	// set color mix to semi-transparent black for shadows
-	pRender2D.SetColorMix(ColorBlack(128));
+  // set color mix to semi-transparent black for shadows
+  pRender2D.SetColorMix(ColorBlack(128));
 
-	// draw zombie, first draw shadow then zombie itself
-	pRender2D.DrawTextureSprite(pTextures[soZombie], Add(stZombiePos , Point2(10, 10)), Point2(128, 128), Trunc(fZombieAnimFrame), fZombieAngle + 90, (EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTextureSprite(pTextures[soZombie], stZombiePos, Point2(128, 128), Trunc(fZombieAnimFrame), fZombieAngle + 90);
+  // draw zombie, first draw shadow then zombie itself
+  pRender2D.DrawTextureSprite(pTextures[soZombie], Add(stZombiePos , Point2(10, 10)), Point2(128, 128), Trunc(fZombieAnimFrame), fZombieAngle + 90, (EF_COLOR_MIX or EF_BLEND));
+  pRender2D.DrawTextureSprite(pTextures[soZombie], stZombiePos, Point2(128, 128), Trunc(fZombieAnimFrame), fZombieAngle + 90);
 
-	// render objects shadows
-	pRender2D.DrawTexture(pShadows[soHouse], Point2( 180 - 200, 150 - 200), Point2(450, 500), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTexture(pShadows[soHouse], Point2( 600 - 200, 550 - 200), Point2(450, 500), 90, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-
-	pRender2D.DrawTexture(pShadows[soTree1], Point2( 900 - 225, 500 - 225), Point2(450, 450), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTexture(pShadows[soTree1], Point2(-250 - 225, 300 - 225), Point2(450, 450), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTexture(pShadows[soTree1], Point2( 800 - 225, 200 - 225), Point2(450, 450), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTexture(pShadows[soTree2], Point2(   0 - 175, 450 - 175), Point2(350, 350), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTexture(pShadows[soTree2], Point2(  50 - 175, 750 - 175), Point2(350, 350), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
-	pRender2D.DrawTexture(pShadows[soTree3], Point2( 500 - 225, 150 - 225), Point2(450, 450), 0, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
+  // render objects shadows
+  Eff := EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND;
+  pRender2D.DrawTexture(pShadows[soHouse], Point2( 180 - 200, 150 - 200), Point2(450, 500),  0, Eff);
+  pRender2D.DrawTexture(pShadows[soHouse], Point2( 600 - 200, 550 - 200), Point2(450, 500), 90, Eff);
+  pRender2D.DrawTexture(pShadows[soTree1], Point2( 900 - 225, 500 - 225), Point2(450, 450),  0, Eff);
+  pRender2D.DrawTexture(pShadows[soTree1], Point2(-250 - 225, 300 - 225), Point2(450, 450),  0, Eff);
+  pRender2D.DrawTexture(pShadows[soTree1], Point2( 800 - 225, 200 - 225), Point2(450, 450),  0, Eff);
+  pRender2D.DrawTexture(pShadows[soTree2], Point2(   0 - 175, 450 - 175), Point2(350, 350),  0, Eff);
+  pRender2D.DrawTexture(pShadows[soTree2], Point2(  50 - 175, 750 - 175), Point2(350, 350),  0, Eff);
+  pRender2D.DrawTexture(pShadows[soTree3], Point2( 500 - 225, 150 - 225), Point2(450, 450),  0, Eff);
 
   // draw 3D models in 2D space
   PtAxis := Point3(0, 0, 1);
@@ -235,16 +233,16 @@ begin
   pRender2D.DrawMesh(pMeshes[soTree2], pTextures[soTree2], Point2(  50, 750), Point3(300, 300, 300), PtAxis);
   pRender2D.DrawMesh(pMeshes[soTree3], pTextures[soTree3], Point2( 500, 150), Point3(400, 400, 500), PtAxis);
 
-  	// draw copter model and rotor sprite
-	RotorPos := Point2(stCopterPos.x - 200. + cos(degTORAD(fCopterAngle)) * 80, stCopterPos.y - 200 + sin(degTORAD(fCopterAngle)) * 80);
-	pRender2D.DrawTexture(pShadows[soCopter], Subtract(stCopterPos, point2(200, 200)), point2(600, 600), fCopterAngle, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
+    // draw copter model and rotor sprite
+  RotorPos := Point2(stCopterPos.x - 200. + Cos(DegToRad(fCopterAngle)) * 80, stCopterPos.y - 200 + Sin(degTORAD(fCopterAngle)) * 80);
+  pRender2D.DrawTexture(pShadows[soCopter], Subtract(stCopterPos, Point2(200, 200)), Point2(600, 600), fCopterAngle, (EF_FLIP_VERTICALLY or EF_COLOR_MIX or EF_BLEND));
 
-	// make blinky rotor shadow
-	pRender2D.SetColorMix(ColorBlack(IfThen(Counter mod 3 = 2, 64, 16)));
-	pRender2D.DrawTexture(pShadows[soRotor], Add(RotorPos, point2(100, 100)), point2(400, 400), 0, (EF_COLOR_MIX or EF_BLEND));
+  // make blinky rotor shadow
+  pRender2D.SetColorMix(ColorBlack(IfThen(Counter mod 3 = 2, 64, 16)));
+  pRender2D.DrawTexture(pShadows[soRotor], Add(RotorPos, Point2(100, 100)), Point2(400, 400), 0, (EF_COLOR_MIX or EF_BLEND));
 
-	pRender2D.DrawMesh(pMeshes[socopter], pTextures[socopter], stCopterPos, Point3(600, 600, 600), PtAxis, fCopterAngle, EF_DEFAULT, false, 90, true);
-	pRender2D.DrawTexture(pTextures[soRotor], RotorPos, point2(400, 400), Counter * 25);
+  pRender2D.DrawMesh(pMeshes[socopter], pTextures[socopter], stCopterPos, Point3(600, 600, 600), PtAxis, fCopterAngle, EF_DEFAULT, False, 90, True);
+  pRender2D.DrawTexture(pTextures[soRotor], RotorPos, Point2(400, 400), Counter * 25);
 
   pRender2D.End2D();
 end;
@@ -253,9 +251,9 @@ begin
   if (GetEngine(DLL_PATH, pEngineCore)) then
   begin
     if (SUCCEEDED(pEngineCore.InitializeEngine(0, APP_CAPTION,
-      EngWindow(1024, 768, False, False, 0, EWF_ALLOW_SIZEING)))) then
+      EngineWindow(1024, 768, False, False, 0, EWF_ALLOW_SIZEING)))) then
     begin
-      pEngineCore.ConsoleVisible(true);
+      pEngineCore.ConsoleVisible(True);
       pEngineCore.AddProcedure(EPT_INIT, @Init);
       pEngineCore.AddProcedure(EPT_FREE, @Free);
       pEngineCore.AddProcedure(EPT_UPDATE, @Update);

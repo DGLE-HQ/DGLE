@@ -15,7 +15,7 @@ interface
 {$I include.inc}
 
 {$IFNDEF DGLE_CRENDERER}
-{$DEFINE DGLE_CRENDERER}
+  {$DEFINE DGLE_CRENDERER}
 {$ENDIF}
 
 uses
@@ -27,13 +27,14 @@ type
   (
     CRT_UNKNOWN                             = 0,
     CRT_OPENGL_LEGACY                       = 1
-    { future needs
+  { 
+    For future needs
     CRT_OPENGL_4_1                          = 2,
     CRT_OPENGL_ES_1_1                       = 3,
     CRT_OPENGL_ES_2_0                       = 4,
     CRT_DIRECT_3D_9_0c                      = 5,
     CRT_DIRECT_3D_11                        = 6
-    }
+  }
   );
 
   E_CORE_RENDERER_FEATURE_TYPE =
@@ -95,7 +96,8 @@ type
     PCM_BACK                                = 2
   );
 
- { For future needs.
+{ 
+  For future needs
   E_STENCIL_OPERATION =
   (
     SO_KEEP                                 = 0,
@@ -114,7 +116,7 @@ type
     BO_MIN                                  = 3,
     BO_MAX                                  = 4
   );
- }
+}
 
   E_BLEND_FACTOR =
   (
@@ -126,7 +128,8 @@ type
     BF_DST_ALPHA                            = 5,
     BF_ONE_MINUS_SRC_COLOR                  = 6,
     BF_ONE_MINUS_SRC_ALPHA                  = 7
-  { For future needs.
+  { 
+    For future needs
     BF_ONE_MINUS_DST_COLOR                  = 8,
     BF_ONE_MINUS_DST_ALPHA                  = 9,
     BF_SRC_ALPHA_SATURATE?                  = 10,
@@ -181,81 +184,85 @@ type
 
 type
 
-  TBlendStateDesc = record
+  TBlendStateDesc = packed record
 
     bEnabled: Boolean;
 
     eSrcFactor: E_BLEND_FACTOR;
     eDstFactor: E_BLEND_FACTOR;
 
-  (* For future needs.
-  eOperation: E_BLEND_OPERATION;
+  { 
+    For future needs
+    eOperation: E_BLEND_OPERATION;
 
-  bSeparate: Boolean;
-  eSrcAlpha: E_BLEND_FACTOR;
-  eDstAlpha: E_BLEND_FACTOR;
-  eOpAlpha : E_BLEND_OPERATION;
-    *)
-{$IF CompilerVersion >= 18}
-  constructor Create(Dummy: Byte);
-{$IFEND}
+    bSeparate: Boolean;
+    eSrcAlpha: E_BLEND_FACTOR;
+    eDstAlpha: E_BLEND_FACTOR;
+    eOpAlpha : E_BLEND_OPERATION;
+  }
+  {$IF CompilerVersion >= 18}
+    constructor Create(Dummy: Byte);
+  {$IFEND}
   end;
 
 
- (* For future needs.
+ {
+ For future needs
  TStencilFaceDesc = Record
 
-  eStencilFailOp:   E_STENCIL_OPERATION;
-  eStencilDepthFailOp:  E_STENCIL_OPERATION;
-  eStencilPassOp:   E_STENCIL_OPERATION;
-  eStencilFunc:     E_COMPARISON_FUNC;
+    eStencilFailOp:   E_STENCIL_OPERATION;
+    eStencilDepthFailOp:  E_STENCIL_OPERATION;
+    eStencilPassOp:   E_STENCIL_OPERATION;
+    eStencilFunc:     E_COMPARISON_FUNC;
   end;
- *)
+ }
 
 
-TDepthStencilDesc = record
-  bDepthTestEnabled: Boolean;
-  bWriteToDepthBuffer: Boolean;
-  eDepthFunc: E_COMPARISON_FUNC;
+  TDepthStencilDesc = packed record
+    bDepthTestEnabled: Boolean;
+    bWriteToDepthBuffer: Boolean;
+    eDepthFunc: E_COMPARISON_FUNC;
+  
+  { 
+    For future needs
+    bStencilEnabled: Boolean;
+    ui8StencilReadMask: Byte;
+    ui8StencilWriteMask: Byte;
+    stFrontFace: TStencilFaceDesc
+    stBackFace: TStencilFaceDesc;
+  }
+  {$IF CompilerVersion >= 18}
+    constructor Create(Dummy: Byte);
+  {$IFEND}
+  end;
+  
+  
+  TRasterizerStateDesc = packed record
+  
+    bWireframe: Boolean;
+  
+    eCullMode: E_POLYGON_CULL_MODE;
+    bFrontCounterClockwise: Boolean;
+  
+    bScissorEnabled: Boolean;
+  
+    bAlphaTestEnabled: Boolean;
+    eAlphaTestFunc: E_COMPARISON_FUNC;
+    fAlphaTestRefValue: Single;
+  
+  { 
+    For future needs
+    iDepthBias: Integer;
+    fDepthBiasClamp: Single;
+    fSlopeScaledDepthBias: Single;
+    bDepthClipEnabled: Boolean;
+  }
+  {$IF CompilerVersion >= 18}
+    constructor Create(Dummy: Byte);
+  {$IFEND}
+  end;
 
-{ For future needs.
-  bStencilEnabled: Boolean;
-  ui8StencilReadMask: Byte;
-  ui8StencilWriteMask: Byte;
-  stFrontFace: TStencilFaceDesc
-  stBackFace: TStencilFaceDesc;
-}
-{$IF CompilerVersion >= 18}
-  constructor Create(Dummy: Byte);
-{$IFEND}
-end;
-
-
-TRasterizerStateDesc = record
-
-  bWireframe: Boolean;
-
-  eCullMode: E_POLYGON_CULL_MODE;
-  bFrontCounterClockwise: Boolean;
-
-  bScissorEnabled: Boolean;
-
-  bAlphaTestEnabled: Boolean;
-  eAlphaTestFunc: E_COMPARISON_FUNC;
-  fAlphaTestRefValue: Single;
-
-{ For future needs.
-  iDepthBias: Integer;
-  fDepthBiasClamp: Single;
-  fSlopeScaledDepthBias: Single;
-  bDepthClipEnabled: Boolean;
-}
-{$IF CompilerVersion >= 18}
-constructor Create(Dummy: Byte);
-{$IFEND}
-end;
-
-  TDrawDataAttributes = record
+  TDrawDataAttributes = packed record
     uiAttribOffset: array[0..7] of Cardinal;
     uiAttribStride: array[0..7] of Cardinal;
     eAttribDataType: array[0..7] of E_ATTRIBUTE_DATA_TYPE;
@@ -267,7 +274,7 @@ end;
   end;
   PDrawDataAttributes = ^TDrawDataAttributes;
 
-  TDrawDataDesc = record
+  TDrawDataDesc = packed record
     pData: Pointer; //Must be start of the vertex data. 2 or 3 floats
 
     uiVertexStride: Cardinal;
@@ -299,6 +306,7 @@ end;
     class operator Equal(const this, desc: TDrawDataDesc): Boolean; inline;
     {$IFEND}
   end;
+  PDrawDataDesc = ^TDrawDataDesc;
 
 IBaseRenderObjectContainer = interface(IDGLE_Base)
   ['{5C5C5973-D826-42ED-B641-A84DDDAAE2A3}']
