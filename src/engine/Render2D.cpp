@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		20.04.2013 (c)Korotkov Andrey
+\date		25.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -691,9 +691,10 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 	IN_2D_GUARD
 
 	_pBuffer[0] = stBBox.x; _pBuffer[1] = stBBox.y;
-	_pBuffer[2] = stBBox.x + stBBox.width; _pBuffer[2] = _pBuffer[1];
-	_pBuffer[3] = _pBuffer[2]; _pBuffer[4] = stBBox.y + stBBox.height;
-	_pBuffer[5] = _pBuffer[0]; _pBuffer[6] = _pBuffer[4];
+	_pBuffer[2] = stBBox.x + stBBox.width; _pBuffer[3] = _pBuffer[1];
+	_pBuffer[4] = _pBuffer[2]; _pBuffer[5] = stBBox.y + stBBox.height;
+	_pBuffer[6] = _pBuffer[0]; _pBuffer[7] = _pBuffer[5];
+	_pBuffer[8] = _pBuffer[0]; _pBuffer[9] = _pBuffer[1];
 
 	TMatrix4 transform;
 
@@ -701,7 +702,7 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 	{
 		TMatrix4 rot = MatrixIdentity();
 		
-		const float s = sinf(-fAngle * (float)M_PI/180.f), c = cosf(-fAngle * (float)M_PI/180.f);
+		const float s = sinf(-fAngle * (float)M_PI / 180.f), c = cosf(-fAngle * (float)M_PI / 180.f);
 
 		rot._2D[0][0] = c;
 		rot._2D[0][1] = -s;
@@ -710,21 +711,21 @@ DGLE_RESULT DGLE_API CRender2D::CullBoundingBox(const TRectF &stBBox, float fAng
 
 		transform = MatrixTranslate(TVector3(-(stBBox.x + stBBox.width / 2.f), -(stBBox.y + stBBox.height / 2.f), 0.f)) * rot * MatrixTranslate(TVector3(stBBox.x + stBBox.width / 2.f, stBBox.y + stBBox.height / 2.f, 0.f));
 
-		_pBuffer[7] = _pBuffer[0], _pBuffer[8] = _pBuffer[1];
-		_pBuffer[0]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
-		_pBuffer[1]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+		float x = _pBuffer[0], y = _pBuffer[1];
+		_pBuffer[0]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+		_pBuffer[1]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 
-		_pBuffer[7] = _pBuffer[2]; _pBuffer[8] = _pBuffer[3];
-		_pBuffer[2]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
-		_pBuffer[3]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+		 x = _pBuffer[2]; y = _pBuffer[3];
+		_pBuffer[2]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+		_pBuffer[3]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 
-		_pBuffer[7] = _pBuffer[4]; _pBuffer[8] = _pBuffer[5];
-		_pBuffer[4]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
-		_pBuffer[5]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+		x = _pBuffer[4]; y = _pBuffer[5];
+		_pBuffer[4]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+		_pBuffer[5]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 
-		_pBuffer[7] = _pBuffer[6]; _pBuffer[8] = _pBuffer[7];
-		_pBuffer[6]	= transform._2D[0][0] * _pBuffer[7] + transform._2D[1][0] * _pBuffer[8] + transform._2D[3][0];
-		_pBuffer[7]	= transform._2D[0][1] * _pBuffer[7] + transform._2D[1][1] * _pBuffer[8] + transform._2D[3][1];
+		x = _pBuffer[6]; y = _pBuffer[7];
+		_pBuffer[6]	= transform._2D[0][0] * x + transform._2D[1][0] * y + transform._2D[3][0];
+		_pBuffer[7]	= transform._2D[0][1] * x + transform._2D[1][1] * y + transform._2D[3][1];
 	}
 
 	const int prev = _iDoDrawBBoxes;
@@ -839,8 +840,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 		{
 			if (eFlags & PF_VERTICES_COLORS)
 			{
-				_vecBatchAccumulator.push_back(TVertex2(stCoords1.x, stCoords1.y, 0.f ,0.f , _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
-				_vecBatchAccumulator.push_back(TVertex2(stCoords2.x, stCoords2.y, 0.f ,0.f , _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
+				_vecBatchAccumulator.push_back(TVertex2(stCoords1.x, stCoords1.y, 0.f ,0.f , _astVerticesColors[2].r, _astVerticesColors[2].g, _astVerticesColors[2].b, _astVerticesColors[2].a));
+				_vecBatchAccumulator.push_back(TVertex2(stCoords2.x, stCoords2.y, 0.f ,0.f , _astVerticesColors[0].r, _astVerticesColors[0].g, _astVerticesColors[0].b, _astVerticesColors[0].a));
 			}
 			else
 			{
@@ -857,8 +858,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 
 		if (eFlags & PF_VERTICES_COLORS)
 		{
-			_pBuffer[4] = _astVerticesColors[0].r; _pBuffer[5] = _astVerticesColors[0].g; _pBuffer[6] = _astVerticesColors[0].b; _pBuffer[7] = _astVerticesColors[0].a;
-			_pBuffer[8] = _astVerticesColors[2].r; _pBuffer[9] = _astVerticesColors[2].g; _pBuffer[10] = _astVerticesColors[2].b; _pBuffer[11] = _astVerticesColors[2].a;
+			_pBuffer[4] = _astVerticesColors[2].r; _pBuffer[5] = _astVerticesColors[2].g; _pBuffer[6] = _astVerticesColors[2].b; _pBuffer[7] = _astVerticesColors[2].a;
+			_pBuffer[8] = _astVerticesColors[0].r; _pBuffer[9] = _astVerticesColors[0].g; _pBuffer[10] = _astVerticesColors[0].b; _pBuffer[11] = _astVerticesColors[0].a;
 			desc.uiColorOffset = 4 * sizeof(float);
 		}
 
