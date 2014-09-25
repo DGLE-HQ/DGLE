@@ -1288,6 +1288,7 @@ namespace DGLE
 	{
 	public:
 		virtual DGLE_RESULT DGLE_API LoadFile(const char* pcFileName, IFile *&prFile) = 0;// c:\data.zip|img.jpg
+		virtual DGLE_RESULT DGLE_API FreeFile(IFile *&prFile) = 0;
 		virtual DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension/*NULL to get HDD file system*/, IFileSystem *&prVFS) = 0;
 		virtual DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char* pcVFSExtension, const char *pcDescription, IFileSystem *pVFS, void (DGLE_API *pDeleteDGLE_API)(void *pParameter, IFileSystem *pVFS), void *pParameter = NULL) = 0;
 		virtual DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char* pcVFSExtension) = 0;

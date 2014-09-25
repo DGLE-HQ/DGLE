@@ -98,8 +98,11 @@ DGLE_RESULT DGLE_API CResFile::GetName(char *pcName, uint &uiCharsCount)
 	
 	if (uiCharsCount <= strlen(_acName))
 	{
+		if (uiCharsCount > 0)
+			strcpy(pcName, "");
+
 		uiCharsCount = strlen(_acName) + 1;
-		strcpy(pcName, "");
+		
 		return E_INVALIDARG;
 	}
 
@@ -119,7 +122,6 @@ DGLE_RESULT DGLE_API CResFile::GetPath(char *pcPath, uint &uiCharsCount)
 	if (uiCharsCount < 1)
 	{
 		uiCharsCount = 1;
-		strcpy(pcPath, "");
 		return E_INVALIDARG;
 	}
 

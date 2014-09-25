@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.01.2010 (c)Korotkov Andrey
+\date		26.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -78,8 +78,8 @@ DGLE_RESULT DGLE_API CHDDFile::Write(const void* pBuffer, uint uiCount, uint &ui
 
 DGLE_RESULT DGLE_API CHDDFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
-	//ToDo: Check if SEEK_END seek goes forward or backward? Should go backward for positive values.
-	_lseek(_iFile, ui32Offset, (eWay == FSSF_BEGIN ? SEEK_SET : (eWay == FSSF_CURRENT ? SEEK_CUR : SEEK_END)));
+	const int origin = (eWay == FSSF_BEGIN ? SEEK_SET : (eWay == FSSF_CURRENT ? SEEK_CUR : SEEK_END));
+	_lseek(_iFile, origin == SEEK_END ? -(long)ui32Offset : ui32Offset, origin);
 	ui32Position = (uint32)(_tell(_iFile));
 	return S_OK;
 }
@@ -106,8 +106,11 @@ DGLE_RESULT DGLE_API CHDDFile::GetName(char* pcName, uint &uiCharsCount)
 	
 	if (uiCharsCount <= strlen(_acName))
 	{
+		if (uiCharsCount > 0)
+			strcpy(pcName, "");
+
 		uiCharsCount = strlen(_acName) + 1;
-		strcpy(pcName, "");
+
 		return E_INVALIDARG;
 	}
 
@@ -126,8 +129,11 @@ DGLE_RESULT DGLE_API CHDDFile::GetPath(char *pcPath, uint &uiCharsCount)
 	
 	if (uiCharsCount <= strlen(_acPath))
 	{
+		if (uiCharsCount > 0)
+			strcpy(pcPath, "");
+
 		uiCharsCount = strlen(_acPath) + 1;
-		strcpy(pcPath, "");
+
 		return E_INVALIDARG;
 	}
 

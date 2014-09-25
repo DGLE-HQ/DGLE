@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.12.2010 (c)Korotkov Andrey
+\date		26.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,10 +31,13 @@ struct TVFileSystem
 	}
 };
 
+class CDummyFile;
 class CDCPFileSystem;
 
 class CMainFS: public CInstancedObj, public IMainFileSystem
 {
+	CDummyFile *_pDummyFile;
+
 	CHDDFileSystem *_pHDDFS;
 	CDCPFileSystem *_pDCPFS;
 
@@ -52,6 +55,7 @@ public:
 	void UnregisterAndFreeAll();
 
 	DGLE_RESULT DGLE_API LoadFile(const char *pcFileName, IFile *&prFile);
+	DGLE_RESULT DGLE_API FreeFile(IFile *&prFile);
 	DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
 	DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter);
 	DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char *pcVFSExtension);

@@ -250,7 +250,7 @@ type
   IEngineBaseObject = interface(IDGLE_Base)
   ['{C010239A-6457-40f5-87EF-FAA3156CE6E2}']
 
-    function Free(): DGLE_RESULT; stdcall;
+    function Free(): DGLE_RESULT; stdcall; // Never use this use IResourceManager.FreeResource instead!
     function GetType(out eObjType: E_ENGINE_OBJECT_TYPE): DGLE_RESULT; stdcall;
     function GetUnknownType(out uiObjUnknownType: Cardinal): DGLE_RESULT; stdcall;
 
@@ -827,6 +827,7 @@ StreamCallbackFunc = function(pParameter: Pointer; ui32DataPos: Cardinal; pBuffe
   ['{4850286F-4770-4bcf-A90A-33D7BE41E686}']
 
     function LoadFile(const pcFileName: PAnsiChar; out prFile: IFile): DGLE_RESULT; stdcall;// c:\data.zip|img.jpg
+    function FreeFile(var prFile: IFile): DGLE_RESULT; stdcall;
     function GetVirtualFileSystem(const pcVFSExtension: PAnsiChar{NULL to get HDD file system}; out prVFS: IFileSystem): DGLE_RESULT; stdcall;
     function RegisterVirtualFileSystem(const pcVFSExtension: PAnsiChar; const pcDescription: PAnsiChar; pVFS: IFileSystem; pDeleteCallback: TFSDelProcedure; pParameter: Pointer = nil): DGLE_RESULT; stdcall;
     function UnregisterVirtualFileSystem(const pcVFSExtension: PAnsiChar): DGLE_RESULT; stdcall;
@@ -847,7 +848,7 @@ StreamCallbackFunc = function(pParameter: Pointer; ui32DataPos: Cardinal; pBuffe
     function IsOpen(out bOpened: Boolean): DGLE_RESULT; stdcall;
     function GetName(pcName: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall;
     function GetPath(pcPath: PAnsiChar; out uiCharsCount: Cardinal): DGLE_RESULT; stdcall;
-    function Free(): DGLE_RESULT; stdcall;
+    function Free(): DGLE_RESULT; stdcall; // Never use this use  IMainFileSystem.FreeFile instead!
 
   end;
 

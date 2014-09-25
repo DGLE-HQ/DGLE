@@ -1206,6 +1206,7 @@ namespace DGLE
         #endregion
 
         void LoadFile([MarshalAs(UnmanagedType.LPStr)] string pcFileName, out IFile prFile);// c:\data.zip|img.jpg
+        void FreeFile(ref IFile prFile);
         void GetVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, out IFileSystem prVFS);
         void RegisterVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension, [MarshalAs(UnmanagedType.LPStr)] string pcDescription, IFileSystem prVFS, [MarshalAs(UnmanagedType.FunctionPtr)] DFSDeleteCallback pProc, IntPtr pParameter);
         void UnregisterVirtualFileSystem([MarshalAs(UnmanagedType.LPStr)] string pcVFSExtension);

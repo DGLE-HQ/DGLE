@@ -79,8 +79,11 @@ DGLE_RESULT DGLE_API CBuffFile::GetName(char *pcName, uint &uiCharsCount)
 
 	if (uiCharsCount <= name.size())
 	{
+		if (uiCharsCount > 0)
+			strcpy(pcName, "");
+
 		uiCharsCount = name.size() + 1;
-		strcpy(pcName, "");
+		
 		return E_INVALIDARG;
 	}
 
@@ -101,8 +104,11 @@ DGLE_RESULT DGLE_API CBuffFile::GetPath(char *pcPath, uint &uiCharsCount)
 
 	if (uiCharsCount <= path.size())
 	{
+		if (uiCharsCount > 0)
+			strcpy(pcPath, "");
+
 		uiCharsCount = path.size() + 1;
-		strcpy(pcPath, "");
+
 		return E_INVALIDARG;
 	}
 

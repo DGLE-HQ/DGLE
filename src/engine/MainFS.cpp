@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.12.2010 (c)Korotkov Andrey
+\date		26.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -11,9 +11,97 @@ See "DGLE.h" for more details.
 
 using namespace std;
 
+class CDummyFile: public IFile
+{
+public:
+
+	DGLE_RESULT DGLE_API Read(void *pBuffer, uint uiCount, uint &uiRead)
+	{
+		uiRead = 0;
+		return E_NOTIMPL;
+	}
+
+	DGLE_RESULT DGLE_API Write(const void *pBuffer, uint uiCount, uint &uiWritten)
+	{
+		uiWritten = 0;
+		return E_NOTIMPL;
+	}
+
+	DGLE_RESULT DGLE_API Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
+	{
+		ui32Position = 0;
+		return E_NOTIMPL;
+	}
+	
+	DGLE_RESULT DGLE_API GetSize(uint32 &ui32Size)
+	{
+		ui32Size = 0;
+		return E_NOTIMPL;
+	}
+
+	DGLE_RESULT DGLE_API IsOpen(bool &bOpened)
+	{
+		bOpened = false;
+		return S_OK;
+	}
+
+	DGLE_RESULT DGLE_API GetName(char *pcName, uint &uiCharsCount)
+	{
+		const char name[] = "dummy.nil";
+
+		if (!pcName)
+		{
+			uiCharsCount = strlen(name) + 1;
+			return S_OK;
+		}
+
+		if (uiCharsCount <= strlen(name))
+		{
+			if (uiCharsCount > 0)
+				strcpy(pcName, "");
+
+			uiCharsCount = strlen(name) + 1;
+			
+			return E_INVALIDARG;
+		}
+
+		strcpy(pcName, name);
+
+		return S_OK;
+	}
+
+	DGLE_RESULT DGLE_API GetPath(char *pcPath, uint &uiCharsCount)
+	{
+		if (!pcPath)
+		{
+			uiCharsCount = 1;
+			return S_OK;
+		}
+
+		if (uiCharsCount < 1)
+		{
+			uiCharsCount = 1;
+			return E_INVALIDARG;
+		}
+
+		strcpy(pcPath, "");
+
+		return S_OK;
+	}
+	
+	DGLE_RESULT DGLE_API Free()
+	{
+		return S_OK;
+	}
+
+	IDGLE_BASE_IMPLEMENTATION(IFile, INTERFACE_IMPL_END)
+};
+
 CMainFS::CMainFS(uint uiInstIdx):
 CInstancedObj(uiInstIdx)
 {
+	_pDummyFile = new CDummyFile();
+
 	Console()->RegComProc("mfs_list_virtual_fs", "Lists all registered virtual file systems.", &_s_ConListVFS, this);
 
 	_pHDDFS = new CHDDFileSystem(InstIdx());
@@ -28,6 +116,9 @@ CInstancedObj(uiInstIdx)
 CMainFS::~CMainFS()
 {
 	Console()->UnRegCom("mfs_list_virtual_fs");
+
+	delete _pDummyFile;
+
 	LOG("Filesystem Subsystem finalized.", LT_INFO);
 }
 
@@ -134,6 +225,13 @@ DGLE_RESULT DGLE_API CMainFS::LoadFile(const char *pcFileName, IFile *&prFile)
 	}
 
 	return p_fs->OpenFile(pcFileName, (E_FILE_SYSTEM_OPEN_FLAGS)(FSOF_READ | FSOF_BINARY), prFile);
+}
+
+DGLE_RESULT DGLE_API CMainFS::FreeFile(IFile *&prFile)
+{
+	const DGLE_RESULT res = prFile->Free();
+	prFile = _pDummyFile;
+	return res;
 }
 
 DGLE_RESULT DGLE_API CMainFS::GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS)
