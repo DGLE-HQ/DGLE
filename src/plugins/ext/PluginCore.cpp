@@ -579,7 +579,8 @@ DGLE_RESULT DGLE_API CPluginCore::GetPluginInterfaceName(char* pcName, uint &uiC
 	if (uiCharsCount < (uint)strlen(PLUGIN_INTERFACE_NAME))
 	{
 		uiCharsCount = (uint)strlen(PLUGIN_INTERFACE_NAME) + 1;
-		strcpy(pcName, "");
+		if (uiCharsCount > 0)
+			strcpy(pcName, "");
 		return E_INVALIDARG;
 	}
 

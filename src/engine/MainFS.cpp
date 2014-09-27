@@ -11,6 +11,8 @@ See "DGLE.h" for more details.
 
 using namespace std;
 
+//CDummyFile//
+
 class CDummyFile: public IFile
 {
 public:
@@ -96,6 +98,8 @@ public:
 
 	IDGLE_BASE_IMPLEMENTATION(IFile, INTERFACE_IMPL_END)
 };
+
+//CMainFS//
 
 CMainFS::CMainFS(uint uiInstIdx):
 CInstancedObj(uiInstIdx)

@@ -63,7 +63,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		::hModule = hModule;
 		break;
 	case DLL_PROCESS_DETACH:
-		for (size_t i = 0; i < vecPluginCores.size(); i++)
+		for (size_t i = 0; i < vecPluginCores.size(); ++i)
 			delete vecPluginCores[i];
 		vecPluginCores.clear();
 		break;

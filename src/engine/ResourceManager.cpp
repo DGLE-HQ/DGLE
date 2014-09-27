@@ -172,7 +172,7 @@ public:
 };
 
 
-//CResource Manager//
+//CResourceManager//
 
 const char CResourceManager::sc_acFormatString[] = "DMD 3.1 BIN";
 
