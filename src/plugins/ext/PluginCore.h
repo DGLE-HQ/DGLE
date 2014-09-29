@@ -34,12 +34,12 @@ private:
 	bool _LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eParams);
 	bool _LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eParams);
 
-	static void DGLE_API _s_Init(void *pParametr);
-	static void DGLE_API _s_Free(void *pParametr);
+	static void DGLE_API _s_Init(void *pParameter);
+	static void DGLE_API _s_Free(void *pParameter);
 
-	static bool DGLE_API _s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
-	static bool DGLE_API _s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
+	static bool DGLE_API _s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter);
+	static bool DGLE_API _s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter);
+	static bool DGLE_API _s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter);
 
 	static void _s_PNGError(png_structp ptr, png_const_charp msg);
 	static void PNGAPI _s_PNGReadCallback(png_structp ptr, png_bytep data, png_size_t length);

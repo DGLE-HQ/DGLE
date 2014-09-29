@@ -514,43 +514,43 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 #undef ID_DXT5
 }
 
-void DGLE_API CPluginCore::_s_Init(void *pParametr)
+void DGLE_API CPluginCore::_s_Init(void *pParameter)
 {
-	((CPluginCore *)pParametr)->_Init();
+	((CPluginCore *)pParameter)->_Init();
 }
 
-void DGLE_API CPluginCore::_s_Free(void *pParametr)
+void DGLE_API CPluginCore::_s_Free(void *pParameter)
 {
-	((CPluginCore *)pParametr)->_Free();
+	((CPluginCore *)pParameter)->_Free();
 }
 
-bool DGLE_API CPluginCore::_s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 
-	bool ret = ((CPluginCore*)pParametr)->_LoadTexturePNG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	bool ret = ((CPluginCore*)pParameter)->_LoadTexturePNG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
 	if (ret) prObj = (IEngineBaseObject *&)ptex;
 
 	return ret;
 }
 
-bool DGLE_API CPluginCore::_s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 
-	bool ret = ((CPluginCore*)pParametr)->_LoadTextureJPG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	bool ret = ((CPluginCore*)pParameter)->_LoadTextureJPG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
 	if (ret) prObj = (IEngineBaseObject *&)ptex;
 
 	return ret;
 }
 
-bool DGLE_API CPluginCore::_s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ITexture *ptex = NULL;
 
-	bool ret = ((CPluginCore*)pParametr)->_LoadTextureDDS(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	bool ret = ((CPluginCore*)pParameter)->_LoadTextureDDS(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
 	if (ret) prObj = (IEngineBaseObject *&)ptex;
 

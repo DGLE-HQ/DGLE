@@ -24,15 +24,6 @@
 extern "C" {
 # endif
 
-# define FPM_INTEL
-
-
-
-# define SIZEOF_INT 4
-# define SIZEOF_LONG 4
-# define SIZEOF_LONG_LONG 8
-
-
 /* Id: version.h,v 1.24 2003/05/27 22:40:37 rob Exp */
 
 # ifndef LIBMAD_VERSION_H

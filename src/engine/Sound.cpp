@@ -120,7 +120,7 @@ inline void CChannel::StreamData()
 	_pStreamCallback(_pParameter, _ui32ReaderPos, const_cast<uint8 *>(_c_pData), _c_uiBufferSize);
 }
 
-__forceinline const TSoundFrame & CChannel::NextFrame(float masterVol)
+FORCE_INLINE const TSoundFrame & CChannel::NextFrame(float masterVol)
 {
 	if (_eState != SCS_PLAYING)
 		_frame.i16L = _frame.i16R = 0;

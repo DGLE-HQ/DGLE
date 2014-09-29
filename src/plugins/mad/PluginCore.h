@@ -26,9 +26,9 @@ private:
 	void _Free();
 	bool _LoadMP3(IFile *pFile, ISoundSample *&prSSample);
 
-	static void DGLE_API _s_Init(void *pParametr);
-	static void DGLE_API _s_Free(void *pParametr);
-	static bool DGLE_API _s_LoadMP3(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr);
+	static void DGLE_API _s_Init(void *pParameter);
+	static void DGLE_API _s_Free(void *pParameter);
+	static bool DGLE_API _s_LoadMP3(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter);
 
 public:
 

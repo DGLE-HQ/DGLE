@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		28.09.2014 (c)Korotkov Andrey
+\date		30.09.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -11,8 +11,23 @@ See "DGLE.h" for more details.
 
 //CSoundSample//
 
+std::vector<uint16> sdata;
+
 class CSoundSample: public ISoundSample
 {
+	struct TMadBuffer
+	{
+		CSoundSample *pSndSample;
+		const uint8 *pData;
+		uint32 ui32Size;
+
+		TMadBuffer(CSoundSample *sample, const uint8 *data, uint32 size):
+		pSndSample(sample), pData(data), ui32Size(size)
+		{}
+	};
+
+	uint _uiInstIdx;
+
 	IResourceManager *_pResMan;
 	ISound *_pSound;
 
@@ -22,24 +37,115 @@ class CSoundSample: public ISoundSample
 	const uint8 *_pData;
 	uint32 _ui32DataSize;
 
+	static inline int16 _s_Scale(mad_fixed_t sample)
+	{
+		sample += (1L << (MAD_F_FRACBITS - 16));
+
+		if (sample >= MAD_F_ONE)
+			sample = MAD_F_ONE - 1;
+		else
+			if (sample < -MAD_F_ONE)
+				sample = -MAD_F_ONE;
+
+		return sample >> (MAD_F_FRACBITS + 1 - 16);
+	}
+
+	static mad_flow _s_MadInput(void *pParameter, mad_stream *stream)
+	{
+		TMadBuffer *buffer = (TMadBuffer*)pParameter;
+
+		if (buffer->ui32Size == 0)
+			return MAD_FLOW_STOP;
+
+		mad_stream_buffer(stream, buffer->pData, buffer->ui32Size);
+
+		buffer->ui32Size = 0;
+
+		return MAD_FLOW_CONTINUE;
+	}
+
+	static mad_flow _s_MadOutput(void *pParameter, mad_header const *header, mad_pcm *pcm)
+	{
+		TMadBuffer *buffer = (TMadBuffer*)pParameter;
+
+		//pcm->samplerate
+		const bool stereo = pcm->channels == 2;
+		uint nsamples = pcm->length;
+		mad_fixed_t const *left_ch = pcm->samples[0],
+			*right_ch = pcm->samples[1];
+
+		sdata.reserve(sdata.size() + nsamples * (stereo ? 2 : 1));
+
+		while (nsamples--)
+		{
+			int16 sample = _s_Scale(*left_ch++);
+
+			sdata.push_back(sample);
+
+			if (stereo)
+			{
+				sample = _s_Scale(*right_ch++);
+				sdata.push_back(sample);
+			}
+		}
+
+		return MAD_FLOW_CONTINUE;
+	}
+
+	static mad_flow _s_MadError(void *pParameter, mad_stream *stream, mad_frame *frame)
+	{
+		TMadBuffer *buffer = ((TMadBuffer*)pParameter);
+		
+		const uint _uiInstIdx = buffer->pSndSample->_uiInstIdx;
+		LOG("MPEG Audio Layer III decoding error " + UIntToStrX(stream->error) + " (" +  mad_stream_errorstr(stream) + ") at byte offset " + UIntToStr(stream->this_frame - buffer->pData) + ".", LT_ERROR);
+		
+		return MAD_FLOW_BREAK;
+	}
+
+	bool _MadDecode(const uint8 *pData, uint32 ui32Size)
+	{
+		TMadBuffer buffer(this, pData, ui32Size);
+
+		mad_decoder decoder;
+		mad_decoder_init(&decoder, &buffer, _s_MadInput, 0 /* header */, 0 /* filter */, _s_MadOutput, _s_MadError, 0 /* message */);
+
+		int result = mad_decoder_run(&decoder, MAD_DECODER_MODE_SYNC);
+
+		mad_decoder_finish(&decoder);
+
+		return result == 0;
+	}
+
+	void _StreamCallback(uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize)
+	{
+	}
+
+	static void DGLE_API _s_StreamCallback(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize)
+	{
+		((CSoundSample*)pParameter)->_StreamCallback(ui32DataPos, pBufferData, uiBufferSize);
+	}
+
 public:
 
-	CSoundSample(IResourceManager *pResMan, ISound *pSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
-	_pResMan(pResMan), _pSound(pSound), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(uiBitsPerSample),
-	_bStereo(bStereo), _pData(pData), _ui32DataSize(ui32DataSize)
-	{}
+	CSoundSample(uint uiInstIdx, IResourceManager *pResMan, ISound *pSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
+	_uiInstIdx(uiInstIdx), _pResMan(pResMan), _pSound(pSound), _uiSamplesPerSec(uiSamplesPerSec),
+	_uiBitsPerSample(uiBitsPerSample), _bStereo(bStereo), _pData(pData), _ui32DataSize(ui32DataSize)
+	{
+		_MadDecode(_pData, _ui32DataSize);
+	}
 
 	~CSoundSample()
 	{
 		_pSound->ReleaseChannelsByData(_pData);
-		//delete[] _pData;
+		delete[] _pData;
 	}
 
 	DGLE_RESULT DGLE_API Play()
 	{
 		ISoundChannel *p_chnl;
 		
-		DGLE_RESULT res = _pSound->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+		DGLE_RESULT res = _pSound->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, reinterpret_cast<const uint8 *>(&sdata[0]), sdata.size() * sizeof(int16));
+		//DGLE_RESULT res = _pSound->CreateStreamableChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _ui32DataSize, &_s_StreamCallback, this);
 
 		if (SUCCEEDED(res))
 		{
@@ -52,7 +158,7 @@ public:
 	
 	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags)
 	{
-		DGLE_RESULT res = _pSound->CreateChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+		DGLE_RESULT res = _pSound->CreateStreamableChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _ui32DataSize, &_s_StreamCallback, this);
 
 		if (SUCCEEDED(res))
 			pSndChnl->Play((bool)(eFlags & SSP_LOOPED));
@@ -192,146 +298,6 @@ public:
 
 //CPluginCore//
 
-std::vector<int16> sdata;
-
-struct mad_buffer
-{
-  unsigned char const *start;
-  unsigned long length;
-};
-
-/*
- * This is the input callback. The purpose of this callback is to (re)fill
- * the stream buffer which is to be decoded. In this example, an entire file
- * has been mapped into memory, so we just call mad_stream_buffer() with the
- * address and length of the mapping. When this callback is called a second
- * time, we are finished decoding.
- */
-mad_flow input(void *data, mad_stream *stream)
-{
-  mad_buffer *buffer = (mad_buffer*)data;
-
-  if (!buffer->length)
-	return MAD_FLOW_STOP;
-
-  mad_stream_buffer(stream, buffer->start, buffer->length);
-
-  buffer->length = 0;
-
-  return MAD_FLOW_CONTINUE;
-}
-
-/*
- * The following utility routine performs simple rounding, clipping, and
- * scaling of MAD's high-resolution samples down to 16 bits. It does not
- * perform any dithering or noise shaping, which would be recommended to
- * obtain any exceptional audio quality. It is therefore not recommended to
- * use this routine if high-quality output is desired.
- */
-inline int scale(mad_fixed_t sample)
-{
-  /* round */
-  sample += (1L << (MAD_F_FRACBITS - 16));
-
-  /* clip */
-  if (sample >= MAD_F_ONE)
-	sample = MAD_F_ONE - 1;
-  else if (sample < -MAD_F_ONE)
-	sample = -MAD_F_ONE;
-
-  /* quantize */
-  return sample >> (MAD_F_FRACBITS + 1 - 16);
-}
-
-/*
- * This is the output callback function. It is called after each frame of
- * MPEG audio data has been completely decoded. The purpose of this callback
- * is to output (or play) the decoded PCM audio.
- */
-mad_flow output(void *data, mad_header const *header, mad_pcm *pcm)
-{
-  unsigned int nchannels, nsamples;
-  mad_fixed_t const *left_ch, *right_ch;
-
-  /* pcm->samplerate contains the sampling frequency */
-
-  nchannels = pcm->channels;
-  nsamples  = pcm->length;
-  left_ch   = pcm->samples[0];
-  right_ch  = pcm->samples[1];
-
-  while (nsamples--)
-  {
-	int16 sample;
-
-	/* output sample(s) in 16-bit signed little-endian PCM */
-
-	sample = scale(*left_ch++);
-
-	sdata.push_back(sample);
-
-	if (nchannels == 2)
-	{
-		sample = scale(*right_ch++);
-		sdata.push_back(sample);
-	}
-  }
-
-  return MAD_FLOW_CONTINUE;
-}
-
-/*
- * This is the error callback function. It is called whenever a decoding
- * error occurs. The error is indicated by stream->error; the list of
- * possible MAD_ERROR_* errors can be found in the mad.h (or stream.h)
- * header file.
- */
-mad_flow error(void *data, mad_stream *stream, mad_frame *frame)
-{
-  mad_buffer *buffer = (mad_buffer*)data;
-
-  uint _uiInstIdx = 0; // need to be removed
-  LOG("MPEG decoding error " + UIntToStrX(stream->error) + " (" +  mad_stream_errorstr(stream) + ") at byte offset " + UIntToStr(stream->this_frame - buffer->start) + ".", LT_ERROR);
- 
-  /* return MAD_FLOW_BREAK here to stop decoding (and propagate an error) */
-
-  return MAD_FLOW_CONTINUE;
-}
-
-/*
- * This is the function called by main() above to perform all the decoding.
- * It instantiates a decoder object and configures it with the input,
- * output, and error callback functions above. A single call to
- * mad_decoder_run() continues until a callback function returns
- * MAD_FLOW_STOP (to stop decoding) or MAD_FLOW_BREAK (to stop decoding and
- * signal an error).
- */
-int decode(unsigned char const *start, unsigned long length)
-{
-  mad_buffer buffer;
-  struct mad_decoder decoder;
-  int result;
-
-  /* initialize our private message structure */
-
-  buffer.start  = start;
-  buffer.length = length;
-
-  /* configure input, output, and error functions */
-
-  mad_decoder_init(&decoder, &buffer, input, 0 /* header */, 0 /* filter */, output, error, 0 /* message */);
-
-  /* start decoding */
-
-  result = mad_decoder_run(&decoder, MAD_DECODER_MODE_SYNC);
-
-  /* release the decoder */
-
-  mad_decoder_finish(&decoder);
-
-  return result;
-}
-
 CPluginCore::CPluginCore(IEngineCore *pEngineCore):
 _pEngineCore(pEngineCore)
 {
@@ -368,14 +334,24 @@ bool CPluginCore::_LoadMP3(IFile *pFile, ISoundSample *&prSSample)
 
 	//ToDo:
 	// 1. Skip ID3v1 and ID3v2 tags.
-	// 2. Read header to check if supported http://mpgedit.org/mpgedit/mpeg_format/MP3Format.html .
+	// ID3V1
+	/*struct TID3v1
+	{
+		char tag[3];
+		char title[30];
+		char artist[30];
+		char album[30];
+		char year[4];
+		char comment[30];
+		unsigned char genre;
+	};*/
+	// http://www.ulduzsoft.com/2012/07/parsing-id3v2-tags-in-the-mp3-files/
+	// 2. Read header to check if supported http://mpgedit.org/mpgedit/mpeg_format/MP3Format.html http://www.cplusplus.com/forum/general/105054/ .
 	byte *data = new byte[size];
 	uint read;
 	pFile->Read(data, size, read);
 
-	decode(data, size);
-
-	prSSample = new CSoundSample(_pResMan, _pSound, 44100, 16, true,  reinterpret_cast<const uint8 *>(&sdata[0]), sdata.size() * sizeof(int16));
+	prSSample = new CSoundSample(_uiInstIdx, _pResMan, _pSound, 44100, 16, true, data, size);
 
 	return true;
 }
@@ -412,26 +388,26 @@ DGLE_RESULT DGLE_API CPluginCore::GetPluginInterfaceName(char* pcName, uint &uiC
 	return S_OK;
 }
 
-void DGLE_API CPluginCore::_s_Init(void *pParametr)
+void DGLE_API CPluginCore::_s_Init(void *pParameter)
 {
-	((CPluginCore *)pParametr)->_Init();
+	((CPluginCore *)pParameter)->_Init();
 }
 
-void DGLE_API CPluginCore::_s_Free(void *pParametr)
+void DGLE_API CPluginCore::_s_Free(void *pParameter)
 {
-	((CPluginCore *)pParametr)->_Free();
+	((CPluginCore *)pParameter)->_Free();
 }
 
-bool DGLE_API CPluginCore::_s_LoadMP3(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParametr)
+bool DGLE_API CPluginCore::_s_LoadMP3(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	ISoundSample *ps = NULL;
 	
-	const bool ret = ((CPluginCore*)pParametr)->_LoadMP3(pFile, ps);
+	const bool ret = ((CPluginCore*)pParameter)->_LoadMP3(pFile, ps);
 	
 	if (ret)
 	{
 		if (uiLoadFlags & SSLF_LOAD_AS_MUSIC)
-			prObj = new CMusic(((CPluginCore*)pParametr)->_pResMan, ps);
+			prObj = new CMusic(((CPluginCore*)pParameter)->_pResMan, ps);
 		else
 			prObj = (IEngineBaseObject *&)ps;
 	}

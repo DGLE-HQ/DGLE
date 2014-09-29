@@ -105,29 +105,29 @@ DGLE_RESULT DGLE_API CPluginCore::GetPluginInterfaceName(char* pcName, uint &uiC
 	return S_OK;
 }
 
-void DGLE_API CPluginCore::_s_Render(void *pParametr)
+void DGLE_API CPluginCore::_s_Render(void *pParameter)
 {
-   ((CPluginCore *)pParametr)->_Render();
+   ((CPluginCore *)pParameter)->_Render();
 }
 
-void DGLE_API CPluginCore::_s_Update(void *pParametr)
+void DGLE_API CPluginCore::_s_Update(void *pParameter)
 {
 	uint dt;
-	((CPluginCore *)pParametr)->_pEngineCore->GetLastUpdateDeltaTime(dt);
-	((CPluginCore *)pParametr)->_Update(dt);
+	((CPluginCore *)pParameter)->_pEngineCore->GetLastUpdateDeltaTime(dt);
+	((CPluginCore *)pParameter)->_Update(dt);
 }
 
-void DGLE_API CPluginCore::_s_Init(void *pParametr)
+void DGLE_API CPluginCore::_s_Init(void *pParameter)
 {
-	((CPluginCore *)pParametr)->_Init();
+	((CPluginCore *)pParameter)->_Init();
 }
 
-void DGLE_API CPluginCore::_s_Free(void *pParametr)
+void DGLE_API CPluginCore::_s_Free(void *pParameter)
 {
-	((CPluginCore *)pParametr)->_Free();
+	((CPluginCore *)pParameter)->_Free();
 }
 
-void DGLE_API CPluginCore::_s_EventHandler(void *pParametr, IBaseEvent *pEvent)
+void DGLE_API CPluginCore::_s_EventHandler(void *pParameter, IBaseEvent *pEvent)
 {
 	E_EVENT_TYPE ev_type;
 	TWindowMessage msg;
@@ -140,11 +140,11 @@ void DGLE_API CPluginCore::_s_EventHandler(void *pParametr, IBaseEvent *pEvent)
 		IEvWindowMessage *p_ev_msg;
 		p_ev_msg = (IEvWindowMessage *)pEvent;
 		p_ev_msg->GetMessage(msg);
-		((CPluginCore *)pParametr)->_MsgProc(msg);
+		((CPluginCore *)pParameter)->_MsgProc(msg);
 		break;
 
 	case ET_ON_PROFILER_DRAW:
-		((CPluginCore *)pParametr)->_ProfilerDraw();
+		((CPluginCore *)pParameter)->_ProfilerDraw();
 		break;
 	}
 }
