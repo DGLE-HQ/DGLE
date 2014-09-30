@@ -31,11 +31,13 @@ class CSoundSample: public ISoundSample
 	IResourceManager *_pResMan;
 	ISound *_pSound;
 
-	uint _uiSamplesPerSec;
-	uint _uiBitsPerSample;
+	uint _uiSamplesPerSec,
+		_uiBitsPerSample,
+		_uiBitRate;
 	bool _bStereo;
+
 	const uint8 *_pData;
-	uint32 _ui32DataSize;
+	uint32 _ui32DataOffset, _ui32DataSize;
 
 	static inline int16 _s_Scale(mad_fixed_t sample)
 	{
@@ -47,7 +49,40 @@ class CSoundSample: public ISoundSample
 			if (sample < -MAD_F_ONE)
 				sample = -MAD_F_ONE;
 
-		return sample >> (MAD_F_FRACBITS + 1 - 16);
+		return (int16)(sample >> (MAD_F_FRACBITS + 1 - 16));
+	}
+
+	uint32 _FindNextMP3Header(const uint32 ui32Offset)
+	{
+		const uint32 offset = _ui32DataOffset + ui32Offset;
+		uint cnt = 0;
+		uint32 pos = offset;
+
+		while (offset + cnt < _ui32DataSize)
+		{
+			pos = cnt;
+		
+			byte frame = _pData[offset + cnt];
+			++cnt;
+
+			if (0xFF == frame)
+			{
+				frame = _pData[offset + cnt];
+				++cnt;
+
+				if(0xFA == frame || 0xFB == frame)
+					return pos;
+			}
+		};
+
+		return -1;
+	}
+
+	uint32 GetRoughMP3DataPosFromPCMDataPos(uint32 pos) const
+	{
+		const uint pos_msec = (pos / (_bStereo ? 2 : 1)) / (_uiSamplesPerSec * (_uiBitsPerSample / 8)) * 1000,
+		avg_frame_size = (uint)(((1152 /*samples per frame for MPEG-1 Layer III format*/ / 8) * _uiBitRate / _uiSamplesPerSec) + 4 /*header size*/);
+		return pos_msec / 26 /*length in msecs of single frame*/ * avg_frame_size;
 	}
 
 	static mad_flow _s_MadInput(void *pParameter, mad_stream *stream)
@@ -68,7 +103,6 @@ class CSoundSample: public ISoundSample
 	{
 		TMadBuffer *buffer = (TMadBuffer*)pParameter;
 
-		//pcm->samplerate
 		const bool stereo = pcm->channels == 2;
 		uint nsamples = pcm->length;
 		mad_fixed_t const *left_ch = pcm->samples[0],
@@ -97,7 +131,7 @@ class CSoundSample: public ISoundSample
 		TMadBuffer *buffer = ((TMadBuffer*)pParameter);
 		
 		const uint _uiInstIdx = buffer->pSndSample->_uiInstIdx;
-		LOG("MPEG Audio Layer III decoding error " + UIntToStrX(stream->error) + " (" +  mad_stream_errorstr(stream) + ") at byte offset " + UIntToStr(stream->this_frame - buffer->pData) + ".", LT_ERROR);
+		LOG("MPEG-1 Audio Layer III decoding error " + UIntToStrX(stream->error) + " (" +  mad_stream_errorstr(stream) + ") at byte offset " + UIntToStr(stream->this_frame - buffer->pData) + ".", LT_ERROR);
 		
 		return MAD_FLOW_BREAK;
 	}
@@ -127,11 +161,11 @@ class CSoundSample: public ISoundSample
 
 public:
 
-	CSoundSample(uint uiInstIdx, IResourceManager *pResMan, ISound *pSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
-	_uiInstIdx(uiInstIdx), _pResMan(pResMan), _pSound(pSound), _uiSamplesPerSec(uiSamplesPerSec),
-	_uiBitsPerSample(uiBitsPerSample), _bStereo(bStereo), _pData(pData), _ui32DataSize(ui32DataSize)
+	CSoundSample(uint uiInstIdx, IResourceManager *pResMan, ISound *pSound, uint uiSamplesPerSec, uint uiBitRate, bool bStereo, const uint8 *pData, uint32 ui32DataOffset, uint32 ui32DataSize):
+	_uiInstIdx(uiInstIdx), _pResMan(pResMan), _pSound(pSound), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(16),
+	_uiBitRate(uiBitRate), _bStereo(bStereo), _pData(pData), _ui32DataOffset(ui32DataOffset), _ui32DataSize(ui32DataSize)
 	{
-		_MadDecode(_pData, _ui32DataSize);
+		_MadDecode(&_pData[ui32DataOffset], _ui32DataSize - ui32DataOffset);
 	}
 
 	~CSoundSample()
@@ -318,7 +352,7 @@ void CPluginCore::_Init()
 	_pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)_pResMan);
 	
 	if (SUCCEEDED(_pEngineCore->GetSubSystem(ESS_SOUND, (IEngineSubSystem *&)_pSound)))
-		_pResMan->RegisterFileFormat("mp3", EOT_SOUND_SAMPLE, "MPEG-1 or MPEG-2 Audio Layer III sound files.", &_s_LoadMP3, (void*)this);
+		_pResMan->RegisterFileFormat("mp3", EOT_SOUND_SAMPLE, "MPEG-1 Audio Layer III (MP3) compatible sound files.", &_s_LoadMP3, (void*)this);
 }
 
 void CPluginCore::_Free()
@@ -328,30 +362,122 @@ void CPluginCore::_Free()
 }
 
 bool CPluginCore::_LoadMP3(IFile *pFile, ISoundSample *&prSSample)
-{
+{	
+	uint read;
+
+	char tag[3];
+	uint32 file_pos;
+	
+	pFile->Seek(128, FSSF_END, file_pos);
+	pFile->Read(tag, sizeof(tag), read);
+
+	if (read != sizeof(tag))
+	{
+		LOG("Error checking ID3v1 tag.", LT_ERROR);
+		return false;
+	}
+	
+	const bool id3v1 = tag[0] == 'T' && tag[1] == 'A' && tag[2] == 'G';
+	
+	pFile->Seek(0, FSSF_BEGIN, file_pos);
+	pFile->Read(tag, sizeof(tag), read);
+	
+	if (read != sizeof(tag))
+	{
+		LOG("Error checking ID3v2 tag.", LT_ERROR);
+		return false;
+	}
+
+	const bool id3v2 = tag[0] == 'I' && tag[1] == 'D' && tag[2] == '3';
+
+	if (id3v2)
+	{
+		byte size_bytes[4];
+		pFile->Seek(3, FSSF_CURRENT, file_pos);
+		pFile->Read(size_bytes, sizeof(size_bytes), read);
+		const uint size = size_bytes[0] << 21 | size_bytes[1] << 14 | size_bytes[2] << 7 | size_bytes[3];
+		pFile->Seek(size, FSSF_CURRENT, file_pos);
+	}
+	else
+		pFile->Seek(0, FSSF_BEGIN, file_pos);
+
 	uint32 size;
 	pFile->GetSize(size);
 
-	//ToDo:
-	// 1. Skip ID3v1 and ID3v2 tags.
-	// ID3V1
-	/*struct TID3v1
-	{
-		char tag[3];
-		char title[30];
-		char artist[30];
-		char album[30];
-		char year[4];
-		char comment[30];
-		unsigned char genre;
-	};*/
-	// http://www.ulduzsoft.com/2012/07/parsing-id3v2-tags-in-the-mp3-files/
-	// 2. Read header to check if supported http://mpgedit.org/mpgedit/mpeg_format/MP3Format.html http://www.cplusplus.com/forum/general/105054/ .
-	byte *data = new byte[size];
-	uint read;
+	if (id3v1)
+		size -= 128;
+
+	if (id3v2)
+		size -= file_pos;
+
+	uint8 *data = new uint8[size];
 	pFile->Read(data, size, read);
 
-	prSSample = new CSoundSample(_uiInstIdx, _pResMan, _pSound, 44100, 16, true, data, size);
+	if (read != size)
+	{
+		delete[] data;
+		LOG("Failed to read audio frames data.", LT_ERROR);
+		return false;
+	}
+
+	bool found = false;
+	uint cnt = 0;
+	uint32 pos = 0;
+	byte frame;
+
+	while (cnt < size)
+	{
+		pos = cnt;
+		
+		frame = data[cnt];
+		++cnt;
+
+		if (0xFF == frame)
+		{
+			frame = data[cnt];
+			++cnt;
+
+			if(0xFA == frame || 0xFB == frame)
+			{
+				found = true;
+				break;
+			}
+		}
+	};
+
+	if ((frame & 0x08) != 0x08 && (frame & 0x06) != 0x02)
+	{
+		delete[] data;
+		LOG("Not MPEG-1 Layer III audio file or unsupported format.", LT_ERROR);
+		return false;
+	}
+
+	frame = data[cnt];
+	++cnt;
+
+	const uint bitrate_table[16] = {0, 32000, 40000, 48000, 56000, 64000, 80000, 96000, 112000, 128000, 160000, 192000, 224000, 256000, 320000, 0},
+	freq_table[4] = {44100, 48000, 32000, 0};
+
+	const uint brate = bitrate_table[(frame & 0xF0) >> 4],
+		freq = freq_table[(frame & 0x0C) >> 2];
+	
+	const bool padding = (frame & 0x02) == 0x02;
+
+	frame = data[cnt];
+	++cnt;
+
+	const bool stereo = (frame & 0xC0) != 0xC0;
+
+	//const uint frame_len = (uint)(((1152 /*samples per frame for MPEG-1 Layer III format*/ / 8) * brate / freq) + (padding ? 1 : 0));
+	//
+	//if (frame_len == 156 /*size of first header if VBR*/)
+	//{
+	//	delete[] data;
+	//	LOG("Variable Bit Rate (VBR) is not supported by decoder for MPEG-1 Layer III audio files.", LT_ERROR);
+	//	return false;
+	//}
+
+	prSSample = new CSoundSample(_uiInstIdx, _pResMan, _pSound, freq, brate, stereo, data, pos, size);
 
 	return true;
 }
