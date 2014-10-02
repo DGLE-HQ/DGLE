@@ -1086,6 +1086,7 @@ namespace DGLE
         void GetMaxChannelsCount(out uint uiCount);
         void GetFreeChannelsCount(out uint uiCount);
         void ReleaseChannelsByData([MarshalAs(UnmanagedType.LPArray)] byte[] pData);
+        void ReleaseChannelsByCallback([MarshalAs(UnmanagedType.FunctionPtr)] DSoundStreamCallback pStreamCallback);
         void CreateChannel(out ISoundChannel prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, [MarshalAs(UnmanagedType.U1)] bool bStereo, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 ui32DataSize); //Data not copied!
         // is this translation ok ? // phomm
         void CreateStreamableChannel(out ISoundChannel prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, [MarshalAs(UnmanagedType.U1)]  bool bStereo, UInt32 ui32DataSize, [MarshalAs(UnmanagedType.FunctionPtr)] DSoundStreamCallback pStreamCallback, IntPtr pParameter);

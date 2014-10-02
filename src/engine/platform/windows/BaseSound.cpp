@@ -109,7 +109,7 @@ bool CBaseSound::_InitDevice(uint id)
 	
 	_bDeviceClosingFlag = false;
 
-	_uiBufferSize = _sc_ui8Latency * (_stWaveFormat.nSamplesPerSec / 1000) * (_stWaveFormat.wBitsPerSample / 8) * _stWaveFormat.nChannels;
+	_uiBufferSize = (uint)(_sc_ui8Latency * ((float)_stWaveFormat.nSamplesPerSec / 1000) * (_stWaveFormat.wBitsPerSample / 8) * _stWaveFormat.nChannels);
 
 	memset(_stWaveBuffers, 0, sizeof(WAVEHDR) * 2);
 	
