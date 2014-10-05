@@ -317,8 +317,9 @@ DGLE_RESULT DGLE_API CChannel::SetCurrentPosition(uint uiPos)
 
 	_pSnd->EnterThreadSafeSection();
 
-	_ui32ReaderPos = (uint32)((float(uiPos / 1000.f) * _c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * (_c_bStereo ? 2 : 1));
+	_ui32ReaderPos = (uint32)(((float)(uiPos / 1000.f) * _c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * (_c_bStereo ? 2 : 1));
 	_ui32BufferDataOffset = 0;
+	_fFrameCnt = (float)_ui32ReaderPos / _c_uiDataPerFrame;
 
 	_pSnd->LeaveThreadSafeSection();
 
