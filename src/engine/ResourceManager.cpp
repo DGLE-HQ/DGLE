@@ -415,7 +415,8 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 	if (exts.size() >= uiCharsCount)
 	{
 		uiCharsCount = exts.size();
-		strcpy(pcTxt, "");
+		if (uiCharsCount > 0)
+			strcpy(pcTxt, "");
 		return E_INVALIDARG;
 	}
 
@@ -619,7 +620,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 			
 		for(uint j = 0; j < uiHeight; ++j)
 			for(uint i = 0; i < ui_line_w; ++i)
-				if (i%3 == 0)
+				if (i % 3 == 0)
 				{
 					uint8
 					ubt_tmp	= pData[ui_line_w * j + i];
@@ -915,9 +916,14 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter)
 {
+	DGLE_RESULT res = S_OK;
+
 	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
 		if (_vecFileFormats[i].ext == string(pcExtension) && _vecFileFormats[i].type == eObjType)
+		{
 			LOG("File format with extension \"" + string(pcExtension) + "\" was overrided.", LT_WARNING);
+			res = S_FALSE;
+		}
 
 	TFileFormat tff;
 
@@ -931,7 +937,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 
 	_strFileFormatsDescs += string("- " + ToUpperCase(string(pcExtension)) + " " + string(pcDiscription) + "\n");
 
-	return S_OK;
+	return res;
 }
 
 bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eFlags)
@@ -1957,7 +1963,8 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExt
 			if (_vecFileFormats[i].discr.size() >= uiCharsCount)
 			{
 				uiCharsCount = _vecFileFormats[i].discr.size() + 1;
-				strcpy(pcTxt, "");
+				if (uiCharsCount > 0)
+					strcpy(pcTxt, "");
 				return E_INVALIDARG;
 			}
 
@@ -1966,7 +1973,8 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExt
 			return S_OK;
 		}
 
-	strcpy(pcTxt, "");
+	if (uiCharsCount > 0)
+		strcpy(pcTxt, "");
 
 	return S_FALSE;
 }

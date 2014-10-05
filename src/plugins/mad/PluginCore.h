@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.10.2012 (c)Korotkov Andrey
+\date		04.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -19,21 +19,16 @@ private:
 	
 	uint _uiInstIdx;
 	IEngineCore *_pEngineCore;
+	IResourceManager *_pResMan;
+	ISound *_pSound;
 
-	int _iDrawProfiler;
-
-	void _Render();
-	void _Update(uint uiDeltaTime);
 	void _Init();
 	void _Free();
-	void _MsgProc(const TWindowMessage &stMsg);
-	void _ProfilerDraw();
+	bool _LoadMP3(IFile *pFile, IMusic *&prMusic);
 
-	static void DGLE_API _s_EventHandler(void *pParameter, IBaseEvent *pEvent);
-	static void DGLE_API _s_Render(void *pParameter);
-	static void DGLE_API _s_Update(void *pParameter);
 	static void DGLE_API _s_Init(void *pParameter);
 	static void DGLE_API _s_Free(void *pParameter);
+	static bool DGLE_API _s_LoadMP3(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter);
 
 public:
 

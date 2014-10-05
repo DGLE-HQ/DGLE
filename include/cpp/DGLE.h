@@ -1209,8 +1209,10 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetMaxChannelsCount(uint &uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount) = 0;
 		virtual DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData) = 0;	
+		virtual DGLE_RESULT DGLE_API ReleaseChannelsByCallback(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize)) = 0;	
+		// pData presents samples in 16-bit signed little-endian PCM format
 		virtual DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize) = 0; //Data not copied!
-		virtual DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter) = 0;
+		virtual DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize) /*callback is being called from separate thread*/, void *pParameter) = 0;
 	};
 
 	//SoundSample interface//

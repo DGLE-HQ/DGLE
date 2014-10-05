@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.10.2012 (c)Korotkov Andrey
+\date		05.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -46,7 +46,7 @@ _c_pData(NULL), _c_ui32DataSize(0), _c_uiDataPerFrame(0),
 _ui32ReaderPos(0), _fFrameCnt(0.f), _c_uiLength(0),
 _bAquired(false), _fVol(1.f), _fPan(0.f), _fSpeed(1.f), _c_fBaseSpeed(1.f), _bLooped(false),
 _eState(SCS_STOPPED), _frame(),
-_pStreamCallback(NULL), _pParameter(NULL), _c_uiBufferSize(0)
+_pStreamCallback(NULL), _pParameter(NULL), _c_uiBufferSize(0), _ui32BufferDataOffset(0)
 {}
 
 CChannel::CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
@@ -56,7 +56,7 @@ _c_pData(pData), _c_ui32DataSize(ui32DataSize), _ui32ReaderPos(0), _c_uiDataPerF
 _fFrameCnt(0.f), _c_uiLength(_DataPosToMsec(ui32DataSize)),
 _bAquired(true), _fVol(1.f), _fPan(0.f), _fSpeed(1.f), _c_fBaseSpeed(uiSamplesPerSec / 44100.f), _bLooped(false),
 _eState(SCS_STOPPED), _frame(),
-_pStreamCallback(NULL), _pParameter(NULL), _c_uiBufferSize(0)
+_pStreamCallback(NULL), _pParameter(NULL), _c_uiBufferSize(0), _ui32BufferDataOffset(0)
 {}
 
 CChannel::CChannel(CBaseSound *pBaseSound, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, uint uiBufferSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter):
@@ -66,7 +66,7 @@ _c_pData(NULL), _c_ui32DataSize(ui32DataSize), _c_uiDataPerFrame((uiBitsPerSampl
 _ui32ReaderPos(0), _fFrameCnt(0.f), _c_uiLength(_DataPosToMsec(ui32DataSize)),
 _bAquired(true), _fVol(1.f), _fPan(0.f), _fSpeed(1.f), _c_fBaseSpeed(uiSamplesPerSec / 44100.f), _bLooped(false),
 _eState(SCS_STOPPED), _frame(),
-_pStreamCallback(pStreamCallback), _pParameter(pParameter), _c_uiBufferSize(uiBufferSize)
+_pStreamCallback(pStreamCallback), _pParameter(pParameter), _c_uiBufferSize(uiBufferSize), _ui32BufferDataOffset(0)
 {
 	_c_pData = new uint8[_c_uiBufferSize];
 }
@@ -79,7 +79,7 @@ CChannel::~CChannel()
 
 inline uint CChannel::_DataPosToMsec(uint32 pos) const
 {
-	return (pos / (_c_bStereo ? 2 : 1)) / (_c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * 1000;
+	return (uint)(((float)pos / (_c_bStereo ? 2 : 1)) / (_c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * 1000);
 }
 
 inline bool CChannel::IsActive() const
@@ -112,33 +112,47 @@ inline bool CChannel::CmprDataPtr(const uint8 *pData) const
 	return pData == _c_pData;
 }
 
+inline bool CChannel::CmprCallbackPtr(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize)) const
+{
+	return pStreamCallback == _pStreamCallback;
+}
+
 inline void CChannel::StreamData()
 {
-	if (!_c_bStreamable)
+	if (!_c_bStreamable || (_ui32ReaderPos != 0 && _ui32ReaderPos == _ui32BufferDataOffset))
 		return;
+
+	_ui32BufferDataOffset = _ui32ReaderPos;
 
 	_pStreamCallback(_pParameter, _ui32ReaderPos, const_cast<uint8 *>(_c_pData), _c_uiBufferSize);
 }
 
-__forceinline const TSoundFrame & CChannel::NextFrame(float masterVol)
+inline bool CChannel::IsStreamable() const
+{
+	return _c_bStreamable;
+}
+
+FORCE_INLINE const TSoundFrame & CChannel::NextFrame(float masterVol)
 {
 	if (_eState != SCS_PLAYING)
 		_frame.i16L = _frame.i16R = 0;
 	else
 	{
+		const uint32 reader_pos = _ui32ReaderPos - _ui32BufferDataOffset;
+
 		if (_c_uiBitsPerSample == 8)
 		{
 			if (!_c_bStereo)
-				_frame.SetMono(((int16)_c_pData[_ui32ReaderPos] - 128) * 256, _fPan, _fVol * masterVol);
+				_frame.SetMono(((int16)_c_pData[reader_pos] - 128) * 256, _fPan, _fVol * masterVol);
 			else
 			{
-				const int16 data[2] = { ((int16)_c_pData[_ui32ReaderPos] - 128) * 256, ((int16)_c_pData[_ui32ReaderPos + 1] - 128) * 256 };
+				const int16 data[2] = { ((int16)_c_pData[reader_pos] - 128) * 256, ((int16)_c_pData[reader_pos + 1] - 128) * 256 };
 				_frame.SetStereo(data, _fVol * masterVol);
 			}
 		}
 		else // 16 bit
 		{
-			const int16 * const pi16_dat = reinterpret_cast<const int16 *>(&_c_pData[_ui32ReaderPos]);
+			const int16 * const pi16_dat = reinterpret_cast<const int16 *>(&_c_pData[reader_pos]);
 
 			if (!_c_bStereo)
 				_frame.SetMono(pi16_dat[0], _fPan, _fVol * masterVol);
@@ -146,9 +160,9 @@ __forceinline const TSoundFrame & CChannel::NextFrame(float masterVol)
 				_frame.SetStereo(pi16_dat, _fVol * masterVol);
 		}
 
-		_ui32ReaderPos = _c_uiDataPerFrame * (uint32)_fFrameCnt;
-
 		_fFrameCnt += _fSpeed * _c_fBaseSpeed;
+
+		_ui32ReaderPos = _c_uiDataPerFrame * (uint32)_fFrameCnt;
 
 		if (_ui32ReaderPos >= _c_ui32DataSize)
 		{
@@ -156,8 +170,12 @@ __forceinline const TSoundFrame & CChannel::NextFrame(float masterVol)
 				_eState = SCS_STOPPED;
 		
 			_ui32ReaderPos = 0;
+			_ui32BufferDataOffset = 0;
 			_fFrameCnt = 0.f;
 		}
+
+		if (_c_bStreamable && _ui32ReaderPos - _ui32BufferDataOffset >= _c_uiBufferSize)
+			StreamData();
 	}
 
 	return _frame;
@@ -192,6 +210,7 @@ DGLE_RESULT DGLE_API CChannel::Stop()
 	
 	_eState = SCS_STOPPED;
 	_ui32ReaderPos = 0;
+	_ui32BufferDataOffset = 0;
 	_fFrameCnt = 0.f;
 	
 	_pSnd->LeaveThreadSafeSection();
@@ -298,7 +317,9 @@ DGLE_RESULT DGLE_API CChannel::SetCurrentPosition(uint uiPos)
 
 	_pSnd->EnterThreadSafeSection();
 
-	_ui32ReaderPos = (uint32)((float(uiPos / 1000.f) * _c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * (_c_bStereo ? 2 : 1));
+	_ui32ReaderPos = (uint32)(((float)(uiPos / 1000.f) * _c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * (_c_bStereo ? 2 : 1));
+	_ui32BufferDataOffset = 0;
+	_fFrameCnt = (float)_ui32ReaderPos / _c_uiDataPerFrame;
 
 	_pSnd->LeaveThreadSafeSection();
 
@@ -511,7 +532,33 @@ DGLE_RESULT DGLE_API CSound::ReleaseChannelsByData(const uint8 *pData)
 	EnterThreadSafeSection();
 
 	for (uint i = 0; i < _sc_uiMaxChannels; ++i)
-		if (_clChannels[i].CmprDataPtr(pData))
+		if (!_clChannels[i].IsStreamable() && _clChannels[i].CmprDataPtr(pData))
+		{
+			if (_clChannels[i].IsAquired())
+			{
+				res = S_FALSE;
+				_clChannels[i].Unaquire();
+			}
+
+			_clChannels[i].Stop();
+		}
+
+	LeaveThreadSafeSection();
+
+	if (res != S_OK)
+		LOG("Releasing aquired sound channel.", LT_WARNING);
+
+	return res;
+}
+
+DGLE_RESULT DGLE_API CSound::ReleaseChannelsByCallback(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize))
+{
+	DGLE_RESULT res = S_OK;
+
+	EnterThreadSafeSection();
+
+	for (uint i = 0; i < _sc_uiMaxChannels; ++i)
+		if (_clChannels[i].IsStreamable() && _clChannels[i].CmprCallbackPtr(pStreamCallback))
 		{
 			if (_clChannels[i].IsAquired())
 			{

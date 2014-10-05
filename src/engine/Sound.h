@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.10.2012 (c)Korotkov Andrey
+\date		05.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,8 +31,8 @@ struct TSoundFrame
 
 	inline void SetStereo(const int16 *data, float vol) 
 	{
-		i16L = int16((float)data[0] * vol);
-		i16R = int16((float)data[1] * vol);
+		i16L = (int16)((float)data[0] * vol);
+		i16R = (int16)((float)data[1] * vol);
 	}
 
 	inline int16 Clamp(int val) const
@@ -76,6 +76,7 @@ class CChannel : public ISoundChannel
 	void (DGLE_API *_pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize);
 	void *_pParameter;
 	const uint _c_uiBufferSize;
+	uint32 _ui32BufferDataOffset;
 
 	TSoundFrame _frame;
 
@@ -95,9 +96,11 @@ public:
 	inline bool IsLooped() const;
 	inline bool IsAquired() const;
 	inline bool CmprDataPtr(const uint8 *pData) const;
+	inline bool CmprCallbackPtr(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize)) const;
 	inline uint MsecLeftToPlay() const;
+	inline bool IsStreamable() const;
 	inline void StreamData();
-	__forceinline const TSoundFrame & NextFrame(float masterVol);
+	FORCEINLINE const TSoundFrame & NextFrame(float masterVol);
 
 	// Thread safe methods.
 	
@@ -154,6 +157,7 @@ public:
 	DGLE_RESULT DGLE_API GetMaxChannelsCount(uint &uiCount);
 	DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount);
 	DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData);
+	DGLE_RESULT DGLE_API ReleaseChannelsByCallback(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize));
 	DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize);
 	DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter);
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);

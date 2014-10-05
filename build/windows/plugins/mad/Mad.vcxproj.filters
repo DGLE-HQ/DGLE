@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\plugins\mad\Common.h" />
+    <ClInclude Include="..\..\..\..\src\plugins\mad\PluginCore.h" />
+    <ClInclude Include="..\..\..\..\src\common\utils.h" />
+    <ClInclude Include="..\..\..\..\include\cpp\DGLE.h">
+      <Filter>DGLE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\cpp\DGLE_Types.h">
+      <Filter>DGLE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\bit.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\config.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\decoder.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\fixed.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\frame.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\global.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\huffman.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\layer3.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\layer12.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\mad.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\stream.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\synth.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\timer.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\deps\mad\version.h">
+      <Filter>Dependencies\mad</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\plugins\mad\PluginCore.cpp" />
+    <ClCompile Include="..\..\..\..\src\plugins\mad\Main.cpp" />
+    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
+    <ClCompile Include="..\..\..\..\deps\mad\bit.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\decoder.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\fixed.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\frame.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\huffman.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\layer3.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\layer12.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\stream.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\synth.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\timer.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\deps\mad\version.c">
+      <Filter>Dependencies\mad</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+    <None Include="..\..\..\..\deps\mad\D.dat">
+      <Filter>Dependencies\mad</Filter>
+    </None>
+    <None Include="..\..\..\..\deps\mad\imdct_s.dat">
+      <Filter>Dependencies\mad</Filter>
+    </None>
+    <None Include="..\..\..\..\deps\mad\qc_table.dat">
+      <Filter>Dependencies\mad</Filter>
+    </None>
+    <None Include="..\..\..\..\deps\mad\rq_table.dat">
+      <Filter>Dependencies\mad</Filter>
+    </None>
+    <None Include="..\..\..\..\deps\mad\sf_table.dat">
+      <Filter>Dependencies\mad</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DGLE">
+      <UniqueIdentifier>{254d08b0-f430-4816-81ee-94b483e78dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{8d962c77-3f12-4ab9-aed4-dce1d6c05ec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\mad">
+      <UniqueIdentifier>{73f756d9-3a9f-4d5c-85a1-e67302c671d9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

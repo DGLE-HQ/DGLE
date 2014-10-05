@@ -764,6 +764,7 @@ StreamCallbackFunc = function(pParameter: Pointer; ui32DataPos: Cardinal; pBuffe
     function GetMaxChannelsCount(out uiCount: Cardinal): DGLE_RESULT; stdcall;
     function GetFreeChannelsCount(out uiCount: Cardinal): DGLE_RESULT; stdcall;
     function ReleaseChannelsByData(const pData: Pointer): DGLE_RESULT; stdcall;
+    function ReleaseChannelsByCallback(pStreamCallback: StreamCallbackFunc): DGLE_RESULT; stdcall;
     function CreateChannel(out prSndChnl: ISoundChannel; uiSamplesPerSec, uiBitsPerSample: Cardinal;
       bStereo: Boolean; const pData: Pointer; ui32DataSize: Cardinal): DGLE_RESULT; stdcall; //Data not copied!
     function CreateStreamableChannel(out prSndChnl: ISoundChannel; uiSamplesPerSec, uiBitsPerSample: Cardinal; bStereo: Boolean;
