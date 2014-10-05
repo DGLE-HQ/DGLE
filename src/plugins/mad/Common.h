@@ -22,7 +22,7 @@ using namespace DGLE;
 #define PLUGIN_NAME				"MP3 Audio Decoder"
 #define PLUGIN_VERSION			("1.0 (" + std::string(__DATE__) + ")").c_str()
 #define PLUGIN_VENDOR			"DGLE Team"
-#define PLUGIN_DESCRIPTION		"MPEG-1 Layer III (MP3) compatible audio format decoder."
+#define PLUGIN_DESCRIPTION		"MPEG Layer III (MP3) compatible audio format decoder."
 #define PLUGIN_INTERFACE_NAME	"IPlugin"
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
