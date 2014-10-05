@@ -620,7 +620,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 			
 		for(uint j = 0; j < uiHeight; ++j)
 			for(uint i = 0; i < ui_line_w; ++i)
-				if (i%3 == 0)
+				if (i % 3 == 0)
 				{
 					uint8
 					ubt_tmp	= pData[ui_line_w * j + i];

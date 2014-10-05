@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		02.10.2014 (c)Korotkov Andrey
+\date		05.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -119,7 +119,7 @@ inline bool CChannel::CmprCallbackPtr(void (DGLE_API *pStreamCallback)(void *pPa
 
 inline void CChannel::StreamData()
 {
-	if (!_c_bStreamable)
+	if (!_c_bStreamable || (_ui32ReaderPos != 0 && _ui32ReaderPos == _ui32BufferDataOffset))
 		return;
 
 	_ui32BufferDataOffset = _ui32ReaderPos;
@@ -138,19 +138,21 @@ FORCE_INLINE const TSoundFrame & CChannel::NextFrame(float masterVol)
 		_frame.i16L = _frame.i16R = 0;
 	else
 	{
+		const uint32 reader_pos = _ui32ReaderPos - _ui32BufferDataOffset;
+
 		if (_c_uiBitsPerSample == 8)
 		{
 			if (!_c_bStereo)
-				_frame.SetMono(((int16)_c_pData[_ui32ReaderPos] - 128) * 256, _fPan, _fVol * masterVol);
+				_frame.SetMono(((int16)_c_pData[reader_pos] - 128) * 256, _fPan, _fVol * masterVol);
 			else
 			{
-				const int16 data[2] = { ((int16)_c_pData[_ui32ReaderPos] - 128) * 256, ((int16)_c_pData[_ui32ReaderPos + 1] - 128) * 256 };
+				const int16 data[2] = { ((int16)_c_pData[reader_pos] - 128) * 256, ((int16)_c_pData[reader_pos + 1] - 128) * 256 };
 				_frame.SetStereo(data, _fVol * masterVol);
 			}
 		}
 		else // 16 bit
 		{
-			const int16 * const pi16_dat = reinterpret_cast<const int16 *>(&_c_pData[_ui32ReaderPos]);
+			const int16 * const pi16_dat = reinterpret_cast<const int16 *>(&_c_pData[reader_pos]);
 
 			if (!_c_bStereo)
 				_frame.SetMono(pi16_dat[0], _fPan, _fVol * masterVol);
@@ -168,6 +170,7 @@ FORCE_INLINE const TSoundFrame & CChannel::NextFrame(float masterVol)
 				_eState = SCS_STOPPED;
 		
 			_ui32ReaderPos = 0;
+			_ui32BufferDataOffset = 0;
 			_fFrameCnt = 0.f;
 		}
 
@@ -207,6 +210,7 @@ DGLE_RESULT DGLE_API CChannel::Stop()
 	
 	_eState = SCS_STOPPED;
 	_ui32ReaderPos = 0;
+	_ui32BufferDataOffset = 0;
 	_fFrameCnt = 0.f;
 	
 	_pSnd->LeaveThreadSafeSection();
@@ -314,6 +318,7 @@ DGLE_RESULT DGLE_API CChannel::SetCurrentPosition(uint uiPos)
 	_pSnd->EnterThreadSafeSection();
 
 	_ui32ReaderPos = (uint32)((float(uiPos / 1000.f) * _c_uiSamplesPerSec * (_c_uiBitsPerSample / 8)) * (_c_bStereo ? 2 : 1));
+	_ui32BufferDataOffset = _ui32ReaderPos;
 
 	_pSnd->LeaveThreadSafeSection();
 

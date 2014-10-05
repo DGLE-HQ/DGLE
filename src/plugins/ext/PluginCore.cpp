@@ -526,33 +526,33 @@ void DGLE_API CPluginCore::_s_Free(void *pParameter)
 
 bool DGLE_API CPluginCore::_s_LoadTexturePNG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
-	ITexture *ptex = NULL;
+	ITexture *p_tex = NULL;
 
-	bool ret = ((CPluginCore*)pParameter)->_LoadTexturePNG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = ((CPluginCore*)pParameter)->_LoadTexturePNG(pFile, p_tex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
-	if (ret) prObj = (IEngineBaseObject *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)p_tex;
 
 	return ret;
 }
 
 bool DGLE_API CPluginCore::_s_LoadTextureJPG(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
-	ITexture *ptex = NULL;
+	ITexture *p_tex = NULL;
 
-	bool ret = ((CPluginCore*)pParameter)->_LoadTextureJPG(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = ((CPluginCore*)pParameter)->_LoadTextureJPG(pFile, p_tex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
-	if (ret) prObj = (IEngineBaseObject *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)p_tex;
 
 	return ret;
 }
 
 bool DGLE_API CPluginCore::_s_LoadTextureDDS(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
-	ITexture *ptex = NULL;
+	ITexture *p_tex = NULL;
 
-	bool ret = ((CPluginCore*)pParameter)->_LoadTextureDDS(pFile, ptex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
+	const bool ret = ((CPluginCore*)pParameter)->_LoadTextureDDS(pFile, p_tex, (E_TEXTURE_LOAD_FLAGS)uiLoadFlags);
 
-	if (ret) prObj = (IEngineBaseObject *&)ptex;
+	if (ret) prObj = (IEngineBaseObject *&)p_tex;
 
 	return ret;
 }

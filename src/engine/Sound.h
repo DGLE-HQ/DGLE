@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		02.10.2014 (c)Korotkov Andrey
+\date		05.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,8 +31,8 @@ struct TSoundFrame
 
 	inline void SetStereo(const int16 *data, float vol) 
 	{
-		i16L = int16((float)data[0] * vol);
-		i16R = int16((float)data[1] * vol);
+		i16L = (int16)((float)data[0] * vol);
+		i16R = (int16)((float)data[1] * vol);
 	}
 
 	inline int16 Clamp(int val) const

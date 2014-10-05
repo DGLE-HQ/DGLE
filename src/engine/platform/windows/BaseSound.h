@@ -16,7 +16,7 @@ See "DGLE.h" for more details.
 class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 {
 	static const uint8 _sc_ui8MaxDevicesCount = 8;
-	static const uint8 _sc_ui8Latency = 52;
+	static const uint8 _sc_ui8Latency = 50;
 
 	HWAVEOUT _hWaveOut;
 	WAVEFORMATEX _stWaveFormat;
