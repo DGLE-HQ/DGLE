@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		28.09.2014 (c)Korotkov Andrey
+\date		04.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,7 +24,7 @@ private:
 
 	void _Init();
 	void _Free();
-	bool _LoadMP3(IFile *pFile, ISoundSample *&prSSample);
+	bool _LoadMP3(IFile *pFile, IMusic *&prMusic);
 
 	static void DGLE_API _s_Init(void *pParameter);
 	static void DGLE_API _s_Free(void *pParameter);

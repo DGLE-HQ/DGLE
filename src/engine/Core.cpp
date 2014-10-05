@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2013 (c)Korotkov Andrey
+\date		05.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -488,6 +488,9 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 			LOG("Done.", LT_INFO);
 		}
 
+		_pResMan->FreeAllResources();
+		_pMainFS->UnregisterAndFreeAll();
+
 		i = 0;
 
 		while (i < _vecPlugins.size())
@@ -508,9 +511,6 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 			delete[] p_name;
 		}
-
-		_pResMan->FreeAllResources();
-		_pMainFS->UnregisterAndFreeAll();
 
 		if (!ReleaseTimer(_uiFPSTimer))
 			LOG("Can't release FPS timer.", LT_ERROR);
