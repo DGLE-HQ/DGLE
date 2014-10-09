@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "HookedWindow.h"
 #include "DummyWindow.h"
 #include "SplashWindow.h"
-#include "MainFS.h"
+#include "MainFileSystem.h"
 #include "ResourceManager.h"
 #include "Input.h"
 #include "Sound.h"
@@ -1267,7 +1267,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		if (_uiFPSTimer = CreateTimer(1000, &_clDelOnFPSTimer), _uiFPSTimer == -1) 
 			LOG("Can't set fps timer.", LT_FATAL);	   
 
-		_pMainFS = new CMainFS(InstIdx());
+		_pMainFS = new CMainFileSystem(InstIdx());
 
 		if (FAILED(_pCoreRenderer->Initialize(rnd_init_res)))
 			return E_ABORT;

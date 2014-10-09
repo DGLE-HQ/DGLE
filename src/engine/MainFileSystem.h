@@ -34,7 +34,7 @@ struct TVFileSystem
 class CDummyFile;
 class CDCPFileSystem;
 
-class CMainFS: public CInstancedObj, public IMainFileSystem
+class CMainFileSystem: public CInstancedObj, public IMainFileSystem
 {
 	CDummyFile *_pDummyFile;
 
@@ -49,8 +49,8 @@ class CMainFS: public CInstancedObj, public IMainFileSystem
 
 public:
 	
-	CMainFS(uint uiInstIdx);
-	~CMainFS();
+	CMainFileSystem(uint uiInstIdx);
+	~CMainFileSystem();
 
 	void UnregisterAndFreeAll();
 

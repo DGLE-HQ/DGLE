@@ -10,7 +10,7 @@ See "DGLE.h" for more details.
 #include "ResourceManager.h"
 #include "Material.h"
 #include "Light.h"
-#include "MainFS.h"
+#include "MainFileSystem.h"
 #include "Texture.h"
 #include "Font.h"
 #include "Music.h"
