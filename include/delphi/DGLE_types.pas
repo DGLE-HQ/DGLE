@@ -174,7 +174,7 @@ type
     constructor Create (var dummy);                                                overload;
     constructor Create (x, y, z : Single);                                         overload;
     constructor Create (all : Single);                                             overload;
-    constructor Create (const Floats: Array of Single);                            overload;
+    constructor Create (const Floats: array of Single);                            overload;
     function Dot(const stPoint: TPoint3): Single;                                  inline;
     function Cross(const stPoint: TPoint3): TPoint3;                               inline;
     function FlatDistTo(const stPoint: TPoint3): Single;                           inline;
@@ -209,9 +209,9 @@ type
   TPoint2 = packed record
   {$IF COMPILERVERSION >= 18}
     constructor Create (var dummy);                                                overload;
-    constructor Create (x, y : Single);                                            overload;
-    constructor Create (all : Single);                                             overload;
-    constructor Create (const Floats: Array of Single);                            overload;
+    constructor Create (x, y: Single);                                            overload;
+    constructor Create (All: Single);                                             overload;
+    constructor Create (const Floats: array of Single);                            overload;
     function Dot(const stPoint: TPoint2): Single;                                  inline;
     function Cross(const stPoint: TPoint2): Single;                                inline;
     function DistTo(const stPoint: TPoint2): Single;                               inline;
@@ -301,7 +301,7 @@ type
     procedure Clear(const base_transform: TMatrix4x4);
     procedure Push();
     procedure Pop();
-    procedure MultGLobal(const transform: TMatrix4x4);
+    procedure MultGlobal(const transform: TMatrix4x4);
     procedure MultLocal(const transform: TMatrix4x4);
     property Top: TMatrix4x4 read GetTop write SetTop;
   end;
@@ -527,9 +527,9 @@ function ColorOfficialOrange(alpha: Byte = 255): TColor4;                   {$IF
 function ColorOfficialBlack(alpha: Byte = 255) : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
 function Point2(): TPoint2;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point2(x,y : Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point2(all : Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point2(const Floats: Array of Single): TPoint2;                    overload;
+function Point2(x, y: Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point2(All: Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point2(const Floats: array of Single): TPoint2;                    overload;
 
 // TPoint2 operators
 function Add(const stLeft, stRight: TPoint2): TPoint2;                      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
@@ -554,8 +554,8 @@ function Rotate(const stLeft: TPoint2; fAngle: Single): TPoint2;            over
 function Reflect(const stLeft, normal : TPoint2): TPoint2;                  overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
 function Point3(): TPoint3;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point3(x,y,z : Single): TPoint3;                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point3(all : Single): TPoint3;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point3(x, y, z: Single): TPoint3;                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point3(All: Single): TPoint3;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function Point3(const Floats: array of Single): TPoint3;                    overload;
 
 // TPoint3 operators
@@ -583,15 +583,17 @@ function Reflect(const stLeft, normal : TPoint3): TPoint3;                  over
 
 function Vertex2(x,y,u,w,r,g,b,a : Single): TVertex2;                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
-function RectF(): TRectf;                                                   overload;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function RectF(x, y, width, height: Single): TRectf;                        overload;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function RectF(const stLeftTop, stRightBottom: TPoint2): TRectf;            overload;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function RectF(): TRectf;                                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function RectF(x, y, width, height: Single): TRectf;                        overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function RectF(const stLeftTop, stRightBottom: TPoint2): TRectf;            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function IntersectRect(const stRect1, stRect2: TRectf):Boolean;             {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function PointInRect(const stPoint: TPoint2; const stRect: TRectf):Boolean; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function RectInRect(const stRect1, stRect2: TRectf): Boolean;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function GetIntersectionRect(const stRect1, stRect2: TRectf): TRectf;       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
-function Matrix(): TMatrix4x4;                                              {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Matrix(): TMatrix4x4;                                              overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Matrix(const RowMajorFloats: array of Single): TMatrix4x4;         overload;
+function Matrix(_00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33: Single): TMatrix4x4; overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function MatrixMulGL(stMLeft, stMRight : TMatrix4x4): TMatrix4x4;           {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function MatrixInverse(const stMatrix : TMatrix4x4): TMatrix4x4;
 function MatrixTranspose(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
@@ -600,6 +602,8 @@ function MatrixScale(const fVec : TPoint3): TMatrix4x4;                     {$IF
 function MatrixTranslate(const fVec : TPoint3): TMatrix4x4;                 {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function MatrixRotate(angle : Single; const stAxis : TPoint3): TMatrix4x4;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure Decompose(const stMatrix : TMatrix4x4; out stScale: TPoint3; out stRotation: TMatrix4x4; out stTranslation: TPoint3); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+
 // Matrix operators
 function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function MatrixAdd(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
@@ -612,11 +616,12 @@ function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3
 function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint2): TPoint2;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function ApplyToVector(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 
-
 function EngineWindow(): TEngineWindow;                                             overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function EngineWindow(uiWidth, uiHeight: Integer; bFullScreen: Boolean;
   bVSync: Boolean = False; eMSampling: {E_MULTISAMPLING_MODE}Cardinal = MM_NONE;
   uiFlags: {ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+
+// TVariant operations  
 procedure Clear(var AVar: TVariant);                                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 procedure SetInt(var AVar: TVariant; iVal: Integer);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 procedure SetFloat(var AVar: TVariant; fVal: Single);                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
@@ -629,7 +634,6 @@ function AsBool(var AVar: TVariant): Boolean;                                   
 function AsPointer(var AVar: TVariant): Pointer;                                    {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 procedure GetData(var AVar: TVariant;out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
 function GetType(var AVar: TVariant): E_DGLE_VARIANT_TYPE;                          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-
 
 implementation
 
@@ -877,20 +881,21 @@ begin
   Result.y := 0.;
 end;
 
-function Point2(x,y : Single): TPoint2; overload;
+function Point2(x, y: Single): TPoint2; overload;
 begin
   Result.x := x;
   Result.y := y;
 end;
 
-function Point2(all : Single): TPoint2; overload;
+function Point2(All: Single): TPoint2; overload;
 begin
-  Result.x := all;
-  Result.y := all;
+  Result.x := All;
+  Result.y := All;
 end;
 
 function Point2(const Floats: array of Single): TPoint2; overload;
 begin
+  Assert(System.Length(Floats) = 2);
   Result.x := Floats[Low(Floats)];
   Result.y := Floats[Low(Floats) + 1];
 end;
@@ -1047,12 +1052,12 @@ begin
   Self := Point2(x, y);
 end;
 
-constructor TPoint2.Create(all : Single);
+constructor TPoint2.Create(All: Single);
 begin
-  Self := Point2(all);
+  Self := Point2(All);
 end;
 
-constructor TPoint2.Create(const Floats: Array of Single);
+constructor TPoint2.Create(const Floats: array of Single);
 begin
   Self := Point2(Floats);
 end;
@@ -1121,22 +1126,23 @@ begin
   Result.z := 0.;
 end;
 
-function Point3(x,y,z : Single): TPoint3; overload;
+function Point3(x, y, z: Single): TPoint3; overload;
 begin
   Result.x := x;
   Result.y := y;
   Result.z := z;
 end;
 
-function Point3(all : Single): TPoint3; overload;
+function Point3(All: Single): TPoint3; overload;
 begin
-  Result.x := all;
-  Result.y := all;
-  Result.z := all;
+  Result.x := All;
+  Result.y := All;
+  Result.z := All;
 end;
 
 function Point3(const Floats: array of Single): TPoint3; overload;
 begin
+  Assert(System.Length(Floats) = 3);
   Result.x := Floats[Low(Floats)];
   Result.y := Floats[Low(Floats) + 1];
   Result.z := Floats[Low(Floats) + 2];
@@ -1303,12 +1309,12 @@ begin
   Self := Point3(x, y, z);
 end;
 
-constructor TPoint3.Create (all : Single);
+constructor TPoint3.Create (All: Single);
 begin
-  Self := Point3(all);
+  Self := Point3(All);
 end;
 
-constructor TPoint3.Create (const Floats: Array of Single);
+constructor TPoint3.Create (const Floats: array of Single);
 begin
   Self := Point3(Floats);
 end;
@@ -1488,15 +1494,28 @@ begin
 end;
 {$IFEND}
 
-
 function Matrix(): TMatrix4x4;
 begin
   ZeroMemory(@Result._1D, 16 * SizeOf(Single));
 end;
 
+function Matrix(const RowMajorFloats: array of Single): TMatrix4x4;
+var
+  I: Integer;
+begin
+  Assert(System.Length(RowMajorFloats) = 16);
+  for I := 0 to 15 do
+    Result._1D[I] := RowMajorFloats[i];
+end;
+
+function Matrix(_00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33: Single): TMatrix4x4;
+begin
+  Result := Matrix([_00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33]);
+end;
+
 function MatrixMulGL(stMLeft, stMRight : TMatrix4x4): TMatrix4x4;
 begin
-  result := MatrixMul(stMRight, stMLeft);
+  Result := MatrixMul(stMRight, stMLeft);
 end;
 
 function MatrixInverse(const stMatrix : TMatrix4x4): TMatrix4x4;
@@ -1689,6 +1708,12 @@ begin
   Result._2D[2][2] := (1.0 - z * z) * cos_angle + z * z;
 end;
 
+function RowFactor(const M : TMatrix4x4; X: Integer): Single; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+begin
+  Result := DGLE_Types.Length(Point3(M._2D[0, X], M._2D[1, X], M._2D[2, X])) *
+    Sign(M._2D[0, X] * M._2D[1, X] * M._2D[2, X] * M._2D[3, X]);
+end;
+
 function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;
 begin
   Result := Matrix();
@@ -1699,9 +1724,29 @@ begin
   Result._2D[1, 3] := stMatrix._2D[1, 3];
   Result._2D[2, 3] := stMatrix._2D[2, 3];
   Result._2D[3, 3] := stMatrix._2D[3, 3];
-  Result._2D[0, 0] := Length(Point3(stMatrix._2D[0, 0], stMatrix._2D[1, 0], stMatrix._2D[2, 0]));
-  Result._2D[1, 1] := Length(Point3(stMatrix._2D[0, 1], stMatrix._2D[1, 1], stMatrix._2D[2, 1]));
-  Result._2D[2, 2] := Length(Point3(stMatrix._2D[0, 2], stMatrix._2D[1, 2], stMatrix._2D[2, 2]));
+  Result._2D[0, 0] := RowFactor(stMatrix, 0);
+  Result._2D[1, 1] := RowFactor(stMatrix, 1);
+  Result._2D[2, 2] := RowFactor(stMatrix, 2);
+end;
+
+procedure Decompose(const stMatrix : TMatrix4x4; out stScale: TPoint3; out stRotation: TMatrix4x4; out stTranslation: TPoint3); 
+begin
+  stTranslation.x := stMatrix._2D[3][0];
+  stTranslation.y := stMatrix._2D[3][1];
+  stTranslation.z := stMatrix._2D[3][2];
+
+  stScale.x := RowFactor(stMatrix, 0);
+  stScale.y := RowFactor(stMatrix, 1);
+  stScale.z := RowFactor(stMatrix, 2);
+
+  if (stScale.x = 0) or (stScale.x = 0) or (stScale.x = 0) then
+    stRotation := Matrix()
+  else
+    stRotation := Matrix(
+      stMatrix._2D[0][0] / stScale.x, stMatrix._2D[0][1] / stScale.x, stMatrix._2D[0][2] / stScale.x, 0,
+      stMatrix._2D[1][0] / stScale.y, stMatrix._2D[1][1] / stScale.y, stMatrix._2D[1][2] / stScale.y, 0,
+      stMatrix._2D[2][0] / stScale.z, stMatrix._2D[2][1] / stScale.z, stMatrix._2D[2][2] / stScale.z, 0,
+      0, 0, 0, 1);
 end;
 
 function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
