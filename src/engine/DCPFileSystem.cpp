@@ -8,7 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "DCPFileSystem.h"
-#include "MainFS.h"
+#include "MainFileSystem.h"
 #include "BuffFile.h"
 #include "minilzo.h"
 #include "deelx.h"

@@ -1058,8 +1058,31 @@ namespace DGLE
 			
 			return product;
 		}
+
+		void Decompose(TPoint3 &stScale, TMatrix4x4 &stRotation, TPoint3 &stTranslation)
+		{
+			stTranslation.x = _2D[3][0];
+			stTranslation.y = _2D[3][1];
+			stTranslation.z = _2D[3][2];
+
+			stScale.x = (signf(_2D[0][0] * _2D[0][1] * _2D[0][2] * _2D[0][3]) < 0.f ? -1.f : 1.f) * TVector3(_2D[0][0], _2D[0][1], _2D[0][2]).Length();
+			stScale.y = (signf(_2D[1][0] * _2D[1][1] * _2D[1][2] * _2D[1][3]) < 0.f ? -1.f : 1.f) * TVector3(_2D[1][0], _2D[1][1], _2D[1][2]).Length();
+			stScale.z = (signf(_2D[2][0] * _2D[2][1] * _2D[2][2] * _2D[2][3]) < 0.f ? -1.f : 1.f) * TVector3(_2D[2][0], _2D[2][1], _2D[2][2]).Length();
+
+			if (stScale.x == 0.f || stScale.x == 0.f || stScale.x == 0.f)
+			{
+				stRotation = TMatrix4x4();
+				return;
+			}
+
+			stRotation = TMatrix4x4(
+				_2D[0][0] / stScale.x, _2D[0][1] / stScale.x, _2D[0][2] / stScale.x, 0.f,
+				_2D[1][0] / stScale.y, _2D[1][1] / stScale.y, _2D[1][2] / stScale.y, 0.f,
+				_2D[2][0] / stScale.z, _2D[2][1] / stScale.z, _2D[2][2] / stScale.z, 0.f,
+				0.f, 0.f, 0.f, 1.f);
+		}
 	};
-	
+
 	typedef TMatrix4x4 TMat4, TMatrix4;
 
 	/** Returns identity matrix. */
@@ -1180,9 +1203,9 @@ namespace DGLE
 	inline TMatrix4x4 MatrixBillboard(const TMatrix4x4 &stMatrix)
 	{
 		return TMatrix4x4(
-			TVector3(stMatrix._2D[0][0], stMatrix._2D[1][0], stMatrix._2D[2][0]).Length(), 0.f, 0.f, stMatrix._2D[0][3],
-			0.f, TVector3(stMatrix._2D[0][1], stMatrix._2D[1][1], stMatrix._2D[2][1]).Length(), 0.f, stMatrix._2D[1][3],
-			0.f, 0.f, TVector3(stMatrix._2D[0][2], stMatrix._2D[1][2], stMatrix._2D[2][2]).Length(), stMatrix._2D[2][3],
+			(signf(stMatrix._2D[0][0] * stMatrix._2D[0][1] * stMatrix._2D[0][2] * stMatrix._2D[0][3]) < 0.f ? -1.f : 1.f) * TVector3(stMatrix._2D[0][0], stMatrix._2D[0][1], stMatrix._2D[0][2]).Length(), 0.f, 0.f, stMatrix._2D[0][3],
+			0.f, (signf(stMatrix._2D[1][0] * stMatrix._2D[1][1] * stMatrix._2D[1][2] * stMatrix._2D[1][3]) < 0.f ? -1.f : 1.f) * TVector3(stMatrix._2D[1][0], stMatrix._2D[1][1], stMatrix._2D[1][2]).Length(), 0.f, stMatrix._2D[1][3],
+			0.f, 0.f, (signf(stMatrix._2D[2][0] * stMatrix._2D[2][1] * stMatrix._2D[2][2] * stMatrix._2D[2][3]) < 0.f ? -1.f : 1.f) * TVector3(stMatrix._2D[2][0], stMatrix._2D[2][1], stMatrix._2D[2][2]).Length(), stMatrix._2D[2][3],
 			stMatrix._2D[3][0],	stMatrix._2D[3][1],	stMatrix._2D[3][2],	stMatrix._2D[3][3]);
 	}
 

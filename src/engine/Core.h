@@ -16,7 +16,7 @@ See "DGLE.h" for more details.
 	const E_KEYBOARD_KEY_CODES c_eFScreenKeySecond = KEY_RETURN;
 #endif
 
-class CMainFS;
+class CMainFileSystem;
 class CResourceManager;
 class CRender;
 
@@ -90,7 +90,7 @@ class CCore: public CInstancedObj, public IEngineCore
 
 	TSystemInfo _stSysInfo;
 
-	CMainFS *_pMainFS;
+	CMainFileSystem *_pMainFS;
 	CResourceManager *_pResMan;
 	CRender *_pRender;
 
@@ -142,7 +142,7 @@ public:
 	~CCore();
 
 	inline	CRender* pRender() const {return _pRender;}
-	inline	CMainFS* pMainFS() const {return _pMainFS;}
+	inline	CMainFileSystem* pMainFS() const {return _pMainFS;}
 	inline	CResourceManager* pResMan() const {return _pResMan;}
 
 	inline  ICoreRenderer* pCoreRenderer() const {return _pCoreRenderer;}

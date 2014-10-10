@@ -42,18 +42,18 @@ void CALLBACK CBaseSound::_s_WaveCallback(HWAVEOUT hWaveOut, UINT uMsg, DWORD dw
 	if (uMsg != WOM_DONE || p_this->_bDeviceClosingFlag)
 		return;
 	
-	EnterCriticalSection(&p_this->_cs);
-
 	waveOutUnprepareHeader(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));
 	
 	if (p_this->_pStreamToDeviceCallback)
+	{
+		EnterCriticalSection(&p_this->_cs);
 		p_this->_pStreamToDeviceCallback(p_this->_pParameter, (uint8 *)pWaveHdr->lpData);
-	
+		LeaveCriticalSection(&p_this->_cs);
+	}
+
 	waveOutPrepareHeader(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));
 	
-	waveOutWrite(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));
-	
-	LeaveCriticalSection(&p_this->_cs);
+	waveOutWrite(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));	
 }
 
 uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
