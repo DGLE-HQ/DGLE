@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		18.04.2013 (c)Korotkov Andrey
+\date		11.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1025,56 +1025,63 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 	bool b_result = false;
 	
+	const bool flip = !(st_header.ui8ImageDescriptor & 0x20);
+	
 	uint8 *p_out = new uint8[i_image_size];
 	
 	if (i_bytes_per_pixel == 3)
 	{
-		const uint8 *in = p_data; uint8 *out = p_out;
-		const int line_w = 3 * st_header.ui16ImageWidth;
-		bool flip = (st_header.ui8ImageDescriptor & 0x20) == 0;
+		const uint8 *in = &p_data[flip ? i_image_size : 0];
+		uint8 *out = p_out;
+		const uint line_w = 3 * st_header.ui16ImageWidth;
 		
-		if (flip) p_out += line_w * st_header.ui16ImageHeight;
-
-		for (int y = 0; y < st_header.ui16ImageHeight; ++y)
+		for (uint y = 0; y < st_header.ui16ImageHeight; ++y)
 		{
-			if (flip) out -= line_w;
+			if (flip)
+				in -= line_w;
 		
-			for (int x = 0; x < line_w; x += 3)
+			for (uint x = 0; x < line_w; x += 3)
 			{
 				out[x] = in[x + 2];
 				out[x + 1] = in[x + 1];
 				out[x + 2] = in[x];
 			}
 
-			if (!flip) out += line_w;
+			if (!flip)
+				in += line_w;
 
-			in += line_w;
+			out += line_w;
 		}
 		
 		E_TEXTURE_CREATION_FLAGS e_create_params = TCF_DEFAULT;
 		
 		if (st_header.ui16ImageWidth % 4 != 0)
-			(int&)e_create_params |= TCF_PIXEL_ALIGNMENT_1;
+			(uint&)e_create_params |= TCF_PIXEL_ALIGNMENT_1;
 		
 		b_result = _CreateTexture(prTex, p_out, st_header.ui16ImageWidth, st_header.ui16ImageHeight, TDF_RGB8, e_create_params, eFlags);
 	}
 	else
 		if (i_bytes_per_pixel == 4)
 		{
-			const int *in = (int*)p_data; int *out = (int*)p_out;
+			const int *in = (int*)&p_data[!flip ? i_image_size : 0];
+			int *out = (int*)p_out;
 			const int *p = in;
 			out += st_header.ui16ImageHeight * st_header.ui16ImageWidth;
 
-			for (int y = 0; y < st_header.ui16ImageHeight; ++y)
+			for (uint y = 0; y < st_header.ui16ImageHeight; ++y)
 			{
-				for (int x = 0; x < st_header.ui16ImageWidth; ++x)
+				if (!flip)
+					in -= (int)st_header.ui16ImageWidth;
+
+				for (uint x = 0; x < st_header.ui16ImageWidth; ++x)
 				{
 					p = in + ((int)st_header.ui16ImageWidth - x - 1);
 					--out;
 					*out = *p;
 				}
-				
-				in += (int)st_header.ui16ImageWidth;
+
+				if (flip)
+					in += (int)st_header.ui16ImageWidth;
 			}
 
 			b_result = _CreateTexture(prTex, p_out, st_header.ui16ImageWidth, st_header.ui16ImageHeight, TDF_BGRA8, TCF_DEFAULT, eFlags);

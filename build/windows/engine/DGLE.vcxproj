@@ -166,7 +166,7 @@
     <ClCompile Include="..\..\..\src\engine\Input.cpp" />
     <ClCompile Include="..\..\..\src\engine\Light.cpp" />
     <ClCompile Include="..\..\..\src\engine\Main.cpp" />
-    <ClCompile Include="..\..\..\src\engine\MainFS.cpp" />
+    <ClCompile Include="..\..\..\src\engine\MainFileSystem.cpp" />
     <ClCompile Include="..\..\..\src\engine\Material.cpp" />
     <ClCompile Include="..\..\..\src\engine\Mesh.cpp" />
     <ClCompile Include="..\..\..\src\engine\Model.cpp" />
@@ -214,7 +214,7 @@
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Input.h" />
     <ClInclude Include="..\..\..\src\engine\Light.h" />
-    <ClInclude Include="..\..\..\src\engine\MainFS.h" />
+    <ClInclude Include="..\..\..\src\engine\MainFileSystem.h" />
     <ClInclude Include="..\..\..\src\engine\Material.h" />
     <ClInclude Include="..\..\..\src\engine\Mesh.h" />
     <ClInclude Include="..\..\..\src\engine\Model.h" />

@@ -5,9 +5,6 @@
     <ClCompile Include="..\..\..\src\engine\DCPFileSystem.cpp">
       <Filter>FileSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\engine\MainFS.cpp">
-      <Filter>FileSystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\engine\Render2D.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -101,14 +98,14 @@
     <ClCompile Include="..\..\..\src\engine\FixedFunctionPipelineGL.cpp">
       <Filter>Render\CoreRenderGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\MainFileSystem.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\engine\Common.h" />
     <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />
     <ClInclude Include="..\..\..\src\engine\DCPFileSystem.h">
-      <Filter>FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\engine\MainFS.h">
       <Filter>FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\Render2D.h">
@@ -224,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\FixedFunctionPipelineGL.h">
       <Filter>Render\CoreRenderGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\engine\MainFileSystem.h">
+      <Filter>FileSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

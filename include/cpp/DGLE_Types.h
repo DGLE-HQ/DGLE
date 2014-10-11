@@ -603,7 +603,7 @@ namespace DGLE
 
 		inline float DistTo(const TPoint2 &point) const
 		{
-			return sqrtf( (point.x - x)*(point.x - x) + (point.y - y)*(point.y - y) );
+			return sqrtf((point.x - x) * (point.x - x) + (point.y - y) * (point.y - y));
 		}
 
 		inline float DistToQ(const TPoint2 &point) const
@@ -613,7 +613,7 @@ namespace DGLE
 
 		inline float LengthQ() const
 		{
-			return x*x + y*y;
+			return x * x + y * y;
 		}
 
 		inline float Length() const
@@ -769,12 +769,12 @@ namespace DGLE
 
 		inline float FlatDistTo(const TPoint3 &point) const
 		{
-			return sqrtf( (point.x - x)*(point.x - x) + (point.y - y)*(point.y - y) );
+			return sqrtf((point.x - x) * (point.x - x) + (point.y - y) * (point.y - y));
 		}
 
 		inline float DistTo(const TPoint3 &point) const
 		{
-			return sqrtf( (point.x - x)*(point.x - x) + (point.y - y)*(point.y - y) + (point.z - z)*(point.z - z) );
+			return sqrtf((point.x - x) * (point.x - x) + (point.y - y) * (point.y - y) + (point.z - z) * (point.z - z));
 		}
 
 		inline float DistToQ(const TPoint3 &point) const
@@ -784,7 +784,7 @@ namespace DGLE
 
 		inline float LengthQ() const
 		{
-			return x*x + y*y + z*z;
+			return x * x + y * y + z * z;
 		}
 
 		inline float Length() const
@@ -806,7 +806,7 @@ namespace DGLE
 
 		inline float Angle(const TPoint3 &point) const
 		{
-			return acosf(Dot(point) / sqrtf( LengthQ() * point.LengthQ() ));
+			return acosf(Dot(point) / sqrtf(LengthQ() * point.LengthQ()));
 		}
 
 		inline TPoint3 Rotate(float fAngle, const TPoint3 &axis) const
