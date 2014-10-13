@@ -63,7 +63,7 @@ void DGLE_API Init(void *pParameter)
 
 	const uint load_3d_flags = (uint)(TLF_FILTERING_ANISOTROPIC | TLF_ANISOTROPY_4X | TLF_GENERATE_MIPMAPS);
 
-	p_res_man->Load(RESOURCE_PATH"fonts\\Times_New_Roman_18_Bold.dft", (IEngineBaseObject *&)pFont);
+	p_res_man->Load(RESOURCE_PATH"fonts\\Times_New_Roman_18_Bold.dft", (IEngineBaseObject *&)pFont, BFLF_GENERATE_MIPMAPS);
 	p_res_man->Load(RESOURCE_PATH"textures\\grass.jpg", (IEngineBaseObject *&)pTexGrass, load_3d_flags | TLF_COORDS_REPEAT /* cause we will tile this texture */ );
 
 	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_owl.png", (IEngineBaseObject*&)pTexOwl, load_3d_flags | TLF_COORDS_CLAMP);

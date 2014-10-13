@@ -121,7 +121,7 @@ const
 
 {Resource Manager SubSystem flags}
 
-  //E_TEXTURE_CREATION_FLAGS
+  //E_TEXTURE_CREATE_FLAGS
 
     TCF_DEFAULT                   = $00000000;
     TCF_PIXEL_ALIGNMENT_1         = $00000001;  //use only if your texture input data is not 4 byte aligned
@@ -150,7 +150,12 @@ const
     TLF_ANISOTROPY_8X             = $00400000;
     TLF_ANISOTROPY_16X            = $00800000;
 
-  //E_MESH_CREATION_FLAGS
+  // E_BITMAP_FONT_LOAD_FLAGS
+    BFLF_FILTERING_NONE           = $00000001;
+    BFLF_GENERATE_MIPMAPS         = $00000002;
+    BFLF_FORCE_ALPHA_TEST_2D      = $00000004;
+
+  //E_MESH_CREATE_FLAGS
     MCF_ONLY_DEFAULT_DATA         = $00000000;//vertex and index arrays must be presented
     MCF_NORMALS_PRESENTED         = $00000001;
     MCF_TEXTURE_COORDS_PRESENTED  = $00000002;
@@ -408,11 +413,11 @@ type
   IResourceManager = interface(IEngineSubSystem)
   ['{139505B6-5EFC-4f02-A5E8-18CD1FBD69E3}']
 
-    function CreateTexture(out prTex: ITexture; const pData: Pointer; uiWidth, uiHeight :Cardinal; eDataFormat: E_TEXTURE_DATA_FORMAT; eCreationFlags: {E_TEXTURE_CREATION_FLAGS} Integer;
+    function CreateTexture(out prTex: ITexture; const pData: Pointer; uiWidth, uiHeight :Cardinal; eDataFormat: E_TEXTURE_DATA_FORMAT; eCreateFlags: {E_TEXTURE_CREATE_FLAGS} Integer;
       eLoadFlags: {E_TEXTURE_LOAD_FLAGS} Integer; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateMaterial(out prMaterial: IMaterial; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateLight(out prLight: ILight; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
-    function CreateMesh(out prMesh: IMesh; const pubtData: Pointer; uiDataSize, uiNumVerts, uiNumFaces: Cardinal; eCreationFlags: {E_MESH_CREATION_FLAGS} Integer;
+    function CreateMesh(out prMesh: IMesh; const pubtData: Pointer; uiDataSize, uiNumVerts, uiNumFaces: Cardinal; eCreateFlags: {E_MESH_CREATE_FLAGS} Integer;
       eLoadFlags: {E_MESH_MODEL_LOAD_FLAGS} Integer; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateModel(out prModel: IModel; const pcName: PAnsiChar = nil; bAddResource: Boolean = True): DGLE_RESULT; stdcall;
     function CreateSound(out prSndSample: ISoundSample; uiSamplesPerSec, uiBitsPerSample: Cardinal; bStereo: Boolean; const pData: Pointer; ui32DataSize: Cardinal; const pcName: PAnsiChar; bAddResource: Boolean = False): DGLE_RESULT; stdcall;

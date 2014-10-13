@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		11.10.2014 (c)Korotkov Andrey
+\date		13.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -265,7 +265,7 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	memcpy(ubt_mesh_data, def_mesh_vtx, sizeof(def_mesh_vtx));
 	memcpy(ubt_mesh_data + sizeof(def_mesh_vtx), def_mesh_fs, sizeof(def_mesh_fs));
 
-	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), _countof(def_mesh_vtx) / 8, _countof(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATION_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
+	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), _countof(def_mesh_vtx) / 8, _countof(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATE_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
 		LOG("Can't create default mesh.", LT_FATAL);
 
 	RegisterDefaultResource(EOT_MESH, (IEngineBaseObject*)_pDefMesh);
@@ -287,7 +287,7 @@ _iProfilerState(0), _uiResIdxCounter(0)
 
 	p_rfile->IsOpen(b_rfopened);
 
-	if (!b_rfopened || !_LoadFontDFT((IFile*)p_rfile, _pDefBmpFnt))
+	if (!b_rfopened || !_LoadFontDFT((IFile*)p_rfile, _pDefBmpFnt, (E_BITMAP_FONT_LOAD_FLAGS)0))
 		LOG("Can't create default font.", LT_FATAL);
 
 	delete p_rfile;
@@ -537,9 +537,9 @@ inline uint8 CResourceManager::_GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format)
 
 #include "bcunpacker_incl.h"
 
-uint CResourceManager::_GenerateDecompressedTextureData(const uint8 *pDataIn, uint8 *&prDataOut, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_TEXTURE_CREATION_FLAGS &eCreationFlags)
+uint CResourceManager::_GenerateDecompressedTextureData(const uint8 *pDataIn, uint8 *&prDataOut, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_TEXTURE_CREATE_FLAGS &eCreateFlags)
 {
-	const bool mips = (eCreationFlags & TCF_MIPMAPS_PRESENTED) != 0;
+	const bool mips = (eCreateFlags & TCF_MIPMAPS_PRESENTED) != 0;
 	uint data_size = 0, mip_width = uiWidth, mip_height = uiHeight;
 	register bool widht_ready, height_ready;
 	do
@@ -596,7 +596,7 @@ uint CResourceManager::_GenerateDecompressedTextureData(const uint8 *pDataIn, ui
 	if (format == TDF_DXT1)
 	{
 		format = TDF_RGB8;
-		(int &)eCreationFlags |= TCF_PIXEL_ALIGNMENT_1;
+		(int &)eCreateFlags |= TCF_PIXEL_ALIGNMENT_1;
 	}
 	else
 		if(format == TDF_DXT5)
@@ -744,7 +744,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 	return data_size;
 }
 
-bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags)
 {
 	if (eLoadFlags == RES_LOAD_DEFAULT)
 		eLoadFlags = (E_TEXTURE_LOAD_FLAGS)(TLF_FILTERING_BILINEAR | TLF_COORDS_REPEAT);
@@ -773,7 +773,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	if (!b_feature_supported && b_is_compressed)
 	{
-		_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreationFlags);
+		_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreateFlags);
 		b_is_compressed = false;
 		need_delete_data_in = true;
 	}
@@ -785,12 +785,12 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 	if (!b_feature_supported && (eDataFormat == TDF_BGR8 || eDataFormat == TDF_BGRA8))
 	{
 		b_been_swaped = true;
-		_SwabRB(p_data_in, uiWidth, uiHeight, eDataFormat,  eCreationFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
+		_SwabRB(p_data_in, uiWidth, uiHeight, eDataFormat,  eCreateFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
 	}
 
 	int i_new_w = uiWidth, i_new_h = uiHeight;
 
-	if (!(eCreationFlags & TCF_MIPMAPS_PRESENTED) && !(b_is_compressed || eDataFormat == TDF_DEPTH_COMPONENT24 || eDataFormat == TDF_DEPTH_COMPONENT32))
+	if (!(eCreateFlags & TCF_MIPMAPS_PRESENTED) && !(b_is_compressed || eDataFormat == TDF_DEPTH_COMPONENT24 || eDataFormat == TDF_DEPTH_COMPONENT32))
 	{
 		if (eLoadFlags & TLF_DECREASE_QUALITY_MEDIUM)
 		{
@@ -825,14 +825,14 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	bool b_need_scale = (i_new_w != uiWidth || i_new_h != uiHeight);
 
-	if (eCreationFlags & TCF_MIPMAPS_PRESENTED)
+	if (eCreateFlags & TCF_MIPMAPS_PRESENTED)
 	{
-		if (eCreationFlags & TLF_GENERATE_MIPMAPS)
-			(int &)eCreationFlags &= ~TLF_GENERATE_MIPMAPS;
+		if (eCreateFlags & TLF_GENERATE_MIPMAPS)
+			(int &)eCreateFlags &= ~TLF_GENERATE_MIPMAPS;
 
 		if (b_need_scale || b_been_swaped)
 		{
-			(int &)eCreationFlags &= ~TCF_MIPMAPS_PRESENTED;
+			(int &)eCreateFlags &= ~TCF_MIPMAPS_PRESENTED;
 			(int &)eLoadFlags |= TLF_GENERATE_MIPMAPS;			
 		}
 	}
@@ -848,14 +848,14 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 		if (b_is_compressed)
 		{
-			_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreationFlags);
+			_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreateFlags);
 			b_is_compressed = false;
 			need_delete_data_in = true;
 		}
 
 		uint8 *p_out_dat = NULL;
 		
-		uint ret = _GenerateScaleImage(p_data_in, uiWidth, uiHeight, p_out_dat, i_new_w, i_new_h, eDataFormat, eCreationFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
+		uint ret = _GenerateScaleImage(p_data_in, uiWidth, uiHeight, p_out_dat, i_new_w, i_new_h, eDataFormat, eCreateFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
 
 		if (need_delete_data_in)
 			delete[] p_data_in;
@@ -870,20 +870,20 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIPMAP_GENERATION, b_feature_supported);
 
-	if (!b_feature_supported && eLoadFlags & TLF_GENERATE_MIPMAPS && !(eCreationFlags & TCF_MIPMAPS_PRESENTED))
+	if (!b_feature_supported && eLoadFlags & TLF_GENERATE_MIPMAPS && !(eCreateFlags & TCF_MIPMAPS_PRESENTED))
 	{
 		uint8 *p_out_dat = NULL;
 		
 		if (b_is_compressed)
 		{
-			_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreationFlags);
+			_GenerateDecompressedTextureData(pData, p_data_in, uiWidth, uiHeight, eDataFormat, eCreateFlags);
 			b_is_compressed = false;
 			need_delete_data_in = true;
 		}
 
-		int ret = _GenerateMipMapData(p_data_in, uiWidth, uiHeight, p_out_dat, eDataFormat, eCreationFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
+		int ret = _GenerateMipMapData(p_data_in, uiWidth, uiHeight, p_out_dat, eDataFormat, eCreateFlags & TCF_PIXEL_ALIGNMENT_1 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4);
 
-		(int &)eCreationFlags |= TCF_MIPMAPS_PRESENTED;
+		(int &)eCreateFlags |= TCF_MIPMAPS_PRESENTED;
 
 		if (need_delete_data_in)
 			delete[] p_data_in;
@@ -898,7 +898,7 @@ bool CResourceManager::_CreateTexture(ITexture *&prTex, const uint8 * const pDat
 
 	ICoreTexture *p_tex;
 	
-	if (FAILED(_pCoreRenderer->CreateTexture(p_tex, p_data_in, (uint)i_new_w, (uint)i_new_h, (eCreationFlags & TCF_MIPMAPS_PRESENTED) != 0, (eCreationFlags & TCF_PIXEL_ALIGNMENT_1) != 0 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4, eDataFormat, eLoadFlags)))
+	if (FAILED(_pCoreRenderer->CreateTexture(p_tex, p_data_in, (uint)i_new_w, (uint)i_new_h, (eCreateFlags & TCF_MIPMAPS_PRESENTED) != 0, (eCreateFlags & TCF_PIXEL_ALIGNMENT_1) != 0 ? CRDA_ALIGNED_BY_1 : CRDA_ALIGNED_BY_4, eDataFormat, eLoadFlags)))
 	{
 		if (need_delete_data_in)
 			delete[] p_data_in;
@@ -1053,7 +1053,7 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 			out += line_w;
 		}
 		
-		E_TEXTURE_CREATION_FLAGS e_create_params = TCF_DEFAULT;
+		E_TEXTURE_CREATE_FLAGS e_create_params = TCF_DEFAULT;
 		
 		if (st_header.ui16ImageWidth % 4 != 0)
 			(uint&)e_create_params |= TCF_PIXEL_ALIGNMENT_1;
@@ -1233,7 +1233,7 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		return false;
 	}
 
-	E_TEXTURE_CREATION_FLAGS flags = TCF_DEFAULT;
+	E_TEXTURE_CREATE_FLAGS flags = TCF_DEFAULT;
 
 	if (header.bMip)
 		flags = TCF_MIPMAPS_PRESENTED;
@@ -1256,7 +1256,7 @@ bool CResourceManager::_LoadTextureDTX(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	return ret;
 }
 
-bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
+bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, const TPoint3 &stCenter, const TVector3 &stExtents, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags)
 {
 	if (!pData || uiNumVerts == 0)
 	{
@@ -1264,9 +1264,9 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, ui
 		return true;
 	}
 
-	bool normals = (eCreationFlags & MCF_NORMALS_PRESENTED) != 0,
-		 textured = (eCreationFlags & MCF_TEXTURE_COORDS_PRESENTED) != 0,
-		 tangents = (eCreationFlags & MCF_TANGENT_SPACE_PRESENTED) != 0;
+	bool normals = (eCreateFlags & MCF_NORMALS_PRESENTED) != 0,
+		 textured = (eCreateFlags & MCF_TEXTURE_COORDS_PRESENTED) != 0,
+		 tangents = (eCreateFlags & MCF_TANGENT_SPACE_PRESENTED) != 0;
 
 	const uint8 face_size = uiNumVerts > 65535 ? sizeof(uint32) : sizeof(uint16);
 
@@ -1289,7 +1289,7 @@ bool CResourceManager::_CreateMesh(IMesh *&prMesh, const uint8 * const pData, ui
 	if (uiNumFaces != 0)
 		desc.pIndexBuffer = const_cast<uint8 *>(&pData[vdata_size]);
 	
-	if (eCreationFlags & MCF_VERTEX_DATA_INTERLEAVED)
+	if (eCreateFlags & MCF_VERTEX_DATA_INTERLEAVED)
 	{
 		uint offset = 3 * sizeof(float), interleave = (3 + (normals ? 3 : 0) + (textured ? 2 : 0) + (tangents ? 6 : 0)) * sizeof(float);
 		
@@ -1436,7 +1436,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 			return false;
 		}
 
-		E_MESH_CREATION_FLAGS cr_flags = MCF_NORMALS_PRESENTED;
+		E_MESH_CREATE_FLAGS cr_flags = MCF_NORMALS_PRESENTED;
 
 		if (header.isTextured)
 			(int&)cr_flags |= MCF_TEXTURE_COORDS_PRESENTED;
@@ -1541,7 +1541,7 @@ void CResourceManager::_ListResources() const
 	Console()->Write(res);
 }
 
-bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
+bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt, E_BITMAP_FONT_LOAD_FLAGS eFlags)
 {
 	uint ui_read;
 
@@ -1596,14 +1596,29 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt)
 
 	ITexture *p_tex;
 
-	if (!_CreateTexture((ITexture*&)p_tex, p_data, header.texWidth, header.texHeight, format, TCF_DEFAULT, (E_TEXTURE_LOAD_FLAGS)(TLF_GENERATE_MIPMAPS | TLF_FILTERING_ANISOTROPIC | TLF_ANISOTROPY_4X | TLF_COORDS_REPEAT)))
+	E_TEXTURE_LOAD_FLAGS tex_flags = TLF_COORDS_REPEAT;
+
+	if (eFlags & BFLF_FILTERING_NONE)
+		(int &)tex_flags |= TLF_FILTERING_NONE;
+	else
+	{
+		if (eFlags & BFLF_GENERATE_MIPMAPS)
+			(int &)tex_flags |= TLF_FILTERING_TRILINEAR;
+		else
+			(int &)tex_flags |= TLF_FILTERING_BILINEAR;
+	}
+
+	if (eFlags & BFLF_GENERATE_MIPMAPS)
+			(int &)tex_flags |= TLF_GENERATE_MIPMAPS;
+
+	if (!_CreateTexture((ITexture*&)p_tex, p_data, header.texWidth, header.texHeight, format, TCF_DEFAULT, tex_flags))
 	{
 		LOG("Error(s) while loading font texture.", LT_ERROR);
 		delete[] p_data;
 		return false;
 	}
 
-	prFnt = (IBitmapFont*) new CBitmapFont(InstIdx(), p_tex, header, chars);
+	prFnt = (IBitmapFont*) new CBitmapFont(InstIdx(), p_tex, header, chars, (eFlags & BFLF_FORCE_ALPHA_TEST_2D) != 0);
 
 	if (_pDefBmpFnt == _pDefBmFntDummy)
 		_pDefBmpFnt = (IBitmapFont*)prFnt;
@@ -1784,7 +1799,7 @@ bool DGLE_API CResourceManager::_s_LoadDMDFile(IFile *pFile, IEngineBaseObject *
 bool DGLE_API CResourceManager::_s_LoadFontDFT(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter)
 {
 	IBitmapFont *pfnt = NULL;
-	const bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt);
+	const bool ret = PTHIS(CResourceManager)->_LoadFontDFT(pFile, pfnt, (E_BITMAP_FONT_LOAD_FLAGS)uiLoadFlags);
 	if (ret) prObj = (IEngineBaseObject *&)pfnt;
 	return ret;
 }
@@ -1811,9 +1826,9 @@ void DGLE_API CResourceManager::_s_ProfilerEventHandler(void *pParameter, IBaseE
 	PTHIS(CResourceManager)->_ProfilerEventHandler();
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource)
+DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource)
 {
-	const DGLE_RESULT result = _CreateTexture(prTex, pData, uiWidth, uiHeight, eDataFormat, eCreationFlags, eLoadFlags) ? S_OK : S_FALSE;
+	const DGLE_RESULT result = _CreateTexture(prTex, pData, uiWidth, uiHeight, eDataFormat, eCreateFlags, eLoadFlags) ? S_OK : S_FALSE;
 	
 	if (bAddResource)
 	{
@@ -1846,12 +1861,12 @@ DGLE_RESULT DGLE_API CResourceManager::CreateLight(ILight *&prLight, const char 
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource)
+DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource)
 {
 	DGLE_RESULT result;
 
 	if (!pData || uiNumVerts == 0 || uiDataSize == 0)
-		result = _CreateMesh(prMesh, NULL, 0, 0, 0, TPoint3(), TVector3(), eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
+		result = _CreateMesh(prMesh, NULL, 0, 0, 0, TPoint3(), TVector3(), eCreateFlags, eLoadFlags) ? S_OK : E_FAIL;
 	else
 	{
 		if (uiNumFaces == 0 && uiNumVerts % 3 != 0)
@@ -1862,8 +1877,8 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 	
 		uint stride = 3 * sizeof(float);
 
-		if (eCreationFlags & MCF_VERTEX_DATA_INTERLEAVED)
-			stride = (3 + 3 * (eCreationFlags & MCF_NORMALS_PRESENTED) + 2 * (eCreationFlags & MCF_TEXTURE_COORDS_PRESENTED) + 6 * (eCreationFlags & MCF_TANGENT_SPACE_PRESENTED)) * sizeof(float);
+		if (eCreateFlags & MCF_VERTEX_DATA_INTERLEAVED)
+			stride = (3 + 3 * (eCreateFlags & MCF_NORMALS_PRESENTED) + 2 * (eCreateFlags & MCF_TEXTURE_COORDS_PRESENTED) + 6 * (eCreateFlags & MCF_TANGENT_SPACE_PRESENTED)) * sizeof(float);
 
 		for (uint i = 0; i < uiNumVerts; ++i)
 		{
@@ -1879,7 +1894,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 			min_dem.z = min(p->z, min_dem.z);
 		}
 
-		result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, min_dem + (max_dem - min_dem) / 2.f, (max_dem - min_dem) / 2.f, eCreationFlags, eLoadFlags) ? S_OK : E_FAIL;
+		result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, min_dem + (max_dem - min_dem) / 2.f, (max_dem - min_dem) / 2.f, eCreateFlags, eLoadFlags) ? S_OK : E_FAIL;
 	}
 
 	if (bAddResource)

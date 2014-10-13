@@ -686,7 +686,7 @@ namespace DGLE
 		TDF_DEPTH_COMPONENT32
 	};
 
-	enum E_TEXTURE_CREATION_FLAGS
+	enum E_TEXTURE_CREATE_FLAGS
 	{
 		TCF_DEFAULT					= 0x00000000,
 		TCF_PIXEL_ALIGNMENT_1		= 0x00000001,//use only if your texture input data is not 4 byte aligned
@@ -718,7 +718,14 @@ namespace DGLE
 		TLF_ANISOTROPY_16X			= 0x00800000
 	};
 
-	enum E_MESH_CREATION_FLAGS
+	enum E_BITMAP_FONT_LOAD_FLAGS
+	{
+		BFLF_FILTERING_NONE			= 0x00000001,
+		BFLF_GENERATE_MIPMAPS		= 0x00000002,
+		BFLF_FORCE_ALPHA_TEST_2D	= 0x00000004
+	};
+
+	enum E_MESH_CREATE_FLAGS
 	{
 		MCF_ONLY_DEFAULT_DATA		= 0x00000000,//vertex and index arrays must be presented
 		MCF_NORMALS_PRESENTED		= 0x00000001,
@@ -751,10 +758,10 @@ namespace DGLE
 	class IResourceManager : public IEngineSubSystem
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = true) = 0;
+		virtual DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = true) = 0;
 		virtual DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName = "", bool bAddResource = true) = 0;
 		virtual DGLE_RESULT DGLE_API CreateLight(ILight *&prLight, const char *pcName = "", bool bAddResource = true) = 0;
-		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = true) = 0; //pData could be NULL to create empty mesh, index buffer could be empty
+		virtual DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName = "", bool bAddResource = true) = 0; //pData could be NULL to create empty mesh, index buffer could be empty
 		virtual DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName = "", bool bAddResource = true) = 0;
 		virtual DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName = "", bool bAddResource = true) = 0;
 	

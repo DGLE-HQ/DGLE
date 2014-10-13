@@ -425,7 +425,7 @@ namespace DGLE
         TDF_DEPTH_COMPONENT32
     };
 
-    public enum E_TEXTURE_CREATION_FLAGS
+    public enum E_TEXTURE_CREATE_FLAGS
     {
         TCF_DEFAULT = 0x00000000,
         TCF_PIXEL_ALIGNMENT_1 = 0x00000001,//use only if your texture input data is not 4 byte aligned
@@ -463,7 +463,14 @@ namespace DGLE
         RES_LOAD_DEFAULT = 0x00000000
     };
 
-    public enum E_MESH_CREATION_FLAGS
+    public enum E_BITMAP_FONT_LOAD_FLAGS
+    {
+        BFLF_FILTERING_NONE = 0x00000001,
+        BFLF_GENERATE_MIPMAPS = 0x00000002,
+        BFLF_FORCE_ALPHA_TEST_2D = 0x00000004
+    };
+
+    public enum E_MESH_CREATE_FLAGS
     {
         MCF_ONLY_DEFAULT_DATA = 0x00000000,//vertex and indexes arrays must be presented
         MCF_NORMALS_PRESENTED = 0x00000001,
@@ -502,10 +509,10 @@ namespace DGLE
         new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
         #endregion
 
-        void CreateTexture(out ITexture prTex, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATION_FLAGS eCreationFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
+        void CreateTexture(out ITexture prTex, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
         void CreateMaterial(out IMaterial prMaterial, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", bool bAddResource = true);
         void CreateLight(out ILight prLight, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", bool bAddResource = true);
-        void CreateMesh(out IMesh prMesh, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATION_FLAGS eCreationFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
+        void CreateMesh(out IMesh prMesh, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
         void CreateModel(out IModel prModel, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResource = true);
         void CreateSound(out ISoundSample prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 ui32DataSize, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
 
