@@ -245,7 +245,6 @@ namespace DGLE
         #endregion
 
         void GetMessage(out TWindowMessage stWinMsg);
-		void SetMessage(ref TWindowMessage stWinMsg);
     };
 
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),

@@ -301,7 +301,6 @@ type
   ['{8D718E48-581D-4cbb-9C40-C04998106F8D}']
 
     function GetMessage(out stWinMsg: TWindowMessage): DGLE_RESULT; stdcall;
-    function SetMessage(const stWinMsg: TWindowMessage): DGLE_RESULT; stdcall;
 
   end;
 

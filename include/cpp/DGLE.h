@@ -471,7 +471,6 @@ namespace DGLE
 			\param[out] stWinMsg Structure with current message information.
 		 */
 		virtual DGLE_RESULT DGLE_API GetMessage(TWindowMessage &stWinMsg) = 0;
-		virtual DGLE_RESULT DGLE_API SetMessage(const TWindowMessage &stWinMsg) = 0;
 	};
 
 	// {2B6D2547-716E-490c-B1F1-422CB428738F}
