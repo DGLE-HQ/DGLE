@@ -19,6 +19,13 @@ using System.Reflection;
 
 namespace DGLE
 {
+    public static class Fundamentals
+    {
+        public const double PrecisePI = 3.1415926535897932;
+        public const double DegreesInPI = 180;
+        public const double RadiansInDegree = PrecisePI / DegreesInPI;
+    }
+    
     //Variant data type definition//
 
     public enum E_DGLE_VARIANT_TYPE
@@ -162,7 +169,7 @@ namespace DGLE
         WMT_KEY_UP,
         WMT_KEY_DOWN,
         WMT_ENTER_CHAR,
-		WMT_MOUSE_LEAVE,
+        WMT_MOUSE_LEAVE,
         WMT_MOUSE_MOVE,
         WMT_MOUSE_DOWN,
         WMT_MOUSE_UP,
@@ -1014,6 +1021,35 @@ namespace DGLE
             return product;
         }
 
+        // internal needs
+        private static float RowFactor(TMatrix4x4 stMatrix, int row)
+        {
+            return Math.Sign(stMatrix[row * 4] * stMatrix[row * 4 + 1] * stMatrix[row * 4 + 2] * stMatrix[row * 4 + 3])
+                * new TPoint3(stMatrix[row * 4], stMatrix[row * 4 + 1], stMatrix[row * 4 + 2]).Length();
+        }
+
+        public void Decompose(out TPoint3 stScale, out TMatrix4x4 stRotation, out TPoint3 stTranslation)
+        {
+            stTranslation.x = _30;
+            stTranslation.y = _31;
+            stTranslation.z = _32;
+
+            stScale.x = RowFactor(this, 0);
+            stScale.y = RowFactor(this, 1);
+            stScale.z = RowFactor(this, 2);
+
+            if (stScale.x == 0f || stScale.x == 0f || stScale.x == 0f)
+            {
+                stRotation = new TMatrix4x4();
+                return;
+            }
+
+            stRotation = new TMatrix4x4(
+                _00 / stScale.x, _01 / stScale.x, _02 / stScale.x, 0f,
+                _10 / stScale.y, _11 / stScale.y, _12 / stScale.y, 0f,
+                _20 / stScale.z, _21 / stScale.z, _22 / stScale.z, 0f,
+                0f, 0f, 0f, 1f);
+        }
 
         public static TMatrix4x4 MatrixIdentity
         {
@@ -1132,8 +1168,8 @@ namespace DGLE
                 x = stAxis.x / axis_norm,
                 y = stAxis.y / axis_norm,
                 z = stAxis.z / axis_norm,
-                sin_angle = (float)Math.Sin(fAngle * 3.1415926535897932 / 180.0f),
-                cos_angle = (float)Math.Cos(fAngle * 3.1415926535897932 / 180.0f);
+                sin_angle = (float)Math.Sin(fAngle * Fundamentals.RadiansInDegree),
+                cos_angle = (float)Math.Cos(fAngle * Fundamentals.RadiansInDegree);
             return new TMatrix4x4(
                 (1.0f - x * x) * cos_angle + x * x, z * sin_angle + x * y * (1.0f - cos_angle), x * z * (1.0f - cos_angle) - y * sin_angle, 0.0f,
                 x * y * (1.0f - cos_angle) - z * sin_angle, (1.0f - y * y) * cos_angle + y * y, y * z * (1.0f - cos_angle) + x * sin_angle, 0.0f,
@@ -1144,9 +1180,9 @@ namespace DGLE
         public static TMatrix4x4 MatrixBillboard(TMatrix4x4 stMatrix)
         {
             return new TMatrix4x4(
-                new TPoint3(stMatrix._00, stMatrix._10, stMatrix._20).Length(), 0f, 0f, stMatrix._03,
-                0f, new TPoint3(stMatrix._01, stMatrix._11, stMatrix._21).Length(), 0f, stMatrix._13,
-                0f, 0f, new TPoint3(stMatrix._02, stMatrix._12, stMatrix._22).Length(), stMatrix._23,
+                RowFactor(stMatrix, 0), 0f, 0f, stMatrix._03,
+                0f, RowFactor(stMatrix, 1), 0f, stMatrix._13,
+                0f, 0f, RowFactor(stMatrix, 2), stMatrix._23,
                 stMatrix._30, stMatrix._31, stMatrix._32, stMatrix._33);
         }
     };
