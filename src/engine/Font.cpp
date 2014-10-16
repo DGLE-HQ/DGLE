@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		14.04.2013 (c)Korotkov Andrey
+\date		13.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -12,8 +12,8 @@ See "DGLE.h" for more details.
 #include "Render2D.h"
 #include "Render3D.h"
 
-CBitmapFont::CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars):
-CInstancedObj(uiInstIdx), _pTex(pTex), _fScale(1.f), _stHeader(stHeader), _uiBufferSize(16)// never less than 16
+CBitmapFont::CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars, bool bForceAlphaTest2D):
+CInstancedObj(uiInstIdx), _pTex(pTex), _fScale(1.f), _stHeader(stHeader), _uiBufferSize(16) /* never less than 16 */, _bForceAlphaTest2D(bForceAlphaTest2D)
 {
 	_pBuffer = new float[_uiBufferSize];
 	memcpy(_astChars, pChars, sizeof(TCharBox) * 224);
@@ -147,7 +147,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	if (!b_need_update)
 	{
-		_pRender2D->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length * 6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
+		_pRender2D->Draw(_pTex, TDrawDataDesc(), CRDM_TRIANGLES, length * 6, TRectF(), (E_EFFECT2D_FLAGS)((_bForceAlphaTest2D ? EF_ALPHA_TEST : EF_BLEND) | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 		return S_OK;
 	}
 
@@ -271,7 +271,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	TDrawDataDesc desc;
 
-	desc.pData = (uint8 *)_pBuffer;
+	desc.pData = (uint8*)_pBuffer;
 	desc.uiVertexStride = 4 * sizeof(float);
 	desc.bVertices2D = true;
 	desc.uiTextureVertexOffset = 2 * sizeof(float);
@@ -280,7 +280,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 	if (bVerticesColors)
 		desc.uiColorOffset = length * 24 * sizeof(float);
 
-	_pRender2D->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)(EF_BLEND | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
+	_pRender2D->Draw(_pTex, desc, CRDM_TRIANGLES, length*6, TRectF(), (E_EFFECT2D_FLAGS)((_bForceAlphaTest2D ? EF_ALPHA_TEST : EF_BLEND) | (bVerticesColors ? EF_DEFAULT : EF_COLOR_MIX)));
 
 	_pRender2D->SetColorMix(prev_color);
 

@@ -617,32 +617,32 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		{	
 				str += IntToStr(osvi.dwMajorVersion) + "." + IntToStr(osvi.dwMinorVersion) + " ";
 				
-				str += "\"Microsoft Windows";
+				str += "\"Microsoft Windows ";
 
 				if (osvi.dwMajorVersion == 6)
 				{
 					if (osvi.dwMinorVersion == 0)
 					{
 						if (osvi.wProductType == VER_NT_WORKSTATION)
-							str += " Vista ";
+							str += "Vista ";
 						else
-							str += " Server 2008 ";
+							str += "Server 2008 ";
 					}
 					else
 						if (osvi.dwMinorVersion == 1)
 						{
 							if (osvi.wProductType == VER_NT_WORKSTATION)
-								str += " 7 ";
+								str += "7 ";
 							else
-								str += " Server 2008 R2 ";
+								str += "Server 2008 R2 ";
 						}
 						else
 							if (osvi.dwMinorVersion == 2)
 							{
 								if (osvi.wProductType == VER_NT_WORKSTATION)
-									str += " 8 ";
+									str += "8 ";
 								else
-									str += " Server 2012 ";
+									str += "Server 2012 ";
 							}
 							else
 								if (osvi.dwMinorVersion == 3)
@@ -650,11 +650,19 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 									if (osvi.wProductType == VER_NT_WORKSTATION)
 										str += "8.1 ";
 									else
-										str += "Server 2012 R2";
+										str += "Server 2012 R2 ";
 								}
 								else
-									if (osvi.wProductType != VER_NT_WORKSTATION)
-										str += " Server ";
+									if (osvi.dwMinorVersion == 4)
+									{
+										if (osvi.wProductType == VER_NT_WORKSTATION)
+											str += "10 ";
+										else
+											str += "10 Server "; // marketing name yet unknown
+									}
+									else
+										if (osvi.wProductType != VER_NT_WORKSTATION)
+											str += "Server ";
 
 					DWORD os_type;
 					typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);

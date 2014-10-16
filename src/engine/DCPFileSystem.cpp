@@ -466,9 +466,8 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 
 		_strPackName = strPackName;
 
-		Core()->pMainFS()->LoadFile(_strPackName.c_str(), _pPack);
-
-		_pPack->IsOpen(open);
+		if (S_OK == Core()->pMainFS()->LoadFile(_strPackName.c_str(), _pPack))
+			_pPack->IsOpen(open);
 
 		if (!open || !_ReadFileInfo())
 		{

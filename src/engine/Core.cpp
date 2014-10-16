@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		05.10.2014 (c)Korotkov Andrey
+\date		14.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -448,16 +448,11 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 
 void CCore::_MessageProc(const TWindowMessage &stMsg)
 {
-	CEvWinMessage msg_hook_event = CEvWinMessage(stMsg);
-	
-	CastEvent(ET_ON_WINDOW_MESSAGE, (IBaseEvent*)&msg_hook_event); 
-	
-	TWindowMessage msg;
-	msg_hook_event.GetMessage(msg);
+	CastEvent(ET_ON_WINDOW_MESSAGE, &CEvWinMessage(stMsg)); 
 	
 	size_t i;
 	
-	switch (msg.eMessage)
+	switch (stMsg.eMessage)
 	{
 	case WMT_REDRAW:
 
@@ -556,7 +551,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_ACTIVATED:
 
-		if (msg.ui32Param1 == 1)
+		if (stMsg.ui32Param1 == 1)
 			break;
 
 		_bPause = false;	
@@ -572,7 +567,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_DEACTIVATED:
 
-		if (msg.ui32Param1 == 1)
+		if (stMsg.ui32Param1 == 1)
 			break;
 
 		_bPause = true;
@@ -607,8 +602,8 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_SIZE:
 
-		_stWin.uiWidth = msg.ui32Param1;
-		_stWin.uiHeight = msg.ui32Param2;
+		_stWin.uiWidth = stMsg.ui32Param1;
+		_stWin.uiHeight = stMsg.ui32Param2;
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 
 		break;
@@ -617,14 +612,14 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		if (!(_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY))
 		{
-			if (msg.ui32Param1 == c_eFScreenKeyFirst[0] || msg.ui32Param1 == c_eFScreenKeyFirst[1])
+			if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
 				_bCmdKeyIsPressed = false;
 
-			if (msg.ui32Param1 == c_eFScreenKeySecond)
+			if (stMsg.ui32Param1 == c_eFScreenKeySecond)
 				_bFScreenKeyIsPressed = false;
 		}
 
-		if (msg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
+		if (stMsg.ui32Param1 == KEY_GRAVE && !(_stWin.uiFlags & EWF_RESTRICT_CONSOLE_HOTKEY))
 			Console()->Visible(true);
 
 		break;
@@ -634,7 +629,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		if (_stWin.uiFlags & EWF_RESTRICT_FULLSCREEN_HOTKEY)
 			break;
 
-		if (msg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
+		if (stMsg.ui32Param1 == c_eFScreenKeySecond && _bCmdKeyIsPressed && !_bFScreenKeyIsPressed && !_bNeedApplyNewWnd)
 		{
 			_bFScreenKeyIsPressed = true;
 			_stWndToApply = _stWin;
@@ -642,7 +637,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 			_ChangeWinMode(_stWndToApply, false);
 		}
 
-		if (msg.ui32Param1 == c_eFScreenKeyFirst[0] || msg.ui32Param1 == c_eFScreenKeyFirst[1])
+		if (stMsg.ui32Param1 == c_eFScreenKeyFirst[0] || stMsg.ui32Param1 == c_eFScreenKeyFirst[1])
 			_bCmdKeyIsPressed = true;
 
 		break;

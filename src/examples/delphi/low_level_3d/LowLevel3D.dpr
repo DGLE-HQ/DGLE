@@ -73,7 +73,7 @@ begin
 // Background clear color setup.
   pRender.SetClearColor(ColorGray());
 
-  pResMan.Load(RESOURCE_PATH + 'fonts\Times_New_Roman_18_Bold.dft', IEngineBaseObject(pFont));
+  pResMan.Load(RESOURCE_PATH + 'fonts\Times_New_Roman_18_Bold.dft', IEngineBaseObject(pFont), BFLF_GENERATE_MIPMAPS);
   pResMan.Load(RESOURCE_PATH + 'textures\grass.jpg',    IEngineBaseObject(pTexGrass), load_3d_flags or TLF_COORDS_REPEAT);
   pResMan.Load( RESOURCE_PATH + 'sprites\cartoon_owl.png', IEngineBaseObject(pTexOwl), load_3d_flags or TLF_COORDS_CLAMP);
   pTexOwl.SetFrameSize( 48, 128 );

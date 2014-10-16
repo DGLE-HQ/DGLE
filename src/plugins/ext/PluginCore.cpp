@@ -398,7 +398,7 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 	if (header.dwMipMapCount == 0)
 		header.dwMipMapCount = 1;
 
-	E_TEXTURE_CREATION_FLAGS cr_flags = header.dwMipMapCount != 1 ? TCF_MIPMAPS_PRESENTED : TCF_DEFAULT;
+	E_TEXTURE_CREATE_FLAGS cr_flags = header.dwMipMapCount != 1 ? TCF_MIPMAPS_PRESENTED : TCF_DEFAULT;
 
 	if (header.ddpfPixelFormat.dwFlags == DDPF_FOURCC)
 	{

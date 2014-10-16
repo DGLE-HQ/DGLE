@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2013 (c)Korotkov Andrey
+\date		13.10.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -46,10 +46,11 @@ private:
 	TCharBox _astChars[224];
 
 	ITexture *_pTex;
+	bool _bForceAlphaTest2D;
 
 public:
 
-	CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars);
+	CBitmapFont(uint uiInstIdx, ITexture *pTex, const TFontHeader &stHeader, TCharBox *pChars, bool bForceAlphaTest2D);
 	~CBitmapFont();
 
 	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTexture);
