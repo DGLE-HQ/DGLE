@@ -200,9 +200,9 @@ type
     eDstAlpha: E_BLEND_FACTOR;
     eOpAlpha : E_BLEND_OPERATION;
   }
-  {$IF CompilerVersion >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(Dummy: Byte);
-  {$IFEND}
+  {$ENDIF}
   end;
 
 
@@ -231,9 +231,9 @@ type
     stFrontFace: TStencilFaceDesc
     stBackFace: TStencilFaceDesc;
   }
-  {$IF CompilerVersion >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(Dummy: Byte);
-  {$IFEND}
+  {$ENDIF}
   end;
   
   
@@ -257,9 +257,9 @@ type
     fSlopeScaledDepthBias: Single;
     bDepthClipEnabled: Boolean;
   }
-  {$IF CompilerVersion >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(Dummy: Byte);
-  {$IFEND}
+  {$ENDIF}
   end;
 
   TDrawDataAttributes = packed record
@@ -268,9 +268,9 @@ type
     eAttribDataType: array[0..7] of E_ATTRIBUTE_DATA_TYPE;
     eAttribCompsCount: array[0..7] of E_ATTRIBUTE_COMPONENTS_COUNT;
 
-    {$IF CompilerVersion >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(Dummy: Byte);
-    {$IFEND}
+  {$ENDIF}
   end;
   PDrawDataAttributes = ^TDrawDataAttributes;
 
@@ -298,13 +298,13 @@ type
     bIndexBuffer32: Boolean;
 
 
-    {$IF CompilerVersion >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(Dummy: Byte); overload;
     constructor Create(pDataPointer: Pointer; uiNormalDataOffset: Cardinal; uiTextureVertexDataOffset: Cardinal; bIs2d: Boolean); overload;
-    {$IFEND}
-    {$IF CompilerVersion >= 20}
-    class operator Equal(const this, desc: TDrawDataDesc): Boolean; inline;
-    {$IFEND}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+    class operator {$IFDEF FPC} = {$ELSE} Equal {$ENDIF}(const this, desc: TDrawDataDesc): Boolean; inline;
+  {$ENDIF}
   end;
   PDrawDataDesc = ^TDrawDataDesc;
 
@@ -455,12 +455,13 @@ IFixedFunctionPipeline = interface(IDGLE_Base)
 
 end;                                
 
-function BlendStateDesc(): TBlendStateDesc; {$IF CompilerVersion >= 18}inline;{$IFEND}
-function DepthStencilDesc(): TDepthStencilDesc; {$IF CompilerVersion >= 18}inline;{$IFEND}
-function RasterizerStateDesc(): TRasterizerStateDesc; {$IF CompilerVersion >= 18}inline;{$IFEND}
-function DrawDataAttributes(): TDrawDataAttributes; {$IF CompilerVersion >= 18}inline;{$IFEND}
-function DrawDataDesc(): TDrawDataDesc; overload; {$IF CompilerVersion >= 18}inline;{$IFEND}
-function DrawDataDesc(pDataPointer: Pointer; uiNormalDataOffset: Cardinal; uiTextureVertexDataOffset: Cardinal; bIs2d: Boolean): TDrawDataDesc; overload; {$IF CompilerVersion >= 18}inline;{$IFEND}
+function BlendStateDesc(): TBlendStateDesc;           {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DepthStencilDesc(): TDepthStencilDesc;       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function RasterizerStateDesc(): TRasterizerStateDesc; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DrawDataAttributes(): TDrawDataAttributes;   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DrawDataDesc(): TDrawDataDesc;               overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DrawDataDesc(pDataPointer: Pointer; uiNormalDataOffset: Cardinal;
+  uiTextureVertexDataOffset: Cardinal; bIs2d: Boolean): TDrawDataDesc; overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
 implementation
 
@@ -537,7 +538,8 @@ begin
   Result.pAttribs               := nil;
 end;
 
-{$IF CompilerVersion >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+
 constructor TBlendStateDesc.Create(Dummy: Byte);
 begin
   Self := BlendStateDesc();
@@ -567,10 +569,12 @@ constructor TDrawDataDesc.Create(pDataPointer: Pointer; uiNormalDataOffset: Card
 begin
   Self := DrawDataDesc(pDataPointer, uiNormalDataOffset, uiTextureVertexDataOffset, bIs2d);
 end;
-{$IFEND}
 
-{$IF CompilerVersion >= 20}
-class operator TDrawDataDesc.Equal(const this, desc: TDrawDataDesc): Boolean; 
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+
+class operator TDrawDataDesc.{$IFDEF FPC} = {$ELSE} Equal {$ENDIF}(const this, desc: TDrawDataDesc): Boolean;
 begin
   Result := (this.pData = desc.pData) and (this.uiVertexStride = desc.uiVertexStride) and (this.bVertices2D = desc.bVertices2D) and
     (this.uiNormalOffset = desc.uiNormalOffset) and (this.uiNormalStride = desc.uiNormalStride) and (this.uiTextureVertexOffset = desc.uiTextureVertexOffset) and
@@ -578,6 +582,8 @@ begin
     (this.uiTangentOffset = desc.uiTangentOffset) and (this.uiBinormalOffset = desc.uiBinormalOffset) and (this.uiTangentStride = desc.uiTangentStride) and
     (this.uiBinormalStride = desc.uiBinormalStride) and (this.pAttribs = desc.pAttribs) and (this.pIndexBuffer = desc.pIndexBuffer) and (this.bIndexBuffer32 = desc.bIndexBuffer32);
 end;
-{$IFEND}
+
+{$ENDIF}
+
 end.
 

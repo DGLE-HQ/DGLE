@@ -1,7 +1,48 @@
+{$UNDEF DGLE_PASCAL_INLINE}
+{$UNDEF DGLE_PASCAL_RECORDMETHODS}
+{$UNDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+{$UNDEF DGLE_PASCAL_RECORDOPERATORS}
+
+// FreePascal Defines
 {$IFDEF FPC}
-// {$MODE OBJFPC}
- {$MACRO ON}
- {$DEFINE COMPILERVERSION := 12} // assume FPC is like Delphi4
+//  {$MODE OBJFPC}
+  {$MACRO ON}
+  {$DEFINE COMPILERVERSION := 12} // assume FPC is like Delphi4
+  {$DEFINE DGLE_PASCAL_INLINE}
+  {$IFDEF VER2_6}
+    {$DEFINE DGLE_PASCAL_RECORDMETHODS}
+    {$DEFINE DGLE_PASCAL_RECORDOPERATORS}
+    {$MODESWITCH ADVANCEDRECORDS}
+  {$ENDIF}
+  {$IFDEF VER2_7}
+    {$DEFINE DGLE_PASCAL_RECORDCONSTRUCTORS}
+  {$ENDIF}
 {$ENDIF}
 
-{$MINENUMSIZE 4} // assume enumerations are 4 bytes, as integer 
+// Delphi Defines
+{$IF COMPILERVERSION >= 17} // may be changed to VERXXX, 150 - D7, 180 - D2006/2007, 200 - D2009
+  {$DEFINE DGLE_PASCAL_INLINE} // Starting with Delphi 2005 for inline
+  {$IF COMPILERVERSION >= 18}  // and Delphi 2006 for advanced records
+    {$DEFINE DGLE_PASCAL_RECORDMETHODS}
+    {$DEFINE DGLE_PASCAL_RECORDCONSTRUCTORS}
+  {$IFEND}
+  {$IF COMPILERVERSION >= 20}  // and Delphi 2009 for operators
+    {$DEFINE DGLE_PASCAL_RECORDOPERATORS}
+  {$IFEND}
+{$IFEND}
+
+{$DEFINE UInt64_Support}
+
+{$IFNDEF FPC} // FPC has UInt64 support
+  {$IF COMPILERVERSION < 18} // Delphi 2007 introduced UInt64, lower versions have only Int64
+    {$UNDEF UInt64_Support}
+  {$IFEND}
+{$ENDIF}
+
+// Common Defines
+
+{$MINENUMSIZE 4} // enumerations are 4 bytes, for interop with DGLE
+
+{$IFDEF DGLE_PASCAL_INLINE}
+  {$INLINE ON}
+{$ENDIF}

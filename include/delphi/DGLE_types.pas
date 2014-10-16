@@ -102,12 +102,12 @@ type
     bVSync            : Boolean;
     eMultiSampling    : {E_MULTISAMPLING_MODE} Cardinal;
     uiFlags           : {ENG_WINDOW_FLAGS} Cardinal;
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(var dummy);                      overload;
     constructor Create(uiWidth, uiHeight : Integer; bFullScreen : Boolean;
       bVSync : Boolean = False; eMSampling: {E_MULTISAMPLING_MODE} Cardinal = MM_NONE;
       uiFlags:{ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT); overload;
-  {$IFEND}
+  {$ENDIF}
   end;
 
  TSystemInfo = packed record
@@ -128,9 +128,9 @@ type
     cVersion          : array[0..64]  of AnsiChar;
     cVendor           : array[0..127] of AnsiChar;
     cDescription      : array[0..256] of AnsiChar;
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(var dummy);
-  {$IFEND}
+  {$ENDIF}
   end;
 
   TWindowMessage = packed record
@@ -138,29 +138,31 @@ type
     ui32Param1        : Cardinal;
     ui32Param2        : Cardinal;
     pParam3           : Pointer;
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(var dummy);                      overload;
     constructor Create(msg: E_WINDOW_MESSAGE_TYPE; param1: Cardinal = 0;
       param2: Cardinal = 0; param3: Pointer = nil);     overload;
-  {$IFEND}
+  {$ENDIF}
   end;
 
   TColor4 = packed record
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(var dummy);                      overload;
     constructor Create(ui32ABGR: Cardinal);             overload;
     constructor Create(ui32RGB: Cardinal; ubA: byte);   overload;
     constructor Create(ubR, ubG, ubB, ubA: Byte);       overload;
     constructor Create(fR, fG, fB, fA: Single);         overload;
     constructor Create(const rgba: array of Single);    overload;
-    procedure SetColorF(fR, fG, fB, fA: Single);        inline;
-    procedure SetColorB(ubR, ubG, ubB, ubA: Byte);      inline;
-    function ColorRGB(): Cardinal;                      inline;
-    function ColorRGBA(): Cardinal;                     inline;
-  {$IFEND}
-  {$IF COMPILERVERSION >= 20}
-    class operator Implicit(Color: TColor4): Cardinal;  inline;
-  {$IFEND}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDMETHODS}
+    procedure SetColorF(fR, fG, fB, fA: Single);        {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure SetColorB(ubR, ubG, ubB, ubA: Byte);      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function ColorRGB(): Cardinal;                      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function ColorRGBA(): Cardinal;                     {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+    class operator {$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(Color: TColor4): Cardinal;  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
     case Byte of
       0: (r, g, b, a : Single);
       1: (_rgba : array[0..3] of Single);
@@ -170,34 +172,36 @@ type
 type
 
   TPoint3 = packed record
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create (var dummy);                                                overload;
     constructor Create (x, y, z : Single);                                         overload;
     constructor Create (all : Single);                                             overload;
     constructor Create (const Floats: array of Single);                            overload;
-    function Dot(const stPoint: TPoint3): Single;                                  inline;
-    function Cross(const stPoint: TPoint3): TPoint3;                               inline;
-    function FlatDistTo(const stPoint: TPoint3): Single;                           inline;
-    function DistTo(const stPoint: TPoint3): Single;                               inline;
-    function DistToQ(const stPoint: TPoint3): Single;                              inline;
-    function LengthQ(): Single;                                                    inline;
-    function Length(): Single;                                                     inline;
-    function Normalize(): TPoint3;                                                 inline;
-    function Lerp(const stPoint: TPoint3; coeff: Single): TPoint3;                 inline;
-    function Angle(const stPoint: TPoint3): Single;                                inline;
-    function Rotate(const Axis: TPoint3; fAngle: Single): TPoint3;                 inline;
-    function Reflect(const normal : TPoint3): TPoint3;                             inline;
-  {$IFEND}
-  {$IF COMPILERVERSION >= 20}
-    class operator Add(const stLeft, stRight: TPoint3): TPoint3;                   inline;
-    class operator Subtract(const stLeft, stRight: TPoint3): TPoint3;              inline;
-    class operator Multiply(const stLeft, stRight: TPoint3): TPoint3;              inline;
-    class operator Divide(const stLeft, stRight: TPoint3): TPoint3;                inline;
-    class operator Add(const stLeft: TPoint3; const fRight: Single): TPoint3;      inline;
-    class operator Subtract(const stLeft: TPoint3; const fRight: Single): TPoint3; inline;
-    class operator Multiply(const stLeft: TPoint3; const fRight: Single): TPoint3; inline;
-    class operator Divide(const stLeft: TPoint3; const fRight: Single): TPoint3;   inline;
-  {$IFEND}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDMETHODS}
+    function Dot(const stPoint: TPoint3): Single;                                  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Cross(const stPoint: TPoint3): TPoint3;                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function FlatDistTo(const stPoint: TPoint3): Single;                           {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function DistTo(const stPoint: TPoint3): Single;                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function DistToQ(const stPoint: TPoint3): Single;                              {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function LengthQ(): Single;                                                    {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Length(): Single;                                                     {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Normalize(): TPoint3;                                                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Lerp(const stPoint: TPoint3; coeff: Single): TPoint3;                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Angle(const stPoint: TPoint3): Single;                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Rotate(const Axis: TPoint3; fAngle: Single): TPoint3;                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Reflect(const normal : TPoint3): TPoint3;                             {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+    class operator {$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;              {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;              {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3;      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3;   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
     case byte of
       0: (_1D : array[0..2] of Single);
       1: (x, y, z : Single);
@@ -207,33 +211,35 @@ type
   TVec3    = TPoint3;
 
   TPoint2 = packed record
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create (var dummy);                                                overload;
-    constructor Create (x, y: Single);                                            overload;
-    constructor Create (All: Single);                                             overload;
+    constructor Create (x, y: Single);                                             overload;
+    constructor Create (All: Single);                                              overload;
     constructor Create (const Floats: array of Single);                            overload;
-    function Dot(const stPoint: TPoint2): Single;                                  inline;
-    function Cross(const stPoint: TPoint2): Single;                                inline;
-    function DistTo(const stPoint: TPoint2): Single;                               inline;
-    function DistToQ(const stPoint: TPoint2): Single;                              inline;
-    function LengthQ(): Single;                                                    inline;
-    function Length(): Single;                                                     inline;
-    function Normalize(): TPoint2;                                                 inline;
-    function Lerp(const stPoint: TPoint2; coeff: Single): TPoint2;                 inline;
-    function Angle(const stPoint: TPoint2): Single;                                inline;
-    function Rotate(fAngle: Single): TPoint2;                                      inline;
-    function Reflect(const normal : TPoint2): TPoint2;                             inline;
-  {$IFEND}
-  {$IF COMPILERVERSION >= 20}
-    class operator Add(const stLeft, stRight: TPoint2): TPoint2;                   inline;
-    class operator Subtract(const stLeft, stRight: TPoint2): TPoint2;              inline;
-    class operator Multiply(const stLeft, stRight: TPoint2): TPoint2;              inline;
-    class operator Divide(const stLeft, stRight: TPoint2): TPoint2;                inline;
-    class operator Add(const stLeft: TPoint2; fRight: Single): TPoint2;            inline;
-    class operator Subtract(const stLeft: TPoint2; fRight: Single): TPoint2;       inline;
-    class operator Multiply(const stLeft: TPoint2; fRight: Single): TPoint2;       inline;
-    class operator Divide(const stLeft: TPoint2; fRight: Single): TPoint2;         inline;
-  {$IFEND}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDMETHODS}
+    function Dot(const stPoint: TPoint2): Single;                                  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Cross(const stPoint: TPoint2): Single;                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function DistTo(const stPoint: TPoint2): Single;                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function DistToQ(const stPoint: TPoint2): Single;                              {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function LengthQ(): Single;                                                    {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Length(): Single;                                                     {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Normalize(): TPoint2;                                                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Lerp(const stPoint: TPoint2; coeff: Single): TPoint2;                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Angle(const stPoint: TPoint2): Single;                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Rotate(fAngle: Single): TPoint2;                                      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function Reflect(const normal : TPoint2): TPoint2;                             {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+    class operator {$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;              {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;              {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;            {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;         {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
     case byte of
       0: (_1D : array[0..1] of Single);
       1: (x, y : Single);
@@ -251,28 +257,30 @@ type
 
   TRectf = packed record
     x, y, width, height : Single;
-  {$IF COMPILERVERSION >= 18}
+  {$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
     constructor Create(var dummy);                                overload;
     constructor Create(x, y, width, height : Single);             overload;
     constructor Create(const stLeftTop, stRightBottom: TPoint2);  overload;
-    function IntersectRect(const stRect: TRectf):Boolean;         inline;
-    function PointInRect(const stPoint : TPoint2):Boolean;        inline;
-    function RectInRect(const stRect : TRectf): Boolean;          inline;
-    function GetIntersectionRect(const stRect : TRectf): TRectf;  inline;
-  {$IFEND}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDMETHODS}
+    function IntersectRect(const stRect: TRectf):Boolean;         {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function PointInRect(const stPoint : TPoint2):Boolean;        {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function RectInRect(const stRect : TRectf): Boolean;          {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function GetIntersectionRect(const stRect : TRectf): TRectf;  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
   end;
   PRectf = ^TRectf;
 
   TMatrix4x4 = packed record
-  {$IF COMPILERVERSION >= 20}
-    class operator Subtract(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4; inline;
-    class operator Add(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;      inline;
-    class operator Multiply(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4; inline;
-    class operator Subtract(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;  inline;
-    class operator Add(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;       inline;
-    class operator Divide(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;    inline;
-    class operator Multiply(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;  inline;
-  {$IFEND}
+  {$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+    class operator {$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;    {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
     case byte of
       0: (_1D : array[0..15] of Single);
       1: (_2D : array[0..3, 0..3] of Single);
@@ -342,26 +350,26 @@ type
    TVariant = packed record
     _type: E_DGLE_VARIANT_TYPE;
     _Data: Pointer;
-  {$IF COMPILERVERSION >= 20}
-    class operator Implicit(AVar: TVariant): Integer; inline;
-    class operator Implicit(AVar: TVariant): Single;  inline;
-    class operator Implicit(AVar: TVariant): Boolean; inline;
-    class operator Implicit(AVar: TVariant): Pointer; inline;
-  {$IFEND}
-  {$IF COMPILERVERSION >= 18}
-    procedure Clear();                                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetInt(iVal: Integer);                                 {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetFloat(fVal: Single);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetBool(bVal: Boolean);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetPointer(pPointer: Pointer);                         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure SetData(pData: Pointer; uiDataSize: Cardinal);         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsInt(): Integer;                                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsFloat(): Single;                                      {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsBool(): Boolean;                                      {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function AsPointer(): Pointer;                                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    procedure GetData(out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-    function GetType(): E_DGLE_VARIANT_TYPE;                         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-  {$IFEND}
+  {$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+    class operator {$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Integer;                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Single;                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Boolean;                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    class operator {$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Pointer;                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
+  {$IFDEF DGLE_PASCAL_RECORDMETHODS}
+    procedure Clear();                                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure SetInt(iVal: Integer);                                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure SetFloat(fVal: Single);                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure SetBool(bVal: Boolean);                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure SetPointer(pPointer: Pointer);                         {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure SetData(pData: Pointer; uiDataSize: Cardinal);         {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function AsInt(): Integer;                                       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function AsFloat(): Single;                                      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function AsBool(): Boolean;                                      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function AsPointer(): Pointer;                                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    procedure GetData(out pData: Pointer; out uiDataSize: Cardinal); {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+    function GetType(): E_DGLE_VARIANT_TYPE;                         {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+  {$ENDIF}
   end;
 
 type
@@ -483,157 +491,157 @@ type
     KEY_NUMLOCK      = $45  // Num Lock on numpad
   );
 
-function PluginInfo(): TPluginInfo;                                         {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function PluginInfo(): TPluginInfo;                                         {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function WindowMessage(): TWindowMessage;                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function WindowMessage(): TWindowMessage;                                   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function WindowMessage(msg: E_WINDOW_MESSAGE_TYPE; param1: Cardinal = 0;
-  param2: Cardinal = 0; param3: Pointer = nil): TWindowMessage;             overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+  param2: Cardinal = 0; param3: Pointer = nil): TWindowMessage;             overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function Color4(r,g,b,a: Single): TColor4;                                  overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Color4(r,g,b,a: Byte): TColor4;                                    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Color4(color : Cardinal; alpha : Byte = 255): TColor4;             overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Color4(): TColor4;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Color4(r,g,b,a: Single): TColor4;                                  overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Color4(r,g,b,a: Byte): TColor4;                                    overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Color4(color : Cardinal; alpha : Byte = 255): TColor4;             overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Color4(): TColor4;                                                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function Color4(const rgba: array of Single): TColor4;                      overload;
 
-function ColorRGB(Color: TColor4): Cardinal;                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorRGBA(Color: TColor4): Cardinal;                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-                                                                            {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorClear(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorWhite(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorBlack(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorRed(alpha: Byte = 255)           : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorGreen(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorBlue(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorRGB(Color: TColor4): Cardinal;                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorRGBA(Color: TColor4): Cardinal;                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+                                                                            {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorClear(alpha: Byte = 255)         : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorWhite(alpha: Byte = 255)         : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorBlack(alpha: Byte = 255)         : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorRed(alpha: Byte = 255)           : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorGreen(alpha: Byte = 255)         : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorBlue(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function ColorAqua(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorBrown(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorCyan(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorFuchsia(alpha: Byte = 255)       : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorGray(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorGrey(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorMagenta(alpha: Byte = 255)       : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorMaroon(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorNavy(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorOlive(alpha: Byte = 255)         : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorOrange(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorPink(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorPurple(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorSilver(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorTeal(alpha: Byte = 255)          : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorViolet(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorYellow(alpha: Byte = 255)        : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorAqua(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorBrown(alpha: Byte = 255)         : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorCyan(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorFuchsia(alpha: Byte = 255)       : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorGray(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorGrey(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorMagenta(alpha: Byte = 255)       : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorMaroon(alpha: Byte = 255)        : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorNavy(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorOlive(alpha: Byte = 255)         : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorOrange(alpha: Byte = 255)        : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorPink(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorPurple(alpha: Byte = 255)        : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorSilver(alpha: Byte = 255)        : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorTeal(alpha: Byte = 255)          : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorViolet(alpha: Byte = 255)        : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorYellow(alpha: Byte = 255)        : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function ColorOfficialOrange(alpha: Byte = 255): TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ColorOfficialBlack(alpha: Byte = 255) : TColor4;                   {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function ColorOfficialOrange(alpha: Byte = 255): TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ColorOfficialBlack(alpha: Byte = 255) : TColor4;                   {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function Point2(): TPoint2;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point2(x, y: Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point2(All: Single): TPoint2;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point2(): TPoint2;                                                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Point2(x, y: Single): TPoint2;                                     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Point2(All: Single): TPoint2;                                      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function Point2(const Floats: array of Single): TPoint2;                    overload;
 
 // TPoint2 operators
-function Add(const stLeft, stRight: TPoint2): TPoint2;                      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Subtract(const stLeft, stRight: TPoint2): TPoint2;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Multiply(const stLeft, stRight: TPoint2): TPoint2;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Divide(const stLeft, stRight: TPoint2): TPoint2;                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Add(const stLeft: TPoint2; fRight: Single): TPoint2;               overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Subtract(const stLeft: TPoint2; fRight: Single): TPoint2;          overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Multiply(const stLeft: TPoint2; fRight: Single): TPoint2;          overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Divide(const stLeft: TPoint2; fRight: Single): TPoint2;            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Add(const stLeft, stRight: TPoint2): TPoint2;                      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Subtract(const stLeft, stRight: TPoint2): TPoint2;                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Multiply(const stLeft, stRight: TPoint2): TPoint2;                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Divide(const stLeft, stRight: TPoint2): TPoint2;                   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Add(const stLeft: TPoint2; fRight: Single): TPoint2;               overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Subtract(const stLeft: TPoint2; fRight: Single): TPoint2;          overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Multiply(const stLeft: TPoint2; fRight: Single): TPoint2;          overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Divide(const stLeft: TPoint2; fRight: Single): TPoint2;            overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 // TPoint2 functions
-function Dot(const stLeft, stRight: TPoint2): Single;                       overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Cross(const stLeft, stRight: TPoint2): Single;                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function DistTo(const stLeft, stRight: TPoint2): Single;                    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function DistToQ(const stLeft, stRight: TPoint2): Single;                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function LengthQ(stPoint: TPoint2): Single;                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Length(const stPoint: TPoint2): Single;                            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Normalize(const stPoint: TPoint2): TPoint2;                        overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Lerp(const stLeft, stRight: TPoint2; coeff: Single): TPoint2;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Angle(const stLeft, stRight: TPoint2): Single;                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Rotate(const stLeft: TPoint2; fAngle: Single): TPoint2;            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Reflect(const stLeft, normal : TPoint2): TPoint2;                  overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Dot(const stLeft, stRight: TPoint2): Single;                       overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Cross(const stLeft, stRight: TPoint2): Single;                     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DistTo(const stLeft, stRight: TPoint2): Single;                    overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DistToQ(const stLeft, stRight: TPoint2): Single;                   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function LengthQ(stPoint: TPoint2): Single;                                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Length(const stPoint: TPoint2): Single;                            overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Normalize(const stPoint: TPoint2): TPoint2;                        overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Lerp(const stLeft, stRight: TPoint2; coeff: Single): TPoint2;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Angle(const stLeft, stRight: TPoint2): Single;                     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Rotate(const stLeft: TPoint2; fAngle: Single): TPoint2;            overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Reflect(const stLeft, normal : TPoint2): TPoint2;                  overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function Point3(): TPoint3;                                                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point3(x, y, z: Single): TPoint3;                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Point3(All: Single): TPoint3;                                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Point3(): TPoint3;                                                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Point3(x, y, z: Single): TPoint3;                                  overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Point3(All: Single): TPoint3;                                      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function Point3(const Floats: array of Single): TPoint3;                    overload;
 
 // TPoint3 operators
-function Add(const stLeft, stRight: TPoint3): TPoint3;                      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Subtract(const stLeft, stRight: TPoint3): TPoint3;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Multiply(const stLeft, stRight: TPoint3): TPoint3;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Divide(const stLeft, stRight: TPoint3): TPoint3;                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Add(const stLeft: TPoint3; fRight: Single): TPoint3;               overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Subtract(const stLeft: TPoint3; fRight: Single): TPoint3;          overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Multiply(const stLeft: TPoint3; fRight: Single): TPoint3;          overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Divide(const stLeft: TPoint3; fRight: Single): TPoint3;            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Add(const stLeft, stRight: TPoint3): TPoint3;                      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Subtract(const stLeft, stRight: TPoint3): TPoint3;                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Multiply(const stLeft, stRight: TPoint3): TPoint3;                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Divide(const stLeft, stRight: TPoint3): TPoint3;                   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Add(const stLeft: TPoint3; fRight: Single): TPoint3;               overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Subtract(const stLeft: TPoint3; fRight: Single): TPoint3;          overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Multiply(const stLeft: TPoint3; fRight: Single): TPoint3;          overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Divide(const stLeft: TPoint3; fRight: Single): TPoint3;            overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 // TPoint3 functions
-function Dot(const stLeft, stRight: TPoint3): Single;                       overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Cross(const stLeft, stRight: TPoint3): TPoint3;                    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function FlatDistTo(const stLeft, stRight: TPoint3): Single;                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function DistTo(const stLeft, stRight: TPoint3): Single;                    overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function DistToQ(const stLeft, stRight: TPoint3): Single;                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function LengthQ(const stPoint: TPoint3): Single;                           overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Length(const stPoint: TPoint3): Single;                            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Normalize(const stPoint: TPoint3): TPoint3;                        overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Lerp(const stLeft, stRight: TPoint3; coeff: Single): TPoint3;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Angle(const stLeft, stRight: TPoint3): Single;                     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Rotate(const stLeft, Axis: TPoint3; fAngle: Single): TPoint3;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function Reflect(const stLeft, normal : TPoint3): TPoint3;                  overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Dot(const stLeft, stRight: TPoint3): Single;                       overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Cross(const stLeft, stRight: TPoint3): TPoint3;                    overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function FlatDistTo(const stLeft, stRight: TPoint3): Single;                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DistTo(const stLeft, stRight: TPoint3): Single;                    overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function DistToQ(const stLeft, stRight: TPoint3): Single;                   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function LengthQ(const stPoint: TPoint3): Single;                           overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Length(const stPoint: TPoint3): Single;                            overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Normalize(const stPoint: TPoint3): TPoint3;                        overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Lerp(const stLeft, stRight: TPoint3; coeff: Single): TPoint3;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Angle(const stLeft, stRight: TPoint3): Single;                     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Rotate(const stLeft, Axis: TPoint3; fAngle: Single): TPoint3;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function Reflect(const stLeft, normal : TPoint3): TPoint3;                  overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function Vertex2(x,y,u,w,r,g,b,a : Single): TVertex2;                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Vertex2(x,y,u,w,r,g,b,a : Single): TVertex2;                       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function RectF(): TRectf;                                                   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function RectF(x, y, width, height: Single): TRectf;                        overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function RectF(const stLeftTop, stRightBottom: TPoint2): TRectf;            overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function IntersectRect(const stRect1, stRect2: TRectf):Boolean;             {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function PointInRect(const stPoint: TPoint2; const stRect: TRectf):Boolean; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function RectInRect(const stRect1, stRect2: TRectf): Boolean;               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function GetIntersectionRect(const stRect1, stRect2: TRectf): TRectf;       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function RectF(): TRectf;                                                   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function RectF(x, y, width, height: Single): TRectf;                        overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function RectF(const stLeftTop, stRightBottom: TPoint2): TRectf;            overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function IntersectRect(const stRect1, stRect2: TRectf):Boolean;             {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function PointInRect(const stPoint: TPoint2; const stRect: TRectf):Boolean; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function RectInRect(const stRect1, stRect2: TRectf): Boolean;               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function GetIntersectionRect(const stRect1, stRect2: TRectf): TRectf;       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function Matrix(): TMatrix4x4;                                              overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Matrix(): TMatrix4x4;                                              overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function Matrix(const RowMajorFloats: array of Single): TMatrix4x4;         overload;
-function Matrix(_00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33: Single): TMatrix4x4; overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixMulGL(stMLeft, stMRight : TMatrix4x4): TMatrix4x4;           {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function Matrix(_00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33: Single): TMatrix4x4; overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixMulGL(stMLeft, stMRight : TMatrix4x4): TMatrix4x4;           {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function MatrixInverse(const stMatrix : TMatrix4x4): TMatrix4x4;
-function MatrixTranspose(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixIdentity(): TMatrix4x4;                                      {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixScale(const fVec : TPoint3): TMatrix4x4;                     {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixTranslate(const fVec : TPoint3): TMatrix4x4;                 {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixRotate(angle : Single; const stAxis : TPoint3): TMatrix4x4;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure Decompose(const stMatrix : TMatrix4x4; out stScale: TPoint3; out stRotation: TMatrix4x4; out stTranslation: TPoint3); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixTranspose(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixIdentity(): TMatrix4x4;                                      {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixScale(const fVec : TPoint3): TMatrix4x4;                     {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixTranslate(const fVec : TPoint3): TMatrix4x4;                 {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixRotate(angle : Single; const stAxis : TPoint3): TMatrix4x4;  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;          {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure Decompose(const stMatrix : TMatrix4x4; out stScale: TPoint3; out stRotation: TMatrix4x4; out stTranslation: TPoint3); {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
 // Matrix operators
-function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixAdd(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixMul(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixSub(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixAdd(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixDiv(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function MatrixMul(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint2): TPoint2;   overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function ApplyToVector(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;  {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function MatrixSub(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixAdd(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixMul(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;     overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixSub(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixAdd(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixDiv(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function MatrixMul(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;      overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ApplyToPoint(const stLeftMatrix: TMatrix4x4; stPoint: TPoint2): TPoint2;   overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function ApplyToVector(const stLeftMatrix: TMatrix4x4; stPoint: TPoint3): TPoint3;  {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
-function EngineWindow(): TEngineWindow;                                             overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function EngineWindow(): TEngineWindow;                                             overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 function EngineWindow(uiWidth, uiHeight: Integer; bFullScreen: Boolean;
   bVSync: Boolean = False; eMSampling: {E_MULTISAMPLING_MODE}Cardinal = MM_NONE;
-  uiFlags: {ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow;                 overload; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+  uiFlags: {ENG_WINDOW_FLAGS}Integer = EWF_DEFAULT): TEngineWindow;                 overload; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
 // TVariant operations  
-procedure Clear(var AVar: TVariant);                                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure SetInt(var AVar: TVariant; iVal: Integer);                                {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure SetFloat(var AVar: TVariant; fVal: Single);                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure SetBool(var AVar: TVariant; bVal: Boolean);                               {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure SetPointer(var AVar: TVariant; pPointer: Pointer);                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure SetData(var AVar: TVariant; pData: Pointer; uiDataSize: Cardinal);        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function AsInt(var AVar: TVariant): Integer;                                        {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function AsFloat(var AVar: TVariant): Single;                                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function AsBool(var AVar: TVariant): Boolean;                                       {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function AsPointer(var AVar: TVariant): Pointer;                                    {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-procedure GetData(var AVar: TVariant;out pData: Pointer; out uiDataSize: Cardinal); {$IF COMPILERVERSION >= 18}inline;{$IFEND}
-function GetType(var AVar: TVariant): E_DGLE_VARIANT_TYPE;                          {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+procedure Clear(var AVar: TVariant);                                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure SetInt(var AVar: TVariant; iVal: Integer);                                {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure SetFloat(var AVar: TVariant; fVal: Single);                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure SetBool(var AVar: TVariant; bVal: Boolean);                               {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure SetPointer(var AVar: TVariant; pPointer: Pointer);                        {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure SetData(var AVar: TVariant; pData: Pointer; uiDataSize: Cardinal);        {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function AsInt(var AVar: TVariant): Integer;                                        {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function AsFloat(var AVar: TVariant): Single;                                       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function AsBool(var AVar: TVariant): Boolean;                                       {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function AsPointer(var AVar: TVariant): Pointer;                                    {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+procedure GetData(var AVar: TVariant;out pData: Pointer; out uiDataSize: Cardinal); {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function GetType(var AVar: TVariant): E_DGLE_VARIANT_TYPE;                          {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 
 implementation
 
@@ -691,7 +699,8 @@ begin
   Result := ColorRGB(Color) + (Round($FF * Color.a) shl 24);
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+
 constructor TColor4.Create(var dummy);
 begin
   Self := Color4();
@@ -722,6 +731,10 @@ begin
   Self := Color4(rgba);
 end;
 
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDMETHODS}
+
 procedure TColor4.SetColorF(fR, fG, fB, fA: Single);
 begin
   Self := Color4(fR, fG, fB, fA);
@@ -741,14 +754,17 @@ function TColor4.ColorRGBA(): Cardinal;
 begin
   Result := ColorRGB + (Round($FF * a) shl 24);
 end;
-{$IFEND}
 
-{$IF COMPILERVERSION >= 20}
-class operator TColor4.Implicit(Color: TColor4): Cardinal;
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+
+class operator TColor4.{$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(Color: TColor4): Cardinal;
 begin
   Result := Color.ColorRGBA();
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function ColorClear(alpha: Byte = 255)         : TColor4;
 begin
@@ -940,47 +956,49 @@ begin
   Result := Point2(stLeft.x / fRight, stLeft.y / fRight);
 end;
 
-{$IF COMPILERVERSION >= 20}
-class operator TPoint2.Add(const stLeft, stRight: TPoint2): TPoint2;
+{$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+
+class operator TPoint2.{$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;
 begin
   Result := DGLE_Types.Add(stLeft, stRight);
 end;
 
-class operator TPoint2.Subtract(const stLeft, stRight: TPoint2): TPoint2;
+class operator TPoint2.{$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;
 begin
   Result := DGLE_Types.Subtract(stLeft, stRight);
 end;
 
-class operator TPoint2.Multiply(const stLeft, stRight: TPoint2): TPoint2;
+class operator TPoint2.{$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;
 begin
   Result := DGLE_Types.Multiply(stLeft, stRight);
 end;
 
-class operator TPoint2.Divide(const stLeft, stRight: TPoint2): TPoint2;
+class operator TPoint2.{$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft, stRight: TPoint2): TPoint2;
 begin
   Result := DGLE_Types.Divide(stLeft, stRight);
 end;
 
-class operator TPoint2.Add(const stLeft: TPoint2; fRight: Single): TPoint2;
+class operator TPoint2.{$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
   Result := DGLE_Types.Add(stLeft, fRight);
 end;
 
-class operator TPoint2.Subtract(const stLeft: TPoint2; fRight: Single): TPoint2;
+class operator TPoint2.{$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
   Result := DGLE_Types.Subtract(stLeft, fRight);
 end;
 
-class operator TPoint2.Multiply(const stLeft: TPoint2; fRight: Single): TPoint2;
+class operator TPoint2.{$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
   Result := DGLE_Types.Multiply(stLeft, fRight);
 end;
 
-class operator TPoint2.Divide(const stLeft: TPoint2; fRight: Single): TPoint2;
+class operator TPoint2.{$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft: TPoint2; fRight: Single): TPoint2;
 begin
   Result := DGLE_Types.Divide(stLeft, fRight);
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function Dot(const stLeft, stRight: TPoint2): Single;
 begin
@@ -1041,7 +1059,8 @@ begin
   Result := Subtract(stLeft, Multiply(normal, Dot(stLeft, normal) * 2));
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+
 constructor TPoint2.Create(var dummy);
 begin
   Self := Point2();
@@ -1061,6 +1080,10 @@ constructor TPoint2.Create(const Floats: array of Single);
 begin
   Self := Point2(Floats);
 end;
+
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDMETHODS}
 
 function TPoint2.Dot(const stPoint: TPoint2): Single;
 begin
@@ -1117,7 +1140,8 @@ function TPoint2.Reflect(const normal : TPoint2): TPoint2;
 begin
   Result := DGLE_Types.Reflect(Self, normal);
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function Point3(): TPoint3; overload;
 begin
@@ -1188,47 +1212,49 @@ begin
   Result := Point3(stLeft.x / fRight, stLeft.y / fRight, stLeft.z / fRight);
 end;
 
-{$IF COMPILERVERSION >= 20}
-class operator TPoint3.Add(const stLeft, stRight: TPoint3): TPoint3;
+{$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+
+class operator TPoint3.{$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;
 begin
   Result := DGLE_Types.Add(stLeft, stRight);
 end;
 
-class operator TPoint3.Subtract(const stLeft, stRight: TPoint3): TPoint3;
+class operator TPoint3.{$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;
 begin
   Result := DGLE_Types.Subtract(stLeft, stRight);
 end;
 
-class operator TPoint3.Multiply(const stLeft, stRight: TPoint3): TPoint3;
+class operator TPoint3.{$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;
 begin
   Result := DGLE_Types.Multiply(stLeft, stRight);
 end;
 
-class operator TPoint3.Divide(const stLeft, stRight: TPoint3): TPoint3;
+class operator TPoint3.{$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft, stRight: TPoint3): TPoint3;
 begin
   Result := DGLE_Types.Divide(stLeft, stRight);
 end;
 
-class operator TPoint3.Add(const stLeft: TPoint3;const  fRight: Single): TPoint3;
+class operator TPoint3.{$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeft: TPoint3;const  fRight: Single): TPoint3;
 begin
   Result := DGLE_Types.Add(stLeft, fRight);
 end;
 
-class operator TPoint3.Subtract(const stLeft: TPoint3; const fRight: Single): TPoint3;
+class operator TPoint3.{$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3;
 begin
   Result := DGLE_Types.Subtract(stLeft, fRight);
 end;
 
-class operator TPoint3.Multiply(const stLeft: TPoint3; const fRight: Single): TPoint3;
+class operator TPoint3.{$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3;
 begin
   Result := DGLE_Types.Multiply(stLeft, fRight);
 end;
 
-class operator TPoint3.Divide(const stLeft: TPoint3; const fRight: Single): TPoint3;
+class operator TPoint3.{$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeft: TPoint3; const fRight: Single): TPoint3;
 begin
   Result := DGLE_Types.Divide(stLeft, fRight);
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function Dot(const stLeft, stRight: TPoint3): Single;
 begin
@@ -1298,7 +1324,8 @@ begin
   Result := Subtract(stLeft, Multiply(normal, Dot(stLeft,normal) * 2));
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+
 constructor TPoint3.Create (var dummy);
 begin
   Self := Point3();
@@ -1318,6 +1345,10 @@ constructor TPoint3.Create (const Floats: array of Single);
 begin
   Self := Point3(Floats);
 end;
+
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDMETHODS}
 
 function TPoint3.Dot(const stPoint: TPoint3): Single;
 begin
@@ -1379,7 +1410,8 @@ function TPoint3.Reflect(const normal : TPoint3): TPoint3;
 begin
   Result := DGLE_Types.Reflect(Self, normal);
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function Vertex2(x,y,u,w,r,g,b,a : Single): TVertex2;
 begin
@@ -1456,7 +1488,7 @@ begin
     Result := Rectf;
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
 
 constructor TRectF.Create(var dummy);
 begin
@@ -1472,6 +1504,10 @@ constructor TRectF.Create(const stLeftTop, stRightBottom: TPoint2);
 begin
   Self := RectF(stLeftTop, stRightBottom);
 end;
+
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDMETHODS}
 
 function TRectF.IntersectRect(const stRect: TRectf):Boolean;
 begin
@@ -1492,7 +1528,8 @@ function TRectF.GetIntersectionRect(const stRect: TRectf): TRectf;
 begin
   Result := DGLE_Types.GetIntersectionRect(Self, stRect);
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function Matrix(): TMatrix4x4;
 begin
@@ -1519,6 +1556,7 @@ begin
 end;
 
 function MatrixInverse(const stMatrix : TMatrix4x4): TMatrix4x4;
+{ TODO : Refactor routine due to FreePascal "not portable int-ptr cast" warning }
 type
   MatrixRows = array[0..7] of Single;
   PMatrixRows = ^MatrixRows;
@@ -1708,7 +1746,7 @@ begin
   Result._2D[2][2] := (1.0 - z * z) * cos_angle + z * z;
 end;
 
-function RowFactor(const M : TMatrix4x4; X: Integer): Single; {$IF COMPILERVERSION >= 18}inline;{$IFEND}
+function RowFactor(const M : TMatrix4x4; X: Integer): Single; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 begin
   Result := DGLE_Types.Length(Point3(M._2D[0, X], M._2D[1, X], M._2D[2, X])) *
     Sign(M._2D[0, X] * M._2D[1, X] * M._2D[2, X] * M._2D[3, X]);
@@ -1925,41 +1963,46 @@ begin
   Result.z := stPoint.x * stLeftMatrix._2d[0, 2] + stPoint.y * stLeftMatrix._2d[1, 2] + stPoint.z * stLeftMatrix._2d[2, 2];
 end;
 
+{$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+
+class operator TMatrix4x4.{$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixAdd(stLeftMatrix, stRightMatrix);
+end;
+
+class operator TMatrix4x4.{$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixSub(stLeftMatrix, stRightMatrix);
+end;
+
+class operator TMatrix4x4.{$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixMul(stLeftMatrix, stRightMatrix);
+end;
+
+class operator TMatrix4x4.{$IFDEF FPC} + {$ELSE} Add {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixAdd(stLeftMatrix, right);
+end;
+
+class operator TMatrix4x4.{$IFDEF FPC} - {$ELSE} Subtract {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixSub(stLeftMatrix, right);
+end;
+
+class operator TMatrix4x4.{$IFDEF FPC} / {$ELSE} Divide {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixDiv(stLeftMatrix, right);
+end;
+
+class operator TMatrix4x4.{$IFDEF FPC} * {$ELSE} Multiply {$ENDIF}(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
+begin
+  Result := DGLE_Types.MatrixMul(stLeftMatrix, right);
+end;
+
+{$ENDIF}
+
 {$IF COMPILERVERSION >= 20}
-class operator TMatrix4x4.Add(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-begin
-  Result := DGLE_Types.Add(Self, stRightMatrix);
-end;
-
-class operator TMatrix4x4.Subtract(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-begin
-  Result := DGLE_Types.Subtract(Self, stRightMatrix);
-end;
-
-class operator TMatrix4x4.Multiply(const stLeftMatrix, stRightMatrix : TMatrix4x4): TMatrix4x4;
-begin
-  Result := DGLE_Types.Multiply(Self, stRightMatrix);
-end;
-
-class operator TMatrix4x4.Add(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-begin
-  Result := DGLE_Types.Add(Self, right);
-end;
-
-class operator TMatrix4x4.Subtract(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-begin
-  Result := DGLE_Types.Subtract(Self, right);
-end;
-
-class operator TMatrix4x4.Divide(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-begin
-  Result := DGLE_Types.Divide(Self, right);
-end;
-
-class operator TMatrix4x4.Multiply(const stLeftMatrix: TMatrix4x4; right: Single): TMatrix4x4;
-begin
-  Result := DGLE_Types.Multiply(Self, right);
-end;
 
 constructor TTransformStack.Create();
 begin
@@ -2094,7 +2137,8 @@ begin
   Result.uiFlags        := uiFlags;
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+
 constructor TEngineWindow.Create(var dummy);
 begin
   Self := EngineWindow();
@@ -2106,21 +2150,23 @@ constructor TEngineWindow.Create(uiWidth, uiHeight : Integer; bFullScreen : Bool
 begin
   Self := EngineWindow(uiWidth, uiHeight, bFullScreen, bVSync, eMSampling, uiFlags);
 end;
-{$IFEND}
 
-{$IF COMPILERVERSION >= 18}
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
 constructor TPluginInfo.Create(var dummy);
 begin
   Self := PluginInfo();
 end;
-{$IFEND}
+{$ENDIF}
 
 function PluginInfo(): TPluginInfo;
 begin
   Result.ui8PluginSDKVersion := _DGLE_PLUGIN_SDK_VER_;
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDCONSTRUCTORS}
+
 constructor TWindowMessage.Create(var dummy);
 begin
   Self := WindowMessage();
@@ -2131,7 +2177,8 @@ constructor TWindowMessage.Create(msg: E_WINDOW_MESSAGE_TYPE; param1: Cardinal =
 begin
   Self := WindowMessage(Msg, param1, param2, param3);
 end;
-{$IFEND}
+
+{$ENDIF}
 
 function WindowMessage(): TWindowMessage; overload;
 begin
@@ -2149,8 +2196,6 @@ begin
   Result.ui32Param2 := param2;
   Result.pParam3    := param3;
 end;
-
-
 
 procedure Clear(var AVar: TVariant);
 begin
@@ -2279,7 +2324,7 @@ begin
   Result := AVar._type;
 end;
 
-{$IF COMPILERVERSION >= 18}
+{$IFDEF DGLE_PASCAL_RECORDMETHODS}
 
 procedure TVariant.Clear();
 begin
@@ -2340,28 +2385,32 @@ function TVariant.GetType(): E_DGLE_VARIANT_TYPE;
 begin
   Result := _type;
 end;
-{$IFEND}
 
-{$IF COMPILERVERSION >= 20}
-class operator TVariant.Implicit(AVar: TVariant): Integer;
+{$ENDIF}
+
+{$IFDEF DGLE_PASCAL_RECORDOPERATORS}
+
+class operator TVariant.{$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Integer;
 begin
   Result := AVar.AsInt();
 end;
 
-class operator TVariant.Implicit(AVar: TVariant): Single;
+class operator TVariant.{$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Single;
 begin
   Result := AVar.AsFloat();
 end;
 
-class operator TVariant.Implicit(AVar: TVariant): Boolean;
+class operator TVariant.{$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Boolean;
 begin
   Result := AVar.AsBool();
 end;
-class operator TVariant.Implicit(AVar: TVariant): Pointer;
+
+class operator TVariant.{$IFDEF FPC} := {$ELSE} Implicit {$ENDIF}(AVar: TVariant): Pointer;
 begin
   Result := AVar.AsPointer();
 end;
-{$IFEND}
+
+{$ENDIF}
 
 begin
 end.

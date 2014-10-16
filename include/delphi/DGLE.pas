@@ -19,8 +19,8 @@ interface
   {$DEFINE DGLE_HEADER}
 {$ENDIF}
 
-
-uses DGLE_Types, DGLE_Base, DGLE_CoreRenderer;
+uses
+  DGLE_Types, DGLE_Base, DGLE_CoreRenderer;
 
 const
     _DGLE_VER_             = '2:0.3.0';
@@ -366,12 +366,12 @@ type
     function RenderFrame(): DGLE_RESULT; stdcall;
     function RenderProfilerText(const pcTxt: PAnsiChar; const stColor: TColor4): DGLE_RESULT; stdcall;
     function GetInstanceIndex(out uiIdx: Cardinal): DGLE_RESULT; stdcall;
-    function GetTimer(out uiTick: {$IF COMPILERVERSION >= 18} UInt64 {$ELSE} Int64 {$IFEND}): DGLE_RESULT; stdcall;
+    function GetTimer(out uiTick: {$IFDEF UInt64_Support} UInt64 {$ELSE} Int64 {$ENDIF}): DGLE_RESULT; stdcall;
     function GetSystemInfo(out stSysInfo: TSystemInfo): DGLE_RESULT; stdcall;
     function GetCurrentWindow(out stWin: TEngineWindow): DGLE_RESULT; stdcall;
     function GetFPS(out uiFPS: Cardinal): DGLE_RESULT; stdcall;
     function GetLastUpdateDeltaTime(out uiDeltaTime: Cardinal): DGLE_RESULT; stdcall;
-    function GetElapsedTime(out ui64ElapsedTime: {$IF COMPILERVERSION >= 18} UInt64 {$ELSE} Int64 {$IFEND}): DGLE_RESULT; stdcall;
+    function GetElapsedTime(out ui64ElapsedTime: {$IFDEF UInt64_Support} UInt64 {$ELSE} Int64 {$ENDIF}): DGLE_RESULT; stdcall;
     function GetWindowHandle(out tHandle: TWindowHandle): DGLE_RESULT; stdcall;
 
     function ChangeWindowMode(const stNewWin: TEngineWindow): DGLE_RESULT; stdcall;
@@ -938,7 +938,8 @@ begin
     if hServer = 0 then
     begin
       hServer := LoadLibraryA(PAnsiChar(pcDllFileName));
-      if hServer = 0 then Exit;
+      if hServer = 0 then
+        Exit;
     end;
     
     if FunctionUnassigned(@pCreateEngine) and FunctionUnassigned(@pFreeEngine) then
