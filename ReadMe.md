@@ -109,7 +109,7 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 
 ## Latest SDK version
 
-Compiled and ready to use latest cross-platform SDK always could be found [here](http://dglengine.org/downloads).
+Compiled and ready to use latest cross-platform SDK always could be found [here](https://github.com/DGLE-HQ/DGLE/releases/latest).
 
 See [ChangeLog](https://raw.github.com/DGLE-HQ/DGLE/master/ChangeLog.txt) for full list of changes.
 
@@ -153,6 +153,6 @@ All DeeProSoft employees for project support
 
 Visit [http://dglengine.org](http://dglengine.org) for more information.
 
-Follow us on [https://twitter.com/dglengine](Twitter), [https://www.facebook.com/dglengine](Facebook) or [http://vk.com/dglengine](VKontakte).
+Follow us on [Twitter](https://twitter.com/dglengine), [Facebook](https://www.facebook.com/dglengine) or [VKontakte](http://vk.com/dglengine).
 
 Feel free to mail us [hello@dglengine.org](mailto:hello@dglengine.org) with any questions.
