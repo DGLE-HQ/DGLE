@@ -13,6 +13,8 @@ Version: 2:0.3.1 Release date: 17.11.2014
 
 -----------------------
 
+This release fixes most critical issues found and added support for some required features like MP3 playback support.
+
 [!+!] Plugin with MP3 music support.
 [ + ] Support for Free Pascal.
 [ + ] Method Decompose of TMatrix4x4.
