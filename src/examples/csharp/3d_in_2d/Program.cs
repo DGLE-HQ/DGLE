@@ -8,9 +8,8 @@ namespace Sample_3Din2D
     {
         #region various initialization 
         const string APP_CAPTION = "Sample 3DIn2D";
-        const string DLL_PATH = @"..\..\DGLE.dll";
-
-        const string RESOURCE_PATH = @"..\..\..\resources\";
+        const string DLL_PATH = @"..\..\..\..\windows\DGLE.dll";
+        const string RESOURCE_PATH = @"..\..\..\..\..\resources\";
         
         const uint SCREEN_WIDTH =1024u;
         const uint SCREEN_HEIGHT = 768u;
@@ -51,7 +50,7 @@ namespace Sample_3Din2D
             "meshes\\copter\\copter.png",
             "meshes\\copter\\propeller.png",
             "sprites\\zombie.png",
-            "grass.jpg",
+            "textures\\grass.jpg",
             "textures\\stone.tga"
         };
 
@@ -234,7 +233,7 @@ namespace Sample_3Din2D
             }
 
             // render rotor shadow
-            pResMan.CreateTexture(out pShadows[5], null, 256, 256, E_TEXTURE_DATA_FORMAT.TDF_RGBA8, E_TEXTURE_CREATION_FLAGS.TCF_DEFAULT, E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_BILINEAR);
+            pResMan.CreateTexture(out pShadows[5], null, 256, 256, E_TEXTURE_DATA_FORMAT.TDF_RGBA8, E_TEXTURE_CREATE_FLAGS.TCF_DEFAULT, E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_BILINEAR);
             pRender.SetRenderTarget(pShadows[5]);
             TPoint2 coords = new TPoint2(128f, 128f);
             TColor4 col = TColor4.ColorWhite();
@@ -262,7 +261,7 @@ namespace Sample_3Din2D
         // This function creates texture and renders models shadow to it.
         void RenderMeshToTexture(out ITexture pTex, IMesh pMesh, ITexture pMeshTex)
         {
-            pResMan.CreateTexture(out pTex, null, 256, 256, E_TEXTURE_DATA_FORMAT.TDF_RGBA8, E_TEXTURE_CREATION_FLAGS.TCF_DEFAULT, E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_BILINEAR);
+            pResMan.CreateTexture(out pTex, null, 256, 256, E_TEXTURE_DATA_FORMAT.TDF_RGBA8, E_TEXTURE_CREATE_FLAGS.TCF_DEFAULT, E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_BILINEAR);
             pRender.SetRenderTarget(pTex);
             TPoint2 coords = new TPoint2(128f, 128f);
             TPoint3 dims = new TPoint3(256f, 256f, 1f);
@@ -404,10 +403,10 @@ pRender2D.ProjectScreenToCamera(ref stMouseOnScreen, out stMouseInCamera);
                 pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, DRender, IntPtr.Zero);
 
                 pEngineCore.StartEngine(); //Entering engine loop
+                Engine.FreeEngine();
             }
             else
                 MessageBox.Show("Couldn't load \"DGLE.dll\"!", APP_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Engine.FreeEngine();
         }
 
         [STAThread]

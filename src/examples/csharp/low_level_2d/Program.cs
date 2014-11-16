@@ -7,9 +7,8 @@ namespace SimplestSharp
     public class Program
     {
         const string APP_CAPTION = "Low Level 2D";
-        const string DLL_PATH = @"..\..\DGLE.dll";
-
-        const string RESOURCE_PATH = @"..\..\..\resources\";
+        const string DLL_PATH = @"..\..\..\..\windows\DGLE.dll";
+        const string RESOURCE_PATH = @"..\..\..\..\..\resources\";
 
         IEngineCore pEngineCore = null;
         IRender2D pRender2D = null;
@@ -129,9 +128,9 @@ namespace SimplestSharp
             pBg = (ITexture)p_obj;
             p_res_man.Load(RESOURCE_PATH + "sprites\\cartoon_cloudy_night_sky.jpg", out p_obj, (uint)E_TEXTURE_LOAD_FLAGS.TEXTURE_LOAD_DEFAULT_2D);
             pSky = (ITexture)p_obj;
-            p_res_man.Load(RESOURCE_PATH + "textures\\smoke.png", out p_obj, (uint)E_TEXTURE_LOAD_FLAGS.TEXTURE_LOAD_DEFAULT_2D);
+            p_res_man.Load(RESOURCE_PATH + "sprites\\smoke.png", out p_obj, (uint)E_TEXTURE_LOAD_FLAGS.TEXTURE_LOAD_DEFAULT_2D);
             pFog = (ITexture)p_obj;
-            p_res_man.Load(RESOURCE_PATH + "textures\\light.jpg", out p_obj, (uint)E_TEXTURE_LOAD_FLAGS.TEXTURE_LOAD_DEFAULT_2D);
+            p_res_man.Load(RESOURCE_PATH + "sprites\\light.jpg", out p_obj, (uint)E_TEXTURE_LOAD_FLAGS.TEXTURE_LOAD_DEFAULT_2D);
             pLightRound = (ITexture)p_obj;
 
             p_res_man.Load(RESOURCE_PATH + "sprites\\vox.jpg", out p_obj, (uint)E_TEXTURE_LOAD_FLAGS.TEXTURE_LOAD_DEFAULT_2D);

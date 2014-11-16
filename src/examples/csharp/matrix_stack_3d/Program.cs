@@ -10,7 +10,7 @@ namespace matrix_stack_3d
     class Program
     {
         const string APP_CAPTION = "MatrixStack3D";
-        const string DLL_PATH = @"..\..\..\..\DGLE.dll";
+        const string DLL_PATH = @"..\..\..\..\windows\DGLE.dll";
         const string RESOURCE_PATH = @"..\..\..\..\..\resources\";
         const uint SCREEN_WIDTH = 1280u;
         const uint SCREEN_HEIGHT = 800u;
@@ -325,7 +325,7 @@ namespace matrix_stack_3d
                 transform.MultLocal(ref mat);
                 mat = TMatrix4x4.MatrixScale(new TPoint3(0.25f, 0.25f, 0.25f));
                 transform.MultLocal(ref mat);
-                mat = TMatrix4x4.MatrixBillboard(transform.Top);
+                //mat = TMatrix4x4.MatrixBillboard(transform.Top);
                 pRender3D.SetMatrix(ref mat);
                 pTexLight.Draw3D();
                 pRender3D.ToggleLighting(true);
