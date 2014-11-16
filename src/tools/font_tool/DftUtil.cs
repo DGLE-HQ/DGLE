@@ -214,17 +214,14 @@ namespace FontTool
 		public static void Write(this BinaryWriter file, Gdk.Pixbuf pixbuf)
 		{
 			byte[] buf = pixbuf.SaveToBuffer("bmp");
-			// skip header
-			for (int i = 54; i < buf.Length; i += 3)
-			{
-				byte r, g, b;
-				r = buf[i + 0];
-				g = buf[i + 1];
-				b = buf[i + 2];
-				
-				byte data = (byte)(((int)r + (int)g + (int)b) / 3);
-				file.Write(data);
-			}
+
+            for (int i = 1; i <= pixbuf.Height; ++i)
+                for (int j = 0; j < pixbuf.Width; ++j)
+                {
+                    int pos = buf.Length - i * pixbuf.Width * 3 + j * 3;
+                    byte data = (byte)(((int)buf[pos + 0] + (int)buf[pos + 1] + (int)buf[pos + 2]) / 3);
+                    file.Write(data);
+                }
 		}
 	}
 }
