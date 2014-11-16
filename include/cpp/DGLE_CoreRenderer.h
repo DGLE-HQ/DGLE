@@ -1,8 +1,8 @@
 /**
 \file		DGLE_CoreRenderer.h
 \author		Korotkov Andrey aka DRON
-\version	2:0.3.5
-\date		27.04.2013 (c)Korotkov Andrey
+\version	2:0.3.1
+\date		17.11.2014 (c)Korotkov Andrey
 
 \brief		This header provides interface of low-level DGLE rendering API.
 

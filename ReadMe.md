@@ -2,10 +2,10 @@
 
 ## Introduction
 
-[DGLE](http://dglengine.org) is a powerful independent cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+[DGLE](http://dglengine.org) is a powerful independent cross-platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
 
 ### Project mission
-The goal of the project is to provide developers with flexible & extendable cross platform easy-to-learn professional technology, capable of building any 2D/3D
+The goal of the project is to provide developers with flexible and extendable cross-platform easy-to-learn professional technology, capable of building any 2D/3D
 games, real-time visualizations, scientific applications etc. It should be easy to make great projects only by using editors and scripts or go deeper and use
 your programming skills of your favorite language to create really exciting projects. Users can also add new formats and functionality by creating new plugins
 for engine and share them with others over the web or just get plugins already made by others. When project is complete it can be easily build for every popular
@@ -17,29 +17,27 @@ Now officially this means: *Dynamite Groovy Lightweight Engine* that is more cor
 Sometimes engine is named *DGLEngine* or *DGLE engine*, both variants are also correct.
 
 ### More information
-See [gallery](http://dglengine.org/gallery) for screenshots of projects based on this engine.
-
-Visit [official website](http://dglengine.org) for more details on this project and also plugins, articles, tutorials, examples and forum.
+Visit [official website](http://dglengine.org) for more details about this project and also plugins, articles, tutorials, examples and support.
 
 ## Features
 
-* Full cross platform.
+* Full cross-platform.
 * Plugin based architecture with micro-core principles.
 * Flexible and highly extensible via plugins.
-* Multi render support: OpenGL (1.x - 2.x and 4.x), OpenGL ES (1.1, 2.0 and 3.0), Direct3D (9.0c and 11.1).
-* Set of visual editors for rapid application development. Also for non-programmers.
+* Multi render support: OpenGL, OpenGL ES, Direct3D.
+* Set of visual editors with scripting support for rapid application development.
 * Provides all necessary API for development high quality 2D and 3D real-time applications.
-* Flexible abstraction levels allow you programming without any restrictions from API.
-* Made by experienced in game development professionals for you with Love!
+* Flexible but clear abstraction levels allow you programming without any restrictions from the API.
+* Made by experienced in game development professionals for you with love!
 
 ## Supported Platforms
 
-* Windows Desktop (XP and later) and RT.
-* Linux (Ubuntu and almost any distributive)
-* Mac OS X (10.6 and later)
-* iOS (4.3 and later)
-* Android (2.3 and later)
-* Adobe Flash (11 and later)
+* Windows Desktop (XP and later)
+* Linux (_in development_)
+* Mac OS X (_in development_)
+* iOS (_planned_)
+* Android (_planned_)
+* Windows RT (_planned_)
 
 ## Supported Programming Languages
 
@@ -103,7 +101,7 @@ Also if you want to participate in the project development process you must read
 
 ## Documentation
 
-You can find engine API documentation [here](http://dglengine.org/api/index.html).
+You can find engine API documentation and articles in the [wiki](https://github.com/DGLE-HQ/DGLE/wiki).
 
 ## License
 
@@ -111,7 +109,7 @@ Licensed under the [LGPL license](http://en.wikipedia.org/wiki/GNU_Lesser_Genera
 
 ## Latest SDK version
 
-Compiled and ready to use latest cross platform SDK always could be found [here](http://dglengine.org/downloads).
+Compiled and ready to use latest cross-platform SDK always could be found [here](http://dglengine.org/downloads).
 
 See [ChangeLog](https://raw.github.com/DGLE-HQ/DGLE/master/ChangeLog.txt) for full list of changes.
 
@@ -119,9 +117,7 @@ See [ChangeLog](https://raw.github.com/DGLE-HQ/DGLE/master/ChangeLog.txt) for fu
 
 ### Project Leader and Lead Programmer
 
-Andrey Korotkov aka DRON also known as [megaDRONe86](https://github.com/megaDRONe86).
-
-[Follow me on Twitter](http://twitter.com/megadrone86).
+[Andrey Korotkov aka DRON](http://dronprogs.org)
 
 ### Additional Programming
 
@@ -155,6 +151,8 @@ All DeeProSoft employees for project support
 
 ## Contacts
 
-Visit [http://dglengine.org](http://dglengine.org) for more details.
+Visit [http://dglengine.org](http://dglengine.org) for more information.
+
+Follow us on [https://twitter.com/dglengine](Twitter), [https://www.facebook.com/dglengine](Facebook) or [http://vk.com/dglengine](VKontakte).
 
 Feel free to mail us [hello@dglengine.org](mailto:hello@dglengine.org) with any questions.

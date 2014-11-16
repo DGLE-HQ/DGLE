@@ -1,8 +1,8 @@
 /**
 \file		DGLE.h
 \author		Korotkov Andrey aka DRON
-\version	2:0.3.5
-\date		27.04.2013 (c)Korotkov Andrey
+\version	2:0.3.1
+\date		17.11.2014 (c)Korotkov Andrey
 
 \brief		Main DGLE engine header.
 
@@ -15,18 +15,18 @@ This header is a part of DGLE SDK.
  
 \section	intro_sec Introduction
 
-- DGLE is a powerful cross platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
-- DGLE is opensource project and free to use (under the terms of license, see below).
-- DGLE is based on widely spread open standards, formats and APIs such as OpenGL, OpenAL, OpenCL, OGG Vorbis, Lua, Box2D, Bullet physics, Mono, e.t.c..
+- DGLE is a powerful cross-platform engine for 2D/3D games and real-time visualizations. Young, strong and crazy!
+- DGLE is an open source project and free for use (under the terms of license, see below).
+- DGLE is based on widely spread open standards, formats and APIs such as OpenGL, OpenAL, OGG Vorbis, Lua, Box2D, Bullet physics, Mono & GTK# e.t.c..
 
-\image html Open_Standarts.png
+\image html banner.jpg
 
 This file is official engine documentation for C++ programmers (DGLE users).
 This documentation is also suitable for any supported programming language.
 
 \section	aim_sec The aim of the project
 
-The goal of the project is to provide developers with flexible & extendable cross platform easy-to-learn professional technology,
+The goal of the project is to provide developers with flexible and extendable cross-platform easy-to-learn professional technology,
 capable of building any 2D/3D games, real-time visualizations, scientific applications etc. It should be easy to make great projects
 only by using editors and scripts or go deeper and use your programming skills of your favorite language to create really exciting projects.
 Users can also add new formats and functionality by creating new plugins for engine and share them with others over the web or just get
@@ -73,8 +73,7 @@ Also we would be happy for any donations to support further project development.
 
 \section additional_sec Additional help and information
 
-Visit official DGLE engine website http://dglengine.org/ for additional information.
-There you can download latest version, gain help, support project or just say your opinion or ask question at official DGLE forum ( http://forum.dronprogs.org/viewforum.php?f=3 ).
+Visit official DGLE engine website http://dglengine.org/ for additional information and support.
 
 Feel free to write directly to project leader on e-mail hello@dglengine.org.
 
@@ -117,7 +116,7 @@ This is simplest DGLE application for Windows.
 /** Defines DGLE version string. 
 	\warning Do not edit!
 */
-#define _DGLE_VER_ "2:0.3.5"
+#define _DGLE_VER_ "2:0.3.1"
  
 /** Defines DGLE version integer. 
 	\warning Do not edit!

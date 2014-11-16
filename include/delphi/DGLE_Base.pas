@@ -1,8 +1,8 @@
 {
 \file    DGLE_Base.pas
 \author    Korotkov Andrey aka DRON
-\version  2:0.3.0
-\date    xx.xx.2012 (c)Korotkov Andrey
+\version  2:0.3.1
+\date    17.11.2014 (c)Korotkov Andrey
 
 This header is a part of DGLE_SDK.
 }

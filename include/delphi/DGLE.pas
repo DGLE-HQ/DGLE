@@ -1,8 +1,8 @@
 {
 \file     DGLE.pas
 \author   Korotkov Andrey aka DRON
-\version  2:0.3.0
-\date     XX.XX.2012 (c)Korotkov Andrey
+\version  2:0.3.1
+\date     17.11.2014 (c)Korotkov Andrey
 \brief    Main DGLE engine header.
 
 To use engine you should just include this header to your project.
