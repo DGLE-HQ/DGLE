@@ -7,8 +7,6 @@ uses
   DGLE_Base in '..\..\..\..\include\delphi\DGLE_Base.pas',
   DGLE_CoreRenderer in '..\..\..\..\include\delphi\DGLE_CoreRenderer.pas';
 
-  {$I include.inc}
-
 type
   TSceneObjects = (soHouse, soTree1, soTree2, soTree3, soCopter, soRotor, soZombie, soGrass, soStone);
 

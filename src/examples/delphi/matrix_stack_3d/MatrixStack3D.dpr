@@ -11,7 +11,7 @@ uses
 
 const
   APP_CAPTION   = 'MatrixStack3D';
-  DLL_PATH      = '..\..\..\DGLE.dll';
+  DLL_PATH      = '..\..\..\..\bin\windows\DGLE.dll';
   RESOURCE_PATH = '..\..\..\..\resources\';
   SCREEN_WIDTH  = 1280;
   SCREEN_HEIGHT = 800;

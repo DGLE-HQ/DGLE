@@ -4,9 +4,10 @@ uses
   Windows,      
   DGLE in '..\..\..\..\include\delphi\DGLE.pas',
   DGLE_Types in '..\..\..\..\include\delphi\DGLE_Types.pas',
-  DGLE_Base in '..\..\..\..\include\delphi\DGLE_Base.pas';
+  DGLE_Base in '..\..\..\..\include\delphi\DGLE_Base.pas',
+  DGLE_CoreRenderer in '..\..\..\..\include\delphi\DGLE_CoreRenderer.pas';
 
-//outputpath ..\..\..\..\..\bin\examples\delphi\
+ //outputpath ..\..\..\..\..\bin\examples\delphi\
 
 const
   APP_CAPT = 'Low Level 2D';
