@@ -123,7 +123,7 @@ class CCore: public CInstancedObj, public IEngineCore
 	TEngineWindow _stWndToApply;
 	bool _bNeedApplyNewWnd;
 	DGLE_RESULT	_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents);
-
+	void _LogWinMode(const TEngineWindow &stWin);
 
 	static void DGLE_API _s_MainLoop(void *pParameter);
 	static void DGLE_API _s_OnTimer(void *pParameter);

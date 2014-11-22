@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		14.10.2014 (c)Korotkov Andrey
+\date		22.11.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1331,6 +1331,26 @@ DGLE_RESULT DGLE_API CCore::GetCurrentWindow(TEngineWindow &stWin)
 	return S_OK;
 }
 
+void CCore::_LogWinMode(const TEngineWindow &stWin)
+{
+	E_WINDOW_ACCESS_TYPE e_actype;
+	_pMainWindow->GetWindowAccessType(e_actype);	
+	switch (e_actype)
+	{
+		case WAT_RESTRICTED_ACCESS:
+			LOG("Restricted window access.", LT_INFO);
+			break;
+
+		case WAT_NO_ACCESS:
+			LOG("Isolated window access.", LT_INFO);
+			break;
+	}
+
+	LOG(string("Setting window mode: ") + UIntToStr(stWin.uiWidth) + "X" + UIntToStr(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
+		(stWin.bFullScreen ? " Fullscreen" : " Windowed") + (stWin.bVSync ? " VSync" : "") +
+		(stWin.eMultisampling != MM_NONE ? IntToStr((int)stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
+}
+
 DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents)
 {
 	TEngineWindow wnd = stNewWin;
@@ -1338,38 +1358,14 @@ DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEv
 	if (!bForceNoEvents && wnd.bFullScreen != _stWin.bFullScreen)
 		CastEvent(ET_ON_FULLSCREEN, (IBaseEvent*)&CEvGoFullScreen(wnd.uiWidth, wnd.uiHeight, wnd.bFullScreen));
 
+	_LogWinMode(wnd);
+
 	if (SUCCEEDED(_pMainWindow->ConfigureWindow(wnd, !_bWasFScreen && !_bFScreenKeyIsPressed)) && SUCCEEDED(_pCoreRenderer->AdjustMode(wnd)))
 	{
 		_stWin = wnd;
-
 		_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
-
 		Console()->ResetWinPos();
-
-		E_WINDOW_ACCESS_TYPE e_actype;
-		_pMainWindow->GetWindowAccessType(e_actype);
-		string access;
-		
-		switch(e_actype)
-		{
-			case WAT_FULL_ACCESS:
-				access = "Full";
-				break;
-			case WAT_RESTRICTED_ACCESS:
-				access = "Restricted";
-				break;
-			case WAT_NO_ACCESS:
-				access = "Isolated";
-				break;
-			default:
-				access = "Unknown";
-		}
-
-		LOG(string("Window mode (Viewport: ") + IntToStr(_stWin.uiWidth) + "X" + IntToStr(_stWin.uiHeight) +
-			(_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16 bit" : "") +
-			", Window access: " + access + (_stWin.bFullScreen?", Fullscreen" : "") + (_stWin.bVSync?", VSync":"") +
-			(_stWin.eMultisampling != MM_NONE ? ", MSAA: " + IntToStr((int)_stWin.eMultisampling * 2) + "X" : "") +
-			") has been set properly.", LT_INFO);
+		LOG("Window mode has been set.", LT_INFO);
 	}
 	else
 	{
@@ -1416,8 +1412,12 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 	if (_pSplashWindow) 
 		_pSplashWindow->Free();
 
+	_LogWinMode(_stWin);
+
 	if (FAILED(_pMainWindow->ConfigureWindow(_stWin, true)) || FAILED(_pCoreRenderer->AdjustMode(_stWin)))
 		return E_ABORT;
+
+	LOG("Window mode has been set.", LT_INFO);
 
 	_pRender->OnResize(_stWin.uiWidth, _stWin.uiHeight);
 

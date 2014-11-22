@@ -13,20 +13,20 @@ Version: 2:0.3.1 Release date: 17.11.2014
 
 -----------------------
 
-This release fixes most critical issues found and added support for some required features like MP3 playback support.
+This release fixes most critical found issues and adds support for some required features like MP3 playback.
 
-[!+!] Plugin with MP3 music support.
-[ + ] Support for Free Pascal.
+[!+!] Plugin with MP3 music playback support.
+[ + ] Support of Free Pascal compiler.
 [ + ] Method Decompose of TMatrix4x4.
 [ + ] Ability to set bitmap font texture filtering through E_BITMAP_FONT_LOAD_FLAGS flags.
-[ * ] FontTool generated corrupted bitmap font files.
-[ * ] Fixed TGA loader issue that cause image flipping in some cases.
-[ * ] Fixed issue with wrong iDeltaWheel value for mouse wheel.
-[ * ] Fixed error in MatrixBillboard method.
-[ * ] Now vertices color order for Render2D::DrawLine is correct.
+[ * ] FontTool generated corrupted bitmap font files (texture was flipped).
+[ * ] TGA loader had issue that cause image flipping in some cases.
+[ * ] Issue with wrong iDeltaWheel value for mouse wheel passing to IInput interface.
+[ * ] Fixed math error in MatrixBillboard method.
+[ * ] Now vertices color order of Render2D::DrawLine is correct.
 [ * ] Wrong behavior after drag mouse outside engines window (in windowed mode only).
 [ * ] Now Render2D::CullBoundingBox with camera set and zero angle is working as expected.
-[ * ] Corrected wrong mouse area at start when using ICF_EXCLUSIVE input configuration flag.
+[ * ] Corrected wrong mouse area at application start when using ICF_EXCLUSIVE input configuration flag.
 [ * ] Method Free of IFile caused crash in Delphi.
 [ * ] Mouse wheel was not captured when engine renders to custom window.
 

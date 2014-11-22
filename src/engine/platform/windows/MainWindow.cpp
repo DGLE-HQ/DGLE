@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.09.2014 (c)Korotkov Andrey
+\date		22.11.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -152,23 +152,23 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
 DGLE_RESULT CMainWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
-	_hWnd				= tHandle;
-	_pDelMainLoop		= pDelMainLoop;
-	_pDelMessageProc	= pDelMsgProc;
+	_hWnd = tHandle;
+	_pDelMainLoop = pDelMainLoop;
+	_pDelMessageProc = pDelMsgProc;
 
 	WNDCLASSEX wcex;
-	wcex.cbSize 		= sizeof(WNDCLASSEX); 
-	wcex.style          = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wcex.lpfnWndProc    = (WNDPROC)CMainWindow::_s_WndProc;
-	wcex.cbClsExtra     = 0;
-	wcex.cbWndExtra     = 0;
-	wcex.hInstance      = _hInst;
-	wcex.hIcon          = LoadIcon(hModule, MAKEINTRESOURCE(IDI_ICON1));
-	wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground  = (HBRUSH)(0);
-	wcex.lpszMenuName   = NULL;
-	wcex.lpszClassName  = "DGLEWindowClass";
-	wcex.hIconSm        = LoadIcon(hModule, MAKEINTRESOURCE(IDI_ICON1));
+	wcex.cbSize = sizeof(WNDCLASSEX); 
+	wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wcex.lpfnWndProc = (WNDPROC)CMainWindow::_s_WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = _hInst;
+	wcex.hIcon = LoadIcon(hModule, MAKEINTRESOURCE(IDI_ICON1));
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(0);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = "DGLEWindowClass";
+	wcex.hIconSm = LoadIcon(hModule, MAKEINTRESOURCE(IDI_ICON1));
 
 	bool need_register = true;
 
@@ -357,11 +357,11 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 	{
 		DEVMODE dm_scr_settings;								
 		memset(&dm_scr_settings, 0, sizeof(dm_scr_settings));	
-		dm_scr_settings.dmSize			= sizeof(dm_scr_settings);		
-		dm_scr_settings.dmPelsWidth		= stWind.uiWidth;				
-		dm_scr_settings.dmPelsHeight	= stWind.uiHeight;				
-		dm_scr_settings.dmBitsPerPel	= Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR ? 16 : 32;					
-		dm_scr_settings.dmFields		= DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+		dm_scr_settings.dmSize = sizeof(dm_scr_settings);		
+		dm_scr_settings.dmPelsWidth	= stWind.uiWidth;				
+		dm_scr_settings.dmPelsHeight = stWind.uiHeight;				
+		dm_scr_settings.dmBitsPerPel = Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR ? 16 : 32;					
+		dm_scr_settings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 		if (ChangeDisplaySettingsEx(NULL ,&dm_scr_settings, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 		{
@@ -413,6 +413,11 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 	if (!stWind.bFullScreen)
 	{
 		GetDisplaySize(desktop_width, desktop_height);
+
+		LOG("Desktop resolution: " + UIntToStr(desktop_width) + "X" + UIntToStr(desktop_height), LT_INFO);
+
+		if (desktop_width < (uint)(rc.right - rc.left) || desktop_height < (uint)(rc.bottom - rc.top))
+			LOG("Window rectangle is beyound screen.", LT_WARNING);
 
 		top_x = (int)(desktop_width - (rc.right - rc.left)) / 2, 
 		top_y = (int)(desktop_height - (rc.bottom - rc.top)) / 2;
