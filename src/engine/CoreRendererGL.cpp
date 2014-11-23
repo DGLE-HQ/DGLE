@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		20.04.2013 (c)Andrey Korotkov
+\date		23.11.2014 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -157,11 +157,13 @@ public:
 
 			if (_uiIndexesDataSize != 0)
 			{
+				_uiIndexesCount = uiIndexesCount;
+
 				if (_uiIndexesDataSize != indexes_data_size)
 				{
-					_uiIndexesCount = indexes_data_size;
+					_uiIndexesDataSize = indexes_data_size;
 					delete[] _stDrawDataDesc.pIndexBuffer;
-					_stDrawDataDesc.pIndexBuffer = new uint8[_uiIndexesCount];
+					_stDrawDataDesc.pIndexBuffer = new uint8[_uiIndexesDataSize];
 				}
 
 				memcpy(_stDrawDataDesc.pIndexBuffer, stDesc.pIndexBuffer, _uiIndexesDataSize);
@@ -183,6 +185,8 @@ public:
 			if (_clGLContainer.GetIndexesVBO() != 0)
 			{
 				_uiIndexesDataSize = indexes_data_size;
+				_uiIndexesCount = uiIndexesCount;
+
 				_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _clGLContainer.GetIndexesVBO());
 				
 				if (_eBufferType == CRBT_HARDWARE_STATIC)
@@ -288,17 +292,33 @@ class CCoreTexture : public ICoreTexture
 	{
 		switch (_format)
 		{
-		case TDF_BGR8: return GL_BGR_EXT;
-		case TDF_RGB8: return GL_RGB;
+		case TDF_BGR8:
+			return GL_BGR_EXT;
+
+		case TDF_RGB8:
+			return GL_RGB;
+
 		case TDF_DEPTH_COMPONENT24:
 		case TDF_DEPTH_COMPONENT32:
 			return GL_DEPTH_COMPONENT;
-		case TDF_BGRA8: return GL_BGRA_EXT;
-		case TDF_RGBA8: return GL_RGBA;
-		case TDF_ALPHA8: return GL_ALPHA;
-		case TDF_DXT1: return GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-		case TDF_DXT5: return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-		default : return 0;
+
+		case TDF_BGRA8:
+			return GL_BGRA_EXT;
+
+		case TDF_RGBA8:
+			return GL_RGBA;
+
+		case TDF_ALPHA8:
+			return GL_ALPHA;
+
+		case TDF_DXT1:
+			return GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+
+		case TDF_DXT5:
+			return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+
+		default:
+			return 0;
 		}
 	}
 
@@ -313,25 +333,30 @@ class CCoreTexture : public ICoreTexture
 		case TDF_DEPTH_COMPONENT24:
 			bytes = 3;
 			break;
+
 		case TDF_BGRA8: 
 		case TDF_RGBA8:
 		case TDF_DEPTH_COMPONENT32:
 			bytes = 4;
 			break;
+
 		case TDF_ALPHA8:
 			bytes = 1;
 			break;
+
 		case TDF_DXT1:
 			bytes = 8;
 			break;
+
 		case TDF_DXT5:
 			bytes = 16;
 			break;
-		default : return 0;
+
+		default:
+			return 0;
 		}
 
-		int w = _w, h = _h;
-		uint l = 0;
+		uint w = _w, h = _h, l = 0;
 
 		while (l != lod)
 		{
@@ -347,7 +372,7 @@ class CCoreTexture : public ICoreTexture
 		if (_format == TDF_DXT1 || _format == TDF_DXT5)
 			return ((w + 3) / 4) * ((h + 3) / 4) * bytes;
 		else
-			return h*w*bytes;
+			return h * w * bytes;
 	}
 
 public:

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		20.04.2013 (c)Korotkov Andrey
+\date		23.11.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -70,11 +70,11 @@ public:
 		
 	DGLE_RESULT DGLE_API SetFogEnabled(bool bEnabled);
 	DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API ConfigureFog(float fStart, float fEnd, float fDensity);
+	DGLE_RESULT DGLE_API ConfigureFog(float fStart, float fEnd);
 
 	DGLE_RESULT DGLE_API GetFogEnabled(bool &bEnabled);
 	DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetFogConfiguration(float &fStart, float &fEnd, float &fDensity);
+	DGLE_RESULT DGLE_API GetFogConfiguration(float &fStart, float &fEnd);
 
 	IDGLE_BASE_IMPLEMENTATION(IFixedFunctionPipeline, INTERFACE_IMPL_END)
 };

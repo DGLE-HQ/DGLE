@@ -49,7 +49,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 		{
 			bool bEnabled;
 			TColor4 stColor;
-			float fDensity, fStart, fEnd;
+			float fStart, fEnd;
 		} stFogDesc;
 		
 	} _stCurState;
@@ -126,11 +126,9 @@ public:
 	DGLE_RESULT DGLE_API ToggleFog(bool bEnabled);
 	DGLE_RESULT DGLE_API SetLinearFogBounds(float fStart, float fEnd);
 	DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API SetFogDensity(float fDensity);
 	DGLE_RESULT DGLE_API IsFogEnabled(bool &bEnabled);
 	DGLE_RESULT DGLE_API GetLinearFogBounds(float &fStart, float &fEnd);
 	DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetFogDensity(float &fDensity);
 
 	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix);
 	DGLE_RESULT DGLE_API MultMatrix(const TMatrix4x4 &stMatrix);

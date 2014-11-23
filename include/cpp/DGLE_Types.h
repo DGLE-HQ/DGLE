@@ -1,8 +1,8 @@
 /**
 \file		DGLE_types.h
 \author		Korotkov Andrey aka DRON
-\version	2:0.3.1
-\date		17.11.2014 (c)Korotkov Andrey
+\version	2:0.3.5
+\date		XX.XX.XXXX (c)Korotkov Andrey
 
 \brief		Engine types definition header.
 
@@ -273,7 +273,7 @@ namespace DGLE
 		WMT_SIZE,		/**< Message indicates that window is being sized. Message parameter ui32Param1 stores width of the window and ui32Param2 stores height. \note Under Windows pParam3 points to RECT structure with window size. */
 		WMT_KEY_UP,		/**< Message indicates that the user has released some keyboard key. Message parameter ui32Param1 is the engine code of the key being released. \see E_KEYBOARD_KEY_CODES */
 		WMT_KEY_DOWN,	/**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the engine code of the key being pressed. \see E_KEYBOARD_KEY_CODES */
-		WMT_ENTER_CHAR, /**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the ASCII code of the key being pressed. */
+		WMT_INPUT_CHAR, /**< Message indicates that the user has pressed some keyboard key. Message parameter ui32Param1 is the ASCII code of the key being pressed. */
 		WMT_MOUSE_LEAVE,/**< Message indicates that cursor is leaving window area. Message parameters are not used. */
 		WMT_MOUSE_MOVE, /**< Message indicates that cursor is being moved within the window. Message parameter ui32Param1 stores x coordinate of cursor and ui32Param1 stores y coordinate. */
 		WMT_MOUSE_DOWN, /**< Message indicates that the user has pressed mouse button. Message parameter ui32Param1 indicates what button was pressed: 0 - Left, 1 - Right, 2 - Middle */

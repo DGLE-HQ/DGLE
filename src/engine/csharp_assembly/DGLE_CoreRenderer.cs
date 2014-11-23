@@ -582,11 +582,11 @@ namespace DGLE
 
         void SetFogEnabled([MarshalAs(UnmanagedType.U1)] bool bEnabled);
         void SetFogColor(ref TColor4 stColor);
-        void ConfigureFog(float fStart, float fEnd, float fDensity);
+        void ConfigureFog(float fStart, float fEnd);
 
         void GetFogEnabled([MarshalAs(UnmanagedType.U1)] out bool bEnabled);
         void GetFogColor(out TColor4 stColor);
-        void GetFogConfiguration(out float fStart, out float fEnd, out float fDensity);
+        void GetFogConfiguration(out float fStart, out float fEnd);
     };
 
 }

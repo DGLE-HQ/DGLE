@@ -88,7 +88,6 @@ void CRender3D::SetDefaultStates()
 	_stCurState.stGlobalAmbient = TColor4(50, 50, 50, 255);
 	
 	_stCurState.stFogDesc.bEnabled = false;
-	_stCurState.stFogDesc.fDensity = 1.f;
 	_stCurState.stFogDesc.stColor = ColorGray();
 	_stCurState.stFogDesc.fStart = 500.f;
 	_stCurState.stFogDesc.fEnd = 1000.f;
@@ -100,7 +99,7 @@ void CRender3D::SetDefaultStates()
 		
 		_pFFP->SetFogEnabled(_stCurState.stFogDesc.bEnabled);
 		_pFFP->SetFogColor(_stCurState.stFogDesc.stColor);
-		_pFFP->ConfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd, _stCurState.stFogDesc.fDensity);
+		_pFFP->ConfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd);
 	}
 
 	_stCurState.eBlendingMode = BE_NORMAL;
@@ -735,7 +734,7 @@ DGLE_RESULT DGLE_API CRender3D::SetLinearFogBounds(float fStart, float fEnd)
 	_stCurState.stFogDesc.fEnd = fEnd;
 	
 	if (_pFFP)
-		_pFFP->ConfigureFog(fStart, fEnd, _stCurState.stFogDesc.fDensity);
+		_pFFP->ConfigureFog(fStart, fEnd);
 
 	return S_OK;
 }
@@ -748,21 +747,6 @@ DGLE_RESULT DGLE_API CRender3D::SetFogColor(const TColor4 &stColor)
 
 	if (_pFFP)
 		_pFFP->SetFogColor(stColor);
-
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CRender3D::SetFogDensity(float fDensity)
-{
-	IN_3D_GUARD
-
-	if (fDensity < 0.f)
-		return E_INVALIDARG;
-
-	_stCurState.stFogDesc.fDensity = fDensity;
-	
-	if (_pFFP)
-		_pFFP->ConfigureFog(_stCurState.stFogDesc.fStart, _stCurState.stFogDesc.fEnd, fDensity);
 
 	return S_OK;
 }
@@ -783,12 +767,6 @@ DGLE_RESULT DGLE_API CRender3D::GetLinearFogBounds(float &fStart, float &fEnd)
 DGLE_RESULT DGLE_API CRender3D::GetFogColor(TColor4 &stColor)
 {
 	stColor = _stCurState.stFogDesc.stColor;
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CRender3D::GetFogDensity(float &fDensity)
-{
-	fDensity = _stCurState.stFogDesc.fDensity;
 	return S_OK;
 }
 

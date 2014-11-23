@@ -573,11 +573,9 @@ type
     function ToggleFog(bEnabled: Boolean): DGLE_RESULT; stdcall;
     function SetLinearFogBounds(fStart, fEnd: Single): DGLE_RESULT; stdcall;
     function SetFogColor(const stColor: TColor4): DGLE_RESULT; stdcall;
-    function SetFogDensity(fDensity: Single): DGLE_RESULT; stdcall;
     function IsFogEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
     function GetLinearFogBounds(out fStart, fEnd: Single): DGLE_RESULT; stdcall;
     function GetFogColor(out stColor: TColor4): DGLE_RESULT; stdcall;
-    function GetFogDensity(out fDensity: Single): DGLE_RESULT; stdcall;
 
     function SetMatrix(const stMatrix: TMatrix4x4): DGLE_RESULT; stdcall;
     function MultMatrix(const stMatrix: TMatrix4x4): DGLE_RESULT; stdcall;

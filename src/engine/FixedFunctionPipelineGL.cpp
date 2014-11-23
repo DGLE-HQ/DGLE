@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		20.04.2013 (c)Korotkov Andrey
+\date		23.11.2014 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -352,9 +352,8 @@ DGLE_RESULT DGLE_API CFixedFunctionPipeline::SetFogColor(const TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CFixedFunctionPipeline::ConfigureFog(float fStart, float fEnd, float fDensity)
+DGLE_RESULT DGLE_API CFixedFunctionPipeline::ConfigureFog(float fStart, float fEnd)
 {
-	glFogf(GL_FOG_DENSITY, fDensity);
 	glFogf(GL_FOG_START, fStart);
 	glFogf(GL_FOG_END, fEnd);
 
@@ -373,9 +372,8 @@ DGLE_RESULT DGLE_API CFixedFunctionPipeline::GetFogColor(TColor4 &stColor)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CFixedFunctionPipeline::GetFogConfiguration(float &fStart, float &fEnd, float &fDensity)
+DGLE_RESULT DGLE_API CFixedFunctionPipeline::GetFogConfiguration(float &fStart, float &fEnd)
 {
-	glGetFloatv(GL_FOG_DENSITY, &fDensity);
 	glGetFloatv(GL_FOG_START, &fStart);
 	glGetFloatv(GL_FOG_END, &fEnd);
 

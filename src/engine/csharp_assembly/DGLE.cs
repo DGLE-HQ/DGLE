@@ -751,11 +751,9 @@ namespace DGLE
         void ToggleFog([MarshalAs(UnmanagedType.U1)] bool bEnabled);
         void SetLinearFogBounds(float fStart, float fEnd);
         void SetFogColor(ref TColor4 stColor);
-        void SetFogDensity(float fDensity);
         void IsFogEnabled([MarshalAs(UnmanagedType.U1)] out bool bEnabled);
         void GetFogColor(out TColor4 stColor);
         void GetLinearFogBounds(out float fStart, out float fEnd);
-        void GetFogDensity(out float fDensity);
 
         void SetMatrix(ref TMatrix4x4 stMatrix);
         void MultMatrix(ref TMatrix4x4 stMatrix);

@@ -1,8 +1,8 @@
 /**
 \file		DGLE_CoreRenderer.h
 \author		Korotkov Andrey aka DRON
-\version	2:0.3.1
-\date		17.11.2014 (c)Korotkov Andrey
+\version	2:0.3.5
+\date		XX.XX.XXXX (c)Korotkov Andrey
 
 \brief		This header provides interface of low-level DGLE rendering API.
 
@@ -508,11 +508,11 @@ namespace DGLE
 
 		virtual DGLE_RESULT DGLE_API SetFogEnabled(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API ConfigureFog(float fStart, float fEnd, float fDensity) = 0;
+		virtual DGLE_RESULT DGLE_API ConfigureFog(float fStart, float fEnd) = 0;
 
 		virtual DGLE_RESULT DGLE_API GetFogEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GetFogConfiguration(float &fStart, float &fEnd, float &fDensity) = 0;
+		virtual DGLE_RESULT DGLE_API GetFogConfiguration(float &fStart, float &fEnd) = 0;
 	};
 
 }

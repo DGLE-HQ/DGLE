@@ -211,7 +211,7 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 			
 			break;
 
-		case WMT_ENTER_CHAR:
+		case WMT_INPUT_CHAR:
 			
 			if (_bIsTxtInput)
 			{

@@ -447,11 +447,11 @@ IFixedFunctionPipeline = interface(IDGLE_Base)
 
   function SetFogEnabled(bEnabled: Boolean): DGLE_RESULT; stdcall;
   function SetFogColor(const stColor: TColor4): DGLE_RESULT; stdcall;
-  function ConfigureFog(fStart, fEnd, fDensity: Single): DGLE_RESULT; stdcall;
+  function ConfigureFog(fStart, fEnd: Single): DGLE_RESULT; stdcall;
 
   function GetFogEnabled(out bEnabled: Boolean): DGLE_RESULT; stdcall;
   function GetFogColor(out stColor: TColor4): DGLE_RESULT; stdcall;
-  function GetFogConfiguration(out fStart, fEnd, fDensity: Single): DGLE_RESULT; stdcall;
+  function GetFogConfiguration(out fStart, fEnd: Single): DGLE_RESULT; stdcall;
 
 end;                                
 

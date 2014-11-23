@@ -1,8 +1,8 @@
 /**
 \file		DGLE.h
 \author		Korotkov Andrey aka DRON
-\version	2:0.3.1
-\date		17.11.2014 (c)Korotkov Andrey
+\version	2:0.3.5
+\date		XX.XX.XXXX (c)Korotkov Andrey
 
 \brief		Main DGLE engine header.
 
@@ -978,11 +978,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API ToggleFog(bool bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API SetLinearFogBounds(float fStart, float fEnd) = 0;
 		virtual DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API SetFogDensity(float fDensity) = 0;
 		virtual DGLE_RESULT DGLE_API IsFogEnabled(bool &bEnabled) = 0;
 		virtual DGLE_RESULT DGLE_API GetLinearFogBounds(float &fStart, float &fEnd) = 0;
 		virtual DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) = 0;
-		virtual DGLE_RESULT DGLE_API GetFogDensity(float &fDensity) = 0;
 
 		virtual DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix) = 0;
 		virtual DGLE_RESULT DGLE_API MultMatrix(const TMatrix4x4 &stMatrix) = 0;

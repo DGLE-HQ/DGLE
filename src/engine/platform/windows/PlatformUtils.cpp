@@ -127,7 +127,7 @@ TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 			return TWindowMessage(WMT_KEY_DOWN, ASCIIKeyToEngKey((uchar)wParam));
 
 	case WM_CHAR:
-		return TWindowMessage(WMT_ENTER_CHAR, (uint32)wParam);
+		return TWindowMessage(WMT_INPUT_CHAR, (uint32)wParam);
 
 	case WM_MOUSEMOVE:
 		return TWindowMessage(WMT_MOUSE_MOVE, LOWORD(lParam), HIWORD(lParam));
@@ -254,7 +254,7 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 		lParam = 0;
 		break;
 
-	case WMT_ENTER_CHAR:
+	case WMT_INPUT_CHAR:
 		Msg = WM_CHAR;
 		wParam = msg.ui32Param1;
 		lParam = 0;
