@@ -630,7 +630,7 @@ DGLE_RESULT DGLE_API CRender2D::SetCamera(const TPoint2 &stCenter, float fAngle,
 			_stCamTransform = MatrixTranslate(TVector3(-(float)_uiScreenWidth / 2.f, -(float)_uiScreenHeight / 2.f, 0.f)) * _stCamTransform;
 		}
 
-		_stCamTransform = _stCamTransform * MatrixTranslate(TVector3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f));
+		_stCamTransform = MatrixTranslate(TVector3((float)_uiScreenWidth / 2.f - stCenter.x, (float)_uiScreenHeight / 2.f - stCenter.y, 0.f)) * _stCamTransform;
 
 		_pCoreRenderer->SetMatrix(_stCamTransform);
 
