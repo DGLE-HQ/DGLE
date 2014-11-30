@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		23.11.2014 (c)Andrey Korotkov
+\date		29.11.2014 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -418,9 +418,10 @@ public:
 		if (!_bMipMaps && uiLodLevel != 0)
 			return E_INVALIDARG;
 
-		uint w, h, size = _DataSize(uiLodLevel, w, h);
+		uint w, h;
+		const uint size = _DataSize(uiLodLevel, w, h);
 
-		if (size != uiDataSize)
+		if (!pData || size != uiDataSize)
 		{
 			uiDataSize = size;
 			return S_FALSE;
@@ -431,7 +432,17 @@ public:
 		if (_format == TDF_DXT1 || _format == TDF_DXT5)
 			glGetCompressedTexImageARB(GL_TEXTURE_2D, uiLodLevel, pData);
 		else
-			glGetTexImage(GL_TEXTURE_2D, uiLodLevel, _GetGLFormat(), GL_UNSIGNED_BYTE, (GLvoid*)pData);
+		{
+			const bool packed = TDF_RGB8 || TDF_BGR8 || TDF_ALPHA8;
+			
+			if (packed)
+				glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+			glGetTexImage(GL_TEXTURE_2D, uiLodLevel, _GetGLFormat(), GL_UNSIGNED_BYTE, (GLvoid *)pData);
+
+			if (packed)
+				glPixelStorei(GL_PACK_ALIGNMENT, 4);
+		}
 
 		return S_OK;
 	}
@@ -442,7 +453,6 @@ public:
 			return E_INVALIDARG;
 
 		uint w, h;
-
 		if (_DataSize(uiLodLevel, w, h) != uiDataSize)
 			return E_INVALIDARG;
 
@@ -451,7 +461,17 @@ public:
 		if (_format == TDF_DXT1 || _format == TDF_DXT5)
 			glCompressedTexSubImage2DARB(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), uiDataSize, (GLvoid*)pData);
 		else
+		{
+			const bool packed = TDF_RGB8 || TDF_BGR8 || TDF_ALPHA8;
+			
+			if (packed)
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 			glTexSubImage2D(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), GL_UNSIGNED_BYTE, (GLvoid*)pData);
+			
+			if (packed)
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		}
 
 		return S_OK;
 	}
@@ -1238,11 +1258,11 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 	}
 
 	if (eDataAlignment == CRDA_ALIGNED_BY_1)
-		glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if (bMipmapsPresented)
 	{
-		int i_mipmaps = 0, max_side = max(uiWidth, uiHeight)/2;
+		int i_mipmaps = 0, max_side = max(uiWidth, uiHeight) / 2;
 
 		// This loop is more correct because of NPOT textures than calculation like this: log(max(uiWidth, uiHeight)) / log(2)
 		while (max_side > 0)
