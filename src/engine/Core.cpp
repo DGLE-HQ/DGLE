@@ -579,14 +579,17 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 			_ui64PauseStartTime = GetPerfTimer();
 		}
 
-		if (_stWin.bFullScreen && !_bNeedApplyNewWnd)
-		{
-			_bWasFScreen = true;
-			_stWndToApply = _stWin;
-			_stWndToApply.bFullScreen = false;
-			_pMainWindow->Minimize();
-			_ChangeWinMode(_stWndToApply, true);
-		}
+		if ((_stWin.bFullScreen && !_bNeedApplyNewWnd))
+			if (_bDoExit)
+				_pMainWindow->ExitFullScreen();
+			else
+			{
+				_bWasFScreen = true;
+				_stWndToApply = _stWin;
+				_stWndToApply.bFullScreen = false;
+				_pMainWindow->Minimize();
+				_ChangeWinMode(_stWndToApply, true);
+			}
 
 		break;
 

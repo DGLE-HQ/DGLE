@@ -30,6 +30,7 @@ public:
 	DGLE_RESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight);
 	DGLE_RESULT ScreenToClient(int &iX, int &iY);
 	DGLE_RESULT ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus);
+	DGLE_RESULT ExitFullScreen();
 	DGLE_RESULT SetCaption(const char *pcTxt);
 	DGLE_RESULT Minimize();
 	DGLE_RESULT BeginMainLoop();

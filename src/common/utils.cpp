@@ -96,6 +96,7 @@ string UIntToStr(uint val)
 	sprintf_s(res, "%u", val);
 	return string(res);
 }
+
 string UIntToStrX(uint val)
 {
 	char res[32];

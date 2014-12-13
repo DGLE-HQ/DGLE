@@ -416,7 +416,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 
 		LOG("Desktop resolution: " + UIntToStr(desktop_width) + "X" + UIntToStr(desktop_height), LT_INFO);
 
-		if (desktop_width < (uint)(rc.right - rc.left) || desktop_height < (uint)(rc.bottom - rc.top))
+		if (IsIconic(_hWnd) == FALSE && (desktop_width < (uint)(rc.right - rc.left) || desktop_height < (uint)(rc.bottom - rc.top)))
 			LOG("Window rectangle is beyound screen.", LT_WARNING);
 
 		top_x = (int)(desktop_width - (rc.right - rc.left)) / 2, 
@@ -451,6 +451,17 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 	}
 
 	return res;
+}
+
+DGLE_RESULT CMainWindow::ExitFullScreen()
+{
+	if (_bFScreen && ChangeDisplaySettings(NULL, 0) != DISP_CHANGE_SUCCESSFUL)
+	{
+		LOG("Can't switch off fullscreen mode.", LT_ERROR);
+		return S_FALSE;
+	}
+	else
+		return S_OK;
 }
 
 DGLE_RESULT CMainWindow::Free()

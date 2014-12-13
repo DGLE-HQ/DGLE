@@ -122,6 +122,11 @@ DGLE_RESULT CDummyWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSet
 	return S_FALSE;
 }
 
+DGLE_RESULT CDummyWindow::ExitFullScreen()
+{
+	return E_NOTIMPL;
+}
+
 DGLE_RESULT CDummyWindow::Free()
 {
 	if (_hDC && ReleaseDC(_hWnd,_hDC) == FALSE)

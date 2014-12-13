@@ -39,6 +39,7 @@ public:
 	virtual DGLE_RESULT GetWinRect(int &iX, int &iY, int &iWidth, int &iHeight) = 0;
 	virtual DGLE_RESULT ScreenToClient(int &iX, int &iY) = 0;
 	virtual DGLE_RESULT ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus) = 0;
+	virtual DGLE_RESULT ExitFullScreen() = 0;
 	virtual DGLE_RESULT SetCaption(const char *pcTxt) = 0;
 	virtual DGLE_RESULT Minimize() = 0;
 	virtual DGLE_RESULT BeginMainLoop() = 0;

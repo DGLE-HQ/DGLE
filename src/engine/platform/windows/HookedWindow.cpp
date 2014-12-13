@@ -233,6 +233,11 @@ DGLE_RESULT CHookedWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSe
 	return S_FALSE;
 }
 
+DGLE_RESULT CHookedWindow::ExitFullScreen()
+{
+	return E_NOTIMPL;
+}
+
 DGLE_RESULT CHookedWindow::SetCaption(const char *pcTxt)
 {
 	return E_NOTIMPL;
