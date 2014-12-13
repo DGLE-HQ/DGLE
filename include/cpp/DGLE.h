@@ -116,7 +116,7 @@ This is simplest DGLE application for Windows.
 /** Defines DGLE version string. 
 	\warning Do not edit!
 */
-#define _DGLE_VER_ "2:0.3.1"
+#define _DGLE_VER_ "2:0.3.5"
  
 /** Defines DGLE version integer. 
 	\warning Do not edit!

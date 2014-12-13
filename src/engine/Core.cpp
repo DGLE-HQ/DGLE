@@ -1469,8 +1469,13 @@ DGLE_RESULT DGLE_API CCore::QuitEngine()
 
 DGLE_RESULT DGLE_API CCore::AllowPause(bool bAllow)
 {
-	_s_ConAutoPause((void*)this, bAllow ? "1" : "0");
-	return S_OK;
+	if (!_bPause)
+	{
+		_iAllowPause = bAllow ? 1 : 0;
+		return S_OK;
+	}
+	else
+		return S_FALSE;
 }
 
 DGLE_RESULT DGLE_API CCore::GetFPS(uint &uiFPS)
