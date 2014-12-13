@@ -597,6 +597,8 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 	case WMT_RESTORED:
 
+		_bCmdKeyIsPressed = false;
+
 		if (_bWasFScreen && !_bNeedApplyNewWnd)
 		{
 			_bWasFScreen = false;
