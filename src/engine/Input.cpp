@@ -216,15 +216,16 @@ void CInput::_MessageProc(const TWindowMessage &stMsg)
 			if (_bIsTxtInput)
 			{
 				if (stMsg.ui32Param1 > 31)
-					_strInputTxt += (char)stMsg.ui32Param1;
+				{
+					if (_strInputTxt.size() + 1 < _uiBufSize)
+						_strInputTxt += (char)stMsg.ui32Param1;
+				}
 				else
 					if (stMsg.ui32Param1 == 8 /*Backspace*/ && _strInputTxt.length() > 0) 
 						_strInputTxt.erase(_strInputTxt.length() - 1, 1);
 				
 				if (_uiBufSize > _strInputTxt.size())
 					strcpy(_pcBuffer, _strInputTxt.c_str());
-				else 
-					EndTextInput();
 			}
 			
 			break;

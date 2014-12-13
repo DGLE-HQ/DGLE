@@ -580,6 +580,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		}
 
 		if ((_stWin.bFullScreen && !_bNeedApplyNewWnd))
+		{
 			if (_bDoExit)
 				_pMainWindow->ExitFullScreen();
 			else
@@ -590,6 +591,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 				_pMainWindow->Minimize();
 				_ChangeWinMode(_stWndToApply, true);
 			}
+		}
 
 		break;
 
