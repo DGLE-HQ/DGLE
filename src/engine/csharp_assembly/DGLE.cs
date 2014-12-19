@@ -761,7 +761,7 @@ namespace DGLE
         void PopMatrix();
         void GetMatrix(out TMatrix4x4 stMatrix);
 
-        void DrawAxis(float fSize = 1f, [MarshalAs(UnmanagedType.U1)] bool bNoDepthTest = false);
+        void DrawAxes(float fSize = 1f, [MarshalAs(UnmanagedType.U1)] bool bNoDepthTest = false);
 
         void ResetStates();
         void PushStates();
@@ -1058,7 +1058,7 @@ namespace DGLE
         void GetKey(E_KEYBOARD_KEY_CODES eKeyCode, [MarshalAs(UnmanagedType.U1)] out bool bPressed);
         void GetKeyName(E_KEYBOARD_KEY_CODES eKeyCode, [MarshalAs(UnmanagedType.LPStr)] out char cASCIICode);
 
-        void BeginTextInput([MarshalAs(UnmanagedType.LPStr)] string pcBuffer, uint uiBufferSize);
+        void BeginTextInput(IntPtr pcBuffer, uint uiBufferSize);
         void EndTextInput();
 
         void GetJoysticksCount(out uint uiCount);
