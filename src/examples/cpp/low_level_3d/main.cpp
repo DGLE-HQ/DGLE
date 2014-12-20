@@ -204,8 +204,6 @@ void DGLE_API Render(void *pParameter)
 	pMeshTree3->Draw();
 	pRender3D->PopMatrix();
 
-	pRender3D->ToggleAlphaTest(false); // we don't need alphatest anymore
-
 	// we use blending for further font and sprite rendering
 	pRender3D->ToggleBlending(true);
 
@@ -252,6 +250,8 @@ void DGLE_API Render(void *pParameter)
 	pTexOwl->Draw3D((uiCounter / 2) % 15); // fast way to render texture as square plane with size 1.0
 	
 	pRender3D->PopMatrix();
+	
+	pRender3D->ToggleAlphaTest(false); // we don't need alphatest anymore
 
 	pRender3D->ToggleBlending(false);
 	pRender3D->ToggleBackfaceCulling(true); // turn backface culling back on here
