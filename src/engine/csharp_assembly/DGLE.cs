@@ -48,7 +48,7 @@ namespace DGLE
     public interface IEngineSubSystem : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -64,7 +64,7 @@ namespace DGLE
     public interface IPlugin : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -84,7 +84,7 @@ namespace DGLE
     public interface ISubSystemPlugin : IPlugin
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -122,7 +122,7 @@ namespace DGLE
     public interface IEngineBaseObject : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -155,7 +155,7 @@ namespace DGLE
     public interface IBaseEvent : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -170,7 +170,7 @@ namespace DGLE
     public interface IEvBeforeInitialization : IBaseEvent
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -190,7 +190,7 @@ namespace DGLE
     public interface IEvConsoleWrite : IBaseEvent
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -210,7 +210,7 @@ namespace DGLE
     public interface IEvFatalMessage : IBaseEvent
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -233,7 +233,7 @@ namespace DGLE
     public interface IEvWindowMessage : IBaseEvent
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -252,7 +252,7 @@ namespace DGLE
     public interface IEvGetSubSystem : IBaseEvent
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -272,7 +272,7 @@ namespace DGLE
     public interface IEvGoFullScreen : IBaseEvent
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -350,7 +350,7 @@ namespace DGLE
     public interface IEngineCore : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -498,7 +498,7 @@ namespace DGLE
     public interface IResourceManager : IEngineSubSystem
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -509,11 +509,11 @@ namespace DGLE
         #endregion
 
         void CreateTexture(out ITexture prTex, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
-        void CreateMaterial(out IMaterial prMaterial, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", bool bAddResource = true);
-        void CreateLight(out ILight prLight, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", bool bAddResource = true);
+        void CreateMaterial(out IMaterial prMaterial, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
+        void CreateLight(out ILight prLight, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
         void CreateMesh(out IMesh prMesh, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
-        void CreateModel(out IModel prModel, [MarshalAs(UnmanagedType.LPStr)] string pcName, bool bAddResource = true);
-        void CreateSound(out ISoundSample prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 ui32DataSize, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
+        void CreateModel(out IModel prModel, [MarshalAs(UnmanagedType.LPStr)] string pcName, [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
+        void CreateSound(out ISoundSample prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, [MarshalAs(UnmanagedType.U1)] bool bStereo, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, UInt32 ui32DataSize, [MarshalAs(UnmanagedType.LPStr)] string pcName = "", [MarshalAs(UnmanagedType.U1)] bool bAddResource = true);
 
         void RegisterFileFormat([MarshalAs(UnmanagedType.LPStr)] string pcExtension, E_ENGINE_OBJECT_TYPE eObjType, [MarshalAs(UnmanagedType.LPStr)] string pcDescription, [MarshalAs(UnmanagedType.FunctionPtr)] DLoadProc pLoadProc, IntPtr pParam);
         void UnregisterFileFormat([MarshalAs(UnmanagedType.LPStr)] string pcExtension);
@@ -562,7 +562,7 @@ namespace DGLE
     public interface IRender : IEngineSubSystem
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -630,7 +630,7 @@ namespace DGLE
     public interface IRender2D : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -660,15 +660,15 @@ namespace DGLE
         void DrawRectangle(ref TRectF stRect, ref TColor4 stColor, E_PRIMITIVE2D_FLAGS eFlags);
         void DrawCircle(ref TPoint2 stCoords, UInt32 uiRadius, UInt32 uiQuality, ref TColor4 stColor, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
         void DrawEllipse(ref TPoint2 stCoords, ref TPoint2 stRadius, UInt32 uiQuality, ref TColor4 stColor, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
-        void DrawPolygon(ITexture pTexture, ref TVertex2[] pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+        void DrawPolygon(ITexture pTexture, ref TVertex2 pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
 
-        // 2D Sprites		
+        // 2D Sprites
         void DrawTexture(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, float fAngle = 0f, E_EFFECT2D_FLAGS flags = E_EFFECT2D_FLAGS.EF_DEFAULT);
         void DrawTextureCropped(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, ref TRectF stTexCropRect, float fAngle = 0f, E_EFFECT2D_FLAGS eFlags = E_EFFECT2D_FLAGS.EF_DEFAULT);
         void DrawTextureSprite(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, UInt32 uiFrameIndex, float fAngle = 0f, E_EFFECT2D_FLAGS eFlags = E_EFFECT2D_FLAGS.EF_DEFAULT);
 
         // Extra
-        void DrawTriangles(ITexture pTexture, ref TVertex2[] pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+        void DrawTriangles(ITexture pTexture, ref TVertex2 pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
         void DrawMesh(IMesh pMesh, ITexture pTexture, ref TPoint2 stCoords, ref TPoint3 stDimensions, ref TPoint3 stAxis, float fAngle = 0f, E_EFFECT2D_FLAGS eFlags = E_EFFECT2D_FLAGS.EF_DEFAULT, [MarshalAs(UnmanagedType.U1)] bool bClip = true, float fFovY = 90f, [MarshalAs(UnmanagedType.U1)] bool bClearDepthBuffer = false);
 
         //Advanced
@@ -707,7 +707,7 @@ namespace DGLE
     public interface IRender3D : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -795,7 +795,7 @@ namespace DGLE
     public interface ILight : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -841,7 +841,7 @@ namespace DGLE
     public interface ITexture : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -874,7 +874,7 @@ namespace DGLE
     public interface IMaterial : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -911,7 +911,7 @@ namespace DGLE
     public interface IBitmapFont : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -941,7 +941,7 @@ namespace DGLE
     public interface IMesh : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -976,7 +976,7 @@ namespace DGLE
     public interface IModel : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1011,7 +1011,7 @@ namespace DGLE
     public interface IPostprocess : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1042,7 +1042,7 @@ namespace DGLE
     public interface IInput : IEngineSubSystem
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1073,7 +1073,7 @@ namespace DGLE
     public interface ISound : IEngineSubSystem
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1116,7 +1116,7 @@ namespace DGLE
     public interface ISoundChannel : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1150,7 +1150,7 @@ namespace DGLE
     public interface ISoundSample : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1169,7 +1169,7 @@ namespace DGLE
     public interface IMusic : IEngineBaseObject
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1200,7 +1200,7 @@ namespace DGLE
     public interface IMainFileSystem : IEngineSubSystem
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1246,7 +1246,7 @@ namespace DGLE
     public interface IFile : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1269,7 +1269,7 @@ namespace DGLE
     public interface IFileIterator : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
@@ -1287,7 +1287,7 @@ namespace DGLE
     public interface IFileSystem : IDGLE_Base
     {
         #region IDGLE_Base
-        new void GetGUID(ref Guid guid);
+        new void GetGUID(out Guid guid);
         new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
         new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
         new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
