@@ -407,8 +407,12 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
         #endregion
-        void GetObjectType(out E_ENGINE_OBJECT_TYPE eType);
+        new void GetObjectType(out E_ENGINE_OBJECT_TYPE eType);
     };
 
 
@@ -420,6 +424,14 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
+        #endregion       
+        
+        #region IBaseRenderObjectContainer
+        new void GetObjectType(out E_ENGINE_OBJECT_TYPE eType);
         #endregion
         void GetTexture(out uint texture);
     };
@@ -430,7 +442,16 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
         #endregion
+
+        #region IBaseRenderObjectContainer
+        new void GetObjectType(out E_ENGINE_OBJECT_TYPE eType);
+        #endregion
+
         void GetVertexBufferObject(out uint vbo);
         void GetIndexBufferObject(out uint vbo);
     };
@@ -445,6 +466,10 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
         #endregion
         void GetSize(out uint width, uint height);
         void GetDepth(out uint depth);
@@ -452,8 +477,8 @@ namespace DGLE
 
         void GetFormat(out E_TEXTURE_DATA_FORMAT eFormat);
         void GetLoadFlags(out E_TEXTURE_LOAD_FLAGS eLoadFlags);
-        void GetPixelData([MarshalAs(UnmanagedType.LPArray)] out byte[] pData, uint uiDataSize, uint uiLodLevel);
-        void SetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiLodLevel);
+        void GetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, out uint uiDataSize, uint uiLodLevel = 0);
+        void SetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiLodLevel = 0);
         void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat);
         void GetBaseObject(out IBaseRenderObjectContainer prObj);
         void Free();
@@ -466,6 +491,10 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
         #endregion
         void GetGeometryData(out TDrawDataDesc stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize);
         void SetGeometryData(ref TDrawDataDesc stDesc, uint uiVerticesDataSize, uint uiIndexesDataSize);
@@ -485,6 +514,14 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
+        #endregion
+
+        #region IEngineSubSystem
+        new void GetType(out E_ENGINE_SUB_SYSTEM eSubSystemType);
         #endregion
 
         // must not be called by user
@@ -545,6 +582,10 @@ namespace DGLE
     {
         #region IDGLE_Base
         new void GetGUID(ref Guid guid);
+        new void ExecuteCommand(uint uiCmd, ref TVariant stVar);
+        new void ExecuteTextCommand([MarshalAs(UnmanagedType.LPStr)] string pcCommand, ref TVariant stVar);
+        new void ExecuteTextCommandEx([MarshalAs(UnmanagedType.LPStr)] string pcCommand, IntPtr pcResult, out uint uiCharsCount);
+
         #endregion
 
         void PushStates();
