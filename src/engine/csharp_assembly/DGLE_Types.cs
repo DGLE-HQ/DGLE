@@ -26,6 +26,22 @@ namespace DGLE
         public const double RadiansInDegree = PrecisePI / DegreesInPI;
     }
     
+    public class MarshalString
+    {
+        string _value;
+        IntPtr _txtPtr = IntPtr.Zero;
+        public uint BufSize { get; private set; }
+        public IntPtr TxtPtr { get { return _txtPtr; } private set { _txtPtr = value; } }
+        public string Value { get { return Marshal.PtrToStringAnsi(TxtPtr); } private set { _value = value;} }
+
+        public MarshalString(uint bufSize = 256)
+        {
+            BufSize = bufSize > int.MaxValue? 256: bufSize;
+            Value = new string(' ', (int)BufSize);
+            _txtPtr = Marshal.StringToHGlobalAnsi(_value);
+        }
+    }
+
     //Variant data type definition//
 
     public enum E_DGLE_VARIANT_TYPE
@@ -866,8 +882,6 @@ namespace DGLE
             return res;
         }
 
-#if PHYSX
-#endif
         public static TMatrix4x4 operator -(TMatrix4x4 m)
         {
             TMatrix4x4 res = new TMatrix4x4();
@@ -1024,7 +1038,7 @@ namespace DGLE
         // internal needs
         private static float RowFactor(TMatrix4x4 stMatrix, int row)
         {
-            return Math.Sign(stMatrix[row * 4] * stMatrix[row * 4 + 1] * stMatrix[row * 4 + 2] * stMatrix[row * 4 + 3])
+            return stMatrix[row * 4] * stMatrix[row * 4 + 1] * stMatrix[row * 4 + 2] * stMatrix[row * 4 + 3] < 0 ? -1 : 1
                 * new TPoint3(stMatrix[row * 4], stMatrix[row * 4 + 1], stMatrix[row * 4 + 2]).Length();
         }
 

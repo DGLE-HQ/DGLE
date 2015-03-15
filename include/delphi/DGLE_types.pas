@@ -1746,10 +1746,10 @@ begin
   Result._2D[2][2] := (1.0 - z * z) * cos_angle + z * z;
 end;
 
-function RowFactor(const M : TMatrix4x4; X: Integer): Single; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
+function RowFactor(const M : TMatrix4x4; R: Integer): Single; {$IFDEF DGLE_PASCAL_INLINE}inline;{$ENDIF}
 begin
-  Result := DGLE_Types.Length(Point3(M._2D[0, X], M._2D[1, X], M._2D[2, X])) *
-    Sign(M._2D[0, X] * M._2D[1, X] * M._2D[2, X] * M._2D[3, X]);
+  Result := DGLE_Types.Length(Point3(M._2D[R, 0], M._2D[R, 1], M._2D[R, 2])) *
+    IfThen(M._2D[R, 0] * M._2D[R, 1] * M._2D[R, 2] * M._2D[R, 3] < 0, -1, 1);
 end;
 
 function MatrixBillboard(const stMatrix : TMatrix4x4): TMatrix4x4;

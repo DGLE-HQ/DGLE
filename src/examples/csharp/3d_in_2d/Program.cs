@@ -403,10 +403,10 @@ pRender2D.ProjectScreenToCamera(ref stMouseOnScreen, out stMouseInCamera);
                 pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, DRender, IntPtr.Zero);
 
                 pEngineCore.StartEngine(); //Entering engine loop
-                Engine.FreeEngine();
             }
             else
                 MessageBox.Show("Couldn't load \"DGLE.dll\"!", APP_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Engine.FreeEngine();
         }
 
         [STAThread]
