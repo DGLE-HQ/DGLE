@@ -5,7 +5,7 @@ using System.IO;
 
 using DGLE;
 
-namespace matrix_stack_3d
+namespace MatrixStack3D
 {
     class Program
     {
@@ -32,9 +32,6 @@ namespace matrix_stack_3d
 
         uint uiCounter = 1500;
 
-        DSubscriber DInit = null;
-        DSubscriber DProcess = null;
-        DSubscriber DRender = null;
         Random rand;
 
         void Init(IntPtr pParam)
@@ -192,7 +189,7 @@ namespace matrix_stack_3d
         }
 
 
-        void Process(IntPtr pParam)
+        void Update(IntPtr pParam)
         {
             if (uiCounter % 25 == 0)
                 pLightSpot.SetEnabled(rand.Next(100) < 75);
@@ -371,13 +368,9 @@ namespace matrix_stack_3d
 
                 pEngineCore.ConsoleVisible(true);
 
-                DInit = Init;
-                DProcess = Process;
-                DRender = Render;
-
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, DInit, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, DProcess, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, DRender, IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, new DSubscriber(Init), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, new DSubscriber(Update), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, new DSubscriber(Render), IntPtr.Zero);
 
                 //
                 pEngineCore.StartEngine(); //Entering engine loop

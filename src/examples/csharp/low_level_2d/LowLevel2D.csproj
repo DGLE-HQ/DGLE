@@ -8,7 +8,7 @@
     <ProjectGuid>{26538E7A-DBF6-44FB-B614-3C4A31192A91}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimplestSharp</RootNamespace>
+    <RootNamespace>LowLevel2D</RootNamespace>
     <AssemblyName>LowLevel2D</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

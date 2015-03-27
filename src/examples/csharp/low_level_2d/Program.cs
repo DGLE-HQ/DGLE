@@ -2,7 +2,7 @@
 using DGLE;
 using System.Windows.Forms;
 
-namespace SimplestSharp
+namespace LowLevel2D
 {
     public class Program
     {
@@ -22,12 +22,6 @@ namespace SimplestSharp
         ISoundSample pSndOwl = null, pForestAmbient = null;
         ISoundChannel pChannelAmbientLoop = null;
 
-        DSubscriber DInit;
-        DSubscriber DFree;
-        DSubscriber DUpdate;
-        DSubscriber DRender;
-        DListenerProc DFullScr;
-
         string HELP_TEXT = "You can resize this window to see it's behavior or go fullscreen by pressing \"Alt + Enter\" keys.";
 
         // This example is made for 800X600 screen resolution.
@@ -37,9 +31,6 @@ namespace SimplestSharp
         // Screen resolution
         uint SCREEN_WIDTH = 1024u;
         uint SCREEN_HEIGHT = 768u;
-
-
-
 
         // Lights positions
         TPoint2[] lights = new TPoint2[5] 
@@ -345,23 +336,18 @@ namespace SimplestSharp
         {
             if (Engine.GetEngine(DLL_PATH, out pEngineCore))
             {
-                TEngineWindow win = new TEngineWindow(GAME_VP_WIDTH, GAME_VP_HEIGHT, false, true, E_MULTISAMPLING_MODE.MM_4X, E_ENG_WINDOW_FLAGS.EWF_ALLOW_SIZEING);
+                TEngineWindow win = new TEngineWindow(SCREEN_WIDTH, SCREEN_HEIGHT, false, true, E_MULTISAMPLING_MODE.MM_4X, E_ENG_WINDOW_FLAGS.EWF_ALLOW_SIZEING);
                 pEngineCore.InitializeEngine(IntPtr.Zero, APP_CAPTION, ref win, 33, E_ENGINE_INIT_FLAGS.EIF_DEFAULT);
                 // You can do some initialization here
 
                 pEngineCore.ConsoleVisible(true);
 
-                DInit = new DSubscriber(Init);
-                DFree = new DSubscriber(Free);
-                DUpdate = new DSubscriber(Update);
-                DRender = new DSubscriber(Render);
-                DFullScr = new DListenerProc(OnFullScreenEvent);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, DInit, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, DFree, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, DUpdate, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, DRender, IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, new DSubscriber(Init), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, new DSubscriber(Free), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, new DSubscriber(Update), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, new DSubscriber(Render), IntPtr.Zero);
 
-                pEngineCore.AddEventListener(E_EVENT_TYPE.ET_ON_FULLSCREEN, DFullScr, IntPtr.Zero);
+                pEngineCore.AddEventListener(E_EVENT_TYPE.ET_ON_FULLSCREEN, new DListenerProc(OnFullScreenEvent), IntPtr.Zero);
 
                 pEngineCore.StartEngine(); //Entering engine loop
             }
