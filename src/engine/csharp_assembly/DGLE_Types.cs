@@ -15,7 +15,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Reflection;
-//using System.Runtime.CompilerServices;
 
 namespace DGLE
 {
@@ -24,6 +23,7 @@ namespace DGLE
         public const double PrecisePI = 3.1415926535897932;
         public const double DegreesInPI = 180;
         public const double RadiansInDegree = PrecisePI / DegreesInPI;
+        public const uint Minus1 = 0xFFFFFFFF; // -1 should be, but uint doesn't allow -1 
     }
     
     public class MarshalString
@@ -41,7 +41,54 @@ namespace DGLE
             _txtPtr = Marshal.StringToHGlobalAnsi(_value);
         }
     }
+    public static class Unmanaged
+    {
+        public static IntPtr New<T>(int elementCount)
+            where T : struct
+        {
+            return Marshal.AllocHGlobal(Marshal.SizeOf(typeof(T)) * elementCount);
+        }
 
+        public static IntPtr NewAndInit<T>(int elementCount)
+            where T : struct
+        {
+            int newSizeInBytes = Marshal.SizeOf(typeof(T)) * elementCount;
+            IntPtr newArrayPointer = Marshal.AllocHGlobal(newSizeInBytes);
+                for (int i = 0; i < newSizeInBytes; i++)
+                    Marshal.WriteByte(newArrayPointer, i, 0);
+            return newArrayPointer;
+        }
+
+        public static void Copy<T>(this IntPtr dest, T[] data)
+            where T : struct
+        {
+            int size = Marshal.SizeOf(typeof(T));
+            IntPtr Ptr = Marshal.AllocHGlobal(size);
+            for (int i = 0; i < data.Length; i++)
+            {
+                Marshal.StructureToPtr(data[i], Ptr, false);
+                byte[] rawdata = new byte[size];
+                Marshal.Copy(Ptr, rawdata, 0, size);
+                for (int j = 0; j < rawdata.Length; j++)
+                    Marshal.WriteByte(dest, i * size + j, rawdata[j]);
+
+            }
+            Marshal.FreeHGlobal(Ptr);
+        }
+
+        public static void Free(this IntPtr pointerToUnmanagedMemory)
+        {
+            Marshal.FreeHGlobal(pointerToUnmanagedMemory);
+        }
+
+        public static IntPtr Resize<T>(this IntPtr oldPointer, int newElementCount)
+            where T : struct
+        {
+            return (Marshal.ReAllocHGlobal(oldPointer,
+                new IntPtr(Marshal.SizeOf(typeof(T)) * newElementCount)));
+        }
+    }
+    
     //Variant data type definition//
 
     public enum E_DGLE_VARIANT_TYPE
