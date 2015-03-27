@@ -772,7 +772,7 @@ namespace DGLE
 
         void SetupFrustum();
         void CullPoint(ref TPoint3 stCoords, [MarshalAs(UnmanagedType.U1)] out bool bCull);
-        void CullSphere(ref TPoint3 stCenter, float radius, [MarshalAs(UnmanagedType.U1)] out bool bCull);
+        void CullSphere(ref TPoint3 stCenter, float fRadius, [MarshalAs(UnmanagedType.U1)] out bool bCull);
         void CullBox(ref TPoint3 stCenter, ref TPoint3 stExtents, [MarshalAs(UnmanagedType.U1)] out bool bCull);
 
         void ToggleLighting([MarshalAs(UnmanagedType.U1)] bool bEnabled);
