@@ -225,14 +225,10 @@ namespace Demo
 
                 pEngineCore.ConsoleVisible(false);
 
-                DSubscriber dInit = Init;
-                DSubscriber dFree = Free;
-                DSubscriber dUpdate = Update;
-                DSubscriber dRender = Render;
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, dInit, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, dFree, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, dUpdate, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, dRender, IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, new DSubscriber(Init), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, new DSubscriber(Free), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, new DSubscriber(Update), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, new DSubscriber(Render), IntPtr.Zero);
 
                 pEngineCore.StartEngine();
             }

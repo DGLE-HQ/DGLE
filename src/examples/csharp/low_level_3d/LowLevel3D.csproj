@@ -8,7 +8,7 @@
     <ProjectGuid>{26538E7A-DBF6-44FB-B614-3C4A31192A91}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LowLevel2D</RootNamespace>
+    <RootNamespace>SimplestSharp</RootNamespace>
     <AssemblyName>LowLevel2D</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\bin\windows\examples\csharp\low_level_2d\</OutputPath>
+    <OutputPath>..\..\..\..\bin\windows\examples\csharp\low_level_3d\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,7 +30,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\bin\windows\examples\csharp\low_level_2d\</OutputPath>
+    <OutputPath>..\..\..\..\bin\windows\examples\csharp\low_level_3d\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

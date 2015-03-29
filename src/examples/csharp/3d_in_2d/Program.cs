@@ -28,12 +28,6 @@ namespace Sample_3Din2D
         TPoint2 stMouseOnScreen, stMouseInCamera;
         TMouseStates mouse;
 
-        // delegates, they are here to be not collected by GC
-        DSubscriber DInit = null;
-        DSubscriber DFree = null;
-        DSubscriber DUpdate = null;
-        DSubscriber DRender = null;
-
         // declarations for work with texs and meshes
         ITexture[] pTextures;
         ITexture[] pShadows;
@@ -392,15 +386,10 @@ pRender2D.ProjectScreenToCamera(ref stMouseOnScreen, out stMouseInCamera);
 
                 pEngineCore.ConsoleVisible(true);
 
-                DInit = new DSubscriber(Init);
-                DFree = new DSubscriber(Free);
-                DUpdate = new DSubscriber(Update);
-                DRender = new DSubscriber(Render);
-
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, DInit, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, DFree, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, DUpdate, IntPtr.Zero);
-                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, DRender, IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_INIT, new DSubscriber(Init), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_FREE, new DSubscriber(Free), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_UPDATE, new DSubscriber(Update), IntPtr.Zero);
+                pEngineCore.AddProcedure(E_ENGINE_PROCEDURE_TYPE.EPT_RENDER, new DSubscriber(Render), IntPtr.Zero);
 
                 pEngineCore.StartEngine(); //Entering engine loop
             }

@@ -172,14 +172,10 @@ namespace DGLE
         ACC_FOUR
     };
 
-
-    /*
-    #if defined(STRUCT_ALIGNMENT_1) && defined(PLATFORM_WINDOWS)
-    #pragma pack( push, 1 )
-    #endif
-    */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TBlendStateDesc
     {
+        [MarshalAs(UnmanagedType.U1)]
         public bool bEnabled;
 
         public E_BLEND_FACTOR eSrcFactor;
@@ -188,6 +184,7 @@ namespace DGLE
         /* For future needs.
         public E_BLEND_OPERATION	eOperation;
 
+        [MarshalAs(UnmanagedType.U1)]
         public bool bSeparate;
         public E_BLEND_FACTOR		eSrcAlpha;
         public E_BLEND_FACTOR		eDestAlpha;
@@ -213,16 +210,20 @@ namespace DGLE
     };
     */
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TDepthStencilDesc
     {
+        [MarshalAs(UnmanagedType.U1)]
         public bool bDepthTestEnabled;
+        [MarshalAs(UnmanagedType.U1)]
         public bool bWriteToDepthBuffer;
         public E_COMPARISON_FUNC eDepthFunc;
 
         /* For future needs.
-        public bool	bStencilEnable;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool bStencilEnable;
         public uint8	ui8StencilReadMask;
-        public 	ui8StencilWriteMask;
+        public unit8    ui8StencilWriteMask;
         public TStencilFaceDesc stFrontFace, stBackFace;
         */
 
@@ -236,23 +237,29 @@ namespace DGLE
         }
     };
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TRasterizerStateDesc
     {
+        [MarshalAs(UnmanagedType.U1)]
         public bool bWireframe;
 
         public E_POLYGON_CULL_MODE eCullMode;
+        [MarshalAs(UnmanagedType.U1)]
         public bool bFrontCounterClockwise;
 
+        [MarshalAs(UnmanagedType.U1)]
         public bool bScissorEnabled;
 
+        [MarshalAs(UnmanagedType.U1)]
         public bool bAlphaTestEnabled;
         public E_COMPARISON_FUNC eAlphaTestFunc;
         public float fAlphaTestRefValue;
 
         /* For future needs.
-        public int		iDepthBias;
+        public int	iDepthBias;
         public float	fDepthBiasClamp;
         public float	fSlopeScaledDepthBias;
+        [MarshalAs(UnmanagedType.U1)]
         public bool	bDepthClipEnabled;
         */
 
@@ -271,15 +278,13 @@ namespace DGLE
         }
     };
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TDrawDataAttributes
     {
         public uint[] uiAttribOffset;
         public uint[] uiAttribStride;
         public E_ATTRIBUTE_DATA_TYPE[] eAttribDataType;
         public E_ATTRIBUTE_COMPONENTS_COUNT[] eAttribCompsCount;
-
-
-        const uint minus1 = 0xFFFFFFFF; // -1 should be, but uint doesn't allow -1 
 
         public static TDrawDataAttributes Default()
         {
@@ -291,7 +296,7 @@ namespace DGLE
             result.eAttribCompsCount = new E_ATTRIBUTE_COMPONENTS_COUNT[len];
             for (int i = 0; i < len; ++i)
             {
-                result.uiAttribOffset[i] = minus1;
+                result.uiAttribOffset[i] = Fundamentals.Minus1;
                 result.uiAttribStride[i] = 0;
                 result.eAttribDataType[i] = E_ATTRIBUTE_DATA_TYPE.ADT_FLOAT;
                 result.eAttribCompsCount[i] = E_ATTRIBUTE_COMPONENTS_COUNT.ACC_ONE;
@@ -300,13 +305,13 @@ namespace DGLE
         }
     };
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TDrawDataDesc
     {
-        //Pointer?
-        [MarshalAs(UnmanagedType.LPArray)]
-        public byte[] pData; //Must be start of the vertex data. 2 or 3 floats
+        public IntPtr pData; //Must be start of the vertex data. 2 or 3 floats
 
         public uint uiVertexStride;
+        [MarshalAs(UnmanagedType.U1)]
         public bool bVertices2D;
 
         public uint uiNormalOffset; //3 floats
@@ -325,46 +330,37 @@ namespace DGLE
         public uint uiTangentStride, uiBinormalStride;
 
         /*not implemeted*/
-        //public TDrawDataAttributes pAttribs;  // what to do with it ? //phomm
+        public IntPtr/*TDrawDataAttributes*/ pAttribs;
 
-
-        //Pointer?
-
-        [MarshalAs(UnmanagedType.LPArray)]
-        public byte[] pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
+        public IntPtr pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
+        [MarshalAs(UnmanagedType.U1)]
         public bool bIndexBuffer32;
 
         //ToDo: Add VertexAttribPointers.
 
-
-        const uint minus1 = 0xFFFFFFFF; // -1 should be, but uint doesn't allow -1 
-
-
         public static TDrawDataDesc Default()
         {
             TDrawDataDesc result;
-            result.pData = null;
+            result.pData = IntPtr.Zero;
             result.uiVertexStride = 0;
             result.bVertices2D = false;
-            result.uiNormalOffset = minus1;
+            result.uiNormalOffset = Fundamentals.Minus1;
             result.uiNormalStride = 0;
-            result.uiTextureVertexOffset = minus1;
+            result.uiTextureVertexOffset = Fundamentals.Minus1;
             result.uiTextureVertexStride = 0;
-            result.uiColorOffset = minus1;
+            result.uiColorOffset = Fundamentals.Minus1;
             result.uiColorStride = 0;
-            result.pIndexBuffer = null;
-            result.bIndexBuffer32 = false;
-            result.uiTangentOffset = minus1;
-            result.uiBinormalOffset = minus1;
+            result.uiTangentOffset = Fundamentals.Minus1;
+            result.uiBinormalOffset = Fundamentals.Minus1;
             result.uiTangentStride = 0;
             result.uiBinormalStride = 0;
-            result.pIndexBuffer = null;
+            result.pIndexBuffer = IntPtr.Zero;
             result.bIndexBuffer32 = false;
-            //pAttribs = null;
+            result.pAttribs = IntPtr.Zero;
             return result;
         }
 
-        public TDrawDataDesc([MarshalAs(UnmanagedType.LPArray)] byte[] pDataPointer, uint uiNormalDataOffset, uint uiTextureVertexDataOffset, [MarshalAs(UnmanagedType.U1)] bool bIs2D)
+        public TDrawDataDesc(/*[MarshalAs(UnmanagedType.SafeArray)]*/ IntPtr pDataPointer, uint uiNormalDataOffset, uint uiTextureVertexDataOffset, [MarshalAs(UnmanagedType.U1)] bool bIs2D)
         {
             pData = pDataPointer;
             uiVertexStride = 0;
@@ -373,17 +369,15 @@ namespace DGLE
             uiNormalStride = 0;
             uiTextureVertexOffset = uiTextureVertexDataOffset;
             uiTextureVertexStride = 0;
-            uiColorOffset = minus1;
+            uiColorOffset = Fundamentals.Minus1;
             uiColorStride = 0;
-            pIndexBuffer = null;
-            bIndexBuffer32 = false;
-            uiTangentOffset = minus1;
-            uiBinormalOffset = minus1;
+            uiTangentOffset = Fundamentals.Minus1;
+            uiBinormalOffset = Fundamentals.Minus1;
             uiTangentStride = 0;
             uiBinormalStride = 0;
-            pIndexBuffer = null;
+            pIndexBuffer = IntPtr.Zero;
             bIndexBuffer32 = false;
-            //pAttribs = null;
+            pAttribs = IntPtr.Zero;
         }
 
         public static bool operator ==(TDrawDataDesc self, TDrawDataDesc desc)
@@ -392,7 +386,7 @@ namespace DGLE
                 self.uiNormalOffset == desc.uiNormalOffset && self.uiNormalStride == desc.uiNormalStride && self.uiTextureVertexOffset == desc.uiTextureVertexOffset &&
                 self.uiTextureVertexStride == desc.uiTextureVertexStride && self.uiColorOffset == desc.uiColorOffset && self.uiColorStride == desc.uiColorStride &&
                 self.uiTangentOffset == desc.uiTangentOffset && self.uiBinormalOffset == desc.uiBinormalOffset && self.uiTangentStride == desc.uiTangentStride &&
-                self.uiBinormalStride == desc.uiBinormalStride /*&& self.pAttribs == desc.pAttribs*/ && self.pIndexBuffer == desc.pIndexBuffer && self.bIndexBuffer32 == desc.bIndexBuffer32;
+                self.uiBinormalStride == desc.uiBinormalStride && self.pAttribs.Equals(desc.pAttribs) && self.pIndexBuffer == desc.pIndexBuffer && self.bIndexBuffer32 == desc.bIndexBuffer32;
         }
         public static bool operator !=(TDrawDataDesc self, TDrawDataDesc desc)
         {
@@ -456,10 +450,6 @@ namespace DGLE
         void GetIndexBufferObject(out uint vbo);
     };
 
-    //#endif
-
-    // {8BFF07F9-2A8E-41D0-8505-3128C1B8160A}
-
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("8BFF07F9-2A8E-41D0-8505-3128C1B8160A")]
     public interface ICoreTexture : IDGLE_Base
@@ -484,7 +474,6 @@ namespace DGLE
         void Free();
     };
 
-
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("9A77DCFF-9E4B-4716-9BBB-A316BF217F7A")]
     public interface ICoreGeometryBuffer : IDGLE_Base
@@ -506,7 +495,6 @@ namespace DGLE
         void GetBaseObject(out IBaseRenderObjectContainer prObj);
         void Free();
     };
-
 
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("C3B687A1-57B0-4E21-BE4C-4D92F3FAB311")]
@@ -536,7 +524,7 @@ namespace DGLE
         void Present();
         void SetClearColor(ref TColor4 stColor);
         void GetClearColor(out TColor4 stColor);
-        void Clear([MarshalAs(UnmanagedType.U1)] bool bColor = true, bool bDepth = true, [MarshalAs(UnmanagedType.U1)] bool bStencil = true);
+        void Clear([MarshalAs(UnmanagedType.U1)] bool bColor = true, [MarshalAs(UnmanagedType.U1)] bool bDepth = true, [MarshalAs(UnmanagedType.U1)] bool bStencil = true);
         void SetViewport(uint x, uint y, uint width, uint height);
         void GetViewport(out uint x, out uint y, out uint width, out uint height);
         void SetScissorRectangle(uint x, uint y, uint width, uint height);
@@ -554,9 +542,9 @@ namespace DGLE
         void InvalidateStateFilter();
         void PushStates();
         void PopStates();
-        void SetMatrix(TMatrix4x4 stMatrix, E_MATRIX_TYPE eMatType = E_MATRIX_TYPE.MT_MODELVIEW);
+        void SetMatrix(ref TMatrix4x4 stMatrix, E_MATRIX_TYPE eMatType = E_MATRIX_TYPE.MT_MODELVIEW);
         void GetMatrix(out TMatrix4x4 stMatrix, E_MATRIX_TYPE eMatType = E_MATRIX_TYPE.MT_MODELVIEW);
-        void Draw(TDrawDataDesc stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
+        void Draw(ref TDrawDataDesc stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
         void DrawBuffer(ICoreGeometryBuffer pBuffer);
         void SetColor(TColor4 stColor);
         void GetColor(out TColor4 stColor);
@@ -631,5 +619,3 @@ namespace DGLE
     };
 
 }
-
-//#endif //DGLE_CRENDERER
