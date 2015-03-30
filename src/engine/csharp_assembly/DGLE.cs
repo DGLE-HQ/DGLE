@@ -668,7 +668,7 @@ namespace DGLE
         void DrawTextureSprite(ITexture pTexture, ref TPoint2 stCoords, ref TPoint2 stDimensions, UInt32 uiFrameIndex, float fAngle = 0f, E_EFFECT2D_FLAGS eFlags = E_EFFECT2D_FLAGS.EF_DEFAULT);
 
         // Extra
-        void DrawTriangles(ITexture pTexture, ref TVertex2 pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+        void DrawTriangles(ITexture pTexture, IntPtr pstVertices, UInt32 uiVerticesCount, E_PRIMITIVE2D_FLAGS eFlags = E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
         void DrawMesh(IMesh pMesh, ITexture pTexture, ref TPoint2 stCoords, ref TPoint3 stDimensions, ref TPoint3 stAxis, float fAngle = 0f, E_EFFECT2D_FLAGS eFlags = E_EFFECT2D_FLAGS.EF_DEFAULT, [MarshalAs(UnmanagedType.U1)] bool bClip = true, float fFovY = 90f, [MarshalAs(UnmanagedType.U1)] bool bClearDepthBuffer = false);
 
         //Advanced

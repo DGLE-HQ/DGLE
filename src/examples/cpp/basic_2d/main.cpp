@@ -224,7 +224,7 @@ void DrawFont(const TRectF &screen)
 	pRender2D->SetVerticesColors(ColorAqua(), ColorAqua(), ColorOrange(), ColorOrange());
 	pFontBold->Draw2D(screen.x + 5, 50, txt, ColorWhite(), 0.f, true);
 
-	txt = "А я могу говорить по русски! [:-|";
+	txt = "А я могу говорить по-русски! [:-|";
 	pFont->Draw2DSimple((int)(screen.x + 5.f), 100, txt, ColorRed());
 
 	txt = "I'm scaling... o_O";
@@ -275,7 +275,7 @@ void DrawAdvanced(const TRectF &screen)
 	
 	pRender2D->SetBlendMode(BE_ADD);
 
-	pRender2D->BeginBatch(false); // not to triangulate complex polygon every frame we can batch it this way and triangulation will be done only afetr update tick
+	pRender2D->BeginBatch(false); // not to triangulate complex polygon every frame we can batch it this way and triangulation will be done only after update tick
 	pRender2D->DrawPolygon(pTexAnimWater[uiCounter / 5 % 11], &waterWaves[0], waterWaves.size(), PF_FILL);
 	pRender2D->EndBatch();
 
