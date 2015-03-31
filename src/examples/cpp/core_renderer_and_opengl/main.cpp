@@ -36,7 +36,7 @@ void DGLE_API Init(void *pParameter)
 {
 	pEngineCore->GetSubSystem(ESS_CORE_RENDERER, (IEngineSubSystem *&)pCoreRenderer);
 
-	// We must be shure that we are working with legacy OpenGL implementation!
+	// We must be sure that we are working with legacy OpenGL implementation!
 	E_CORE_RENDERER_TYPE type;
 	pCoreRenderer->GetRendererType(type);
 	if (type != CRT_OPENGL_LEGACY)
