@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		29.11.2014 (c)Andrey Korotkov
+\date		12.04.2015 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -415,6 +415,12 @@ public:
 	
 	DGLE_RESULT DGLE_API GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel)
 	{
+		ICoreTexture *p_rnd_target;
+		_pCR->GetRenderTarget(p_rnd_target);
+		
+		if (p_rnd_target && p_rnd_target == this)
+			return E_ABORT;
+
 		if (!_bMipMaps && uiLodLevel != 0)
 			return E_INVALIDARG;
 
@@ -449,6 +455,12 @@ public:
 
 	DGLE_RESULT DGLE_API SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel)
 	{
+		ICoreTexture *p_rnd_target;
+		_pCR->GetRenderTarget(p_rnd_target);
+		
+		if (p_rnd_target && p_rnd_target == this)
+			return E_ABORT;
+
 		if (!_bMipMaps && uiLodLevel != 0)
 			return E_INVALIDARG;
 
@@ -476,21 +488,54 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat)
+	DGLE_RESULT DGLE_API Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipMaps, E_TEXTURE_DATA_FORMAT eDataFormat)
 	{
-		if (eDataFormat != _format)
+		if (!pData || eDataFormat != _format)
+			return E_INVALIDARG;
+
+		int max_tex_res;
+		_pCR->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, max_tex_res);
+
+		if (uiWidth > (uint)max_tex_res || uiHeight > (uint)max_tex_res)
 			return E_INVALIDARG;
 
 		_w = uiWidth; _h = uiHeight;
 
 		_pCR->BindTexture(this, 0);
 
-		if (_bMipMaps && (!GLEW_ARB_framebuffer_object && GLEW_SGIS_generate_mipmap))
+		if ((_bMipMaps && !bMipMaps) && (!GLEW_ARB_framebuffer_object && GLEW_SGIS_generate_mipmap))
 			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
-		DGLE_RESULT ret = SetPixelData(pData, _DataSize(0, _w, _h), 0);
+		GLenum tex_format = 0, tex_internal_format = 0;
+		uint bytes_per_pixel = 0;
 
-		if (_bMipMaps)
+		if (!CCoreRendererGL::GetTextureGLFormat(eDataFormat, tex_format, tex_internal_format, bytes_per_pixel))
+			return E_INVALIDARG;
+
+		DGLE_RESULT ret;
+
+		uint dat_offset = 0, lod = 0, cur_w = uiWidth * 2, cur_h = uiHeight * 2;
+
+		while (!(cur_w == cur_h == 1))
+		{
+			cur_w /= 2;
+			if (cur_w == 0) cur_w = 1;
+			
+			cur_h /= 2;
+			if (cur_h == 0) cur_h = 1;
+
+			const uint dat_size = _DataSize(lod, cur_w, cur_h);				
+
+			ret = SetPixelData(const_cast<uint8 *>(&pData[dat_offset]), dat_size, lod);
+
+			if (FAILED(ret) || !bMipMaps)
+				break;
+
+			dat_offset += dat_size;
+			++lod;
+		}
+
+		if (_bMipMaps && !bMipMaps)
 		{
 			if (GLEW_ARB_framebuffer_object)
 				glGenerateMipmap(GL_TEXTURE_2D);
@@ -502,7 +547,7 @@ public:
 		if (FAILED(ret))
 			return E_ABORT;
 		else
-			if (_bMipMaps && (!GLEW_ARB_framebuffer_object && !GLEW_SGIS_generate_mipmap))
+			if ((_bMipMaps && !bMipMaps) && (!GLEW_ARB_framebuffer_object && !GLEW_SGIS_generate_mipmap))
 				return S_FALSE;
 			else
 				return S_OK;
@@ -545,6 +590,71 @@ inline uint CCoreRendererGL::GetVertexSize(const TDrawDataDesc &stDesc)
 	}
 
 	return res;
+}
+
+inline bool CCoreRendererGL::GetTextureGLFormat(const E_TEXTURE_DATA_FORMAT eFormat, GLenum &uiFormat, GLenum &uiInternalFormat, uint &uiBytesPerPixel)
+{
+	switch (eFormat)
+	{
+	case TDF_RGB8:
+		uiFormat = GL_RGB;
+		uiInternalFormat= GL_RGB8;
+		uiBytesPerPixel = 3;
+		break;
+
+	case TDF_RGBA8:
+		uiFormat = GL_RGBA;
+		uiInternalFormat= GL_RGBA8;
+		uiBytesPerPixel = 4;
+		break;
+
+	case TDF_ALPHA8:
+		uiFormat = GL_ALPHA;
+		uiInternalFormat= GL_ALPHA8;
+		uiBytesPerPixel = 1;
+		break;
+
+	case TDF_BGR8: 
+		uiFormat = GL_BGR;
+		uiInternalFormat= GL_RGB8;
+		uiBytesPerPixel = 3;
+		break;
+
+	case TDF_BGRA8: 
+		uiFormat = GL_BGRA;
+		uiInternalFormat = GL_RGBA8;
+		uiBytesPerPixel = 4;
+		break;
+
+	case TDF_DXT1:
+		uiFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+		uiInternalFormat = 0;
+		uiBytesPerPixel = 8; // per block
+		break;
+
+	case TDF_DXT5:
+		uiFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		uiInternalFormat = 0;
+		uiBytesPerPixel = 16; // per block
+		break;
+
+	case TDF_DEPTH_COMPONENT24:
+		uiFormat = GL_DEPTH_COMPONENT;
+		uiInternalFormat= GL_DEPTH_COMPONENT24_ARB;
+		uiBytesPerPixel = 3;
+		break;
+
+	case TDF_DEPTH_COMPONENT32:
+		uiFormat = GL_DEPTH_COMPONENT;
+		uiInternalFormat= GL_DEPTH_COMPONENT32_ARB;
+		uiBytesPerPixel = 4;
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 DGLE_RESULT DGLE_API CCoreRendererGL::Prepare(TCrRndrInitResults &stResults)
@@ -1134,53 +1244,8 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 	GLenum tex_format = 0, tex_internal_format = 0;
 	uint bytes_per_pixel = 0;
 
-	switch (eDataFormat)
-	{
-	case TDF_RGB8:
-		tex_format = GL_RGB;
-		tex_internal_format= GL_RGB8;
-		bytes_per_pixel = 3;
-		break;
-	case TDF_RGBA8:
-		tex_format = GL_RGBA;
-		tex_internal_format= GL_RGBA8;
-		bytes_per_pixel = 4;
-		break;
-	case TDF_ALPHA8:
-		tex_format = GL_ALPHA;
-		tex_internal_format= GL_ALPHA8;
-		bytes_per_pixel = 1;
-		break;
-	case TDF_BGR8: 
-		tex_format = GL_BGR;
-		tex_internal_format= GL_RGB8;
-		bytes_per_pixel = 3;
-		break;
-	case TDF_BGRA8: 
-		tex_format = GL_BGRA;
-		tex_internal_format = GL_RGBA8;
-		bytes_per_pixel = 4;
-		break;
-	case TDF_DXT1:
-		tex_format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-		bytes_per_pixel = 8; // per block
-		break;
-	case TDF_DXT5:
-		tex_format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-		bytes_per_pixel = 16; // per block
-		break;
-	case TDF_DEPTH_COMPONENT24:
-		tex_format = GL_DEPTH_COMPONENT;
-		tex_internal_format= GL_DEPTH_COMPONENT24_ARB;
-		bytes_per_pixel = 3;
-		break;
-	case TDF_DEPTH_COMPONENT32:
-		tex_format = GL_DEPTH_COMPONENT;
-		tex_internal_format= GL_DEPTH_COMPONENT32_ARB;
-		bytes_per_pixel = 4;
-		break;
-	default : return E_INVALIDARG;
-	}
+	if (!GetTextureGLFormat(eDataFormat, tex_format, tex_internal_format, bytes_per_pixel))
+		return E_INVALIDARG;
 
 	GLuint new_tex;
 	glGenTextures(1, &new_tex);
@@ -1242,15 +1307,13 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 				tex_internal_format = GL_COMPRESSED_RGB_ARB;
 				eDataFormat = TDF_DXT1;
 				break;
+
 			case GL_BGRA:
 			case GL_RGBA:
 				tex_internal_format = GL_COMPRESSED_RGBA_ARB;
 				eDataFormat = TDF_DXT5;
 				break;
-			case GL_ALPHA:
-				tex_internal_format = GL_COMPRESSED_ALPHA_ARB;
-				eDataFormat = TDF_ALPHA8;
-				break;
+
 			default:
 				ret = S_FALSE;
 			}
@@ -1281,9 +1344,17 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 		if (i_mipmaps > 3 && (eLoadFlags & TLF_DECREASE_QUALITY_MEDIUM || eLoadFlags & TLF_DECREASE_QUALITY_HIGH))
 		{
 			if (eLoadFlags & TLF_DECREASE_QUALITY_MEDIUM)
+			{
 				i_start_level = 1;
+				uiWidth /= 2;
+				uiHeight /= 2;
+			}
 			else
+			{
 				i_start_level = 2;
+				uiWidth /= 4;
+				uiHeight /= 4;
+			}
 
 			for (int l = 0; l < i_start_level; ++l)
 			{
@@ -1291,7 +1362,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 				i_cur_h /= 2;
 
 				if (eDataAlignment == CRDA_ALIGNED_BY_4)
-					cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pixel, 4);
+					cur_align = GetPixelDataAlignmentIncrement((uint)i_cur_w, bytes_per_pixel, 4);
 
 				if (b_is_compressed)
 					dat_offset += ((i_cur_w + 3) / 4) * ((i_cur_h + 3) / 4) * bytes_per_pixel;
@@ -1309,9 +1380,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			if (i_cur_h == 0) i_cur_h = 1;
 
 			if (eDataAlignment == CRDA_ALIGNED_BY_4)
-				cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pixel, 4);
-			else
-				cur_align = 0;
+				cur_align = GetPixelDataAlignmentIncrement((uint)i_cur_w, bytes_per_pixel, 4);
 
 			if(b_is_compressed)
 				data_size = ((i_cur_w + 3) / 4) * ((i_cur_h + 3) / 4) * bytes_per_pixel;
@@ -1402,8 +1471,8 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 		else
 			if (eLoadFlags & TLF_COORDS_MIRROR_CLAMP && GLEW_EXT_texture_mirror_clamp)
 			{
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_EXT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_EXT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_TO_EDGE_EXT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE_EXT);
 			}
 			else
 				{
@@ -1467,8 +1536,6 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *
 			desc.pIndexBuffer = new uint8[indexes_data_size];
 			memcpy(desc.pIndexBuffer, stDrawDesc.pIndexBuffer, indexes_data_size);
 		}
-		else
-			desc.pIndexBuffer = NULL;
 	}
 
 	prBuffer = new CCoreGeometryBuffer(this, vbos[0], vbos[1], desc, vertices_data_size, indexes_data_size, uiVerticesCount, uiIndexesCount, eMode, eType);

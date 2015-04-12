@@ -469,7 +469,7 @@ namespace DGLE
         void GetLoadFlags(out E_TEXTURE_LOAD_FLAGS eLoadFlags);
         void GetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, out uint uiDataSize, uint uiLodLevel = 0);
         void SetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiLodLevel = 0);
-        void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat);
+        void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, bool bMipMaps, E_TEXTURE_DATA_FORMAT eDataFormat);
         void GetBaseObject(out IBaseRenderObjectContainer prObj);
         void Free();
     };

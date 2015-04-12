@@ -456,12 +456,12 @@ uint32 GetCRC32(const uint8 *pData, uint32 ui32Size)
 	return crc ^ 0xFFFFFFFFUL;
 }
 
-uint8 GetDataAlignmentIncrement(uint uiLineWidth, uint8 ui8BytesPerPixel, uint8 ui8Alignment)
+uint8 GetPixelDataAlignmentIncrement(uint uiLineWidth, uint8 ui8BytesPerPixel, uint8 ui8Alignment)
 {
-	uint8 a = (uiLineWidth*ui8BytesPerPixel) % ui8Alignment;
+	const uint8 a = (uiLineWidth * ui8BytesPerPixel) % ui8Alignment;
 	
-	if ( a != 0)
-		return 4 - a;
+	if (a != 0)
+		return ui8Alignment - a;
 	else
 		return a;
 }

@@ -614,7 +614,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 		int align = 0;
 
 		if (eAlignment == CRDA_ALIGNED_BY_4)
-			align = GetDataAlignmentIncrement(uiWidth, 3, 4);
+			align = GetPixelDataAlignmentIncrement(uiWidth, 3, 4);
 
 		uint ui_line_w = uiWidth * 3 + align;
 			
@@ -662,8 +662,8 @@ uint CResourceManager::_GenerateScaleImage(const uint8 * const pDataIn, uint uiW
 
 	if (eAlignment == CRDA_ALIGNED_BY_4)
 	{
-		cur_align = GetDataAlignmentIncrement(uiWidth, bytes_per_pix, 4);
-		new_align = GetDataAlignmentIncrement(uiNewWidth, bytes_per_pix, 4);
+		cur_align = GetPixelDataAlignmentIncrement(uiWidth, bytes_per_pix, 4);
+		new_align = GetPixelDataAlignmentIncrement(uiNewWidth, bytes_per_pix, 4);
 	}
 
 	uint data_size = uiNewHeight * (uiNewWidth * bytes_per_pix + new_align);
@@ -710,7 +710,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 		i_cur_h /= 2; if (i_cur_h == 0) i_cur_h = 1;
 
 		if (eAlignment == CRDA_ALIGNED_BY_4)
-			cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
+			cur_align = GetPixelDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
 
 		data_size += i_cur_h * (i_cur_w * bytes_per_pix + cur_align);
 	}
@@ -720,7 +720,7 @@ uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiW
 	prDataOut = new uint8[data_size];
 
 	if (eAlignment == CRDA_ALIGNED_BY_4)
-		cur_align = GetDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
+		cur_align = GetPixelDataAlignmentIncrement((uint)i_cur_w, bytes_per_pix, 4);
 
 	dat_last_offset = uiHeight * (uiWidth * bytes_per_pix + cur_align);
 
@@ -1153,7 +1153,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 	if (ui_bitmap_length == 0)
 	{
-		uint8 ui8_add_bts = GetDataAlignmentIncrement(st_info_header.i32Width, 3, 4);
+		uint8 ui8_add_bts = GetPixelDataAlignmentIncrement(st_info_header.i32Width, 3, 4);
 		ui_bitmap_length = st_info_header.i32Height * (st_info_header.i32Width * 3 + ui8_add_bts);
 	}
 

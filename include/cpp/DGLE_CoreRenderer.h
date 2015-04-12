@@ -381,9 +381,9 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetType(E_TEXTURE_TYPE &eType) = 0;
 		virtual DGLE_RESULT DGLE_API GetFormat(E_TEXTURE_DATA_FORMAT &eFormat) = 0;
 		virtual DGLE_RESULT DGLE_API GetLoadFlags(E_TEXTURE_LOAD_FLAGS &eLoadFlags) = 0;
-		virtual DGLE_RESULT DGLE_API GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel = 0) = 0;
+		virtual DGLE_RESULT DGLE_API GetPixelData(uint8 *pData, uint &uiDataSize, uint uiLodLevel = 0) = 0; // Note: changes current texture
 		virtual DGLE_RESULT DGLE_API SetPixelData(const uint8 *pData, uint uiDataSize, uint uiLodLevel = 0) = 0;
-		virtual DGLE_RESULT DGLE_API Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat) = 0;
+		virtual DGLE_RESULT DGLE_API Reallocate(const uint8 *pData, uint uiWidth, uint uiHeight, bool bMipMaps, E_TEXTURE_DATA_FORMAT eDataFormat) = 0; // Note: changes current texture
 		virtual DGLE_RESULT DGLE_API GetBaseObject(IBaseRenderObjectContainer *&prObj) = 0;
 		virtual DGLE_RESULT DGLE_API Free() = 0;
 	};

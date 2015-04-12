@@ -334,7 +334,7 @@ ICoreTexture = interface(IDGLE_Base)
   function GetLoadFlags(out eLoadFlags: {E_TEXTURE_LOAD_FLAGS} cARDINAL): DGLE_RESULT; stdcall;
   function GetPixelData(pData: Pointer; out uiDataSize: Cardinal; uiLodLevel: Cardinal = 0): DGLE_RESULT; stdcall;
   function SetPixelData(const pData: Pointer; uiDataSize: Cardinal; uiLodLevel: Cardinal = 0): DGLE_RESULT; stdcall;
-  function Reallocate(const pData: Pointer; uiWidth: Cardinal; uiHeight: Cardinal; eDataFormat: E_TEXTURE_DATA_FORMAT): DGLE_RESULT; stdcall;
+  function Reallocate(const pData: Pointer; uiWidth: Cardinal; uiHeight: Cardinal; bMipMaps: Boolean; eDataFormat: E_TEXTURE_DATA_FORMAT): DGLE_RESULT; stdcall;
   function GetBaseObject(out prObj: IBaseRenderObjectContainer): DGLE_RESULT; stdcall;
   function Free(): DGLE_RESULT; stdcall;
 end;

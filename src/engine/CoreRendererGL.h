@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		20.04.2013 (c)Andrey Korotkov
+\date		12.04.2015 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -90,6 +90,7 @@ public:
 
 	inline IStateManager* pStateMan() const {return _pStateMan;} /**< \warning Never copy IStateManager* because _pStateMan may be reallocated at any time! */
 	static inline uint GetVertexSize(const TDrawDataDesc &stDesc);
+	static inline bool GetTextureGLFormat(const E_TEXTURE_DATA_FORMAT eFormat, GLenum &uiFormat, GLenum &uiInternalFormat, uint &uiBytesPerPixel);
 
 	DGLE_RESULT DGLE_API Prepare(TCrRndrInitResults &stResults);
 	DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults);
