@@ -303,7 +303,7 @@ namespace DGLE
 
         void Initialize();
         void Free();
-        void Update(UInt64 ui64DeltaTime);
+        void Update(uint uiDeltaTime);
         void Render();
         void OnEvent(E_EVENT_TYPE eEventType, IBaseEvent pEvent);
     };
@@ -1318,7 +1318,7 @@ namespace DGLE
         static FreeEngineDelegate pFreeEngine;
         static IntPtr hServer = IntPtr.Zero;
 
-        public const string _DGLE_VER_ = "2:0.3.0";
+        public const string _DGLE_VER_ = "2:0.3.5";
         public const byte _DGLE_SDK_VER_ = 1;
         public const byte _DGLE_PLUGIN_SDK_VER_ = _DGLE_SDK_VER_;
 
