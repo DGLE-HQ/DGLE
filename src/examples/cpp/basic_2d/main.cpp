@@ -52,13 +52,13 @@ void DGLE_API Init(void *pParameter)
 	
 	// for sprites part
 
-	const uint unfilitered_2d_flag = (uint)(TLF_FILTERING_NONE /* for cool old-school pixelized image */ | TLF_COORDS_CLAMP);
+	const uint unfiltered_2d_flag = (uint)(TLF_FILTERING_NONE /* for cool old-school pixelized image */ | TLF_COORDS_CLAMP);
 	p_res_man->Load(RESOURCE_PATH"textures\\cartoon_grass.tga", (IEngineBaseObject *&)pTexGrass,
-		unfilitered_2d_flag | TLF_DECREASE_QUALITY_MEDIUM /* decrease texture size to make it more pixelized */);
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_tank_body.png", (IEngineBaseObject *&)pTexTankBody, unfilitered_2d_flag);
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_tank_turret.png", (IEngineBaseObject *&)pTexTankTurret, unfilitered_2d_flag);
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_anime_girl.png", (IEngineBaseObject*&)pTexGirl, unfilitered_2d_flag);
-	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_mistery_light.jpg", (IEngineBaseObject*&)pTexLight, unfilitered_2d_flag | TLF_DECREASE_QUALITY_HIGH);
+		unfiltered_2d_flag | TLF_DECREASE_QUALITY_MEDIUM /* decrease texture size to make it more pixelized */);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_tank_body.png", (IEngineBaseObject *&)pTexTankBody, unfiltered_2d_flag);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_tank_turret.png", (IEngineBaseObject *&)pTexTankTurret, unfiltered_2d_flag);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_anime_girl.png", (IEngineBaseObject*&)pTexGirl, unfiltered_2d_flag);
+	p_res_man->Load(RESOURCE_PATH"sprites\\cartoon_mistery_light.jpg", (IEngineBaseObject*&)pTexLight, unfiltered_2d_flag | TLF_DECREASE_QUALITY_HIGH);
 
 	pTexGirl->SetFrameSize(55, 117); // set animation frame size
 	pTexLight->SetFrameSize(64, 128);
@@ -91,7 +91,7 @@ void RenderPlanetInToTexture()
 	pRender2D->SetBlendMode(BE_MASK);
 	
 	const float tex_offset_x = uiCounter / 200.f;
-	const TVertex2 quad[] = { // generate two triangles to form a quad and move their texture coordinates horizontically
+	const TVertex2 quad[] = { // generate two triangles to form a quad and move their texture coordinates horizontally
 		TVertex2(0.f, 0.f, tex_offset_x, 0.f, 1.f, 1.f, 1.f, 1.f), TVertex2(256.f, 0.f, 1.f + tex_offset_x, 0.f, 1.f, 1.f, 1.f, 1.f), TVertex2(256.f, 256.f, 1.f + tex_offset_x, 1.f, 1.f, 1.f, 1.f, 1.f),
 		TVertex2(0.f, 0.f, tex_offset_x, 0.f, 1.f, 1.f, 1.f, 1.f), TVertex2(256.f, 256.f, 1.f + tex_offset_x, 1.f, 1.f, 1.f, 1.f, 1.f), TVertex2(0.f, 256.f, 0.f + tex_offset_x, 1.f, 1.f, 1.f, 1.f, 1.f)
 	};
@@ -154,12 +154,12 @@ void DrawPrimitives(const TRectF &screen)
 	}
 
 	pRender2D->SetLineWidth(2);
-	pRender2D->SetVerticesColors(ColorAqua(), ColorFuchsia(), TColor4(), TColor4()); // ovveride per vertex color for the line
+	pRender2D->SetVerticesColors(ColorAqua(), ColorFuchsia(), TColor4(), TColor4()); // override per vertex color for the line
 	pRender2D->DrawLine(TPoint2(screen.width, 75.f), TPoint2(200.f, screen.height), TColor4(), PF_VERTICES_COLORS);
 
 	pRender2D->SetLineWidth(1);
 
-	pRender2D->SetVerticesColors(ColorGray(), ColorMagenta(), ColorOrange(), ColorViolet()); // ovveride per vertex color for the rectangle
+	pRender2D->SetVerticesColors(ColorGray(), ColorMagenta(), ColorOrange(), ColorViolet()); // override per vertex color for the rectangle
 	pRender2D->DrawRectangle(TRectF(250.f, 25.f, 125.f, 125.f), TColor4(), (E_PRIMITIVE2D_FLAGS)(PF_LINE | PF_VERTICES_COLORS));
 	
 	pRender2D->SetVerticesColors(ColorBlack(0), ColorGreen(), ColorGreen(), ColorBlack(0)); 

@@ -105,12 +105,6 @@ public:
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API SetMessage(const TWindowMessage &stWinMsg)
-	{
-		_stMessage = stWinMsg;
-		return S_OK;
-	}
-
 	DGLE_RESULT DGLE_API GetEventType(E_EVENT_TYPE &eEvType)
 	{
 		eEvType = ET_ON_WINDOW_MESSAGE;

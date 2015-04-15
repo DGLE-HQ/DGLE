@@ -31,7 +31,27 @@ namespace Basic2D
         private uint counter = 0;
         Random rand = new Random();
 
-        IntPtr pQuad, pTriangles;
+        TVertex2[] triangles = 
+	    {
+	        new TVertex2(25f, 155f, 0f, 0f, 0f, 1f, 0f, 1f),
+	        new TVertex2(25f, 50f, 0f, 0f, 1f, 0f, 0f, 1f),
+	        new TVertex2(140f, 155f, 0f, 0f, 0f, 0f, 1f, 1f)
+	    };
+
+        static float star_x = 25f, star_y = 250f;
+        TVertex2[] star_polygon = 
+	    {
+            new TVertex2(47f + star_x, 20f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(60f + star_x, 48f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(91f + star_x, 48f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(67f + star_x, 64f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(80f + star_x, 94f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(48f + star_x, 75f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(21f + star_x, 92f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(30f + star_x, 65f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(1f  + star_x, 49f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
+            new TVertex2(37f + star_x, 48f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f)
+	    };
 
         private float ToRad(float f)
         {
@@ -63,22 +83,22 @@ namespace Basic2D
             pFontHard = (IBitmapFont)pBaseObj;
 
             // for sprites part
-            const uint unfilitered_2d_flag = (uint)(E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_NONE |
-                                                     E_TEXTURE_LOAD_FLAGS.TLF_COORDS_CLAMP);
-            pResMan.Load(ResPath + "textures\\cartoon_grass.tga", out pBaseObj, unfilitered_2d_flag |
-                (uint)E_TEXTURE_LOAD_FLAGS.TLF_DECREASE_QUALITY_MEDIUM);
+            const uint unfiltered_2d_flag = (uint)(E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_NONE /* for cool old-school pixelized image */ |
+                E_TEXTURE_LOAD_FLAGS.TLF_COORDS_CLAMP);
+            pResMan.Load(ResPath + "textures\\cartoon_grass.tga", out pBaseObj, unfiltered_2d_flag |
+                (uint)E_TEXTURE_LOAD_FLAGS.TLF_DECREASE_QUALITY_MEDIUM /* decrease texture size to make it more pixelized */);
             pTexGrass = (ITexture)pBaseObj;
-            pResMan.Load(ResPath + "sprites\\cartoon_tank_body.png", out pBaseObj, unfilitered_2d_flag);
+            pResMan.Load(ResPath + "sprites\\cartoon_tank_body.png", out pBaseObj, unfiltered_2d_flag);
             pTexTankBody = (ITexture)pBaseObj;
-            pResMan.Load(ResPath + "sprites\\cartoon_tank_turret.png", out pBaseObj, unfilitered_2d_flag);
+            pResMan.Load(ResPath + "sprites\\cartoon_tank_turret.png", out pBaseObj, unfiltered_2d_flag);
             pTexTankTurret = (ITexture)pBaseObj;
-            pResMan.Load(ResPath + "sprites\\cartoon_anime_girl.png", out pBaseObj, unfilitered_2d_flag);
+            pResMan.Load(ResPath + "sprites\\cartoon_anime_girl.png", out pBaseObj, unfiltered_2d_flag);
             pTexGirl = (ITexture)pBaseObj;
-            pResMan.Load(ResPath + "sprites\\cartoon_mistery_light.jpg", out pBaseObj, unfilitered_2d_flag |
+            pResMan.Load(ResPath + "sprites\\cartoon_mistery_light.jpg", out pBaseObj, unfiltered_2d_flag |
                 (uint)E_TEXTURE_LOAD_FLAGS.TLF_DECREASE_QUALITY_HIGH);
             pTexLight = (ITexture)pBaseObj;
 
-            pTexGirl.SetFrameSize(55, 117);
+            pTexGirl.SetFrameSize(55, 117); 
             pTexLight.SetFrameSize(64, 128);
 
             // for advanced part
@@ -97,37 +117,61 @@ namespace Basic2D
             for (int i = 0; i < 11; i++)
             {
                 pResMan.Load(ResPath + "textures\\water\\water_" + i + ".tga", out pBaseObj, (uint)(E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_BILINEAR |
-                E_TEXTURE_LOAD_FLAGS.TLF_COORDS_MIRROR_REPEAT));
+                E_TEXTURE_LOAD_FLAGS.TLF_COORDS_MIRROR_REPEAT/* let's repeat the texture this way to make it little weird */));
                 pTexAnimWater[i] = (ITexture)pBaseObj;
             }
 
             pResMan.CreateTexture(out pTexPlanetRenderIn, null, 256, 256, E_TEXTURE_DATA_FORMAT.TDF_RGBA8,
                 E_TEXTURE_CREATE_FLAGS.TCF_DEFAULT, E_TEXTURE_LOAD_FLAGS.TLF_FILTERING_BILINEAR |
                 E_TEXTURE_LOAD_FLAGS.TLF_COORDS_CLAMP);
-
-            TVertex2[] triangles = 
-	        {
-	            new TVertex2(25f, 155f, 0f, 0f, 0f, 1f, 0f, 1f),
-	            new TVertex2(25f, 50f, 0f, 0f, 1f, 0f, 0f, 1f),
-	            new TVertex2(140f, 155f, 0f, 0f, 0f, 0f, 1f, 1f)
-	        };
-
-            pTriangles = Unmanaged.New<TVertex2>(triangles.Length);
-            pTriangles.Copy(triangles);
-
-            pQuad = Unmanaged.New<TVertex2>(6);
         }
 
         void Free(IntPtr pParam)
         {
-            pTriangles.Free();
-            pQuad.Free();
+
         }
 
-        void Update(IntPtr pParam)
+        void RenderPlanetInToTexture()
         {
+            TColor4 c = TColor4.ColorWhite(0); // set clear color here because SetRenderTarget will clear color buffer for us
+            pRender.SetClearColor(ref c);
+            pRender.SetRenderTarget(pTexPlanetRenderIn);
+
+            pRender2D.Begin2D();
+
+            TPoint2 pos = new TPoint2();
+            TPoint2 dim = new TPoint2(256f, 256f);
+            pRender2D.DrawTexture(pTexMask, ref pos, ref dim, 0f, E_EFFECT2D_FLAGS.EF_BLEND);
+
+            pRender2D.SetBlendMode(E_BLENDING_EFFECT.BE_MASK);
+
+            float texOffsetX = counter / 200f;
+            // generate two triangles to form a quad and move their texture coordinates horizontally
+            TVertex2[] quad =
+            {
+                new TVertex2(0f, 0f, texOffsetX, 0f, 1f, 1f, 1f, 1f), 
+                new TVertex2(256f, 0f, 1f + texOffsetX, 0f, 1f, 1f, 1f, 1f), 
+                new TVertex2(256f, 256f, 1f + texOffsetX, 1f, 1f, 1f, 1f, 1f),
+                new TVertex2(0f, 0f, texOffsetX, 0f, 1f, 1f, 1f, 1f), 
+                new TVertex2(256f, 256f, 1f + texOffsetX, 1f, 1f, 1f, 1f, 1f), 
+                new TVertex2(0f, 256f, 0f + texOffsetX, 1f, 1f, 1f, 1f, 1f)
+            };
+
+            pRender2D.DrawTriangles(pTexPlanet, ref quad[0], (uint)quad.Length, E_PRIMITIVE2D_FLAGS.PF_FILL);
+
+            pRender2D.End2D();
+
+            c = TColor4.ColorOfficialBlack();
+            pRender.SetClearColor(ref c); // set clear color back
+            pRender.SetRenderTarget(null);
+        }
+
+        void Update(IntPtr pParameter)
+        {
+            // render into the texture for advanced example part
             RenderPlanetInToTexture();
 
+            // create water polygon for advanced example part
             TRectF section_adv_rect = new TRectF(ScreenWidth / 2f, ScreenHeight / 2f,
                 ScreenWidth / 2f, ScreenHeight / 2f);
             float bottom_y = section_adv_rect.y + section_adv_rect.height;
@@ -153,41 +197,6 @@ namespace Basic2D
             ++counter;
         }
 
-        void RenderPlanetInToTexture()
-        {
-            TColor4 c = TColor4.ColorWhite(0);
-            pRender.SetClearColor(ref c);
-            pRender.SetRenderTarget(pTexPlanetRenderIn);
-
-            pRender2D.Begin2D();
-
-            TPoint2 pos = new TPoint2();
-            TPoint2 dim = new TPoint2(256f, 256f);
-            pRender2D.DrawTexture(pTexMask, ref pos, ref dim, 0f, E_EFFECT2D_FLAGS.EF_BLEND);
-
-            pRender2D.SetBlendMode(E_BLENDING_EFFECT.BE_MASK);
-
-            float texOffsetX = counter / 200f;
-            TVertex2[] quad =
-            {
-                new TVertex2(0f, 0f, texOffsetX, 0f, 1f, 1f, 1f, 1f), 
-                new TVertex2(256f, 0f, 1f + texOffsetX, 0f, 1f, 1f, 1f, 1f), 
-                new TVertex2(256f, 256f, 1f + texOffsetX, 1f, 1f, 1f, 1f, 1f),
-                new TVertex2(0f, 0f, texOffsetX, 0f, 1f, 1f, 1f, 1f), 
-                new TVertex2(256f, 256f, 1f + texOffsetX, 1f, 1f, 1f, 1f, 1f), 
-                new TVertex2(0f, 256f, 0f + texOffsetX, 1f, 1f, 1f, 1f, 1f)
-            };
-
-            pQuad.Copy(quad);
-            pRender2D.DrawTriangles(pTexPlanet, pQuad, (uint)quad.Length, E_PRIMITIVE2D_FLAGS.PF_FILL);
-
-            pRender2D.End2D();
-
-            c = TColor4.ColorOfficialBlack();
-            pRender.SetClearColor(ref c);
-            pRender.SetRenderTarget(null);
-        }
-
         void DrawPrimitives(TRectF screen)
         {
             TColor4 c;
@@ -201,7 +210,7 @@ namespace Basic2D
             c = TColor4.ColorGray();
             pRender2D.DrawRectangle(ref rect, ref c, E_PRIMITIVE2D_FLAGS.PF_FILL);
 
-            pRender2D.DrawTriangles(null, pTriangles, 3, E_PRIMITIVE2D_FLAGS.PF_FILL);
+            pRender2D.DrawTriangles(null, ref triangles[0], (uint)triangles.Length, E_PRIMITIVE2D_FLAGS.PF_FILL);
 
             for (int i = 0; i <= 12; i++)
             {
@@ -221,7 +230,7 @@ namespace Basic2D
 
             pRender2D.SetLineWidth(2);
             TColor4 c1 = TColor4.ColorAqua(), c2 = TColor4.ColorFuchsia(), c3 = new TColor4(), c4 = new TColor4();
-            pRender2D.SetVerticesColors(ref c1, ref c2, ref c3, ref c4);
+            pRender2D.SetVerticesColors(ref c1, ref c2, ref c3, ref c4); // override per vertex color for the line
             c = new TColor4();
             TPoint2 p2 = new TPoint2(screen.width, 75f);
             TPoint2 p3 = new TPoint2(200f, screen.height);
@@ -233,7 +242,7 @@ namespace Basic2D
             c2 = TColor4.ColorMagenta();
             c3 = TColor4.ColorOrange();
             c4 = TColor4.ColorViolet();
-            pRender2D.SetVerticesColors(ref c1, ref c2, ref c3, ref c4);
+            pRender2D.SetVerticesColors(ref c1, ref c2, ref c3, ref c4); // override per vertex color for the rectangle
             rect = new TRectF(250f, 25f, 125f, 125f);
             pRender2D.DrawRectangle(ref rect, ref c, (E_PRIMITIVE2D_FLAGS.PF_LINE | E_PRIMITIVE2D_FLAGS.PF_VERTICES_COLORS));
 
@@ -273,21 +282,7 @@ namespace Basic2D
             c = TColor4.ColorOrange(100);
             pRender2D.DrawEllipse(ref p2, ref p3, 64, ref c, E_PRIMITIVE2D_FLAGS.PF_FILL);
 
-            float star_x = 25f, star_y = 250f;
-            TVertex2[] star_poligon = 
-	        {
-	            new TVertex2(47f + star_x, 20f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-	            new TVertex2(60f + star_x, 48f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-	            new TVertex2(91f + star_x, 48f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-                new TVertex2(67f + star_x, 64f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-		        new TVertex2(80f + star_x, 94f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-		        new TVertex2(48f + star_x, 75f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-		        new TVertex2(21f + star_x, 92f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-		        new TVertex2(30f + star_x, 65f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-		        new TVertex2(1f  + star_x, 49f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f),
-		        new TVertex2(37f + star_x, 48f + star_y, 1f, 1f, 0.7f, 0.7f, 0f, 1f)
-	        };
-            pRender2D.DrawPolygon(null, ref star_poligon[0], 10, E_PRIMITIVE2D_FLAGS.PF_FILL);
+            pRender2D.DrawPolygon(null, ref star_polygon[0], (uint)triangles.Length, E_PRIMITIVE2D_FLAGS.PF_FILL);
         }
 
         void DrawFont(TRectF screen)
@@ -349,22 +344,23 @@ namespace Basic2D
         void DrawSprites(TRectF screen)
         {
             pTexGrass.Draw2D((int)screen.x, (int)screen.y, (uint)screen.width, (uint)screen.height, 0, 0);
-            pTexGirl.Draw2DSimple((int)(screen.x + 400), (int)(screen.y + 30), (counter / 5) % 16);
+            pTexGirl.Draw2DSimple((int)(screen.x + 400), (int)(screen.y + 30), (counter / 5) % 16); // simpliest way to draw animated sprite
 
+            // draw tank
             uint width, height;
 
-            TPoint2 scale = new TPoint2(2f, 2f);
+            TPoint2 scale = new TPoint2(2f, 2f); // scale X and Y axes by two
             pRender2D.SetScale(ref scale);
 
             pTexTankBody.GetDimensions(out width, out height);
             TPoint2 pos = new TPoint2(screen.x + 50f, screen.y + 150f);
             TPoint2 dimension = new TPoint2(width, height);
-            pRender2D.DrawTexture(pTexTankBody, ref pos, ref dimension, 0, E_EFFECT2D_FLAGS.EF_ALPHA_TEST |
+            pRender2D.DrawTexture(pTexTankBody, ref pos, ref dimension, 0, E_EFFECT2D_FLAGS.EF_ALPHA_TEST /* better than blending if we want to have sharp edges */ |
                 E_EFFECT2D_FLAGS.EF_SCALE);
 
             pTexTankTurret.GetDimensions(out width, out height);
             TPoint2 rot = new TPoint2(48f, 64f);
-            pRender2D.SetRotationPoint(ref rot);
+            pRender2D.SetRotationPoint(ref rot); // rotate turret around it's base center, not the center of the image
             TPoint2 turretCenter = new TPoint2(screen.x + 50f - 10f, screen.y + 150f + 18f);
             float turretAngle = (float)(-30f + Math.Sin(counter / 15f) * 20f);
             dimension = new TPoint2(width, height);
@@ -379,7 +375,7 @@ namespace Basic2D
                 (float)(Math.Sin(ToRad(turretAngle - 15f)) * 165f));
             pRender2D.DrawTextureSprite(pTexLight, ref pos, ref dimension, (counter / 2) % 14, 0, E_EFFECT2D_FLAGS.EF_BLEND);
 
-            pRender2D.SetBlendMode(E_BLENDING_EFFECT.BE_NORMAL);
+            pRender2D.SetBlendMode(E_BLENDING_EFFECT.BE_NORMAL); // switch back blending mode to common one
         }
 
         void DrawAdvanced(TRectF screen)
@@ -388,10 +384,12 @@ namespace Basic2D
 
             TPoint2 pos = new TPoint2(screen.x + screen.width - 160f, screen.y + 20f);
             TPoint2 dim = new TPoint2(128f, 128f);
-            pRender2D.DrawTexture(pTexPlanetRenderIn, ref pos, ref dim, 0);//, E_EFFECT2D_FLAGS.EF_BLEND | E_EFFECT2D_FLAGS.EF_FLIP_VERTICALLY);
+            pRender2D.DrawTexture(pTexPlanetRenderIn, ref pos, ref dim, 0, E_EFFECT2D_FLAGS.EF_BLEND |
+                E_EFFECT2D_FLAGS.EF_FLIP_VERTICALLY /* because render targets are flipped */);
 
             pRender2D.SetBlendMode(E_BLENDING_EFFECT.BE_ADD);
 
+            // not to triangulate complex polygon every frame we can batch it this way and triangulation will be done only after update tick
             pRender2D.BeginBatch(false);
             pRender2D.DrawPolygon(pTexAnimWater[counter / 5 % 11], ref waterWaves.ToArray()[0], (uint)waterWaves.Count,
                 E_PRIMITIVE2D_FLAGS.PF_FILL);
@@ -421,60 +419,61 @@ namespace Basic2D
                 E_EFFECT2D_FLAGS.EF_COLOR_MIX);
         }
 
-        void Render(IntPtr pParam)
+        void Render(IntPtr pParameter)
         {
             TRectF sectionRect;
             uint txt_w, txt_h;
-            TColor4 c = TColor4.ColorWhite(); ;
+            TColor4 white = TColor4.ColorWhite(); ;
 
             pRender2D.Begin2D();
 
             // First section with primitives. //
             sectionRect = new TRectF(0f, 0f, ScreenWidth / 2f, ScreenHeight / 2f);
-            pRender.EnableScissor(ref sectionRect);
+            pRender.EnableScissor(ref sectionRect); // here and below scissor test is used to prevent drawing something to another section of the screen
 
-            DrawPrimitives(sectionRect);
-            pRender2D.DrawRectangle(ref sectionRect, ref c, E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+            DrawPrimitives(sectionRect); 
+            pRender2D.DrawRectangle(ref sectionRect, ref white); 
 
             const string txtSec1 = "Primitives";
             pFont.GetTextDimensions(txtSec1, out txt_w, out txt_h);
-            pFont.Draw2DSimple((int)((ScreenWidth / 2 - txt_w) / 2), (int)(ScreenHeight / 2 - txt_h), txtSec1, ref c);
+            // here and below draw section label near the end of each section
+            pFont.Draw2DSimple((int)((ScreenWidth / 2 - txt_w) / 2), (int)(ScreenHeight / 2 - txt_h), txtSec1, ref white);
 
             // Second section with font rendering. //
             sectionRect = new TRectF(ScreenWidth / 2f, 0f, ScreenWidth / 2f, ScreenHeight / 2f);
             pRender.EnableScissor(ref sectionRect);
 
             DrawFont(sectionRect);
-            pRender2D.DrawRectangle(ref sectionRect, ref c, E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+            pRender2D.DrawRectangle(ref sectionRect, ref white);
 
             const string txtSec2 = "Fonts";
             pFont.GetTextDimensions(txtSec2, out txt_w, out txt_h);
             pFont.Draw2DSimple((int)(ScreenWidth / 2 + (ScreenWidth / 2 - txt_w) / 2),
-                (int)(ScreenHeight / 2 - txt_h), txtSec2, ref c);
+                (int)(ScreenHeight / 2 - txt_h), txtSec2, ref white);
 
             // Third section with sprites. //
             sectionRect = new TRectF(0f, ScreenHeight / 2f, ScreenWidth / 2f, ScreenHeight / 2f);
             pRender.EnableScissor(ref sectionRect);
 
             DrawSprites(sectionRect);
-            pRender2D.DrawRectangle(ref sectionRect, ref c, E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+            pRender2D.DrawRectangle(ref sectionRect, ref white);
 
             const string txtSec3 = "Sprites";
             pFont.GetTextDimensions(txtSec3, out txt_w, out txt_h);
-            pFont.Draw2DSimple((int)((ScreenWidth / 2 - txt_w) / 2f), (int)(ScreenHeight - txt_h - 25), txtSec3, ref c);
+            pFont.Draw2DSimple((int)((ScreenWidth / 2 - txt_w) / 2f), (int)(ScreenHeight - txt_h - 25), txtSec3, ref white);
 
             // Fourth section with advanced techniques. //
             sectionRect = new TRectF(ScreenWidth / 2f, ScreenHeight / 2f, ScreenWidth / 2f, ScreenHeight / 2f);
             pRender.EnableScissor(ref sectionRect);
 
             DrawAdvanced(sectionRect);
-            pRender2D.DrawRectangle(ref sectionRect, ref c, E_PRIMITIVE2D_FLAGS.PF_DEFAULT);
+            pRender2D.DrawRectangle(ref sectionRect, ref white);
 
             const string txtSec4 = "Advanced";
             pFont.GetTextDimensions(txtSec4, out txt_w, out txt_h);
-            pFont.Draw2DSimple((int)(ScreenWidth / 2 + (ScreenWidth / 2 - txt_w) / 2f), (int)(ScreenHeight - txt_h - 25), txtSec4, ref c);
+            pFont.Draw2DSimple((int)(ScreenWidth / 2 + (ScreenWidth / 2 - txt_w) / 2f), (int)(ScreenHeight - txt_h - 25), txtSec4, ref white);
 
-            pRender.DisableScissor();
+            pRender.DisableScissor(); // The way to turn off scissor test, you must do it manually before the end of the frame.
 
             pRender2D.End2D();
         }
@@ -483,8 +482,7 @@ namespace Basic2D
         {
             if (Engine.GetEngine(DllPath, out pEngineCore))
             {
-                //multisampling will smooth lines and primitive edges
-                var win = new TEngineWindow(ScreenWidth, ScreenHeight, false, false, E_MULTISAMPLING_MODE.MM_4X);
+                var win = new TEngineWindow(ScreenWidth, ScreenHeight, false, false, E_MULTISAMPLING_MODE.MM_4X /* multisampling will smooth lines and primitive edges */ );
                 pEngineCore.InitializeEngine(IntPtr.Zero, AppCaption, ref win);
 
                 pEngineCore.ConsoleVisible(false);

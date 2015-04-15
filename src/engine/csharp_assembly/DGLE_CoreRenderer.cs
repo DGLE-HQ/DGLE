@@ -88,7 +88,7 @@ namespace DGLE
     };
 
     /* For future needs.
-    enum E_STENCIL_OPERATION
+    public enum E_STENCIL_OPERATION
     {
         SO_KEEP = 0,
         SO_ZERO,
@@ -98,7 +98,7 @@ namespace DGLE
         SO_DECR
     };
 
-    enum E_BLEND_OPERATION
+    public enum E_BLEND_OPERATION
     {
         BO_ADD = 0,
         BO_SUBTRACT,
@@ -467,9 +467,9 @@ namespace DGLE
 
         void GetFormat(out E_TEXTURE_DATA_FORMAT eFormat);
         void GetLoadFlags(out E_TEXTURE_LOAD_FLAGS eLoadFlags);
-        void GetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, out uint uiDataSize, uint uiLodLevel = 0);
+        void GetPixelData([MarshalAs(UnmanagedType.LPArray)] out byte[] pData, out uint uiDataSize, uint uiLodLevel = 0);
         void SetPixelData([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiDataSize, uint uiLodLevel = 0);
-        void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, bool bMipMaps, E_TEXTURE_DATA_FORMAT eDataFormat);
+        void Reallocate([MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, [MarshalAs(UnmanagedType.U1)] bool bMipMaps, E_TEXTURE_DATA_FORMAT eDataFormat);
         void GetBaseObject(out IBaseRenderObjectContainer prObj);
         void Free();
     };
@@ -537,7 +537,7 @@ namespace DGLE
         void SetRenderTarget(ICoreTexture pTexture);
         void GetRenderTarget(out ICoreTexture prTexture);
         void CreateTexture(out ICoreTexture prTex, [MarshalAs(UnmanagedType.LPArray)] byte[] pData, uint uiWidth, uint uiHeight, [MarshalAs(UnmanagedType.U1)] bool bMipmapsPresented, E_CORE_RENDERER_DATA_ALIGNMENT eDataAlignment, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_LOAD_FLAGS eLoadFlags);
-        void CreateGeometryBuffer(out ICoreGeometryBuffer prBuffer, TDrawDataDesc stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType);
+        void CreateGeometryBuffer(out ICoreGeometryBuffer prBuffer, ref TDrawDataDesc stDrawDesc, uint uiVerticesCount, uint uiIndexesCount, E_CORE_RENDERER_DRAW_MODE eMode, E_CORE_RENDERER_BUFFER_TYPE eType);
         void ToggleStateFilter([MarshalAs(UnmanagedType.U1)] bool bEnabled);
         void InvalidateStateFilter();
         void PushStates();
@@ -546,15 +546,15 @@ namespace DGLE
         void GetMatrix(out TMatrix4x4 stMatrix, E_MATRIX_TYPE eMatType = E_MATRIX_TYPE.MT_MODELVIEW);
         void Draw(ref TDrawDataDesc stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
         void DrawBuffer(ICoreGeometryBuffer pBuffer);
-        void SetColor(TColor4 stColor);
+        void SetColor(ref TColor4 stColor);
         void GetColor(out TColor4 stColor);
         void ToggleBlendState([MarshalAs(UnmanagedType.U1)] bool bEnabled);
         void ToggleAlphaTestState([MarshalAs(UnmanagedType.U1)] bool bEnabled);
-        void SetBlendState(TBlendStateDesc stState);
+        void SetBlendState(ref TBlendStateDesc stState);
         void GetBlendState(out TBlendStateDesc stState);
-        void SetDepthStencilState(TDepthStencilDesc stState);
+        void SetDepthStencilState(ref TDepthStencilDesc stState);
         void GetDepthStencilState(out TDepthStencilDesc stState);
-        void SetRasterizerState(TRasterizerStateDesc stState);
+        void SetRasterizerState(ref TRasterizerStateDesc stState);
         void GetRasterizerState(out TRasterizerStateDesc stState);
         void BindTexture(ICoreTexture pTex, uint uiTextureLayer);
         void GetBindedTexture(out ICoreTexture prTex, uint uiTextureLayer);
