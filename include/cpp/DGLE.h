@@ -1257,8 +1257,10 @@ namespace DGLE
 	class ISoundSample : public IEngineBaseObject
 	{
 	public:
-		virtual DGLE_RESULT DGLE_API Play() = 0;
+		virtual DGLE_RESULT DGLE_API Play(int iPan = 0) = 0;
 		virtual DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = SSP_NONE) = 0; //pSndChnl must be checked on null
+		virtual DGLE_RESULT DGLE_API SetVolume(uint uiVolume) = 0;
+		virtual DGLE_RESULT DGLE_API GetVolume(uint &uiVolume) = 0;
 	};
 
 	//Music interface//

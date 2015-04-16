@@ -802,8 +802,10 @@ StreamCallbackFunc = function(pParameter: Pointer; ui32DataPos: Cardinal; pBuffe
   ISoundSample = interface(IEngineBaseObject)
   ['{30DD8C94-D3FA-40cf-9C49-649211424919}']
 
-    function Play(): DGLE_RESULT; stdcall;
+    function Play(iPan: Integer = 0): DGLE_RESULT; stdcall;
     function PlayEx(out pSndChnl: ISoundChannel; eFlags: {E_SOUND_SAMPLE_PARAMS}Integer = SSP_NONE): DGLE_RESULT; stdcall; //pSndChnl must be checked on nul
+    function SetVolume(uiVolume: Cardinal): DGLE_RESULT; stdcall;
+    function GetVolume(out uiVolume: Cardinal): DGLE_RESULT; stdcall;
 
   end;
 

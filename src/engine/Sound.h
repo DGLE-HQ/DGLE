@@ -134,7 +134,7 @@ class CSound: private CBaseSound, public ISound
 	bool _bInited, _bPaused;
 	uint _uiBufferSize;
 	float _fMasterVolume;
-	int _iProfilerState;
+	int _iProfilerState, _iMuteState;
 	volatile uint64 _ui64MixDelay;
 
 	CChannel _clChannels[_sc_uiMaxChannels];

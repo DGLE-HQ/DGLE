@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		05.10.2014 (c)Korotkov Andrey
+\date		16.04.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -361,11 +361,12 @@ DGLE_RESULT DGLE_API CChannel::Unaquire()
 // CSound //
 
 CSound::CSound(uint uiInstIdx):
-CBaseSound(uiInstIdx), _bPaused(false), _fMasterVolume(1.f), _iProfilerState(0)
+CBaseSound(uiInstIdx), _bPaused(false), _fMasterVolume(1.f), _iProfilerState(0), _iMuteState(0)
 {
 	_bInited = OpenDevice(_sc_uiSamplesPerSec, _sc_uiBitsPerSample, true, _uiBufferSize, &_s_StreamToDeviceCallback, this);
 
 	Console()->RegComVar("snd_profiler", "Displays sound subsystems profiler.", &_iProfilerState, 0, 1);
+	Console()->RegComVar("snd_mute", "Mutes all sound channels.", &_iMuteState, 0, 1);
 	
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
 
@@ -377,6 +378,7 @@ CBaseSound(uiInstIdx), _bPaused(false), _fMasterVolume(1.f), _iProfilerState(0)
 
 CSound::~CSound()
 {
+	Console()->UnRegCom("snd_mute");
 	Console()->UnRegCom("snd_profiler");
 
 	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
@@ -438,6 +440,8 @@ void CSound::_MixSoundChannels(TSoundFrame *frames, uint uiFramesCount)
 {
 	_ui64MixDelay = GetPerfTimer();
 
+	const float master_volume = _iMuteState == 0 ? _fMasterVolume : 0.f;
+
 	memset(frames, 0, sizeof(TSoundFrame) * uiFramesCount);
 
 	if (!_bPaused)
@@ -447,7 +451,7 @@ void CSound::_MixSoundChannels(TSoundFrame *frames, uint uiFramesCount)
 				_clChannels[i].StreamData();
 
 				for (uint j = 0; j < uiFramesCount; ++j)
-					frames[j] += _clChannels[i].NextFrame(_fMasterVolume);
+					frames[j] += _clChannels[i].NextFrame(master_volume);
 			}
 
 	_ui64MixDelay = GetPerfTimer() - _ui64MixDelay;

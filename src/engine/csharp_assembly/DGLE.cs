@@ -1162,8 +1162,10 @@ namespace DGLE
         new void GetUnknownType(out uint uiObjUnknownType);
         #endregion
 
-        void Play();
+        void Play(int iPan);
         void PlayEx(out ISoundChannel pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags = E_SOUND_SAMPLE_PARAMS.SSP_NONE); //pSndChnl must be checked on nul
+        void SetVolume(UInt32 uiVolume);
+        void GetVolume(out UInt32 uiVolume);
     };
 
     public interface IMusic : IEngineBaseObject

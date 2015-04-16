@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.10.2014 (c)Korotkov Andrey
+\date		16.04.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -61,9 +61,11 @@ public:
 class CSSampleDummy: public ISoundSample
 {
 public:
-	DGLE_RESULT DGLE_API Play(){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API Play(int iPan){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags){pSndChnl = (ISoundChannel*)new CSoundChannelDummy; return E_NOTIMPL;}
-	
+	DGLE_RESULT DGLE_API SetVolume(uint uiVolume){return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume = 0; return E_NOTIMPL;}
+
 	DGLE_RESULT DGLE_API Free(){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType){eObjType = EOT_SOUND_SAMPLE; return S_OK;}
 	DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType){uiObjUnknownType = -1; return S_FALSE;}
@@ -114,8 +116,9 @@ public:
 
 class CSoundSample: public CInstancedObj, public ISoundSample
 {
-	uint _uiSamplesPerSec;
-	uint _uiBitsPerSample;
+	uint _uiSamplesPerSec,
+		_uiBitsPerSample,
+		_uiVolume;
 	bool _bStereo;
 	const uint8 *_pData;
 	uint32 _ui32DataSize;
@@ -123,7 +126,7 @@ class CSoundSample: public CInstancedObj, public ISoundSample
 public:
 
 	CSoundSample(uint uiInstIdx, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize):
-	CInstancedObj(uiInstIdx), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(uiBitsPerSample),
+	CInstancedObj(uiInstIdx), _uiSamplesPerSec(uiSamplesPerSec), _uiBitsPerSample(uiBitsPerSample), _uiVolume(100),
 	_bStereo(bStereo), _pData(pData), _ui32DataSize(ui32DataSize)
 	{}
 
@@ -133,17 +136,19 @@ public:
 		delete[] _pData;
 	}
 
-	DGLE_RESULT DGLE_API Play()
+	DGLE_RESULT DGLE_API Play(int iPan)
 	{
 		if (!Core()->pSound())
 			return E_ABORT;
 
 		ISoundChannel *p_chnl;
 		
-		DGLE_RESULT res = Core()->pSound()->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+		const DGLE_RESULT res = Core()->pSound()->CreateChannel(p_chnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
 
 		if (SUCCEEDED(res))
 		{
+			p_chnl->SetPan(iPan);
+			p_chnl->SetVolume(_uiVolume);
 			p_chnl->Play(false);
 			p_chnl->Unaquire();
 		}
@@ -159,14 +164,38 @@ public:
 			return E_ABORT;
 		}
 
-		DGLE_RESULT res = Core()->pSound()->CreateChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
+		const DGLE_RESULT res = Core()->pSound()->CreateChannel(pSndChnl, _uiSamplesPerSec, _uiBitsPerSample, _bStereo, _pData, _ui32DataSize);
 
 		if (SUCCEEDED(res))
+		{
+			pSndChnl->SetVolume(_uiVolume);
 			pSndChnl->Play((bool)(eFlags & SSP_LOOPED));
+		}
 
 		return res;
 	}
 	
+	DGLE_RESULT DGLE_API SetVolume(uint uiVolume)
+	{
+		DGLE_RESULT res = S_OK;
+
+		if (uiVolume > 100)
+		{
+			uiVolume = 100;
+			res = S_FALSE;
+		}
+
+		_uiVolume = uiVolume;
+
+		return res;
+	}
+
+	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume)
+	{
+		uiVolume = _uiVolume;
+		return S_OK;
+	}
+
 	IENGINE_BASE_OBJECT_IMPLEMENTATION(EOT_SOUND_SAMPLE)
 	IDGLE_BASE_IMPLEMENTATION(ISoundSample, INTERFACE_IMPL(IEngineBaseObject, INTERFACE_IMPL_END))
 };
