@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Andrey Korotkov")]
 [assembly: AssemblyProduct("DGLESharp")]
-[assembly: AssemblyCopyright("Copyright © Andrey Korotkov 2012")]
+[assembly: AssemblyCopyright("Copyright © Andrey Korotkov 2015")]
 [assembly: AssemblyTrademark("DGLE")]
 [assembly: AssemblyCulture("")]
 

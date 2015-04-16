@@ -55,7 +55,7 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 		pack.read((char*)data, meta[0]);
 
 		_clInfoTable.resize(meta[1]);
-		pack.read((char *)&_clInfoTable[0], meta[1] * sizeof(TDCPFileInfo));
+		pack.read((char*)&_clInfoTable[0], meta[1] * sizeof(TDCPFileInfo));
 
 		pack.close();
 
@@ -139,7 +139,7 @@ bool CDCPPackager::Save(const string &strFileName)
 	for (size_t i = 0; i < _clInfoTable.size(); ++i)
 	{
 		_clInfoTable[i].ui32Offset = size;
-		pack.write((char *)_data[i], _clInfoTable[i].ui32CmprsdSize);
+		pack.write((char*)_data[i], _clInfoTable[i].ui32CmprsdSize);
 		size += _clInfoTable[i].ui32CmprsdSize;
 	}
 
@@ -194,7 +194,7 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 	
 	file.seekg(0, ios_base::beg);
 	uint8 *dat = new uint8[size];
-	file.read((char *)dat, size);
+	file.read((char*)dat, size);
 	
 	file.close();
 
@@ -216,6 +216,8 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 	_data.push_back(cmprsd_buffer);
 
 	TDCPFileInfo info;
+
+	memset(&info, 0, sizeof(TDCPFileInfo));
 
 	info.ui32CRC32 = GetCRC32((uint8*)file_name.c_str(), file_name.size());
 	info.ui32Size = size;
