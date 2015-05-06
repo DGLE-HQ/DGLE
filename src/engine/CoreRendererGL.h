@@ -93,7 +93,7 @@ public:
 	static inline bool GetTextureGLFormat(const E_TEXTURE_DATA_FORMAT eFormat, GLenum &uiFormat, GLenum &uiInternalFormat, uint &uiBytesPerPixel);
 
 	DGLE_RESULT DGLE_API Prepare(TCrRndrInitResults &stResults);
-	DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults);
+	DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults, TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eInitFlags);
 	DGLE_RESULT DGLE_API Finalize();
 	DGLE_RESULT DGLE_API AdjustMode(TEngineWindow &stNewWin);
 	DGLE_RESULT DGLE_API MakeCurrent();

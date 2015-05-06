@@ -417,7 +417,7 @@ namespace DGLE
 	public:
 		//Must not be called by user
 		virtual DGLE_RESULT DGLE_API Prepare(TCrRndrInitResults &stResults) = 0;
-		virtual DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults) = 0;
+		virtual DGLE_RESULT DGLE_API Initialize(TCrRndrInitResults &stResults, TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eInitFlags) = 0;
 		virtual DGLE_RESULT DGLE_API Finalize() = 0;
 		virtual DGLE_RESULT DGLE_API AdjustMode(TEngineWindow &stNewWin) = 0;
 		//

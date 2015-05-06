@@ -20,13 +20,14 @@ class CBaseRendererGL : public CInstancedObj, public CPlatformBaseRenderGL
 {
 	HGLRC _hRC;
 	TWindowDrawHandle _hDC;
+	E_MULTISAMPLING_MODE _eMultisampling;
 
 public:
 	
 	CBaseRendererGL(uint uiInstIdx);
 
 	bool Prepare();
-	bool Initialize();
+	bool Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eInitFlags);
 	bool Finalize();
 	bool AdjustMode(TEngineWindow &stNewWin);
 	bool MakeCurrent();

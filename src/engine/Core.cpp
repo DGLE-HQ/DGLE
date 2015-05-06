@@ -1265,7 +1265,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 
 		_pMainFS = new CMainFileSystem(InstIdx());
 
-		if (FAILED(_pCoreRenderer->Initialize(rnd_init_res)))
+		if (FAILED(_pCoreRenderer->Initialize(rnd_init_res, _stWin, _eInitFlags)))
 			return E_ABORT;
 
 		_pRender = new CRender(InstIdx());

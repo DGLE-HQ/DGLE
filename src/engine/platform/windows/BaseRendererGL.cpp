@@ -23,7 +23,7 @@ bool CBaseRendererGL::Prepare()
 	return true;
 }
 
-bool CBaseRendererGL::Initialize()
+bool CBaseRendererGL::Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eInitFlags)
 {
 	PIXELFORMATDESCRIPTOR pfd=				
 	{
@@ -33,7 +33,7 @@ bool CBaseRendererGL::Initialize()
 		PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
 		PFD_DOUBLEBUFFER,							// Must Support Double Buffering
 		PFD_TYPE_RGBA,								// Request An RGBA Format
-		(Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR) ? 16 : 24,// Select Our Color Bits
+		(eInitFlags & EIF_FORCE_16_BIT_COLOR) ? 16 : 24,// Select Our Color Bits
 		0, 0, 0, 0, 0, 0,							// Per Color Bits and Shifts Ignored
 		8,											// Alpha Bits
 		0,											// Shift Bit Ignored
@@ -49,7 +49,7 @@ bool CBaseRendererGL::Initialize()
 
 	int pixel_format = NULL;
 
-	if (Core()->EngWindow()->eMultisampling != MM_NONE)
+	if (stWin.eMultisampling != MM_NONE)
 	{
 		HWND	temp_win_handle	= NULL;
 		HDC		temp_win_dc		= NULL;
@@ -65,7 +65,7 @@ bool CBaseRendererGL::Initialize()
 		!wglMakeCurrent(temp_win_dc, temp_win_rc)
 		)
 		{
-			Core()->EngWindow()->eMultisampling = MM_NONE;
+			stWin.eMultisampling = MM_NONE;
 			LOG("Error(s) while performing OpenGL MSAA preinit routine.", LT_ERROR);
 		}
 		else
@@ -77,13 +77,13 @@ bool CBaseRendererGL::Initialize()
 					WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
 					WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
 					WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-					WGL_COLOR_BITS_ARB, (Core()->InitFlags() & EIF_FORCE_16_BIT_COLOR) ? 16 : 24,
+					WGL_COLOR_BITS_ARB, (eInitFlags & EIF_FORCE_16_BIT_COLOR) ? 16 : 24,
 					WGL_ALPHA_BITS_ARB, 8,
 					WGL_DEPTH_BITS_ARB, 24,
 					WGL_STENCIL_BITS_ARB, 8,
 					WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
 					WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
-					WGL_SAMPLES_ARB, (int)Core()->EngWindow()->eMultisampling * 2,
+					WGL_SAMPLES_ARB, (int)stWin.eMultisampling * 2,
 					0, 0
 				};
 
@@ -99,12 +99,12 @@ bool CBaseRendererGL::Initialize()
 					pixel_format = tmp_pixel_format;
 				else
 				{
-					LOG("Can't find suitable PixelFormat with required MSAA " + IntToStr((int)Core()->EngWindow()->eMultisampling * 2) + "X support.", LT_WARNING);
-					Core()->EngWindow()->eMultisampling = MM_NONE;
+					LOG("Can't find suitable PixelFormat with required MSAA " + IntToStr((int)stWin.eMultisampling * 2) + "X support.", LT_WARNING);
+					stWin.eMultisampling = MM_NONE;
 				}
 			}
 			else
-				Core()->EngWindow()->eMultisampling = MM_NONE;
+				stWin.eMultisampling = MM_NONE;
 		}
 
 		if (
@@ -115,6 +115,8 @@ bool CBaseRendererGL::Initialize()
 		)
 			LOG("Can't free resources after performing OpenGL MSAA preinit routine.", LT_WARNING);
 	}
+
+	_eMultisampling = stWin.eMultisampling;
 
 	Core()->pMainWindow()->GetDrawContext(_hDC);
 
@@ -182,7 +184,7 @@ bool CBaseRendererGL::AdjustMode(TEngineWindow &stNewWin)
 {
 	bool res = true;
 
-	if (Core()->EngWindow()->eMultisampling != stNewWin.eMultisampling)
+	if (_eMultisampling != stNewWin.eMultisampling)
 	{
 		res = false;
 
@@ -193,7 +195,7 @@ bool CBaseRendererGL::AdjustMode(TEngineWindow &stNewWin)
 		}
 		else
 		{
-			stNewWin.eMultisampling = Core()->EngWindow()->eMultisampling;
+			stNewWin.eMultisampling = _eMultisampling;
 			LOG("Changing MSAA samples count after initialization is not allowed.", LT_WARNING);
 		}
 	}

@@ -662,14 +662,14 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Prepare(TCrRndrInitResults &stResults)
 	return stResults = CBaseRendererGL::Prepare(), stResults ? S_OK : E_FAIL;
 }
 
-DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults)
+DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eInitFlags)
 {
 	if (_stInitResults)
 		return E_ABORT;
 
 	LOG("Initializing Core Renderer...", LT_INFO);
 
-	stResults = CBaseRendererGL::Initialize();
+	stResults = CBaseRendererGL::Initialize(stWin, eInitFlags);
 
 	if (!stResults)
 		return E_ABORT;
