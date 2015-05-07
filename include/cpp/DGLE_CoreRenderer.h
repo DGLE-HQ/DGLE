@@ -28,8 +28,8 @@ namespace DGLE
 		/*  For future needs.
 		CRT_OPENGL_4_1,
 		CRT_OPENGL_ES_1_1,
-		CRT_OPENGL_ES_2_0,
-		CRT_DIRECT_3D_9_0c,
+		CRT_OPENGL_ES_2_0*/,
+		CRT_DIRECT_3D_9_0c/*,
 		CRT_DIRECT_3D_11
 		*/
 	};
