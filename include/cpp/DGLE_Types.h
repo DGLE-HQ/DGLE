@@ -440,17 +440,17 @@ namespace DGLE
 			r = ubR / 255.f; g = ubG / 255.f; b = ubB / 255.f; a = ubA / 255.f;
 		}
 
-		inline uint32 ColorRGB()
+		inline uint32 ColorRGB() const
 		{
 			return RGB(255 * r, 255 * g, 255 * b);
 		}
 
-		inline uint32 ColorRGBA()
+		inline uint32 ColorRGBA() const
 		{
 			return RGBA(255 * r, 255 * g, 255 * b, 255 * a);
 		}
 
-		inline operator uint32()
+		inline operator uint32() const
 		{
 			return RGBA(255 * r, 255 * g, 255 * b, 255 * a);
 		}
