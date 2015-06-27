@@ -53,7 +53,7 @@ namespace DGLE
 		CRFT_GEOMETRY_BUFFER,
 		CRFT_FRAME_BUFFER
 	};
-	
+
 	enum E_MATRIX_TYPE
 	{
 		MT_PROJECTION = 0,
@@ -96,21 +96,21 @@ namespace DGLE
 	/* For future needs.
 	enum E_STENCIL_OPERATION
 	{
-		SO_KEEP = 0,
-		SO_ZERO,
-		SO_REPLACE,
-		SO_INVERT,
-		SO_INCR,
-		SO_DECR
+	SO_KEEP = 0,
+	SO_ZERO,
+	SO_REPLACE,
+	SO_INVERT,
+	SO_INCR,
+	SO_DECR
 	};
 
 	enum E_BLEND_OPERATION
 	{
-		BO_ADD = 0,
-		BO_SUBTRACT,
-		BO_REV_SUBTRACT,
-		BO_MIN,
-		BO_MAX
+	BO_ADD = 0,
+	BO_SUBTRACT,
+	BO_REV_SUBTRACT,
+	BO_MIN,
+	BO_MAX
 	};
 	*/
 
@@ -124,7 +124,7 @@ namespace DGLE
 		BF_DST_ALPHA,
 		BF_ONE_MINUS_SRC_COLOR,
 		BF_ONE_MINUS_SRC_ALPHA
-		
+
 		/* For future needs.
 		BF_ONE_MINUS_DST_COLOR,
 		BF_ONE_MINUS_DST_ALPHA,
@@ -152,11 +152,11 @@ namespace DGLE
 	enum ENUM_FORWARD_DECLARATION(E_CORE_RENDERER_DRAW_MODE)
 	{
 		CRDM_POINTS = 0,
-		CRDM_LINES,
-		CRDM_TRIANGLES,
-		CRDM_LINE_STRIP,
-		CRDM_TRIANGLE_STRIP,
-		CRDM_TRIANGLE_FAN
+			CRDM_LINES,
+			CRDM_TRIANGLES,
+			CRDM_LINE_STRIP,
+			CRDM_TRIANGLE_STRIP,
+			CRDM_TRIANGLE_FAN
 	};
 
 	enum E_ATTRIBUTE_DATA_TYPE
@@ -185,30 +185,30 @@ namespace DGLE
 	struct TBlendStateDesc
 	{
 		bool bEnabled;
-		
+
 		E_BLEND_FACTOR eSrcFactor;
 		E_BLEND_FACTOR eDstFactor;
-		
+
 		/* For future needs.
 		E_BLEND_OPERATION eOperation;
-		
+
 		bool bSeparate;
 		E_BLEND_FACTOR eSrcAlpha;
 		E_BLEND_FACTOR eDstAlpha;
 		E_BLEND_OPERATION eOpAlpha;
 		*/
-		TBlendStateDesc():
-		bEnabled(false), eSrcFactor(BF_SRC_ALPHA), eDstFactor(BF_ONE_MINUS_SRC_ALPHA)
+		TBlendStateDesc() :
+			bEnabled(false), eSrcFactor(BF_SRC_ALPHA), eDstFactor(BF_ONE_MINUS_SRC_ALPHA)
 		{}
 	};
 
 	/* For future needs.
 	struct TStencilFaceDesc
 	{
-		E_STENCIL_OPERATION eStencilFailOp;
-		E_STENCIL_OPERATION eStencilDepthFailOp;
-		E_STENCIL_OPERATION eStencilPassOp;
-		E_COMPARISON_FUNC eStencilFunc;
+	E_STENCIL_OPERATION eStencilFailOp;
+	E_STENCIL_OPERATION eStencilDepthFailOp;
+	E_STENCIL_OPERATION eStencilPassOp;
+	E_COMPARISON_FUNC eStencilFunc;
 	};
 	*/
 
@@ -217,7 +217,7 @@ namespace DGLE
 		bool bDepthTestEnabled;
 		bool bWriteToDepthBuffer;
 		E_COMPARISON_FUNC eDepthFunc;
-		
+
 		/* For future needs.
 		bool bStencilEnabled;
 		uint8 ui8StencilReadMask;
@@ -225,24 +225,24 @@ namespace DGLE
 		TStencilFaceDesc stFrontFace, stBackFace;
 		*/
 
-		TDepthStencilDesc():
-		bDepthTestEnabled(true), bWriteToDepthBuffer(true), eDepthFunc(CF_LESS_EQUAL)
+		TDepthStencilDesc() :
+			bDepthTestEnabled(true), bWriteToDepthBuffer(true), eDepthFunc(CF_LESS_EQUAL)
 		{}
 	};
 
 	struct TRasterizerStateDesc
 	{
 		bool bWireframe;
-		
+
 		E_POLYGON_CULL_MODE eCullMode;
 		bool bFrontCounterClockwise;
-		
+
 		bool bScissorEnabled;
-		
+
 		bool bAlphaTestEnabled;
 		E_COMPARISON_FUNC eAlphaTestFunc;
 		float fAlphaTestRefValue;
-		
+
 		/* For future needs.
 		int iDepthBias;
 		float fDepthBiasClamp;
@@ -250,9 +250,9 @@ namespace DGLE
 		bool bDepthClipEnabled;
 		*/
 
-		TRasterizerStateDesc():
-		bWireframe(false), eCullMode(PCM_NONE), bFrontCounterClockwise(true), bScissorEnabled(false),
-		bAlphaTestEnabled(false), eAlphaTestFunc(CF_GREATER), fAlphaTestRefValue(0.25f)
+		TRasterizerStateDesc() :
+			bWireframe(false), eCullMode(PCM_NONE), bFrontCounterClockwise(true), bScissorEnabled(false),
+			bAlphaTestEnabled(false), eAlphaTestFunc(CF_GREATER), fAlphaTestRefValue(0.25f)
 		{}
 	};
 
@@ -264,7 +264,7 @@ namespace DGLE
 		E_ATTRIBUTE_COMPONENTS_COUNT eAttribCompsCount[8];
 
 		TDrawDataAttributes()
-		//:uiAttribStride(), eAttribDataType(), eAttribCompsCount()
+			//:uiAttribStride(), eAttribDataType(), eAttribCompsCount()
 		{
 			uiAttribOffset[0] = uiAttribOffset[1] = uiAttribOffset[2] = uiAttribOffset[3] =
 				uiAttribOffset[4] = uiAttribOffset[5] = uiAttribOffset[6] = uiAttribOffset[7] = -1;
@@ -274,43 +274,43 @@ namespace DGLE
 	struct TDrawDataDesc
 	{
 		uint8 *pData; //Must be start of the vertex data. 2 or 3 floats
-		
+
 		uint uiVertexStride;
 		bool bVertices2D;
-		
+
 		uint uiNormalOffset; //3 floats
 		uint uiNormalStride;
-		
+
 		uint uiTextureVertexOffset; //2 floats
 		uint uiTextureVertexStride;
-		
+
 		uint uiColorOffset; //4 floats
 		uint uiColorStride;
-		
+
 		/*not implemeted*/ uint uiTangentOffset, uiBinormalOffset; //6 floats, 3 for tangent and 3 for binormal
 		/*not implemeted*/ uint uiTangentStride, uiBinormalStride;
-		
+
 		/*not implemeted*/ TDrawDataAttributes *pAttribs;
-		
+
 		uint8 *pIndexBuffer; //May point to separate memory. uint16 or uint32 data pointer.
 		bool bIndexBuffer32;
 
-		inline TDrawDataDesc():
-		pData(NULL), uiVertexStride(0), bVertices2D(false),
-		uiNormalOffset(-1), uiNormalStride(0),
-		uiTextureVertexOffset(-1), uiTextureVertexStride(0),
-		uiColorOffset(-1), uiColorStride(0),
-		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
-		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
+		inline TDrawDataDesc() :
+			pData(NULL), uiVertexStride(0), bVertices2D(false),
+			uiNormalOffset(-1), uiNormalStride(0),
+			uiTextureVertexOffset(-1), uiTextureVertexStride(0),
+			uiColorOffset(-1), uiColorStride(0),
+			uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
+			pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 
-		inline TDrawDataDesc(uint8 *pDataPointer, uint uiNormalDataOffset, uint uiTextureVertexDataOffset, bool bIs2D):
-		pData(pDataPointer), uiVertexStride(0), bVertices2D(bIs2D),
-		uiNormalOffset(uiNormalDataOffset), uiNormalStride(0),
-		uiTextureVertexOffset(uiTextureVertexDataOffset), uiTextureVertexStride(0),
-		uiColorOffset(-1), uiColorStride(0),
-		uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
-		pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
+		inline TDrawDataDesc(uint8 *pDataPointer, uint uiNormalDataOffset, uint uiTextureVertexDataOffset, bool bIs2D) :
+			pData(pDataPointer), uiVertexStride(0), bVertices2D(bIs2D),
+			uiNormalOffset(uiNormalDataOffset), uiNormalStride(0),
+			uiTextureVertexOffset(uiTextureVertexDataOffset), uiTextureVertexStride(0),
+			uiColorOffset(-1), uiColorStride(0),
+			uiTangentOffset(-1), uiBinormalOffset(-1), uiTangentStride(0), uiBinormalStride(0),
+			pIndexBuffer(NULL), bIndexBuffer32(false), pAttribs(NULL)
 		{}
 
 		inline bool operator == (const TDrawDataDesc &desc) const
@@ -329,7 +329,7 @@ namespace DGLE
 #endif
 
 	// {5C5C5973-D826-42ED-B641-A84DDDAAE2A3}
-	static const GUID IID_IBaseRenderObjectContainer = 
+	static const GUID IID_IBaseRenderObjectContainer =
 	{ 0x5c5c5973, 0xd826, 0x42ed, { 0xb6, 0x41, 0xa8, 0x4d, 0xdd, 0xaa, 0xe2, 0xa3 } };
 
 	class IBaseRenderObjectContainer : public IDGLE_Base
@@ -347,7 +347,7 @@ namespace DGLE
 #endif
 
 	// {7264D8D2-C3AF-4ED3-91D1-90E02BE6A4EE}
-	static const GUID IID_IOpenGLTextureContainer = 
+	static const GUID IID_IOpenGLTextureContainer =
 	{ 0x7264d8d2, 0xc3af, 0x4ed3, { 0x91, 0xd1, 0x90, 0xe0, 0x2b, 0xe6, 0xa4, 0xee } };
 
 	class IOpenGLTextureContainer : public IBaseRenderObjectContainer
@@ -357,7 +357,7 @@ namespace DGLE
 	};
 
 	// {152B744F-7C1B-414F-BEC1-CD40A308E5DF}
-	static const GUID IID_IOpenGLBufferContainer = 
+	static const GUID IID_IOpenGLBufferContainer =
 	{ 0x152b744f, 0x7c1b, 0x414f, { 0xbe, 0xc1, 0xcd, 0x40, 0xa3, 0x8, 0xe5, 0xdf } };
 
 	class IOpenGLBufferContainer : public IBaseRenderObjectContainer
@@ -367,6 +367,39 @@ namespace DGLE
 		virtual DGLE_RESULT DGLE_API GetIndexBufferObject(GLuint &vbo) = 0;
 	};
 
+#endif
+
+#ifdef DX9_LEGACY_BASE_OBJECTS
+}
+
+struct IDirect3DTexture9;
+struct IDirect3DVertexBuffer9;
+struct IDirect3DIndexBuffer9;
+struct IDirect3DVertexDeclaration9;
+
+namespace DGLE
+{
+	// {7EAB859A-ED30-43E3-81E8-FC25755CD681}
+	static const GUID IID_IDX9TextureContainer =
+	{ 0x7eab859a, 0xed30, 0x43e3, { 0x81, 0xe8, 0xfc, 0x25, 0x75, 0x5c, 0xd6, 0x81 } };
+
+	class IDX9TextureContainer : public IBaseRenderObjectContainer
+	{
+	public:
+		virtual DGLE_RESULT DGLE_API GetTexture(IDirect3DTexture9 *&texture) = 0;
+	};
+
+	// {A3814299-88BC-4EED-AF7F-5FF70BEBC4E5}
+	static const GUID IID_IDX9BufferContainer =
+	{ 0xa3814299, 0x88bc, 0x4eed, { 0xaf, 0x7f, 0x5f, 0xf7, 0xb, 0xeb, 0xc4, 0xe5 } };
+
+	class IDX9BufferContainer : public IBaseRenderObjectContainer
+	{
+	public:
+		virtual DGLE_RESULT DGLE_API GetVB(IDirect3DVertexBuffer9 *&VB) = 0;
+		virtual DGLE_RESULT DGLE_API GetIB(IDirect3DIndexBuffer9 *&IB) = 0;
+		virtual DGLE_RESULT DGLE_API GetVBDecl(IDirect3DVertexDeclaration9 *&VBDecl) = 0;
+	};
 #endif
 
 	// {8BFF07F9-2A8E-41D0-8505-3128C1B8160A}
