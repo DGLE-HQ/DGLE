@@ -464,6 +464,11 @@ namespace DGLE
 		{
 			return rgba;
 		}
+
+		inline bool operator ==(const TColor4 &src) const
+		{
+			return r == src.r && g == src.g && b == src.b && a == src.a;
+		}
 	};
 
 	inline TColor4 ColorClear() { return TColor4(0x00, 0x00, 0x00, 0); }

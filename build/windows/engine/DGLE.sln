@@ -1,12 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DGLE", "DGLE.vcxproj", "{FB5AA462-678C-4BDB-859D-6AADACB37713}"
-	ProjectSection(ProjectDependencies) = postProject
-		{232D048F-EDA8-4C60-89B2-278EABE44AC8} = {232D048F-EDA8-4C60-89B2-278EABE44AC8}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevTest", "..\tests\dev\DevTest.vcxproj", "{232D048F-EDA8-4C60-89B2-278EABE44AC8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FB5AA462-678C-4BDB-859D-6AADACB37713} = {FB5AA462-678C-4BDB-859D-6AADACB37713}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
