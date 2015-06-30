@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		20.04.2013 (c)Korotkov Andrey
+\date		1.07.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -136,7 +136,6 @@ void CRender3D::BeginFrame()
 	_ui64DrawDelay = GetPerfTimer();
 	_bFrCalculated = false;
 	_uiObjsDrawnCount = 0;
-	_uiLightsEnabledCount = 0;
 
 	while (!_stackStates.empty())
 		_stackStates.pop();
@@ -390,55 +389,50 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 	if (!pLight)
 		return E_INVALIDARG;
 
-	uint idx = -1;
-
-	for (size_t i = 0; i < _stCurState.vecCurLights.size(); ++i)
-		if (_stCurState.vecCurLights[i].pLight == pLight || !_stCurState.vecCurLights[i].bEnabled)
-		{
-			idx = i;
-			break;
-		}
-
-	if (idx == -1 && _uiLightsEnabledCount + 1 == _uiMaxLightsCount)
-		return E_ABORT;
-
-	if (idx == -1)
+	auto light = std::find_if(_stCurState.vecCurLights.begin(), _stCurState.vecCurLights.end(), [pLight](std::enable_if<true, decltype(_stCurState.vecCurLights)>::type::const_reference light)
 	{
-		_stCurState.vecCurLights.push_back(TState::TLight());
-		idx = _uiLightsEnabledCount++;
+		return light.pLight == pLight || !light.bEnabled;
+	});
+
+	if (light == _stCurState.vecCurLights.end())
+	{
+		if (_stCurState.vecCurLights.size() + 1 == _uiMaxLightsCount)
+			return E_ABORT;
+		_stCurState.vecCurLights.emplace_back();
+		light = --_stCurState.vecCurLights.end();
 	}
 
-	TState::TLight &light = _stCurState.vecCurLights[idx];
+	pLight->GetEnabled(light->bEnabled);
+	pLight->GetColor(light->stDiffCol);
+	pLight->GetPosition(light->stPos);
+	pLight->GetDirection(light->stDir);
+	pLight->GetIntensity(light->fIntensity);
+	pLight->GetRange(light->fRange);
+	pLight->GetSpotAngle(light->fAngle);
+	pLight->GetType(light->eType);
 
-	pLight->GetEnabled(light.bEnabled);
-	pLight->GetColor(light.stDiffCol);
-	pLight->GetPosition(light.stPos);
-	pLight->GetDirection(light.stDir);
-	pLight->GetIntensity(light.fIntensity);
-	pLight->GetRange(light.fRange);
-	pLight->GetSpotAngle(light.fAngle);
-	pLight->GetType(light.eType);
+	light->pLight = pLight;
 
-	light.pLight = pLight;
+	const auto idx = std::distance(_stCurState.vecCurLights.begin(), light);
 
 	if (_pFFP)
 	{
-		_pFFP->SetLightEnabled(idx, light.bEnabled);
-		_pFFP->SetLightColor(idx, light.stDiffCol);
-		_pFFP->SetLightIntensity(idx, light.fIntensity);
+		_pFFP->SetLightEnabled(idx, light->bEnabled);
+		_pFFP->SetLightColor(idx, light->stDiffCol);
+		_pFFP->SetLightIntensity(idx, light->fIntensity);
 
-		switch (light.eType)
+		switch (light->eType)
 		{
 		case LT_POINT:
-			_pFFP->ConfigurePointLight(idx, light.stPos, light.fRange);
+			_pFFP->ConfigurePointLight(idx, light->stPos, light->fRange);
 			break;
 
 		case LT_DIRECTIONAL:
-			_pFFP->ConfigureDirectionalLight(idx, light.stDir);
+			_pFFP->ConfigureDirectionalLight(idx, light->stDir);
 			break;
 
 		case LT_SPOT:
-			_pFFP->ConfigureSpotLight(idx, light.stPos, light.stDir, light.fRange, light.fAngle);
+			_pFFP->ConfigureSpotLight(idx, light->stPos, light->stDir, light->fRange, light->fAngle);
 			break;
 		}
 	}

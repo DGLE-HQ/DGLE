@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2013 (c)Korotkov Andrey
+\date		1.07.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -54,8 +54,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 		
 	} _stCurState;
 
-	uint _uiMaxLightsCount, _uiMaxTexUnits,
-		_uiLightsEnabledCount;
+	uint _uiMaxLightsCount, _uiMaxTexUnits;
 
 	std::stack<TState> _stackStates;
 
