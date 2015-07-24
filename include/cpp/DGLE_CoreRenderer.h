@@ -401,6 +401,35 @@ namespace DGLE
 	};
 #endif
 
+#ifdef DX11_LEGACY_BASE_OBJECTS
+}
+
+struct ID3D11ShaderResourceView;
+struct ID3D11SamplerState;
+struct ID3D11Buffer;
+
+namespace DGLE
+	// {C18527AB-2804-410B-9822-176F8FAABADE}
+	static const GUID IID_IDX11TextureContainer =
+	{ 0xc18527ab, 0x2804, 0x410b,{ 0x98, 0x22, 0x17, 0x6f, 0x8f, 0xaa, 0xba, 0xde } };
+
+	class IDX11TextureContainer : public IBaseRenderObjectContainer
+	{
+		virtual DGLE_RESULT DGLE_API GetView(ID3D11ShaderResourceView *&texture) = 0;
+		virtual DGLE_RESULT DGLE_API GetSampler(ID3D11SamplerState *&texture) = 0;
+	};
+
+	// {964F1A36-D1C8-4C86-9DDB-56BE646DE58B}
+	static const GUID IID_IDX9BufferContainer =
+	{ 0x964f1a36, 0xd1c8, 0x4c86,{ 0x9d, 0xdb, 0x56, 0xbe, 0x64, 0x6d, 0xe5, 0x8b } };
+	
+	class IDX9BufferContainer : public IBaseRenderObjectContainer
+	{
+		virtual DGLE_RESULT DGLE_API GetVB(ID3D11Buffer *&VB) = 0;
+		virtual DGLE_RESULT DGLE_API GetIB(ID3D11Buffer *&IB) = 0;
+	};
+#endif
+
 	// {8BFF07F9-2A8E-41D0-8505-3128C1B8160A}
 	static const GUID IID_ICoreTexture = 
 	{ 0x8bff07f9, 0x2a8e, 0x41d0, { 0x85, 0x5, 0x31, 0x28, 0xc1, 0xb8, 0x16, 0xa } };
