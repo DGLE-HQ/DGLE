@@ -409,6 +409,7 @@ struct ID3D11SamplerState;
 struct ID3D11Buffer;
 
 namespace DGLE
+{
 	// {C18527AB-2804-410B-9822-176F8FAABADE}
 	static const GUID IID_IDX11TextureContainer =
 	{ 0xc18527ab, 0x2804, 0x410b,{ 0x98, 0x22, 0x17, 0x6f, 0x8f, 0xaa, 0xba, 0xde } };
@@ -420,10 +421,10 @@ namespace DGLE
 	};
 
 	// {964F1A36-D1C8-4C86-9DDB-56BE646DE58B}
-	static const GUID IID_IDX9BufferContainer =
+	static const GUID IID_IDX11BufferContainer =
 	{ 0x964f1a36, 0xd1c8, 0x4c86,{ 0x9d, 0xdb, 0x56, 0xbe, 0x64, 0x6d, 0xe5, 0x8b } };
 	
-	class IDX9BufferContainer : public IBaseRenderObjectContainer
+	class IDX11BufferContainer : public IBaseRenderObjectContainer
 	{
 		virtual DGLE_RESULT DGLE_API GetVB(ID3D11Buffer *&VB) = 0;
 		virtual DGLE_RESULT DGLE_API GetIB(ID3D11Buffer *&IB) = 0;
