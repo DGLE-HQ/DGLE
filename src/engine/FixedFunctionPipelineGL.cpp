@@ -324,8 +324,9 @@ DGLE_RESULT DGLE_API CFixedFunctionPipeline::GetSpotLightConfiguration(uint uiId
 	glGetLightfv(GL_LIGHT0 + uiIdx, GL_SPOT_DIRECTION, stDirection);
 
 	// May work wrong when light position was set or changed directly via OpenGL outside this class.
-	stPosition = MatrixInverse(_pLights[uiIdx].mview).ApplyToPoint(TPoint3(pos[0], pos[1], pos[2])); 
-	stDirection = MatrixInverse(_pLights[uiIdx].mview).ApplyToVector(stDirection);
+	const TMatrix4x4 inv_mview = MatrixInverse(_pLights[uiIdx].mview);
+	stPosition = inv_mview.ApplyToPoint(TPoint3(pos[0], pos[1], pos[2])); 
+	stDirection = inv_mview.ApplyToVector(stDirection);
 	
 	glGetLightfv(GL_LIGHT0 + uiIdx, GL_SPOT_CUTOFF, &fSpotAngle);
 	fSpotAngle *= 2.f;
