@@ -492,7 +492,13 @@ public:
 	{
 		if (!pData || eDataFormat != _format)
 			return E_INVALIDARG;
-
+		
+		ICoreTexture *p_rnd_target;
+		_pCR->GetRenderTarget(p_rnd_target);
+		
+		if (p_rnd_target && p_rnd_target == this)
+			return E_ABORT;
+		
 		int max_tex_res;
 		_pCR->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, max_tex_res);
 
