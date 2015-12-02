@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 		FreeEngine();
 	}
 	else
-		cout << "Couldn't load \""DLL_PATH"\"!" << endl;
+		cout << "Couldn't load \"" DLL_PATH "\"!" << endl;
 	
 	return 0;
 }
