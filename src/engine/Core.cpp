@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.07.2015 (c)Korotkov Andrey
+\date		3.12.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -404,9 +404,7 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 	if (eType != LT_FATAL)
 		_LogWrite(msg.c_str(), eType > 1/*immediately flushs only errors and fatals*/);
 
-#ifdef _DEBUG
 	assert(eType == LT_INFO);
-#endif
 }
 
 void CCore::_LogWrite(const char *pcTxt, bool bFlush)
