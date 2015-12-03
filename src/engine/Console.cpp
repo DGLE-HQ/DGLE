@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		09.04.2013 (c)Korotkov Andrey
+\date		3.12.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -498,7 +498,10 @@ void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 	string txt(strTxt);
 
 	if (Core())
-		Core()->CastEvent(ET_ON_CONSOLE_WRITE, &CEvConsoleWrite(txt, bToPrevLine));
+	{
+		CEvConsoleWrite event(txt, bToPrevLine);
+		Core()->CastEvent(ET_ON_CONSOLE_WRITE, &event);
+	}
 
 	for (size_t i = 0; i < txt.size(); ++i)
 		if (txt[i] == '\n')

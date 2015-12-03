@@ -440,7 +440,10 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 
 void CCore::_MessageProc(const TWindowMessage &stMsg)
 {
-	CastEvent(ET_ON_WINDOW_MESSAGE, &CEvWinMessage(stMsg)); 
+	{
+		CEvWinMessage event(stMsg);
+		CastEvent(ET_ON_WINDOW_MESSAGE, &event);
+	}
 	
 	size_t i;
 	
@@ -651,7 +654,10 @@ void CCore::_OnTimer()
 		_bNeedApplyNewWnd = false;
 	}
 
-	CastEvent(ET_ON_PER_SECOND_TIMER, (IBaseEvent*)&CBaseEvent(ET_ON_PER_SECOND_TIMER));
+	{
+		CBaseEvent event(ET_ON_PER_SECOND_TIMER);
+		CastEvent(ET_ON_PER_SECOND_TIMER, &event);
+	}
 
 	if (_iDrawProfiler == 3)
 		_uiLastMemUsage = GetProcessMemoryUsage();
@@ -765,13 +771,19 @@ void CCore::_RenderFrame()
 
 	_pRender->BeginFrame();
 
-	CastEvent(ET_BEFORE_RENDER, (IBaseEvent*)&CBaseEvent(ET_BEFORE_RENDER));
+	{
+		CBaseEvent event(ET_BEFORE_RENDER);
+		CastEvent(ET_BEFORE_RENDER, &event);
+	}
 
 	_clDelRender.Invoke();
 	
 	_InvokeUserCallback(EPT_RENDER);
 
-	CastEvent(ET_AFTER_RENDER, (IBaseEvent*)&CBaseEvent(ET_AFTER_RENDER));
+	{
+		CBaseEvent event(ET_AFTER_RENDER);
+		CastEvent(ET_AFTER_RENDER, &event);
+	}
 
 	_pRender->EndFrame();
 	
@@ -804,7 +816,10 @@ void CCore::_RenderFrame()
 				
 		_pRender->DrawProfiler();
 
-		CastEvent(ET_ON_PROFILER_DRAW, (IBaseEvent*)&CBaseEvent(ET_ON_PROFILER_DRAW));
+		{
+			CBaseEvent event(ET_ON_PROFILER_DRAW);
+			CastEvent(ET_ON_PROFILER_DRAW, &event);
+		}
 
 		_bInDrawProfilers = false;
 
@@ -1048,7 +1063,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		_uiUpdateInterval = uiUpdateInterval;
 		_bPause = false;
 
-		CastEvent(ET_BEFORE_INITIALIZATION, (IBaseEvent*)&CEvBeforeInit(&_stWin, &_eInitFlags));
+		{
+			CEvBeforeInit event(&_stWin, &_eInitFlags);
+			CastEvent(ET_BEFORE_INITIALIZATION, &event);
+		}
 
 		bool do_spl = !((uint)_eInitFlags & EIF_NO_SPLASH) && InstIdx() == 0;
 
@@ -1355,7 +1373,10 @@ DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEv
 	TEngineWindow wnd = stNewWin;
 
 	if (!bForceNoEvents && wnd.bFullScreen != _stWin.bFullScreen)
-		CastEvent(ET_ON_FULLSCREEN, (IBaseEvent*)&CEvGoFullScreen(wnd.uiWidth, wnd.uiHeight, wnd.bFullScreen));
+	{
+		CEvGoFullScreen event(wnd.uiWidth, wnd.uiHeight, wnd.bFullScreen);
+		CastEvent(ET_ON_FULLSCREEN, &event);
+	}
 
 	_LogWinMode(wnd);
 
@@ -1890,7 +1911,10 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 			return E_INVALIDARG;
 	}
 
-	CastEvent(ET_ON_GET_SUBSYSTEM, (IBaseEvent*)&CEvGetSubSystem(eSubSystem, prSubSystem));
+	{
+		CEvGetSubSystem event(eSubSystem, prSubSystem);
+		CastEvent(ET_ON_GET_SUBSYSTEM, &event);
+	}
 
 	return S_OK;
 }

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.09.2014 (c)Korotkov Andrey
+\date		3.12.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -168,7 +168,7 @@ void CRender2D::_SetDefaultStates()
 	Core()->pRender()->pRender3D()->PrepareFor2D();
 }
 
-FORCE_INLINE bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) const
+bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) const
 {
 	if (_bInProfilerMode)
 		return true;
@@ -2053,7 +2053,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTextureCropped(ITexture *pTexture, const TPo
 	return DrawTexture(pTexture, stCoords, stDimensions, stTexCropRect, fAngle, eFlags);
 }
 
-FORCE_INLINE DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TVector2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
+DGLE_RESULT CRender2D::DrawTexture(ITexture *tex, const TPoint2 &coord, const TVector2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags)
 {
 	IN_2D_GUARD
 
