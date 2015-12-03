@@ -62,17 +62,16 @@ template<class T1, class T2>
 class TCFuncDelegate;
 
 template<typename F>
-class CFunctor: public CFunctorImpl<F>
+class CFunctor final: public CFunctorImpl<F>
 {
 	template<class T1, class T2>
 	friend class TCFuncDelegate;
 
-	template<class T1, class T2>
-	CFunctor(TCFuncDelegate<T1, T2> &parent): CFunctorImpl<F>(parent) {}
+	using CFunctorImpl<F>::CFunctorImpl;
 };
 
 template<class T1, class T2>
-class TCFuncDelegate
+class TCFuncDelegate final
 {
 	friend class CFunctorImpl<T2>;
 
