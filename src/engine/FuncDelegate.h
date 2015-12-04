@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		3.12.2015 (c)Korotkov Andrey
+\date		4.12.2015 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -79,13 +79,7 @@ class TCFuncDelegate final
 	bool _bCatchExpts,
 		 _bAllowInvoke;
 
-	struct _TFunc
-	{
-		void *pParameter;
-		T1	pFunc;
-	};
-
-	std::vector<_TFunc> _funcList;
+	std::vector<std::pair<T1, void *>> _funcList;
 
 public:
 
@@ -110,20 +104,15 @@ public:
 
 	void Add(T1 pFunc, void *pParameter)
 	{
-		_TFunc tmp;
-		tmp.pParameter = pParameter;
-		tmp.pFunc = pFunc;
-		_funcList.push_back(tmp);
+		_funcList.emplace_back(pFunc, pParameter);
 	}
 
 	void Remove(T1 pFunc, void *pParameter)
 	{
-		for (std::size_t i = 0; i < _funcList.size(); ++i)
-			if (_funcList[i].pParameter == pParameter && _funcList[i].pFunc == pFunc)
-			{
-				_funcList.erase(_funcList.begin() + i);
-				break;
-			}
+		// NOTE: removes first occurrence only (in FIFO fashion)
+		const auto found = std::find(_funcList.cbegin(), _funcList.cend(), std::make_pair(pFunc, pParameter));
+		if (found != _funcList.cend())
+			_funcList.erase(found);
 	}
 
 	CFunctor<T2> Invoke;
@@ -148,7 +137,7 @@ public:
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParameter);
+				(*_parent._funcList[i].first)(_parent._funcList[i].second);
 			)
 	}
 };
@@ -164,7 +153,7 @@ public:
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParameter, stMsg);
+				(*_parent._funcList[i].first)(_parent._funcList[i].second, stMsg);
 			)
 	}
 };
@@ -180,7 +169,7 @@ public:
 		if (_parent._bAllowInvoke)
 			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
 			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].pFunc)(_parent._funcList[i].pParameter, pEvent);
+				(*_parent._funcList[i].first)(_parent._funcList[i].second, pEvent);
 			)
 	}
 };
