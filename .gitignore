@@ -40,6 +40,8 @@ ipch/
 *.aps
 *.sdf
 *.opensdf
+*.iobj
+*.ipdb
 
 # Monodevelop and C#
 *.userprefs
