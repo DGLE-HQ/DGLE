@@ -86,14 +86,16 @@ This is simplest DGLE application for Windows.
 #ifndef DGLE_HEADER
 #define DGLE_HEADER
 
+#define ENABLE_FORCE_INLINE 1
+
 //Compiler compatibility tweaks//
 
-#if defined(_MSC_VER)
+#if defined _MSC_VER
 
 #	define FORCE_INLINE __forceinline
-#	define ENUM_FORWARD_DECLARATION(name) name
+#	define ENUM_FORWARD_DECLARATION(name) name : uint32
 
-#elif defined(__BORLANDC__)
+#elif defined __BORLANDC__
 
 #	define FORCE_INLINE __inline
 
@@ -109,6 +111,20 @@ This is simplest DGLE application for Windows.
 #	define atan2f atan2
 #	define acosf acos
 
+elif defined __clang__ || defined __GNUC__
+
+#	define FORCE_INLINE __attribute__((always_inline))
+#	define ENUM_FORWARD_DECLARATION(name) name : uint32
+
+#else
+
+#	define FORCE_INLINE inline
+#	define ENUM_FORWARD_DECLARATION(name) name : uint32
+
+#endif
+
+#if !ENABLE_FORCE_INLINE
+#define FORCE_INLINE inline
 #endif
 
 //Engine version defines//
