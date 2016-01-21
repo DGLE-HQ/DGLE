@@ -1,11 +1,15 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		21.02.2012 (c)Korotkov Andrey
+\date		21.01.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
+
+#if defined _MSC_VER && _MSC_VER < 1900
+#error old compiler version
+#endif
 
 #include "Common.h"
 
