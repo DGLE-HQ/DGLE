@@ -7,10 +7,6 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
-#if defined _MSC_VER && _MSC_VER < 1900
-#error old compiler version
-#endif
-
 #include "Common.h"
 
 bool bTerminate = false;
