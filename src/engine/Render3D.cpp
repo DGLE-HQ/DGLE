@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		1.07.2015 (c)Korotkov Andrey
+\date		21.01.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -389,7 +389,7 @@ DGLE_RESULT DGLE_API CRender3D::UpdateLight(ILight *pLight)
 	if (!pLight)
 		return E_INVALIDARG;
 
-	auto light = std::find_if(_stCurState.vecCurLights.begin(), _stCurState.vecCurLights.end(), [pLight](std::enable_if<true, decltype(_stCurState.vecCurLights)>::type::const_reference light)
+	auto light = std::find_if(_stCurState.vecCurLights.begin(), _stCurState.vecCurLights.end(), [pLight](decltype(_stCurState.vecCurLights)::const_reference light)
 	{
 		return light.pLight == pLight || !light.bEnabled;
 	});
