@@ -43,6 +43,7 @@ ipch/
 *.iobj
 *.ipdb
 *.opendb
+*.VC.db
 
 # Monodevelop and C#
 *.userprefs
