@@ -85,7 +85,7 @@ CInstancedObj(uiInstIdx)
 	int i_value;
 
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, i_value);
-	_strMetricsList += "Maximum texture resolution: " + std::to_string(i_value) + "X" + std::to_string(i_value) + "\n\t";
+	_strMetricsList += "Maximum texture resolution: " + std::to_string(i_value) + 'X' + std::to_string(i_value) + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_ANISOTROPY, b_supported);
 	if (b_supported)

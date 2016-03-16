@@ -309,7 +309,7 @@ _clDelOnFPSTimer(uiInstIdx)
 		_clLogFile << "DGLEngine Log File" << endl;
 		_clLogFile << "Version: "<< DGLE_VERSION << endl;
 		_clLogFile << "Visit http://dglengine.org/ for more information." << endl;
-		_clLogFile << "Log Started at " << time.ui16Day << "." << time.ui16Month << "." << time.ui16Year << "." << endl;
+		_clLogFile << "Log Started at " << time.ui16Day << '.' << time.ui16Month << '.' << time.ui16Year << '.' << endl;
 	}
 }
 
@@ -356,12 +356,12 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 		break;
 	
 	case LT_ERROR:
-		msg = "[ERROR] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ")";
+		msg = "[ERROR] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ')';
 		++_uiLogErrorsCount;
 		break;
 	
 	case LT_FATAL:
-		msg = "[FATAL] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ")";
+		msg = "[FATAL] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ')';
 		++_uiLogErrorsCount;
 		
 		_LogWrite(msg.c_str(), true);		 
@@ -415,11 +415,11 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 		GetLocalTimaAndDate(time);
 		_clLogFile.fill('0');
 		_clLogFile.width(2);
-		_clLogFile << time.ui16Hour << ":";
+		_clLogFile << time.ui16Hour << ':';
 		_clLogFile.width(2);
-		_clLogFile << time.ui16Minute << ":";
+		_clLogFile << time.ui16Minute << ':';
 		_clLogFile.width(2);
-		_clLogFile << time.ui16Second << ".";	
+		_clLogFile << time.ui16Second << '.';	
 		_clLogFile.width(3);
 		_clLogFile << time.ui16Milliseconds;
 		_clLogFile.width(0);
@@ -806,8 +806,8 @@ void CCore::_RenderFrame()
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerText(("Render delay:" + to_string(_ui64RenderDelay / 1000) + "." + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
-				RenderProfilerText(("Update delay:" + to_string(_ui64UpdateDelay / 1000) + "." + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(("Render delay:" + to_string(_ui64RenderDelay / 1000) + '.' + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(("Update delay:" + to_string(_ui64UpdateDelay / 1000) + '.' + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
 			}
 
 			if (_iDrawProfiler == 3)
@@ -995,7 +995,7 @@ bool CCore::_LoadPlugin(const string &strFileName, IPlugin *&prPlugin)
 	prPlugin = tmp.pPlugin;
 
 	LOG("Plugin \"" + string(info.cName) + "\" " + string(info.cVersion) +" by \"" + string(info.cVendor) + "\" connected succesfully.", LT_INFO);
-	LOG("Plugin description: \"" + string(info.cDescription) + "\"", LT_INFO);
+	LOG("Plugin description: \"" + string(info.cDescription) + '\"', LT_INFO);
 
 	return true;
 }
@@ -1007,7 +1007,7 @@ void CCore::_PrintPluginsInfo()
 	{
 		TPluginInfo info;
 		_vecPlugins[i].pPlugin->GetPluginInfo(info);
-		tmp += "- " + string(info.cName) + " " + string(info.cVersion) + " by " + string(info.cVendor) + "\n";
+		tmp += "- " + string(info.cName) + ' ' + string(info.cVersion) + " by " + string(info.cVendor) + '\n';
 	}
 	tmp += "-----------------------------";
 	Console()->Write(tmp.c_str());
@@ -1085,9 +1085,9 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		GetCurrentWorkingPath(working_path);
 
 		if (eng_path == working_path)
-			LOG("Working directory: \"" + working_path + "\"", LT_INFO);
+			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
 		else
-			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + "\"", LT_INFO);
+			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + '\"', LT_INFO);
 
 		string system_info;
 		GetSystemInformation(system_info, _stSysInfo);
@@ -1363,7 +1363,7 @@ void CCore::_LogWinMode(const TEngineWindow &stWin)
 			break;
 	}
 
-	LOG("Setting window mode: " + to_string(stWin.uiWidth) + "X" + to_string(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
+	LOG("Setting window mode: " + to_string(stWin.uiWidth) + 'X' + to_string(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
 		(stWin.bFullScreen ? " Fullscreen" : " Windowed") + (stWin.bVSync ? " VSync" : "") +
 		(stWin.eMultisampling != MM_NONE ? to_string((int)stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
 }
@@ -1669,7 +1669,7 @@ bool DGLE_API CCore::_s_InstIdx(void *pParameter, const char *pcParam)
 	}
 	else
 	{
-		CON(CCore, ("Instance Index is " + to_string(PTHIS(CCore)->InstIdx()) + ".").c_str());
+		CON(CCore, ("Instance Index is " + to_string(PTHIS(CCore)->InstIdx()) + '.').c_str());
 		return true;
 	}
 }

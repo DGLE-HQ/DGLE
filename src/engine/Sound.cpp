@@ -408,7 +408,7 @@ void CSound::_ProfilerDraw()
 
 		EnterThreadSafeSection();
 
-		Core()->RenderProfilerText(("Mixer delay     :" + to_string(_ui64MixDelay / 1000) + "." + to_string(_ui64MixDelay % 1000) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Mixer delay     :" + to_string(_ui64MixDelay / 1000) + '.' + to_string(_ui64MixDelay % 1000) + " ms").c_str(), ColorWhite());
 
 		uint cnt = 0;
 
@@ -418,7 +418,7 @@ void CSound::_ProfilerDraw()
 
 		LeaveThreadSafeSection();
 
-		Core()->RenderProfilerText(("Opened channels :" + to_string(cnt) + "/" + to_string(_sc_uiMaxChannels)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Opened channels :" + to_string(cnt) + '/' + to_string(_sc_uiMaxChannels)).c_str(), ColorWhite());
 	}
 	
 	Core()->RenderProfilerText("============================", ColorWhite());

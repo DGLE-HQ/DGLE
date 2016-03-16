@@ -367,7 +367,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 
 		if (ChangeDisplaySettingsEx(NULL ,&dm_scr_settings, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 		{
-			LOG("Can't set fullscreen mode " + to_string(stWind.uiWidth) + "X" + to_string(stWind.uiHeight) + ", switching back to windowed mode.", LT_ERROR);
+			LOG("Can't set fullscreen mode " + to_string(stWind.uiWidth) + 'X' + to_string(stWind.uiHeight) + ", switching back to windowed mode.", LT_ERROR);
 			_bFScreen = false;
 			const_cast<TEngineWindow *>(&stWind)->bFullScreen = false;
 			res = S_FALSE;
@@ -416,7 +416,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 	{
 		GetDisplaySize(desktop_width, desktop_height);
 
-		LOG("Desktop resolution: " + to_string(desktop_width) + "X" + to_string(desktop_height), LT_INFO);
+		LOG("Desktop resolution: " + to_string(desktop_width) + 'X' + to_string(desktop_height), LT_INFO);
 
 		if (IsIconic(_hWnd) == FALSE && (desktop_width < (uint)(rc.right - rc.left) || desktop_height < (uint)(rc.bottom - rc.top)))
 			LOG("Window rectangle is beyound screen.", LT_WARNING);

@@ -128,7 +128,7 @@ void CRender3D::DrawProfiler()
 		using std::to_string;
 		Core()->RenderProfilerText("======Render3D Profiler=====", ColorWhite());
 		Core()->RenderProfilerText(("Objects on screen :" + to_string(_uiObjsDrawnCount)).c_str(), ColorWhite());
-		Core()->RenderProfilerText(("Render delay      :" + to_string(_ui64DrawDelay / 1000) + "." + to_string(_ui64DrawDelay % 1000) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Render delay      :" + to_string(_ui64DrawDelay / 1000) + '.' + to_string(_ui64DrawDelay % 1000) + " ms").c_str(), ColorWhite());
 	}
 }
 

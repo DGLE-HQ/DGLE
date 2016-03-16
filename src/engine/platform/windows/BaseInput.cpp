@@ -55,7 +55,7 @@ CInstancedObj(uiInstIdx)
 		LOG("Found " + to_string(_vecJoyCaps.size()) + " connected joystick" + (_vecJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
 
 		for (size_t i = 0; i < _vecJoyCaps.size(); ++i)
-			LOG("Joystick with id: " + to_string(i) + " name: \"" + _vecJoyCaps[i].info.szPname + "\"", LT_INFO);
+			LOG("Joystick with id: " + to_string(i) + " name: \"" + _vecJoyCaps[i].info.szPname + '\"', LT_INFO);
 	}
 
 	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);

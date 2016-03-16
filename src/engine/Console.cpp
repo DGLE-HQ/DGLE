@@ -134,7 +134,7 @@ void CConsole::Exec(const char* pcCommand)
 {
 	string command(pcCommand);
 
-	Write((">" + command).c_str());
+	Write(('>' + command).c_str());
 	
 	_ProcessConCmd(ToLowerCase(command));
 
@@ -149,9 +149,9 @@ void CConsole::_Cmdlist()
 	if (!_vecCommands.empty())
 	{
 		for (size_t i = 0; i < _vecCommands.size(); ++i)
-			lst += " >" + string(_vecCommands[i].pcName) + "\n";
+			lst += " >" + string(_vecCommands[i].pcName) + '\n';
 		
-		lst += "------" + to_string((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + "\n";
+		lst += "------" + to_string((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + '\n';
 		
 		Write(lst.c_str());
 	}
@@ -252,17 +252,17 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 				if (param.empty())
 				{
 					Write((ToUpperCase(cmd) + " current value is " + to_string(*_vecCommands[i].piVar) + ".\n"
-						"Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + ".").c_str());
+						"Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + '.').c_str());
 				}
 				else
 				{
 					int t = stoi(param);
 
 					if (t == 0 && param != "0")
-						Write(("\"" + param + "\" is not a valid integer value.").c_str());
+						Write(('\"' + param + "\" is not a valid integer value.").c_str());
 					else
 						if (t < _vecCommands[i].iMinValue || t > _vecCommands[i].iMaxValue)
-							Write(("Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + ".").c_str());
+							Write(("Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + '.').c_str());
 						else
 						{
 							_pConsoleWindow->EnterThreadSafeSection();
@@ -275,7 +275,7 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 							if (res)
 							{
 								*_vecCommands[i].piVar = t;
-								Write((ToUpperCase(cmd) + " is set to " + to_string(t) + ".").c_str());
+								Write((ToUpperCase(cmd) + " is set to " + to_string(t) + '.').c_str());
 							}
 
 							_pConsoleWindow->LeaveThreadSafeSection();
@@ -313,13 +313,13 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 		{
 			++count;
 			idx = (int)i;
-			cmds += " >"+string(_vecCommands[i].pcName) + "\n";
+			cmds += " >" + string(_vecCommands[i].pcName) + '\n';
 		}
 	}
-		cmds+="----";
+		cmds += "----";
 		
 		if (count == 1) 
-			_pConsoleWindow->SetEditTxt((string(_vecCommands[idx].pcName) + " ").c_str());
+			_pConsoleWindow->SetEditTxt((string(_vecCommands[idx].pcName) + ' ').c_str());
 		else
 			if (count > 1)
 				Write(cmds.c_str());
@@ -406,7 +406,7 @@ bool CConsole::_SetPos(const char* pcParam)
 		
 		if (x == 0 && par1 != "0") 
 		{
-			Write(("\"" + par1 + "\" is not a valid integer value.").c_str());
+			Write(('\"' + par1 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
@@ -414,7 +414,7 @@ bool CConsole::_SetPos(const char* pcParam)
 		
 		if (y == 0 && par2 != "0") 
 		{
-			Write(("\"" + par2 + "\" is not a valid integer value.").c_str());
+			Write(('\"' + par2 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
@@ -447,7 +447,7 @@ bool CConsole::_SetSize(const char *pcParam)
 		
 		if (w == 0 && par1 != "0") 
 		{
-			Write(("\"" + par1 + "\" is not a valid integer value.").c_str());
+			Write(('\"' + par1 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
@@ -455,7 +455,7 @@ bool CConsole::_SetSize(const char *pcParam)
 		
 		if (h == 0 && par2 != "0") 
 		{
-			Write(("\"" + par2 + "\" is not a valid integer value.").c_str());
+			Write(('\"' + par2 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 

@@ -345,7 +345,7 @@ uint64 GetPerfTimer()
 
 void OutputDebugTxt(const char *pcTxt)
 {
-	OutputDebugString((string(pcTxt) + "\n").c_str());
+	OutputDebugString((string(pcTxt) + '\n').c_str());
 }
 
 struct TTimer
@@ -450,7 +450,7 @@ bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
 
 			string fullname(tmp);
 
-			int pos = (int)fullname.find_last_of("\\");
+			int pos = (int)fullname.find_last_of('\\');
 
 			fullname = fullname.substr(0, pos + 1);
 			fullname += wfd.cFileName;
@@ -615,7 +615,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	{
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion > 4)
 		{	
-				str += to_string(osvi.dwMajorVersion) + "." + to_string(osvi.dwMinorVersion) + " ";
+				str += to_string(osvi.dwMajorVersion) + '.' + to_string(osvi.dwMinorVersion) + ' ';
 				
 				str += "\"Microsoft Windows ";
 
@@ -782,7 +782,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 										str += "Server";
 					}
 
-				str += "\"" + (strlen(osvi.szCSDVersion) > 0 ? " " + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + to_string(osvi.dwBuildNumber) + ")" : "");
+				str += '\"' + (strlen(osvi.szCSDVersion) > 0 ? " " + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + to_string(osvi.dwBuildNumber) + ')' : "");
 
 				if (osvi.dwMajorVersion >= 6)
 				{
@@ -848,7 +848,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	str = "CPU: ";
 	str += string(pc_processor_name) + " (~" + to_string(mhz) + " Mhz";
 	if (st_sys_info.dwNumberOfProcessors > 1) str += " X " + to_string(st_sys_info.dwNumberOfProcessors);
-	str +=")";
+	str += ')';
 
 	result += str + "\n\t";
 	stSysInfo.uiCPUFrequency = mhz;
@@ -959,10 +959,10 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		vcard_advanced_str = "(driver \"" + string(txt) + "\",";
 
 		GetStringValue( p_object, L"szDriverVersion", EXPAND(txt));
-		vcard_advanced_str += " ver. " + string(txt) + ",";
+		vcard_advanced_str += " ver. " + string(txt) + ',';
 
 		GetStringValue( p_object, L"szDriverDateLocalized", EXPAND(txt));
-		vcard_advanced_str += " date " + string(txt) + ")";
+		vcard_advanced_str += " date " + string(txt) + ')';
 
 		p_object->Release();
 		p_container->Release();
@@ -1055,7 +1055,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	if (vram != 0)
 		stSysInfo.uiVideocardRAM = vram;
 
-	result += str + " " + to_string(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;
+	result += str + ' ' + to_string(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;
 
 	strInfo = result;
 }

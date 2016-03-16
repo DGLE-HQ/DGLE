@@ -712,7 +712,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, 
 
 	if (GLEW_VERSION_2_1) gl_ver = "2.1";
 
-	LOG("OpenGL " + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ")", LT_INFO);
+	LOG("OpenGL " + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ')', LT_INFO);
 
 #ifdef PLATFORM_WINDOWS
 	if (string((char*)glGetString(GL_RENDERER)).find("GDI") != string::npos && string((char*)glGetString(GL_VENDOR)).find("Microsoft") != string::npos && !GLEW_VERSION_1_2)

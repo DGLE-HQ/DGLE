@@ -154,7 +154,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::GetRegisteredVirtualFileSystems(char *pcTx
 
 	if (_clVFileSystems.size() > 1)
 		for (size_t i = 1; i<_clVFileSystems.size(); ++i)
-			exts += _clVFileSystems[i].ext + ";";
+			exts += _clVFileSystems[i].ext + ';';
 
 	if (!pcTxt)
 	{
@@ -203,11 +203,11 @@ DGLE_RESULT DGLE_API CMainFileSystem::LoadFile(const char *pcFileName, IFile *&p
 
 	IFileSystem *p_fs = NULL;
 
-	if (string(pcFileName).find("|") == string::npos)
+	if (string(pcFileName).find('|') == string::npos)
 		p_fs = (IFileSystem*)_pHDDFS;
 	else
 		for (size_t i = 0; i < _clVFileSystems.size(); ++i)
-			if ((ToUpperCase(pcFileName).find("." + ToUpperCase(_clVFileSystems[i].ext) + "|") != string::npos))
+			if ((ToUpperCase(pcFileName).find("." + ToUpperCase(_clVFileSystems[i].ext) + '|') != string::npos))
 			{
 				p_fs = _clVFileSystems[i].fs;
 				break;
@@ -297,7 +297,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::RegisterVirtualFileSystem(const char *pcVF
 	
 	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteCallback, pParameter));
 
-	_strVFSsDescs += "- " + ToUpperCase(pcVFSExtension) + " " + pcDiscription + "\n";
+	_strVFSsDescs += "- " + ToUpperCase(pcVFSExtension) + ' ' + pcDiscription + '\n';
 
 	return S_OK;
 }

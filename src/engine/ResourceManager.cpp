@@ -433,7 +433,7 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 	string exts;
 
 	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		exts += _vecFileFormats[i].ext + ";";
+		exts += _vecFileFormats[i].ext + ';';
 
 	if (!pcTxt)
 	{
@@ -964,7 +964,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 
 	_vecFileFormats.push_back(tff);
 
-	_strFileFormatsDescs += "- " + ToUpperCase(pcExtension) + " " + pcDiscription + "\n";
+	_strFileFormatsDescs += "- " + ToUpperCase(pcExtension) + ' ' + pcDiscription + '\n';
 
 	return res;
 }
@@ -1561,7 +1561,7 @@ void CResourceManager::_ListResources() const
 		_vecList[i].pObj->GetType(type);
 		string name;
 		_s_GetObjTypeName(type, name);
-		res += string(_vecList[i].pcName) + "[" + name + "]\n";
+		res += string(_vecList[i].pcName) + '[' + name + "]\n";
 	}
 
 	if(!res.empty())

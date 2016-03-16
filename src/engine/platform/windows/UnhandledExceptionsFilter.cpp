@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.02.2011 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -206,8 +206,8 @@ void WriteStackDetails(PCONTEXT pContext)
 			char res1[16],res2[16];
 			sprintf_s(res1,16, "%d", sf.AddrPC.Offset);
 			sprintf_s(res2,16, "%d", sf.AddrFrame.Offset);
-			str_info+= "================================================\n";
-			str_info+= "|"+std::string(res1)+"|{"+ std::string(res2)+"}\n";
+			str_info += "================================================\n";
+			str_info += '|' + std::string(res1) + "|{" + std::string(res2) + "}\n";
 
 		DWORD64 symDisplacement = 0;	
 

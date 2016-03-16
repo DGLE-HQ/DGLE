@@ -82,7 +82,7 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 
-		_vecDevices.push_back((flag ? "Compatible" : "Incompatible") + string(" audio device with id: ") + to_string(i) + " name: \"" + name + "\"");
+		_vecDevices.push_back((flag ? "Compatible" : "Incompatible") + string(" audio device with id: ") + to_string(i) + " name: \"" + name + '\"');
 	}
 
 	return res;
@@ -160,7 +160,7 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 		return false;
 	}
 
-	LOG("Using compatible audio device with id " + to_string(dev_id) + ".", LT_INFO);
+	LOG("Using compatible audio device with id " + to_string(dev_id) + '.', LT_INFO);
 
 	if (!_InitDevice(dev_id))
 	{
@@ -264,7 +264,7 @@ bool DGLE_API CBaseSound::_s_PrintDevId(void *pParameter, const char *pcParam)
 	{
 		UINT id;
 		waveOutGetID(PTHIS(CBaseSound)->_hWaveOut, &id);
-		CON(CBaseSound, ("Using audio device with id " + to_string(id) + ".").c_str());
+		CON(CBaseSound, ("Using audio device with id " + to_string(id) + '.').c_str());
 		return true;
 	}
 }
