@@ -39,8 +39,7 @@ CInstancedObj(uiInstIdx)
 
 	for (uint i = 0; i < count; ++i)
 	{
-		JOYCAPS caps;
-		memset(&caps, 0, sizeof(JOYCAPS));
+		JOYCAPS caps{};
 		
 		joyGetDevCaps(i, &caps, sizeof(JOYCAPS));
 
