@@ -885,23 +885,25 @@ CInstancedObj(uiInstIdx), _clNameList(clNameList)
 
 DGLE_RESULT DGLE_API CDCPFileIterator::FileName(char *pcName, DGLE::uint &uiCharsCount)
 {
+	if (_clNameListIter == _clNameList.end())
+	{
+		uiCharsCount = 0;
+		return E_FAIL;
+	}
+
 	if (!pcName)
 	{
-		uiCharsCount = (*_clNameListIter).size() + 1;
+		uiCharsCount = _clNameListIter->size() + 1;
 		return S_OK;
 	}
 
-	if ((*_clNameListIter).size() >= uiCharsCount)
+	if (_clNameListIter->size() >= uiCharsCount)
 	{
-		uiCharsCount = (*_clNameListIter).size() + 1;
-		strcpy(pcName, "");
+		uiCharsCount = _clNameListIter->size() + 1;
 		return E_INVALIDARG;
 	}
 
-		if (_clNameListIter == _clNameList.end())
-			pcName = "";	
-		else
-			strcpy(pcName, (*_clNameListIter).c_str());
+	strcpy(pcName, _clNameListIter->c_str());
 
 	return S_OK;
 }
