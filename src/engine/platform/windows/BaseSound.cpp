@@ -231,7 +231,7 @@ void CBaseSound::_PrintDevList()
 		output = "--------- Audio Devices ---------\n";
 
 		for (size_t i = 0; i < _vecDevices.size(); ++i)
-			output += _vecDevices[i] + "\n";
+			output += _vecDevices[i] + '\n';
 
 		output += "---------------------------------\n";
 	}

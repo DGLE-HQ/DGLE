@@ -426,7 +426,7 @@ void GetEngineFilePath(string &strPath)
 	if (GetModuleFileNameA(hModule, eng_file_name, MAX_PATH) == 0)
 		strcpy(eng_file_name, "");
 
-	strPath = GetFilePath(eng_file_name) + "\\";
+	strPath = GetFilePath(eng_file_name) + '\\';
 }
 
 bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
@@ -782,7 +782,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 										str += "Server";
 					}
 
-				str += '\"' + (strlen(osvi.szCSDVersion) > 0 ? " " + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + to_string(osvi.dwBuildNumber) + ')' : "");
+				str += '\"' + (strlen(osvi.szCSDVersion) > 0 ? ' ' + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + to_string(osvi.dwBuildNumber) + ')' : "");
 
 				if (osvi.dwMajorVersion >= 6)
 				{

@@ -247,7 +247,7 @@ void WriteStackDetails(PCONTEXT pContext)
 			strcat_s(szTextBuf, buf);
 		}
 
-		str_info += std::string(szTextBuf) + "\n";
+		str_info += std::string(szTextBuf) + '\n';
 		strcat_s(szTopFunc, szTextBuf);
 		strcat_s(szTopFunc, "\n");
 	}

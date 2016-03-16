@@ -506,7 +506,7 @@ void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 	for (size_t i = 0; i < txt.size(); ++i)
 		if (txt[i] == '\n')
 		{
-			txt.insert(i, "\r");
+			txt.insert(i, 1, '\r');
 			++i;
 		}
 
