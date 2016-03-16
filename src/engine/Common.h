@@ -61,6 +61,7 @@ typedef HMODULE TDynLibHandle;
 #include <io.h>
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 
 #include "Utils.h"
 #include "FuncDelegate.h"

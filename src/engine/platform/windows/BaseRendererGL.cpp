@@ -70,7 +70,7 @@ bool CBaseRendererGL::Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eIni
 		}
 		else
 		{		
-			if (std::string((char*)glGetString(GL_EXTENSIONS)).find("ARB_multisample") != std::string::npos)
+			if (strstr((char*)glGetString(GL_EXTENSIONS), "ARB_multisample"))
 			{	
 				int ia_attributes[] =
 				{

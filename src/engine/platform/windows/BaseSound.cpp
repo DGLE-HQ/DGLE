@@ -271,9 +271,7 @@ bool DGLE_API CBaseSound::_s_PrintDevId(void *pParameter, const char *pcParam)
 
 bool DGLE_API CBaseSound::_s_ForceDevice(void *pParameter, const char *pcParam)
 {
-	string param(pcParam);
-
-	if (param.find(' ') != string::npos)
+	if (strchr(pcParam, ' '))
 	{
 		CON(CBaseSound, "Only one parameter expected.");
 		return false;
@@ -281,7 +279,7 @@ bool DGLE_API CBaseSound::_s_ForceDevice(void *pParameter, const char *pcParam)
 	else
 	{
 		PTHIS(CBaseSound)->CloseDevice();
-		PTHIS(CBaseSound)->_InitDevice(stoul(param, NULL, 0));
+		PTHIS(CBaseSound)->_InitDevice(strtoul(pcParam, NULL, 0));
 		return true;
 	}
 }

@@ -556,11 +556,15 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		if (ret == ERROR_SUCCESS)
 		{
-			const string ver(tmp_string);
-			const string::size_type pos = ver.find_first_of('.');
-			osvi.dwMajorVersion = stoi(ver.substr(0, pos));
-			osvi.dwMinorVersion = stoi(ver.substr(pos + 1, ver.size() - pos - 1));
+			const char *ver_part(strtok(tmp_string, "."));
+			assert(ver_part);
+			osvi.dwMajorVersion = strtoul(ver_part, NULL, 10);
+			ver_part = strtok(NULL, "");
+			assert(ver_part);
+			osvi.dwMinorVersion = strtoul(ver_part, NULL, 10);
 		}
+
+		delete[] tmp_string;
 
 		if (ret != ERROR_SUCCESS || osvi.dwMajorVersion == 0)
 			for (uint32 i = osvi.dwMajorVersion; i < osvi.dwMajorVersion + 3; ++i)
@@ -576,8 +580,6 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 							if (j > osvi.dwMinorVersion)
 								osvi.dwMinorVersion = j;
 					}
-
-		delete[] tmp_string;
 
 		dw_size = 0;
 		ret = RegQueryValueEx(h_key, "CSDVersion", NULL, &dw_type, NULL, &dw_size);

@@ -715,7 +715,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, 
 	LOG("OpenGL " + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ')', LT_INFO);
 
 #ifdef PLATFORM_WINDOWS
-	if (string((char*)glGetString(GL_RENDERER)).find("GDI") != string::npos && string((char*)glGetString(GL_VENDOR)).find("Microsoft") != string::npos && !GLEW_VERSION_1_2)
+	if (strstr((char*)glGetString(GL_RENDERER), "GDI") && strstr((char*)glGetString(GL_VENDOR), "Microsoft") && !GLEW_VERSION_1_2)
 	{
 		LOG("Non hardware accelerated OpenGL implementation found! Videocard drivers are missing, corrupted or outdated.", LT_FATAL);
 		return E_FAIL;
