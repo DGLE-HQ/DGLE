@@ -114,17 +114,17 @@ bool CConsole::_Help(const char* pcParam)
 			par.erase(par.length() - 1, 1);
 
 		for (size_t i = 0; i < _vecCommands.size(); ++i)
-		 if (ToLowerCase(par) == string(_vecCommands[i].pcName))
+		 if (ToLowerCase(par) == _vecCommands[i].pcName)
 		 {
 			 if (strlen(_vecCommands[i].pcHelp) == 0)
-				Write(string("Help for command \"" + par + "\" is not presented.").c_str());
+				Write(("Help for command \"" + par + "\" is not presented.").c_str());
 			 else
 				Write(_vecCommands[i].pcHelp);
 			 
 			 return true;
 		 }
 
-		 Write(string("Command \"" + par + "\" not found.").c_str());
+		 Write(("Command \"" + par + "\" not found.").c_str());
 	}
 
 	return true;
@@ -557,7 +557,7 @@ bool DGLE_API CConsole::_s_Clear(void *pParameter, const char *pcParam)
 
 bool DGLE_API CConsole::_s_Save(void *pParameter, const char *pcParam)
 {
-	return PTHIS(CConsole)->_Save(string(pcParam));
+	return PTHIS(CConsole)->_Save(pcParam);
 }
 
 bool DGLE_API CConsole::_s_Terminate(void *pParameter, const char *pcParam)
