@@ -559,7 +559,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	return S_OK;
 }
 
-void CDCPFileSystem::_ReplaceSubstrInStr(string &outStr, const string &findCh, const string &repCh)
+void CDCPFileSystem::_s_ReplaceSubstrInStr(string &outStr, const string &findCh, const string &repCh)
 {
 	auto posCh = outStr.find(findCh);
 
@@ -584,10 +584,10 @@ void CDCPFileSystem::_ConvertFormatFromDirToRegEx(string &outStr, const string &
 {
 	outStr = inStr;
 	s_CorrectSlashes(outStr);
-	_ReplaceSubstrInStr(outStr, "\\", "\\\\");
-	_ReplaceSubstrInStr(outStr, ".", "\\.");
-	_ReplaceSubstrInStr(outStr, "?", ".");
-	_ReplaceSubstrInStr(outStr, "*", ".*");
+	_s_ReplaceSubstrInStr(outStr, "\\", "\\\\");
+	_s_ReplaceSubstrInStr(outStr, ".", "\\.");
+	_s_ReplaceSubstrInStr(outStr, "?", ".");
+	_s_ReplaceSubstrInStr(outStr, "*", ".*");
 }
 
 void CDCPFileSystem::_Clean()

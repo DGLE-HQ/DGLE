@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		30.10.2012 (c)Sivkov Ilya
+\date		17.03.2016 (c)Sivkov Ilya
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -74,9 +74,9 @@ class CDCPFileSystem :public CInstancedObj, public IFileSystem
 	bool _ReadFileInfo();
 	bool _OpenPack(const std::string &strPackName);
 	void _Clean();
-	void _ReplaceSubstrInStr(std::string &outStr, const std::string &findCh, const std::string &repCh);
 	void _ConvertFormatFromDirToRegEx(std::string &outStr, const std::string &inStr);
 
+	static void _s_ReplaceSubstrInStr(std::string &outStr, const std::string &findCh, const std::string &repCh);
 	static bool DGLE_API _s_ConCmdHelp(void *pParameter, const char *pcParam);
 	static bool DGLE_API _s_ConExecCmd(void *pParameter, const char *pcParam);
 
