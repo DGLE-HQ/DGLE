@@ -58,6 +58,7 @@ typedef HMODULE TDynLibHandle;
 #include <strstream>
 #include <limits>
 #include <type_traits>
+#include <utility>
 #include <io.h>
 #include <cstdlib>
 #include <cstdio>
