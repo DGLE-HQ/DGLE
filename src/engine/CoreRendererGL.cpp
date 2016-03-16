@@ -706,13 +706,13 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, 
 		return E_ABORT;
 	}
 	
-	_strOpenGLExtensions = string((char*)glGetString(GL_EXTENSIONS));
+	_strOpenGLExtensions = (char*)glGetString(GL_EXTENSIONS);
 
 	string gl_ver((char*)glGetString(GL_VERSION));
 
 	if (GLEW_VERSION_2_1) gl_ver = "2.1";
 
-	LOG(string("OpenGL ") + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ")", LT_INFO);
+	LOG("OpenGL " + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ")", LT_INFO);
 
 #ifdef PLATFORM_WINDOWS
 	if (string((char*)glGetString(GL_RENDERER)).find("GDI") != string::npos && string((char*)glGetString(GL_VENDOR)).find("Microsoft") != string::npos && !GLEW_VERSION_1_2)
@@ -2261,7 +2261,7 @@ bool DGLE_API CCoreRendererGL::_s_ConPrintGLExts(void *pParameter, const char *p
 		return false;
 	}
 	
-	string res = string("------OpenGL Extensions------\n") + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\n-----------------------------";
+	string res = "------OpenGL Extensions------\n" + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\n-----------------------------";
 
 	if (write)
 		LOG2(CCoreRendererGL, res, LT_INFO);

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		4.12.2015 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -39,7 +39,7 @@ if(!doCatch) expression else \
 try{ expression }\
 catch(const std::exception &exc)\
 {\
-	LogWrite(instIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + std::string(exc.what()) + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);\
+	LogWrite(instIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + exc.what() + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);\
 }\
 catch(...)\
 {\

@@ -82,7 +82,7 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 
-		_vecDevices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + to_string(i) + " name: \"" + name + "\"");
+		_vecDevices.push_back((flag ? "Compatible" : "Incompatible") + string(" audio device with id: ") + to_string(i) + " name: \"" + name + "\"");
 	}
 
 	return res;

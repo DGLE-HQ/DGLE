@@ -33,11 +33,11 @@ bool StrToBool(const string &str)
 {
 	string val = ToLowerCase(str);
 
-	if (val == string("true") ||
-		val == string("on") ||
-		val == string("enabled") ||
-		val == string("1") ||
-		val == string("active"))
+	if (val == "true" ||
+		val == "on" ||
+		val == "enabled" ||
+		val == "1" ||
+		val == "active")
 		return true;
 	else
 		return false;
@@ -77,7 +77,7 @@ string GetFilePath(const char *name)
 	string path(name);
 	
 	if (path.empty()) 
-		return string("");
+		return "";
 	
 	if (path[path.length() - 1] == '\\' || path[path.length() - 1] == '/') 
 		path.erase(path.length() - 1);
@@ -90,7 +90,7 @@ string GetFilePath(const char *name)
 		return path;
 	}
 	else 
-		return string("");
+		return "";
 }
 
 string GetFileName(const char *name)

@@ -391,7 +391,7 @@ DGLE_RESULT DGLE_API CResourceManager::UnregisterDefaultResource(E_ENGINE_OBJECT
 DGLE_RESULT DGLE_API CResourceManager::UnregisterFileFormat(const char* pcExtension)
 {
 	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == ToUpperCase(string(pcExtension)))
+		if (_vecFileFormats[i].ext == ToUpperCase(pcExtension))
 		{
 			_vecFileFormats.erase(_vecFileFormats.begin()+i);
 			return S_OK;
@@ -409,7 +409,7 @@ bool DGLE_API CResourceManager::_s_ConListFileFormats(void *pParameter, const ch
 	}
 	else
 	{
-		CON(CResourceManager, string("---Supported File Formats---\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
+		CON(CResourceManager, ("---Supported File Formats---\n" + PTHIS(CResourceManager)->_strFileFormatsDescs + "----------------------------").c_str());
 		return true;
 	}
 }
@@ -948,7 +948,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 	DGLE_RESULT res = S_OK;
 
 	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == string(pcExtension) && _vecFileFormats[i].type == eObjType)
+		if (_vecFileFormats[i].ext == pcExtension && _vecFileFormats[i].type == eObjType)
 		{
 			LOG("File format with extension \"" + string(pcExtension) + "\" was overrided.", LT_WARNING);
 			res = S_FALSE;
@@ -956,15 +956,15 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 
 	TFileFormat tff;
 
-	tff.ext = ToUpperCase(string(pcExtension));
+	tff.ext = ToUpperCase(pcExtension);
 	tff.type = eObjType;
-	tff.discr = string(pcDiscription);
+	tff.discr = pcDiscription;
 	tff.pLoadProc = pLoadProc;
 	tff.pParameter = pParameter;
 
 	_vecFileFormats.push_back(tff);
 
-	_strFileFormatsDescs += string("- " + ToUpperCase(string(pcExtension)) + " " + string(pcDiscription) + "\n");
+	_strFileFormatsDescs += "- " + ToUpperCase(pcExtension) + " " + pcDiscription + "\n";
 
 	return res;
 }
@@ -1989,7 +1989,7 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType)
 {
 	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == ToUpperCase(string(pcExtension)))
+		if (_vecFileFormats[i].ext == ToUpperCase(pcExtension))
 		{
 			eType = _vecFileFormats[i].type;
 			return S_OK;
@@ -2003,7 +2003,7 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension,
 DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount)
 {
 	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == ToUpperCase(string(pcExtension)))
+		if (_vecFileFormats[i].ext == ToUpperCase(pcExtension))
 		{
 			if (!pcTxt)
 			{
@@ -2138,7 +2138,7 @@ DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&
 	if (file_name.length() > 0 && file_name[file_name.length() - 1] != '\\')
 		file_name += '\\';
 
-	file_name += string(name);
+	file_name += name;
 
 	DGLE_RESULT ret = _Load(file_name.c_str(), pFile, _GetFileFormatLoaderIdx(name, EOT_UNKNOWN, uiLoadFlags, prObj), prObj, uiLoadFlags, pcName);
 

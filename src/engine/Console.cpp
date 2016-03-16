@@ -151,7 +151,7 @@ void CConsole::_Cmdlist()
 		for (size_t i = 0; i < _vecCommands.size(); ++i)
 			lst += " >" + string(_vecCommands[i].pcName) + "\n";
 		
-		lst += string("------" + to_string((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + "\n");
+		lst += "------" + to_string((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + "\n";
 		
 		Write(lst.c_str());
 	}
@@ -395,7 +395,7 @@ bool CConsole::_SetPos(const char* pcParam)
 	
 	if (par.size() == 0)
 	{
-		Write(string("Current console position is left: " + to_string(x) + " top: " + to_string(y) + " .").c_str());
+		Write(("Current console position is left: " + to_string(x) + " top: " + to_string(y) + " .").c_str());
 		return true;
 	}
 	else
@@ -406,7 +406,7 @@ bool CConsole::_SetPos(const char* pcParam)
 		
 		if (x == 0 && par1 != "0") 
 		{
-			Write(string("\"" + par1 + "\" is not a valid integer value.").c_str());
+			Write(("\"" + par1 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
@@ -414,13 +414,13 @@ bool CConsole::_SetPos(const char* pcParam)
 		
 		if (y == 0 && par2 != "0") 
 		{
-			Write(string("\"" + par2 + "\" is not a valid integer value.").c_str());
+			Write(("\"" + par2 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
 		_pConsoleWindow->SetSizeAndPos(x, y, w, h);
 
-		Write(string("Console position is set to left: " + to_string(x) + " top: " + to_string(y) + " .").c_str());
+		Write(("Console position is set to left: " + to_string(x) + " top: " + to_string(y) + " .").c_str());
 
 		return true;
 	}
@@ -436,7 +436,7 @@ bool CConsole::_SetSize(const char *pcParam)
 
 	if (par.size() == 0)
 	{
-		Write(string("Current console size is width: " + to_string(w) + " height: " + to_string(h) + " .").c_str());
+		Write(("Current console size is width: " + to_string(w) + " height: " + to_string(h) + " .").c_str());
 		return true;
 	}
 	else
@@ -447,7 +447,7 @@ bool CConsole::_SetSize(const char *pcParam)
 		
 		if (w == 0 && par1 != "0") 
 		{
-			Write(string("\"" + par1 + "\" is not a valid integer value.").c_str());
+			Write(("\"" + par1 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
@@ -455,13 +455,13 @@ bool CConsole::_SetSize(const char *pcParam)
 		
 		if (h == 0 && par2 != "0") 
 		{
-			Write(string("\"" + par2 + "\" is not a valid integer value.").c_str());
+			Write(("\"" + par2 + "\" is not a valid integer value.").c_str());
 			return false;
 		}
 
 		_pConsoleWindow->SetSizeAndPos(x, y, w, h);
 
-		Write(string("Console size is set to width: " + to_string(w) + " height: " + to_string(h) + " .").c_str());
+		Write(("Console size is set to width: " + to_string(w) + " height: " + to_string(h) + " .").c_str());
 
 		return true;
 	}

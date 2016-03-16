@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.09.2014 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -138,7 +138,7 @@ void CMainFileSystem::UnregisterAndFreeAll()
 DGLE_RESULT DGLE_API CMainFileSystem::UnregisterVirtualFileSystem(const char *pcVFSExtension)
 {
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
-		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
+		if (_clVFileSystems[i].ext == ToUpperCase(pcVFSExtension))
 		{
 			_clVFileSystems[i].pdc(_clVFileSystems[i].param, _clVFileSystems[i].fs);
 			_clVFileSystems.erase(_clVFileSystems.begin()+i);
@@ -183,7 +183,7 @@ bool DGLE_API CMainFileSystem::_s_ConListVFS(void *pParameter, const char *pcPar
 	}
 	else
 	{
-		CON(CMainFileSystem, string("---Supported VFile Systems---\n" + PTHIS(CMainFileSystem)->_strVFSsDescs + "-----------------------------").c_str());
+		CON(CMainFileSystem, ("---Supported VFile Systems---\n" + PTHIS(CMainFileSystem)->_strVFSsDescs + "-----------------------------").c_str());
 		return true;
 	}
 }
@@ -207,7 +207,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::LoadFile(const char *pcFileName, IFile *&p
 		p_fs = (IFileSystem*)_pHDDFS;
 	else
 		for (size_t i = 0; i < _clVFileSystems.size(); ++i)
-			if ((ToUpperCase(string(pcFileName)).find("." + ToUpperCase(_clVFileSystems[i].ext) + "|") != string::npos))
+			if ((ToUpperCase(pcFileName).find("." + ToUpperCase(_clVFileSystems[i].ext) + "|") != string::npos))
 			{
 				p_fs = _clVFileSystems[i].fs;
 				break;
@@ -247,7 +247,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::GetVirtualFileSystem(const char *pcVFSExte
 	}
 
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
-		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
+		if (_clVFileSystems[i].ext == ToUpperCase(pcVFSExtension))
 		{
 			prVFS = _clVFileSystems[i].fs;
 			return S_OK;
@@ -261,7 +261,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::GetVirtualFileSystem(const char *pcVFSExte
 DGLE_RESULT DGLE_API CMainFileSystem::GetVirtualFileSystemDescription(const char *pcVFSExtension, char *pcTxt, uint &uiCharsCount)
 {
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
-		if (_clVFileSystems[i].ext == ToUpperCase(string(pcVFSExtension)))
+		if (_clVFileSystems[i].ext == ToUpperCase(pcVFSExtension))
 		{
 			if (!pcTxt)
 			{
@@ -289,7 +289,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::GetVirtualFileSystemDescription(const char
 DGLE_RESULT DGLE_API CMainFileSystem::RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter)
 {
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
-		if (_clVFileSystems[i].ext == string(pcVFSExtension))
+		if (_clVFileSystems[i].ext == pcVFSExtension)
 		{
 			LOG("Virtual file system with extension \"" + string(pcVFSExtension) + "\" already registered.", LT_WARNING);
 			return E_INVALIDARG;
@@ -297,7 +297,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::RegisterVirtualFileSystem(const char *pcVF
 	
 	_clVFileSystems.push_back(TVFileSystem(pcVFSExtension, pcDiscription, pVFS, pDeleteCallback, pParameter));
 
-	_strVFSsDescs += string("- " + ToUpperCase(string(pcVFSExtension)) + " " + string(pcDiscription) + "\n");
+	_strVFSsDescs += "- " + ToUpperCase(pcVFSExtension) + " " + pcDiscription + "\n";
 
 	return S_OK;
 }

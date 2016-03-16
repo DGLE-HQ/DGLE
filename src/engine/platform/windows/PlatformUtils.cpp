@@ -453,7 +453,7 @@ bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
 			int pos = (int)fullname.find_last_of("\\");
 
 			fullname = fullname.substr(0, pos + 1);
-			fullname += string(wfd.cFileName);
+			fullname += wfd.cFileName;
 			fileNames.push_back(fullname);
 		}
 		while (FindNextFileA(hSearch, &wfd));
@@ -933,7 +933,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		char txt[200];
 
 		GetStringValue(p_object, L"szDescription", EXPAND(txt));
-		str+=string(txt);
+		str += txt;
 
 		if(strlen(txt) <= 128)
 			strcpy(stSysInfo.cVideocardName, txt);

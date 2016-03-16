@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		30.10.2012 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -391,7 +391,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 		return E_INVALIDARG;
 	}
 
-	string pack_name = string(pcName);
+	string pack_name = pcName;
 
 	string::size_type delim_pos = pack_name.find_first_of("|");
 
@@ -494,7 +494,7 @@ uint32 CDCPFileSystem::s_GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, co
 
 DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 {
-	string pack_name = string(pcName);
+	string pack_name = pcName;
 
 	string::size_type delim_pos = pack_name.find_first_of("|");
 
@@ -519,7 +519,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExist
 
 DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)
 {
-	string pack_name = string(pcMask);
+	string pack_name = pcMask;
 
 	string::size_type delim_pos = pack_name.find_first_of("|");
 
@@ -585,10 +585,10 @@ void CDCPFileSystem::_ConvertFormatFromDirToRegEx(string &outStr, const string &
 {
 	outStr = inStr;
 	s_CorrectSlashes(outStr);
-	_ReplaceSubstrInStr(outStr, string("\\"), string("\\\\"));
-	_ReplaceSubstrInStr(outStr, string("."), string("\\."));
-	_ReplaceSubstrInStr(outStr, string("?"), string("."));
-	_ReplaceSubstrInStr(outStr, string("*"), string(".*"));
+	_ReplaceSubstrInStr(outStr, "\\", "\\\\");
+	_ReplaceSubstrInStr(outStr, ".", "\\.");
+	_ReplaceSubstrInStr(outStr, "?", ".");
+	_ReplaceSubstrInStr(outStr, "*", ".*");
 }
 
 void CDCPFileSystem::_Clean()

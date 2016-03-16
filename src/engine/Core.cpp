@@ -301,7 +301,7 @@ _clDelOnFPSTimer(uiInstIdx)
 	if (!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_NO_LOG_FILE))
 	{
 		_clLogFile.setf(ios_base::right, ios_base::adjustfield);
-		_clLogFile.open((string("log") + (InstIdx() != 0 ? to_string(InstIdx()) : string("")) + ".txt").c_str(), ios::out | ios::trunc);
+		_clLogFile.open(("log" + (InstIdx() != 0 ? to_string(InstIdx()) : "") + ".txt").c_str(), ios::out | ios::trunc);
 
 		TSysTimeAndDate time;
 		GetLocalTimaAndDate(time);
@@ -356,12 +356,12 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 		break;
 	
 	case LT_ERROR:
-		msg = "[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + to_string(iSrcLineNumber) + ")";
+		msg = "[ERROR] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ")";
 		++_uiLogErrorsCount;
 		break;
 	
 	case LT_FATAL:
-		msg = "[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + to_string(iSrcLineNumber) + ")";
+		msg = "[FATAL] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ")";
 		++_uiLogErrorsCount;
 		
 		_LogWrite(msg.c_str(), true);		 
@@ -671,7 +671,7 @@ void CCore::_OnTimer()
 		++_ui64CyclesCount;
 
 		if (_iFPSToCaption == 1)
-			_pMainWindow->SetCaption((string(_pcApplicationCaption) + string(" FPS:") + to_string(_uiLastFPS)).c_str());
+			_pMainWindow->SetCaption((string(_pcApplicationCaption) + " FPS:" + to_string(_uiLastFPS)).c_str());
 		else
 			_pMainWindow->SetCaption(_pcApplicationCaption);
 	}
@@ -1363,7 +1363,7 @@ void CCore::_LogWinMode(const TEngineWindow &stWin)
 			break;
 	}
 
-	LOG(string("Setting window mode: ") + to_string(stWin.uiWidth) + "X" + to_string(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
+	LOG("Setting window mode: " + to_string(stWin.uiWidth) + "X" + to_string(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
 		(stWin.bFullScreen ? " Fullscreen" : " Windowed") + (stWin.bVSync ? " VSync" : "") +
 		(stWin.eMultisampling != MM_NONE ? to_string((int)stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
 }
@@ -1669,7 +1669,7 @@ bool DGLE_API CCore::_s_InstIdx(void *pParameter, const char *pcParam)
 	}
 	else
 	{
-		CON(CCore, (string("Instance Index is ") + to_string(PTHIS(CCore)->InstIdx()) + ".").c_str());
+		CON(CCore, ("Instance Index is " + to_string(PTHIS(CCore)->InstIdx()) + ".").c_str());
 		return true;
 	}
 }
