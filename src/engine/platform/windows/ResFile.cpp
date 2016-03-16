@@ -17,7 +17,7 @@ _ui32Pos(0),
 _ui32Size(0)
 {	
 	snprintf(_acName, std::extent<decltype(_acName)>::value, "%d", resId);
-	HRSRC res = FindResource(hModule, MAKEINTRESOURCE(resId), "BIN");
+	const HRSRC res = FindResource(hModule, MAKEINTRESOURCE(resId), "BIN");
 	
 	if (res)
 		_hRes = LoadResource(hModule, res);

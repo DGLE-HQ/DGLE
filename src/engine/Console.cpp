@@ -132,7 +132,7 @@ bool CConsole::_Help(const char* pcParam)
 
 void CConsole::Exec(const char* pcCommand)
 {
-	string command(pcCommand);
+	const string command(pcCommand);
 
 	Write(('>' + command).c_str());
 	
@@ -256,7 +256,7 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 				}
 				else
 				{
-					int t = stoi(param);
+					const int t = stoi(param);
 
 					if (t == 0 && param != "0")
 						Write(('\"' + param + "\" is not a valid integer value.").c_str());
@@ -387,7 +387,7 @@ void CConsole::RegComVar(const char *pcName, const char *pcHelp, int *piVar, int
 
 bool CConsole::_SetPos(const char* pcParam)
 {
-	string par(pcParam);
+	const string par(pcParam);
 	
 	int x, y, w, h;
 
@@ -428,7 +428,7 @@ bool CConsole::_SetPos(const char* pcParam)
 
 bool CConsole::_SetSize(const char *pcParam)
 {
-	string par(pcParam);
+	const string par(pcParam);
 	
 	int x, y, w, h;
 

@@ -35,7 +35,7 @@ CInstancedObj(uiInstIdx)
 
 #ifndef NO_JOYSTICKS
 
-	uint count = joyGetNumDevs();
+	const uint count = joyGetNumDevs();
 
 	for (uint i = 0; i < count; ++i)
 	{

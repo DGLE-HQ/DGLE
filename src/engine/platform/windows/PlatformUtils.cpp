@@ -450,7 +450,7 @@ bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
 
 			string fullname(tmp);
 
-			int pos = (int)fullname.find_last_of('\\');
+			const int pos = (int)fullname.find_last_of('\\');
 
 			fullname = fullname.substr(0, pos + 1);
 			fullname += wfd.cFileName;
@@ -556,7 +556,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		if (ret == ERROR_SUCCESS)
 		{
-			string ver(tmp_string);
+			const string ver(tmp_string);
 			const string::size_type pos = ver.find_first_of('.');
 			osvi.dwMajorVersion = stoi(ver.substr(0, pos));
 			osvi.dwMinorVersion = stoi(ver.substr(pos + 1, ver.size() - pos - 1));

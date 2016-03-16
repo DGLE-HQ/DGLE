@@ -78,7 +78,7 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 
 		string name(caps.szPname);
 
-		string::size_type bracket_pos_1 = name.find_last_of('('), bracket_pos_2 = name.find_last_of(')');
+		const string::size_type bracket_pos_1 = name.find_last_of('('), bracket_pos_2 = name.find_last_of(')');
 		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 

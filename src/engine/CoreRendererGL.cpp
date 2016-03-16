@@ -2261,7 +2261,7 @@ bool DGLE_API CCoreRendererGL::_s_ConPrintGLExts(void *pParameter, const char *p
 		return false;
 	}
 	
-	string res = "------OpenGL Extensions------\n" + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\n-----------------------------";
+	const string res = "------OpenGL Extensions------\n" + PTHIS(CCoreRendererGL)->_strOpenGLExtensions + "\n-----------------------------";
 
 	if (write)
 		LOG2(CCoreRendererGL, res, LT_INFO);

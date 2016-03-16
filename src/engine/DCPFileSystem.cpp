@@ -393,7 +393,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 
 	string pack_name = pcName;
 
-	string::size_type delim_pos = pack_name.find_first_of('|');
+	const string::size_type delim_pos = pack_name.find_first_of('|');
 
 	if (!(delim_pos > 0 && delim_pos != string::npos))
 	{
@@ -412,7 +412,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 
 	s_CorrectSlashes(file_name);
 
-	uint32 file_idx = s_GetTableIdx(_clInfoTable, file_name);
+	const uint32 file_idx = s_GetTableIdx(_clInfoTable, file_name);
 
 	if (file_idx == -1)
 	{
@@ -420,8 +420,8 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 		return E_ABORT;
 	}
 
-	uint8	*cmprsd_buff = new uint8[_clInfoTable[file_idx].ui32CmprsdSize], 
-			*dcmprsd_buff = new uint8[_clInfoTable[file_idx].ui32Size];
+	uint8	*const cmprsd_buff = new uint8[_clInfoTable[file_idx].ui32CmprsdSize], 
+			*const dcmprsd_buff = new uint8[_clInfoTable[file_idx].ui32Size];
 
 	uint32 pos;
 	_pPack->Seek(_clInfoTable[file_idx].ui32Offset + 7, FSSF_BEGIN, pos);
@@ -439,7 +439,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 
 	lzo_uint uncm_size;
 
-	int r = lzo1x_decompress(cmprsd_buff, _clInfoTable[file_idx].ui32CmprsdSize, dcmprsd_buff, &uncm_size, NULL);	
+	const int r = lzo1x_decompress(cmprsd_buff, _clInfoTable[file_idx].ui32CmprsdSize, dcmprsd_buff, &uncm_size, NULL);	
 
 	if (r != LZO_E_OK || uncm_size != _clInfoTable[file_idx].ui32Size)
 	{
@@ -483,7 +483,7 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 
 uint32 CDCPFileSystem::s_GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const std::string &strName)
 {
-	uint32 crc32 = GetCRC32((uint8*)strName.c_str(), (uint32)strName.size());
+	const uint32 crc32 = GetCRC32((uint8*)strName.c_str(), (uint32)strName.size());
 
 	for (size_t i = 0; i < clInfoTable.size(); ++i)
 		if (crc32 == clInfoTable[i].ui32CRC32)
@@ -496,7 +496,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExist
 {
 	string pack_name = pcName;
 
-	string::size_type delim_pos = pack_name.find_first_of('|');
+	const string::size_type delim_pos = pack_name.find_first_of('|');
 
 	if (!(delim_pos > 0 && delim_pos != string::npos))
 	{
@@ -521,7 +521,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 {
 	string pack_name = pcMask;
 
-	string::size_type delim_pos = pack_name.find_first_of('|');
+	const string::size_type delim_pos = pack_name.find_first_of('|');
 
 	if (!(delim_pos > 0 && delim_pos != string::npos))
 	{
@@ -529,7 +529,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 		return E_INVALIDARG;
 	}
 
-	string mask = pack_name.substr(delim_pos + 1, pack_name.size() - 1);
+	const string mask = pack_name.substr(delim_pos + 1, pack_name.size() - 1);
 	pack_name = pack_name.substr(0, delim_pos);
 
 	if (!_OpenPack(pack_name))
@@ -638,7 +638,7 @@ bool DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 	{
 		string cmd(pcParam), param;
 		
-		string::size_type pos = cmd.find_first_of(' ');
+		const string::size_type pos = cmd.find_first_of(' ');
 		
 		if (pos != string::npos)
 		{
@@ -731,7 +731,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommandEx(const char *pcCommand,
 		if (!_pPackager)
 			return E_ABORT;
 
-		string list = _pPackager->GetFilesList();
+		const string list = _pPackager->GetFilesList();
 
 		if (!pcResult || uiCharsCount < list.size() + 1)
 		{
@@ -758,7 +758,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommandEx(const char *pcCommand,
 			if (!_pPackager)
 				return E_ABORT;
 
-			string err = _pPackager->GetLastError();
+			const string err = _pPackager->GetLastError();
 
 			if (!pcResult || uiCharsCount < err.size() + 1)
 			{
@@ -797,7 +797,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 {
 	string cmd(pcCommand), param;
 
-	string::size_type pos = cmd.find_first_of(' ');
+	const string::size_type pos = cmd.find_first_of(' ');
 	
 	if (pos != string::npos)
 	{
@@ -846,7 +846,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 	
 	if (cmd == "add" && !param.empty())
 	{
-		string::size_type pos = param.find_first_of(';');
+		const string::size_type pos = param.find_first_of(';');
 		string dir;
 
 		if (pos != string::npos)
@@ -862,7 +862,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 	
 	if (cmd == "extract" && !param.empty())
 	{
-		string::size_type pos = param.find_first_of(';');
+		const string::size_type pos = param.find_first_of(';');
 
 		if (pos == string::npos)
 			return E_INVALIDARG;

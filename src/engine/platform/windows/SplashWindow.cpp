@@ -99,7 +99,7 @@ bool CSplashWindow::_CreateWindow()
 			}
 			else
 			{
-				HDC desktop_dc	= GetDC(GetDesktopWindow()), hdc1 = CreateCompatibleDC(desktop_dc), hdc2 = CreateCompatibleDC(desktop_dc);
+				const HDC desktop_dc	= GetDC(GetDesktopWindow()), hdc1 = CreateCompatibleDC(desktop_dc), hdc2 = CreateCompatibleDC(desktop_dc);
 
 				SelectObject(hdc1, _hBmp);
 				SelectObject(hdc2, bmp);
@@ -108,9 +108,9 @@ bool CSplashWindow::_CreateWindow()
 				DeleteDC(hdc2);
 				DeleteObject(bmp);
 				
-				HBITMAP tmp = CreateCompatibleBitmap(desktop_dc, bm1.bmWidth, bm1.bmHeight);
-				HDC hdc3 = CreateCompatibleDC(desktop_dc);
-				HGDIOBJ old = SelectObject(hdc3, tmp);
+				const HBITMAP tmp = CreateCompatibleBitmap(desktop_dc, bm1.bmWidth, bm1.bmHeight);
+				const HDC hdc3 = CreateCompatibleDC(desktop_dc);
+				const HGDIOBJ old = SelectObject(hdc3, tmp);
 
 				BitBlt(hdc3, 0, 0, bm1.bmWidth, bm1.bmHeight, hdc1, 0, 0, SRCCOPY);
 
