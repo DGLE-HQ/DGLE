@@ -561,16 +561,8 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 void CDCPFileSystem::_s_ReplaceSubstrInStr(string &outStr, const string &findCh, const string &repCh)
 {
-	auto posCh = outStr.find(findCh);
-
-	while (posCh != string::npos)
-	{		
+	for (auto posCh = outStr.find(findCh); posCh != string::npos; posCh = outStr.find(findCh, posCh + repCh.size()))
 		outStr.replace(posCh, findCh.size(), repCh);
-
-		posCh += repCh.size();
-
-		posCh = outStr.find(findCh, posCh);	
-	}
 }
 
 void CDCPFileSystem::s_CorrectSlashes(string &strFileName)
