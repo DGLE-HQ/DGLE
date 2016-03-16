@@ -17,7 +17,7 @@ using namespace std;
 
 #define CON_SPLIT_TWO_PARAMS(params)\
 	string::size_type pos = params.find_first_of(' ');\
-	string par1(params.substr(0, pos)), par2(params.substr(pos + 1, params.size() - pos - 1));
+	string par1(params.substr(0, pos)), par2(params.substr(pos + 1));
 
 class CEvConsoleWrite : public IEvConsoleWrite
 {
@@ -229,7 +229,7 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 		
 	if (pos != string::npos)
 	{
-		param = strCommand.substr(pos + 1, strCommand.size() - pos - 1);
+		param = strCommand.substr(pos + 1);
 		cmd = strCommand.substr(0, pos);
 	}
 	else

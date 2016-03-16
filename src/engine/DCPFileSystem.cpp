@@ -401,7 +401,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 		return E_INVALIDARG;
 	}
 
-	string file_name = pack_name.substr(delim_pos + 1, pack_name.size() - 1);
+	string file_name = pack_name.substr(delim_pos + 1);
 	pack_name = pack_name.substr(0, delim_pos);
 
 	if (!_OpenPack(pack_name))
@@ -504,7 +504,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExist
 		return E_INVALIDARG;
 	}
 
-	string name = pack_name.substr(delim_pos + 1, pack_name.size() - 1);
+	string name = pack_name.substr(delim_pos + 1);
 	pack_name = pack_name.substr(0, delim_pos);
 
 	if (!_OpenPack(pack_name))
@@ -529,7 +529,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 		return E_INVALIDARG;
 	}
 
-	const string mask = pack_name.substr(delim_pos + 1, pack_name.size() - 1);
+	const string mask = pack_name.substr(delim_pos + 1);
 	pack_name = pack_name.substr(0, delim_pos);
 
 	if (!_OpenPack(pack_name))
@@ -642,8 +642,8 @@ bool DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 		
 		if (pos != string::npos)
 		{
-			param = cmd.substr(pos + 1, cmd.size() - pos - 1);
-			cmd.erase(pos, cmd.size() - pos);
+			param = cmd.substr(pos + 1);
+			cmd.erase(pos);
 		}
 
 		if (cmd == "list")
@@ -801,8 +801,8 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 	
 	if (pos != string::npos)
 	{
-		param = cmd.substr(pos + 1, cmd.size() - pos - 1);
-		cmd.erase(pos, cmd.size() - pos);
+		param = cmd.substr(pos + 1);
+		cmd.erase(pos);
 	}
 
 	if (cmd == "create")
@@ -851,8 +851,8 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 
 		if (pos != string::npos)
 		{
-			dir = param.substr(pos + 1, param.size() - pos - 1);
-			param.erase(pos, param.size() - pos);
+			dir = param.substr(pos + 1);
+			param.erase(pos);
 		}
 
 		stVar.SetBool(_pPackager->AddFile(param, dir));
@@ -867,7 +867,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 		if (pos == string::npos)
 			return E_INVALIDARG;
 
-		stVar.SetBool(_pPackager->ExtractFile(param.substr(0, pos), param.substr(pos + 1, param.size() - pos - 1)));
+		stVar.SetBool(_pPackager->ExtractFile(param.substr(0, pos), param.substr(pos + 1)));
 
 		return S_OK;
 	}
