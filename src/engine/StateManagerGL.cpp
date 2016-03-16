@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		16.03.2016 (c)Andrey Korotkov
+\date		17.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,7 +14,7 @@ See "DGLE.h" for more details.
 
 using namespace std;
 
-#define UNDEFINED_CAP_FATAL(cap) LOG("Undefined State Manager cap: " + UIntToStrX(cap) + "! This is program logic issue, please report to engine developers.", LT_FATAL);
+#define UNDEFINED_CAP_FATAL(cap) LOG("Undefined State Manager cap: " + ToStrX(cap) + "! This is program logic issue, please report to engine developers.", LT_FATAL);
 
 inline uint8 CToggleState::GetCapIdx(GLenum cap) const
 {

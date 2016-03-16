@@ -17,9 +17,9 @@ std::string ToUpperCase(std::string str);
 
 bool StrToBool(std::string str);
 
-std::string UIntToStrX(DGLE::uint val);
-std::string FloatToStrFmt(float val);
-std::string DoubleToStr(double val);
+std::string ToStrX(DGLE::uint val);
+std::string ToStrFmt(double val);
+std::string ToStrExp(double val);
 std::string BoolToStr(bool val);
 
 std::string GetFilePath(const char *name);

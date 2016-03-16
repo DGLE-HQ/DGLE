@@ -10,8 +10,11 @@ See "DGLE.h" for more details.
 #include "Utils.h"
 
 #include <cctype>
+#include <cstdio>
 #include <algorithm>
 #include <utility>
+#include <type_traits>
+#include <limits>
 
 using namespace DGLE;
 using namespace std;
@@ -40,25 +43,25 @@ bool StrToBool(string str)
 		val == "active";
 }
 
-string UIntToStrX(uint val)
+string ToStrX(uint val)
 {
-	char res[32];
-	sprintf_s(res, "%x", val);
-	return string("0x") + res;
+	char res[2/*0x*/ + numeric_limits<decltype(val)>::digits10 + 1/*correction for digits10*/ + 1/*terminator*/];
+	sprintf(res, "0x%x", val);
+	return res;
 }
 
-string FloatToStrFmt(float val)
+string ToStrFmt(double val)
 {
 	char res[16];
-	sprintf_s(res, "%.4f", val);
-	return res[0] == '-' ? string(res) : " " + string(res);
+	snprintf(res, extent<decltype(res)>::value, "% .4f", val);
+	return res;
 }
 
-string DoubleToStr(double val)
+string ToStrExp(double val)
 {
 	char res[16];
-	sprintf_s(res, "%e", val);
-	return string(res);
+	snprintf(res, extent<decltype(res)>::value, "%e", val);
+	return res;
 }
 
 string BoolToStr(bool val)

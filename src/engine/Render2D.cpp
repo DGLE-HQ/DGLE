@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -336,7 +336,7 @@ inline void CRender2D::_BatchFlush()
 		break;
 
 	default:
-		LOG("Unallowed draw mode " + UIntToStrX(_eBatchDrawMode) + " passed to 2D batching system! This is program logic issue, please report to engine developers.", LT_FATAL);
+		LOG("Unallowed draw mode " + ToStrX(_eBatchDrawMode) + " passed to 2D batching system! This is program logic issue, please report to engine developers.", LT_FATAL);
 	}
 
 	_batchMaxSize = max(_batchMaxSize, size);
