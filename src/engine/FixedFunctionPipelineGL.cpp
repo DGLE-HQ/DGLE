@@ -1,12 +1,13 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.11.2014 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
+#include "Common.h"
 #include "FixedFunctionPipelineGL.h"
 
 CFixedFunctionPipeline::CFixedFunctionPipeline() : _c_fAttenuationFactor(1.75f), _bStateFilterEnabled(true)

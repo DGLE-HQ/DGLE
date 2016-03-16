@@ -1,12 +1,13 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		15.04.2013 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
+#include "Common.h"
 #include "Material.h"
 #include "Render.h"
 #include "Render3D.h"

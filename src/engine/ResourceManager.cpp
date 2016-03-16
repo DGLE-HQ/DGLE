@@ -7,6 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
+#include "Common.h"
 #include "ResourceManager.h"
 #include "Material.h"
 #include "Light.h"

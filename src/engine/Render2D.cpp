@@ -7,6 +7,7 @@ under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
+#include "Common.h"
 #define __RENDER2D__
 #include "Render2D.h"
 #include "Core.h"
