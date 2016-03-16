@@ -1,6 +1,6 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,16 +31,14 @@ string ToUpperCase(const string &inString)
 
 bool StrToBool(const string &str)
 {
-	string val = ToLowerCase(str);
+	const string val = ToLowerCase(str);
 
-	if (val == "true" ||
-		val == "on" ||
-		val == "enabled" ||
-		val == "1" ||
-		val == "active")
-		return true;
-	else
-		return false;
+	return
+		val == "true"		||
+		val == "on"			||
+		val == "enabled"	||
+		val == "1"			||
+		val == "active";
 }
 
 string UIntToStrX(uint val)
