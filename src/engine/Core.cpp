@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1748,7 +1748,7 @@ bool DGLE_API CCore::_s_ConPrintVersion(void *pParameter, const char *pcParam)
 	}
 	else 
 	{
-		CON(CCore, (string("Engine version: ")+string(DGLE_VERSION)).c_str());
+		CON(CCore, (string("Engine version: ") + DGLE_VERSION).c_str());
 		return true;
 	}
 }
