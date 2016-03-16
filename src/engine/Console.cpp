@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		3.12.2015 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -151,7 +151,7 @@ void CConsole::_Cmdlist()
 		for (size_t i = 0; i < _vecCommands.size(); ++i)
 			lst += " >" + string(_vecCommands[i].pcName) + "\n";
 		
-		lst += string("------" + UIntToStr((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + "\n");
+		lst += string("------" + to_string((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + "\n");
 		
 		Write(lst.c_str());
 	}
@@ -251,18 +251,18 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 			{
 				if (param.empty())
 				{
-					Write((ToUpperCase(cmd) + " current value is " + IntToStr(*_vecCommands[i].piVar) + ".\n"
-						"Value may vary from " + IntToStr(_vecCommands[i].iMinValue) + " up to " + IntToStr(_vecCommands[i].iMaxValue) + ".").c_str());
+					Write((ToUpperCase(cmd) + " current value is " + to_string(*_vecCommands[i].piVar) + ".\n"
+						"Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + ".").c_str());
 				}
 				else
 				{
-					int t = StrToInt(param);
+					int t = stoi(param);
 
 					if (t == 0 && param != "0")
 						Write(("\"" + param + "\" is not a valid integer value.").c_str());
 					else
 						if (t < _vecCommands[i].iMinValue || t > _vecCommands[i].iMaxValue)
-							Write(("Value may vary from " + IntToStr(_vecCommands[i].iMinValue) + " up to " + IntToStr(_vecCommands[i].iMaxValue) + ".").c_str());
+							Write(("Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + ".").c_str());
 						else
 						{
 							_pConsoleWindow->EnterThreadSafeSection();
@@ -275,7 +275,7 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 							if (res)
 							{
 								*_vecCommands[i].piVar = t;
-								Write((ToUpperCase(cmd) + " is set to " + IntToStr(t) + ".").c_str());
+								Write((ToUpperCase(cmd) + " is set to " + to_string(t) + ".").c_str());
 							}
 
 							_pConsoleWindow->LeaveThreadSafeSection();
@@ -395,14 +395,14 @@ bool CConsole::_SetPos(const char* pcParam)
 	
 	if (par.size() == 0)
 	{
-		Write(string("Current console position is left: " + IntToStr(x) + " top: " + IntToStr(y) + " .").c_str());
+		Write(string("Current console position is left: " + to_string(x) + " top: " + to_string(y) + " .").c_str());
 		return true;
 	}
 	else
 	{
 		CON_SPLIT_TWO_PARAMS(par);
 
-		x = StrToInt(par1);
+		x = stoi(par1);
 		
 		if (x == 0 && par1 != "0") 
 		{
@@ -410,7 +410,7 @@ bool CConsole::_SetPos(const char* pcParam)
 			return false;
 		}
 
-		y = StrToInt(par2);
+		y = stoi(par2);
 		
 		if (y == 0 && par2 != "0") 
 		{
@@ -420,7 +420,7 @@ bool CConsole::_SetPos(const char* pcParam)
 
 		_pConsoleWindow->SetSizeAndPos(x, y, w, h);
 
-		Write(string("Console position is set to left: " + IntToStr(x) + " top: " + IntToStr(y) + " .").c_str());
+		Write(string("Console position is set to left: " + to_string(x) + " top: " + to_string(y) + " .").c_str());
 
 		return true;
 	}
@@ -436,14 +436,14 @@ bool CConsole::_SetSize(const char *pcParam)
 
 	if (par.size() == 0)
 	{
-		Write(string("Current console size is width: " + IntToStr(w) + " height: " + IntToStr(h) + " .").c_str());
+		Write(string("Current console size is width: " + to_string(w) + " height: " + to_string(h) + " .").c_str());
 		return true;
 	}
 	else
 	{
 		CON_SPLIT_TWO_PARAMS(par);
 
-		w = StrToInt(par1);
+		w = stoi(par1);
 		
 		if (w == 0 && par1 != "0") 
 		{
@@ -451,7 +451,7 @@ bool CConsole::_SetSize(const char *pcParam)
 			return false;
 		}
 
-		h = StrToInt(par2);
+		h = stoi(par2);
 		
 		if (h == 0 && par2 != "0") 
 		{
@@ -461,7 +461,7 @@ bool CConsole::_SetSize(const char *pcParam)
 
 		_pConsoleWindow->SetSizeAndPos(x, y, w, h);
 
-		Write(string("Console size is set to width: " + IntToStr(w) + " height: " + IntToStr(h) + " .").c_str());
+		Write(string("Console size is set to width: " + to_string(w) + " height: " + to_string(h) + " .").c_str());
 
 		return true;
 	}

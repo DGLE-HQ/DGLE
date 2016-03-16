@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		09.04.2012 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -90,7 +90,7 @@ bool CSplashWindow::_CreateWindow()
 
 			if (bm1.bmWidth < bm2.bmWidth || bm1.bmHeight < bm2.bmHeight)
 			{
-				LOG("Custom splash picture must be greater than " + IntToStr(bm2.bmWidth) + "X" + IntToStr(bm2.bmHeight) + " pixels.", LT_ERROR);
+				LOG("Custom splash picture must be greater than " + to_string(bm2.bmWidth) + "X" + to_string(bm2.bmHeight) + " pixels.", LT_ERROR);
 				
 				DeleteObject(_hBmp);
 				DeleteObject(bmp);

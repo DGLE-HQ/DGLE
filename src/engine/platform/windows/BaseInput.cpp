@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		17.09.2012 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -52,10 +52,10 @@ CInstancedObj(uiInstIdx)
 
 	if (!_vecJoyCaps.empty())
 	{
-		LOG("Found " + UIntToStr(_vecJoyCaps.size()) + " connected joystick" + (_vecJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
+		LOG("Found " + to_string(_vecJoyCaps.size()) + " connected joystick" + (_vecJoyCaps.size() == 1 ? "." : "s."), LT_INFO);
 
 		for (size_t i = 0; i < _vecJoyCaps.size(); ++i)
-			LOG("Joystick with id: " + UIntToStr(i) + " name: \"" + string(_vecJoyCaps[i].info.szPname) + "\"", LT_INFO);
+			LOG("Joystick with id: " + to_string(i) + " name: \"" + string(_vecJoyCaps[i].info.szPname) + "\"", LT_INFO);
 	}
 
 	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
@@ -144,7 +144,7 @@ void CBaseInput::_PrintJoysList()
 		output = "----------- Joysticks -----------\n";
 
 		for (size_t i = 0; i < _vecJoyCaps.size(); ++i)
-			output += "id: " + UIntToStr(i) + " name: \"" + string(_vecJoyCaps[i].info.szPname) + "\"\n";
+			output += "id: " + to_string(i) + " name: \"" + string(_vecJoyCaps[i].info.szPname) + "\"\n";
 
 		output += "---------------------------------\n";
 	}

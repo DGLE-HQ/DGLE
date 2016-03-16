@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		20.04.2013 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1343,9 +1343,9 @@ void CStateManager<true>::glBindBufferARB(GLenum target, GLuint buffer)
 
 void CStateManager<true>::_OutputFunctionProfileData(const string &functionName, const ::TProfileData &profileData)
 {
-	string str(functionName + UIntToStr(profileData.unfilteredCallCount) + '/' + UIntToStr(profileData.overallCallCount));
+	string str(functionName + to_string(profileData.unfilteredCallCount) + '/' + to_string(profileData.overallCallCount));
 	if (profileData.overallCallCount)
-		str.append(" (").append(UIntToStr((profileData.overallCallCount - profileData.unfilteredCallCount) * 100 / profileData.overallCallCount)).append("% redundant)");
+		str.append(" (").append(to_string((profileData.overallCallCount - profileData.unfilteredCallCount) * 100 / profileData.overallCallCount)).append("% redundant)");
 	Core()->RenderProfilerText(str.c_str(), ColorWhite());
 }
 

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.09.2014 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -558,8 +558,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		{
 			string ver(tmp_string);
 			const string::size_type pos = ver.find_first_of('.');
-			osvi.dwMajorVersion = StrToInt(ver.substr(0, pos));
-			osvi.dwMinorVersion = StrToInt(ver.substr(pos + 1, ver.size() - pos - 1));
+			osvi.dwMajorVersion = stoi(ver.substr(0, pos));
+			osvi.dwMinorVersion = stoi(ver.substr(pos + 1, ver.size() - pos - 1));
 		}
 
 		if (ret != ERROR_SUCCESS || osvi.dwMajorVersion == 0)
@@ -598,7 +598,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		ret = RegQueryValueEx(h_key, "CurrentBuildNumber", NULL, &dw_type, (LPBYTE)tmp_string, &dw_size);
 
 		if (ret == ERROR_SUCCESS)
-			osvi.dwBuildNumber = StrToInt(string(tmp_string));
+			osvi.dwBuildNumber = strtol(tmp_string, NULL, 10);
 
 		delete[] tmp_string;
 
@@ -615,7 +615,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	{
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion > 4)
 		{	
-				str += IntToStr(osvi.dwMajorVersion) + "." + IntToStr(osvi.dwMinorVersion) + " ";
+				str += to_string(osvi.dwMajorVersion) + "." + to_string(osvi.dwMinorVersion) + " ";
 				
 				str += "\"Microsoft Windows ";
 
@@ -782,7 +782,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 										str += "Server";
 					}
 
-				str += "\"" + (strlen(osvi.szCSDVersion) > 0 ? " " + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + IntToStr(osvi.dwBuildNumber) + ")" : "");
+				str += "\"" + (strlen(osvi.szCSDVersion) > 0 ? " " + (string)osvi.szCSDVersion : "") + (osvi.dwBuildNumber != 0 ? " (Build " + to_string(osvi.dwBuildNumber) + ")" : "");
 
 				if (osvi.dwMajorVersion >= 6)
 				{
@@ -846,8 +846,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	::GetSystemInfo((SYSTEM_INFO*) &st_sys_info);
 
 	str = "CPU: ";
-	str += string(pc_processor_name) + " (~" + IntToStr(mhz) + " Mhz";
-	if (st_sys_info.dwNumberOfProcessors>1) str+=" X "+IntToStr(st_sys_info.dwNumberOfProcessors);
+	str += string(pc_processor_name) + " (~" + to_string(mhz) + " Mhz";
+	if (st_sys_info.dwNumberOfProcessors > 1) str += " X " + to_string(st_sys_info.dwNumberOfProcessors);
 	str +=")";
 
 	result += str + "\n\t";
@@ -871,9 +871,9 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	uint64 ram_free = (uint64)ceil(stat.ullAvailPhys / 1024.0 / 1024.0),
 	ram_total = (uint64)ceil(stat.ullTotalPhys / 1024.0 / 1024.0);
 
-	str = "RAM Total: " + UInt64ToStr(ram_total) + " MiB";
+	str = "RAM Total: " + to_string(ram_total) + " MiB";
 	result += str + "\n\t";
-	str = "RAM Available: " + UInt64ToStr(ram_free) + " MiB";
+	str = "RAM Available: " + to_string(ram_free) + " MiB";
 	result += str + "\n\t";
 
 	stSysInfo.uiRAMAvailable = (uint)ram_free;
@@ -917,7 +917,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		hr = p_container->GetNumberOfChildContainers(&nInstanceCount);
 
 		if(nInstanceCount > 1)
-			str += "(Count: " + IntToStr(nInstanceCount)+") ";
+			str += "(Count: " + to_string(nInstanceCount) + ") ";
 
 		stSysInfo.uiVideocardCount = nInstanceCount;
 
@@ -953,7 +953,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 			else
 				str_ts2 += str_ts[i];
 		
-		stSysInfo.uiVideocardRAM = StrToInt(str_res);
+		stSysInfo.uiVideocardRAM = stoi(str_res);
 
 		GetStringValue( p_object, L"szDriverName", EXPAND(txt));
 		vcard_advanced_str = "(driver \"" + string(txt) + "\",";
@@ -1055,7 +1055,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	if (vram != 0)
 		stSysInfo.uiVideocardRAM = vram;
 
-	result += str + " " + IntToStr(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;
+	result += str + " " + to_string(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;
 
 	strInfo = result;
 }

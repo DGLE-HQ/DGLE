@@ -1,6 +1,6 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		07.10.2012 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -29,32 +29,6 @@ string ToUpperCase(const string &inString)
 	return res;
 }
 
-int StrToInt(const string &str)
-{
-	int res = 0;
-	sscanf(str.c_str(), "%d", &res);
-	return res;
-}
-
-uint StrToUInt(const string &str)
-{
-	unsigned int res = 0;
-	
-	if (ToLowerCase(string(str)).find("x") == string::npos)
-		sscanf(str.c_str(), "%u", &res);
-	else
-		sscanf(str.c_str(), "%x", &res);
-
-	return res;
-}
-
-float StrToFloat(const string &str)
-{
-	float res = 0;
-	sscanf(str.c_str(), "%f", &res);
-	return res;
-}
-
 bool StrToBool(const string &str)
 {
 	string val = ToLowerCase(str);
@@ -69,46 +43,11 @@ bool StrToBool(const string &str)
 		return false;
 }
 
-string Int64ToStr(int64 val)
-{
-	char res[16];
-	sprintf_s(res, "%I64d", val);
-	return string(res);
-}
-
-string IntToStr(int val)
-{
-	char res[16];
-	sprintf_s(res, "%d", val);
-	return string(res);
-}
-
-string UInt64ToStr(uint64 val)
-{
-	char res[16];
-	sprintf_s(res, "%I64u", val);
-	return string(res);
-}
-
-string UIntToStr(uint val)
-{
-	char res[32];
-	sprintf_s(res, "%u", val);
-	return string(res);
-}
-
 string UIntToStrX(uint val)
 {
 	char res[32];
 	sprintf_s(res, "%x", val);
 	return string("0x") + res;
-}
-
-string FloatToStr(float val)
-{
-	char res[16];
-	sprintf_s(res, "%f", val);
-	return string(res);
 }
 
 string FloatToStrFmt(float val)

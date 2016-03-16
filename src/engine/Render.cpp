@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		18.04.2013 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -85,17 +85,17 @@ CInstancedObj(uiInstIdx)
 	int i_value;
 
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_RESOLUTION, i_value);
-	_strMetricsList += "Maximum texture resolution: " + IntToStr(i_value) + "X" + IntToStr(i_value) + "\n\t";
+	_strMetricsList += "Maximum texture resolution: " + std::to_string(i_value) + "X" + std::to_string(i_value) + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_ANISOTROPY, b_supported);
 	if (b_supported)
 	{
 		_pCoreRenderer->GetDeviceMetric(CRMT_MAX_ANISOTROPY_LEVEL, i_value);
-		_strMetricsList += "Maximum anisotropy level: " + IntToStr(i_value) + "X\n\t";
+		_strMetricsList += "Maximum anisotropy level: " + std::to_string(i_value) + "X\n\t";
 	}
 
 	_pCoreRenderer->GetDeviceMetric(CRMT_MAX_TEXTURE_LAYERS, i_value);
-	_strMetricsList += "Maximum multitexturing layer: " + IntToStr(i_value);
+	_strMetricsList += "Maximum multitexturing layer: " + std::to_string(i_value);
 
 	// Don't append "\n\t" to the last line!
 	assert(_strMetricsList[_strMetricsList.length() - 2] != '\n' && _strMetricsList[_strMetricsList.length() - 1] != '\t');

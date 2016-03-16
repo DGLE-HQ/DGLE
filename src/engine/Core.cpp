@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		3.12.2015 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -301,7 +301,7 @@ _clDelOnFPSTimer(uiInstIdx)
 	if (!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_NO_LOG_FILE))
 	{
 		_clLogFile.setf(ios_base::right, ios_base::adjustfield);
-		_clLogFile.open((string("log") + (InstIdx() != 0 ? IntToStr(InstIdx()) : string("")) + ".txt").c_str(), ios::out | ios::trunc);
+		_clLogFile.open((string("log") + (InstIdx() != 0 ? to_string(InstIdx()) : string("")) + ".txt").c_str(), ios::out | ios::trunc);
 
 		TSysTimeAndDate time;
 		GetLocalTimaAndDate(time);
@@ -351,17 +351,17 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 	switch (eType)
 	{
 	case LT_WARNING:
-		msg="[WARNING] " + string(pcTxt);
+		msg = "[WARNING] " + string(pcTxt);
 		++_uiLogWarningsCount;
 		break;
 	
 	case LT_ERROR:
-		msg="[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + IntToStr(iSrcLineNumber) + ")";
+		msg = "[ERROR] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + to_string(iSrcLineNumber) + ")";
 		++_uiLogErrorsCount;
 		break;
 	
 	case LT_FATAL:
-		msg="[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + IntToStr(iSrcLineNumber) + ")";
+		msg = "[FATAL] " + string(pcTxt) + " (File: \"" + string(pcSrcFileName) + "\", Line: " + to_string(iSrcLineNumber) + ")";
 		++_uiLogErrorsCount;
 		
 		_LogWrite(msg.c_str(), true);		 
@@ -671,7 +671,7 @@ void CCore::_OnTimer()
 		++_ui64CyclesCount;
 
 		if (_iFPSToCaption == 1)
-			_pMainWindow->SetCaption((string(_pcApplicationCaption) + string(" FPS:") + IntToStr(_uiLastFPS)).c_str());
+			_pMainWindow->SetCaption((string(_pcApplicationCaption) + string(" FPS:") + to_string(_uiLastFPS)).c_str());
 		else
 			_pMainWindow->SetCaption(_pcApplicationCaption);
 	}
@@ -801,17 +801,17 @@ void CCore::_RenderFrame()
 				
 		if (_iDrawProfiler > 0)
 		{
-			RenderProfilerText(("FPS:" + IntToStr(_uiLastFPS)).c_str(), _uiLastFPS < 60 ? ColorRed() : ColorWhite());
-			RenderProfilerText(("UPS:" + IntToStr(_uiLastUPS)).c_str(), _uiLastUPS < 1000 / _uiUpdateInterval ? ColorRed() : ColorWhite());
+			RenderProfilerText(("FPS:" + to_string(_uiLastFPS)).c_str(), _uiLastFPS < 60 ? ColorRed() : ColorWhite());
+			RenderProfilerText(("UPS:" + to_string(_uiLastUPS)).c_str(), _uiLastUPS < 1000 / _uiUpdateInterval ? ColorRed() : ColorWhite());
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerText(("Render delay:" + UInt64ToStr(_ui64RenderDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
-				RenderProfilerText(("Update delay:" + UInt64ToStr(_ui64UpdateDelay / 1000) + "." + UIntToStr(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(("Render delay:" + to_string(_ui64RenderDelay / 1000) + "." + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(("Update delay:" + to_string(_ui64UpdateDelay / 1000) + "." + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
 			}
 
 			if (_iDrawProfiler == 3)
-				RenderProfilerText(("Memory usage:" + UIntToStr((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), ColorWhite());
+				RenderProfilerText(("Memory usage:" + to_string((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), ColorWhite());
 		}
 				
 		_pRender->DrawProfiler();
@@ -1363,9 +1363,9 @@ void CCore::_LogWinMode(const TEngineWindow &stWin)
 			break;
 	}
 
-	LOG(string("Setting window mode: ") + UIntToStr(stWin.uiWidth) + "X" + UIntToStr(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
+	LOG(string("Setting window mode: ") + to_string(stWin.uiWidth) + "X" + to_string(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
 		(stWin.bFullScreen ? " Fullscreen" : " Windowed") + (stWin.bVSync ? " VSync" : "") +
-		(stWin.eMultisampling != MM_NONE ? IntToStr((int)stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
+		(stWin.eMultisampling != MM_NONE ? to_string((int)stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
 }
 
 DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents)
@@ -1669,7 +1669,7 @@ bool DGLE_API CCore::_s_InstIdx(void *pParameter, const char *pcParam)
 	}
 	else
 	{
-		CON(CCore, (string("Instance Index is ") + IntToStr(PTHIS(CCore)->InstIdx()) + ".").c_str());
+		CON(CCore, (string("Instance Index is ") + to_string(PTHIS(CCore)->InstIdx()) + ".").c_str());
 		return true;
 	}
 }
@@ -1685,8 +1685,8 @@ bool DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
 		"* Release build.\n"
 #endif		
 		+
-		"* Engine SDK version: " + IntToStr(_DGLE_SDK_VER_) + ".\n" +
-		"* Plugin SDK version: " + IntToStr(_DGLE_PLUGIN_SDK_VER_) + ".\n" +
+		"* Engine SDK version: " + to_string(_DGLE_SDK_VER_) + ".\n" +
+		"* Plugin SDK version: " + to_string(_DGLE_PLUGIN_SDK_VER_) + ".\n" +
 #ifdef DGLE_STATIC
 		"* Static library build.\n"
 #endif

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.11.2014 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -334,6 +334,8 @@ DGLE_RESULT CMainWindow::KillWindow()
 
 DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetFocus)
 {
+	using std::to_string;
+
 	if (!_hWnd)
 		return E_FAIL;
 
@@ -365,7 +367,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 
 		if (ChangeDisplaySettingsEx(NULL ,&dm_scr_settings, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 		{
-			LOG("Can't set fullscreen mode " +IntToStr(stWind.uiWidth)+"X"+IntToStr(stWind.uiHeight)+", switching back to windowed mode.", LT_ERROR);
+			LOG("Can't set fullscreen mode " + to_string(stWind.uiWidth) + "X" + to_string(stWind.uiHeight) + ", switching back to windowed mode.", LT_ERROR);
 			_bFScreen = false;
 			const_cast<TEngineWindow *>(&stWind)->bFullScreen = false;
 			res = S_FALSE;
@@ -414,7 +416,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 	{
 		GetDisplaySize(desktop_width, desktop_height);
 
-		LOG("Desktop resolution: " + UIntToStr(desktop_width) + "X" + UIntToStr(desktop_height), LT_INFO);
+		LOG("Desktop resolution: " + to_string(desktop_width) + "X" + to_string(desktop_height), LT_INFO);
 
 		if (IsIconic(_hWnd) == FALSE && (desktop_width < (uint)(rc.right - rc.left) || desktop_height < (uint)(rc.bottom - rc.top)))
 			LOG("Window rectangle is beyound screen.", LT_WARNING);

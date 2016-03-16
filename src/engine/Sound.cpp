@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.04.2015 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -403,12 +403,12 @@ void CSound::_ProfilerDraw()
 		Core()->RenderProfilerText("Initialization failed!", ColorRed());
 	else
 	{
-		Core()->RenderProfilerText(("Bits per sample :" + UIntToStr(_sc_uiBitsPerSample)).c_str(), ColorWhite());
-		Core()->RenderProfilerText(("Samples per sec.:" + UIntToStr(_sc_uiSamplesPerSec)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Bits per sample :" + to_string(_sc_uiBitsPerSample)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Samples per sec.:" + to_string(_sc_uiSamplesPerSec)).c_str(), ColorWhite());
 
 		EnterThreadSafeSection();
 
-		Core()->RenderProfilerText(("Mixer delay     :" + UInt64ToStr(_ui64MixDelay / 1000) + "." + UIntToStr(_ui64MixDelay % 1000) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Mixer delay     :" + to_string(_ui64MixDelay / 1000) + "." + to_string(_ui64MixDelay % 1000) + " ms").c_str(), ColorWhite());
 
 		uint cnt = 0;
 
@@ -418,7 +418,7 @@ void CSound::_ProfilerDraw()
 
 		LeaveThreadSafeSection();
 
-		Core()->RenderProfilerText(("Opened channels :" + UIntToStr(cnt) + "/" + UIntToStr(_sc_uiMaxChannels)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Opened channels :" + to_string(cnt) + "/" + to_string(_sc_uiMaxChannels)).c_str(), ColorWhite());
 	}
 	
 	Core()->RenderProfilerText("============================", ColorWhite());

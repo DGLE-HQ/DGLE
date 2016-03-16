@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.04.2015 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -535,7 +535,7 @@ void CResourceManager::_AddResource(const char *pcName, IEngineBaseObject *pObj)
 {
 	if (pcName == NULL || strlen(pcName) == 0)
 	{
-		_vecList.push_back(TResource(("Res_" + IntToStr(_uiResIdxCounter)).c_str(), pObj));
+		_vecList.push_back(TResource(("Res_" + to_string(_uiResIdxCounter)).c_str(), pObj));
 		++_uiResIdxCounter;
 	}
 	else
@@ -1519,7 +1519,7 @@ void CResourceManager::_ProfilerEventHandler() const
 	Core()->RenderProfilerText("== Resource Man. Profiler ==", color);
 
 	if (_iProfilerState > 0)
-		Core()->RenderProfilerText(("Resources loaded: " + UIntToStr((uint)_vecList.size())).c_str(), color);
+		Core()->RenderProfilerText(("Resources loaded: " + to_string((uint)_vecList.size())).c_str(), color);
 
 	if (_iProfilerState > 1)
 	{
@@ -1541,7 +1541,7 @@ void CResourceManager::_ProfilerEventHandler() const
 			
 			_s_GetObjTypeName((E_ENGINE_OBJECT_TYPE)i, s);
 
-			s += ':' + UIntToStr(cnt[i]);
+			s += ':' + to_string(cnt[i]);
 
 			Core()->RenderProfilerText(s.c_str(), color);
 		}

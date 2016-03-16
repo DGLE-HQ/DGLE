@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		03.10.2012 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -82,7 +82,7 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 
-		_vecDevices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + UIntToStr(i) + " name: \"" + name + "\"");
+		_vecDevices.push_back((flag ? string("Compatible") : string("Incompatible")) + " audio device with id: " + to_string(i) + " name: \"" + name + "\"");
 	}
 
 	return res;
@@ -149,7 +149,7 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 
 	dev_id = _FindDevice(_stWaveFormat);
 
-	LOG("Found " + UIntToStr(_vecDevices.size()) + " output audio devices.", LT_INFO);
+	LOG("Found " + to_string(_vecDevices.size()) + " output audio devices.", LT_INFO);
 
 	for (size_t i = 0; i < _vecDevices.size(); ++i)
 		LOG(_vecDevices[i], LT_INFO);
@@ -160,7 +160,7 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 		return false;
 	}
 
-	LOG("Using compatible audio device with id " + UIntToStr(dev_id) + ".", LT_INFO);
+	LOG("Using compatible audio device with id " + to_string(dev_id) + ".", LT_INFO);
 
 	if (!_InitDevice(dev_id))
 	{
@@ -264,7 +264,7 @@ bool DGLE_API CBaseSound::_s_PrintDevId(void *pParameter, const char *pcParam)
 	{
 		UINT id;
 		waveOutGetID(PTHIS(CBaseSound)->_hWaveOut, &id);
-		CON(CBaseSound, ("Using audio device with id " + UIntToStr(id) + ".").c_str());
+		CON(CBaseSound, ("Using audio device with id " + to_string(id) + ".").c_str());
 		return true;
 	}
 }
@@ -281,7 +281,7 @@ bool DGLE_API CBaseSound::_s_ForceDevice(void *pParameter, const char *pcParam)
 	else
 	{
 		PTHIS(CBaseSound)->CloseDevice();
-		PTHIS(CBaseSound)->_InitDevice(StrToUInt(param));
+		PTHIS(CBaseSound)->_InitDevice(stoul(param, NULL, 0));
 		return true;
 	}
 }

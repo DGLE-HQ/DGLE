@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.01.2016 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -102,20 +102,20 @@ void CRender2D::DrawProfiler()
 	if (_iProfilerState > 0)
 	{
 		Core()->RenderProfilerText("======Render2D Profiler=====", ColorWhite());
-		Core()->RenderProfilerText(("Objects on screen :" + UIntToStr(_uiObjsDrawnCount)).c_str(), ColorWhite());
-		Core()->RenderProfilerText(("Batches per frame :" + UIntToStr(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? ColorRed() : ColorWhite());
-		Core()->RenderProfilerText(("Render delay      :" + UInt64ToStr(_ui64DrawAverallDelay / 1000) + "." + UIntToStr(_ui64DrawAverallDelay % 1000) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Objects on screen :" + to_string(_uiObjsDrawnCount)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Batches per frame :" + to_string(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? ColorRed() : ColorWhite());
+		Core()->RenderProfilerText(("Render delay      :" + to_string(_ui64DrawAverallDelay / 1000) + "." + to_string(_ui64DrawAverallDelay % 1000) + " ms").c_str(), ColorWhite());
 
 		if (_iProfilerState > 1)
 		{
 			uint  buffs_count = (uint)_vecBatchBuffers.size();
 
 			Core()->RenderProfilerText("--------Batch Render--------", ColorWhite());
-			Core()->RenderProfilerText(("Buffers count  :" + UIntToStr(buffs_count)).c_str(), ColorWhite());
-			Core()->RenderProfilerText(("Buffers in use :" + UIntToStr(_batchBufferCurCounter)).c_str(), ColorWhite());
-			Core()->RenderProfilerText(("Effective calls:" + UIntToStr(_batchBuffersNotModefiedPerFrameCounter)).c_str(), !_batchNeedToRefreshBatches && _batchBuffersNotModefiedPerFrameCounter != _batchBufferCurCounter ? ColorRed() : ColorWhite());
-			Core()->RenderProfilerText(("Max. batch size:" + UIntToStr(_batchMaxSize)).c_str(), ColorWhite());
-			Core()->RenderProfilerText(("Min. batch size:" + UIntToStr(_batchMinSize == (numeric_limits<uint>::max)() ? 0 : _batchMinSize)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Buffers count  :" + to_string(buffs_count)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Buffers in use :" + to_string(_batchBufferCurCounter)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Effective calls:" + to_string(_batchBuffersNotModefiedPerFrameCounter)).c_str(), !_batchNeedToRefreshBatches && _batchBuffersNotModefiedPerFrameCounter != _batchBufferCurCounter ? ColorRed() : ColorWhite());
+			Core()->RenderProfilerText(("Max. batch size:" + to_string(_batchMaxSize)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Min. batch size:" + to_string(_batchMinSize == (numeric_limits<uint>::max)() ? 0 : _batchMinSize)).c_str(), ColorWhite());
 			Core()->RenderProfilerText("----------------------------", ColorWhite());
 		}
 	}

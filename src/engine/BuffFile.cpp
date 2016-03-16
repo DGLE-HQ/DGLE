@@ -1,6 +1,6 @@
 /**
 \author		Kotlyarov Semen aka Kimer
-\date		29.10.2012 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,7 +16,7 @@ _strFileName(strFileName), _ui32Pos(0), _ui32Size(ui32DataSize),
 _pData(pData), _bDelData(bDelData)
 {
 	if (_strFileName.empty())
-		_strFileName = "Virtual." + UIntToStr(*pData);
+		_strFileName = "Virtual." + to_string(*pData);
 }
 
 DGLE_RESULT DGLE_API CBuffFile::Read(void *pBuffer, uint uiCount, uint &uiRead)

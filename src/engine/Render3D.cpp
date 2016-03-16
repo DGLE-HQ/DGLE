@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		21.01.2016 (c)Korotkov Andrey
+\date		16.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -125,9 +125,10 @@ void CRender3D::DrawProfiler()
 {
 	if (_iProfilerState > 0)
 	{
+		using std::to_string;
 		Core()->RenderProfilerText("======Render3D Profiler=====", ColorWhite());
-		Core()->RenderProfilerText(("Objects on screen :" + UIntToStr(_uiObjsDrawnCount)).c_str(), ColorWhite());
-		Core()->RenderProfilerText(("Render delay      :" + UInt64ToStr(_ui64DrawDelay / 1000) + "." + UIntToStr(_ui64DrawDelay % 1000) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Objects on screen :" + to_string(_uiObjsDrawnCount)).c_str(), ColorWhite());
+		Core()->RenderProfilerText(("Render delay      :" + to_string(_ui64DrawDelay / 1000) + "." + to_string(_ui64DrawDelay % 1000) + " ms").c_str(), ColorWhite());
 	}
 }
 

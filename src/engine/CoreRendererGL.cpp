@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		12.04.2015 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -2227,13 +2227,13 @@ void CCoreRendererGL::_ProfilerEventHandler() const
 	{
 		if (_bStateFilterEnabled)
 		{
-			Core()->RenderProfilerText(("Overall draw calls:" + UIntToStr(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? ColorRed() : ColorWhite());
-			Core()->RenderProfilerText(("Overall triangles:" + UIntToStr(_uiOverallTrianglesCount)).c_str(), ColorWhite());
+			Core()->RenderProfilerText(("Overall draw calls:" + to_string(_uiOverallDrawCalls)).c_str(), _uiOverallDrawCalls > _sc_uiMaxDrawCallsPerFrame ? ColorRed() : ColorWhite());
+			Core()->RenderProfilerText(("Overall triangles:" + to_string(_uiOverallTrianglesCount)).c_str(), ColorWhite());
 
-			string str("Draw states setups (unfiltered/overall):" + UIntToStr(_uiUnfilteredDrawSetups) + '/' + UIntToStr(_uiOverallDrawSetups));
+			string str("Draw states setups (unfiltered/overall):" + to_string(_uiUnfilteredDrawSetups) + '/' + to_string(_uiOverallDrawSetups));
 
 			if (_uiOverallDrawSetups)
-				str.append(" (").append(UIntToStr((_uiOverallDrawSetups - _uiUnfilteredDrawSetups) * 100 / _uiOverallDrawSetups)).append("% redundant)");
+				str.append(" (").append(to_string((_uiOverallDrawSetups - _uiUnfilteredDrawSetups) * 100 / _uiOverallDrawSetups)).append("% redundant)");
 
 			Core()->RenderProfilerText(str.c_str(), ColorWhite());
 		}

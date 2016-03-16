@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		26.04.2012 (c)Andrey Korotkov
+\date		16.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -99,7 +99,7 @@ bool CBaseRendererGL::Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eIni
 					pixel_format = tmp_pixel_format;
 				else
 				{
-					LOG("Can't find suitable PixelFormat with required MSAA " + IntToStr((int)stWin.eMultisampling * 2) + "X support.", LT_WARNING);
+					LOG("Can't find suitable PixelFormat with required MSAA " + std::to_string((int)stWin.eMultisampling * 2) + "X support.", LT_WARNING);
 					stWin.eMultisampling = MM_NONE;
 				}
 			}
