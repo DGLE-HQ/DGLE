@@ -561,7 +561,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 void CDCPFileSystem::_ReplaceSubstrInStr(string &outStr, const string &findCh, const string &repCh)
 {
-	auto posCh = outStr.find_first_of(findCh.c_str());
+	auto posCh = outStr.find_first_of(findCh);
 
 	while (posCh != string::npos)
 	{		
@@ -569,7 +569,7 @@ void CDCPFileSystem::_ReplaceSubstrInStr(string &outStr, const string &findCh, c
 
 		posCh += repCh.size();
 
-		posCh = outStr.find_first_of(findCh.c_str(), posCh);	
+		posCh = outStr.find_first_of(findCh, posCh);	
 	}
 }
 
