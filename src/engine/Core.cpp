@@ -346,7 +346,7 @@ CCore::~CCore()
 
 void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
 {
-	string msg = "";
+	string msg;
 	
 	switch (eType)
 	{
