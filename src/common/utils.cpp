@@ -11,27 +11,26 @@ See "DGLE.h" for more details.
 
 #include <cctype>
 #include <algorithm>
+#include <utility>
 
 using namespace DGLE;
 using namespace std;
 
-string ToLowerCase(const string &inString)
+string ToLowerCase(string str)
 {
-	string res(inString);
-	transform(inString.begin(), inString.end(), res.begin(), std::tolower);
-	return res;
+	transform(str.begin(), str.end(), str.begin(), std::tolower);
+	return str;
 }
 
-string ToUpperCase(const string &inString)
+string ToUpperCase(string str)
 {
-	string res(inString);
-	transform(inString.begin(), inString.end(), res.begin(), std::toupper);
-	return res;
+	transform(str.begin(), str.end(), str.begin(), std::toupper);
+	return str;
 }
 
-bool StrToBool(const string &str)
+bool StrToBool(string str)
 {
-	const string val = ToLowerCase(str);
+	const string val = ToLowerCase(move(str));
 
 	return
 		val == "true"		||

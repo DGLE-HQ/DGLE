@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -12,10 +12,10 @@ See "DGLE.h" for more details.
 #include <DGLE.h>
 #include <string>
 
-std::string ToLowerCase(const std::string &inString);
-std::string ToUpperCase(const std::string &inString);
+std::string ToLowerCase(std::string str);
+std::string ToUpperCase(std::string str);
 
-bool StrToBool(const std::string &str);
+bool StrToBool(std::string str);
 
 std::string UIntToStrX(DGLE::uint val);
 std::string FloatToStrFmt(float val);
