@@ -452,8 +452,7 @@ bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
 
 			const int pos = (int)fullname.find_last_of('\\');
 
-			fullname = fullname.substr(0, pos + 1);
-			fullname += wfd.cFileName;
+			fullname.erase(pos + 1) += wfd.cFileName;
 			fileNames.push_back(fullname);
 		}
 		while (FindNextFileA(hSearch, &wfd));

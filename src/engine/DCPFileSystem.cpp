@@ -402,7 +402,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 	}
 
 	string file_name = pack_name.substr(delim_pos + 1);
-	pack_name = pack_name.substr(0, delim_pos);
+	pack_name.erase(delim_pos).shrink_to_fit();
 
 	if (!_OpenPack(pack_name))
 	{
@@ -505,7 +505,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExist
 	}
 
 	string name = pack_name.substr(delim_pos + 1);
-	pack_name = pack_name.substr(0, delim_pos);
+	pack_name.erase(delim_pos).shrink_to_fit();
 
 	if (!_OpenPack(pack_name))
 		return E_ABORT;
@@ -530,7 +530,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	}
 
 	const string mask = pack_name.substr(delim_pos + 1);
-	pack_name = pack_name.substr(0, delim_pos);
+	pack_name.erase(delim_pos).shrink_to_fit();
 
 	if (!_OpenPack(pack_name))
 		return E_ABORT;
