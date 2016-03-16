@@ -1486,10 +1486,10 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 	PARANOIC_CHECK_RES(pEngineCore->StartEngine());
 	\endcode
 */
-#ifdef _DEBUG
-#	define PARANOIC_CHECK_RES(res) assert(res == S_OK), S_OK
-#else
+#ifdef NDEBUG
 #	define PARANOIC_CHECK_RES(res) res
+#else
+#	define PARANOIC_CHECK_RES(res) assert(res == S_OK), S_OK
 #endif
 
 //Implementation macroses//

@@ -431,7 +431,7 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 			_clLogFile.flush();
 	}
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 	OutputDebugTxt(pcTxt);
 #endif
 
@@ -1679,10 +1679,10 @@ bool DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 
 	string res = string("Engine was build with:\n") +
-#ifdef _DEBUG
-		"* DEBUG build.\n"
-#else
+#ifdef NDEBUG
 		"* Release build.\n"
+#else
+		"* DEBUG build.\n"
 #endif		
 		+
 		"* Engine SDK version: " + to_string(_DGLE_SDK_VER_) + ".\n" +

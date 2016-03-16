@@ -21,7 +21,15 @@ using namespace DGLE;
 
 #if defined(PLATFORM_WINDOWS)
 
-#ifdef _DEBUG // for debug builds paths are configured for debugging from DGLE project
+#ifdef NDEBUG // for release build paths are configured to run executeble itself
+#	define DLL_PATH				"..\\DGLE.dll"
+#	define PLUGS_PATH			"..\\plugins\\"
+#	ifdef _WIN64
+#		define RESOURCE_PATH	"..\\..\\..\\..\\resources\\"
+#	else
+#		define RESOURCE_PATH	"..\\..\\..\\resources\\"
+#	endif
+#else // for debug builds paths are configured for debugging from DGLE project
 #	ifdef _WIN64
 #		define DLL_PATH			"..\\..\\..\\bin\\windows\\x64\\DGLE.dll"
 #		define PLUGS_PATH		"..\\..\\..\\bin\\windows\\x64\\plugins\\"
@@ -30,14 +38,6 @@ using namespace DGLE;
 #		define PLUGS_PATH		"..\\..\\..\\bin\\windows\\plugins\\"
 #	endif
 #	define RESOURCE_PATH		"..\\..\\..\\resources\\"
-#else // for release build paths are configured to run executeble itself
-#	define DLL_PATH				"..\\DGLE.dll"
-#	define PLUGS_PATH			"..\\plugins\\"
-#	ifdef _WIN64
-#		define RESOURCE_PATH	"..\\..\\..\\..\\resources\\"
-#	else
-#		define RESOURCE_PATH	"..\\..\\..\\resources\\"
-#endif
 #endif
 
 #else // PLATFORM_WINDOWS
