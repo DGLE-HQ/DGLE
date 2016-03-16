@@ -63,10 +63,7 @@ string DoubleToStr(double val)
 
 string BoolToStr(bool val)
 {
-	if (val)
-		return string("true");
-	else
-		return string("false");
+	return val ? "true" : "false";
 }
 
 string GetFilePath(const char *name)
