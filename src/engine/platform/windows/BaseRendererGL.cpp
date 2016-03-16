@@ -99,7 +99,7 @@ bool CBaseRendererGL::Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eIni
 					pixel_format = tmp_pixel_format;
 				else
 				{
-					LOG("Can't find suitable PixelFormat with required MSAA " + std::to_string((int)stWin.eMultisampling * 2) + "X support.", LT_WARNING);
+					LOG("Can't find suitable PixelFormat with required MSAA " + std::to_string(stWin.eMultisampling * 2) + "X support.", LT_WARNING);
 					stWin.eMultisampling = MM_NONE;
 				}
 			}

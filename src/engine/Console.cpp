@@ -151,7 +151,7 @@ void CConsole::_Cmdlist()
 		for (size_t i = 0; i < _vecCommands.size(); ++i)
 			lst += " >" + string(_vecCommands[i].pcName) + '\n';
 		
-		lst += "------" + to_string((uint)_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + '\n';
+		lst += "------" + to_string(_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + '\n';
 		
 		Write(lst.c_str());
 	}

@@ -811,7 +811,7 @@ void CCore::_RenderFrame()
 			}
 
 			if (_iDrawProfiler == 3)
-				RenderProfilerText(("Memory usage:" + to_string((uint)ceilf((float)_uiLastMemUsage / 1024.f)) + " KiB").c_str(), ColorWhite());
+				RenderProfilerText(("Memory usage:" + to_string((uint)ceil(_uiLastMemUsage / 1024.f)) + " KiB").c_str(), ColorWhite());
 		}
 				
 		_pRender->DrawProfiler();
@@ -1365,7 +1365,7 @@ void CCore::_LogWinMode(const TEngineWindow &stWin)
 
 	LOG("Setting window mode: " + to_string(stWin.uiWidth) + 'X' + to_string(stWin.uiHeight) + (_eInitFlags & EIF_FORCE_16_BIT_COLOR ? " 16bit" : "") +
 		(stWin.bFullScreen ? " Fullscreen" : " Windowed") + (stWin.bVSync ? " VSync" : "") +
-		(stWin.eMultisampling != MM_NONE ? to_string((int)stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
+		(stWin.eMultisampling != MM_NONE ? to_string(stWin.eMultisampling * 2) + "X MSAA" : "") + "...", LT_INFO);
 }
 
 DGLE_RESULT CCore::_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents)
