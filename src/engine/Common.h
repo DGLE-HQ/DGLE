@@ -49,7 +49,10 @@ typedef HMODULE TDynLibHandle;
 #	include <new>
 #endif
 
-#include <assert.h>
+#include <cassert>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <string>
 #include <vector>
 #include <map>
@@ -60,9 +63,6 @@ typedef HMODULE TDynLibHandle;
 #include <type_traits>
 #include <utility>
 #include <io.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 
 #include "Utils.h"
 #include "FuncDelegate.h"
