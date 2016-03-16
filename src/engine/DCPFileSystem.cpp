@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		16.03.2016 (c)Andrey Korotkov
+\date		17.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -561,17 +561,15 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 void CDCPFileSystem::_ReplaceSubstrInStr(string &outStr, const string &findCh, const string &repCh)
 {
-	uint posCh = 0;
-
-	posCh = (uint)outStr.find_first_of(findCh.c_str(), posCh);
+	auto posCh = outStr.find_first_of(findCh.c_str());
 
 	while (posCh != string::npos)
 	{		
 		outStr.replace(posCh, findCh.size(), repCh);
 
-		posCh += (uint)repCh.size();
+		posCh += repCh.size();
 
-		posCh = (uint)outStr.find_first_of(findCh.c_str(), posCh);	
+		posCh = outStr.find_first_of(findCh.c_str(), posCh);	
 	}
 }
 
