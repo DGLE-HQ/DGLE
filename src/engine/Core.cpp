@@ -890,7 +890,7 @@ DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 
 DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
 {
 	if (_access(pcFileName, 0) != -1)
-		return _LoadPlugin(string(pcFileName),prPlugin) ? S_OK : E_ABORT;
+		return _LoadPlugin(pcFileName, prPlugin) ? S_OK : E_ABORT;
 	else
 	{
 		prPlugin = NULL;
@@ -1822,7 +1822,7 @@ DGLE_RESULT DGLE_API CCore::ConsoleVisible(bool bIsVisible)
 
 DGLE_RESULT DGLE_API CCore::ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine)
 {
-	Console()->Write(string(pcTxt), bWriteToPreviousLine);
+	Console()->Write(pcTxt, bWriteToPreviousLine);
 	return S_OK;
 }
 

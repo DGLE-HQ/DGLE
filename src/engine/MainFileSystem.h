@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.09.2014 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -23,8 +23,8 @@ struct TVFileSystem
 
 	TVFileSystem(const char *pcExt, const char *pcDiscr, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter)
 	{
-		ext		= ToUpperCase(std::string(pcExt));
-		discr	= std::string(pcDiscr);
+		ext		= ToUpperCase(pcExt);
+		discr	= pcDiscr;
 		fs		= pVFS;
 		pdc		= pDeleteCallback;
 		param	= pParameter;

@@ -26,8 +26,8 @@ void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo);
 void WriteStackDetails(PCONTEXT pContext);
 bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, size_t bufLen);
 
-static LPTOP_LEVEL_EXCEPTION_FILTER m_previousFilter = NULL;
-static string str_info = "";
+static LPTOP_LEVEL_EXCEPTION_FILTER m_previousFilter;
+static string str_info;
 
 void DGLE_API con_dump(void *pParameter, const char *pcParam)
 {

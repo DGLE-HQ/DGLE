@@ -549,7 +549,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 	for (size_t i = 0; i < _clInfoTable.size(); ++i)
 		if (regexp.Match(_clInfoTable[i].acPackedFName).IsMatched())		
-			_clFindedFiles.push_back(string(_clInfoTable[i].acPackedFName));		
+			_clFindedFiles.emplace_back(_clInfoTable[i].acPackedFName);
 
 	if (_clFindedFiles.size() > 0)
 		prIterator = new CDCPFileIterator(InstIdx(), _clFindedFiles);
