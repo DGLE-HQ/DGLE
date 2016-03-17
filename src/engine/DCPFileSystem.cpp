@@ -380,7 +380,7 @@ bool CDCPFileSystem::_ReadFileInfo()
 
 DGLE_RESULT DGLE_API CDCPFileSystem::DeleteFile(const char *pcName)
 {
-	LOG("Failed to delete file \"" + string(pcName) + "\", DCP packages are read only.", LT_ERROR);
+	LOG("Failed to delete file \""s + pcName + "\", DCP packages are read only.", LT_ERROR);
 	return E_NOTIMPL;
 }
 
@@ -388,7 +388,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 {
 	if (eFlags & FSOF_WRITE || eFlags & FSOF_TRUNC)
 	{
-		LOG("Failed to open file \"" + string(pcName) + "\" for writing, DCP packages are read only.", LT_ERROR);
+		LOG("Failed to open file \""s + pcName + "\" for writing, DCP packages are read only.", LT_ERROR);
 		return E_INVALIDARG;
 	}
 

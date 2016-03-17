@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -56,13 +56,13 @@ _iFile(-1)
 			perms = _S_IREAD;
 
 	if ((_iFile = _open(pcName, mode, perms)) == -1)
-		LOG(string("Can't open file \"") + pcName + "\".", LT_ERROR);
+		LOG("Can't open file \""s + pcName + "\".", LT_ERROR);
 }
 
 CHDDFile::~CHDDFile()
 {
 	if (_close(_iFile) != 0)
-		LOG(string("Can't close file \"") + _acName + "\".", LT_ERROR);
+		LOG("Can't close file \""s + _acName + "\".", LT_ERROR);
 }
 
 DGLE_RESULT DGLE_API CHDDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)

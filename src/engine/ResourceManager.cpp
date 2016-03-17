@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -951,7 +951,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
 		if (_vecFileFormats[i].ext == pcExtension && _vecFileFormats[i].type == eObjType)
 		{
-			LOG("File format with extension \"" + string(pcExtension) + "\" was overrided.", LT_WARNING);
+			LOG("File format with extension \""s + pcExtension + "\" was overrided.", LT_WARNING);
 			res = S_FALSE;
 		}
 
@@ -1680,7 +1680,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateSound(ISoundSample *&prSndSample, u
 		if (result == S_OK) 
 			_AddResource(pcName, (IEngineBaseObject*)prSndSample);
 		else
-			LOG("Error creating sound with name \"" + string(pcName) + "\".", LT_ERROR);
+			LOG("Error creating sound with name \""s + pcName + "\".", LT_ERROR);
 	}
 
 	return result;
@@ -1865,7 +1865,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uin
 		if (result == S_OK) 
 			_AddResource(pcName, (IEngineBaseObject*)prTex);
 		else
-			LOG("Error creating texture with name \"" + string(pcName) + "\".", LT_ERROR);
+			LOG("Error creating texture with name \""s + pcName + "\".", LT_ERROR);
 	}
 
 	return result;
@@ -1932,7 +1932,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 		if (result == S_OK)
 			_AddResource(pcName, (IEngineBaseObject*)prMesh);
 		else
-			LOG("Error creating mesh with name \"" + string(pcName) + "\".", LT_ERROR);
+			LOG("Error creating mesh with name \""s + pcName + "\".", LT_ERROR);
 	}
 
 	return result;
@@ -2036,7 +2036,7 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	if (uiFFIdx == -1)
 	{
 		Console()->Write("Use \"rman_list_file_formats\" console command to list supported file formats.");
-		LOG("Resource Manager can't load file \"" + string(pcFileName) + "\" because of unknown file extension \"" + ToUpperCase(GetFileExt(pcFileName)) + "\".", LT_FATAL);
+		LOG("Resource Manager can't load file \""s + pcFileName + "\" because of unknown file extension \"" + ToUpperCase(GetFileExt(pcFileName)) + "\".", LT_FATAL);
 		return E_FAIL;
 	}
 
@@ -2046,7 +2046,7 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	
 	if (!opened)
 	{
-		LOG("Can't open file \"" + string(pcFileName) + "\", probably file doesn't exists.", LT_WARNING);
+		LOG("Can't open file \""s + pcFileName + "\", probably file doesn't exists.", LT_WARNING);
 		return S_FALSE;
 	}
 
@@ -2056,14 +2056,14 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	
 	if (size <= 0)
 	{
-		LOG("File \"" + string(pcFileName) + "\" size is zero, nothing to read.", LT_WARNING);
+		LOG("File \""s + pcFileName + "\" size is zero, nothing to read.", LT_WARNING);
 		return S_FALSE;
 	}
 
 	bool ret = (*_vecFileFormats[uiFFIdx].pLoadProc)(pFile, prObj, uiLoadFlags, _vecFileFormats[uiFFIdx].pParameter);
 
 	if (!ret)
-		LOG("Error(s) while loading file \"" + string(pcFileName) + "\".", LT_ERROR);
+		LOG("Error(s) while loading file \""s + pcFileName + "\".", LT_ERROR);
 	else
 		_vecList.push_back(TResource(pcName == NULL || strlen(pcName) == 0 ? pcFileName : pcName, prObj));
 
@@ -2087,7 +2087,7 @@ DGLE_RESULT DGLE_API CResourceManager::Load(const char *pcFileName, IEngineBaseO
 
 	if (!p_file)
 	{
-		LOG("Error openning file \"" + string(pcFileName) + "\".", LT_ERROR);
+		LOG("Error openning file \""s + pcFileName + "\".", LT_ERROR);
 		return E_ABORT;
 	}
 

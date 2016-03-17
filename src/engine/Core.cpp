@@ -352,17 +352,17 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 	switch (eType)
 	{
 	case LT_WARNING:
-		msg = "[WARNING] " + string(pcTxt);
+		msg = "[WARNING] "s + pcTxt;
 		++_uiLogWarningsCount;
 		break;
 	
 	case LT_ERROR:
-		msg = "[ERROR] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ')';
+		msg = "[ERROR] "s + pcTxt + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ')';
 		++_uiLogErrorsCount;
 		break;
 	
 	case LT_FATAL:
-		msg = "[FATAL] " + string(pcTxt) + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ')';
+		msg = "[FATAL] "s + pcTxt + " (File: \"" + pcSrcFileName + "\", Line: " + to_string(iSrcLineNumber) + ')';
 		++_uiLogErrorsCount;
 		
 		_LogWrite(msg.c_str(), true);		 
@@ -570,7 +570,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		if (_iAllowPause)
 		{
-			_pMainWindow->SetCaption((string(_pcApplicationCaption) + " [Paused]").c_str());
+			_pMainWindow->SetCaption((_pcApplicationCaption + " [Paused]"s).c_str());
 			if (_pSound != NULL) _pSound->MasterPause(true);
 			_ui64PauseStartTime = GetPerfTimer();
 		}
@@ -672,7 +672,7 @@ void CCore::_OnTimer()
 		++_ui64CyclesCount;
 
 		if (_iFPSToCaption == 1)
-			_pMainWindow->SetCaption((string(_pcApplicationCaption) + " FPS:" + to_string(_uiLastFPS)).c_str());
+			_pMainWindow->SetCaption((_pcApplicationCaption + " FPS:"s + to_string(_uiLastFPS)).c_str());
 		else
 			_pMainWindow->SetCaption(_pcApplicationCaption);
 	}
@@ -894,7 +894,7 @@ DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPl
 	else
 	{
 		prPlugin = NULL;
-		LOG("Plugin file \"" + string(pcFileName) + "\" doesn't exists.", LT_ERROR);
+		LOG("Plugin file \""s + pcFileName + "\" doesn't exists.", LT_ERROR);
 		return S_FALSE;
 	}
 }
@@ -936,9 +936,9 @@ bool CCore::_UnloadPlugin(IPlugin *pPlugin)
 				(*pFreePlugin)(_vecPlugins[i].pPlugin);
 			
 			if (!ReleaseDynamicLib(_vecPlugins[i].tLib))
-				LOG("Can't free \"" + string(info.cName) + "\" plugin library.", LT_ERROR);
+				LOG("Can't free \""s + info.cName + "\" plugin library.", LT_ERROR);
 			else
-				LOG("Plugin \"" + string(info.cName) + "\" disconnected succesfully.", LT_INFO);
+				LOG("Plugin \""s + info.cName + "\" disconnected succesfully.", LT_INFO);
 			
 			_vecPlugins.erase(_vecPlugins.begin() + i);
 			return true;
@@ -995,8 +995,8 @@ bool CCore::_LoadPlugin(const string &strFileName, IPlugin *&prPlugin)
 
 	prPlugin = tmp.pPlugin;
 
-	LOG("Plugin \"" + string(info.cName) + "\" " + string(info.cVersion) +" by \"" + string(info.cVendor) + "\" connected succesfully.", LT_INFO);
-	LOG("Plugin description: \"" + string(info.cDescription) + '\"', LT_INFO);
+	LOG("Plugin \""s + info.cName + "\" " + info.cVersion +" by \"" + info.cVendor + "\" connected succesfully.", LT_INFO);
+	LOG("Plugin description: \""s + info.cDescription + '\"', LT_INFO);
 
 	return true;
 }
@@ -1008,7 +1008,7 @@ void CCore::_PrintPluginsInfo()
 	{
 		TPluginInfo info;
 		_vecPlugins[i].pPlugin->GetPluginInfo(info);
-		tmp += "- " + string(info.cName) + ' ' + string(info.cVersion) + " by " + string(info.cVendor) + '\n';
+		tmp += "- "s + info.cName + ' ' + info.cVersion + " by " + info.cVendor + '\n';
 	}
 	tmp += "-----------------------------";
 	Console()->Write(tmp.c_str());
@@ -1056,7 +1056,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 			return E_ABORT;
 		}
 
-		LOG("Current locale: " + string(setlocale(LC_ALL, "")), LT_INFO);
+		LOG("Current locale: "s + setlocale(LC_ALL, ""), LT_INFO);
 		
 		setlocale(LC_NUMERIC, "C");
 
@@ -1679,7 +1679,7 @@ bool DGLE_API CCore::_s_ConFeatures(void *pParameter, const char *pcParam)
 {
 	bool write = strlen(pcParam) != 0 && pcParam[0] == 'w';
 
-	string res = string("Engine was build with:\n") +
+	const string res = "Engine was build with:\n"s +
 #ifdef NDEBUG
 		"* Release build.\n"
 #else
@@ -1748,7 +1748,7 @@ bool DGLE_API CCore::_s_ConPrintVersion(void *pParameter, const char *pcParam)
 	}
 	else 
 	{
-		CON(CCore, (string("Engine version: ") + DGLE_VERSION).c_str());
+		CON(CCore, ("Engine version: "s + DGLE_VERSION).c_str());
 		return true;
 	}
 }

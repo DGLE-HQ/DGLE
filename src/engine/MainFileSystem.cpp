@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -216,7 +216,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::LoadFile(const char *pcFileName, IFile *&p
 
 	if (!p_fs)
 	{
-		LOG("Failed to find virtual file system to open file \"" + string(pcFileName) + "\".", LT_ERROR);
+		LOG("Failed to find virtual file system to open file \""s + pcFileName + "\".", LT_ERROR);
 		return E_INVALIDARG;
 	}
 
@@ -225,7 +225,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::LoadFile(const char *pcFileName, IFile *&p
 
 	if (!exists)
 	{
-		LOG("File \"" + string(pcFileName) + "\" doesn't exists.", LT_WARNING);
+		LOG("File \""s + pcFileName + "\" doesn't exists.", LT_WARNING);
 		return S_FALSE;
 	}
 
@@ -254,7 +254,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::GetVirtualFileSystem(const char *pcVFSExte
 			return S_OK;
 		}
 
-	LOG("Virtual file system with extension \"" + string(pcVFSExtension) + "\" hasn't been registered.", LT_ERROR);
+	LOG("Virtual file system with extension \""s + pcVFSExtension + "\" hasn't been registered.", LT_ERROR);
 
 	return E_INVALIDARG;
 }
@@ -292,7 +292,7 @@ DGLE_RESULT DGLE_API CMainFileSystem::RegisterVirtualFileSystem(const char *pcVF
 	for (size_t i = 0; i < _clVFileSystems.size(); ++i)
 		if (_clVFileSystems[i].ext == pcVFSExtension)
 		{
-			LOG("Virtual file system with extension \"" + string(pcVFSExtension) + "\" already registered.", LT_WARNING);
+			LOG("Virtual file system with extension \""s + pcVFSExtension + "\" already registered.", LT_WARNING);
 			return E_INVALIDARG;
 		}
 	

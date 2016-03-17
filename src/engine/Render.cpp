@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,6 +16,8 @@ See "DGLE.h" for more details.
 CRender::CRender(uint uiInstIdx):
 CInstancedObj(uiInstIdx)
 {
+	using std::operator ""s;
+
 	_pCoreRenderer = Core()->pCoreRenderer();
 
 	Console()->RegComProc("rnd_list_features", "Prints list of features supported by current Core Renderer implementation.", &_s_ConListFeatures, (void*)this);
@@ -25,52 +27,52 @@ CInstancedObj(uiInstIdx)
 	_strFeturesList = "Core Renderer supported features\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_BUILTIN_FULLSCREEN_MODE, b_supported);
-	_strFeturesList += std::string("Builtin fullscreen mode: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Builtin fullscreen mode: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_BUILTIN_STATE_FILTER, b_supported);
-	_strFeturesList += std::string("Builtin state filter: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Builtin state filter: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_MULTISAMPLING, b_supported);
-	_strFeturesList += std::string("Multisampling: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Multisampling: "s + (b_supported ? "Yes" : "No") + "\n\t";
 	
 	_pCoreRenderer->IsFeatureSupported(CRFT_VSYNC, b_supported);
-	_strFeturesList += std::string("Vertical synchronization: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Vertical synchronization: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_PROGRAMMABLE_PIPELINE, b_supported);
-	_strFeturesList += std::string("Programmable pipeline: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Programmable pipeline: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_LEGACY_FIXED_FUNCTION_PIPELINE_API, b_supported);
-	_strFeturesList += std::string("Legacy fixed function pipeline API: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Legacy fixed function pipeline API: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_BGRA_DATA_FORMAT, b_supported);
-	_strFeturesList += std::string("BGRA textures: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "BGRA textures: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_COMPRESSION, b_supported);
-	_strFeturesList += std::string("Texture compression: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Texture compression: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_NON_POWER_OF_TWO_TEXTURES, b_supported);
-	_strFeturesList += std::string("Non power of two textures: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Non power of two textures: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_DEPTH_TEXTURES, b_supported);
-	_strFeturesList += std::string("Depth textures: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Depth textures: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_ANISOTROPY, b_supported);
-	_strFeturesList += std::string("Texture anisotropy: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Texture anisotropy: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIPMAP_GENERATION, b_supported);
-	_strFeturesList += std::string("Hardware mipmap generation: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Hardware mipmap generation: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIRRORED_REPEAT, b_supported);
-	_strFeturesList += std::string("Texture mirrored repeat: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Texture mirrored repeat: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_TEXTURE_MIRROR_CLAMP, b_supported);
-	_strFeturesList += std::string("Texture mirror clamp: ") + (b_supported ? "Yes" : "No") + "\n\t";
+	_strFeturesList += "Texture mirror clamp: "s + (b_supported ? "Yes" : "No") + "\n\t";
 
 	_pCoreRenderer->IsFeatureSupported(CRFT_GEOMETRY_BUFFER, b_supported);
-	_strFeturesList += std::string("Hardware geometry buffers: ") + (b_supported ? "Yes" : "No") + "\n\t";;
+	_strFeturesList += "Hardware geometry buffers: "s + (b_supported ? "Yes" : "No") + "\n\t";;
 	
 	_pCoreRenderer->IsFeatureSupported(CRFT_FRAME_BUFFER, b_supported);
-	_strFeturesList += std::string("Hardware frame buffers: ") + (b_supported ? "Yes" : "No");
+	_strFeturesList += "Hardware frame buffers: "s + (b_supported ? "Yes" : "No");
 
 	// Don't append "\n\t" to the last line!
 	assert(_strFeturesList[_strFeturesList.length() - 2] != '\n' && _strFeturesList[_strFeturesList.length() - 1] != '\t');

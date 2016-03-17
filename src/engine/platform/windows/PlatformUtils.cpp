@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -848,7 +848,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	::GetSystemInfo((SYSTEM_INFO*) &st_sys_info);
 
 	str = "CPU: ";
-	str += string(pc_processor_name) + " (~" + to_string(mhz) + " Mhz";
+	str += pc_processor_name + " (~"s + to_string(mhz) + " Mhz";
 	if (st_sys_info.dwNumberOfProcessors > 1) str += " X " + to_string(st_sys_info.dwNumberOfProcessors);
 	str += ')';
 
@@ -958,13 +958,13 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		stSysInfo.uiVideocardRAM = stoi(str_res);
 
 		GetStringValue( p_object, L"szDriverName", EXPAND(txt));
-		vcard_advanced_str = "(driver \"" + string(txt) + "\",";
+		vcard_advanced_str = "(driver \""s + txt + "\",";
 
 		GetStringValue( p_object, L"szDriverVersion", EXPAND(txt));
-		vcard_advanced_str += " ver. " + string(txt) + ',';
+		vcard_advanced_str += " ver. "s + txt + ',';
 
 		GetStringValue( p_object, L"szDriverDateLocalized", EXPAND(txt));
-		vcard_advanced_str += " date " + string(txt) + ')';
+		vcard_advanced_str += " date "s + txt + ')';
 
 		p_object->Release();
 		p_container->Release();

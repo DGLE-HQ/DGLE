@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		21.01.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,9 +9,11 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
+using namespace std;
+
 bool bTerminate = false;
 
-std::vector<TEngInstance> vecEngineInstances;
+vector<TEngInstance> vecEngineInstances;
 
 TEngInstance* EngineInstance(uint uiInstIdx)
 {
@@ -25,9 +27,9 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 {
 	if (uiInstIdx == -1)
 	{
-		for (std::size_t i = 0; i < vecEngineInstances.size(); ++i)
+		for (size_t i = 0; i < vecEngineInstances.size(); ++i)
 			if (vecEngineInstances[i].pclCore)
-				vecEngineInstances[i].pclCore->WriteToLogEx(("**Broadcast**" + std::string(pcTxt)).c_str(), eType, pcSrcFileName, iSrcLineNumber);
+				vecEngineInstances[i].pclCore->WriteToLogEx(("**Broadcast**"s + pcTxt).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		return;
 	}
 	
@@ -66,7 +68,7 @@ bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
 	if (!pEngineCore)
 		return false;
 
-	for (std::size_t i = 0; i < vecEngineInstances.size(); ++i)
+	for (size_t i = 0; i < vecEngineInstances.size(); ++i)
 		if (pEngineCore == vecEngineInstances[i].pclCore)
 		{
 			delete vecEngineInstances[i].pclCore;

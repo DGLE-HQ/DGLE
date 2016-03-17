@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -79,7 +79,7 @@ bool CSplashWindow::_CreateWindow()
 		HBITMAP bmp = (HBITMAP)LoadImage(hModule, _pcBmpFile, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 		
 		if (!bmp)
-			LOG("Can't load custom splash bitmap \"" + string(_pcBmpFile) + "\".", LT_ERROR);
+			LOG("Can't load custom splash bitmap \""s + _pcBmpFile + "\".", LT_ERROR);
 		else
 		{
 			_hBmp = bmp;

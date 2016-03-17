@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		16.03.2016 (c)Andrey Korotkov
+\date		17.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -83,7 +83,7 @@ uint CBaseSound::_FindDevice(const WAVEFORMATEX &stFormat)
 		if (bracket_pos_1 != string::npos && (bracket_pos_2 == string::npos || bracket_pos_2 < bracket_pos_1))
 			name += "...)";
 
-		_vecDevices.push_back((flag ? "Compatible" : "Incompatible") + string(" audio device with id: ") + to_string(i) + " name: \"" + name + '\"');
+		_vecDevices.push_back((flag ? "Compatible" : "Incompatible") + " audio device with id: "s + to_string(i) + " name: \"" + name + '\"');
 	}
 
 	return res;

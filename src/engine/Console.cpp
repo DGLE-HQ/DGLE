@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -150,7 +150,7 @@ void CConsole::_Cmdlist()
 	if (!_vecCommands.empty())
 	{
 		for (size_t i = 0; i < _vecCommands.size(); ++i)
-			lst += " >" + string(_vecCommands[i].pcName) + '\n';
+			lst += " >"s + _vecCommands[i].pcName + '\n';
 		
 		lst += "------" + to_string(_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + '\n';
 		
@@ -314,7 +314,7 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 		{
 			++count;
 			idx = (int)i;
-			cmds += " >" + string(_vecCommands[i].pcName) + '\n';
+			cmds += " >"s + _vecCommands[i].pcName + '\n';
 		}
 	}
 		cmds += "----";

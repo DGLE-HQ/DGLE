@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -130,22 +130,22 @@ const char* GetExceptionString(DWORD dwCode)
 void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo)
 {
 	PEXCEPTION_RECORD pExceptionRecord = pExceptionInfo->ExceptionRecord;
-	str_info+= "################################################\n";
-	str_info+= "################ PROGRAM CRASH! ################\n";
-	str_info+= "################################################\n\n";
-	str_info+= "ERROR: \"" + std::string(GetExceptionString(pExceptionRecord->ExceptionCode)) + "\"\n\n";
-	str_info+= "Sorry, but application must be restarted.\nIf this unhandled exception appears again please inform application/engine/plugin developer.\nUse console for debugging or make a dump file using \"crash_dump\" command.\nAlso see engine log file for any additional information available.\n\n";
+	str_info += "################################################\n";
+	str_info += "################ PROGRAM CRASH! ################\n";
+	str_info += "################################################\n\n";
+	str_info += "ERROR: \""s + GetExceptionString(pExceptionRecord->ExceptionCode) + "\"\n\n";
+	str_info += "Sorry, but application must be restarted.\nIf this unhandled exception appears again please inform application/engine/plugin developer.\nUse console for debugging or make a dump file using \"crash_dump\" command.\nAlso see engine log file for any additional information available.\n\n";
 	if (!SymInitialize(GetCurrentProcess(), 0, TRUE))
 	{
-		str_info+= "(Can't write call stack - SymInitialize failed!)\n";
-		str_info+= "################################################\n";
+		str_info += "(Can't write call stack - SymInitialize failed!)\n";
+		str_info += "################################################\n";
 		return;
 	}
 	PCONTEXT pCtx = pExceptionInfo->ContextRecord;
 	CONTEXT* pTrashableContext = pCtx;
 
 	WriteStackDetails(pTrashableContext);
-	str_info+= "################################################\n";
+	str_info += "################################################\n";
 
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 
@@ -160,11 +160,11 @@ void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo)
 
 void WriteStackDetails(PCONTEXT pContext)
 {				
-	str_info+= "################################################\n";
-	str_info+= "################## Call stack ##################\n";
-	str_info+= "################################################\n";
+	str_info += "################################################\n";
+	str_info += "################## Call stack ##################\n";
+	str_info += "################################################\n";
 
-	str_info+=
+	str_info +=
 		"|Address|{FrameFunction}\nFunction or method in source file[Sourcefile and line number]\n";
 
 	DWORD dwMachineType = 0;
@@ -207,7 +207,7 @@ void WriteStackDetails(PCONTEXT pContext)
 			snprintf(res1, size(res1), "%d", sf.AddrPC.Offset);
 			snprintf(res2, size(res2), "%d", sf.AddrFrame.Offset);
 			str_info += "================================================\n";
-			str_info += '|' + std::string(res1) + "|{" + std::string(res2) + "}\n";
+			str_info += '|' + (res1 + "|{"s + res2) + "}\n";
 
 		DWORD64 symDisplacement = 0;	
 
@@ -247,7 +247,7 @@ void WriteStackDetails(PCONTEXT pContext)
 			strcat_s(szTextBuf, buf);
 		}
 
-		str_info += std::string(szTextBuf) + '\n';
+		str_info += string(szTextBuf) + '\n';
 		strcat_s(szTopFunc, szTextBuf);
 		strcat_s(szTopFunc, "\n");
 	}
@@ -337,7 +337,7 @@ const char* FormWin32ExceptionString(DWORD dwCode)
 
 	static char szBuffer[512] = { 0 };
 
-	strcpy(szBuffer, (string("We are very sorry, but program crashed! Unhandled WIN32 exception ") + exp_txt + " occured.").c_str());
+	strcpy(szBuffer, ("We are very sorry, but program crashed! Unhandled WIN32 exception "s + exp_txt + " occured.").c_str());
 
 	return szBuffer;
 }

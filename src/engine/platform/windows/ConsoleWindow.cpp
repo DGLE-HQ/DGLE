@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -132,11 +132,11 @@ DGLE_RESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 		_bToPrevLineActive = bToPrevLine;
 
 		if (_hThreadHandle && _hMemo == NULL)
-			_strOnCreate += "\r\n" + string(pcTxt);
+			_strOnCreate += "\r\n"s + pcTxt;
 		else
 		{
 			SendMessage(_hMemo, EM_SETSEL, cur_l, cur_l);
-			SendMessage(_hMemo, EM_REPLACESEL, false, (LPARAM)("\r\n" + string(pcTxt)).c_str());
+			SendMessage(_hMemo, EM_REPLACESEL, false, (LPARAM)("\r\n"s + pcTxt).c_str());
 			SendMessage(_hMemo, EM_SCROLL, SB_BOTTOM, 0);
 		}
 	} 
