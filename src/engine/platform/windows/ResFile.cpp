@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		17.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -17,13 +17,13 @@ _pData(NULL),
 _ui32Pos(0),
 _ui32Size(0)
 {	
-	snprintf(_acName, std::extent<decltype(_acName)>::value, "%d", resId);
+	snprintf(_acName, std::size(_acName), "%d", resId);
 	const HRSRC res = FindResource(hModule, MAKEINTRESOURCE(resId), "BIN");
 	
 	if (res)
 		_hRes = LoadResource(hModule, res);
 	
-	_bOpened = _hRes!=NULL;
+	_bOpened = _hRes != NULL;
 	
 	if (_bOpened)
 	{

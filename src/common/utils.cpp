@@ -13,7 +13,6 @@ See "DGLE.h" for more details.
 #include <cstdio>
 #include <algorithm>
 #include <utility>
-#include <type_traits>
 #include <limits>
 
 using namespace DGLE;
@@ -53,14 +52,14 @@ string ToStrX(uint val)
 string ToStrFmt(double val)
 {
 	char res[16];
-	snprintf(res, extent<decltype(res)>::value, "% .4f", val);
+	snprintf(res, size(res), "% .4f", val);
 	return res;
 }
 
 string ToStrExp(double val)
 {
 	char res[16];
-	snprintf(res, extent<decltype(res)>::value, "%e", val);
+	snprintf(res, size(res), "%e", val);
 	return res;
 }
 
