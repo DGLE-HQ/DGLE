@@ -203,9 +203,9 @@ void WriteStackDetails(PCONTEXT pContext)
 		if (!sf.AddrFrame.Offset)		
 			break;						
 
-			char res1[16],res2[16];
-			sprintf_s(res1,16, "%d", sf.AddrPC.Offset);
-			sprintf_s(res2,16, "%d", sf.AddrFrame.Offset);
+			char res1[16], res2[16];
+			snprintf(res1, size(res1), "%d", sf.AddrPC.Offset);
+			snprintf(res2, size(res2), "%d", sf.AddrFrame.Offset);
 			str_info += "================================================\n";
 			str_info += '|' + std::string(res1) + "|{" + std::string(res2) + "}\n";
 
@@ -228,7 +228,7 @@ void WriteStackDetails(PCONTEXT pContext)
 	#endif
 		{
 			UnDecorateSymbolName(pSymbol->Name, szUndecoratedName, sizeof (szUndecoratedName), UNDNAME_COMPLETE);
-			sprintf_s(szTextBuf, "%hs+%I64X  ", pSymbol->Name, symDisplacement);
+			snprintf(szTextBuf, size(szTextBuf), "%hs+%I64X  ", pSymbol->Name, symDisplacement);
 		}
 		else    
 		{
@@ -242,7 +242,7 @@ void WriteStackDetails(PCONTEXT pContext)
 			char buf[4096] = {0};
 
 			GetTextFileString (lineInfo.FileName, lineInfo.LineNumber, buf, 4096);
-			sprintf_s(buf, "%s [%s line %u]", buf, lineInfo.FileName, lineInfo.LineNumber); 
+			snprintf(buf, size(buf), "%s [%s line %u]", buf, lineInfo.FileName, lineInfo.LineNumber); 
 
 			strcat_s(szTextBuf, buf);
 		}
