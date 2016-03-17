@@ -20,13 +20,13 @@ using namespace std;
 
 string ToLowerCase(string str)
 {
-	transform(str.begin(), str.end(), str.begin(), std::tolower);
+	transform(str.begin(), str.end(), str.begin(), tolower);
 	return str;
 }
 
 string ToUpperCase(string str)
 {
-	transform(str.begin(), str.end(), str.begin(), std::toupper);
+	transform(str.begin(), str.end(), str.begin(), toupper);
 	return str;
 }
 
