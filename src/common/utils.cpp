@@ -73,16 +73,20 @@ string GetFilePath(const char *name)
 	string path(name);
 	
 	if (path.empty()) 
-		return "";
+		return path;
 	
-	if (path[path.length() - 1] == '\\' || path[path.length() - 1] == '/') 
-		path.erase(path.length() - 1);
+	switch (path[path.length() - 1])
+	{
+	case '\\':
+	case '/':
+		path.pop_back();
+	}
 
-	string::size_type pos = path.find_last_of("\\/");
+	const string::size_type pos = path.find_last_of("\\/");
 	
 	if (pos != string::npos)
 	{
-		path.erase(pos);
+		path.erase(pos).shrink_to_fit();
 		return path;
 	}
 	else 
@@ -94,15 +98,19 @@ string GetFileName(const char *name)
 	string path(name);
 	
 	if (path.empty())
-		return path.c_str();
+		return path;
 	
-	if (path[path.length() - 1] == '\\' || path[path.length() - 1] == '/')
-		path.erase(path.length() - 1);
-	
-	string::size_type pos = path.find_last_of("\\/");
+	switch (path[path.length() - 1])
+	{
+	case '\\':
+	case '/':
+		path.pop_back();
+	}
+
+	const string::size_type pos = path.find_last_of("\\/");
 	
 	if (pos != string::npos)
-		path.erase(0, pos + 1);
+		path.erase(0, pos + 1).shrink_to_fit();
 	
 	return path;
 }
@@ -110,18 +118,23 @@ string GetFileName(const char *name)
 string GetFileExt(const char *name)
 {
 	string path(name);
-	string::size_type pos = path.find_last_of('.');
+	const string::size_type pos = path.find_last_of('.');
 	if (pos != string::npos)
-		path.erase(0, pos + 1);
+		path.erase(0, pos + 1).shrink_to_fit();
 	return path;
 }
 
 string GetOnlyFileName(const char *name)
 {
 	string path(GetFileName(name));
-	string::size_type pos = path.find_last_of('.');
+	const string::size_type pos = path.find_last_of('.');
 	if (pos != string::npos)
-		path.erase(pos);
+		path.erase(pos).shrink_to_fit();
+	/*
+		Shrinking can non-beneficial for short extensions
+		but shrink_to_fit() is non-binding anyway.
+		Leave the decision concerning shrinking to the stdlib implementation.
+	*/
 	return path;
 }
 
