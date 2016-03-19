@@ -1,6 +1,6 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		19.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -111,7 +111,8 @@ string GetFileExt(const char *name)
 {
 	string path(name);
 	string::size_type pos = path.find_last_of('.');
-	path.erase(0, pos + 1);
+	if (pos != string::npos)
+		path.erase(0, pos + 1);
 	return path;
 }
 
