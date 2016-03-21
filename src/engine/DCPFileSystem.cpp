@@ -530,7 +530,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 		return E_INVALIDARG;
 	}
 
-	const string mask = pack_name.substr(delim_pos + 1);
+	string mask = pack_name.substr(delim_pos + 1);
 	pack_name.erase(delim_pos).shrink_to_fit();
 
 	if (!_OpenPack(pack_name))
@@ -539,9 +539,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	if (_clInfoTable.empty())
 		return E_FAIL;
 
-	string reg_exp_mask;
-
-	s__ConvertFormatFromDirToRegEx(reg_exp_mask, mask);
+	const string reg_exp_mask = _s_ConvertFormatFromDirToRegEx(move(mask));
 	
 	CRegexpT<char> regexp(reg_exp_mask.c_str());
 
@@ -570,14 +568,14 @@ void CDCPFileSystem::s_CorrectSlashes(string &strFileName)
 	replace(strFileName.begin(), strFileName.end(), '/', '\\');
 }
 
-void CDCPFileSystem::s__ConvertFormatFromDirToRegEx(string &outStr, const string &inStr)
+string CDCPFileSystem::_s_ConvertFormatFromDirToRegEx(string str)
 {
-	outStr = inStr;
-	s_CorrectSlashes(outStr);
-	_s_ReplaceSubstrInStr(outStr, "\\", "\\\\");
-	_s_ReplaceSubstrInStr(outStr, ".", "\\.");
-	_s_ReplaceSubstrInStr(outStr, "?", ".");
-	_s_ReplaceSubstrInStr(outStr, "*", ".*");
+	s_CorrectSlashes(str);
+	_s_ReplaceSubstrInStr(str, "\\", "\\\\");
+	_s_ReplaceSubstrInStr(str, ".", "\\.");
+	_s_ReplaceSubstrInStr(str, "?", ".");
+	_s_ReplaceSubstrInStr(str, "*", ".*");
+	return str;
 }
 
 void CDCPFileSystem::_Clean()

@@ -75,7 +75,7 @@ class CDCPFileSystem :public CInstancedObj, public IFileSystem
 	bool _OpenPack(const std::string &strPackName);
 	void _Clean();
 	
-	static void s__ConvertFormatFromDirToRegEx(std::string &outStr, const std::string &inStr);
+	static std::string _s_ConvertFormatFromDirToRegEx(std::string dirStr);
 	static void _s_ReplaceSubstrInStr(std::string &outStr, const std::string &findCh, const std::string &repCh);
 	static bool DGLE_API _s_ConCmdHelp(void *pParameter, const char *pcParam);
 	static bool DGLE_API _s_ConExecCmd(void *pParameter, const char *pcParam);
