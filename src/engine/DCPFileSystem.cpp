@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		17.03.2016 (c)Andrey Korotkov
+\date		21.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -541,7 +541,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 	string reg_exp_mask;
 
-	_ConvertFormatFromDirToRegEx(reg_exp_mask, mask);
+	s__ConvertFormatFromDirToRegEx(reg_exp_mask, mask);
 	
 	CRegexpT<char> regexp(reg_exp_mask.c_str());
 
@@ -572,7 +572,7 @@ void CDCPFileSystem::s_CorrectSlashes(string &strFileName)
 			strFileName[i] = '\\';
 }
 
-void CDCPFileSystem::_ConvertFormatFromDirToRegEx(string &outStr, const string &inStr)
+void CDCPFileSystem::s__ConvertFormatFromDirToRegEx(string &outStr, const string &inStr)
 {
 	outStr = inStr;
 	s_CorrectSlashes(outStr);
