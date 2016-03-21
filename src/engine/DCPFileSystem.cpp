@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "MainFileSystem.h"
 #include "BuffFile.h"
 #include "minilzo.h"
-#include "deelx.h"
+#include <regex>
 
 using namespace std;
 
@@ -541,12 +541,12 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 	const string reg_exp_mask = _s_ConvertFormatFromDirToRegEx(move(mask));
 	
-	CRegexpT<char> regexp(reg_exp_mask.c_str());
+	const regex regexp(reg_exp_mask.c_str());
 
 	_clFindedFiles.clear();
 
 	for (size_t i = 0; i < _clInfoTable.size(); ++i)
-		if (regexp.Match(_clInfoTable[i].acPackedFName).IsMatched())		
+		if (regex_match(_clInfoTable[i].acPackedFName, regexp))		
 			_clFindedFiles.emplace_back(_clInfoTable[i].acPackedFName);
 
 	if (_clFindedFiles.size() > 0)

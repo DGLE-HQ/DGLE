@@ -188,9 +188,6 @@
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Console.h" />
     <ClInclude Include="..\..\..\src\engine\Core.h" />
-    <ClInclude Include="..\..\..\deps\deelx\deelx.h">
-      <Filter>Dependencies\deelx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFile.h">
       <Filter>Platform\FileSystem</Filter>
     </ClInclude>
@@ -262,9 +259,6 @@
     </Filter>
     <Filter Include="Dependencies\glew">
       <UniqueIdentifier>{52e7df8b-16d8-49ee-890c-0d3c16b05ff3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Dependencies\deelx">
-      <UniqueIdentifier>{f3204efa-ce0c-45ed-bec2-921453dd3ba3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Dependencies\minilzo">
       <UniqueIdentifier>{300f8b2a-9aa7-4dc5-9a7f-1b2d29503cb6}</UniqueIdentifier>
