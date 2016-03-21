@@ -530,7 +530,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 		return E_INVALIDARG;
 	}
 
-	string mask = pack_name.substr(delim_pos + 1);
+	string mask = pack_name.substr(delim_pos + 1);	// non-const in order to enable move semantic below
 	pack_name.erase(delim_pos).shrink_to_fit();
 
 	if (!_OpenPack(pack_name))
@@ -541,15 +541,15 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 
 	const string reg_exp_mask = _s_ConvertFormatFromDirToRegEx(move(mask));
 	
-	const regex regexp(reg_exp_mask.c_str());
+	const regex regexp(reg_exp_mask);
 
 	_clFindedFiles.clear();
 
-	for (size_t i = 0; i < _clInfoTable.size(); ++i)
-		if (regex_match(_clInfoTable[i].acPackedFName, regexp))		
-			_clFindedFiles.emplace_back(_clInfoTable[i].acPackedFName);
+	for (const auto &info : _clInfoTable)
+		if (regex_match(info.acPackedFName, regexp))		
+			_clFindedFiles.emplace_back(info.acPackedFName);
 
-	if (_clFindedFiles.size() > 0)
+	if (!_clFindedFiles.empty())
 		prIterator = new CDCPFileIterator(InstIdx(), _clFindedFiles);
 	else
 		prIterator = NULL;
