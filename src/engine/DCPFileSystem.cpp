@@ -567,9 +567,7 @@ void CDCPFileSystem::_s_ReplaceSubstrInStr(string &outStr, const string &findCh,
 
 void CDCPFileSystem::s_CorrectSlashes(string &strFileName)
 {
-	for (string::size_type i = 0; i < strFileName.size(); ++i)
-		if (strFileName[i] == '/')
-			strFileName[i] = '\\';
+	replace(strFileName.begin(), strFileName.end(), '/', '\\');
 }
 
 void CDCPFileSystem::s__ConvertFormatFromDirToRegEx(string &outStr, const string &inStr)
