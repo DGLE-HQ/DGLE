@@ -1,9 +1,9 @@
-#include <stdio.h>
+#include "DGLE.h"
+#include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <DGLE.h>
 
 using namespace DGLE;
 using namespace std;

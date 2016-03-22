@@ -20,7 +20,7 @@ This header is a part of DGLE SDK.
 #endif
 
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 #include <stack>
 
 #ifndef PLATFORM_WINDOWS

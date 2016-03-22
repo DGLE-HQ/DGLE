@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -868,11 +868,11 @@ DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 
 
 	uint tw, th;
 	
-	_pResMan->pISystemFont()->GetTextDimensions(pcTxt,tw,th);
+	_pResMan->pISystemFont()->GetTextDimensions(pcTxt, tw, th);
 	_pResMan->pISystemFont()->Draw2D((float)_uiProfilerCurTxtXOffset, (float)_uiProfilerCurTxtYOffset, pcTxt, stColor);
 	
 	_uiProfilerCurTxtYOffset += th;
-	_uiProfilerCurTxtMaxLength = max(_uiProfilerCurTxtMaxLength,tw);
+	_uiProfilerCurTxtMaxLength = max(_uiProfilerCurTxtMaxLength, tw);
 
 	uint x,y, w, h;
 	_pCoreRenderer->GetViewport(x, y, w, h);

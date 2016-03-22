@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -429,14 +429,14 @@ DGLE_RESULT DGLE_API CMesh::RecalculateBounds()
 	{
 		const TPoint3 * const p = reinterpret_cast<TPoint3 *>(&desc.pData[stride * i]);
 
-		max_dem.x = max(p->x, max_dem.x);
-		min_dem.x = min(p->x, min_dem.x);
+		max_dem.x = fmax(p->x, max_dem.x);
+		min_dem.x = fmin(p->x, min_dem.x);
 
-		max_dem.y = max(p->y, max_dem.y);
-		min_dem.y = min(p->y, min_dem.y);
+		max_dem.y = fmax(p->y, max_dem.y);
+		min_dem.y = fmin(p->y, min_dem.y);
 
-		max_dem.z = max(p->z, max_dem.z);
-		min_dem.z = min(p->z, min_dem.z);
+		max_dem.z = fmax(p->z, max_dem.z);
+		min_dem.z = fmin(p->z, min_dem.z);
 	}
 
 	delete[] desc.pData;

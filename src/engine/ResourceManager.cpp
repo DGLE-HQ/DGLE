@@ -1917,14 +1917,14 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 		{
 			const TPoint3 * const p = reinterpret_cast<TPoint3 *>(const_cast<uint8 *>(&pData[stride * i]));
 
-			max_dem.x = max(p->x, max_dem.x);
-			min_dem.x = min(p->x, min_dem.x);
+			max_dem.x = fmax(p->x, max_dem.x);
+			min_dem.x = fmin(p->x, min_dem.x);
 
-			max_dem.y = max(p->y, max_dem.y);
-			min_dem.y = min(p->y, min_dem.y);
+			max_dem.y = fmax(p->y, max_dem.y);
+			min_dem.y = fmin(p->y, min_dem.y);
 
-			max_dem.z = max(p->z, max_dem.z);
-			min_dem.z = min(p->z, min_dem.z);
+			max_dem.z = fmax(p->z, max_dem.z);
+			min_dem.z = fmin(p->z, min_dem.z);
 		}
 
 		result = _CreateMesh(prMesh, pData, uiDataSize, uiNumVerts, uiNumFaces, min_dem + (max_dem - min_dem) / 2.f, (max_dem - min_dem) / 2.f, eCreateFlags, eLoadFlags) ? S_OK : E_FAIL;

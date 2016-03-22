@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -728,10 +728,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 	_2D_BATCH_DUMMY_DRAW_CALL_EXIT
 
 	const float quad[] = {
-		min(stCoords1.x, stCoords2.x), min(stCoords1.y, stCoords2.y),
-		max(stCoords1.x, stCoords2.x), min(stCoords1.y, stCoords2.y),
-		max(stCoords1.x, stCoords2.x), max(stCoords1.y, stCoords2.y),
-		min(stCoords1.x, stCoords2.x), max(stCoords1.y, stCoords2.y)
+		fmin(stCoords1.x, stCoords2.x), fmin(stCoords1.y, stCoords2.y),
+		fmax(stCoords1.x, stCoords2.x), fmin(stCoords1.y, stCoords2.y),
+		fmax(stCoords1.x, stCoords2.x), fmax(stCoords1.y, stCoords2.y),
+		fmin(stCoords1.x, stCoords2.x), fmax(stCoords1.y, stCoords2.y)
 	};
 	
 	if (!BBoxInScreen(quad, false))
@@ -1285,10 +1285,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 
 	for (uint i = 0; i < uiVerticesCount; ++i)
 	{
-		max_x = max(pstVertices[i].x, max_x);
-		max_y = max(pstVertices[i].y, max_y);
-		min_x = min(pstVertices[i].x, min_x);
-		min_y = min(pstVertices[i].y, min_y);
+		max_x = fmax(pstVertices[i].x, max_x);
+		max_y = fmax(pstVertices[i].y, max_y);
+		min_x = fmin(pstVertices[i].x, min_x);
+		min_y = fmin(pstVertices[i].y, min_y);
 	}
 
 	const float quad[] = {
@@ -1459,10 +1459,10 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 
 	for (uint i = 0; i < uiVerticesCount; ++i)
 	{
-		max_x = max(pstVertices[i].x, max_x);
-		max_y = max(pstVertices[i].y, max_y);
-		min_x = min(pstVertices[i].x, min_x);
-		min_y = min(pstVertices[i].y, min_y);
+		max_x = fmax(pstVertices[i].x, max_x);
+		max_y = fmax(pstVertices[i].y, max_y);
+		min_x = fmin(pstVertices[i].x, min_x);
+		min_y = fmin(pstVertices[i].y, min_y);
 	}
 
 	const float quad[] = {
@@ -1602,7 +1602,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawBuffer3D(ITexture *pTexture, ICoreGeometryBu
 	// restrict znear in a way to [0.998..1.0] ndc z range ([-1..1]) occupy no more then half of eye space z range ([-znear..-zplane])
 	const float z = 0.999f,
 		z_min = (z_plane - z_plane * sqrtf(1.f - 4.f * z * (1.f - z))) / (2.f * z),
-		z_near = max(z_min, z_plane - max_dist),
+		z_near = fmax(z_min, z_plane - max_dist),
 		factor = z_near / z_plane,
 
 		plane_right = (float)_uiScreenWidth / 2.f,

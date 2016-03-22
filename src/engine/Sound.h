@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		05.10.2014 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -25,8 +25,8 @@ struct TSoundFrame
 
 	inline void SetMono(int16 mono, float pan, float vol) 
 	{
-		i16L = (int16)((float)mono * min(1.f, 1.f - pan) * vol);
-		i16R = (int16)((float)mono * min(1.f, pan + 1.f) * vol);
+		i16L = (int16)((float)mono * fmin(1.f, 1.f - pan) * vol);
+		i16R = (int16)((float)mono * fmin(1.f, pan + 1.f) * vol);
 	}
 
 	inline void SetStereo(const int16 *data, float vol) 
@@ -40,7 +40,7 @@ struct TSoundFrame
 		return (val < -0x8000 ? -0x8000 : (val > 0x7FFF ? 0x7FFF : (int16)val));
 	}
 
-	inline TSoundFrame& operator += (const TSoundFrame &s)
+	inline TSoundFrame &operator += (const TSoundFrame &s)
 	{
 		i16L = Clamp((int)i16L + (int)s.i16L);
 		i16R = Clamp((int)i16R + (int)s.i16R);
