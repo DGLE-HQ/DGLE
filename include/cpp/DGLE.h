@@ -1420,55 +1420,55 @@ error Static linking is not implemented!
 	\note This macros is used when engine is linked dynamically from library file (ex. DLL for Windows). This macros provides three functions GetEngine, CreateEngine and FreeEngine. First one must be called to load engine from dynamic library.
 	\see E_GET_ENGINE_FLAGS
 */
-#define DGLE_DYNAMIC_FUNC \
-bool (CALLBACK *pCreateEngine)(DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags, DGLE::uint8 ubtSDKVer) = NULL;\
-bool (CALLBACK *pFreeEngine)(DGLE::IEngineCore *pEngineCore) = NULL;\
-HMODULE hServer = NULL;\
-bool CreateEngine(DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags = DGLE::GEF_DEFAULT)\
-{\
-	if (pCreateEngine == NULL)\
-		return false;\
-	return (*pCreateEngine)(pEngineCore, eFlags, _DGLE_SDK_VER_);\
-}\
-bool FreeEngine(DGLE::IEngineCore *pEngineCore = NULL, bool bFreeLib = true)\
-{\
-	if (pEngineCore)\
-		(*pFreeEngine)(pEngineCore);\
-	if (bFreeLib && hServer)\
-	{\
-		::FreeLibrary(hServer);\
-		hServer = NULL;\
-		pCreateEngine = NULL;\
-		pFreeEngine = NULL;\
-	}\
-	return true;\
-}\
-bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags = DGLE::GEF_DEFAULT)\
-{\
-	if (hServer == NULL)\
-	{\
-		pEngineCore = NULL;\
-		if (hServer == NULL)\
-		{\
-			hServer = ::LoadLibraryA(pcDllFileName);\
-			if (hServer == NULL) return false;\
-		}\
-		if (pCreateEngine == NULL && pFreeEngine == NULL)\
-		{\
-			pCreateEngine = reinterpret_cast<bool (CALLBACK *)(DGLE::IEngineCore *&, DGLE::E_GET_ENGINE_FLAGS, DGLE::uint8)>\
-				(::GetProcAddress(hServer,("CreateEngine")));\
-			pFreeEngine = reinterpret_cast<bool (CALLBACK *)(DGLE::IEngineCore *)>\
-				(::GetProcAddress(hServer,("FreeEngine")));\
-			if (pCreateEngine == NULL || pFreeEngine == NULL)\
-			{\
-				::FreeLibrary(hServer);\
-				hServer = NULL;\
-				return false;\
-			}\
-		}\
-	}\
-	if (hServer) return CreateEngine(pEngineCore, eFlags);\
-	return false;\
+#define DGLE_DYNAMIC_FUNC																										\
+bool (CALLBACK *pCreateEngine)(DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags, DGLE::uint8 ubtSDKVer) = NULL;	\
+bool (CALLBACK *pFreeEngine)(DGLE::IEngineCore *pEngineCore) = NULL;															\
+HMODULE hServer = NULL;																											\
+bool CreateEngine(DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags = DGLE::GEF_DEFAULT)							\
+{																																\
+	if (pCreateEngine == NULL)																									\
+		return false;																											\
+	return pCreateEngine(pEngineCore, eFlags, _DGLE_SDK_VER_);																	\
+}																																\
+bool FreeEngine(DGLE::IEngineCore *pEngineCore = NULL, bool bFreeLib = true)													\
+{																																\
+	if (pEngineCore)																											\
+		pFreeEngine(pEngineCore);																								\
+	if (bFreeLib && hServer)																									\
+	{																															\
+		::FreeLibrary(hServer);																									\
+		hServer = NULL;																											\
+		pCreateEngine = NULL;																									\
+		pFreeEngine = NULL;																										\
+	}																															\
+	return true;																												\
+}																																\
+bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags = DGLE::GEF_DEFAULT)	\
+{																																\
+	if (hServer == NULL)																										\
+	{																															\
+		pEngineCore = NULL;																										\
+		if (hServer == NULL)																									\
+		{																														\
+			hServer = ::LoadLibraryA(pcDllFileName);																			\
+			if (hServer == NULL) return false;																					\
+		}																														\
+		if (pCreateEngine == NULL && pFreeEngine == NULL)																		\
+		{																														\
+			pCreateEngine = reinterpret_cast<bool (CALLBACK *)(DGLE::IEngineCore *&, DGLE::E_GET_ENGINE_FLAGS, DGLE::uint8)>	\
+				(::GetProcAddress(hServer,("CreateEngine")));																	\
+			pFreeEngine = reinterpret_cast<bool (CALLBACK *)(DGLE::IEngineCore *)>												\
+				(::GetProcAddress(hServer,("FreeEngine")));																		\
+			if (pCreateEngine == NULL || pFreeEngine == NULL)																	\
+			{																													\
+				::FreeLibrary(hServer);																							\
+				hServer = NULL;																									\
+				return false;																									\
+			}																													\
+		}																														\
+	}																															\
+	if (hServer) return CreateEngine(pEngineCore, eFlags);																		\
+	return false;																												\
 }
 
 // Helper macroses //
