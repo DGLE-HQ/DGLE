@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		05.10.2014 (c)Korotkov Andrey
+\date		13.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -367,7 +367,7 @@ bool CPluginCore::_LoadMP3(IFile *pFile, IMusic *&prMusic)
 
 	if (header.samplerate != 44100)
 	{
-		LOG("MPEG Layer III decoder supports only frequency equal to 44100 but got " + UIntToStr(header.samplerate) + ".", LT_ERROR);
+		LOG("MPEG Layer III decoder supports only frequency equal to 44100 but got " + std::to_string(header.samplerate) + ".", LT_ERROR);
 		goto clean;
 	}
 

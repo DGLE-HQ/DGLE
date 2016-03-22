@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		21.11.2012 (c)Korotkov Andrey
+\date		13.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -460,7 +460,7 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 				}
 				else
 				{
-					LOG("Unsupported uncompressed DDS format. Expected 32 or 24 bit count but got " + IntToStr(header.ddpfPixelFormat.dwRGBBitCount) + ".", LT_ERROR);
+					LOG("Unsupported uncompressed DDS format. Expected 32 or 24 bit count but got " + to_string(header.ddpfPixelFormat.dwRGBBitCount) + ".", LT_ERROR);
 					return false;
 				}
 		}
