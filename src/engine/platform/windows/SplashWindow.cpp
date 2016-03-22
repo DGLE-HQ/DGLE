@@ -30,7 +30,7 @@ DGLE_RESULT CSplashWindow::InitWindow(const char *pcBmpFileName)
 	HANDLE thread_handle = NULL;
 
 	if (_bInSeparateThread)
-		thread_handle = CreateThread(NULL, NULL, &CSplashWindow::_s_ThreadProc, (PVOID)this, NULL, NULL);
+		thread_handle = CreateThread(NULL, 0, &CSplashWindow::_s_ThreadProc, (PVOID)this, 0, NULL);
 
 	if (thread_handle)
 	{
@@ -51,7 +51,7 @@ DGLE_RESULT CSplashWindow::Free()
 		SetForegroundWindow(_hOwnerWndHwnd);
 
 	if (_bInSeparateThread)
-		PostMessage(_hWnd, WM_QUIT, NULL, NULL);
+		PostMessage(_hWnd, WM_QUIT, 0, 0);
 	else
 		_DestroyWindow();
 

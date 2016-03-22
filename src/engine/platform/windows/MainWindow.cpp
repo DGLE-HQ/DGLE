@@ -76,7 +76,7 @@ bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
 	}
 	else
 	{
-		::PostMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, NULL, NULL);
+		::PostMessage(PTHIS(CMainWindow)->_hWnd, WM_CLOSE, 0, 0);
 		return true;
 	}
 }
