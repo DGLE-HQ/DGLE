@@ -47,12 +47,17 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 	while (_bIsLooping)
 		if (PeekMessage(&st_msg, NULL, 0, 0, PM_REMOVE ))
 		{
-			if (WM_QUIT == st_msg.message) 
+			switch (st_msg.message)
+			{
+			case WM_EXIT:
+				PostQuitMessage(st_msg.wParam);
+				break;
+			case WM_QUIT:
 				_bIsLooping = false;
-			else
-			{   
+				break;
+			default:
 				TranslateMessage(&st_msg);
-				DispatchMessage (&st_msg);
+				DispatchMessage(&st_msg);
 			}
 		}
 		else 

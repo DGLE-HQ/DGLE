@@ -221,7 +221,7 @@ DGLE_RESULT CConsoleWindow::Free()
 {
 	if (_hThreadHandle)
 	{
-		PostThreadMessage(_threadId, WM_QUIT, 0, 0);
+		PostThreadMessage(_threadId, WM_EXIT, 0, 0);
 
 		WaitForSingleObject(_hThreadHandle, INFINITE);
 
@@ -442,12 +442,18 @@ DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
 	while (this_ptr->_bIsLooping)
 		if (WaitMessage() && PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			if (WM_QUIT == msg.message)
+			switch (msg.message)
+			{
+			case WM_EXIT:
+				PostQuitMessage(msg.wParam);
+				break;
+			case WM_QUIT:
 				this_ptr->_bIsLooping = false;
-			else
-			{   
+				break;
+			default:
 				TranslateMessage(&msg);
-				DispatchMessage (&msg);
+				DispatchMessage(&msg);
+				break;
 			}
 		}
 

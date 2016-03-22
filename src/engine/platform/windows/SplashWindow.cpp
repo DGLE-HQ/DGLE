@@ -51,7 +51,7 @@ DGLE_RESULT CSplashWindow::Free()
 		SetForegroundWindow(_hOwnerWndHwnd);
 
 	if (_bInSeparateThread)
-		PostMessage(_hWnd, WM_QUIT, 0, 0);
+		PostMessage(_hWnd, WM_EXIT, 0, 0);
 	else
 		_DestroyWindow();
 
@@ -184,12 +184,18 @@ DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
 	{
 		if( PeekMessage(&st_msg, NULL, 0, 0, PM_REMOVE))
 		{
-			if (WM_QUIT == st_msg.message) 
+			switch (st_msg.message)
+			{
+			case WM_EXIT:
+				PostQuitMessage(st_msg.wParam);
+				break;
+			case WM_QUIT:
 				b_is_looping = false;
-			else
-			{   
-			  TranslateMessage(&st_msg);
-			  DispatchMessage (&st_msg);
+				break;
+			default:
+				TranslateMessage(&st_msg);
+				DispatchMessage(&st_msg);
+				break;
 			}
 		}
 		
