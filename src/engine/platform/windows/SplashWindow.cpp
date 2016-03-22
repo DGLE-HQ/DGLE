@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -197,5 +197,5 @@ DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
 
 	((CSplashWindow*)lpParameter)->_DestroyWindow();
 
-	return 0;
+	return st_msg.wParam;
 }

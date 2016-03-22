@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -221,7 +221,7 @@ DGLE_RESULT CConsoleWindow::Free()
 {
 	if (_hThreadHandle)
 	{
-		PostThreadMessage(_threadId, WM_QUIT, 0, NULL);
+		PostThreadMessage(_threadId, WM_QUIT, 0, 0);
 
 		WaitForSingleObject(_hThreadHandle, INFINITE);
 
@@ -456,5 +456,5 @@ DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
 
 	this_ptr->_hWnd = NULL;
 
-	return 0;
+	return msg.wParam;
 }

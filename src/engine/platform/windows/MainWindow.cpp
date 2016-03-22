@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -64,7 +64,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 
 	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
 
-	return (int)st_msg.wParam;
+	return st_msg.wParam;
 }
 
 bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
