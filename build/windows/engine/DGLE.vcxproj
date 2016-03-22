@@ -230,6 +230,7 @@
     <ClInclude Include="..\..\..\deps\minilzo\lzodefs.h" />
     <ClInclude Include="..\..\..\deps\minilzo\minilzo.h" />
     <ClInclude Include="..\..\..\src\common\utils.h" />
+    <ClInclude Include="..\..\..\src\engine\bcunpacker_incl.h" />
     <ClInclude Include="..\..\..\src\engine\BuffFile.h" />
     <ClInclude Include="..\..\..\src\engine\Common.h" />
     <ClInclude Include="..\..\..\src\engine\Console.h" />
