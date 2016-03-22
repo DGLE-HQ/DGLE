@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -46,7 +46,7 @@ void CPluginCore::_Free()
 
 void CPluginCore::_s_PNGError(png_structp ptr, png_const_charp msg)
 {
-	LogWrite(((CPluginCore*)ptr->io_ptr)->_uiInstIdx, ("PNG fatal error: " + string(msg) + ".").c_str(), LT_ERROR, __FILE__, __LINE__);
+	LogWrite(((CPluginCore*)ptr->io_ptr)->_uiInstIdx, ("PNG fatal error: " + string(msg) + '.').c_str(), LT_ERROR, __FILE__, __LINE__);
 }
 
 void PNGAPI CPluginCore::_s_PNGReadCallback(png_structp ptr, png_bytep data, png_size_t length)
@@ -201,7 +201,7 @@ boolean CPluginCore::_s_FillInputBuffer(j_decompress_ptr cinfo)
 
 void CPluginCore::_s_SkipInputData(j_decompress_ptr cinfo, long count)
 {
-	jpeg_source_mgr * src = cinfo->src;
+	jpeg_source_mgr *src = cinfo->src;
 	
 	if (count > 0)
 	{
@@ -215,8 +215,8 @@ void CPluginCore::_s_TermSource(j_decompress_ptr cinfo)
 
 void CPluginCore::_s_ErrorExit(j_common_ptr cinfo)
 {
-	(*cinfo->err->output_message) (cinfo);
-	TJpegErrorMgr *myerr = (TJpegErrorMgr*) cinfo->err;
+	cinfo->err->output_message(cinfo);
+	TJpegErrorMgr *myerr = (TJpegErrorMgr *)cinfo->err;
 	longjmp(myerr->setBufferJump, 1);
 }
 
@@ -224,7 +224,7 @@ void CPluginCore::_s_OutputMessage(j_common_ptr cinfo)
 {
 	char temp[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message)(cinfo, temp);
-	LogWrite(((TJpegErrorMgr*)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \"" + string(temp) + "\".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
+	LogWrite(((TJpegErrorMgr *)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \"" + string(temp) + "\".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
 }
 
 bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eParams)
@@ -235,7 +235,7 @@ bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 	uint8 *input = new uint8[size];
 	
 	uint read;
-	pFile->Read((void*)input, size, read);
+	pFile->Read((void *)input, size, read);
 
 	if (read != size)
 	{
@@ -460,7 +460,7 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 				}
 				else
 				{
-					LOG("Unsupported uncompressed DDS format. Expected 32 or 24 bit count but got " + to_string(header.ddpfPixelFormat.dwRGBBitCount) + ".", LT_ERROR);
+					LOG("Unsupported uncompressed DDS format. Expected 32 or 24 bit count but got " + to_string(header.ddpfPixelFormat.dwRGBBitCount) + '.', LT_ERROR);
 					return false;
 				}
 		}
