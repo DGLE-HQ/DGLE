@@ -28,7 +28,6 @@ LOGFONT LF = {12, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, "Lucida Cons
 CConsoleWindow::CConsoleWindow():
 _strOnCreate("DGLE Console created..."),
 _iPrevLineSize(22),
-_bIsLooping(false),
 _bToPrevLineActive(false),
 _hWnd(NULL), _hMemo(NULL), _hEdit(NULL),
 _hInst(NULL), _hThreadHandle(NULL), _threadId(0),
@@ -437,9 +436,7 @@ DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
 
 	MSG msg = {0};
 
-	this_ptr->_bIsLooping = true;
-
-	while (this_ptr->_bIsLooping)
+	while (true)
 		if (WaitMessage() && PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			switch (msg.message)
@@ -448,19 +445,14 @@ DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
 				PostQuitMessage(msg.wParam);
 				break;
 			case WM_QUIT:
-				this_ptr->_bIsLooping = false;
-				break;
+				if (FALSE != DestroyWindow(this_ptr->_hWnd))
+					UnregisterClass("DGLEConsoleClass", this_ptr->_hInst);
+				this_ptr->_hWnd = NULL;
+				return msg.wParam;
 			default:
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 				break;
 			}
 		}
-
-	if (FALSE != DestroyWindow(this_ptr->_hWnd))
-		UnregisterClass("DGLEConsoleClass", this_ptr->_hInst);
-
-	this_ptr->_hWnd = NULL;
-
-	return msg.wParam;
 }

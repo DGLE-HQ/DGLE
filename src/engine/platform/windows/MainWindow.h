@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -18,7 +18,7 @@ class CMainWindow : public CInstancedObj, public IMainWindow
 	HDC _hDC;
 	TProcDelegate *_pDelMainLoop;
 	TMsgProcDelegate *_pDelMessageProc;
-	bool _bFScreen, _bIsLooping;
+	bool _bFScreen;
 
 	int WINAPI _wWinMain(HINSTANCE hInstance);	
 	static LRESULT DGLE_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -17,8 +17,7 @@ extern HMODULE hModule;
 
 CMainWindow::CMainWindow(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _hWnd(NULL), _hDC(NULL),
-_hInst(GetModuleHandle(NULL)), _bFScreen(false),
-_bIsLooping(false)
+_hInst(GetModuleHandle(NULL)), _bFScreen(false)
 {}
 
 CMainWindow::~CMainWindow()
@@ -38,13 +37,11 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 	if (!_hWnd)
 		return -1;
 
-	_bIsLooping = true;
-	
 	MSG st_msg = {0};
 
 	LOG("**Entering main loop**", LT_INFO);
 
-	while (_bIsLooping)
+	while (true)
 		if (PeekMessage(&st_msg, NULL, 0, 0, PM_REMOVE ))
 		{
 			switch (st_msg.message)
@@ -53,8 +50,10 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 				PostQuitMessage(st_msg.wParam);
 				break;
 			case WM_QUIT:
-				_bIsLooping = false;
-				break;
+				LOG("**Exiting main loop**", LT_INFO);
+				Console()->UnRegCom("quit");
+				_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
+				return st_msg.wParam;
 			default:
 				TranslateMessage(&st_msg);
 				DispatchMessage(&st_msg);
@@ -62,14 +61,6 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 		}
 		else 
 			_pDelMainLoop->Invoke();
-
-	LOG("**Exiting main loop**", LT_INFO);
-
-	Console()->UnRegCom("quit");
-
-	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
-
-	return st_msg.wParam;
 }
 
 bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)

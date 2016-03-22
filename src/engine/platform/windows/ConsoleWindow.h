@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -18,7 +18,6 @@ class CConsoleWindow : public IConsoleWindow
 
 	HINSTANCE _hInst;
 	std::string	_strOnCreate;
-	bool _bIsLooping;
 	int	_iX, _iY, _iWidth, _iHeight;
 	bool _bVisible;
 	int	_iPrevLineSize;
