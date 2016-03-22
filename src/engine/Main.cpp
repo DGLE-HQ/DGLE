@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		22.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,7 +15,7 @@ bool bTerminate = false;
 
 vector<TEngInstance> vecEngineInstances;
 
-TEngInstance* EngineInstance(uint uiInstIdx)
+TEngInstance *EngineInstance(uint uiInstIdx)
 {
 	if (uiInstIdx >= vecEngineInstances.size())
 		return NULL;
@@ -65,20 +65,26 @@ bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags,
 
 bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
 {
-	if (!pEngineCore)
-		return false;
-
-	for (size_t i = 0; i < vecEngineInstances.size(); ++i)
-		if (pEngineCore == vecEngineInstances[i].pclCore)
+	for (auto &eng_inst : vecEngineInstances)
+	{
+		bool stop = false;
+		if (!pEngineCore || (stop = pEngineCore == eng_inst.pclCore))
 		{
-			delete vecEngineInstances[i].pclCore;
-			vecEngineInstances[i].pclCore = NULL;
-			
-			delete vecEngineInstances[i].pclConsole;
-			vecEngineInstances[i].pclConsole = NULL;
-			
-			return true;
+			delete eng_inst.pclCore;
+			eng_inst.pclCore = NULL;
+
+			delete eng_inst.pclConsole;
+			eng_inst.pclConsole = NULL;
 		}
+		if (stop)
+			return true;
+	}
+
+	if (!pEngineCore)
+	{
+		vecEngineInstances.clear();
+		return true;
+	}
 
 	return false;
 }
@@ -107,20 +113,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 	case DLL_PROCESS_DETACH:
 		
-		for(size_t i = 0; i < vecEngineInstances.size(); ++i)
-		{
-			if(vecEngineInstances[i].pclCore)
-			{
-				delete vecEngineInstances[i].pclCore;
-				vecEngineInstances[i].pclCore = NULL;
-			}
-
-			if(vecEngineInstances[i].pclConsole)
-				delete vecEngineInstances[i].pclConsole;
-		}
-
-		vecEngineInstances.clear();
-
 		if(bTerminate)
 			TerminateProcess(GetCurrentProcess(), 1);
 		

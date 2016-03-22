@@ -1432,16 +1432,19 @@ bool CreateEngine(DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFla
 }																																\
 bool FreeEngine(DGLE::IEngineCore *pEngineCore = NULL, bool bFreeLib = true)													\
 {																																\
-	if (pEngineCore)																											\
-		pFreeEngine(pEngineCore);																								\
-	if (bFreeLib && hServer)																									\
+	bool result = true;																											\
+	if (pEngineCore && (result = pFreeEngine))																					\
+		result = pFreeEngine(pEngineCore);																						\
+	if (bFreeLib && (result &= hServer != NULL, hServer))																		\
 	{																															\
+		if (result &= pFreeEngine != NULL, pFreeEngine)																			\
+			result &= pFreeEngine(NULL);																						\
 		::FreeLibrary(hServer);																									\
 		hServer = NULL;																											\
 		pCreateEngine = NULL;																									\
 		pFreeEngine = NULL;																										\
 	}																															\
-	return true;																												\
+	return result;																												\
 }																																\
 bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE::E_GET_ENGINE_FLAGS eFlags = DGLE::GEF_DEFAULT)	\
 {																																\

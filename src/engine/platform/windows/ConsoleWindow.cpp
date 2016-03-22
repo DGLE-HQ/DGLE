@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		22.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -223,12 +223,7 @@ DGLE_RESULT CConsoleWindow::Free()
 	{
 		PostThreadMessage(_threadId, WM_QUIT, 0, NULL);
 
-		//Note: WaitForSingleObject won't work here, so we are using this walkaround.
-		DWORD tick = GetTickCount();
-		while (_hWnd && GetTickCount() - tick < 500) Sleep(0);
-
-		if (_hWnd)
-			TerminateThread(_hThreadHandle, 1);
+		WaitForSingleObject(_hThreadHandle, INFINITE);
 
 		CloseHandle(_hThreadHandle);
 		DeleteCriticalSection(&_cs);
