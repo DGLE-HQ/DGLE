@@ -46,7 +46,7 @@ void CPluginCore::_Free()
 
 void CPluginCore::_s_PNGError(png_structp ptr, png_const_charp msg)
 {
-	LogWrite(((CPluginCore*)ptr->io_ptr)->_uiInstIdx, ("PNG fatal error: " + string(msg) + '.').c_str(), LT_ERROR, __FILE__, __LINE__);
+	LogWrite(((CPluginCore*)ptr->io_ptr)->_uiInstIdx, ("PNG fatal error: "s + msg + '.').c_str(), LT_ERROR, __FILE__, __LINE__);
 }
 
 void PNGAPI CPluginCore::_s_PNGReadCallback(png_structp ptr, png_bytep data, png_size_t length)
@@ -223,8 +223,8 @@ void CPluginCore::_s_ErrorExit(j_common_ptr cinfo)
 void CPluginCore::_s_OutputMessage(j_common_ptr cinfo)
 {
 	char temp[JMSG_LENGTH_MAX];
-	(*cinfo->err->format_message)(cinfo, temp);
-	LogWrite(((TJpegErrorMgr *)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \"" + string(temp) + "\".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
+	cinfo->err->format_message(cinfo, temp);
+	LogWrite(((TJpegErrorMgr *)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \""s + temp + "\".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
 }
 
 bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eParams)
@@ -424,7 +424,7 @@ bool CPluginCore::_LoadTextureDDS(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD
 				buf[3] = (four_cc >> 24) & 255;
 				buf[4] = 0;
 				
-				LOG("DDS format \"" + string(buf) + "\" is unsupported by loader. Only DXT1 and DXT5 are supported.", LT_ERROR);
+				LOG("DDS format \""s + buf + "\" is unsupported by loader. Only DXT1 and DXT5 are supported.", LT_ERROR);
 				
 				return false;
 			}

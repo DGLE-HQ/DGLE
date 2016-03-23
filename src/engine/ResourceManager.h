@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.10.2014 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -29,7 +29,7 @@ struct TDefaultRes
 {
 	E_ENGINE_OBJECT_TYPE type;
 	IEngineBaseObject *pBaseObj;
-	TDefaultRes(E_ENGINE_OBJECT_TYPE _type, IEngineBaseObject *_pObj):type(_type), pBaseObj(_pObj){}
+	TDefaultRes(E_ENGINE_OBJECT_TYPE _type, IEngineBaseObject *_pObj) : type(_type), pBaseObj(_pObj) {}
 };
 
 struct TResource
@@ -90,8 +90,8 @@ class CResourceManager : public CInstancedObj, public IResourceManager
 	inline uint8 _GetBytesPerPixel(E_TEXTURE_DATA_FORMAT &format);
 	uint _GenerateDecompressedTextureData(const uint8 * pDataIn, uint8 *&prDataOut, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_TEXTURE_CREATE_FLAGS &eCreateFlags);
 	bool _SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT &format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);
-	uint _GenerateScaleImage(const uint8 * const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, uint uiNewWidth, uint uiNewHeight, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);
-	uint _GenerateMipMapData(const uint8 * const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);
+	uint _GenerateScaleImage(const uint8 *const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, uint uiNewWidth, uint uiNewHeight, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);
+	uint _GenerateMipMapData(const uint8 *const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment);
 
 	bool _CreateTexture(ITexture *&prTex, const uint8 * const pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags);
 	bool _LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eFlags);

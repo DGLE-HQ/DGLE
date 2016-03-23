@@ -681,7 +681,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 			return false;
 }
 
-uint CResourceManager::_GenerateScaleImage(const uint8 * const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, uint uiNewWidth, uint uiNewHeight, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
+uint CResourceManager::_GenerateScaleImage(const uint8 *const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, uint uiNewWidth, uint uiNewHeight, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
 {
 	if (format > TDF_BGRA8)
 	{
@@ -718,7 +718,7 @@ uint CResourceManager::_GenerateScaleImage(const uint8 * const pDataIn, uint uiW
 	return data_size;
 }
 
-uint CResourceManager::_GenerateMipMapData(const uint8 * const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
+uint CResourceManager::_GenerateMipMapData(const uint8 *const pDataIn, uint uiWidth, uint uiHeight, uint8 *&prDataOut, E_TEXTURE_DATA_FORMAT format, E_CORE_RENDERER_DATA_ALIGNMENT eAlignment)
 {
 	if (format > TDF_BGRA8)
 		return -1;
