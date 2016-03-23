@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -404,7 +404,7 @@ TDynLibHandle LoadDynamicLib(const char *pcFileName)
 	return LoadLibraryA(pcFileName);
 }
 
-void* GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName)
+void *GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName)
 {
 	return GetProcAddress(tHandle, pcFuncName);
 }

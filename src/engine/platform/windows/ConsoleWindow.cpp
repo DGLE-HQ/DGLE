@@ -316,7 +316,7 @@ void CConsoleWindow::_Realign()
 
 LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	CConsoleWindow *this_ptr = (CConsoleWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CConsoleWindow *this_ptr = (CConsoleWindow *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	switch(message) 
 	{
@@ -361,7 +361,7 @@ LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wPar
 
 LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	CConsoleWindow *this_ptr = (CConsoleWindow*)GetWindowLongPtr(GetParent(hWnd), GWLP_USERDATA);
+	CConsoleWindow *this_ptr = (CConsoleWindow *)GetWindowLongPtr(GetParent(hWnd), GWLP_USERDATA);
 	
 	char tmp[_sc_uiTmpBufferSize];
 
@@ -429,7 +429,7 @@ callDefWndPros:
 
 DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
 {
-	CConsoleWindow *this_ptr = (CConsoleWindow*)lpParameter;
+	CConsoleWindow *this_ptr = (CConsoleWindow *)lpParameter;
 
 	if (this_ptr->_WinMain(GetModuleHandle(NULL)) != S_OK)
 		return FALSE;

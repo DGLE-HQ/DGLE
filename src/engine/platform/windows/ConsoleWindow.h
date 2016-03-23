@@ -33,8 +33,8 @@ class CConsoleWindow : public IConsoleWindow
 
 	void (DGLE_API *_pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand); 
 
-	void _Realign();
 	int WINAPI _WinMain(HINSTANCE hInstance);	
+	void _Realign();
 	
 	static LRESULT CALLBACK _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK _s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

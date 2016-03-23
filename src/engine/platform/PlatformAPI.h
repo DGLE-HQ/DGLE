@@ -167,7 +167,7 @@ uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer);
 bool ReleaseTimer(uint id);
 void Suspend(uint uiMilliseconds);
 TDynLibHandle LoadDynamicLib(const char *pcFileName);
-void* GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName);
+void *GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName);
 bool ReleaseDynamicLib(TDynLibHandle tHandle);
 void ShowModalUserAlert(const char *pcTxt, const char *pcCaption);
 void GetEngineFilePath(std::string &strPath);
