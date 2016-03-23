@@ -173,16 +173,14 @@ void CSplashWindow::_DestroyWindow()
 
 DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
 {
-	if (!((CSplashWindow*)lpParameter)->_CreateWindow())
+	if (!((CSplashWindow *)lpParameter)->_CreateWindow())
 		return 1;
 
 	MSG st_msg = {0};
 
-	bool b_is_looping = true;
-
-	while (b_is_looping)
+	while (true)
 	{
-		if( PeekMessage(&st_msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessage(&st_msg, NULL, 0, 0, PM_REMOVE))
 		{
 			switch (st_msg.message)
 			{
@@ -190,8 +188,8 @@ DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
 				PostQuitMessage(st_msg.wParam);
 				break;
 			case WM_QUIT:
-				b_is_looping = false;
-				break;
+				((CSplashWindow *)lpParameter)->_DestroyWindow();
+				return st_msg.wParam;
 			default:
 				TranslateMessage(&st_msg);
 				DispatchMessage(&st_msg);
@@ -200,8 +198,4 @@ DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
 		}
 		
 	}
-
-	((CSplashWindow*)lpParameter)->_DestroyWindow();
-
-	return st_msg.wParam;
 }
