@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		28.09.2014 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -20,7 +20,7 @@ See "DGLE.h" for more details.
 using namespace DGLE;
 
 #define PLUGIN_NAME				"MP3 Audio Decoder"
-#define PLUGIN_VERSION			("1.0 (" + std::string(__DATE__) + ")").c_str()
+#define PLUGIN_VERSION			"1.0 (" __DATE__ ")"
 #define PLUGIN_VENDOR			"DGLE Team"
 #define PLUGIN_DESCRIPTION		"MPEG Layer III (MP3) compatible audio format decoder."
 #define PLUGIN_INTERFACE_NAME	"IPlugin"

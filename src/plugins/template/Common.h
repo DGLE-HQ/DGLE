@@ -19,7 +19,7 @@ See "DGLE.h" for more details.
 using namespace DGLE;
 
 #define PLUGIN_NAME				"Plugin Template"
-#define PLUGIN_VERSION			("1.0 (" + std::string(__DATE__) + ")").c_str()
+#define PLUGIN_VERSION			"1.0 (" __DATE__ ")"
 #define PLUGIN_VENDOR			"Your Company Name"
 #define PLUGIN_DESCRIPTION		"Just simple template for any DGLE plugin."
 #define PLUGIN_INTERFACE_NAME	"IPlugin"

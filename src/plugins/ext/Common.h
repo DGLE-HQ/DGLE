@@ -19,7 +19,7 @@ See "DGLE.h" for more details.
 using namespace DGLE;
 
 #define PLUGIN_NAME				"Ext"
-#define PLUGIN_VERSION			("0.1 (" + std::string(__DATE__) + ")").c_str()
+#define PLUGIN_VERSION			"0.1 (" __DATE__ ")"
 #define PLUGIN_VENDOR			"DGLE Team"
 #define PLUGIN_DESCRIPTION		"Standart official DGLE extension plugin. Provides support for various file formats and common engine extensions."
 #define PLUGIN_INTERFACE_NAME	"IPlugin"
