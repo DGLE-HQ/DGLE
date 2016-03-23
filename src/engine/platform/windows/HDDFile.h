@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		24.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,12 +16,11 @@ class CInstancedObj;
 class CHDDFile final : public CInstancedObj, public IFile
 {
 	int	_iFile;
-	char _acName[MAX_PATH],
-		_acPath[MAX_PATH];
+	char _acName[MAX_PATH], _acPath[MAX_PATH];
 
 public:
 
-	CHDDFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags = FSOF_READ);
+	CHDDFile(uint uiInstIdx, const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags = FSOF_READ);
 	~CHDDFile();
 
 	DGLE_RESULT DGLE_API Read(void *pBuffer, uint uiCount, uint &uiRead) override;

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		24.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,7 +15,7 @@ See "DGLE.h" for more details.
 
 using namespace std;
 
-CHDDFile::CHDDFile(uint uiInstIdx, const char* pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags):
+CHDDFile::CHDDFile(uint uiInstIdx, const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags):
 CInstancedObj(uiInstIdx),
 _iFile(-1)
 {
@@ -35,15 +35,15 @@ _iFile(-1)
 		strcpy(_acPath, "\"file_path\" is too long.");
 
 	if (eFlags & FSOF_WRITE && eFlags & FSOF_READ)
-		mode = mode | _O_RDWR;
+		mode |= _O_RDWR;
 	else
 	{
-		if (eFlags & FSOF_WRITE) mode = mode | _O_WRONLY;
-		if (eFlags & FSOF_READ) mode = mode | _O_RDONLY;
+		if (eFlags & FSOF_WRITE) mode |= _O_WRONLY;
+		if (eFlags & FSOF_READ) mode |= _O_RDONLY;
 	}
 	
-	if (eFlags & FSOF_TRUNC) mode = mode | _O_TRUNC | _O_CREAT;
-	if (eFlags & FSOF_BINARY) mode = mode | _O_BINARY;
+	if (eFlags & FSOF_TRUNC) mode |= _O_TRUNC | _O_CREAT;
+	if (eFlags & FSOF_BINARY) mode |= _O_BINARY;
 
 	int perms = 0;
 
@@ -71,7 +71,7 @@ DGLE_RESULT DGLE_API CHDDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CHDDFile::Write(const void* pBuffer, uint uiCount, uint &uiWritten)
+DGLE_RESULT DGLE_API CHDDFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
 	uiWritten = _write(_iFile, pBuffer, uiCount);
 	return S_OK;
@@ -97,7 +97,7 @@ DGLE_RESULT DGLE_API CHDDFile::IsOpen(bool &bOpened)
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CHDDFile::GetName(char* pcName, uint &uiCharsCount)
+DGLE_RESULT DGLE_API CHDDFile::GetName(char *pcName, uint &uiCharsCount)
 {
 	if (!pcName)
 	{
