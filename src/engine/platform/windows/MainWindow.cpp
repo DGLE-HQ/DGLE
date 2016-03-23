@@ -16,7 +16,7 @@ extern HMODULE hModule;
 #define UPDATE_TIMER_ID 1
 
 CMainWindow::CMainWindow(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _hWnd(NULL), _hDC(NULL),
+CInstancedObj(uiInstIdx), _hWnd(), _hDC(),
 _hInst(GetModuleHandle(NULL)), _bFScreen(false)
 {}
 

@@ -29,10 +29,10 @@ CConsoleWindow::CConsoleWindow():
 _strOnCreate("DGLE Console created..."),
 _iPrevLineSize(22),
 _bToPrevLineActive(false),
-_hWnd(NULL), _hMemo(NULL), _hEdit(NULL),
-_hInst(NULL), _hThreadHandle(NULL), _threadId(0),
-_pOldEditProc(NULL), _bVisible(false),
-_pConWindowEvent(NULL), _pConsole(NULL)
+_hWnd(), _hMemo(), _hEdit(),
+_hInst(), _hThreadHandle(), _threadId(),
+_pOldEditProc(), _bVisible(false),
+_pConWindowEvent(), _pConsole()
 {}
 
 DGLE_RESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole)

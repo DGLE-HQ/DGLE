@@ -17,7 +17,7 @@ extern HMODULE hModule;
 
 CSplashWindow::CSplashWindow(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
-_hWnd(NULL), _hOwnerWndHwnd(NULL), _hBmp(NULL)
+_hWnd(), _hOwnerWndHwnd(), _hBmp()
 {}
 
 DGLE_RESULT CSplashWindow::InitWindow(const char *pcBmpFileName)
