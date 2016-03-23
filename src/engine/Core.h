@@ -36,7 +36,7 @@ struct TEvent
 
 // CCore //
 
-class CCore: public CInstancedObj, public IEngineCore
+class CCore final : public CInstancedObj, public IEngineCore
 #ifdef DGLE_USE_COM
 , public IEngineCoreWrapper
 #endif

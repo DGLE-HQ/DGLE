@@ -13,7 +13,7 @@ See "DGLE.h" for more details.
 
 class CInstancedObj;
 
-class CHDDFile: public CInstancedObj, public IFile
+class CHDDFile final : public CInstancedObj, public IFile
 {
 	int	_iFile;
 	char _acName[MAX_PATH],

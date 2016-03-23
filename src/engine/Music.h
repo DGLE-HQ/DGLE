@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "ResourceManager.h"
 
-class CMusic: public CInstancedObj, public IMusic
+class CMusic final : public CInstancedObj, public IMusic
 {
 
 	ISoundSample *_pSndSample;

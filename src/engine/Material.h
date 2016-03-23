@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "ResourceManager.h"
 
-class CMaterial: public CInstancedObj, public IMaterial
+class CMaterial final : public CInstancedObj, public IMaterial
 {
 	TColor4 _stDiffCol, _stSpecCol;
 	float _fShine;

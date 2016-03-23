@@ -15,7 +15,7 @@ See "DGLE.h" for more details.
 class CRender2D;
 class CRender3D;
 
-class CTexture: public CInstancedObj, public ITexture
+class CTexture final : public CInstancedObj, public ITexture
 {
 	CRender2D *_pRender2D;
 	CRender3D *_pRender3D;

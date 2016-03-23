@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CDCPFileIterator: public CInstancedObj, public IFileIterator
+class CDCPFileIterator final : public CInstancedObj, public IFileIterator
 {
 	char _acName[MAX_PATH];
 	std::string _strMask; 
@@ -40,7 +40,7 @@ struct TDCPFileInfo
 };
 #pragma pack( pop )
 
-class CDCPPackager
+class CDCPPackager final
 {
 	std::vector<TDCPFileInfo> _clInfoTable;
 	std::vector<uint8 *> _data;
@@ -61,7 +61,7 @@ public:
 	bool ExtractFile(const std::string &strSrcFileName, const std::string &strDestFileName);
 };
 
-class CDCPFileSystem :public CInstancedObj, public IFileSystem
+class CDCPFileSystem final : public CInstancedObj, public IFileSystem
 {
 	IFile *_pPack;
 	std::string _strPackName;	

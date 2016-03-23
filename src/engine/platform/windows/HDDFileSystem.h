@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CHDDFileIterator: public CInstancedObj, public IFileIterator
+class CHDDFileIterator final : public CInstancedObj, public IFileIterator
 {
 	char _acName[MAX_PATH];
 	HANDLE _fileHandle;
@@ -28,7 +28,7 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END)
 };
 
-class CHDDFileSystem: public CInstancedObj, public IFileSystem
+class CHDDFileSystem final : public CInstancedObj, public IFileSystem
 {
 public:
 	CHDDFileSystem(uint uiInstIdx);

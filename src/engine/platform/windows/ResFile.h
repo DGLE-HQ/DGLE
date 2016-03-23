@@ -13,7 +13,7 @@ See "DGLE.h" for more details.
 
 extern HMODULE hModule;
 
-class CResFile: public CInstancedObj, public IFile
+class CResFile final : public CInstancedObj, public IFile
 {
 	char _acName[MAX_PATH];
 	uint32 _ui32Pos, _ui32Size;

@@ -14,7 +14,7 @@ See "DGLE.h" for more details.
 class CRender2D;
 class CRender3D;
 
-class CRender: public CInstancedObj, public IRender
+class CRender final : public CInstancedObj, public IRender
 {
 	ICoreRenderer *_pCoreRenderer;
 	

@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "ResourceManager.h"
 
-class CLight: public CInstancedObj, public ILight
+class CLight final : public CInstancedObj, public ILight
 {
 	bool _bEnabled;
 	E_LIGHT_TYPE _eType;

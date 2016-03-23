@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CDummyWindow : public CInstancedObj, public IMainWindow
+class CDummyWindow final : public CInstancedObj, public IMainWindow
 {
 	HWND _hWnd;
 	HDC _hDC;

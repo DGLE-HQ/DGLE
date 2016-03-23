@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CConsoleWindow : public IConsoleWindow
+class CConsoleWindow final : public IConsoleWindow
 {
 	static const uint _sc_uiTmpBufferSize = 256;
 	static const uint _sc_uiMaxConsoleTxtLength = 30000;

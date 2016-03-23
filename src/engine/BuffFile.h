@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CBuffFile: public IFile
+class CBuffFile final : public IFile
 {
 	std::string _strFileName;
 	uint32 _ui32Pos, _ui32Size;

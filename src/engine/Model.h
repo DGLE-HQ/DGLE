@@ -12,7 +12,7 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "ResourceManager.h"
 
-class CModel: public CInstancedObj, public IModel
+class CModel final : public CInstancedObj, public IModel
 {
 	struct TMeshWithMat
 	{

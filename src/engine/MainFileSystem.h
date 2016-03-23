@@ -34,7 +34,7 @@ struct TVFileSystem
 class CDummyFile;
 class CDCPFileSystem;
 
-class CMainFileSystem: public CInstancedObj, public IMainFileSystem
+class CMainFileSystem final : public CInstancedObj, public IMainFileSystem
 {
 	CDummyFile *_pDummyFile;
 

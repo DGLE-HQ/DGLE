@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CSplashWindow : public CInstancedObj, public ISplashWindow
+class CSplashWindow final : public CInstancedObj, public ISplashWindow
 {
 	bool _bInSeparateThread;
 	HWND _hOwnerWndHwnd, _hWnd;

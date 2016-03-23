@@ -22,7 +22,7 @@ See "DGLE.h" for more details.
 
 class CCoreGeometryBuffer;
 
-class CCoreRendererGL: private CBaseRendererGL, public ICoreRenderer
+class CCoreRendererGL final : private CBaseRendererGL, public ICoreRenderer
 {
 	static const uint _sc_uiMaxVerticesCountForLegacy = 128;
 	static const uint _sc_uiMaxDrawCallsPerFrame = 3000;

@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CMainWindow : public CInstancedObj, public IMainWindow
+class CMainWindow final : public CInstancedObj, public IMainWindow
 {
 	HINSTANCE _hInst;
 	HWND _hWnd;

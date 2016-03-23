@@ -14,7 +14,7 @@ See "DGLE.h" for more details.
 
 class CRender3D;
 
-class CMesh: public CInstancedObj, public IMesh
+class CMesh final : public CInstancedObj, public IMesh
 {
 	CRender3D *_pRender3D;
 	IModel *_pOwnerModel;

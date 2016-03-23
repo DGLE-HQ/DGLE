@@ -55,7 +55,7 @@ struct TResource
 	}
 };
 
-class CResourceManager : public CInstancedObj, public IResourceManager
+class CResourceManager final : public CInstancedObj, public IResourceManager
 {
 	static const uint _sc_EngObjTypeCount = EOT_EMPTY + 1;
 	static void _s_GetObjTypeName(E_ENGINE_OBJECT_TYPE type, std::string &name);

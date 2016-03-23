@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CRender2D: public CInstancedObj, public IRender2D
+class CRender2D final : public CInstancedObj, public IRender2D
 {
 	ICoreRenderer *_pCoreRenderer;
 	TRasterizerStateDesc _stRasterStateDesc;

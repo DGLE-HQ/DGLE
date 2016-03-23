@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CHookedWindow : public CInstancedObj, public IMainWindow
+class CHookedWindow final : public CInstancedObj, public IMainWindow
 {
 	HWND _hWnd, _hRootHWnd;
 	HDC _hDC;

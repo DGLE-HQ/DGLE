@@ -55,7 +55,7 @@ enum E_SOUND_CHANNEL_STATE
 	SCS_PAUSED
 };
 
-class CChannel : public ISoundChannel
+class CChannel final : public ISoundChannel
 {
 	CBaseSound *_pSnd;
 
@@ -123,7 +123,7 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(ISoundChannel, INTERFACE_IMPL_END)
 };
 
-class CSound: private CBaseSound, public ISound
+class CSound final : private CBaseSound, public ISound
 {
 	// Attention! This sound realization will work correct only with stereo 16 bit output and 44100 frequency.
 	static const uint _sc_uiBitsPerSample = 16;

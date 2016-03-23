@@ -15,7 +15,7 @@ See "DGLE.h" for more details.
 class CRender2D;
 class CRender3D;
 
-class CBitmapFont: public CInstancedObj, public IBitmapFont
+class CBitmapFont final : public CInstancedObj, public IBitmapFont
 {
 public:
 

@@ -11,7 +11,7 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CFixedFunctionPipeline : public IFixedFunctionPipeline
+class CFixedFunctionPipeline final : public IFixedFunctionPipeline
 {
 	const float _c_fAttenuationFactor;
 
