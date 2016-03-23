@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -153,20 +153,24 @@ public:
 // Externs //
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+inline void LogWrite(uint uiInstIdx, const std::string &str, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
+{
+	LogWrite(uiInstIdx, str.c_str(), eType, pcSrcFileName, iSrcLineNumber);
+}
 
 // Macroses //
 
 #define PTHIS(cl_name) (reinterpret_cast<cl_name *>(pParameter))
 #define CON(cl_name, txt) PTHIS(cl_name)->Console()->Write(txt, false)
-#define LOG(txt, type) LogWrite(this->InstIdx(), std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
-#define LOG2(cl_name, txt, type) LogWrite(PTHIS(cl_name)->InstIdx(), std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG(txt, type) LogWrite(this->InstIdx(), txt, type, ExtractFilename(__FILE__), __LINE__)
+#define LOG2(cl_name, txt, type) LogWrite(PTHIS(cl_name)->InstIdx(), txt, type, ExtractFilename(__FILE__), __LINE__)
 
-#define LOG_POINT2(p) LogWrite(this->InstIdx(), ('(' + ToStrFmt(p.x) + ',' + ToStrFmt(p.y) + ')').c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
-#define LOG_POINT3(p) LogWrite(this->InstIdx(), ('(' + ToStrFmt(p.x) + ',' + ToStrFmt(p.y) + ',' + ToStrFmt(p.z) + ')').c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG_POINT2(p) LogWrite(this->InstIdx(), ('(' + ToStrFmt(p.x) + ',' + ToStrFmt(p.y) + ')').c_str(), LT_INFO, ExtractFilename(__FILE__), __LINE__)
+#define LOG_POINT3(p) LogWrite(this->InstIdx(), ('(' + ToStrFmt(p.x) + ',' + ToStrFmt(p.y) + ',' + ToStrFmt(p.z) + ')').c_str(), LT_INFO, ExtractFilename(__FILE__), __LINE__)
 #define LOG_MATRIX4(m) LogWrite(this->InstIdx(), ('[' + ToStrFmt(m._2D[0][0]) + ',' + ToStrFmt(m._2D[0][1]) + ',' + ToStrFmt(m._2D[0][2]) + ',' + ToStrFmt(m._2D[0][3]) + '\n'\
 	+ ' ' + ToStrFmt(m._2D[1][0]) + ',' + ToStrFmt(m._2D[1][1]) + ',' + ToStrFmt(m._2D[1][2]) + ',' + ToStrFmt(m._2D[1][3]) + '\n'\
 	+ ' ' + ToStrFmt(m._2D[2][0]) + ',' + ToStrFmt(m._2D[2][1]) + ',' + ToStrFmt(m._2D[2][2]) + ',' + ToStrFmt(m._2D[2][3]) + '\n'\
-	+ ' ' + ToStrFmt(m._2D[3][0]) + ',' + ToStrFmt(m._2D[3][1]) + ',' + ToStrFmt(m._2D[3][2]) + ',' + ToStrFmt(m._2D[3][3]) + ']').c_str(), LT_INFO, GetFileName(__FILE__).c_str(), __LINE__)
+	+ ' ' + ToStrFmt(m._2D[3][0]) + ',' + ToStrFmt(m._2D[3][1]) + ',' + ToStrFmt(m._2D[3][2]) + ',' + ToStrFmt(m._2D[3][3]) + ']').c_str(), LT_INFO, ExtractFilename(__FILE__), __LINE__)
 
 #define IENGINE_BASE_OBJECT_IMPLEMENTATION(object_type) \
 DGLE_RESULT DGLE_API Free()\

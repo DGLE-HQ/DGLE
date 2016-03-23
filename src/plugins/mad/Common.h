@@ -26,5 +26,9 @@ using namespace DGLE;
 #define PLUGIN_INTERFACE_NAME	"IPlugin"
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+inline void LogWrite(uint uiInstIdx, const std::string &str, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber)
+{
+	LogWrite(uiInstIdx, str.c_str(), eType, pcSrcFileName, iSrcLineNumber);
+}
 
-#define LOG(txt, type) LogWrite(_uiInstIdx, std::string(txt).c_str(), type, GetFileName(__FILE__).c_str(), __LINE__)
+#define LOG(txt, type) LogWrite(_uiInstIdx, txt, type, ExtractFilename(__FILE__), __LINE__)
