@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -54,15 +54,15 @@ public:
 
 	void UnregisterAndFreeAll();
 
-	DGLE_RESULT DGLE_API LoadFile(const char *pcFileName, IFile *&prFile);
-	DGLE_RESULT DGLE_API FreeFile(IFile *&prFile);
-	DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS);
-	DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter);
-	DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char *pcVFSExtension);
-	DGLE_RESULT DGLE_API GetRegisteredVirtualFileSystems(char *pcTxt, uint &uiCharsCount);
-	DGLE_RESULT DGLE_API GetVirtualFileSystemDescription(const char *pcVFSExtension, char *pcTxt, uint &uiCharsCount);
+	DGLE_RESULT DGLE_API LoadFile(const char *pcFileName, IFile *&prFile) override;
+	DGLE_RESULT DGLE_API FreeFile(IFile *&prFile) override;
+	DGLE_RESULT DGLE_API GetVirtualFileSystem(const char *pcVFSExtension, IFileSystem *&prVFS) override;
+	DGLE_RESULT DGLE_API RegisterVirtualFileSystem(const char *pcVFSExtension, const char *pcDiscription, IFileSystem *pVFS, void (DGLE_API *pDeleteCallback)(void *pParameter, IFileSystem *pVFS), void *pParameter) override;
+	DGLE_RESULT DGLE_API UnregisterVirtualFileSystem(const char *pcVFSExtension) override;
+	DGLE_RESULT DGLE_API GetRegisteredVirtualFileSystems(char *pcTxt, uint &uiCharsCount) override;
+	DGLE_RESULT DGLE_API GetVirtualFileSystemDescription(const char *pcVFSExtension, char *pcTxt, uint &uiCharsCount) override;
 
-	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType) override;
 
 	IDGLE_BASE_IMPLEMENTATION(IMainFileSystem, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };

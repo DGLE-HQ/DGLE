@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		1.07.2015 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -87,73 +87,73 @@ public:
 	void PushSelfStates();
 	void PopSelfStates();
 
-	DGLE_RESULT DGLE_API SetPerspective(float fFovAngle, float fZNear, float fZFar);
-	DGLE_RESULT DGLE_API GetPerspective(float &fFovAngle, float &fZNear, float &fZFar);
+	DGLE_RESULT DGLE_API SetPerspective(float fFovAngle, float fZNear, float fZFar) override;
+	DGLE_RESULT DGLE_API GetPerspective(float &fFovAngle, float &fZNear, float &fZFar) override;
 	
-	DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetColor(TColor4 &stColor);
+	DGLE_RESULT DGLE_API SetColor(const TColor4 &stColor) override;
+	DGLE_RESULT DGLE_API GetColor(TColor4 &stColor) override;
 
-	DGLE_RESULT DGLE_API GetMaxLightsPerPassCount(uint &uiCount);
-	DGLE_RESULT DGLE_API UpdateLight(ILight *pLight);
+	DGLE_RESULT DGLE_API GetMaxLightsPerPassCount(uint &uiCount) override;
+	DGLE_RESULT DGLE_API UpdateLight(ILight *pLight) override;
 
-	DGLE_RESULT DGLE_API BindTexture(ITexture *pTex, uint uiTextureLayer);
-	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTex, uint uiTextureLayer);
+	DGLE_RESULT DGLE_API BindTexture(ITexture *pTex, uint uiTextureLayer) override;
+	DGLE_RESULT DGLE_API GetTexture(ITexture *&prTex, uint uiTextureLayer) override;
 
-	DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat);
-	DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat);
+	DGLE_RESULT DGLE_API BindMaterial(IMaterial *pMat) override;
+	DGLE_RESULT DGLE_API GetMaterial(IMaterial *&prMat) override;
 
-	DGLE_RESULT DGLE_API ToggleBlending(bool bEnabled);
-	DGLE_RESULT DGLE_API IsBlendingEnabled(bool &bEnabled);
-	DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode);
-	DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode);
+	DGLE_RESULT DGLE_API ToggleBlending(bool bEnabled) override;
+	DGLE_RESULT DGLE_API IsBlendingEnabled(bool &bEnabled) override;
+	DGLE_RESULT DGLE_API SetBlendMode(E_BLENDING_EFFECT eMode) override;
+	DGLE_RESULT DGLE_API GetBlendMode(E_BLENDING_EFFECT &eMode) override;
 
-	DGLE_RESULT DGLE_API ToggleAlphaTest(bool bEnabled);
-	DGLE_RESULT DGLE_API SetAlphaTreshold(float fTreshold);
-	DGLE_RESULT DGLE_API IsAlphaTestEnabled(bool &bEnabled);
-	DGLE_RESULT DGLE_API GetAlphaTreshold(float &fTreshold);
+	DGLE_RESULT DGLE_API ToggleAlphaTest(bool bEnabled) override;
+	DGLE_RESULT DGLE_API SetAlphaTreshold(float fTreshold) override;
+	DGLE_RESULT DGLE_API IsAlphaTestEnabled(bool &bEnabled) override;
+	DGLE_RESULT DGLE_API GetAlphaTreshold(float &fTreshold) override;
 
-	DGLE_RESULT DGLE_API ClearDepthBuffer();
-	DGLE_RESULT DGLE_API ToggleDepthTest(bool bEnabled);
-	DGLE_RESULT DGLE_API IsDepthTestEnabled(bool &bEnabled);
+	DGLE_RESULT DGLE_API ClearDepthBuffer() override;
+	DGLE_RESULT DGLE_API ToggleDepthTest(bool bEnabled) override;
+	DGLE_RESULT DGLE_API IsDepthTestEnabled(bool &bEnabled) override;
 
-	DGLE_RESULT DGLE_API ToggleBackfaceCulling(bool bEnabled);
-	DGLE_RESULT DGLE_API IsBackfaceCullingEnabled(bool &bEnabled);
+	DGLE_RESULT DGLE_API ToggleBackfaceCulling(bool bEnabled) override;
+	DGLE_RESULT DGLE_API IsBackfaceCullingEnabled(bool &bEnabled) override;
 
-	DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount);
-	DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer);
+	DGLE_RESULT DGLE_API Draw(const TDrawDataDesc &stDrawDesc, E_CORE_RENDERER_DRAW_MODE eMode, uint uiCount) override;
+	DGLE_RESULT DGLE_API DrawBuffer(ICoreGeometryBuffer *pBuffer) override;
 
-	DGLE_RESULT DGLE_API ToggleFog(bool bEnabled);
-	DGLE_RESULT DGLE_API SetLinearFogBounds(float fStart, float fEnd);
-	DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API IsFogEnabled(bool &bEnabled);
-	DGLE_RESULT DGLE_API GetLinearFogBounds(float &fStart, float &fEnd);
-	DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor);
+	DGLE_RESULT DGLE_API ToggleFog(bool bEnabled) override;
+	DGLE_RESULT DGLE_API SetLinearFogBounds(float fStart, float fEnd) override;
+	DGLE_RESULT DGLE_API SetFogColor(const TColor4 &stColor) override;
+	DGLE_RESULT DGLE_API IsFogEnabled(bool &bEnabled) override;
+	DGLE_RESULT DGLE_API GetLinearFogBounds(float &fStart, float &fEnd) override;
+	DGLE_RESULT DGLE_API GetFogColor(TColor4 &stColor) override;
 
-	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix);
-	DGLE_RESULT DGLE_API MultMatrix(const TMatrix4x4 &stMatrix);
-	DGLE_RESULT DGLE_API PushMatrix();
-	DGLE_RESULT DGLE_API PopMatrix();
-	DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix);
+	DGLE_RESULT DGLE_API SetMatrix(const TMatrix4x4 &stMatrix) override;
+	DGLE_RESULT DGLE_API MultMatrix(const TMatrix4x4 &stMatrix) override;
+	DGLE_RESULT DGLE_API PushMatrix() override;
+	DGLE_RESULT DGLE_API PopMatrix() override;
+	DGLE_RESULT DGLE_API GetMatrix(TMatrix4x4 &stMatrix) override;
 
-	DGLE_RESULT DGLE_API DrawAxes(float fSize, bool bNoDepthTest);
+	DGLE_RESULT DGLE_API DrawAxes(float fSize, bool bNoDepthTest) override;
 
-	DGLE_RESULT DGLE_API ResetStates();
-	DGLE_RESULT DGLE_API PushStates();
-	DGLE_RESULT DGLE_API PopStates();
+	DGLE_RESULT DGLE_API ResetStates() override;
+	DGLE_RESULT DGLE_API PushStates() override;
+	DGLE_RESULT DGLE_API PopStates() override;
 
-	DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_MODE eFlag);
-	DGLE_RESULT DGLE_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen);
+	DGLE_RESULT DGLE_API GetPoint3(const TPoint2 &stPointOnScreen, TPoint3 &stResultPoint, E_GET_POINT3_MODE eFlag) override;
+	DGLE_RESULT DGLE_API GetPoint2(const TPoint3 &stPoint, TPoint2 &stResultPointOnScreen) override;
 
-	DGLE_RESULT DGLE_API SetupFrustum();
-	DGLE_RESULT DGLE_API CullPoint(const TPoint3 &stCoords, bool &bCull);
-	DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCenter, float fRadius, bool &bCull);
-	DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenter, const TVector3 &stExtents, bool &bCull);
+	DGLE_RESULT DGLE_API SetupFrustum() override;
+	DGLE_RESULT DGLE_API CullPoint(const TPoint3 &stCoords, bool &bCull) override;
+	DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCenter, float fRadius, bool &bCull) override;
+	DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenter, const TVector3 &stExtents, bool &bCull) override;
 
-	DGLE_RESULT DGLE_API CreateLight(ILight *&prLight);
-	DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled);
-	DGLE_RESULT DGLE_API SetGlobalAmbientLighting(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API IsLightingEnabled(bool &bEnabled);
-	DGLE_RESULT DGLE_API GetGlobalAmbientLighting(TColor4 &stColor);
+	DGLE_RESULT DGLE_API CreateLight(ILight *&prLight) /*override*/;
+	DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled) override;
+	DGLE_RESULT DGLE_API SetGlobalAmbientLighting(const TColor4 &stColor) override;
+	DGLE_RESULT DGLE_API IsLightingEnabled(bool &bEnabled) override;
+	DGLE_RESULT DGLE_API GetGlobalAmbientLighting(TColor4 &stColor) override;
 
 	IDGLE_BASE_IMPLEMENTATION(IRender3D, INTERFACE_IMPL_END)
 };

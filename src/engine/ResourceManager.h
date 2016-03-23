@@ -138,35 +138,35 @@ public:
 	
 	void FreeAllResources();
 
-	DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource);
-	DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResource);
-	DGLE_RESULT DGLE_API CreateLight(ILight *&prLight, const char *pcName, bool bAddResource);
-	DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource);
-	DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName, bool bAddResource);
-	DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResource);
+	DGLE_RESULT DGLE_API CreateTexture(ITexture *&prTex, const uint8 *pData, uint uiWidth, uint uiHeight, E_TEXTURE_DATA_FORMAT eDataFormat, E_TEXTURE_CREATE_FLAGS eCreateFlags, E_TEXTURE_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource) override;
+	DGLE_RESULT DGLE_API CreateMaterial(IMaterial *&prMaterial, const char *pcName, bool bAddResource) override;
+	DGLE_RESULT DGLE_API CreateLight(ILight *&prLight, const char *pcName, bool bAddResource) override;
+	DGLE_RESULT DGLE_API CreateMesh(IMesh *&prMesh, const uint8 *pData, uint uiDataSize, uint uiNumVerts, uint uiNumFaces, E_MESH_CREATE_FLAGS eCreateFlags, E_MESH_MODEL_LOAD_FLAGS eLoadFlags, const char *pcName, bool bAddResource) override;
+	DGLE_RESULT DGLE_API CreateModel(IModel *&prModel, const char *pcName, bool bAddResource) override;
+	DGLE_RESULT DGLE_API CreateSound(ISoundSample *&prSndSample, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize, const char *pcName, bool bAddResource) override;
 
-	DGLE_RESULT DGLE_API RegisterFileFormat(const char* pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter);
-	DGLE_RESULT DGLE_API UnregisterFileFormat(const char* pcExtension);
-	DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj);
-	DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj);
-	DGLE_RESULT DGLE_API GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount);
-	DGLE_RESULT DGLE_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount);
-	DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType);
+	DGLE_RESULT DGLE_API RegisterFileFormat(const char* pcExtension, E_ENGINE_OBJECT_TYPE eObjType, const char *pcDiscription, bool (DGLE_API *pLoadProc)(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, void *pParameter), void *pParameter) override;
+	DGLE_RESULT DGLE_API UnregisterFileFormat(const char* pcExtension) override;
+	DGLE_RESULT DGLE_API RegisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj) override;
+	DGLE_RESULT DGLE_API UnregisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj) override;
+	DGLE_RESULT DGLE_API GetRegisteredExtensions(char* pcTxt, uint &uiCharsCount) override;
+	DGLE_RESULT DGLE_API GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount) override;
+	DGLE_RESULT DGLE_API GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType) override;
 	
-	DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj);
-	DGLE_RESULT DGLE_API GetResourceByIndex(uint uiIdx, IEngineBaseObject *&prObj);
-	DGLE_RESULT DGLE_API GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount);
-	DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj);
-	DGLE_RESULT DGLE_API GetResourcesCount(uint &uiCount);
+	DGLE_RESULT DGLE_API GetResourceByName(const char *pcName, IEngineBaseObject *&prObj) override;
+	DGLE_RESULT DGLE_API GetResourceByIndex(uint uiIdx, IEngineBaseObject *&prObj) override;
+	DGLE_RESULT DGLE_API GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount) override;
+	DGLE_RESULT DGLE_API GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj) override;
+	DGLE_RESULT DGLE_API GetResourcesCount(uint &uiCount) override;
 
-	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName);
-	DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName);
+	DGLE_RESULT DGLE_API Load(const char *pcFileName, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName) override;
+	DGLE_RESULT DGLE_API LoadEx(IFile *pFile, IEngineBaseObject *&prObj, uint uiLoadFlags, const char *pcName) override;
 	
-	DGLE_RESULT DGLE_API FreeResource(IEngineBaseObject *&prObj);
-	DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngineBaseObject *pObj);
-	DGLE_RESULT DGLE_API RemoveResource(IEngineBaseObject *pObj, bool &bCanDelete);
+	DGLE_RESULT DGLE_API FreeResource(IEngineBaseObject *&prObj) override;
+	DGLE_RESULT DGLE_API AddResource(const char *pcName, IEngineBaseObject *pObj) override;
+	DGLE_RESULT DGLE_API RemoveResource(IEngineBaseObject *pObj, bool &bCanDelete) override;
 
-	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSysType);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSysType) override;
 
 	IDGLE_BASE_IMPLEMENTATION(IResourceManager, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };

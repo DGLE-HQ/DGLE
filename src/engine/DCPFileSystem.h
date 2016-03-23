@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		21.03.2016 (c)Sivkov Ilya
+\date		23.03.2016 (c)Sivkov Ilya
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -22,9 +22,9 @@ class CDCPFileIterator: public CInstancedObj, public IFileIterator
 public:
 	CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList);
 
-	DGLE_RESULT DGLE_API FileName(char *pcName, uint &uiCharsCount);
-	DGLE_RESULT DGLE_API Next();
-	DGLE_RESULT DGLE_API Free();
+	DGLE_RESULT DGLE_API FileName(char *pcName, uint &uiCharsCount) override;
+	DGLE_RESULT DGLE_API Next() override;
+	DGLE_RESULT DGLE_API Free() override;
 
 	IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END);	
 };
@@ -88,14 +88,14 @@ public:
 	static uint32 s_GetTableIdx(const std::vector<TDCPFileInfo> &clInfoTable, const std::string &strName);
 	static void s_CorrectSlashes(std::string &strFileName);
 
-	DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile);	
-	DGLE_RESULT DGLE_API DeleteFile(const char *pcName);
-	DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists);
-	DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator);
+	DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) override;
+	DGLE_RESULT DGLE_API DeleteFile(const char *pcName) override;
+	DGLE_RESULT DGLE_API FileExists(const char *pcName, bool &bExists) override;
+	DGLE_RESULT DGLE_API Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator) override;
 
-	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar);
-	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar);
-	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount);
+	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar) override;
+	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar) override;
+	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount) override;
 
 	IDGLE_BASE_GUID_IMPL(IFileSystem)
 	IUNKNOWN_IMPL(INTERFACE_IMPL(IDGLE_Base, INTERFACE_IMPL(IFileSystem, INTERFACE_IMPL_END)))

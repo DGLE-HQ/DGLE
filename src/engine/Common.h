@@ -173,7 +173,7 @@ inline void LogWrite(uint uiInstIdx, const std::string &str, E_LOG_TYPE eType, c
 	+ ' ' + ToStrFmt(m._2D[3][0]) + ',' + ToStrFmt(m._2D[3][1]) + ',' + ToStrFmt(m._2D[3][2]) + ',' + ToStrFmt(m._2D[3][3]) + ']').c_str(), LT_INFO, ExtractFilename(__FILE__), __LINE__)
 
 #define IENGINE_BASE_OBJECT_IMPLEMENTATION(object_type) \
-DGLE_RESULT DGLE_API Free()\
+DGLE_RESULT DGLE_API Free() override\
 {\
 	bool can_delete;\
 	Core()->pResMan()->RemoveResource(this, can_delete);\
@@ -185,12 +185,12 @@ DGLE_RESULT DGLE_API Free()\
 	else\
 		return S_FALSE;\
 }\
-DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType)\
+DGLE_RESULT DGLE_API GetType(E_ENGINE_OBJECT_TYPE &eObjType) override\
 {\
 	eObjType = object_type;\
 	return S_OK;\
 }\
-DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType)\
+DGLE_RESULT DGLE_API GetUnknownType(uint &uiObjUnknownType) override\
 {\
 	uiObjUnknownType = -1;\
 	return S_FALSE;\

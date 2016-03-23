@@ -104,21 +104,21 @@ public:
 
 	// Thread safe methods.
 	
-	DGLE_RESULT DGLE_API Play(bool bLooped);
-	DGLE_RESULT DGLE_API Pause();
-	DGLE_RESULT DGLE_API Stop();
-	DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying);
-	DGLE_RESULT DGLE_API SetVolume(uint uiVolume);
-	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume);
-	DGLE_RESULT DGLE_API SetPan(int iPan);
-	DGLE_RESULT DGLE_API GetPan(int &iPan);
-	DGLE_RESULT DGLE_API SetSpeed(uint uiSpeed);
-	DGLE_RESULT DGLE_API GetSpeed(uint &uiSpeed);
-	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos);
-	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos);
-	DGLE_RESULT DGLE_API GetLength(uint &uiLength);
-	DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable);
-	DGLE_RESULT DGLE_API Unaquire();
+	DGLE_RESULT DGLE_API Play(bool bLooped) override;
+	DGLE_RESULT DGLE_API Pause() override;
+	DGLE_RESULT DGLE_API Stop() override;
+	DGLE_RESULT DGLE_API IsPlaying(bool &bIsPlaying) override;
+	DGLE_RESULT DGLE_API SetVolume(uint uiVolume) override;
+	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume) override;
+	DGLE_RESULT DGLE_API SetPan(int iPan) override;
+	DGLE_RESULT DGLE_API GetPan(int &iPan) override;
+	DGLE_RESULT DGLE_API SetSpeed(uint uiSpeed) override;
+	DGLE_RESULT DGLE_API GetSpeed(uint &uiSpeed) override;
+	DGLE_RESULT DGLE_API SetCurrentPosition(uint uiPos) override;
+	DGLE_RESULT DGLE_API GetCurrentPosition(uint &uiPos) override;
+	DGLE_RESULT DGLE_API GetLength(uint &uiLength) override;
+	DGLE_RESULT DGLE_API IsStreamable(bool &bStreamable) override;
+	DGLE_RESULT DGLE_API Unaquire() override;
 
 	IDGLE_BASE_IMPLEMENTATION(ISoundChannel, INTERFACE_IMPL_END)
 };
@@ -151,16 +151,16 @@ public:
 	CSound(uint uiInstIdx);
 	~CSound();
 
-	DGLE_RESULT DGLE_API SetMasterVolume(uint uiVolume);
-	DGLE_RESULT DGLE_API MasterPause(bool bPaused);
-	DGLE_RESULT DGLE_API StopAllChannels();
-	DGLE_RESULT DGLE_API GetMaxChannelsCount(uint &uiCount);
-	DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount);
-	DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData);
-	DGLE_RESULT DGLE_API ReleaseChannelsByCallback(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize));
-	DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize);
-	DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter);
-	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType);
+	DGLE_RESULT DGLE_API SetMasterVolume(uint uiVolume) override;
+	DGLE_RESULT DGLE_API MasterPause(bool bPaused) override;
+	DGLE_RESULT DGLE_API StopAllChannels() override;
+	DGLE_RESULT DGLE_API GetMaxChannelsCount(uint &uiCount) override;
+	DGLE_RESULT DGLE_API GetFreeChannelsCount(uint &uiCount) override;
+	DGLE_RESULT DGLE_API ReleaseChannelsByData(const uint8 *pData) override;
+	DGLE_RESULT DGLE_API ReleaseChannelsByCallback(void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize)) override;
+	DGLE_RESULT DGLE_API CreateChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, const uint8 *pData, uint32 ui32DataSize) override;
+	DGLE_RESULT DGLE_API CreateStreamableChannel(ISoundChannel *&prSndChnl, uint uiSamplesPerSec, uint uiBitsPerSample, bool bStereo, uint32 ui32DataSize, void (DGLE_API *pStreamCallback)(void *pParameter, uint32 ui32DataPos, uint8 *pBufferData, uint uiBufferSize), void *pParameter) override;
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubsysType) override;
 
 	IDGLE_BASE_IMPLEMENTATION(ISound, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };

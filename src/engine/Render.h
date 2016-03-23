@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		18.04.2013 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -42,20 +42,20 @@ public:
 	void DrawProfiler();
 	void RefreshBatchData();
 
-	DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor);
-	DGLE_RESULT DGLE_API ClearColorBuffer();
-	DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType);
-	DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea);	
-	DGLE_RESULT DGLE_API DisableScissor();
-	DGLE_RESULT DGLE_API GetScissor(bool &bEnabled, TRectF &stArea);
-	DGLE_RESULT DGLE_API SetRenderTarget(ITexture *pTargetTex);
-	DGLE_RESULT DGLE_API GetRenderTarget(ITexture *&prTargetTex);
+	DGLE_RESULT DGLE_API SetClearColor(const TColor4 &stColor) override;
+	DGLE_RESULT DGLE_API GetClearColor(TColor4 &stColor) override;
+	DGLE_RESULT DGLE_API ClearColorBuffer() override;
+	DGLE_RESULT DGLE_API Unbind(E_ENGINE_OBJECT_TYPE eType) override;
+	DGLE_RESULT DGLE_API EnableScissor(const TRectF &stArea) override;
+	DGLE_RESULT DGLE_API DisableScissor() override;
+	DGLE_RESULT DGLE_API GetScissor(bool &bEnabled, TRectF &stArea) override;
+	DGLE_RESULT DGLE_API SetRenderTarget(ITexture *pTargetTex) override;
+	DGLE_RESULT DGLE_API GetRenderTarget(ITexture *&prTargetTex) override;
 
-	DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D);
-	DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D);
+	DGLE_RESULT DGLE_API GetRender2D(IRender2D *&prRender2D) override;
+	DGLE_RESULT DGLE_API GetRender3D(IRender3D *&prRender3D) override;
 
-	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType);
+	DGLE_RESULT DGLE_API GetType(E_ENGINE_SUB_SYSTEM &eSubSystemType) override;
 
 	IDGLE_BASE_IMPLEMENTATION(IRender, INTERFACE_IMPL(IEngineSubSystem, INTERFACE_IMPL_END))
 };

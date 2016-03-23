@@ -44,21 +44,21 @@ public:
 
 	CConsoleWindow();
 
-	DGLE_RESULT InitWindow(bool bSeparateThread, void (DGLE_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole);
-	DGLE_RESULT Visible(bool bVisible);
-	DGLE_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight);
-	DGLE_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight);
-	DGLE_RESULT GetWindowHandle(TWindowHandle &tHandle);
-	DGLE_RESULT GetThreadId(uint32 &ui32Id);
-	DGLE_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine);
-	DGLE_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize);
-	DGLE_RESULT SetEditTxt(const char *pcTxt);
-	DGLE_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize);
-	DGLE_RESULT Clear();
-	DGLE_RESULT ResetSizeAndPos();
-	DGLE_RESULT EnterThreadSafeSection();
-	DGLE_RESULT LeaveThreadSafeSection();
-	DGLE_RESULT Free();
+	DGLE_RESULT InitWindow(bool bSeparateThread, void (DGLE_API *pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand), CConsole *pConsole) override;
+	DGLE_RESULT Visible(bool bVisible) override;
+	DGLE_RESULT SetSizeAndPos(int iX, int iY, int iWidth, int iHeight) override;
+	DGLE_RESULT GetSizeAndPos(int &iX, int &iY, int &iWidth, int &iHeight) override;
+	DGLE_RESULT GetWindowHandle(TWindowHandle &tHandle) override;
+	DGLE_RESULT GetThreadId(uint32 &ui32Id) override;
+	DGLE_RESULT OutputTxt(const char *pcTxt, bool bToPrevLine) override;
+	DGLE_RESULT GetEditTxt(char *pcTxt, uint uiBufferSize) override;
+	DGLE_RESULT SetEditTxt(const char *pcTxt) override;
+	DGLE_RESULT GetConsoleTxt(char *pcTxt, uint &uiBufferSize) override;
+	DGLE_RESULT Clear() override;
+	DGLE_RESULT ResetSizeAndPos() override;
+	DGLE_RESULT EnterThreadSafeSection() override;
+	DGLE_RESULT LeaveThreadSafeSection() override;
+	DGLE_RESULT Free() override;
 
 	IDGLE_BASE_IMPLEMENTATION(IConsoleWindow, INTERFACE_IMPL_END)
 };

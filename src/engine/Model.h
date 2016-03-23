@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		20.04.2013 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -56,23 +56,23 @@ public:
 
 	void AddMesh(IMesh *pMesh, const TPoint3 &stCenter, const TVector3 &stExtents);
 
-	DGLE_RESULT DGLE_API Draw();
-	DGLE_RESULT DGLE_API DrawMesh(uint uiMeshIdx);
-	DGLE_RESULT DGLE_API GetCenter(TPoint3 &stCenter);
-	DGLE_RESULT DGLE_API GetExtents(TVector3 &stExtents);
-	DGLE_RESULT DGLE_API MeshesCount(uint &uiCount);
-	DGLE_RESULT DGLE_API GetMesh(uint uiMeshIdx, IMesh *&prMesh);
-	DGLE_RESULT DGLE_API SetModelMaterial(IMaterial *pMaterial);
-	DGLE_RESULT DGLE_API GetModelMaterial(IMaterial *&prMaterial);
-	DGLE_RESULT DGLE_API SetMeshMaterial(uint uiMeshIdx, IMaterial *pMaterial);
-	DGLE_RESULT DGLE_API GetMeshMaterial(uint uiMeshIdx, IMaterial *&prMaterial);
-	DGLE_RESULT DGLE_API AddMesh(IMesh *pMesh);
-	DGLE_RESULT DGLE_API RemoveMesh(IMesh *pMesh);
-	DGLE_RESULT DGLE_API ReplaceMesh(uint uiMeshIdx, IMesh *pMesh);
+	DGLE_RESULT DGLE_API Draw() override;
+	DGLE_RESULT DGLE_API DrawMesh(uint uiMeshIdx) override;
+	DGLE_RESULT DGLE_API GetCenter(TPoint3 &stCenter) override;
+	DGLE_RESULT DGLE_API GetExtents(TVector3 &stExtents) override;
+	DGLE_RESULT DGLE_API MeshesCount(uint &uiCount) override;
+	DGLE_RESULT DGLE_API GetMesh(uint uiMeshIdx, IMesh *&prMesh) override;
+	DGLE_RESULT DGLE_API SetModelMaterial(IMaterial *pMaterial) override;
+	DGLE_RESULT DGLE_API GetModelMaterial(IMaterial *&prMaterial) override;
+	DGLE_RESULT DGLE_API SetMeshMaterial(uint uiMeshIdx, IMaterial *pMaterial) override;
+	DGLE_RESULT DGLE_API GetMeshMaterial(uint uiMeshIdx, IMaterial *&prMaterial) override;
+	DGLE_RESULT DGLE_API AddMesh(IMesh *pMesh) override;
+	DGLE_RESULT DGLE_API RemoveMesh(IMesh *pMesh) override;
+	DGLE_RESULT DGLE_API ReplaceMesh(uint uiMeshIdx, IMesh *pMesh) override;
 
-	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar); // Command with uiCmd == 1 will save mesh to IFile, stVar should contain a pointer to IFile interface.
-	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar);
-	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount);
+	DGLE_RESULT DGLE_API ExecuteCommand(uint uiCmd, TVariant &stVar) override; // Command with uiCmd == 1 will save mesh to IFile, stVar should contain a pointer to IFile interface.
+	DGLE_RESULT DGLE_API ExecuteTextCommand(const char *pcCommand, TVariant &stVar) override;
+	DGLE_RESULT DGLE_API ExecuteTextCommandEx(const char *pcCommand, char *pcResult, uint &uiCharsCount) override;
 
 	IENGINE_BASE_OBJECT_IMPLEMENTATION(EOT_MODEL)
 	IDGLE_BASE_GUID_IMPL(IModel)

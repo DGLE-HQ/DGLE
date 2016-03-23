@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2013 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -159,56 +159,56 @@ public:
 	inline	bool SoundEnabled() const {return _bSndEnabled;}
 	void	ToogleSuspendEngine(bool bSuspend);
 
-	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName);
-	DGLE_RESULT DGLE_API AddPluginToInitializationList(const char *pcFileName);
+	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName) override;
+	DGLE_RESULT DGLE_API AddPluginToInitializationList(const char *pcFileName) override;
 
-	DGLE_RESULT DGLE_API InitializeEngine(TWindowHandle tHandle, const char* pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags);
-	DGLE_RESULT DGLE_API SetUpdateInterval(uint uiUpdateInterval);
-	DGLE_RESULT DGLE_API StartEngine();
-	DGLE_RESULT DGLE_API QuitEngine();
+	DGLE_RESULT DGLE_API InitializeEngine(TWindowHandle tHandle, const char* pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags) override;
+	DGLE_RESULT DGLE_API SetUpdateInterval(uint uiUpdateInterval) override;
+	DGLE_RESULT DGLE_API StartEngine() override;
+	DGLE_RESULT DGLE_API QuitEngine() override;
 
-	DGLE_RESULT DGLE_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin);
-	DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin);
-	DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin);
+	DGLE_RESULT DGLE_API ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin) override;
+	DGLE_RESULT DGLE_API DisconnectPlugin(IPlugin *pPlugin) override;
+	DGLE_RESULT DGLE_API GetPlugin(const char *pcPluginName, IPlugin *&prPlugin) override;
 
-	DGLE_RESULT DGLE_API AddEngineCallback(IEngineCallback *pEngineCallback);
-	DGLE_RESULT DGLE_API RemoveEngineCallback(IEngineCallback *pEngineCallback);
+	DGLE_RESULT DGLE_API AddEngineCallback(IEngineCallback *pEngineCallback) override;
+	DGLE_RESULT DGLE_API RemoveEngineCallback(IEngineCallback *pEngineCallback) override;
 
-	DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter);
-	DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter);
+	DGLE_RESULT DGLE_API AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter) override;
+	DGLE_RESULT DGLE_API RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter) override;
 
-	DGLE_RESULT DGLE_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent);
-	DGLE_RESULT DGLE_API AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter);
-	DGLE_RESULT DGLE_API RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter);
+	DGLE_RESULT DGLE_API CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent) override;
+	DGLE_RESULT DGLE_API AddEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter) override;
+	DGLE_RESULT DGLE_API RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter) override;
 
-	DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem);
+	DGLE_RESULT DGLE_API GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem) override;
 
-	DGLE_RESULT DGLE_API RenderFrame();
-	DGLE_RESULT DGLE_API RenderProfilerText(const char *pcTxt, const TColor4 &stColor);
-	DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx);
-	DGLE_RESULT DGLE_API GetTimer(uint64 &ui64Tick);
-	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo);
-	DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin);
-	DGLE_RESULT DGLE_API GetFPS(uint &uiFPS);
-	DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint &uiDeltaTime);
-	DGLE_RESULT DGLE_API GetElapsedTime(uint64 &ui64ElapsedTime);
-	DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle);
+	DGLE_RESULT DGLE_API RenderFrame() override;
+	DGLE_RESULT DGLE_API RenderProfilerText(const char *pcTxt, const TColor4 &stColor) override;
+	DGLE_RESULT DGLE_API GetInstanceIndex(uint &uiIdx) override;
+	DGLE_RESULT DGLE_API GetTimer(uint64 &ui64Tick) override;
+	DGLE_RESULT DGLE_API GetSystemInfo(TSystemInfo &stSysInfo) override;
+	DGLE_RESULT DGLE_API GetCurrentWindow(TEngineWindow &stWin) override;
+	DGLE_RESULT DGLE_API GetFPS(uint &uiFPS) override;
+	DGLE_RESULT DGLE_API GetLastUpdateDeltaTime(uint &uiDeltaTime) override;
+	DGLE_RESULT DGLE_API GetElapsedTime(uint64 &ui64ElapsedTime) override;
+	DGLE_RESULT DGLE_API GetWindowHandle(TWindowHandle &tHandle) override;
 
-	DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin);
-	DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight);
-	DGLE_RESULT DGLE_API AllowPause(bool bAllow);
+	DGLE_RESULT DGLE_API ChangeWindowMode(const TEngineWindow &stNewWin) override;
+	DGLE_RESULT DGLE_API GetDesktopResolution(uint &uiWidth, uint &uiHeight) override;
+	DGLE_RESULT DGLE_API AllowPause(bool bAllow) override;
 
-	DGLE_RESULT DGLE_API WriteToLog(const char *pcTxt);
-	DGLE_RESULT DGLE_API WriteToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
+	DGLE_RESULT DGLE_API WriteToLog(const char *pcTxt) override;
+	DGLE_RESULT DGLE_API WriteToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber) override;
 
-	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible);
-	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine);
-	DGLE_RESULT DGLE_API ConsoleExecute(const char* pcCommandTxt);
-	DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter); 
-	DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter);
-	DGLE_RESULT DGLE_API ConsoleUnregister(const char* pcCommandName);
+	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible) override;
+	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine) override;
+	DGLE_RESULT DGLE_API ConsoleExecute(const char* pcCommandTxt) override;
+	DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) override;
+	DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) override;
+	DGLE_RESULT DGLE_API ConsoleUnregister(const char* pcCommandName) override;
 
-	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize);
+	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) override;
 
 #ifndef DGLE_USE_COM
 
@@ -216,19 +216,19 @@ public:
 
 #else
 
-	DGLE_RESULT DGLE_API SetWindowAPI(IMainWindow *pMainWindow)
+	DGLE_RESULT DGLE_API SetWindowAPI(IMainWindow *pMainWindow) override
 	{
 		_pMainWindow = pMainWindow;
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API TranslateMessage(const TWindowMessage &stWinMsg)
+	DGLE_RESULT DGLE_API TranslateMessage(const TWindowMessage &stWinMsg) override
 	{
 		_clDelMProc.Invoke(stWinMsg);
 		return S_OK;
 	}
 
-	DGLE_RESULT DGLE_API KillEngine()
+	DGLE_RESULT DGLE_API KillEngine() override
 	{
 		_bDoExit = true;
 		_MainLoop();
@@ -241,7 +241,7 @@ public:
 
 	IDGLE_BASE_GUID_IMPL(IEngineCore)
 
-	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject)
+	HRESULT CALLBACK QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject) override
 	{
 		*ppvObject = NULL;
 
@@ -265,12 +265,12 @@ public:
 		return S_OK;
 	}
 	
-	ULONG CALLBACK AddRef()
+	ULONG CALLBACK AddRef() override
 	{
 		return 1;
 	}
 	
-	ULONG CALLBACK Release()
+	ULONG CALLBACK Release() override
 	{
 		return 1;
 	}

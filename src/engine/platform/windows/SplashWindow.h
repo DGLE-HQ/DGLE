@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.03.2016 (c)Korotkov Andrey
+\date		23.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -27,9 +27,9 @@ public:
 
 	CSplashWindow(uint uiInstIdx);
 
-	DGLE_RESULT InitWindow(const char *pcBmpFileName);
-	DGLE_RESULT SetOwnerWindow(TWindowHandle tOwnerHwnd);
-	DGLE_RESULT Free();
+	DGLE_RESULT InitWindow(const char *pcBmpFileName) override;
+	DGLE_RESULT SetOwnerWindow(TWindowHandle tOwnerHwnd) override;
+	DGLE_RESULT Free() override;
 
 	IDGLE_BASE_IMPLEMENTATION(ISplashWindow, INTERFACE_IMPL_END)
 };
