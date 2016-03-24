@@ -10,19 +10,13 @@ See "DGLE.h" for more details.
 #include "Common.h"
 #include "HDDFile.h"
 
-#include <fcntl.h>
-#include <sys\stat.h>
-
 using namespace std;
 
-CHDDFile::CHDDFile(uint uiInstIdx, const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags):
-CInstancedObj(uiInstIdx),
-_iFile(-1)
+CHDDFile::CHDDFile(uint uiInstIdx, const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags) :
+CInstancedObj(uiInstIdx), _file()
 {
-	int mode = 0;
-	
-	string  file_name = GetFileName(pcName),
-			file_path = GetFilePath(pcName);
+	const string	file_name = GetFileName(pcName),
+					file_path = GetFilePath(pcName);
 
 	if (file_name.size() < MAX_PATH)
 		strcpy(_acName, file_name.c_str());
@@ -34,66 +28,86 @@ _iFile(-1)
 	else
 		strcpy(_acPath, "\"file_path\" is too long.");
 
-	if (eFlags & FSOF_WRITE && eFlags & FSOF_READ)
-		mode |= _O_RDWR;
+	char mode[4], *write_pos = mode;
+
+	if (eFlags & FSOF_TRUNC)
+	{
+		if (!(eFlags & FSOF_WRITE))
+		{
+			LOG("Can't open file \""s + pcName + "\": 'FSOF_TRUNC' specified without 'FSOF_WRITE'.", LT_ERROR);
+			return;
+		}
+		*write_pos++ = 'w';
+		if (eFlags & FSOF_READ)
+			*write_pos++ = '+';
+	}
 	else
 	{
-		if (eFlags & FSOF_WRITE) mode |= _O_WRONLY;
-		if (eFlags & FSOF_READ) mode |= _O_RDONLY;
+		*write_pos++ = 'r';
+		if (eFlags & FSOF_WRITE)
+			*write_pos++ = '+';
 	}
+
+	*write_pos++ = eFlags & FSOF_BINARY ? 'b' : 't';
+	*write_pos = '\0';
 	
-	if (eFlags & FSOF_TRUNC) mode |= _O_TRUNC | _O_CREAT;
-	if (eFlags & FSOF_BINARY) mode |= _O_BINARY;
-
-	int perms = 0;
-
-	if (mode & _O_RDWR)
-		perms = _S_IREAD | _S_IWRITE;
-	else
-		if(mode & _O_WRONLY)
-			perms = _S_IWRITE;
-		else
-			perms = _S_IREAD;
-
-	if ((_iFile = _open(pcName, mode, perms)) == -1)
+	if (!(_file = fopen(pcName, mode)))
 		LOG("Can't open file \""s + pcName + "\".", LT_ERROR);
 }
 
 CHDDFile::~CHDDFile()
 {
-	if (_close(_iFile) != 0)
+	if (fclose(_file) != 0)
 		LOG("Can't close file \""s + _acName + "\".", LT_ERROR);
 }
 
 DGLE_RESULT DGLE_API CHDDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
 {
-	uiRead = _read(_iFile, pBuffer, uiCount);
+	uiRead = fread(pBuffer, 1, uiCount, _file);
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CHDDFile::Write(const void *pBuffer, uint uiCount, uint &uiWritten)
 {
-	uiWritten = _write(_iFile, pBuffer, uiCount);
+	uiWritten = fwrite(pBuffer, 1, uiCount, _file);
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CHDDFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
-	const int origin = (eWay == FSSF_BEGIN ? SEEK_SET : (eWay == FSSF_CURRENT ? SEEK_CUR : SEEK_END));
-	_lseek(_iFile, origin == SEEK_END ? -(long)ui32Offset : ui32Offset, origin);
-	ui32Position = (uint32)(_tell(_iFile));
+	long offset = ui32Offset;
+	const int origin = [eWay, &offset]
+	{
+		switch (eWay)
+		{
+		case FSSF_BEGIN:					return SEEK_SET;
+		case FSSF_CURRENT:					return SEEK_CUR;
+		case FSSF_END: offset = -offset;	return SEEK_END;
+		default:
+			assert(false);
+			__assume(false);
+		}
+	}();
+	if (fseek(_file, offset, origin) != 0)
+		return E_FAIL;
+	ui32Position = ftell(_file);
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CHDDFile::GetSize(uint32 &ui32Size)
 {
-	ui32Size = (uint32)(_filelength(_iFile));
+	const auto pos = ftell(_file);
+	if (fseek(_file, 0, SEEK_END) != 0)
+		return E_FAIL;
+	ui32Size = ftell(_file);
+	if (fseek(_file, pos, SEEK_SET) != 0)
+		return E_FAIL;
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CHDDFile::IsOpen(bool &bOpened)
 {
-	bOpened = _iFile > 0;
+	bOpened = _file;
 	return S_OK;
 }
 

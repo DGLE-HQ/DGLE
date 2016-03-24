@@ -15,8 +15,15 @@ class CInstancedObj;
 
 class CHDDFile final : public CInstancedObj, public IFile
 {
-	int	_iFile;
-	char _acName[MAX_PATH], _acPath[MAX_PATH];
+	/*
+		FILE used rather than fstream because no C++ features like RAII and exception safety required here for this C style code
+		and it have less memory footprint for not opened files.
+		fstream though provides better portability regarding seeking relative to the end of file and for text files
+		so it can be used in future if required.
+	*/
+	std::FILE *_file;
+	char	_acName[MAX_PATH],
+			_acPath[MAX_PATH];
 
 public:
 
