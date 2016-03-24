@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -170,9 +170,8 @@ TDynLibHandle LoadDynamicLib(const char *pcFileName);
 void *GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName);
 bool ReleaseDynamicLib(TDynLibHandle tHandle);
 void ShowModalUserAlert(const char *pcTxt, const char *pcCaption);
-void GetEngineFilePath(std::string &strPath);
+std::string GetEngineFilePath(), GetCurrentWorkingPath();
 bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs);
-void GetCurrentWorkingPath(std::string &strPath);
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 void Terminate();
 uint32 GetProcessMemoryUsage();

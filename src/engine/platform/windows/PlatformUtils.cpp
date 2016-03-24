@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -419,19 +419,37 @@ void ShowModalUserAlert(const char *pcTxt, const char *pcCaption)
 	MessageBoxA(NULL, pcTxt, pcCaption, MB_OK | MB_ICONSTOP | MB_SETFOREGROUND | MB_SYSTEMMODAL);
 }
 
-void GetEngineFilePath(string &strPath)
+string GetEngineFilePath()
 {
 	char eng_file_name[MAX_PATH];
 		
 	if (GetModuleFileNameA(hModule, eng_file_name, MAX_PATH) == 0)
 		strcpy(eng_file_name, "");
 
-	strPath = GetFilePath(eng_file_name) + '\\';
+	return GetFilePath(eng_file_name) + '\\';
 }
 
-bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
+string GetCurrentWorkingPath()
 {
-	char* part;
+	string path;
+	
+	char *buffer = _getcwd(NULL, 0);
+
+	if (buffer)
+	{
+		path.assign(buffer);
+		free(buffer);
+		
+		if (path[path.length() - 1] != '\\')
+			path += '\\';
+	}
+
+	return path;
+}
+
+bool FindFilesInDir(const char *pcMask, vector<string> &fileNames)
+{
+	char *part;
 	char tmp[MAX_PATH];
 	HANDLE hSearch = NULL;
 	WIN32_FIND_DATAA wfd;
@@ -458,25 +476,9 @@ bool FindFilesInDir(const char* pcMask, vector<string> &fileNames)
 		}
 		while (FindNextFileA(hSearch, &wfd));
 
-		FindClose (hSearch);
+		FindClose(hSearch);
 
 		return true;
-}
-
-void GetCurrentWorkingPath(string &strPath)
-{
-	strPath.clear();
-	
-	char *buffer = _getcwd(NULL, 0);
-
-	if (buffer)
-	{
-		strPath.assign(buffer);
-		free(buffer);
-		
-		if (strPath[strPath.length() - 1] != '\\')
-			strPath += '\\';
-	}
 }
 
 #ifdef DXDIAG_VIDEO_INFO

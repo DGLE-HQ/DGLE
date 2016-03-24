@@ -1086,10 +1086,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		string eng_path, working_path;
-
-		GetEngineFilePath(eng_path);
-		GetCurrentWorkingPath(working_path);
+		const string eng_path = GetEngineFilePath(), working_path = GetCurrentWorkingPath();
 
 		if (eng_path == working_path)
 			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
@@ -1116,7 +1113,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 				error_code error;
 				if (fs::exists(ext_fnames[i], error))
 				{
-					_vecPluginInitList.push_back(ext_fnames[i]);
+					_vecPluginInitList.push_back(move(ext_fnames[i]));
 					break;
 				}
 				else if (error)
@@ -1129,15 +1126,15 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		_clDelInit.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 		_clDelFree.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
-		Console()->RegComVar("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, (void*)this);
-		Console()->RegComVar("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, (void*)this);
-		Console()->RegComVar("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additionally draw performance metrics.\n3 - additionally draw memory usage metrics.", &_iDrawProfiler, 0, 3, NULL, (void*)this);
-		Console()->RegComVar("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, (void*)this);
-		Console()->RegComProc("core_version", "Prints engine version.", &_s_ConPrintVersion, (void*)this);
-		Console()->RegComProc("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, (void*)this);
-		Console()->RegComProc("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, (void*)this);
-		Console()->RegComProc("core_instidx", "Prints Instance Index of current engine unit.", &_s_InstIdx, (void*)this);
-		Console()->RegComProc("core_set_mode", "Changes display mode.\nUsage: \"core_set_mode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\nExample:\"core_set_mode 800 600 1 1 4\"", &_s_ConChangeMode, (void*)this);
+		Console()->RegComVar("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, this);
+		Console()->RegComVar("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, this);
+		Console()->RegComVar("core_profiler", "Displays engine core profiler.\r\0 - hide profiler.\n1 - simple draw FPS and UPS.\n2 - additionally draw performance metrics.\n3 - additionally draw memory usage metrics.", &_iDrawProfiler, 0, 3, NULL, this);
+		Console()->RegComVar("core_allow_profilers", "Allow or not rendering various engine profilers.", &_iAllowDrawProfilers, 0, 1, NULL, this);
+		Console()->RegComProc("core_version", "Prints engine version.", &_s_ConPrintVersion, this);
+		Console()->RegComProc("core_features", "Prints list of features with which engine was build.\nw - write to logfile.", &_s_ConFeatures, this);
+		Console()->RegComProc("core_list_plugins", "Prints list of connected plugins.", &_s_ConListPlugs, this);
+		Console()->RegComProc("core_instidx", "Prints Instance Index of current engine unit.", &_s_InstIdx, this);
+		Console()->RegComProc("core_set_mode", "Changes display mode.\nUsage: \"core_set_mode [ScrWidth] [ScrHeight] [Fullscreen(0 or 1)] [VSync(0 or 1)] [MSAA(from 1 to 8)]\"\nExample:\"core_set_mode 800 600 1 1 4\"", &_s_ConChangeMode, this);
 
 		if (!_pMainWindow)
 			if (_eInitFlags & EIF_FORCE_NO_WINDOW)
@@ -1153,9 +1150,9 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 				}
 			}
 
-		_clDelOnFPSTimer.Add(&_s_OnTimer, (void*)this);
-		_clDelMLoop.Add(&_s_MainLoop, (void*)this);
-		_clDelMProc.Add(&_s_MessageProc, (void*)this);
+		_clDelOnFPSTimer.Add(&_s_OnTimer, this);
+		_clDelMLoop.Add(&_s_MainLoop, this);
+		_clDelMProc.Add(&_s_MessageProc, this);
 
 		if (!_vecPluginInitList.empty())
 		{
