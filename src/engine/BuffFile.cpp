@@ -1,6 +1,6 @@
 /**
 \author		Kotlyarov Semen aka Kimer
-\date		16.03.2016 (c)Andrey Korotkov
+\date		25.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -70,7 +70,7 @@ DGLE_RESULT DGLE_API CBuffFile::IsOpen(bool &bOpened)
 
 DGLE_RESULT DGLE_API CBuffFile::GetName(char *pcName, uint &uiCharsCount)
 {
-	string name = GetFileName(_strFileName.c_str());
+	const string name = GetFileName(_strFileName);
 
 	if (!pcName)
 	{
@@ -95,7 +95,7 @@ DGLE_RESULT DGLE_API CBuffFile::GetName(char *pcName, uint &uiCharsCount)
 
 DGLE_RESULT DGLE_API CBuffFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
-	string path = GetFilePath(_strFileName.c_str());
+	const string path = GetFilePath(_strFileName);
 
 	if (!pcPath)
 	{

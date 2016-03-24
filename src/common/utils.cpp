@@ -1,6 +1,6 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		19.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -68,10 +68,8 @@ string BoolToStr(bool val)
 	return val ? "true" : "false";
 }
 
-string GetFilePath(const char *name)
+string GetFilePath(string path)
 {
-	string path(name);
-	
 	if (path.empty()) 
 		return path;
 	
@@ -93,10 +91,8 @@ string GetFilePath(const char *name)
 		return "";
 }
 
-string GetFileName(const char *name)
+string GetFileName(string path)
 {
-	string path(name);
-	
 	if (path.empty())
 		return path;
 	
@@ -115,18 +111,16 @@ string GetFileName(const char *name)
 	return path;
 }
 
-string GetFileExt(const char *name)
+string GetFileExt(string path)
 {
-	string path(name);
 	const string::size_type pos = path.find_last_of('.');
 	if (pos != string::npos)
 		path.erase(0, pos + 1).shrink_to_fit();
 	return path;
 }
 
-string GetOnlyFileName(const char *name)
+string GetOnlyFileName(string path)
 {
-	string path(GetFileName(name));
 	const string::size_type pos = path.find_last_of('.');
 	if (pos != string::npos)
 		path.erase(pos).shrink_to_fit();
