@@ -429,24 +429,6 @@ string GetEngineFilePath()
 	return GetFilePath(eng_file_name) + '\\';
 }
 
-string GetCurrentWorkingPath()
-{
-	string path;
-	
-	char *buffer = _getcwd(NULL, 0);
-
-	if (buffer)
-	{
-		path.assign(buffer);
-		free(buffer);
-		
-		if (path[path.length() - 1] != '\\')
-			path += '\\';
-	}
-
-	return path;
-}
-
 bool FindFilesInDir(const char *pcMask, vector<string> &fileNames)
 {
 	char *part;

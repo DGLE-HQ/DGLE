@@ -1086,7 +1086,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		const string eng_path = GetEngineFilePath(), working_path = GetCurrentWorkingPath();
+		const string eng_path = GetEngineFilePath(), working_path = fs::current_path().string();
 
 		if (eng_path == working_path)
 			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
