@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -112,9 +112,10 @@ DGLE_RESULT DGLE_API CHDDFileSystem::FileExists(const char *pcName, bool &bExist
 		return S_OK;
 	}
 
-	bExists = _access(pcName, 0) != -1;
+	std::error_code error;
+	bExists = fs::exists(pcName, error);
 
-	return S_OK;
+	return error ? E_FAIL : S_OK;
 }
 
 DGLE_RESULT DGLE_API CHDDFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlags, IFileIterator *&prIterator)

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -889,8 +889,14 @@ DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 
 
 DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
 {
-	if (_access(pcFileName, 0) != -1)
+	error_code error;
+	if (fs::exists(pcFileName, error))
 		return _LoadPlugin(pcFileName, prPlugin) ? S_OK : E_ABORT;
+	else if (error)
+	{
+		LOG("Fail to connect plugin\""s + pcFileName + "\": " + error.message() + '.', LT_ERROR);
+		return E_FAIL;
+	}
 	else
 	{
 		prPlugin = NULL;
@@ -1103,14 +1109,19 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		}
 		else
 		{
-			string ext_fnames[] = {eng_path + "Ext" PLUGIN_FILE_EXTENSION, eng_path + "plugins\\Ext" PLUGIN_FILE_EXTENSION};
+			string ext_fnames[] = { eng_path + "Ext" PLUGIN_FILE_EXTENSION, eng_path + "plugins\\Ext" PLUGIN_FILE_EXTENSION };
 
 			for (int i = 0; i < _countof(ext_fnames); ++i)
-				if (_access(ext_fnames[i].c_str(), 0) != -1)
+			{
+				error_code error;
+				if (fs::exists(ext_fnames[i], error))
 				{
 					_vecPluginInitList.push_back(ext_fnames[i]);
 					break;
 				}
+				else if (error)
+					LOG("Ext plugin file error: " + error.message() + '.', LT_ERROR);
+			}
 		}
 
 		_clDelUpdate.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
