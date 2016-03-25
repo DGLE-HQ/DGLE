@@ -1158,10 +1158,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		{
 			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
 				for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
-					if (ToUpperCase(GetOnlyFileName(_vecPluginInitList[i].c_str())) == ToUpperCase(GetOnlyFileName(_vecPluginInitList[j].c_str())))
+					if (ToUpperCase(fs::path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(fs::path(_vecPluginInitList[j]).replace_extension().string()))
 					{
 						_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
-						LOG("Found duplicated plugin \"" + GetOnlyFileName(_vecPluginInitList[i].c_str()) + "\" in plugins initialization list.", LT_WARNING);
+						LOG("Found duplicated plugin \"" + fs::path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
 					}
 
 			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)

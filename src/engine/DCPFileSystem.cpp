@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		21.03.2016 (c)Andrey Korotkov
+\date		25.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -26,7 +26,7 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 	{
 		_isOpened = false;
 
-		if (ToLowerCase(GetFileExt(strFileName.c_str())) != "dcp")
+		if (ToLowerCase(fs::path(strFileName).extension().string()) != ".dcp")
 		{
 			_strLastError = "Wrong file extension.";
 			return;
@@ -118,7 +118,7 @@ bool CDCPPackager::Save(const string &strFileName)
 		return false;
 	}
 
-	if (ToLowerCase(GetFileExt(strFileName.c_str())) != "dcp")
+	if (ToLowerCase(fs::path(strFileName).extension().string()) != ".dcp")
 	{
 		_strLastError = "Wrong file extension.";
 		return false;
@@ -163,10 +163,7 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 		return false;
 	}
 
-	string dir(strDir);
-	CDCPFileSystem::s_CorrectSlashes(dir);
-
-	string file_name = dir + (!dir.empty() && dir[dir.size() - 1] != '\\' ? "\\" : "" ) + GetFileName(strFileName.c_str());
+	string file_name = (strDir / fs::path(strFileName).filename()).string();
 
 	if (file_name.size() > 255)
 	{

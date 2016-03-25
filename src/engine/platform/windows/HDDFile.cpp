@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,8 +15,9 @@ using namespace std;
 CHDDFile::CHDDFile(uint uiInstIdx, const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags) :
 CInstancedObj(uiInstIdx), _file()
 {
-	const string	file_name = GetFileName(pcName),
-					file_path = GetFilePath(pcName);
+	const fs::path path(pcName);
+	const string	file_name = path.filename().string(),
+					file_path = path.parent_path().string();
 
 	if (file_name.size() < MAX_PATH)
 		strcpy(_acName, file_name.c_str());

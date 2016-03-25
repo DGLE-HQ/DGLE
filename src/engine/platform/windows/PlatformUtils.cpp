@@ -426,7 +426,7 @@ string GetEngineFilePath()
 	if (GetModuleFileNameA(hModule, eng_file_name, MAX_PATH) == 0)
 		strcpy(eng_file_name, "");
 
-	return GetFilePath(eng_file_name) + '\\';
+	return fs::path(eng_file_name).parent_path().string() + '\\';
 }
 
 bool FindFilesInDir(const char *pcMask, vector<string> &fileNames)

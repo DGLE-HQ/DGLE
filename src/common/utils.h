@@ -45,11 +45,6 @@ std::string ToStrFmt(double val);
 std::string ToStrExp(double val);
 std::string BoolToStr(bool val);
 
-std::string GetFilePath(std::string path);
-std::string GetFileName(std::string path);
-std::string GetFileExt(std::string path);
-std::string GetOnlyFileName(std::string path);
-
 DGLE::uchar EngKeyToASCIIKey(const DGLE::uint8 key);
 DGLE::uint8 ASCIIKeyToEngKey(const DGLE::uchar key);
 

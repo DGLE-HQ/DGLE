@@ -70,7 +70,7 @@ DGLE_RESULT DGLE_API CBuffFile::IsOpen(bool &bOpened)
 
 DGLE_RESULT DGLE_API CBuffFile::GetName(char *pcName, uint &uiCharsCount)
 {
-	const string name = GetFileName(_strFileName);
+	const string name = fs::path(_strFileName).filename().string();
 
 	if (!pcName)
 	{
@@ -95,7 +95,7 @@ DGLE_RESULT DGLE_API CBuffFile::GetName(char *pcName, uint &uiCharsCount)
 
 DGLE_RESULT DGLE_API CBuffFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
-	const string path = GetFilePath(_strFileName);
+	const string path = fs::path(_strFileName).parent_path().string();
 
 	if (!pcPath)
 	{

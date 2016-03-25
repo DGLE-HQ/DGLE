@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1961,9 +1961,9 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 		return ret;
 	}
 
-	string file_ext = ToUpperCase(GetFileExt(pcFileName));
+	const string file_ext = ToUpperCase(fs::path(pcFileName).extension().string().erase(0, 1));
 
-	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
+	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
 		if ((eObjType == EOT_UNKNOWN || _vecFileFormats[i].type == eObjType) && _vecFileFormats[i].ext == file_ext)
 		{
 			ret = (uint)i;
@@ -2039,7 +2039,7 @@ inline DGLE_RESULT CResourceManager::_Load(const char *pcFileName, IFile *pFile,
 	if (uiFFIdx == -1)
 	{
 		Console()->Write("Use \"rman_list_file_formats\" console command to list supported file formats.");
-		LOG("Resource Manager can't load file \""s + pcFileName + "\" because of unknown file extension \"" + ToUpperCase(GetFileExt(pcFileName)) + "\".", LT_FATAL);
+		LOG("Resource Manager can't load file \""s + pcFileName + "\" because of unknown file extension \"" + ToUpperCase(fs::path(pcFileName).extension().string().erase(0, 1)) + "\".", LT_FATAL);
 		return E_FAIL;
 	}
 
