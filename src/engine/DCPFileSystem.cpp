@@ -132,15 +132,15 @@ bool CDCPPackager::Save(const string &strFileName)
 		return false;
 	}
 
-	char ftype[7] = {'D', 'C', 'P', ' ', '1', '.', '0'};
-	pack.write(ftype, 7);
+	const char ftype[7] = { 'D', 'C', 'P', ' ', '1', '.', '0' };
+	pack.write(ftype, sizeof ftype);
 
 	uint32 size = 0;
 
 	for (size_t i = 0; i < _clInfoTable.size(); ++i)
 	{
 		_clInfoTable[i].ui32Offset = size;
-		pack.write((char*)_data[i], _clInfoTable[i].ui32CmprsdSize);
+		pack.write((const char *)_data[i], _clInfoTable[i].ui32CmprsdSize);
 		size += _clInfoTable[i].ui32CmprsdSize;
 	}
 
@@ -148,7 +148,7 @@ bool CDCPPackager::Save(const string &strFileName)
 		pack.write((char*)&_clInfoTable[0], _clInfoTable.size() * sizeof(TDCPFileInfo));
 
 	uint32 meta[2] = {size, _clInfoTable.size()};
-	pack.write((char*)meta, 2 * sizeof(uint32));
+	pack.write((const char *)meta, sizeof meta);
 
 	pack.close();
 
@@ -179,7 +179,7 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 		return false;
 	}
 
-	ifstream file(strFileName.c_str(), ios_base::in | ios_base::binary);
+	ifstream file(strFileName, ios_base::in | ios_base::binary);
 
 	if (!file.is_open())
 	{
@@ -188,11 +188,11 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 	}
 
 	file.seekg(0, ios_base::end);
-	uint32 size = (uint32)file.tellg();
+	const streamsize size = file.tellg();
 	
 	file.seekg(0, ios_base::beg);
 	uint8 *dat = new uint8[size];
-	file.read((char*)dat, size);
+	file.read((char *)dat, size);
 	
 	file.close();
 
