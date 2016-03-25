@@ -27,7 +27,7 @@ struct INDICES
 {
 	inline uint operator [](uint i) const
 	{
-		register union
+		union
 		{
 			typename IDX_BLOCK_TYPE<(block_bytes > sizeof(uint32))>::TYPE uint: block_bits;
 			uint8 bytes[block_bytes];
