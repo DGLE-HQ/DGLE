@@ -49,14 +49,14 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 
 		uint32 meta[2];
 		pack.seekg(-2 * (int)sizeof(uint32), ios_base::end);
-		pack.read((char*)meta, 2 * sizeof(uint32));
+		pack.read((char *)meta, sizeof meta);
 		pack.seekg(7, ios_base::beg);
 
 		uint8 *data = new uint8[meta[0]];
-		pack.read((char*)data, meta[0]);
+		pack.read((char *)data, meta[0]);
 
 		_clInfoTable.resize(meta[1]);
-		pack.read((char*)&_clInfoTable[0], meta[1] * sizeof(TDCPFileInfo));
+		pack.read((char *)&_clInfoTable[0], meta[1] * sizeof(TDCPFileInfo));
 
 		pack.close();
 
@@ -64,7 +64,7 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 
 		for (size_t i = 0; i < _clInfoTable.size(); ++i)
 		{
-			uint8 *fdat = new uint8[_clInfoTable[i].ui32CmprsdSize];
+			uint8 *const fdat = new uint8[_clInfoTable[i].ui32CmprsdSize];
 			memcpy(fdat, &data[_clInfoTable[i].ui32Offset], _clInfoTable[i].ui32CmprsdSize);
 			_data[i] = fdat;
 		}
@@ -81,7 +81,7 @@ CDCPPackager::~CDCPPackager()
 		delete[] _data[i];
 }
 
-string& CDCPPackager::GetLastError()
+string &CDCPPackager::GetLastError()
 {
 	return _strLastError;
 }
@@ -102,10 +102,10 @@ string CDCPPackager::GetFilesList()
 	string res;
 
 	for (size_t i = 0; i < _clInfoTable.size(); ++i)
-		res += string(_clInfoTable[i].acPackedFName) + ';';
+		res.append(_clInfoTable[i].acPackedFName) += ';';
 
 	if (!res.empty())
-		res.erase(res.begin() + (res.size() - 1));
+		res.pop_back();
 
 	return res;
 }

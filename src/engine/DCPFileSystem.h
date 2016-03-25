@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Sivkov Ilya
+\date		25.03.2016 (c)Sivkov Ilya
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -52,7 +52,7 @@ public:
 	CDCPPackager(const std::string &strFileName);
 	~CDCPPackager();
 
-	std::string& GetLastError();
+	std::string &GetLastError();
 	bool IsOpened();
 	std::string GetFilesList();
 	bool Save(const std::string &strFileName);
