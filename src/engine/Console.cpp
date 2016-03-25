@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -86,7 +86,7 @@ CInstancedObj(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 
 CConsole::~CConsole()
 {
-	for(uint i = 0; i<_vecCommands.size(); ++i)
+	for (uint i = 0; i < _vecCommands.size(); ++i)
 	{
 		delete[] _vecCommands[i].pcName;
 		delete[] _vecCommands[i].pcHelp;

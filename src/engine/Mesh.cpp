@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		25.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -223,7 +223,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateNormals(bool bInvert)
 		v_stride = desc_new.uiVertexStride == 0 ? 3 * sizeof(float) : desc_new.uiVertexStride,
 		count = idxs_count == 0 ? verts_count / 3 : idxs_count / 3;
 
-	for(uint i = 0; i < count; ++i)
+	for (uint i = 0; i < count; ++i)
 	{
 		uint face[3];
 
@@ -247,7 +247,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateNormals(bool bInvert)
 				face[2] = reinterpret_cast<uint16 *>(&desc_new.pIndexBuffer[i * 3 * sizeof(uint16)])[2];
 			}
 
-		const TPoint3 * const v[3] = {
+		const TPoint3 *const v[3] = {
 			reinterpret_cast<TPoint3 *>(&desc_new.pData[face[0] * v_stride]),
 			reinterpret_cast<TPoint3 *>(&desc_new.pData[face[1] * v_stride]),
 			reinterpret_cast<TPoint3 *>(&desc_new.pData[face[2] * v_stride])};
@@ -260,7 +260,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateNormals(bool bInvert)
 	}
 
 	for (uint i = 0; i < verts_count; ++i)
-		(*(reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + i * n_stride]))).Normalize();
+		(reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + i * n_stride]))->Normalize();
 
 	PARANOIC_CHECK_RES(_pBuffer->Reallocate(desc_new, verts_count, idxs_count, CRDM_TRIANGLES));
 
@@ -335,7 +335,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 		n_stride = desc_new.uiNormalStride == 0 ? 3 * sizeof(float) : desc_new.uiNormalStride,
 		count = idxs_count == 0 ? verts_count / 3 : idxs_count / 3;
 
-	for(uint i = 0; i < count; ++i)
+	for (uint i = 0; i < count; ++i)
 	{
 		uint face[3];
 

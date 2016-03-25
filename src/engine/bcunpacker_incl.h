@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		3.12.2015 (c)Andrey Korotkov
+\date		25.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -32,7 +32,7 @@ struct INDICES
 			typename IDX_BLOCK_TYPE<(block_bytes > sizeof(uint32))>::TYPE uint: block_bits;
 			uint8 bytes[block_bytes];
 		};
-		for(uint8 byte_idx = 0; byte_idx < block_bytes; ++byte_idx)
+		for (uint8 byte_idx = 0; byte_idx < block_bytes; ++byte_idx)
 			bytes[byte_idx] = data[byte_idx];
 		return uint >> i * bpi & mask;
 	}

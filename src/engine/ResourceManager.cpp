@@ -651,8 +651,8 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 
 		uint ui_line_w = uiWidth * 3 + align;
 			
-		for(uint j = 0; j < uiHeight; ++j)
-			for(uint i = 0; i < ui_line_w; ++i)
+		for (uint j = 0; j < uiHeight; ++j)
+			for (uint i = 0; i < ui_line_w; ++i)
 				if (i % 3 == 0)
 				{
 					uint8
