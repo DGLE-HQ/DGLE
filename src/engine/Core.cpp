@@ -1108,7 +1108,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		{
 			string ext_fnames[] = { eng_path + "Ext" PLUGIN_FILE_EXTENSION, eng_path + "plugins\\Ext" PLUGIN_FILE_EXTENSION };
 
-			for (int i = 0; i < _countof(ext_fnames); ++i)
+			for (int i = 0; i < size(ext_fnames); ++i)
 			{
 				error_code error;
 				if (fs::exists(ext_fnames[i], error))

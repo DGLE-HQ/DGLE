@@ -295,7 +295,7 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	memcpy(ubt_mesh_data, def_mesh_vtx, sizeof(def_mesh_vtx));
 	memcpy(ubt_mesh_data + sizeof(def_mesh_vtx), def_mesh_fs, sizeof(def_mesh_fs));
 
-	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), _countof(def_mesh_vtx) / 8, _countof(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATE_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
+	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), size(def_mesh_vtx) / 8, size(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATE_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
 		LOG("Can't create default mesh.", LT_FATAL);
 
 	RegisterDefaultResource(EOT_MESH, (IEngineBaseObject*)_pDefMesh);
