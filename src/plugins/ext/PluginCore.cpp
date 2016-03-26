@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		27.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,23 +16,23 @@ _pEngineCore(pEngineCore)
 {
 	_pEngineCore->GetInstanceIndex(_uiInstIdx);
 
-	_pEngineCore->AddProcedure(EPT_INIT, &_s_Init, (void*)this);
-	_pEngineCore->AddProcedure(EPT_FREE, &_s_Free, (void*)this);
+	_pEngineCore->AddProcedure(EPT_INIT, &_s_Init, this);
+	_pEngineCore->AddProcedure(EPT_FREE, &_s_Free, this);
 }
 
 CPluginCore::~CPluginCore()
 {
-	_pEngineCore->RemoveProcedure(EPT_INIT, &_s_Init, (void*)this);
-	_pEngineCore->RemoveProcedure(EPT_FREE, &_s_Free, (void*)this);
+	_pEngineCore->RemoveProcedure(EPT_INIT, &_s_Init, this);
+	_pEngineCore->RemoveProcedure(EPT_FREE, &_s_Free, this);
 }
 
 void CPluginCore::_Init()
 {
 	_pEngineCore->GetSubSystem(ESS_RESOURCE_MANAGER, (IEngineSubSystem *&)_pResMan);
 
-	_pResMan->RegisterFileFormat("jpg", EOT_TEXTURE, "Joint Photographic Experts Group images.", &_s_LoadTextureJPG, (void*)this);
-	_pResMan->RegisterFileFormat("png", EOT_TEXTURE, "Portable Network Graphics images.", &_s_LoadTexturePNG, (void*)this);
-	_pResMan->RegisterFileFormat("dds", EOT_TEXTURE, "Direct Draw Surface images.", &_s_LoadTextureDDS, (void*)this);
+	_pResMan->RegisterFileFormat("jpg", EOT_TEXTURE, "Joint Photographic Experts Group images.", &_s_LoadTextureJPG, this);
+	_pResMan->RegisterFileFormat("png", EOT_TEXTURE, "Portable Network Graphics images.", &_s_LoadTexturePNG, this);
+	_pResMan->RegisterFileFormat("dds", EOT_TEXTURE, "Direct Draw Surface images.", &_s_LoadTextureDDS, this);
 }
 
 void CPluginCore::_Free()
@@ -224,7 +224,7 @@ void CPluginCore::_s_OutputMessage(j_common_ptr cinfo)
 {
 	char temp[JMSG_LENGTH_MAX];
 	cinfo->err->format_message(cinfo, temp);
-	LogWrite(((TJpegErrorMgr *)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \""s + temp + "\".").c_str(), LT_ERROR, GetFileName(__FILE__).c_str(), __LINE__);
+	LogWrite(((TJpegErrorMgr *)cinfo->err)->pPluginCore->_uiInstIdx, ("JPG error: \""s + temp + "\".").c_str(), LT_ERROR, ExtractFilename(__FILE__), __LINE__);
 }
 
 bool CPluginCore::_LoadTextureJPG(IFile *pFile, ITexture *&prTex, E_TEXTURE_LOAD_FLAGS eParams)
