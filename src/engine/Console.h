@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		09.04.2013 (c)Korotkov Andrey
+\date		27.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -43,7 +43,7 @@ class CConsole : public CInstancedObj
 	bool _SetSize(const char *pcParam);
 	bool _Save(const std::string &strFileName);
 	void _Cmdlist();
-	bool _Help(const char* pcParam);
+	bool _Help(const char *pcParam);
 	
 	static bool DGLE_API _s_Hide(void *pParameter, const char *pcParam);
 	static bool DGLE_API _s_Show(void *pParameter, const char *pcParam);

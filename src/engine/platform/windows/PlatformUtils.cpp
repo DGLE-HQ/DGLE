@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		27.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -458,7 +458,7 @@ bool FindFilesInDir(const char *pcMask, vector<string> &fileNames)
 }
 
 #ifdef DXDIAG_VIDEO_INFO
-HRESULT GetStringValue(IDxDiagContainer* pObject, WCHAR* wstrName, TCHAR* strValue, int nStrLen)
+HRESULT GetStringValue(IDxDiagContainer *pObject, WCHAR *wstrName, TCHAR *strValue, int nStrLen)
 {
 	HRESULT hr;
 	VARIANT var;
@@ -471,9 +471,9 @@ HRESULT GetStringValue(IDxDiagContainer* pObject, WCHAR* wstrName, TCHAR* strVal
 		return E_INVALIDARG;
 	
 #ifdef _UNICODE
-	wcsncpy( strValue, var.bstrVal, nStrLen-1 );
+	wcsncpy(strValue, var.bstrVal, nStrLen - 1);
 #else
-	wcstombs( strValue, var.bstrVal, nStrLen );   
+	wcstombs(strValue, var.bstrVal, nStrLen);
 #endif
 
 	strValue[nStrLen-1] = TEXT('\0');
@@ -915,13 +915,8 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		GetStringValue(p_object, L"szDescription", EXPAND(txt));
 		str += txt;
 
-		if (strlen(txt) < 128)
-			strcpy(stSysInfo.cVideocardName, txt);
-		else
-		{
-			memcpy(stSysInfo.cVideocardName, txt, 127);
-			stSysInfo.cOSName[127] = '\0';
-		}
+		strncpy(stSysInfo.cVideocardName, txt, size(stSysInfo.cVideocardName) - 1);
+		*prev(end(stSysInfo.cVideocardName)) = '\0';
 
 		GetStringValue( p_object, L"szDisplayMemoryLocalized", EXPAND(txt));
 		

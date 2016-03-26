@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		27.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -372,7 +372,7 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterDefaultResource(E_ENGINE_OBJECT_T
 	if (eObjType == EOT_UNKNOWN)
 		return E_INVALIDARG;
 
-	_vecDefRes.push_back(TDefaultRes(eObjType, pObj));
+	_vecDefRes.emplace_back(eObjType, pObj);
 	
 	return S_OK;
 }
@@ -1569,7 +1569,7 @@ void CResourceManager::_ListResources() const
 	}
 
 	if (!res.empty())
-		res.erase(res.size() - 1, res.size() - 1);
+		res.pop_back();
 
 	Console()->Write(res);
 }

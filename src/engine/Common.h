@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		27.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -60,6 +60,7 @@ typedef HMODULE TDynLibHandle;
 #include <algorithm>
 #include <fstream>
 #include <strstream>
+#include <iterator>
 #include <limits>
 #include <type_traits>
 #include <utility>

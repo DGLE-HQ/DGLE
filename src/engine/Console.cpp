@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		27.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -97,11 +97,11 @@ CConsole::~CConsole()
 	_pConsoleWindow->Free();
 }
 
-bool CConsole::_Help(const char* pcParam)
+bool CConsole::_Help(const char *pcParam)
 {
 	string par(pcParam);
 
-	if (par == "" || par == "help")
+	if (par.empty() || par == "help")
 	{
 		Write(	"Print \"cmdlist\" for list of available console commands.\n"
 				"Print \"help <command>\" for specific command help.\n"
@@ -111,8 +111,8 @@ bool CConsole::_Help(const char* pcParam)
 	} 
 	else
 	{
-		if (par[par.length() - 1] == ' ')
-			par.erase(par.length() - 1, 1);
+		if (par.back() == ' ')
+			par.pop_back();
 
 		for (const auto &entry : _vecCommands)
 			if (ToLowerCase(par) == entry.pcName)
@@ -329,7 +329,7 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 
 bool CConsole::UnRegCom(const char *pcName)
 {
-	const auto found = find_if(_vecCommands.cbegin(), _vecCommands.cend(), [cmd = ToLowerCase(pcName)](decltype(_vecCommands)::const_reference entry) { return strcmp(entry.pcName, cmd.c_str()) == 0; });
+	const auto found = find_if(_vecCommands.cbegin(), _vecCommands.cend(), [cmd = ToLowerCase(pcName)](decltype(_vecCommands)::const_reference entry) { return entry.pcName == cmd; });
 	if (found != _vecCommands.cend())
 	{
 		delete[] found->pcName;
