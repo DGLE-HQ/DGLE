@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -17,17 +17,17 @@ CInstancedObj(uiInstIdx), _mat(NULL)
 CModel::~CModel()
 {
 	while (!_meshes.empty())
-		(*_meshes.begin()).pMesh->Free();
+		_meshes.front().pMesh->Free();
 }
 
 bool CModel::_HaveMaterialWithBlending() const
 {
-	for (size_t i = 0; i < _meshes.size(); ++i)
-		if (_meshes[i].pMaterial)
+	for (const auto &mesh : _meshes)
+		if (mesh.pMaterial)
 		{
 			bool enabled;
 			E_BLENDING_EFFECT effect;
-			_meshes[i].pMaterial->GetBlending(enabled, effect);
+			mesh.pMaterial->GetBlending(enabled, effect);
 			if (enabled) return true;
 		}
 
@@ -36,26 +36,25 @@ bool CModel::_HaveMaterialWithBlending() const
 
 void CModel::_RecalculateBounds()
 {
-	TPoint3 min_dem((std::numeric_limits<float>::infinity)(), (std::numeric_limits<float>::infinity)(), (std::numeric_limits<float>::infinity)()),
-		max_dem(-(std::numeric_limits<float>::infinity)(), -(std::numeric_limits<float>::infinity)(), -(std::numeric_limits<float>::infinity)());
+	TPoint3	min_dem(+(std::numeric_limits<float>::infinity)(), +(std::numeric_limits<float>::infinity)(), +(std::numeric_limits<float>::infinity)()),
+			max_dem(-(std::numeric_limits<float>::infinity)(), -(std::numeric_limits<float>::infinity)(), -(std::numeric_limits<float>::infinity)());
 	
-	for (size_t i = 0; i < _meshes.size(); ++i)
+	for (const auto &mesh : _meshes)
 	{
 		TPoint3 center;
 		TVector3 extents;
 
-		_meshes[i].pMesh->GetCenter(center);
-		_meshes[i].pMesh->GetExtents(extents);
+		mesh.pMesh->GetCenter(center);
+		mesh.pMesh->GetExtents(extents);
 
-		const TPoint3 walls[6] = {
+		const TPoint3 walls[6] =
+		{
 			TPoint3(center.x - extents.x, center.y, center.z), TPoint3(center.x + extents.x, center.y, center.z), TPoint3(center.x, center.y - extents.y, center.z),
 			TPoint3(center.x, center.y + extents.y, center.z), TPoint3(center.x, center.y, center.z - extents.z), TPoint3(center.x, center.y, center.z + extents.z)
 		};
 
-		for (uint i = 0; i < 6; ++i)
+		for (const TPoint3 &p : walls)
 		{
-			const TPoint3 &p = walls[i];
-
 			max_dem.x = fmax(p.x, max_dem.x);
 			min_dem.x = fmin(p.x, min_dem.x);
 
@@ -94,12 +93,12 @@ bool CModel::_SaveToFile(IFile *pFile)
 
 	bool ret = true;
 
-	for (size_t i = 0; i < _meshes.size(); ++i)
+	for (const auto &mesh : _meshes)
 	{
 		TVariant var;
 		var.SetPointer(pFile);
 		
-		if (FAILED(_meshes[i].pMesh->ExecuteCommand(1, var)) || !var.AsBool())
+		if (FAILED(mesh.pMesh->ExecuteCommand(1, var)) || !var.AsBool())
 			ret = false;
 	}
 
@@ -117,15 +116,15 @@ void CModel::AddMesh(IMesh *pMesh, const TPoint3 &stCenter, const TVector3 &stEx
 
 DGLE_RESULT DGLE_API CModel::Draw()
 {
-	for (size_t i = 0; i < _meshes.size(); ++i)
+	for (const auto &mesh : _meshes)
 	{
-		if (_meshes[i].pMaterial)
-			_meshes[i].pMaterial->Bind();
+		if (mesh.pMaterial)
+			mesh.pMaterial->Bind();
 		else
 			if (_mat)
 				_mat->Bind();
 
-		_meshes[i].pMesh->Draw();
+		mesh.pMesh->Draw();
 	}
 
 	return S_OK;
@@ -234,12 +233,12 @@ DGLE_RESULT DGLE_API CModel::AddMesh(IMesh *pMesh)
 
 DGLE_RESULT DGLE_API CModel::RemoveMesh(IMesh *pMesh)
 {
-	for (size_t i = 0; i < _meshes.size(); ++i)
-		if (pMesh == _meshes[i].pMesh)
-		{
-			_meshes.erase(_meshes.begin() + i);
-			return S_OK;
-		}
+	const auto found = std::find_if(_meshes.cbegin(), _meshes.cend(), [pMesh](decltype(_meshes)::const_reference mesh) { return pMesh == mesh.pMesh; });
+	if (found != _meshes.cend())
+	{
+		_meshes.erase(found);
+		return S_OK;
+	}
 
 	return S_FALSE;
 }

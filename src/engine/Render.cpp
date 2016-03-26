@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -79,9 +79,7 @@ CInstancedObj(uiInstIdx)
 
 	LOG(_strFeturesList, LT_INFO);
 
-	for (size_t i = 0; i < _strFeturesList.size(); ++i)
-		if (_strFeturesList[i] == '\t')
-			_strFeturesList[i] = ' ';
+	std::replace(_strFeturesList.begin(), _strFeturesList.end(), '\t', ' ');
 
 	_strMetricsList = "Core Renderer device metrics\n\t";
 
@@ -105,9 +103,7 @@ CInstancedObj(uiInstIdx)
 
 	LOG(_strMetricsList, LT_INFO);
 
-	for (size_t i = 0; i < _strMetricsList.size(); ++i)
-		if (_strMetricsList[i] == '\t')
-			_strMetricsList[i] = ' ';
+	std::replace(_strMetricsList.begin(), _strMetricsList.end(), '\t', ' ');
 
 	SetClearColor(ColorClear());
 

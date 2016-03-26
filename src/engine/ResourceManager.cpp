@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -379,24 +379,24 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterDefaultResource(E_ENGINE_OBJECT_T
 
 DGLE_RESULT DGLE_API CResourceManager::UnregisterDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *pObj)
 {
-	for (size_t i = 0; i < _vecDefRes.size(); ++i)
-		if (_vecDefRes[i].type == eObjType && _vecDefRes[i].pBaseObj == pObj)
-		{
-			_vecDefRes.erase(_vecDefRes.begin() + i);
-			return S_OK;
-		}
+	const auto found = find_if(_vecDefRes.cbegin(), _vecDefRes.cend(), [=](decltype(_vecDefRes)::const_reference res) { return res.type == eObjType && res.pBaseObj == pObj; });
+	if (found != _vecDefRes.cend())
+	{
+		_vecDefRes.erase(found);
+		return S_OK;
+	}
 
 	return E_INVALIDARG;
 }
 
-DGLE_RESULT DGLE_API CResourceManager::UnregisterFileFormat(const char* pcExtension)
+DGLE_RESULT DGLE_API CResourceManager::UnregisterFileFormat(const char *pcExtension)
 {
-	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == ToUpperCase(pcExtension))
-		{
-			_vecFileFormats.erase(_vecFileFormats.begin()+i);
-			return S_OK;
-		}
+	const auto found = find_if(_vecFileFormats.cbegin(), _vecFileFormats.cend(), [pcExtension](decltype(_vecFileFormats)::const_reference fmt) { return fmt.ext == ToUpperCase(pcExtension); });
+	if (found != _vecFileFormats.cend())
+	{
+		_vecFileFormats.erase(found);
+		return S_OK;
+	}
 
 	return E_INVALIDARG;
 }
@@ -433,8 +433,8 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 {
 	string exts;
 
-	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		exts += _vecFileFormats[i].ext + ';';
+	for (const auto &fmt : _vecFileFormats)
+		exts.append(fmt.ext) += ';';
 
 	if (!pcTxt)
 	{
@@ -457,14 +457,14 @@ DGLE_RESULT DGLE_API CResourceManager::GetRegisteredExtensions(char* pcTxt, uint
 
 DGLE_RESULT DGLE_API CResourceManager::GetDefaultResource(E_ENGINE_OBJECT_TYPE eObjType, IEngineBaseObject *&prObj)
 {
-	for (int i = (int)_vecDefRes.size() - 1; i > -1; --i)
-		if (eObjType == _vecDefRes[i].type)
-		{
-			prObj = _vecDefRes[i].pBaseObj;
-			return S_OK;
-		}
+	const auto found = find_if(_vecDefRes.crbegin(), _vecDefRes.crend(), [eObjType](decltype(_vecDefRes)::const_reference res) { return eObjType == res.type; });
+	if (found != _vecDefRes.crend())
+	{
+		prObj = found->pBaseObj;
+		return S_OK;
+	}
 
-	prObj = (IEngineBaseObject*)_pBObjDummy;
+	prObj = (IEngineBaseObject *)_pBObjDummy;
 
 	return E_INVALIDARG;
 }
@@ -482,12 +482,12 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByName(const char *pcName, IEn
 	if (!pcName || strlen(pcName) == 0)
 		return E_INVALIDARG;
 
-	uint32 hash = GetCRC32((uint8*)pcName, (uint32)strlen(pcName) * sizeof(char));
+	const uint32 hash = GetCRC32((const uint8 *)pcName, strlen(pcName) * sizeof(char));
 
-	for (size_t i = 0; i < _vecList.size(); ++i)
-		if (_vecList[i].nameHash == hash)
+	for (const auto &res : _vecList)
+		if (res.nameHash == hash)
 		{
-			prObj = _vecList[i].pObj;
+			prObj = res.pObj;
 			return S_OK;
 		}
 
@@ -508,23 +508,23 @@ DGLE_RESULT DGLE_API CResourceManager::GetResourceByIndex(uint uiIdx, IEngineBas
 
 DGLE_RESULT DGLE_API CResourceManager::GetResourceName(IEngineBaseObject *pObj, char *pcName, uint &uiCharsCount)
 {
-	for (size_t i = 0; i < _vecList.size(); ++i)
-		if (_vecList[i].pObj == pObj)
+	for (const auto &res : _vecList)
+		if (res.pObj == pObj)
 			if (!pcName || uiCharsCount == 0)
 			{
-				uiCharsCount = strlen(_vecList[i].pcName) + 1;
+				uiCharsCount = strlen(res.pcName) + 1;
 				return S_OK;
 			}
 			else
 			{
-				if (uiCharsCount <= strlen(_vecList[i].pcName))
+				if (uiCharsCount <= strlen(res.pcName))
 				{
-					uiCharsCount = strlen(_vecList[i].pcName) + 1;
+					uiCharsCount = strlen(res.pcName) + 1;
 					strcpy(pcName, "");
 					return E_INVALIDARG;
 				}
 
-				strcpy(pcName, _vecList[i].pcName);
+				strcpy(pcName, res.pcName);
 				
 				return S_OK;
 			}
@@ -667,7 +667,7 @@ bool CResourceManager::_SwabRB(uint8 *pData, uint uiWidth, uint uiHeight, E_TEXT
 		{
 			format = TDF_RGBA8;
 
-			for (uint i = 0; i < uiWidth*uiHeight; ++i)
+			for (uint i = 0; i < uiWidth * uiHeight; ++i)
 			{
 				uint8
 				ubt_tmp = pData[i * 4];
@@ -951,8 +951,8 @@ DGLE_RESULT DGLE_API CResourceManager::RegisterFileFormat(const char* pcExtensio
 {
 	DGLE_RESULT res = S_OK;
 
-	for (size_t i = 0; i<_vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == pcExtension && _vecFileFormats[i].type == eObjType)
+	for (const auto &fmt : _vecFileFormats)
+		if (fmt.ext == pcExtension && fmt.type == eObjType)
 		{
 			LOG("File format with extension \""s + pcExtension + "\" was overrided.", LT_WARNING);
 			res = S_FALSE;
@@ -1530,10 +1530,10 @@ void CResourceManager::_ProfilerEventHandler() const
 		uint cnt[_sc_EngObjTypeCount];
 		memset(cnt, 0, _sc_EngObjTypeCount * sizeof(uint));
 
-		for (size_t i = 0; i < _vecList.size(); ++i)
+		for (const auto &res : _vecList)
 		{
 			E_ENGINE_OBJECT_TYPE type;
-			_vecList[i].pObj->GetType(type);
+			res.pObj->GetType(type);
 			++cnt[type];
 		}
 
@@ -1559,16 +1559,16 @@ void CResourceManager::_ListResources() const
 {
 	string res;
 
-	for (size_t i = 0; i < _vecList.size(); ++i)
+	for (const auto &resource : _vecList)
 	{
 		E_ENGINE_OBJECT_TYPE type;
-		_vecList[i].pObj->GetType(type);
+		resource.pObj->GetType(type);
 		string name;
 		_s_GetObjTypeName(type, name);
-		res += string(_vecList[i].pcName) + '[' + name + "]\n";
+		res += string(resource.pcName) + '[' + move(name) + "]\n";
 	}
 
-	if(!res.empty())
+	if (!res.empty())
 		res.erase(res.size() - 1, res.size() - 1);
 
 	Console()->Write(res);
@@ -1966,12 +1966,12 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
 		if ((eObjType == EOT_UNKNOWN || _vecFileFormats[i].type == eObjType) && _vecFileFormats[i].ext == file_ext)
 		{
-			ret = (uint)i;
+			ret = i;
 			break;
 		}
 
 	if (ret == -1)
-		prObj = (IEngineBaseObject*&)_pBObjDummy;
+		prObj = (IEngineBaseObject *&)_pBObjDummy;
 	else
 		switch (_vecFileFormats[ret].type)
 		{
@@ -1992,10 +1992,11 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 
 DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension, E_ENGINE_OBJECT_TYPE &eType)
 {
-	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == ToUpperCase(pcExtension))
+	const auto ext = ToUpperCase(pcExtension);
+	for (const auto &fmt : _vecFileFormats)
+		if (fmt.ext == ext)
 		{
-			eType = _vecFileFormats[i].type;
+			eType = fmt.type;
 			return S_OK;
 		}
 
@@ -2006,24 +2007,25 @@ DGLE_RESULT DGLE_API CResourceManager::GetExtensionType(const char *pcExtension,
 
 DGLE_RESULT DGLE_API CResourceManager::GetExtensionDescription(const char *pcExtension, char *pcTxt, uint &uiCharsCount)
 {
-	for (size_t i = 0; i < _vecFileFormats.size(); ++i)
-		if (_vecFileFormats[i].ext == ToUpperCase(pcExtension))
+	const auto ext = ToUpperCase(pcExtension);
+	for (const auto &fmt : _vecFileFormats)
+		if (fmt.ext == ext)
 		{
 			if (!pcTxt)
 			{
-				uiCharsCount = _vecFileFormats[i].discr.size() + 1;
+				uiCharsCount = fmt.discr.size() + 1;
 				return S_OK;
 			}
 
-			if (_vecFileFormats[i].discr.size() >= uiCharsCount)
+			if (fmt.discr.size() >= uiCharsCount)
 			{
-				uiCharsCount = _vecFileFormats[i].discr.size() + 1;
+				uiCharsCount = fmt.discr.size() + 1;
 				if (uiCharsCount > 0)
 					strcpy(pcTxt, "");
 				return E_INVALIDARG;
 			}
 
-			strcpy(pcTxt, _vecFileFormats[i].discr.c_str());
+			strcpy(pcTxt, fmt.discr.c_str());
 
 			return S_OK;
 		}
@@ -2161,8 +2163,8 @@ DGLE_RESULT DGLE_API CResourceManager::FreeResource(IEngineBaseObject *&prObj)
 
 DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngineBaseObject *pObj)
 {
-	for (size_t i = 0; i < _vecList.size(); ++i)
-		if (_vecList[i].pObj == pObj)
+	for (const auto &res : _vecList)
+		if (res.pObj == pObj)
 			return E_INVALIDARG;
 
 	_AddResource(pcName, pObj);
@@ -2172,19 +2174,15 @@ DGLE_RESULT DGLE_API CResourceManager::AddResource(const char *pcName, IEngineBa
 
 DGLE_RESULT DGLE_API CResourceManager::RemoveResource(IEngineBaseObject *pObj, bool &bCanDelete)
 {
-	for (size_t i = 0; i < _vecList.size(); ++i)
-		if (_vecList[i].pObj == pObj)
-		{
-			bCanDelete = true;
-			_vecList.erase(_vecList.begin() + i);
-			return S_OK;
-		}
+	const auto found = find_if(_vecList.cbegin(), _vecList.cend(), [pObj](decltype(_vecList)::const_reference res) { return res.pObj == pObj; });
+	if (found != _vecList.cend())
+	{
+		bCanDelete = true;
+		_vecList.erase(found);
+		return S_OK;
+	}
 
-	bCanDelete = true;
-
-	for (size_t i = 0; i < _vecDefRes.size(); ++i)
-		if (pObj == _vecDefRes[i].pBaseObj)
-			bCanDelete = false;
+	bCanDelete = find_if(_vecDefRes.cbegin(), _vecDefRes.cend(), [pObj](decltype(_vecDefRes)::const_reference res) { return pObj == res.pBaseObj; }) == _vecDefRes.cend();
 	
 	return S_FALSE;
 }

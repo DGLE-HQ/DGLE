@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -50,6 +50,7 @@ typedef HMODULE TDynLibHandle;
 #endif
 
 #include <cassert>
+#include <cstdint>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -62,6 +63,7 @@ typedef HMODULE TDynLibHandle;
 #include <limits>
 #include <type_traits>
 #include <utility>
+#include <functional>
 #include <system_error>
 #include <filesystem>
 
@@ -95,7 +97,7 @@ struct TEngInstance
 	{}
 };
 
-TEngInstance* EngineInstance(uint uiInstIdx);
+TEngInstance *EngineInstance(uint uiInstIdx);
 
 class CInstancedObj
 {

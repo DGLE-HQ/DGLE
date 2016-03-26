@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -521,25 +521,25 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 #ifndef NO_BUILTIN_INPUT
 		if (_bBuiltInInput)
-			delete (CInput*)_pInput;
+			delete (CInput *)_pInput;
 #endif
 
 #ifndef NO_BUILTIN_SOUND
 		if (_bSndEnabled && _bBuiltInSound)
-			delete (CSound*)_pSound;
+			delete (CSound *)_pSound;
 #endif
 
 #ifndef NO_BUILTIN_RENDERER
 		if (_bBuiltInRenderer)
-			delete (CCoreRendererGL*)_pCoreRenderer;
+			delete (CCoreRendererGL *)_pCoreRenderer;
 #endif
 
 		delete _pMainFS;
 
 		_pMainWindow->Free();
 
-		for (i = 0; i < _vecEvents.size(); ++i)
-			delete _vecEvents[i].pDEvent;
+		for (const auto &event : _vecEvents)
+			delete event.pDEvent;
 
 		_vecEvents.clear();
 
@@ -846,19 +846,19 @@ DGLE_RESULT DGLE_API CCore::RenderFrame()
 
 void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 {
-	if (_vecEngineCallbacks.empty())
-		return;
+	const auto invoke = [=]
+	{
+		for (const auto callback : _vecEngineCallbacks)
+			switch(eProcType)
+			{
+			case EPT_UPDATE:	callback->Update(_uiLastUpdateDeltaTime);	break;
+			case EPT_RENDER:	callback->Render();							break;
+			case EPT_INIT:		callback->Initialize();						break;
+			case EPT_FREE:		callback->Free();							break;
+			}
+	};
 
-	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
-	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
-		switch(eProcType)
-		{
-		case EPT_UPDATE: _vecEngineCallbacks[i]->Update(_uiLastUpdateDeltaTime); break;
-		case EPT_RENDER: _vecEngineCallbacks[i]->Render(); break;
-		case EPT_INIT: _vecEngineCallbacks[i]->Initialize(); break;
-		case EPT_FREE: _vecEngineCallbacks[i]->Free(); break;
-		}
-	)
+	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), invoke();)
 }
 
 DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 &stColor)
@@ -912,13 +912,13 @@ DGLE_RESULT DGLE_API CCore::DisconnectPlugin(IPlugin *pPlugin)
 
 DGLE_RESULT DGLE_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlugin)
 {
-	for (size_t i = 0; i < _vecPlugins.size(); ++i)
+	for (const auto &plugin : _vecPlugins)
 	{
 		TPluginInfo info;
-		_vecPlugins[i].pPlugin->GetPluginInfo(info);
-		if (strcmp(pcPluginName,info.cName) == 0)
+		plugin.pPlugin->GetPluginInfo(info);
+		if (strcmp(pcPluginName, info.cName) == 0)
 		{
-			prPlugin = _vecPlugins[i].pPlugin;
+			prPlugin = plugin.pPlugin;
 			return S_OK;
 		}
 	}
@@ -928,27 +928,27 @@ DGLE_RESULT DGLE_API CCore::GetPlugin(const char *pcPluginName, IPlugin *&prPlug
 
 bool CCore::_UnloadPlugin(IPlugin *pPlugin)
 {
-	for (size_t i = 0; i < _vecPlugins.size(); ++i)
-		if (_vecPlugins[i].pPlugin == pPlugin)
-		{
-			TPluginInfo info;
-			_vecPlugins[i].pPlugin->GetPluginInfo(info);
+	const auto found = find_if(_vecPlugins.cbegin(), _vecPlugins.cend(), [pPlugin](decltype(_vecPlugins)::const_reference plugin) { return plugin.pPlugin == pPlugin; });
+	if (found != _vecPlugins.cend())
+	{
+		TPluginInfo info;
+		found->pPlugin->GetPluginInfo(info);
 
-			void (DGLE_API *pFreePlugin)(IPlugin *plugin) = NULL;
+		void (DGLE_API *pFreePlugin)(IPlugin *plugin) = NULL;
 
-			pFreePlugin = reinterpret_cast<void (DGLE_API *)(IPlugin *)>(GetProcAddress(_vecPlugins[i].tLib,("FreePlugin")));
+		pFreePlugin = reinterpret_cast<void (DGLE_API *)(IPlugin *)>(GetProcAddress(found->tLib, "FreePlugin"));
 
-			if (pFreePlugin)
-				(*pFreePlugin)(_vecPlugins[i].pPlugin);
+		if (pFreePlugin)
+			pFreePlugin(found->pPlugin);
 			
-			if (!ReleaseDynamicLib(_vecPlugins[i].tLib))
-				LOG("Can't free \""s + info.cName + "\" plugin library.", LT_ERROR);
-			else
-				LOG("Plugin \""s + info.cName + "\" disconnected succesfully.", LT_INFO);
+		if (!ReleaseDynamicLib(found->tLib))
+			LOG("Can't free \""s + info.cName + "\" plugin library.", LT_ERROR);
+		else
+			LOG("Plugin \""s + info.cName + "\" disconnected succesfully.", LT_INFO);
 			
-			_vecPlugins.erase(_vecPlugins.begin() + i);
-			return true;
-		}
+		_vecPlugins.erase(found);
+		return true;
+	}
 
 	return false;
 }
@@ -1010,10 +1010,10 @@ bool CCore::_LoadPlugin(const string &strFileName, IPlugin *&prPlugin)
 void CCore::_PrintPluginsInfo()
 {
 	string tmp = "------Connected Plugins------\n";
-	for (size_t i = 0; i < _vecPlugins.size(); ++i)
+	for (const auto &plugin : _vecPlugins)
 	{
 		TPluginInfo info;
-		_vecPlugins[i].pPlugin->GetPluginInfo(info);
+		plugin.pPlugin->GetPluginInfo(info);
 		tmp += "- "s + info.cName + ' ' + info.cVersion + " by " + info.cVendor + '\n';
 	}
 	tmp += "-----------------------------";
@@ -1108,12 +1108,12 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		{
 			string ext_fnames[] = { eng_path + "Ext" PLUGIN_FILE_EXTENSION, eng_path + "plugins\\Ext" PLUGIN_FILE_EXTENSION };
 
-			for (int i = 0; i < size(ext_fnames); ++i)
+			for (string &name : ext_fnames)
 			{
 				error_code error;
-				if (fs::exists(ext_fnames[i], error))
+				if (fs::exists(name, error))
 				{
-					_vecPluginInitList.push_back(move(ext_fnames[i]));
+					_vecPluginInitList.push_back(move(name));
 					break;
 				}
 				else if (error)
@@ -1164,10 +1164,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 						LOG("Found duplicated plugin \"" + fs::path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
 					}
 
-			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
+			for (const auto &filename : _vecPluginInitList)
 			{
 				IPlugin *plugin;
-				if (S_OK == ConnectPlugin(_vecPluginInitList[i].c_str(), plugin))
+				if (S_OK == ConnectPlugin(filename.c_str(), plugin))
 				{
 					char *p_name;
 					uint chars_cnt;
@@ -1533,19 +1533,23 @@ DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &ui64Tick)
 
 DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {
-	for (size_t i = 0; i < _vecEvents.size(); ++i)
-		if (eEventType == _vecEvents[i].eType)
+	// wrap to lambda in order to cope with C2712 due to __try usage
+	[=]
+	{
+		const auto found = find_if(_vecEvents.cbegin(), _vecEvents.cend(), [eEventType](decltype(_vecEvents)::const_reference event) { return eEventType == event.eType; });
+		if (found != _vecEvents.cend())
 		{
-			if (!_vecEvents[i].pDEvent->IsNull())
-				_vecEvents[i].pDEvent->Invoke(pEvent);
-			
-			break;
+			if (!found->pDEvent->IsNull())
+				found->pDEvent->Invoke(pEvent);
 		}
+	}();
 
-	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), 
-	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
-		_vecEngineCallbacks[i]->OnEvent(eEventType, pEvent);
-	)
+	const auto notify_callbacks = [=]
+	{
+		for_each(_vecEngineCallbacks.cbegin(), _vecEngineCallbacks.cend(), bind(&remove_pointer_t<decltype(_vecEngineCallbacks)::value_type>::OnEvent, placeholders::_1, eEventType, pEvent));
+	};
+
+	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), notify_callbacks();)
 	
 	return S_OK;
 }
@@ -1555,10 +1559,10 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 	if (eEventType == ET_BEFORE_INITIALIZATION && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
 	
-	for (size_t i = 0; i < _vecEvents.size(); ++i)
-		if (eEventType == _vecEvents[i].eType)
+	for (const auto &event : _vecEvents)
+		if (eEventType == event.eType)
 		{
-			_vecEvents[i].pDEvent->Add(pListnerProc, pParameter);
+			event.pDEvent->Add(pListnerProc, pParameter);
 			return S_OK;
 		}
 
@@ -1575,10 +1579,10 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 
 DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
-	for (size_t i = 0; i < _vecEvents.size(); ++i)
-		if (eEventType == _vecEvents[i].eType)
+	for (const auto &event : _vecEvents)
+		if (eEventType == event.eType)
 		{
-			_vecEvents[i].pDEvent->Remove(pListnerProc, pParameter);
+			event.pDEvent->Remove(pListnerProc, pParameter);
 			return S_OK;
 		}
 
@@ -1587,9 +1591,8 @@ DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (D
 
 DGLE_RESULT DGLE_API CCore::AddEngineCallback(IEngineCallback *pEngineCallback)
 {
-	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
-		if (_vecEngineCallbacks[i] == pEngineCallback)
-			return S_FALSE;
+	if (find(_vecEngineCallbacks.cbegin(), _vecEngineCallbacks.cend(), pEngineCallback) != _vecEngineCallbacks.cend())
+		return S_FALSE;
 
 	_vecEngineCallbacks.push_back(pEngineCallback);
 
@@ -1598,12 +1601,12 @@ DGLE_RESULT DGLE_API CCore::AddEngineCallback(IEngineCallback *pEngineCallback)
 
 DGLE_RESULT DGLE_API CCore::RemoveEngineCallback(IEngineCallback *pEngineCallback)
 {
-	for (size_t i = 0; i < _vecEngineCallbacks.size(); ++i)
-		if (_vecEngineCallbacks[i] == pEngineCallback)
-		{
-			_vecEngineCallbacks.erase(_vecEngineCallbacks.begin() + i);
-			return S_OK;
-		}
+	const auto found = find(_vecEngineCallbacks.cbegin(), _vecEngineCallbacks.cend(), pEngineCallback);
+	if (found != _vecEngineCallbacks.cend())
+	{
+		_vecEngineCallbacks.erase(found);
+		return S_OK;
+	}
 
 	return S_FALSE;
 }

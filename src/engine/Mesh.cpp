@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -392,7 +392,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateTangentSpace()
 
 	for (uint i = 0; i < verts_count; ++i)
 	{
-		const TVector3 * const normal = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + i * n_stride]);
+		const TVector3 *const normal = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiNormalOffset + i * n_stride]);
 		TVector3 *tangent = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiTangentOffset + i * t_stride]),
 			*binormal = reinterpret_cast<TVector3 *>(&desc_new.pData[desc_new.uiBinormalOffset + i * b_stride]);
 		
@@ -427,7 +427,7 @@ DGLE_RESULT DGLE_API CMesh::RecalculateBounds()
 
 	for (uint i = 0; i < verts_count; ++i)
 	{
-		const TPoint3 * const p = reinterpret_cast<TPoint3 *>(&desc.pData[stride * i]);
+		const TPoint3 *const p = reinterpret_cast<TPoint3 *>(&desc.pData[stride * i]);
 
 		max_dem.x = fmax(p->x, max_dem.x);
 		min_dem.x = fmin(p->x, min_dem.x);

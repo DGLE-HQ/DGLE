@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		17.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,7 +24,7 @@ bool bUnhandledFilterEnabled = false;
 LONG WINAPI M2UnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo);
 void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo);
 void WriteStackDetails(PCONTEXT pContext);
-bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, size_t bufLen);
+bool GetTextFileString(const char *szFileName, unsigned int iNo, char *szBuf, size_t bufLen);
 
 static LPTOP_LEVEL_EXCEPTION_FILTER m_previousFilter;
 static string str_info;
@@ -254,7 +254,7 @@ void WriteStackDetails(PCONTEXT pContext)
 
 }
 
-bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, size_t bufLen)
+bool GetTextFileString(const char *szFileName, unsigned int iNo, char *szBuf, size_t bufLen)
 {
 	HANDLE hFile = CreateFileA(szFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == NULL)
@@ -264,7 +264,7 @@ bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, si
 
 	size_t size = GetFileSize(hFile, NULL);
 
-	char* pFile = (char*)VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_READWRITE);
+	char *pFile = (char *)VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_READWRITE);
 
 	DWORD dwDataRead;
 
@@ -284,8 +284,8 @@ bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, si
 
 		if (iLine == iNo)
 		{
-			char* pStart = &pFile [i + 2];
-			char* pEnd = strchr(pStart, 0x0DU);
+			char *pStart = pFile + (i + 2);
+			char *pEnd = strchr(pStart, 0x0DU);
 			size_t len = min(size_t(pEnd - pStart), bufLen - 1);
 			strncpy_s(szBuf, bufLen, pStart, len);
 			szBuf[len] = 0;
@@ -301,7 +301,7 @@ bool GetTextFileString(const char* szFileName, unsigned int iNo, char* szBuf, si
 #else
 void InitDbgHelp(uint uiInstIdx){}
 
-const char* FormWin32ExceptionString(DWORD dwCode)
+const char *FormWin32ExceptionString(DWORD dwCode)
 {
 	string exp_txt;
 

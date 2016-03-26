@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -86,10 +86,10 @@ CInstancedObj(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 
 CConsole::~CConsole()
 {
-	for (uint i = 0; i < _vecCommands.size(); ++i)
+	for (const auto &entry : _vecCommands)
 	{
-		delete[] _vecCommands[i].pcName;
-		delete[] _vecCommands[i].pcHelp;
+		delete[] entry.pcName;
+		delete[] entry.pcHelp;
 	}
 
 	_vecCommands.clear();
@@ -114,16 +114,16 @@ bool CConsole::_Help(const char* pcParam)
 		if (par[par.length() - 1] == ' ')
 			par.erase(par.length() - 1, 1);
 
-		for (size_t i = 0; i < _vecCommands.size(); ++i)
-		 if (ToLowerCase(par) == _vecCommands[i].pcName)
-		 {
-			 if (strlen(_vecCommands[i].pcHelp) == 0)
-				Write(("Help for command \"" + par + "\" is not presented.").c_str());
-			 else
-				Write(_vecCommands[i].pcHelp);
-			 
-			 return true;
-		 }
+		for (const auto &entry : _vecCommands)
+			if (ToLowerCase(par) == entry.pcName)
+			{
+				if (strlen(entry.pcHelp) == 0)
+					Write(("Help for command \"" + par + "\" is not presented.").c_str());
+				else
+					Write(entry.pcHelp);
+
+				return true;
+			}
 
 		 Write(("Command \"" + par + "\" not found.").c_str());
 	}
@@ -149,8 +149,8 @@ void CConsole::_Cmdlist()
 
 	if (!_vecCommands.empty())
 	{
-		for (size_t i = 0; i < _vecCommands.size(); ++i)
-			lst += " >"s + _vecCommands[i].pcName + '\n';
+		for (const auto &entry : _vecCommands)
+			lst += " >"s + entry.pcName + '\n';
 		
 		lst += "------" + to_string(_vecCommands.size()) + " registered commands-----" + (_vecCommands.size() < 100 ? "-" : "") + '\n';
 		
@@ -236,14 +236,14 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 	else
 		cmd = strCommand;
 	
-	for (size_t i = 0; i < _vecCommands.size(); ++i)
-		if (cmd == _vecCommands[i].pcName)
+	for (const auto &entry : _vecCommands)
+		if (cmd == entry.pcName)
 		{
-			if (_vecCommands[i].piVar == NULL)
+			if (entry.piVar == NULL)
 			{
 				_pConsoleWindow->EnterThreadSafeSection();
 
-				if (!(*_vecCommands[i].pProc)(_vecCommands[i].pParameter, param.c_str()))
+				if (!(*entry.pProc)(entry.pParameter, param.c_str()))
 					Write("Failed to execute command.");
 
 				_pConsoleWindow->LeaveThreadSafeSection();
@@ -252,8 +252,8 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 			{
 				if (param.empty())
 				{
-					Write((ToUpperCase(cmd) + " current value is " + to_string(*_vecCommands[i].piVar) + ".\n"
-						"Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + '.').c_str());
+					Write((ToUpperCase(cmd) + " current value is " + to_string(*entry.piVar) + ".\n"
+						"Value may vary from " + to_string(entry.iMinValue) + " up to " + to_string(entry.iMaxValue) + '.').c_str());
 				}
 				else
 				{
@@ -262,20 +262,20 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 					if (t == 0 && param != "0")
 						Write(('\"' + param + "\" is not a valid integer value.").c_str());
 					else
-						if (t < _vecCommands[i].iMinValue || t > _vecCommands[i].iMaxValue)
-							Write(("Value may vary from " + to_string(_vecCommands[i].iMinValue) + " up to " + to_string(_vecCommands[i].iMaxValue) + '.').c_str());
+						if (t < entry.iMinValue || t > entry.iMaxValue)
+							Write(("Value may vary from " + to_string(entry.iMinValue) + " up to " + to_string(entry.iMaxValue) + '.').c_str());
 						else
 						{
 							_pConsoleWindow->EnterThreadSafeSection();
 							
 							bool res = true;
 
-							if (_vecCommands[i].pProc != NULL)
-								res = (*_vecCommands[i].pProc)(_vecCommands[i].pParameter, param.c_str());
+							if (entry.pProc != NULL)
+								res = (*entry.pProc)(entry.pParameter, param.c_str());
 							
 							if (res)
 							{
-								*_vecCommands[i].piVar = t;
+								*entry.piVar = t;
 								Write((ToUpperCase(cmd) + " is set to " + to_string(t) + '.').c_str());
 							}
 
@@ -293,7 +293,8 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 
 void CConsole::_OnCmdComplete(const char *pcParam)
 {
-	string cmds = "----\n", cmd = ToLowerCase(pcParam);
+	string cmds = "----\n";
+	const string cmd = ToLowerCase(pcParam);
 	int count = 0, idx = 0;
 	
 	for (size_t i = 0; i < _vecCommands.size(); ++i)
@@ -328,18 +329,16 @@ void CConsole::_OnCmdComplete(const char *pcParam)
 
 bool CConsole::UnRegCom(const char *pcName)
 {
-	string cmd = ToLowerCase(pcName);
-	
-	for (size_t i = 0; i < _vecCommands.size(); ++i)
-		if (strcmp(_vecCommands[i].pcName, cmd.c_str()) == 0)
-		{
-			delete[] _vecCommands[i].pcName;
-			delete[] _vecCommands[i].pcHelp;
-			
-			_vecCommands.erase(_vecCommands.begin() + i);
-			
-			return true;
-		}
+	const auto found = find_if(_vecCommands.cbegin(), _vecCommands.cend(), [cmd = ToLowerCase(pcName)](decltype(_vecCommands)::const_reference entry) { return strcmp(entry.pcName, cmd.c_str()) == 0; });
+	if (found != _vecCommands.cend())
+	{
+		delete[] found->pcName;
+		delete[] found->pcHelp;
+
+		_vecCommands.erase(found);
+
+		return true;
+	}
 
 	return false;
 }
@@ -506,10 +505,7 @@ void CConsole::Write(const std::string &strTxt, bool bToPrevLine)
 
 	for (size_t i = 0; i < txt.size(); ++i)
 		if (txt[i] == '\n')
-		{
-			txt.insert(i, 1, '\r');
-			++i;
-		}
+			txt.insert(i++, 1, '\r');
 
 	_pConsoleWindow->OutputTxt(txt.c_str(), bToPrevLine);
 }

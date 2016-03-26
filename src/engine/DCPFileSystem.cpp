@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		25.03.2016 (c)Andrey Korotkov
+\date		26.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -77,8 +77,8 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 
 CDCPPackager::~CDCPPackager()
 {
-	for (size_t i = 0; i < _data.size(); ++i)
-		delete[] _data[i];
+	for (const auto item : _data)
+		delete[] item;
 }
 
 string &CDCPPackager::GetLastError()
@@ -101,8 +101,8 @@ string CDCPPackager::GetFilesList()
 
 	string res;
 
-	for (size_t i = 0; i < _clInfoTable.size(); ++i)
-		res.append(_clInfoTable[i].acPackedFName) += ';';
+	for (const auto &info : _clInfoTable)
+		res.append(info.acPackedFName) += ';';
 
 	if (!res.empty())
 		res.pop_back();
@@ -641,9 +641,7 @@ bool DGLE_API CDCPFileSystem::_s_ConExecCmd(void *pParameter, const char *pcPara
 			{
 				string list = PTHIS(CDCPFileSystem)->_pPackager->GetFilesList();
 
-				for (string::size_type i = 0; i < list.size(); ++i)
-					if (list[i] == ';')
-						list[i] = '\n';
+				replace(list.begin(), list.end(), ';', '\n');
 
 				CON(CDCPFileSystem, list.c_str());
 

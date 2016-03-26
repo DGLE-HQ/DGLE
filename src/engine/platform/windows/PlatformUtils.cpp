@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -358,12 +358,9 @@ vector<TTimer> timers;
 
 void DGLE_API TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-	for (size_t i = 0; i < timers.size(); ++i)
-		if (timers[i].uiId == idEvent)
-		{
-			timers[i].pDelegate->Invoke();
-			break;
-		}
+	const auto found = find_if(timers.cbegin(), timers.cend(), [idEvent](decltype(timers)::const_reference timer) { return timer.uiId == idEvent; });
+	if (found != timers.cend())
+		found->pDelegate->Invoke();
 }
 
 uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer)
@@ -384,12 +381,9 @@ uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer)
 
 bool ReleaseTimer(uint id)
 {
-	for (size_t i = 0; i < timers.size(); ++i)
-		if (timers[i].uiId == id)
-		{
-			timers.erase(timers.begin() + i);
-			break;
-		}
+	const auto found = find_if(timers.cbegin(), timers.cend(), [id](decltype(timers)::const_reference timer) { return timer.uiId == id; });
+	if (found != timers.cend())
+		timers.erase(found);
 
 	return KillTimer(NULL, id) != FALSE;
 }
@@ -872,12 +866,12 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	string vcard_advanced_str = "";
 
 #ifdef DXDIAG_VIDEO_INFO
-	IDxDiagProvider*  p_dx_diag_provider;
+	IDxDiagProvider * p_dx_diag_provider;
 
 	hr = E_FAIL;
 
 	if (SUCCEEDED(chr))
-		hr = CoCreateInstance( CLSID_DxDiagProvider, NULL, CLSCTX_INPROC_SERVER, IID_IDxDiagProvider, (LPVOID*) &p_dx_diag_provider);
+		hr = CoCreateInstance( CLSID_DxDiagProvider, NULL, CLSCTX_INPROC_SERVER, IID_IDxDiagProvider, (LPVOID *)&p_dx_diag_provider);
 	
 	if (SUCCEEDED(hr))
 	{
@@ -891,11 +885,11 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		hr = p_dx_diag_provider->Initialize(&dx_diag_init_param);
 
-		IDxDiagContainer* p_dx_diag_root;
+		IDxDiagContainer *p_dx_diag_root;
 
 		hr = p_dx_diag_provider->GetRootContainer(&p_dx_diag_root);
 
-		IDxDiagContainer* p_container = NULL;
+		IDxDiagContainer *p_container = NULL;
 
 		hr = p_dx_diag_root->GetChildContainer(L"DxDiag_DisplayDevices", &p_container);
 		
@@ -907,21 +901,21 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		stSysInfo.uiVideocardCount = nInstanceCount;
 
-		IDxDiagContainer* p_object = NULL;
+		IDxDiagContainer *p_object = NULL;
 
 		wchar wc_container[256];
 
 		hr = p_container->EnumChildContainerNames(0, wc_container, 256);
 		hr = p_container->GetChildContainer(wc_container, &p_object);
 
-		#define EXPAND(x) x, sizeof(x)/sizeof(TCHAR)
+		#define EXPAND(x) x, sizeof(x) / sizeof(TCHAR)
 		
 		char txt[200];
 
 		GetStringValue(p_object, L"szDescription", EXPAND(txt));
 		str += txt;
 
-		if(strlen(txt) <= 128)
+		if (strlen(txt) <= 128)
 			strcpy(stSysInfo.cVideocardName, txt);
 		else
 		{
@@ -931,7 +925,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		GetStringValue( p_object, L"szDisplayMemoryLocalized", EXPAND(txt));
 		
-		string str_ts = txt, str_ts2 = "", str_res = "";
+		string str_ts = txt, str_ts2, str_res;
 		
 		for (uint i = 0; i < str_ts.length(); ++i)
 			if (str_ts[i] == '.')

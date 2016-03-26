@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -254,7 +254,7 @@ void CRender3D::UnbindTextures()
 	for (uint i = _uiMaxTexUnits; i != 0; --i)
 		_pCoreRenderer->BindTexture(NULL, i - 1);
 
-	memset(&_stCurState.pCurTexs[0], NULL, _stCurState.pCurTexs.size() * sizeof(ITexture*));
+	std::fill(_stCurState.pCurTexs.begin(), _stCurState.pCurTexs.end(), nullptr);
 }
 
 DGLE_RESULT DGLE_API CRender3D::BindTexture(ITexture *pTex, uint uiTextureLayer)

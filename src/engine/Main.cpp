@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		22.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -27,9 +27,9 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 {
 	if (uiInstIdx == -1)
 	{
-		for (size_t i = 0; i < vecEngineInstances.size(); ++i)
-			if (vecEngineInstances[i].pclCore)
-				vecEngineInstances[i].pclCore->WriteToLogEx(("**Broadcast**"s + pcTxt).c_str(), eType, pcSrcFileName, iSrcLineNumber);
+		for (const auto &engine_instance : vecEngineInstances)
+			if (engine_instance.pclCore)
+				engine_instance.pclCore->WriteToLogEx(("**Broadcast**"s + pcTxt).c_str(), eType, pcSrcFileName, iSrcLineNumber);
 		return;
 	}
 	
@@ -65,16 +65,16 @@ bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags,
 
 bool CALLBACK FreeEngine(DGLE::IEngineCore *pEngineCore)
 {
-	for (auto &eng_inst : vecEngineInstances)
+	for (auto &engine_instance : vecEngineInstances)
 	{
 		bool stop = false;
-		if (!pEngineCore || (stop = pEngineCore == eng_inst.pclCore))
+		if (!pEngineCore || (stop = pEngineCore == engine_instance.pclCore))
 		{
-			delete eng_inst.pclCore;
-			eng_inst.pclCore = NULL;
+			delete engine_instance.pclCore;
+			engine_instance.pclCore = NULL;
 
-			delete eng_inst.pclConsole;
-			eng_inst.pclConsole = NULL;
+			delete engine_instance.pclConsole;
+			engine_instance.pclConsole = NULL;
 		}
 		if (stop)
 			return true;

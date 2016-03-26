@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		16.03.2016 (c)Andrey Korotkov
+\date		26.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -791,17 +791,17 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Finalize()
 
 	if (GLEW_EXT_framebuffer_object)
 	{
-		for (size_t i = 0; i < _vecFrameBuffers.size(); ++i)
+		for (const auto &framebuffer : _vecFrameBuffers)
 		{
-			glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBObject);
+			glDeleteFramebuffersEXT(1, &framebuffer.uiFBObject);
 			
-			if (_vecFrameBuffers[i].uiFBBlitObject != 0)
-				glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBBlitObject);
+			if (framebuffer.uiFBBlitObject != 0)
+				glDeleteFramebuffersEXT(1, &framebuffer.uiFBBlitObject);
 			
-			if (_vecFrameBuffers[i].uiRBObjectColor != 0)
-				glDeleteRenderbuffersEXT(1, &_vecFrameBuffers[i].uiRBObjectColor);
+			if (framebuffer.uiRBObjectColor != 0)
+				glDeleteRenderbuffersEXT(1, &framebuffer.uiRBObjectColor);
 			
-			glDeleteRenderbuffersEXT(1, &_vecFrameBuffers[i].uiRBObjectDepthStencil);
+			glDeleteRenderbuffersEXT(1, &framebuffer.uiRBObjectDepthStencil);
 		}
 
 		_vecFrameBuffers.clear();
@@ -1049,7 +1049,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 			if (GLEW_EXT_framebuffer_object && (GL_EXT_packed_depth_stencil || fmt == TDF_DEPTH_COMPONENT32))
 			{		
-				const GLuint tex_id = ((CCoreTexture*)pTexture)->GetTex();
+				const GLuint tex_id = ((CCoreTexture *)pTexture)->GetTex();
 
 				uint fbo_id = -1;
 

@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		17.03.2016 (c)Andrey Korotkov
+\date		26.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -152,8 +152,8 @@ bool CBaseSound::OpenDevice(uint uiSamplesPerSec, uint uiBitsPerSample, bool bSt
 
 	LOG("Found " + to_string(_vecDevices.size()) + " output audio devices.", LT_INFO);
 
-	for (size_t i = 0; i < _vecDevices.size(); ++i)
-		LOG(_vecDevices[i], LT_INFO);
+	for (const auto &device : _vecDevices)
+		LOG(device, LT_INFO);
 
 	if (dev_id == -1)
 	{
@@ -231,8 +231,8 @@ void CBaseSound::_PrintDevList()
 	{
 		output = "--------- Audio Devices ---------\n";
 
-		for (size_t i = 0; i < _vecDevices.size(); ++i)
-			output += _vecDevices[i] + '\n';
+		for (const auto &device : _vecDevices)
+			output += device + '\n';
 
 		output += "---------------------------------\n";
 	}

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -54,8 +54,8 @@ CRender2D::~CRender2D()
 	delete[] _pPolyTrisBuffer;
 	delete[] _pBuffer;
 
-	for (size_t i = 0; i < _vecBatchBuffers.size(); ++i)
-		_vecBatchBuffers[i]->Free();
+	for (const auto batchbuffer : _vecBatchBuffers)
+		batchbuffer->Free();
 
 	_vecBatchAccumulator.clear();
 }
@@ -1354,8 +1354,8 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 		_2D_IF_BATCH_NO_UPDATE_EXIT
 			else
 				for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
-					for (uint8 v = 0; v < 3; ++v)
-						_vecBatchAccumulator.push_back(pstVertices[tris[tri_idx].index[v]]);
+					for (const auto idx : tris[tri_idx].index)
+						_vecBatchAccumulator.push_back(pstVertices[idx]);
 		else
 		{
 			if (_uiBufferSize < (uint)8 * tri_count * 3)
@@ -1366,7 +1366,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 			}
 
 			for (int32 tri_idx = 0; tri_idx < tri_count; ++tri_idx)
-				for (uint8 v = 0; v < 3; ++v)
+				for (uint_fast8_t v = 0; v < 3; ++v)
 				{
 					const uint idx_1 = tri_idx * 8 * 3 + v * 8;
 					const uint16 idx_2 = tris[tri_idx].index[v];
@@ -1489,7 +1489,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawTriangles(ITexture *pTexture, const TVertex2
 	_2D_IF_BATCH_NO_UPDATE_EXIT
 		else
 			for (uint i = 0; i < uiVerticesCount / 3; ++i)
-				for (uint8 j = 0; j < 3; ++j)
+				for (uint_fast8_t j = 0; j < 3; ++j)
 					{
 						if (!(eFlags & PF_FILL) && j > 0)
 							_vecBatchAccumulator.push_back(pstVertices[i * 3 + j - 1]);

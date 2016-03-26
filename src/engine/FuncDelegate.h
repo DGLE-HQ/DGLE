@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -22,12 +22,12 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 
 #ifdef PLATFORM_WINDOWS
 
-const char* FormWin32ExceptionString(DWORD dwCode);
+const char *FormWin32ExceptionString(DWORD dwCode);
 
 #define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression) \
-if(!doCatch) expression else \
-__try{ expression }\
-__except(EXCEPTION_EXECUTE_HANDLER)\
+if (!doCatch) expression else \
+__try { expression }\
+__except (EXCEPTION_EXECUTE_HANDLER)\
 {\
 	LogWrite(instIdx, FormWin32ExceptionString(GetExceptionCode()), LT_FATAL, __FILE__, __LINE__);\
 }
@@ -35,13 +35,13 @@ __except(EXCEPTION_EXECUTE_HANDLER)\
 #else
 
 #define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression) \
-if(!doCatch) expression else \
-try{ expression }\
-catch(const std::exception &exc)\
+if (!doCatch) expression else \
+try { expression }\
+catch (const std::exception &exc)\
 {\
 	LogWrite(instIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + exc.what() + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);\
 }\
-catch(...)\
+catch (...)\
 {\
 	LogWrite(instIdx, "We are very sorry, but program crashed! Unhandled cpp exception occured.", LT_FATAL, __FILE__, __LINE__);\
 }
@@ -126,51 +126,74 @@ protected:
 	TCFuncDelegate<T1, T2> &_parent;
 };
 
+// Call loop moved to _Call() methods in order to cope with C2712 compiler error due to __try usage.
+
 template<>
 class CFunctorImpl<void ()>: CFunctorBase<TPProc, void ()>
 {
+	void _Call()
+	{
+#if 0
+		for (const auto &func : _parent._funcList)
+			func.first(func.second);
+#else
+		for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
+			_parent._funcList[i].first(_parent._funcList[i].second);
+#endif
+	}
 protected:
 	CFunctorImpl(TCFuncDelegate<TPProc, void ()> &parent): CFunctorBase(parent) {}
 public:
 	void operator ()()
 	{
 		if (_parent._bAllowInvoke)
-			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
-			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].first)(_parent._funcList[i].second);
-			)
+			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx, _Call();)
 	}
 };
 
 template<>
 class CFunctorImpl<void (const TWindowMessage &)>: CFunctorBase<TPMsgProc, void (const TWindowMessage &)>
 {
+	void _Call(const TWindowMessage &stMsg)
+	{
+#if 0
+		for (const auto &func : _parent._funcList)
+			func.first(func.second, stMsg);
+#else
+		for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
+			_parent._funcList[i].first(_parent._funcList[i].second, stMsg);
+#endif
+	}
 protected:
 	CFunctorImpl(TCFuncDelegate<TPMsgProc, void (const TWindowMessage &)> &parent): CFunctorBase(parent) {}
 public:
 	void operator ()(const TWindowMessage &stMsg)
 	{
 		if (_parent._bAllowInvoke)
-			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
-			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].first)(_parent._funcList[i].second, stMsg);
-			)
+			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx, _Call(stMsg);)
 	}
 };
 
 template<>
 class CFunctorImpl<void (IBaseEvent *)>: CFunctorBase<TPEventProc, void (IBaseEvent *)>
 {
+	void _Call(IBaseEvent *pEvent)
+	{
+#if 0
+		for (const auto &func : _parent._funcList)
+			func.first(func.second, pEvent);
+#else
+		for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
+			_parent._funcList[i].first(_parent._funcList[i].second, pEvent);
+#endif
+	}
 protected:
 	CFunctorImpl(TCFuncDelegate<TPEventProc, void (IBaseEvent *)> &parent): CFunctorBase(parent) {}
 public:
 	void operator ()(IBaseEvent *pEvent)
 	{
 		if (_parent._bAllowInvoke)
-			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx,
-			for (std::size_t i = 0; i < _parent._funcList.size(); ++i)
-				(*_parent._funcList[i].first)(_parent._funcList[i].second, pEvent);
-			)
+			CATCH_ALL_EXCEPTIONS(_parent._bCatchExpts, _parent._uiInstIdx, _Call(pEvent);)
 	}
 };
 

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		26.03.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -37,13 +37,14 @@ DGLE_RESULT DGLE_API CBitmapFont::GetTexture(ITexture *&prTexture)
 
 DGLE_RESULT DGLE_API CBitmapFont::GetTextDimensions(const char *pcTxt, uint &uiWidth, uint &uiHeight)
 {
-	if (strlen(pcTxt) == 0) 
+	const auto len = strlen(pcTxt);
+	if (len == 0)
 		return S_FALSE;
 
 	float t_width = 0.f; 
 	uiHeight = (uint)(_astChars[0].h * _fScale);
 
-	for (uint i = 0; i < strlen(pcTxt); ++i)
+	for (std::remove_const_t<decltype(len)> i = 0; i < len; ++i)
 		t_width += _astChars[static_cast<uchar>(pcTxt[i]) - 32].w * _fScale;
 
 	uiWidth = (uint)t_width;
@@ -65,7 +66,7 @@ DGLE_RESULT DGLE_API CBitmapFont::GetScale(float &fScale)
 
 DGLE_RESULT DGLE_API CBitmapFont::Draw3D(const char *pcTxt)
 {
-	size_t length = strlen(pcTxt);
+	const size_t length = strlen(pcTxt);
 	
 	if (length == 0)
 		return S_FALSE;
