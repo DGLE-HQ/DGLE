@@ -925,15 +925,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		GetStringValue( p_object, L"szDisplayMemoryLocalized", EXPAND(txt));
 		
-		string str_ts = txt, str_ts2, str_res;
-		
-		for (uint i = 0; i < str_ts.length(); ++i)
-			if (str_ts[i] == '.')
-				str_res = str_ts2;
-			else
-				str_ts2 += str_ts[i];
-		
-		stSysInfo.uiVideocardRAM = stoi(str_res);
+		stSysInfo.uiVideocardRAM = strtoul(txt, nullptr, 10);
 
 		GetStringValue( p_object, L"szDriverName", EXPAND(txt));
 		vcard_advanced_str = "(driver \""s + txt + "\",";
