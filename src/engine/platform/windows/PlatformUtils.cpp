@@ -915,7 +915,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		GetStringValue(p_object, L"szDescription", EXPAND(txt));
 		str += txt;
 
-		if (strlen(txt) <= 128)
+		if (strlen(txt) < 128)
 			strcpy(stSysInfo.cVideocardName, txt);
 		else
 		{
