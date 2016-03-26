@@ -1088,7 +1088,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPolygon(ITexture *pTexture, const TVertex2 *
 		{
 			const float c_epsilon = 0.001f;
 
-			memset(active, 1, vertexCount);
+			fill_n(active, vertexCount, true);
 
 			uint triangleCount = 0, start = 0,
 				p1 = 0, p2 = 1,
