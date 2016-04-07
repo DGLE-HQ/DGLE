@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		07.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,26 +24,26 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 
 const char *FormWin32ExceptionString(DWORD dwCode);
 
-#define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression) \
-if (!doCatch) expression else \
-__try { expression }\
-__except (EXCEPTION_EXECUTE_HANDLER)\
-{\
-	LogWrite(instIdx, FormWin32ExceptionString(GetExceptionCode()), LT_FATAL, __FILE__, __LINE__);\
+#define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression)											\
+__try { expression }																				\
+__except (doCatch ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)							\
+{																									\
+	LogWrite(instIdx, FormWin32ExceptionString(GetExceptionCode()), LT_FATAL, __FILE__, __LINE__);	\
 }
 
 #else
 
-#define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression) \
-if (!doCatch) expression else \
-try { expression }\
-catch (const std::exception &exc)\
-{\
-	LogWrite(instIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + exc.what() + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);\
-}\
-catch (...)\
-{\
-	LogWrite(instIdx, "We are very sorry, but program crashed! Unhandled cpp exception occured.", LT_FATAL, __FILE__, __LINE__);\
+#define CATCH_ALL_EXCEPTIONS(doCatch, instIdx, expression)																																	\
+try { expression }																																											\
+catch (const std::exception &exc)																																							\
+{																																															\
+	if (!doCatch) throw;																																									\
+	LogWrite(instIdx, (std::string("We are very sorry, but program crashed! Unhandled std exception occured with message \"") + exc.what() + "\".").c_str(), LT_FATAL, __FILE__, __LINE__);	\
+}																																															\
+catch (...)																																													\
+{																																															\
+	if (!doCatch) throw;																																									\
+	LogWrite(instIdx, "We are very sorry, but program crashed! Unhandled cpp exception occured.", LT_FATAL, __FILE__, __LINE__);															\
 }
 
 #endif
