@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		08.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1538,10 +1538,7 @@ DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEven
 	{
 		const auto found = find_if(_vecEvents.cbegin(), _vecEvents.cend(), [eEventType](decltype(_vecEvents)::const_reference event) { return eEventType == event.eType; });
 		if (found != _vecEvents.cend())
-		{
-			if (!found->pDEvent->IsNull())
-				found->pDEvent->Invoke(pEvent);
-		}
+			found->pDEvent->Invoke(pEvent);
 	}();
 
 	const auto notify_callbacks = [=]
