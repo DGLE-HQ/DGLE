@@ -22,6 +22,7 @@
     <ProjectGuid>{FB5AA462-678C-4BDB-859D-6AADACB37713}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DGLE</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
