@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		07.04.2016 (c)Korotkov Andrey
+\date		08.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -57,9 +57,6 @@ typedef void (DGLE_API *TPProc)(void *pParameter),
 
 template<typename F>
 class CFunctorImpl;
-
-template<class T1, class T2>
-class TCFuncDelegate;
 
 template<typename F>
 class CFunctor final: public CFunctorImpl<F>
