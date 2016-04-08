@@ -56,7 +56,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\plugins\mad\PluginCore.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\mad\Main.cpp" />
-    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\..\deps\mad\bit.c">
       <Filter>Dependencies\mad</Filter>
     </ClCompile>

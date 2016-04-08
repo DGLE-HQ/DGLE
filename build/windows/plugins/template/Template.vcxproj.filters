@@ -14,7 +14,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\plugins\template\PluginCore.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\template\Main.cpp" />
-    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

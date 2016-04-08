@@ -190,9 +190,13 @@
     <ClCompile Include="..\..\..\..\deps\mad\synth.c" />
     <ClCompile Include="..\..\..\..\deps\mad\timer.c" />
     <ClCompile Include="..\..\..\..\deps\mad\version.c" />
-    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\mad\Main.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\mad\PluginCore.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{6ead2e2b-092f-40c2-81e2-b18a89e14929}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

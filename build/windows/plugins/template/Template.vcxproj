@@ -160,9 +160,13 @@
     <ClInclude Include="..\..\..\..\src\plugins\template\PluginCore.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\template\Main.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\template\PluginCore.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{6ead2e2b-092f-40c2-81e2-b18a89e14929}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

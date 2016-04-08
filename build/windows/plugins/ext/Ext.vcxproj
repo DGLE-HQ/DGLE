@@ -267,12 +267,16 @@
     <ClCompile Include="..\..\..\..\deps\zlib\unzip.c" />
     <ClCompile Include="..\..\..\..\deps\zlib\zip.c" />
     <ClCompile Include="..\..\..\..\deps\zlib\zutil.c" />
-    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\ext\Main.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\ext\PluginCore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{6ead2e2b-092f-40c2-81e2-b18a89e14929}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

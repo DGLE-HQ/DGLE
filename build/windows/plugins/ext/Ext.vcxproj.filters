@@ -105,7 +105,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\src\common\utils.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\ext\Main.cpp" />
     <ClCompile Include="..\..\..\..\src\plugins\ext\PluginCore.cpp" />
     <ClCompile Include="..\..\..\..\deps\jpeglib\jaricom.c">
