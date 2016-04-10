@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -318,7 +318,7 @@ LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wPar
 {
 	CConsoleWindow *this_ptr = (CConsoleWindow *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
-	switch(message) 
+	switch (message) 
 	{
 	case WM_MOVE:
 		this_ptr->_iX = LOWORD(lParam);
@@ -365,10 +365,10 @@ LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM 
 	
 	char tmp[_sc_uiTmpBufferSize];
 
-	switch(message) 
+	switch (message) 
 	{
 	case WM_KEYUP:
-		switch(wParam)
+		switch (wParam)
 		{
 			case 192: //tilda
 				this_ptr->Visible(false);

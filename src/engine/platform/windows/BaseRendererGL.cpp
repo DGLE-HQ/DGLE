@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		16.03.2016 (c)Andrey Korotkov
+\date		10.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -96,7 +96,7 @@ bool CBaseRendererGL::Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eIni
 				int valid = wglChoosePixelFormatARB(temp_win_dc, ia_attributes, fa_attributes, 1, &tmp_pixel_format, &formats_cnt);
 				wglChoosePixelFormatARB = NULL;
 
-				if(valid && formats_cnt >= 1)
+				if (valid && formats_cnt >= 1)
 					pixel_format = tmp_pixel_format;
 				else
 				{
@@ -167,7 +167,7 @@ void CBaseRendererGL::Present()
 
 bool CBaseRendererGL::Finalize()
 {
-	if(_hRC)
+	if (_hRC)
 	{
 		if (!wglMakeCurrent(NULL, NULL))
 			LOG("Failed to release Device Context and Rendering Context.", LT_ERROR);

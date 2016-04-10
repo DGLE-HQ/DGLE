@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -37,7 +37,7 @@ LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wP
 	}
 	else
 	{
-		switch(msg)
+		switch (msg)
 		{
 		case WM_KILLFOCUS:
 		case WM_SETFOCUS:
@@ -45,12 +45,12 @@ LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wP
 		case WM_KEYDOWN:
 		case WM_CHAR:
 		case WM_MOUSEWHEEL:
-			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(msg, wParam, lParam));
+			this_ptr->_pDelMessageProc->operator ()(WinAPIMsgToEngMsg(msg, wParam, lParam));
 			break;
 
 		case WM_SIZING:
 			GetClientRect(this_ptr->_hWnd, &r);
-			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(WM_SIZING, wParam, (LPARAM)&r));
+			this_ptr->_pDelMessageProc->operator ()(WinAPIMsgToEngMsg(WM_SIZING, wParam, (LPARAM)&r));
 			break;
 		}
 
@@ -71,9 +71,9 @@ LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam
 		return DefWindowProc(hWnd, msg, wParam, lParam );
 	}
 	else
-		this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(msg, wParam, lParam));
+		this_ptr->_pDelMessageProc->operator ()(WinAPIMsgToEngMsg(msg, wParam, lParam));
 
-	if(!this_ptr->_stOldWindowProc || (msg == WM_PAINT || msg == WM_SETTEXT || msg == WM_NCPAINT|| msg == WM_ERASEBKGND))
+	if (!this_ptr->_stOldWindowProc || (msg == WM_PAINT || msg == WM_SETTEXT || msg == WM_NCPAINT|| msg == WM_ERASEBKGND))
 		return DefWindowProc(hWnd, msg, wParam, lParam );
 	else
 		return CallWindowProc(this_ptr->_stOldWindowProc, hWnd, msg, wParam, lParam);
@@ -81,7 +81,7 @@ LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam
 
 DGLE_RESULT CHookedWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc)
 {
-	if(_stOldWindowProc || _stOldRootWindowProc)
+	if (_stOldWindowProc || _stOldRootWindowProc)
 		return E_FAIL;
 
 	_hWnd = tHandle;
@@ -268,7 +268,7 @@ DGLE_RESULT CHookedWindow::BeginMainLoop()
 	if (GetClientRect(_hWnd, &rect) == FALSE)
 		LOG("Can't get window client rectangle.", LT_FATAL);
 	
-	_pDelMessageProc->Invoke(TWindowMessage(WMT_SIZE, rect.right, rect.bottom));
+	_pDelMessageProc->operator ()(TWindowMessage(WMT_SIZE, rect.right, rect.bottom));
 
 	LOG("**Entering main loop**",LT_INFO);
 
@@ -284,13 +284,13 @@ void CHookedWindow::_KillWindow()
 
 	Console()->UnRegCom("quit");
 
-	_pDelMessageProc->Invoke(TWindowMessage(WMT_CLOSE));
-	_pDelMessageProc->Invoke(TWindowMessage(WMT_DESTROY));
+	_pDelMessageProc->operator ()(TWindowMessage(WMT_CLOSE));
+	_pDelMessageProc->operator ()(TWindowMessage(WMT_DESTROY));
 
 	if (!_bNoMloopHook && !ReleaseTimer(_uiUpdateTimer))
 		LOG("Can't kill update timer.", LT_ERROR);
 
-	if(
+	if (
 		SetWindowLongPtr(_hWnd, GWLP_WNDPROC, (LONG_PTR)_stOldWindowProc)!=NULL &&
 		(_stOldRootWindowProc == NULL || SetWindowLongPtr(_hRootHWnd, GWLP_WNDPROC, (LONG_PTR)_stOldRootWindowProc) != NULL)
 		)
@@ -301,7 +301,7 @@ void CHookedWindow::_KillWindow()
 	_stOldWindowProc = NULL;
 	_stOldRootWindowProc = NULL;
 
-	_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
+	_pDelMessageProc->operator ()(TWindowMessage(WMT_RELEASED));
 }
 
 DGLE_RESULT CHookedWindow::KillWindow()

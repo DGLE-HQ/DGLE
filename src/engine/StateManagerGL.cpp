@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		17.03.2016 (c)Andrey Korotkov
+\date		10.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -20,7 +20,7 @@ inline uint8 CToggleState::GetCapIdx(GLenum cap) const
 {
 	uint8 idx = _sc_uiStatesCount;
 
-	switch(cap)
+	switch (cap)
 	{
 		case GL_TEXTURE_COORD_ARRAY: idx = 0; break;
 		case GL_COLOR_ARRAY: idx = 1; break;
@@ -47,7 +47,7 @@ inline GLenum CToggleState::GetCap(uint8 idx) const
 {
 	GLenum cap;
 
-	switch(idx)
+	switch (idx)
 	{
 		case 0: cap = GL_TEXTURE_COORD_ARRAY; break;
 		case 1: cap = GL_COLOR_ARRAY; break;
@@ -270,7 +270,7 @@ inline void CModeState::glGetBooleanv(GLenum pname, GLboolean *params) const
 
 inline void CModeState::glGetIntegerv(GLenum pname, GLint *params) const
 {
-	switch(pname)
+	switch (pname)
 	{
 	case GL_FRONT_FACE:
 		if (_mode[0] != ~0)
@@ -1168,7 +1168,7 @@ GLboolean CStateManager<true>::glIsEnabled(GLenum cap) const
 
 void CStateManager<true>::glGetIntegerv(GLenum pname, GLint *params) const
 {
-	switch(pname)
+	switch (pname)
 	{
 	case GL_FRONT_FACE:
 	case GL_CULL_FACE_MODE:
@@ -1206,7 +1206,7 @@ void CStateManager<true>::glGetIntegerv(GLenum pname, GLint *params) const
 
 void CStateManager<true>::glGetFloatv(GLenum pname, GLfloat *params) const
 {
-	switch(pname)
+	switch (pname)
 	{
 	case GL_ALPHA_TEST_REF:
 		_curState.alphaFuncState.glGetFloatv(pname, params);
@@ -1231,7 +1231,7 @@ void CStateManager<true>::glGetFloatv(GLenum pname, GLfloat *params) const
 
 void CStateManager<true>::glGetBooleanv(GLenum pname, GLboolean *params) const
 {
-	switch(pname)
+	switch (pname)
 	{
 	case GL_DEPTH_WRITEMASK:
 		_curState.modeState.glGetBooleanv(pname, params);

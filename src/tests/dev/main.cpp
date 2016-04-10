@@ -104,7 +104,7 @@ void DGLE_API Render(void *pParameter)
 
 	uint w, h;
 	pTex->GetDimensions(w, h);
-	pTex->Draw2DSimple((SCREEN_X - (int)w)/2, (SCREEN_Y - (int)h)/2);
+	pTex->Draw2DSimple((SCREEN_X - (int)w) / 2, (SCREEN_Y - (int)h) / 2);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

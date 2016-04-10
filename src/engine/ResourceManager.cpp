@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -632,7 +632,7 @@ uint CResourceManager::_GenerateDecompressedTextureData(const uint8 *pDataIn, ui
 		(int &)eCreateFlags |= TCF_PIXEL_ALIGNMENT_1;
 	}
 	else
-		if(format == TDF_DXT5)
+		if (format == TDF_DXT5)
 			format = TDF_RGBA8;
 
 	return data_size;
@@ -1588,7 +1588,7 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt, E_BITMAP_
 		return false;
 	}
 
-	if(ftype[4] != '1' || ftype[5] != '.' || ftype[6] != '1')
+	if (ftype[4] != '1' || ftype[5] != '.' || ftype[6] != '1')
 	{
 		LOG("Incorrect font version.", LT_ERROR);
 		return false;

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -360,7 +360,7 @@ void DGLE_API TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	const auto found = find_if(timers.cbegin(), timers.cend(), [idEvent](decltype(timers)::const_reference timer) { return timer.uiId == idEvent; });
 	if (found != timers.cend())
-		found->pDelegate->Invoke();
+		found->pDelegate->operator ()();
 }
 
 uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer)
@@ -896,7 +896,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		DWORD nInstanceCount = 0;
 		hr = p_container->GetNumberOfChildContainers(&nInstanceCount);
 
-		if(nInstanceCount > 1)
+		if (nInstanceCount > 1)
 			str += "(Count: " + to_string(nInstanceCount) + ") ";
 
 		stSysInfo.uiVideocardCount = nInstanceCount;
@@ -959,7 +959,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	}
 #endif
 
-	IWbemLocator* locator = NULL;
+	IWbemLocator *locator = NULL;
 	uint vram = 0;
 	hr = E_FAIL;
 
@@ -968,7 +968,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 	if (SUCCEEDED(hr))
 	{
-		IWbemServices* services = NULL;
+		IWbemServices *services = NULL;
 		hr = locator->ConnectServer(_bstr_t("root\\cimv2"), NULL, NULL, NULL, 0, NULL, NULL, &services);
 		locator->Release();
 
@@ -979,13 +979,13 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 				services->Release();
 			else
 			{
-				IEnumWbemClassObject* instance_enum = NULL;
+				IEnumWbemClassObject *instance_enum = NULL;
 				hr = services->CreateInstanceEnum(_bstr_t("Win32_VideoController"), WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &instance_enum);
 				services->Release();
 				
 				if (SUCCEEDED(hr))
 				{
-					IWbemClassObject* instance;
+					IWbemClassObject *instance;
 					ULONG objectsReturned = 0;
 
 					while (true)

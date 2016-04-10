@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -33,14 +33,14 @@ void DGLE_API con_dump(void *pParameter, const char *pcParam)
 {
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 
-	if(!p_console)
+	if (!p_console)
 		return;
 
-	if(strlen(pcParam)!=0)
+	if (strlen(pcParam) != 0)
 		p_console->Write("No parameters expected.");
 	else
 	{
-		if(str_info=="")
+		if (str_info.empty())
 			p_console->Write("This command works only after application crashes or any unhandled exception appears.");
 		else
 		{
@@ -57,13 +57,13 @@ void DGLE_API con_dump(void *pParameter, const char *pcParam)
 
 void InitDbgHelp(uint uiInstIdx)
 {
-	if(uiInstIdx == 0)
+	if (uiInstIdx == 0)
 	{
 		EngineInstance(0)->pclConsole->RegComProc("crash_dump", "Dumps unhandled crash callstack to txt file in current directory \"crash_dump.txt\".", &con_dump, NULL, false);
 
 		m_previousFilter = SetUnhandledExceptionFilter(M2UnhandledExceptionFilter);
 
-		if(NULL!=m_previousFilter) 
+		if (NULL!=m_previousFilter) 
 		{
 			bUnhandledFilterEnabled = true;
 			LogWrite(0, "Unhandled Exceptions Filter has been set successfully.", LT_INFO, __FILE__, __LINE__);
@@ -72,7 +72,7 @@ void InitDbgHelp(uint uiInstIdx)
 			LogWrite(0, "Setting Unhandled Exception Filter failed!", LT_INFO, __FILE__, __LINE__);
 	}
 	else
-		if(bUnhandledFilterEnabled)
+		if (bUnhandledFilterEnabled)
 			LogWrite(uiInstIdx, "Unhandled Exception Filter already has been set to zero engine instance.", LT_INFO, __FILE__, __LINE__);
 		else
 			LogWrite(uiInstIdx, "Unhandled Exception Filter must be set to zero engine instance.", LT_ERROR, __FILE__, __LINE__);
@@ -82,7 +82,7 @@ LONG WINAPI M2UnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 {
 	GenerateExceptionReport(pExceptionInfo);
 
-	if(m_previousFilter)
+	if (m_previousFilter)
 		return m_previousFilter(pExceptionInfo);
 	else
 		return EXCEPTION_CONTINUE_SEARCH;
@@ -149,7 +149,7 @@ void GenerateExceptionReport(PEXCEPTION_POINTERS pExceptionInfo)
 
 	CConsole *p_console = EngineInstance(0)->pclConsole;
 
-	if(p_console)
+	if (p_console)
 	{
 		p_console->Visible(true);
 		p_console->Write(str_info.c_str());
@@ -186,7 +186,7 @@ void WriteStackDetails(PCONTEXT pContext)
 	char szTextBuf[4096] = "";
 	char szUndecoratedName[4096] = "";
 
-	while(true)
+	while (true)
 	{
 		if (!StackWalk(	dwMachineType,
 			GetCurrentProcess(),
@@ -307,7 +307,7 @@ const char *FormWin32ExceptionString(DWORD dwCode)
 
 #define EXCEPTION(x) case EXCEPTION_##x: exp_txt = #x; break;
 
-	switch(dwCode)
+	switch (dwCode)
 	{
 			EXCEPTION(ACCESS_VIOLATION)
 			EXCEPTION(DATATYPE_MISALIGNMENT)

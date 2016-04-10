@@ -1,6 +1,6 @@
 /**
 \author		Kotlyarov Semen aka Kimer
-\date		25.03.2016 (c)Andrey Korotkov
+\date		10.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -38,7 +38,7 @@ DGLE_RESULT DGLE_API CBuffFile::Write(const void *pBuffer, uint uiCount, uint &u
 
 DGLE_RESULT DGLE_API CBuffFile::Seek(uint32 ui32Offset, E_FILE_SYSTEM_SEEK_FLAG eWay, uint32 &ui32Position)
 {
-	switch(eWay)
+	switch (eWay)
 	{
 	case FSSF_BEGIN:
 		_ui32Pos = ui32Offset;

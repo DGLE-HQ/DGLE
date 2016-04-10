@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -41,16 +41,57 @@ class CCore final : public CInstancedObj, public IEngineCore
 , public IEngineCoreWrapper
 #endif
 {
-	static const uint _sc_MaxUpdateCycles = 10;
-	static const uint _sc_AppCaptionMaxLength = 128;
+	static constexpr uint _sc_MaxUpdateCycles = 10;
+	static constexpr uint _sc_AppCaptionMaxLength = 128;
 
-	TProcDelegate _clDelUpdate, _clDelRender, _clDelInit, _clDelFree,
+	class CConnectionTracker
+	{
+		// C++17 std::any could be use as well but unrestricted union provides better memory fit because size of all connections is known and is the same
+		class GenericConnection
+		{
+			union
+			{
+				Signals::ScopedConnection<IBaseEvent *>	eventConnection;
+				Signals::ScopedConnection<>				procConnection;
+			};
+			enum class ConnectionType : uint_least8_t
+			{
+				Event,
+				Proc,
+			} _type;
+
+		public:
+			GenericConnection(Signals::ScopedConnection<IBaseEvent *>	&&eventConnection) noexcept;
+			GenericConnection(Signals::ScopedConnection<>				&&procConnection) noexcept;
+			GenericConnection(GenericConnection &&connection) noexcept;
+			GenericConnection &operator =(GenericConnection &&connection) noexcept;
+			~GenericConnection() noexcept;
+		};
+		std::multimap<std::pair<void *, void *>, GenericConnection> _connections;
+
+	public:
+		typedef const decltype(_connections)::key_type &Slot;
+
+	public:
+		CConnectionTracker() = default;
+		CConnectionTracker(CConnectionTracker &&) = default;
+		CConnectionTracker &operator =(CConnectionTracker &&) = default;
+
+	public:
+		void Add(Slot slot, Signals::ScopedConnection<IBaseEvent *> &&eventConnection), Add(Slot slot, Signals::ScopedConnection<> &&procConnection);
+		void Remove(Slot slot);
+
+	private:
+		void Add(Slot slot, GenericConnection &&connection);
+	};
+
+	std::pair<TProcDelegate, CConnectionTracker> _clDelUpdate, _clDelRender, _clDelInit, _clDelFree, *_SelectProcDelegate(E_ENGINE_PROCEDURE_TYPE eProcType) noexcept,
 		_clDelMLoop, _clDelOnFPSTimer;
 	TMsgProcDelegate _clDelMProc;
 
 	std::vector<IEngineCallback *> _vecEngineCallbacks;
 
-	std::vector<TEvent> _vecEvents;
+	std::vector<std::pair<TEvent, CConnectionTracker>> _vecEvents;
 
 	std::fstream _clLogFile;
 	uint _uiLogWarningsCount, _uiLogErrorsCount;
@@ -125,10 +166,6 @@ class CCore final : public CInstancedObj, public IEngineCore
 	DGLE_RESULT	_ChangeWinMode(const TEngineWindow &stNewWin, bool bForceNoEvents);
 	void _LogWinMode(const TEngineWindow &stWin);
 
-	static void DGLE_API _s_MainLoop(void *pParameter);
-	static void DGLE_API _s_OnTimer(void *pParameter);
-	static void DGLE_API _s_MessageProc(void *pParameter, const TWindowMessage &stMsg);
-
 	static bool DGLE_API _s_ConAutoPause(void *pParameter, const char *pcParam);
 	static bool DGLE_API _s_ConPrintVersion(void *pParameter, const char *pcParam);
 	static bool DGLE_API _s_ConFeatures(void *pParameter, const char *pcParam);
@@ -141,20 +178,20 @@ public:
 	CCore(uint uiInstIdx);
 	~CCore();
 
-	inline	CRender* pRender() const {return _pRender;}
-	inline	CMainFileSystem* pMainFS() const {return _pMainFS;}
-	inline	CResourceManager* pResMan() const {return _pResMan;}
+	inline	CRender *pRender() const {return _pRender;}
+	inline	CMainFileSystem *pMainFS() const {return _pMainFS;}
+	inline	CResourceManager *pResMan() const {return _pResMan;}
 
-	inline  ICoreRenderer* pCoreRenderer() const {return _pCoreRenderer;}
-	inline  IMainWindow* pMainWindow() const {return _pMainWindow;}
-	inline	ISound* pSound() const {return _pSound;}
-	inline	IInput* pInput() const {return _pInput;}
+	inline  ICoreRenderer *pCoreRenderer() const {return _pCoreRenderer;}
+	inline  IMainWindow *pMainWindow() const {return _pMainWindow;}
+	inline	ISound *pSound() const {return _pSound;}
+	inline	IInput *pInput() const {return _pInput;}
 
 	inline	E_ENGINE_INIT_FLAGS InitFlags() const {return _eInitFlags;}
-	inline	TMsgProcDelegate* pDMessageProc() {return &_clDelMProc;}
-	inline	TProcDelegate* pDMLoopProc() {return &_clDelMLoop;}
-	inline	TProcDelegate* pDFPSTimerProc() {return &_clDelOnFPSTimer;}
-	inline	TEngineWindow* EngWindow() {return &_stWin;}
+	inline	TMsgProcDelegate *pDMessageProc() {return &_clDelMProc;}
+	inline	TProcDelegate *pDMLoopProc() {return &_clDelMLoop.first;}
+	inline	TProcDelegate *pDFPSTimerProc() {return &_clDelOnFPSTimer.first;}
+	inline	TEngineWindow *EngWindow() {return &_stWin;}
 	
 	inline	bool SoundEnabled() const {return _bSndEnabled;}
 	void	ToogleSuspendEngine(bool bSuspend);
@@ -162,7 +199,7 @@ public:
 	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName) override;
 	DGLE_RESULT DGLE_API AddPluginToInitializationList(const char *pcFileName) override;
 
-	DGLE_RESULT DGLE_API InitializeEngine(TWindowHandle tHandle, const char* pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags) override;
+	DGLE_RESULT DGLE_API InitializeEngine(TWindowHandle tHandle, const char *pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags) override;
 	DGLE_RESULT DGLE_API SetUpdateInterval(uint uiUpdateInterval) override;
 	DGLE_RESULT DGLE_API StartEngine() override;
 	DGLE_RESULT DGLE_API QuitEngine() override;
@@ -202,11 +239,11 @@ public:
 	DGLE_RESULT DGLE_API WriteToLogEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber) override;
 
 	DGLE_RESULT DGLE_API ConsoleVisible(bool bIsVisible) override;
-	DGLE_RESULT DGLE_API ConsoleWrite(const char* pcTxt, bool bWriteToPreviousLine) override;
-	DGLE_RESULT DGLE_API ConsoleExecute(const char* pcCommandTxt) override;
+	DGLE_RESULT DGLE_API ConsoleWrite(const char *pcTxt, bool bWriteToPreviousLine) override;
+	DGLE_RESULT DGLE_API ConsoleExecute(const char *pcCommandTxt) override;
 	DGLE_RESULT DGLE_API ConsoleRegisterCommand(const char *pcCommandName, const char *pcCommandHelp, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) override;
 	DGLE_RESULT DGLE_API ConsoleRegisterVariable(const char *pcCommandName, const char *pcCommandHelp, int *piVar, int iMinValue, int iMaxValue, bool (DGLE_API *pProc)(void *pParameter, const char *pcParam), void *pParameter) override;
-	DGLE_RESULT DGLE_API ConsoleUnregister(const char* pcCommandName) override;
+	DGLE_RESULT DGLE_API ConsoleUnregister(const char *pcCommandName) override;
 
 	DGLE_RESULT DGLE_API GetVersion(char *pcBuffer, uint &uiBufferSize) override;
 
@@ -224,7 +261,7 @@ public:
 
 	DGLE_RESULT DGLE_API TranslateMessage(const TWindowMessage &stWinMsg) override
 	{
-		_clDelMProc.Invoke(stWinMsg);
+		_clDelMProc(stWinMsg);
 		return S_OK;
 	}
 
@@ -245,19 +282,19 @@ public:
 	{
 		*ppvObject = NULL;
 
-		if(::memcmp(&riid, &__uuidof(IUnknown), sizeof(GUID)) == 0) 
+		if (::memcmp(&riid, &__uuidof(IUnknown), sizeof(GUID)) == 0) 
 			*ppvObject = static_cast<IUnknown *>(this);
 		else 
-			if(::memcmp(&riid,&IID_IDGLE_Base, sizeof(GUID)) == 0) 
+			if (::memcmp(&riid,&IID_IDGLE_Base, sizeof(GUID)) == 0) 
 				*ppvObject = static_cast<IDGLE_Base *>(this);
 			else
-				if(::memcmp(&riid, &IID_IEngineCore, sizeof(GUID)) == 0) 
+				if (::memcmp(&riid, &IID_IEngineCore, sizeof(GUID)) == 0) 
 					*ppvObject = static_cast<IEngineCore *>(this);
 				else
-					if(::memcmp(&riid, &IID_IEngineCoreWrapper, sizeof(GUID)) == 0) 
+					if (::memcmp(&riid, &IID_IEngineCoreWrapper, sizeof(GUID)) == 0) 
 						*ppvObject = static_cast<IEngineCoreWrapper *>(this);
 					else
-						if(::memcmp(&riid, &IID_IMainWindow, sizeof(GUID)) == 0) 
+						if (::memcmp(&riid, &IID_IMainWindow, sizeof(GUID)) == 0) 
 							*ppvObject = static_cast<IMainWindow *>(_pMainWindow);
 						else
 							return E_NOINTERFACE;

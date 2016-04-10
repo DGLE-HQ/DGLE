@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -547,7 +547,7 @@ DGLE_RESULT DGLE_API CRender3D::SetBlendMode(E_BLENDING_EFFECT eMode)
 	_stCurState.pCurMat = INVALID_MATERIAL;
 	_stCurState.eBlendingMode = eMode;
 
-	switch(eMode)
+	switch (eMode)
 	{
 	case BE_NORMAL:
 		_stCurState.stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;

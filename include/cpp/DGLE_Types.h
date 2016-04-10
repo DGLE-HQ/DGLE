@@ -69,7 +69,7 @@ typedef long int DGLE_RESULT;
 /** Macros to check DGLE_RESULT value. Returns true if value is S_OK or S_FALSE and false otherwise.
 	\param[in] hr DGLE_RESULT value to be checked.
 	\code
-	if(SUCCEEDED(pEngineCore->InitializeEngine(NULL, "Test"))) pEngineCore->StartEngine();
+	if (SUCCEEDED(pEngineCore->InitializeEngine(NULL, "Test"))) pEngineCore->StartEngine();
 	\endcode
 */
 #define SUCCEEDED(res) (((DGLE_RESULT)(res)) >= 0)
@@ -77,7 +77,7 @@ typedef long int DGLE_RESULT;
 /** Macros to check DGLE_RESULT value. Returns true for any value except S_OK and S_FALSE.
 	\param[in] hr DGLE_RESULT value to be checked.
 	\code
-	if(FAILED(pEngineCore->InitializeEngine(NULL, "Test"))) Exit(1);
+	if (FAILED(pEngineCore->InitializeEngine(NULL, "Test"))) Exit(1);
 	\endcode
 */
 #define FAILED(res) (((DGLE_RESULT)(res)) < 0)

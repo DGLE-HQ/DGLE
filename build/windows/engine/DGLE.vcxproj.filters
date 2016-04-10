@@ -223,6 +223,7 @@
       <Filter>FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\bcunpacker_incl.h" />
+    <ClInclude Include="..\..\..\src\engine\Signals.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Platform">

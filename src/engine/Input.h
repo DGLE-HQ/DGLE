@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -19,13 +19,15 @@ See "DGLE.h" for more details.
 
 class CInput final : private CBaseInput, public IInput
 {
-	bool		 _bExclusive;
-	bool		 _bHideCursor;
-	bool		 _bFocused;
-	bool		 _bCurBeyond;
+	const Signals::ScopedConnection<const TWindowMessage &> _msgConnection;
+	const Signals::ScopedConnection<> _loopConnection;
+	bool		 _bExclusive = false;
+	bool		 _bHideCursor = false;
+	bool		 _bFocused = false;
+	bool		 _bCurBeyond = false;
 
-	bool		 _bIsTxtInput;
-	char		*_pcBuffer;
+	bool		 _bIsTxtInput = false;
+	char		*_pcBuffer = NULL;
 	std::string	 _strInputTxt;
 	uint		 _uiBufSize;
 
@@ -38,9 +40,7 @@ class CInput final : private CBaseInput, public IInput
 	void		 _Loop();
 	void		 _Update();
 
-	static void DGLE_API _s_MessageProc(void *pParameter, const TWindowMessage &stMsg);
 	static void DGLE_API _s_Update(void *pParameter);
-	static void DGLE_API _s_Loop(void *pParameter);
 
 public:
 

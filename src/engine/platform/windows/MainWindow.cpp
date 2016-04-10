@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -52,7 +52,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 			case WM_QUIT:
 				LOG("**Exiting main loop**", LT_INFO);
 				Console()->UnRegCom("quit");
-				_pDelMessageProc->Invoke(TWindowMessage(WMT_RELEASED));
+				_pDelMessageProc->operator ()(TWindowMessage(WMT_RELEASED));
 				return st_msg.wParam;
 			default:
 				TranslateMessage(&st_msg);
@@ -60,7 +60,7 @@ int CMainWindow::_wWinMain(HINSTANCE hInstance)
 			}
 		}
 		else 
-			_pDelMainLoop->Invoke();
+			_pDelMainLoop->operator ()();
 }
 
 bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
@@ -90,7 +90,7 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
 		const TEngInstance &eng_inst = *EngineInstance(this_ptr->InstIdx());
 
-		switch(message)
+		switch (message)
 		{
 		case WM_SETFOCUS:
 		case WM_KILLFOCUS:
@@ -105,28 +105,28 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		case WM_ACTIVATEAPP:
 			if (!(eng_inst.eGetEngFlags & GEF_FORCE_SINGLE_THREAD))
 			{
-				this_ptr->_pDelMessageProc->Invoke(TWindowMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
+				this_ptr->_pDelMessageProc->operator ()(TWindowMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
 				break;
 			}
 
 		case WM_ENTERSIZEMOVE:
-			this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_DEACTIVATED));
+			this_ptr->_pDelMessageProc->operator ()(TWindowMessage(WMT_DEACTIVATED));
 			SetTimer(hWnd, UPDATE_TIMER_ID, USER_TIMER_MINIMUM, NULL);
 			break;
 
 		case WM_EXITSIZEMOVE:
-			this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_ACTIVATED));
+			this_ptr->_pDelMessageProc->operator ()(TWindowMessage(WMT_ACTIVATED));
 			KillTimer(hWnd, UPDATE_TIMER_ID);
 			break;
 
 		case WM_SIZING:
 			GetClientRect(hWnd, &r);
-			this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_SIZE, (uint32)r.right, (uint32)r.bottom));
+			this_ptr->_pDelMessageProc->operator ()(TWindowMessage(WMT_SIZE, (uint32)r.right, (uint32)r.bottom));
 			break;
 
 		case WM_TIMER:
 			if (wParam == UPDATE_TIMER_ID)
-				this_ptr->_pDelMessageProc->Invoke(TWindowMessage(WMT_REDRAW));
+				this_ptr->_pDelMessageProc->operator ()(TWindowMessage(WMT_REDRAW));
 			break;
 
 		case WM_PAINT:
@@ -137,7 +137,7 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			return 1;
 
 		default:
-			this_ptr->_pDelMessageProc->Invoke(WinAPIMsgToEngMsg(message, wParam, lParam));
+			this_ptr->_pDelMessageProc->operator ()(WinAPIMsgToEngMsg(message, wParam, lParam));
 		}
 
 		if ((message == WM_SYSCOMMAND && ((wParam == SC_KEYMENU && (lParam >> 16) <= 0) || wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER)) || message == WM_CLOSE)
@@ -444,7 +444,7 @@ DGLE_RESULT CMainWindow::ConfigureWindow(const TEngineWindow &stWind, bool bSetF
 		SetForegroundWindow(_hWnd);
 
 		if (!is_visible)
-			_pDelMessageProc->Invoke(TWindowMessage(WMT_PRESENT));
+			_pDelMessageProc->operator ()(TWindowMessage(WMT_PRESENT));
 
 		SetCursorPos(top_x + (rc.right - rc.left) / 2, top_y + (rc.bottom - rc.top) / 2);
 	}

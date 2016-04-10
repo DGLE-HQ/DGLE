@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,12 +15,10 @@ using namespace std;
 #ifndef NO_BUILTIN_INPUT
 
 CInput::CInput(uint uiInstIdx):
-CBaseInput(uiInstIdx), _bFocused(false),
-_bIsTxtInput(false), _pcBuffer(NULL),
-_bExclusive(false), _bHideCursor(false), _bCurBeyond(false)
+CBaseInput(uiInstIdx),
+_msgConnection(Core()->pDMessageProc()->Add(bind(&CInput::_MessageProc, this, placeholders::_1))),
+_loopConnection(Core()->pDMLoopProc()->Add(bind(&CInput::_Loop, this)))
 {
-	Core()->pDMessageProc()->Add(&_s_MessageProc, (void*)this);
-	Core()->pDMLoopProc()->Add(&_s_Loop, (void*)this);
 	Core()->AddProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 
 	memset(_abKeys, 0, 256 * sizeof(bool));
@@ -31,8 +29,6 @@ _bExclusive(false), _bHideCursor(false), _bCurBeyond(false)
 
 CInput::~CInput()
 {
-	Core()->pDMessageProc()->Remove(&_s_MessageProc, (void*)this);
-	Core()->pDMLoopProc()->Remove(&_s_Loop, (void*)this);
 	Core()->RemoveProcedure(EPT_UPDATE, &_s_Update, (void*)this);
 
 	if (_bExclusive)
@@ -115,7 +111,7 @@ void CInput::_ClipCursor()
 
 void CInput::_MessageProc(const TWindowMessage &stMsg)
 {
-	switch(stMsg.eMessage)
+	switch (stMsg.eMessage)
 	{
 		case WMT_CLOSE:
 			
@@ -354,16 +350,6 @@ DGLE_RESULT DGLE_API CInput::GetType(E_ENGINE_SUB_SYSTEM &eSubsysType)
 {
 	eSubsysType = ESS_INPUT;
 	return S_OK;
-}
-
-void DGLE_API CInput::_s_MessageProc(void *pParameter, const TWindowMessage &stMsg)
-{
-	PTHIS(CInput)->_MessageProc(stMsg);
-}
-
-void DGLE_API CInput::_s_Loop(void *pParameter)
-{
-	PTHIS(CInput)->_Loop();
 }
 
 void DGLE_API CInput::_s_Update(void *pParameter)

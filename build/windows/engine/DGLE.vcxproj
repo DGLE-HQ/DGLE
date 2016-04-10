@@ -264,6 +264,7 @@
     <ClInclude Include="..\..\..\src\engine\Render2D.h" />
     <ClInclude Include="..\..\..\src\engine\Render3D.h" />
     <ClInclude Include="..\..\..\src\engine\ResourceManager.h" />
+    <ClInclude Include="..\..\..\src\engine\Signals.h" />
     <ClInclude Include="..\..\..\src\engine\Sound.h" />
     <ClInclude Include="..\..\..\src\engine\StateManagerGL.h" />
     <ClInclude Include="..\..\..\src\engine\Texture.h" />

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		08.04.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -22,6 +22,7 @@ See "DGLE.h" for more details.
 #include "Render2D.h"
 
 using namespace std;
+using namespace placeholders;
 
 extern bool bUnhandledFilterEnabled;
 
@@ -275,6 +276,81 @@ public:
 
 //Engine Core//
 
+inline CCore::CConnectionTracker::GenericConnection::GenericConnection(Signals::ScopedConnection<IBaseEvent *> &&eventConnection) noexcept :
+eventConnection(move(eventConnection)), _type(ConnectionType::Event) {}
+
+inline CCore::CConnectionTracker::GenericConnection::GenericConnection(Signals::ScopedConnection<> &&procConnection) noexcept :
+procConnection(move(procConnection)), _type(ConnectionType::Proc) {}
+
+CCore::CConnectionTracker::GenericConnection::GenericConnection(GenericConnection &&connection) noexcept : _type(connection._type)
+{
+	switch (_type)
+	{
+	case ConnectionType::Event:
+		new(&eventConnection) decltype(eventConnection)(move(connection.eventConnection));
+		break;
+	case ConnectionType::Proc:
+		new(&procConnection) decltype(procConnection)(move(connection.procConnection));
+		break;
+	default:
+		assert(false);
+		__assume(false);
+	}
+}
+
+auto CCore::CConnectionTracker::GenericConnection::operator =(GenericConnection &&connection) noexcept -> GenericConnection &
+{
+	switch (_type = connection._type)
+	{
+	case ConnectionType::Event:
+		eventConnection = move(connection.eventConnection);
+		break;
+	case ConnectionType::Proc:
+		procConnection = move(connection.procConnection);
+		break;
+	default:
+		assert(false);
+		__assume(false);
+	}
+	return *this;
+}
+
+CCore::CConnectionTracker::GenericConnection::~GenericConnection() noexcept
+{
+	switch (_type)
+	{
+	case ConnectionType::Event:
+		eventConnection.~ScopedConnection();
+		break;
+	case ConnectionType::Proc:
+		procConnection.~ScopedConnection();
+		break;
+	default:
+		assert(false);
+		__assume(false);
+	}
+}
+
+inline void CCore::CConnectionTracker::Add(Slot slot, Signals::ScopedConnection<IBaseEvent *> &&eventConnection)
+{
+	Add(slot, GenericConnection(move(eventConnection)));
+}
+
+inline void CCore::CConnectionTracker::Add(Slot slot, Signals::ScopedConnection<> &&procConnection)
+{
+	Add(slot, GenericConnection(move(procConnection)));
+}
+
+void CCore::CConnectionTracker::Add(Slot slot, GenericConnection &&connection)
+{
+	_connections.emplace(slot, move(connection));
+}
+
+void CCore::CConnectionTracker::Remove(Slot slot)
+{
+	_connections.erase(slot);
+}
+
 CCore::CCore(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
 _pMainWindow(NULL), _uiFPSTimer(0),
@@ -288,13 +364,13 @@ _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
 _bNeedApplyNewWnd(false), _uiLastUpdateDeltaTime(0), _uiLastMemUsage(0),
 _ui64StartTime(0), _ui64PauseTime(0),
 //Delegates initialization
-_clDelUpdate(uiInstIdx),
-_clDelRender(uiInstIdx),
-_clDelInit(uiInstIdx),
-_clDelFree(uiInstIdx),
-_clDelMLoop(uiInstIdx),
+_clDelUpdate(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
+_clDelRender(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
+_clDelInit(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
+_clDelFree(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
+_clDelMLoop(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
 _clDelMProc(uiInstIdx),
-_clDelOnFPSTimer(uiInstIdx)
+_clDelOnFPSTimer(piecewise_construct, make_tuple(uiInstIdx), make_tuple())
 {
 	_pcCustomSplash = new char [1];
 	_pcCustomSplash[0] = '\0';
@@ -452,7 +528,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 	{
 	case WMT_REDRAW:
 
-		_clDelMLoop.Invoke();
+		_clDelMLoop.first();
 
 		break;
 
@@ -468,13 +544,13 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pCoreRenderer->MakeCurrent();
 
-		if (!_clDelFree.IsNull() || !_vecEngineCallbacks.empty()) 
+		if (!_clDelFree.first.IsNull() || !_vecEngineCallbacks.empty()) 
 		{
 			LOG("Calling user finalization procedure...", LT_INFO);
 			
 			_InvokeUserCallback(EPT_FREE);
 
-			_clDelFree.Invoke();	
+			_clDelFree.first();	
 			
 			LOG("Done.", LT_INFO);
 		}
@@ -539,7 +615,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		_pMainWindow->Free();
 
 		for (const auto &event : _vecEvents)
-			delete event.pDEvent;
+			delete event.first.pDEvent;
 
 		_vecEvents.clear();
 
@@ -726,12 +802,12 @@ void CCore::_MainLoop()
 	
 	for (uint i = 0; i < cycles_cnt; ++i)
 	{
-		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.IsNull() || !_vecEngineCallbacks.empty()) && !_bQuitFlag) 
+		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.first.IsNull() || !_vecEngineCallbacks.empty()) && !_bQuitFlag) 
 		{
 			if (i == cycles_cnt - 1)
 				_pRender->RefreshBatchData();
 
-			_clDelUpdate.Invoke();
+			_clDelUpdate.first();
 			
 			_InvokeUserCallback(EPT_UPDATE);
 
@@ -777,7 +853,7 @@ void CCore::_RenderFrame()
 		CastEvent(ET_BEFORE_RENDER, &event);
 	}
 
-	_clDelRender.Invoke();
+	_clDelRender.first();
 	
 	_InvokeUserCallback(EPT_RENDER);
 
@@ -849,7 +925,7 @@ void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 	const auto invoke = [=]
 	{
 		for (const auto callback : _vecEngineCallbacks)
-			switch(eProcType)
+			switch (eProcType)
 			{
 			case EPT_UPDATE:	callback->Update(_uiLastUpdateDeltaTime);	break;
 			case EPT_RENDER:	callback->Render();							break;
@@ -1042,7 +1118,7 @@ DGLE_RESULT DGLE_API CCore::AddPluginToInitializationList(const char *pcFileName
 	return S_OK;
 }
 
-DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags)
+DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *pcApplicationName, const TEngineWindow &stWindowParam, uint uiUpdateInterval, E_ENGINE_INIT_FLAGS eInitFlags)
 {
 	if (!_bInitedFlag)
 	{
@@ -1121,10 +1197,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 			}
 		}
 
-		_clDelUpdate.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		_clDelRender.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		_clDelInit.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		_clDelFree.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelUpdate.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelRender.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelInit.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelFree.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
 		Console()->RegComVar("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, this);
 		Console()->RegComVar("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, this);
@@ -1150,9 +1226,9 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 				}
 			}
 
-		_clDelOnFPSTimer.Add(&_s_OnTimer, this);
-		_clDelMLoop.Add(&_s_MainLoop, this);
-		_clDelMProc.Add(&_s_MessageProc, this);
+		_clDelOnFPSTimer.first.Add(bind(&CCore::_OnTimer, this));
+		_clDelMLoop.first.Add(bind(&CCore::_MainLoop, this));
+		_clDelMProc.Add(bind(&CCore::_MessageProc, this, _1));
 
 		if (!_vecPluginInitList.empty())
 		{
@@ -1264,7 +1340,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 		if (FAILED(_pCoreRenderer->Prepare(rnd_init_res)))
 			return E_ABORT;
 
-		if (FAILED(_pMainWindow->InitWindow(tHandle, rnd_init_res, &_clDelMLoop, &_clDelMProc)))
+		if (FAILED(_pMainWindow->InitWindow(tHandle, rnd_init_res, &_clDelMLoop.first, &_clDelMProc)))
 			return E_ABORT;
 
 		if (do_spl)
@@ -1285,7 +1361,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 
 		_pMainWindow->SetCaption(_pcApplicationCaption);
 
-		if (_uiFPSTimer = CreateTimer(1000, &_clDelOnFPSTimer), _uiFPSTimer == -1) 
+		if (_uiFPSTimer = CreateTimer(1000, &_clDelOnFPSTimer.first), _uiFPSTimer == -1) 
 			LOG("Can't set fps timer.", LT_FATAL);	   
 
 		_pMainFS = new CMainFileSystem(InstIdx());
@@ -1335,7 +1411,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char* 
 
 void CCore::ToogleSuspendEngine(bool bSuspend)
 {
-	_clDelMLoop.AllowInvoke(!bSuspend);
+	_clDelMLoop.first.AllowInvoke(!bSuspend);
 	_clDelMProc.AllowInvoke(!bSuspend);
 }
 
@@ -1427,11 +1503,11 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_pRender->SetDefaultStates();
 
-	if (!_clDelInit.IsNull() || !_vecEngineCallbacks.empty()) 
+	if (!_clDelInit.first.IsNull() || !_vecEngineCallbacks.empty()) 
 	{
 		LOG("Calling user initialization procedure...", LT_INFO);
 		
-		_clDelInit.Invoke();
+		_clDelInit.first();
 		
 		_InvokeUserCallback(EPT_INIT);
 		
@@ -1536,14 +1612,14 @@ DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEven
 	// wrap to lambda in order to cope with C2712 due to __try usage
 	[=]
 	{
-		const auto found = find_if(_vecEvents.cbegin(), _vecEvents.cend(), [eEventType](decltype(_vecEvents)::const_reference event) { return eEventType == event.eType; });
+		const auto found = find_if(_vecEvents.cbegin(), _vecEvents.cend(), [eEventType](decltype(_vecEvents)::const_reference event) { return eEventType == event.first.eType; });
 		if (found != _vecEvents.cend())
-			found->pDEvent->Invoke(pEvent);
+			found->first.pDEvent->operator ()(pEvent);
 	}();
 
 	const auto notify_callbacks = [=]
 	{
-		for_each(_vecEngineCallbacks.cbegin(), _vecEngineCallbacks.cend(), bind(&remove_pointer_t<decltype(_vecEngineCallbacks)::value_type>::OnEvent, placeholders::_1, eEventType, pEvent));
+		for_each(_vecEngineCallbacks.cbegin(), _vecEngineCallbacks.cend(), bind(&remove_pointer_t<decltype(_vecEngineCallbacks)::value_type>::OnEvent, _1, eEventType, pEvent));
 	};
 
 	CATCH_ALL_EXCEPTIONS(_eInitFlags & EIF_CATCH_UNHANDLED, InstIdx(), notify_callbacks();)
@@ -1555,31 +1631,29 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 {
 	if (eEventType == ET_BEFORE_INITIALIZATION && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
+
+	auto listener = bind(pListnerProc, pParameter, _1);	// not const in order to enable move semantic below
 	
-	for (const auto &event : _vecEvents)
-		if (eEventType == event.eType)
+	for (auto &event : _vecEvents)
+		if (eEventType == event.first.eType)
 		{
-			event.pDEvent->Add(pListnerProc, pParameter);
+			event.second.Add({ pListnerProc, pParameter }, event.first.pDEvent->Add(move(listener)));
 			return S_OK;
 		}
 
-	TEvent new_event;
-	new_event.eType = eEventType;
-	new_event.pDEvent = new TEventProcDelegate(InstIdx());
-	new_event.pDEvent->Add(pListnerProc, pParameter);
-	new_event.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-
-	_vecEvents.push_back(new_event);
+	_vecEvents.emplace_back(TEvent{ eEventType, new TEventProcDelegate(InstIdx()) }, CConnectionTracker());
+	_vecEvents.back().second.Add({ pListnerProc, pParameter }, _vecEvents.back().first.pDEvent->Add(move(listener)));
+	_vecEvents.back().first.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
-	for (const auto &event : _vecEvents)
-		if (eEventType == event.eType)
+	for (auto &event : _vecEvents)
+		if (eEventType == event.first.eType)
 		{
-			event.pDEvent->Remove(pListnerProc, pParameter);
+			event.second.Remove({ pListnerProc, pParameter });
 			return S_OK;
 		}
 
@@ -1608,53 +1682,45 @@ DGLE_RESULT DGLE_API CCore::RemoveEngineCallback(IEngineCallback *pEngineCallbac
 	return S_FALSE;
 }
 
-DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter)
+inline auto CCore::_SelectProcDelegate(E_ENGINE_PROCEDURE_TYPE eProcType) noexcept -> pair<TProcDelegate, CConnectionTracker> *
 {
-	switch(eProcType)
+	switch (eProcType)
 	{
 	case EPT_UPDATE:
-		_clDelUpdate.Add(pProc, pParameter);
-		break;
+		return &_clDelUpdate;
 	case EPT_RENDER:
-		_clDelRender.Add(pProc, pParameter);
-		break;
+		return &_clDelRender;
 	case EPT_INIT:
-		_clDelInit.Add(pProc, pParameter);
-		if(_bStartedFlag)
+		return &_clDelInit;
+	case EPT_FREE:
+		return &_clDelFree;
+	}
+	return nullptr;
+}
+
+DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter)
+{
+	if (const auto delegate = _SelectProcDelegate(eProcType))
+	{
+		delegate->second.Add({ pProc, pParameter }, delegate->first.Add(bind(pProc, pParameter)));
+		if (eProcType == EPT_INIT && _bStartedFlag)
 		{
-			(*pProc)(pParameter);
+			pProc(pParameter);
 			return S_FALSE;
 		}
-		break;
-	case EPT_FREE:
-		_clDelFree.Add(pProc, pParameter);
-		break;
-	default: return E_INVALIDARG;
+		return S_OK;
 	}
-
-	return S_OK;
+	return E_INVALIDARG;
 }
 
 DGLE_RESULT DGLE_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void (DGLE_API *pProc)(void *pParameter), void *pParameter)
 {
-	switch(eProcType)
+	if (const auto delegate = _SelectProcDelegate(eProcType))
 	{
-	case EPT_UPDATE:
-		_clDelUpdate.Remove(pProc, pParameter);
-		break;
-	case EPT_RENDER:
-		_clDelRender.Remove(pProc, pParameter);
-		break;
-	case EPT_INIT:
-		_clDelInit.Remove(pProc, pParameter);
-		break;
-	case EPT_FREE:
-		_clDelFree.Remove(pProc, pParameter);
-		break;
-	default: return E_INVALIDARG;
+		delegate->second.Remove({ pProc, pParameter });
+		return S_OK;
 	}
-
-	return S_OK;
+	return E_INVALIDARG;
 }
 
 DGLE_RESULT DGLE_API CCore::WriteToLog(const char *pcTxt)
@@ -1878,7 +1944,7 @@ DGLE_RESULT DGLE_API CCore::GetVersion(char *pcBuffer, uint &uiBufferSize)
 
 DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngineSubSystem *&prSubSystem)
 {
-	switch(eSubSystem)
+	switch (eSubSystem)
 	{
 		case ESS_CORE_RENDERER:
 			prSubSystem = (IEngineSubSystem*)_pCoreRenderer;
@@ -1897,7 +1963,7 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 			break;		
 
 		case ESS_INPUT:
-			if(_pInput == NULL)
+			if (_pInput == NULL)
 			{
 				prSubSystem = NULL;
 				return E_NOTIMPL;
@@ -1907,7 +1973,7 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 			break;	
 
 		case ESS_SOUND:
-			if(_pSound == NULL)
+			if (_pSound == NULL)
 			{
 				prSubSystem = NULL;
 				return E_NOTIMPL;
@@ -1926,19 +1992,4 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 	}
 
 	return S_OK;
-}
-
-void DGLE_API CCore::_s_OnTimer(void *pParameter)
-{
-	PTHIS(CCore)->_OnTimer();
-}
-
-void DGLE_API CCore::_s_MainLoop(void *pParameter)
-{
-	PTHIS(CCore)->_MainLoop();
-}
-
-void DGLE_API CCore::_s_MessageProc(void *pParameter, const TWindowMessage &stMsg)
-{
-	PTHIS(CCore)->_MessageProc(stMsg);
 }

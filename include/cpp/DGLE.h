@@ -1501,7 +1501,7 @@ bool GetEngine(const char *pcDllFileName, DGLE::IEngineCore *&pEngineCore, DGLE:
 #ifdef DGLE_USE_COM
 
 #define INTERFACE_IMPL(interface_name, next) \
-	if(memcmp(&riid, &IID_##interface_name, sizeof(GUID)) == 0)\
+	if (memcmp(&riid, &IID_##interface_name, sizeof(GUID)) == 0)\
 		*ppvObject = static_cast<interface_name *>(this);\
 	else\
 		next

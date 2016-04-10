@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -64,6 +64,7 @@ typedef HMODULE TDynLibHandle;
 #include <limits>
 #include <type_traits>
 #include <utility>
+#include <tuple>
 #include <functional>
 #include <system_error>
 #include <filesystem>
@@ -115,12 +116,12 @@ public:
 		return _uiInstIdx;
 	}
 	
-	inline CConsole* Console() const 
+	inline CConsole *Console() const 
 	{
 		return EngineInstance(_uiInstIdx)->pclConsole;
 	}
 
-	inline CCore* Core() const 
+	inline CCore *Core() const 
 	{
 		return EngineInstance(_uiInstIdx)->pclCore;
 	}

@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		26.03.2016 (c)Andrey Korotkov
+\date		10.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -687,7 +687,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, 
 	{
 		string cause = "";
 		
-		switch(glew_res)
+		switch (glew_res)
 		{
 			case GLEW_ERROR_NO_GL_VERSION:
 				cause = "Reason: Can't get OpenGL version.";
@@ -1124,7 +1124,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::SetRenderTarget(ICoreTexture *pTexture)
 
 					if (fbo.bValid)
 					{
-						if( do_multisample)
+						if (do_multisample)
 						{
 							glGenFramebuffersEXT(1, &fbo.uiFBBlitObject);
 							glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo.uiFBBlitObject);
@@ -1218,7 +1218,7 @@ void CCoreRendererGL::_KillDeadFBOs()
 		{
 			glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBObject);
 			
-			if(_vecFrameBuffers[i].uiFBBlitObject != 0)
+			if (_vecFrameBuffers[i].uiFBBlitObject != 0)
 				glDeleteFramebuffersEXT(1, &_vecFrameBuffers[i].uiFBBlitObject);
 			
 			if (_vecFrameBuffers[i].uiRBObjectColor != 0)
@@ -1307,7 +1307,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			ret = S_FALSE;
 		else
 		{
-			switch(tex_format)
+			switch (tex_format)
 			{
 			case GL_BGR:
 			case GL_RGB:
@@ -1389,7 +1389,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			if (eDataAlignment == CRDA_ALIGNED_BY_4)
 				cur_align = GetPixelDataAlignmentIncrement((uint)i_cur_w, bytes_per_pixel, 4);
 
-			if(b_is_compressed)
+			if (b_is_compressed)
 				data_size = ((i_cur_w + 3) / 4) * ((i_cur_h + 3) / 4) * bytes_per_pixel;
 			else
 				data_size = i_cur_h * (i_cur_w * bytes_per_pixel + cur_align);

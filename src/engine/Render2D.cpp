@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		10.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -162,7 +162,7 @@ DGLE_RESULT DGLE_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 
 	_batchMode = eMode;
 
-	switch(eMode)
+	switch (eMode)
 	{
 	case BM_AUTO:	
 		if (Core()->InitFlags() & EIF_FORCE_LIMIT_FPS)
@@ -893,7 +893,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 
 		TDrawDataDesc desc((uint8*)_pBuffer, -1, -1, true);
 
-		if(eFlags & PF_VERTICES_COLORS)
+		if (eFlags & PF_VERTICES_COLORS)
 		{
 			if (eFlags & PF_FILL)
 			{
@@ -2004,7 +2004,7 @@ DGLE_RESULT DGLE_API CRender2D::SetBlendMode(E_BLENDING_EFFECT eMode)
 	else
 		_BatchFlush();
 
-	switch(eMode)
+	switch (eMode)
 	{
 	case BE_NORMAL:
 		_stBlendStateDesc.eSrcFactor = BF_SRC_ALPHA;
