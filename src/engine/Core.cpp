@@ -372,6 +372,8 @@ _clDelMLoop(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
 _clDelMProc(uiInstIdx),
 _clDelOnFPSTimer(piecewise_construct, make_tuple(uiInstIdx), make_tuple())
 {
+	_vecEvents.reserve(ET_COUNT);
+
 	_pcCustomSplash = new char [1];
 	_pcCustomSplash[0] = '\0';
 

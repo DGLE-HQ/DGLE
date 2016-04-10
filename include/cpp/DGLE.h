@@ -364,6 +364,7 @@ namespace DGLE
 		ET_ON_CONSOLE_WRITE,		/**< Event occurs when some text is being outputted to the engine console. \see IEvConsoleWrite */
 		ET_ON_FULLSCREEN,			/**< Event occurs when engine is switching to fullscreen mode or back to windowed from fullscreen. \see IEvGoFullScreen */
 		ET_ON_PER_SECOND_TIMER,		/**< Event occurs every second, just before engine recalculates its current per second metrics. */
+		ET_COUNT
 	};
 
 	// {6DFEF982-AADF-42e9-A369-378BDB31404A}
