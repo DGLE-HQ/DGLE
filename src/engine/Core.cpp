@@ -1629,18 +1629,14 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 	if (eEventType == ET_BEFORE_INITIALIZATION && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
 
-	auto listener = bind(pListnerProc, pParameter, _1);	// not const in order to enable move semantic below
-	
-	for (auto &event : _vecEvents)
-		if (eEventType == event.first.eType)
-		{
-			event.second.Add({ pListnerProc, pParameter }, event.first.pDEvent->Add(move(listener)));
-			return S_OK;
-		}
-
-	_vecEvents.emplace_back(TEvent{ eEventType, make_unique<TEventProcDelegate>(InstIdx()) }, CConnectionTracker());
-	_vecEvents.back().second.Add({ pListnerProc, pParameter }, _vecEvents.back().first.pDEvent->Add(move(listener)));
-	_vecEvents.back().first.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+	auto target_event = find_if(_vecEvents.begin(), _vecEvents.end(), [eEventType](decltype(_vecEvents)::const_reference curEvent) { return curEvent.first.eType == eEventType; });
+	if (target_event == _vecEvents.end())
+	{
+		_vecEvents.emplace_back(TEvent{ eEventType, make_unique<TEventProcDelegate>(InstIdx()) }, CConnectionTracker());
+		_vecEvents.back().first.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		target_event = prev(_vecEvents.end());
+	}
+	target_event->second.Add({ pListnerProc, pParameter }, target_event->first.pDEvent->Add(bind(pListnerProc, pParameter, _1)));
 
 	return S_OK;
 }
