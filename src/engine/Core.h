@@ -31,7 +31,7 @@ struct TPlugin
 struct TEvent
 {
 	E_EVENT_TYPE eType;
-	TEventProcDelegate *pDEvent;
+	std::unique_ptr<TEventProcDelegate> pDEvent;
 };
 
 // CCore //

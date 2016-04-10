@@ -614,9 +614,6 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pMainWindow->Free();
 
-		for (const auto &event : _vecEvents)
-			delete event.first.pDEvent;
-
 		_vecEvents.clear();
 
 		break;
@@ -1641,7 +1638,7 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 			return S_OK;
 		}
 
-	_vecEvents.emplace_back(TEvent{ eEventType, new TEventProcDelegate(InstIdx()) }, CConnectionTracker());
+	_vecEvents.emplace_back(TEvent{ eEventType, make_unique<TEventProcDelegate>(InstIdx()) }, CConnectionTracker());
 	_vecEvents.back().second.Add({ pListnerProc, pParameter }, _vecEvents.back().first.pDEvent->Add(move(listener)));
 	_vecEvents.back().first.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
