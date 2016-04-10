@@ -88,8 +88,8 @@ namespace Signals
 	struct ScopedConnection : Connection<Args...>
 	{
 		ScopedConnection(ScopedConnection &&) = default;
-		ScopedConnection(Connection<Args...> &&src) noexcept : Connection(std::move(src)) {}
-		ScopedConnection &operator =(Connection<Args...> &&src) noexcept { return Connection::operator =(std::move(src)), *this; }
+		ScopedConnection(Connection<Args...> &&src) noexcept : Connection<Args...>(std::move(src)) {}
+		ScopedConnection &operator =(Connection<Args...> &&src) noexcept { return Connection<Args...>::operator =(std::move(src)), *this; }
 		ScopedConnection &operator =(ScopedConnection &&src) = default;
 		~ScopedConnection() noexcept { Disconnect(); }
 	};
@@ -188,6 +188,6 @@ void Signals::Connection<Args...>::Disconnect() noexcept
 template<typename ...Args>
 auto Signals::MakeSignal() -> std::shared_ptr<Signal<Args...>>
 {
-	return std::allocate_shared<Signal<Args...>>(Signal<Args...>::Allocator<>());
+	return std::allocate_shared<Signal<Args...>>(typename Signal<Args...>::Allocator<>());
 }
 #pragma endregion
