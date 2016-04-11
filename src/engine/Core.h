@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		11.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -26,12 +26,6 @@ struct TPlugin
 {
 	TDynLibHandle tLib;
 	IPlugin *pPlugin;
-};
-
-struct TEvent
-{
-	E_EVENT_TYPE eType;
-	std::unique_ptr<TEventProcDelegate> pDEvent;
 };
 
 // CCore //
@@ -91,7 +85,7 @@ class CCore final : public CInstancedObj, public IEngineCore
 
 	std::vector<IEngineCallback *> _vecEngineCallbacks;
 
-	std::vector<std::pair<TEvent, CConnectionTracker>> _vecEvents;
+	std::unique_ptr<std::pair<TEventProcDelegate, CConnectionTracker>> _events[ET_COUNT];
 
 	std::fstream _clLogFile;
 	uint _uiLogWarningsCount, _uiLogErrorsCount;

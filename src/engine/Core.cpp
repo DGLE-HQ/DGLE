@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		11.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -372,8 +372,6 @@ _clDelMLoop(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
 _clDelMProc(uiInstIdx),
 _clDelOnFPSTimer(piecewise_construct, make_tuple(uiInstIdx), make_tuple())
 {
-	_vecEvents.reserve(ET_COUNT);
-
 	_pcCustomSplash = new char [1];
 	_pcCustomSplash[0] = '\0';
 
@@ -616,7 +614,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pMainWindow->Free();
 
-		_vecEvents.clear();
+		fill(begin(_events), end(_events), nullptr);
 
 		break;
 
@@ -1608,13 +1606,8 @@ DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &ui64Tick)
 
 DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {
-	// wrap to lambda in order to cope with C2712 due to __try usage
-	[=]
-	{
-		const auto found = find_if(_vecEvents.cbegin(), _vecEvents.cend(), [eEventType](decltype(_vecEvents)::const_reference event) { return eEventType == event.first.eType; });
-		if (found != _vecEvents.cend())
-			found->first.pDEvent->operator ()(pEvent);
-	}();
+	if (_events[eEventType])
+		_events[eEventType]->first(pEvent);
 
 	const auto notify_callbacks = [=]
 	{
@@ -1631,28 +1624,23 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 	if (eEventType == ET_BEFORE_INITIALIZATION && _bInitedFlag) // Means that engine is already inited and event will never happen.
 		return S_FALSE;
 
-	auto target_event = find_if(_vecEvents.begin(), _vecEvents.end(), [eEventType](decltype(_vecEvents)::const_reference curEvent) { return curEvent.first.eType == eEventType; });
-	if (target_event == _vecEvents.end())
+	if (!_events[eEventType])
 	{
-		_vecEvents.emplace_back(TEvent{ eEventType, make_unique<TEventProcDelegate>(InstIdx()) }, CConnectionTracker());
-		_vecEvents.back().first.pDEvent->CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		target_event = prev(_vecEvents.end());
+		_events[eEventType] = make_unique<remove_extent_t<decltype(_events)>::element_type>(InstIdx(), CConnectionTracker());
+		_events[eEventType]->first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 	}
-	target_event->second.Add({ pListnerProc, pParameter }, target_event->first.pDEvent->Add(bind(pListnerProc, pParameter, _1)));
+	_events[eEventType]->second.Add({ pListnerProc, pParameter }, _events[eEventType]->first.Add(bind(pListnerProc, pParameter, _1)));
 
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (DGLE_API *pListnerProc)(void *pParameter, IBaseEvent *pEvent), void *pParameter)
 {
-	for (auto &event : _vecEvents)
-		if (eEventType == event.first.eType)
-		{
-			event.second.Remove({ pListnerProc, pParameter });
-			return S_OK;
-		}
+	if (!_events[eEventType])
+		return E_INVALIDARG;
 
-	return E_INVALIDARG;
+	_events[eEventType]->second.Remove({ pListnerProc, pParameter });
+	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::AddEngineCallback(IEngineCallback *pEngineCallback)
