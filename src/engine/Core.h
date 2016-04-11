@@ -38,7 +38,7 @@ class CCore final : public CInstancedObj, public IEngineCore
 	static constexpr uint _sc_MaxUpdateCycles = 10;
 	static constexpr uint _sc_AppCaptionMaxLength = 128;
 
-	class CConnectionTracker
+	class CConnectionsTracker
 	{
 		// C++17 std::any could be use as well but unrestricted union provides better memory fit because size of all connections is known and is the same
 		class GenericConnection
@@ -67,9 +67,9 @@ class CCore final : public CInstancedObj, public IEngineCore
 		typedef const decltype(_connections)::key_type &Slot;
 
 	public:
-		CConnectionTracker() = default;
-		CConnectionTracker(CConnectionTracker &&) = default;
-		CConnectionTracker &operator =(CConnectionTracker &&) = default;
+		CConnectionsTracker() = default;
+		CConnectionsTracker(CConnectionsTracker &&) = default;
+		CConnectionsTracker &operator =(CConnectionsTracker &&) = default;
 
 	public:
 		void Add(Slot slot, Signals::ScopedConnection<IBaseEvent *> &&eventConnection), Add(Slot slot, Signals::ScopedConnection<> &&procConnection);
@@ -79,13 +79,13 @@ class CCore final : public CInstancedObj, public IEngineCore
 		void Add(Slot slot, GenericConnection &&connection);
 	};
 
-	std::pair<TProcDelegate, CConnectionTracker> _clDelUpdate, _clDelRender, _clDelInit, _clDelFree, *_SelectProcDelegate(E_ENGINE_PROCEDURE_TYPE eProcType) noexcept,
+	std::pair<CConnectionsTracker, TProcDelegate> _clDelUpdate, _clDelRender, _clDelInit, _clDelFree, *_SelectProcDelegate(E_ENGINE_PROCEDURE_TYPE eProcType) noexcept,
 		_clDelMLoop, _clDelOnFPSTimer;
 	TMsgProcDelegate _clDelMProc;
 
 	std::vector<IEngineCallback *> _vecEngineCallbacks;
 
-	std::unique_ptr<std::pair<TEventProcDelegate, CConnectionTracker>> _events[ET_COUNT];
+	std::unique_ptr<std::pair<CConnectionsTracker, TEventProcDelegate>> _events[ET_COUNT];
 
 	std::fstream _clLogFile;
 	uint _uiLogWarningsCount, _uiLogErrorsCount;
@@ -183,8 +183,8 @@ public:
 
 	inline	E_ENGINE_INIT_FLAGS InitFlags() const {return _eInitFlags;}
 	inline	TMsgProcDelegate *pDMessageProc() {return &_clDelMProc;}
-	inline	TProcDelegate *pDMLoopProc() {return &_clDelMLoop.first;}
-	inline	TProcDelegate *pDFPSTimerProc() {return &_clDelOnFPSTimer.first;}
+	inline	TProcDelegate *pDMLoopProc() {return &_clDelMLoop.second;}
+	inline	TProcDelegate *pDFPSTimerProc() {return &_clDelOnFPSTimer.second;}
 	inline	TEngineWindow *EngWindow() {return &_stWin;}
 	
 	inline	bool SoundEnabled() const {return _bSndEnabled;}

@@ -276,13 +276,13 @@ public:
 
 //Engine Core//
 
-inline CCore::CConnectionTracker::GenericConnection::GenericConnection(Signals::ScopedConnection<IBaseEvent *> &&eventConnection) noexcept :
+inline CCore::CConnectionsTracker::GenericConnection::GenericConnection(Signals::ScopedConnection<IBaseEvent *> &&eventConnection) noexcept :
 eventConnection(move(eventConnection)), _type(ConnectionType::Event) {}
 
-inline CCore::CConnectionTracker::GenericConnection::GenericConnection(Signals::ScopedConnection<> &&procConnection) noexcept :
+inline CCore::CConnectionsTracker::GenericConnection::GenericConnection(Signals::ScopedConnection<> &&procConnection) noexcept :
 procConnection(move(procConnection)), _type(ConnectionType::Proc) {}
 
-CCore::CConnectionTracker::GenericConnection::GenericConnection(GenericConnection &&connection) noexcept : _type(connection._type)
+CCore::CConnectionsTracker::GenericConnection::GenericConnection(GenericConnection &&connection) noexcept : _type(connection._type)
 {
 	switch (_type)
 	{
@@ -298,7 +298,7 @@ CCore::CConnectionTracker::GenericConnection::GenericConnection(GenericConnectio
 	}
 }
 
-auto CCore::CConnectionTracker::GenericConnection::operator =(GenericConnection &&connection) noexcept -> GenericConnection &
+auto CCore::CConnectionsTracker::GenericConnection::operator =(GenericConnection &&connection) noexcept -> GenericConnection &
 {
 	switch (_type = connection._type)
 	{
@@ -315,7 +315,7 @@ auto CCore::CConnectionTracker::GenericConnection::operator =(GenericConnection 
 	return *this;
 }
 
-CCore::CConnectionTracker::GenericConnection::~GenericConnection() noexcept
+CCore::CConnectionsTracker::GenericConnection::~GenericConnection() noexcept
 {
 	switch (_type)
 	{
@@ -331,22 +331,22 @@ CCore::CConnectionTracker::GenericConnection::~GenericConnection() noexcept
 	}
 }
 
-inline void CCore::CConnectionTracker::Add(Slot slot, Signals::ScopedConnection<IBaseEvent *> &&eventConnection)
+inline void CCore::CConnectionsTracker::Add(Slot slot, Signals::ScopedConnection<IBaseEvent *> &&eventConnection)
 {
 	Add(slot, GenericConnection(move(eventConnection)));
 }
 
-inline void CCore::CConnectionTracker::Add(Slot slot, Signals::ScopedConnection<> &&procConnection)
+inline void CCore::CConnectionsTracker::Add(Slot slot, Signals::ScopedConnection<> &&procConnection)
 {
 	Add(slot, GenericConnection(move(procConnection)));
 }
 
-void CCore::CConnectionTracker::Add(Slot slot, GenericConnection &&connection)
+void CCore::CConnectionsTracker::Add(Slot slot, GenericConnection &&connection)
 {
 	_connections.emplace(slot, move(connection));
 }
 
-void CCore::CConnectionTracker::Remove(Slot slot)
+void CCore::CConnectionsTracker::Remove(Slot slot)
 {
 	_connections.erase(slot);
 }
@@ -364,13 +364,13 @@ _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
 _bNeedApplyNewWnd(false), _uiLastUpdateDeltaTime(0), _uiLastMemUsage(0),
 _ui64StartTime(0), _ui64PauseTime(0),
 //Delegates initialization
-_clDelUpdate(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
-_clDelRender(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
-_clDelInit(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
-_clDelFree(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
-_clDelMLoop(piecewise_construct, make_tuple(uiInstIdx), make_tuple()),
+_clDelUpdate(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
+_clDelRender(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
+_clDelInit(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
+_clDelFree(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
+_clDelMLoop(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
 _clDelMProc(uiInstIdx),
-_clDelOnFPSTimer(piecewise_construct, make_tuple(uiInstIdx), make_tuple())
+_clDelOnFPSTimer(piecewise_construct, make_tuple(), make_tuple(uiInstIdx))
 {
 	_pcCustomSplash = new char [1];
 	_pcCustomSplash[0] = '\0';
@@ -528,7 +528,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 	{
 	case WMT_REDRAW:
 
-		_clDelMLoop.first();
+		_clDelMLoop.second();
 
 		break;
 
@@ -544,13 +544,13 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 
 		_pCoreRenderer->MakeCurrent();
 
-		if (!_clDelFree.first.IsNull() || !_vecEngineCallbacks.empty()) 
+		if (!_clDelFree.second.IsNull() || !_vecEngineCallbacks.empty()) 
 		{
 			LOG("Calling user finalization procedure...", LT_INFO);
 			
 			_InvokeUserCallback(EPT_FREE);
 
-			_clDelFree.first();	
+			_clDelFree.second();	
 			
 			LOG("Done.", LT_INFO);
 		}
@@ -799,12 +799,12 @@ void CCore::_MainLoop()
 	
 	for (uint i = 0; i < cycles_cnt; ++i)
 	{
-		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.first.IsNull() || !_vecEngineCallbacks.empty()) && !_bQuitFlag) 
+		if (((!_bPause && _iAllowPause) || !_iAllowPause) && (!_clDelUpdate.second.IsNull() || !_vecEngineCallbacks.empty()) && !_bQuitFlag) 
 		{
 			if (i == cycles_cnt - 1)
 				_pRender->RefreshBatchData();
 
-			_clDelUpdate.first();
+			_clDelUpdate.second();
 			
 			_InvokeUserCallback(EPT_UPDATE);
 
@@ -850,7 +850,7 @@ void CCore::_RenderFrame()
 		CastEvent(ET_BEFORE_RENDER, &event);
 	}
 
-	_clDelRender.first();
+	_clDelRender.second();
 	
 	_InvokeUserCallback(EPT_RENDER);
 
@@ -1194,10 +1194,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 			}
 		}
 
-		_clDelUpdate.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		_clDelRender.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		_clDelInit.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
-		_clDelFree.first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelUpdate.second.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelRender.second.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelInit.second.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_clDelFree.second.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 
 		Console()->RegComVar("core_allow_pause", "Pauses main process rutine when window losts focus.", &_iAllowPause, 0, 1, &_s_ConAutoPause, this);
 		Console()->RegComVar("core_fps_in_caption", "Displays current fps value in window caption.", &_iFPSToCaption, 0, 1, NULL, this);
@@ -1223,8 +1223,8 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 				}
 			}
 
-		_clDelOnFPSTimer.first.Add(bind(&CCore::_OnTimer, this));
-		_clDelMLoop.first.Add(bind(&CCore::_MainLoop, this));
+		_clDelOnFPSTimer.second.Add(bind(&CCore::_OnTimer, this));
+		_clDelMLoop.second.Add(bind(&CCore::_MainLoop, this));
 		_clDelMProc.Add(bind(&CCore::_MessageProc, this, _1));
 
 		if (!_vecPluginInitList.empty())
@@ -1337,7 +1337,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		if (FAILED(_pCoreRenderer->Prepare(rnd_init_res)))
 			return E_ABORT;
 
-		if (FAILED(_pMainWindow->InitWindow(tHandle, rnd_init_res, &_clDelMLoop.first, &_clDelMProc)))
+		if (FAILED(_pMainWindow->InitWindow(tHandle, rnd_init_res, &_clDelMLoop.second, &_clDelMProc)))
 			return E_ABORT;
 
 		if (do_spl)
@@ -1358,7 +1358,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 
 		_pMainWindow->SetCaption(_pcApplicationCaption);
 
-		if (_uiFPSTimer = CreateTimer(1000, &_clDelOnFPSTimer.first), _uiFPSTimer == -1) 
+		if (_uiFPSTimer = CreateTimer(1000, &_clDelOnFPSTimer.second), _uiFPSTimer == -1) 
 			LOG("Can't set fps timer.", LT_FATAL);	   
 
 		_pMainFS = new CMainFileSystem(InstIdx());
@@ -1408,7 +1408,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 
 void CCore::ToogleSuspendEngine(bool bSuspend)
 {
-	_clDelMLoop.first.AllowInvoke(!bSuspend);
+	_clDelMLoop.second.AllowInvoke(!bSuspend);
 	_clDelMProc.AllowInvoke(!bSuspend);
 }
 
@@ -1500,11 +1500,11 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_pRender->SetDefaultStates();
 
-	if (!_clDelInit.first.IsNull() || !_vecEngineCallbacks.empty()) 
+	if (!_clDelInit.second.IsNull() || !_vecEngineCallbacks.empty()) 
 	{
 		LOG("Calling user initialization procedure...", LT_INFO);
 		
-		_clDelInit.first();
+		_clDelInit.second();
 		
 		_InvokeUserCallback(EPT_INIT);
 		
@@ -1607,7 +1607,7 @@ DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &ui64Tick)
 DGLE_RESULT DGLE_API CCore::CastEvent(E_EVENT_TYPE eEventType, IBaseEvent *pEvent)
 {
 	if (_events[eEventType])
-		_events[eEventType]->first(pEvent);
+		_events[eEventType]->second(pEvent);
 
 	const auto notify_callbacks = [=]
 	{
@@ -1626,10 +1626,10 @@ DGLE_RESULT DGLE_API CCore::AddEventListener(E_EVENT_TYPE eEventType, void (DGLE
 
 	if (!_events[eEventType])
 	{
-		_events[eEventType] = make_unique<remove_extent_t<decltype(_events)>::element_type>(InstIdx(), CConnectionTracker());
-		_events[eEventType]->first.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
+		_events[eEventType] = make_unique<remove_extent_t<decltype(_events)>::element_type>(CConnectionsTracker(), InstIdx());
+		_events[eEventType]->second.CatchExceptions(_eInitFlags & EIF_CATCH_UNHANDLED);
 	}
-	_events[eEventType]->second.Add({ pListnerProc, pParameter }, _events[eEventType]->first.Add(bind(pListnerProc, pParameter, _1)));
+	_events[eEventType]->first.Add({ pListnerProc, pParameter }, _events[eEventType]->second.Add(bind(pListnerProc, pParameter, _1)));
 
 	return S_OK;
 }
@@ -1639,7 +1639,7 @@ DGLE_RESULT DGLE_API CCore::RemoveEventListener(E_EVENT_TYPE eEventType, void (D
 	if (!_events[eEventType])
 		return E_INVALIDARG;
 
-	_events[eEventType]->second.Remove({ pListnerProc, pParameter });
+	_events[eEventType]->first.Remove({ pListnerProc, pParameter });
 	return S_OK;
 }
 
@@ -1665,7 +1665,7 @@ DGLE_RESULT DGLE_API CCore::RemoveEngineCallback(IEngineCallback *pEngineCallbac
 	return S_FALSE;
 }
 
-inline auto CCore::_SelectProcDelegate(E_ENGINE_PROCEDURE_TYPE eProcType) noexcept -> pair<TProcDelegate, CConnectionTracker> *
+inline auto CCore::_SelectProcDelegate(E_ENGINE_PROCEDURE_TYPE eProcType) noexcept -> pair<CConnectionsTracker, TProcDelegate> *
 {
 	switch (eProcType)
 	{
@@ -1685,7 +1685,7 @@ DGLE_RESULT DGLE_API CCore::AddProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, void
 {
 	if (const auto delegate = _SelectProcDelegate(eProcType))
 	{
-		delegate->second.Add({ pProc, pParameter }, delegate->first.Add(bind(pProc, pParameter)));
+		delegate->first.Add({ pProc, pParameter }, delegate->second.Add(bind(pProc, pParameter)));
 		if (eProcType == EPT_INIT && _bStartedFlag)
 		{
 			pProc(pParameter);
@@ -1700,7 +1700,7 @@ DGLE_RESULT DGLE_API CCore::RemoveProcedure(E_ENGINE_PROCEDURE_TYPE eProcType, v
 {
 	if (const auto delegate = _SelectProcDelegate(eProcType))
 	{
-		delegate->second.Remove({ pProc, pParameter });
+		delegate->first.Remove({ pProc, pParameter });
 		return S_OK;
 	}
 	return E_INVALIDARG;
