@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -23,7 +23,8 @@ See "DGLE.h" for more details.
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
-#ifdef PLATFORM_WINDOWS
+// TODO: try with future clang versions
+#if defined PLATFORM_WINDOWS && !__clang__
 
 const char *FormWin32ExceptionString(DWORD dwCode);
 
