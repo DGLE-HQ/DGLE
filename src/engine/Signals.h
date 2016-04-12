@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		10.04.2016 (c)Andrey Korotkov
+\date		12.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -57,6 +57,9 @@ namespace Signals
 		mutable std::list<std::function<void(Args...)>> slots;
 		mutable unsigned int recursionDepth = 0;
 		mutable bool dirty = false;
+
+	public:
+		using std::enable_shared_from_this<Signal<Args...>>::shared_from_this;
 
 	public:
 		Connection<Args...> Connect(std::function<void(Args...)> slot);
@@ -157,7 +160,7 @@ void Signals::Signal<Args...>::operator ()(Args ...args) const
 		{
 			if (!--signal->recursionDepth && signal->dirty)
 			{
-				signal->slots.remove_if([](decltype(slots)::const_reference slot) -> bool { return !slot; });
+				signal->slots.remove_if([](typename decltype(slots)::const_reference slot) -> bool { return !slot; });
 				signal->dirty = false;
 			}
 		}
