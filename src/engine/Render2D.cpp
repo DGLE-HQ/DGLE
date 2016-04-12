@@ -105,8 +105,7 @@ void CRender2D::DrawProfiler()
 		Core()->RenderProfilerText("======Render2D Profiler=====", ColorWhite());
 		Core()->RenderProfilerText(("Objects on screen :" + to_string(_uiObjsDrawnCount)).c_str(), ColorWhite());
 		Core()->RenderProfilerText(("Batches per frame :" + to_string(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? ColorRed() : ColorWhite());
-		const auto ms = floor<chrono::milliseconds>(_drawAverallDelay);
-		Core()->RenderProfilerText(("Render delay      :" + to_string(ms.count()) + '.' + to_string((_drawAverallDelay - ms).count()) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(GetProfilerDelayText("Render delay      :", _drawAverallDelay).c_str(), ColorWhite());
 
 		if (_iProfilerState > 1)
 		{

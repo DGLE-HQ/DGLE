@@ -49,6 +49,8 @@ typedef HMODULE TDynLibHandle;
 #	include <new>
 #endif
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
@@ -60,6 +62,8 @@ typedef HMODULE TDynLibHandle;
 #include <algorithm>
 #include <fstream>
 #include <strstream>
+#include <sstream>
+#include <iomanip>
 #include <iterator>
 #include <limits>
 #include <type_traits>
@@ -95,6 +99,20 @@ template<class Duration>
 inline auto GetPerfTimer() noexcept
 {
 	return std::chrono::duration_cast<Duration>(GetPerfTimer());
+}
+
+template<class Duration>
+std::string GetProfilerDelayText(const std::string &prefix, Duration delay)
+{
+	using namespace std;
+	using chrono::milliseconds;
+	static_assert(Duration::period::num == 1 && Duration::period::den > milliseconds::period::den, "invalid delay type");
+	ostringstream stream(prefix, ios_base::out | ios_base::ate);
+	const milliseconds ms = floor<milliseconds>(delay);
+	stream.fill('0');
+	// TODO: consider implementing compile time witdh computation
+	stream << ms.count() << '.' << setw(log10(Duration::period::den / milliseconds::period::den)) << (delay - ms).count() << " ms";
+	return stream.str();
 }
 
 class CCore;

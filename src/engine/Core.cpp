@@ -880,9 +880,8 @@ void CCore::_RenderFrame()
 
 			if (_iDrawProfiler > 1)
 			{
-				milliseconds ms;
-				RenderProfilerText(("Render delay:" + to_string((ms = floor<milliseconds>(_renderDelay)).count()) + '.' + to_string((_renderDelay - ms).count()) + " ms").c_str(), ColorWhite());
-				RenderProfilerText(("Update delay:" + to_string((ms = floor<milliseconds>(_updateDelay)).count()) + '.' + to_string((_updateDelay - ms).count()) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(GetProfilerDelayText("Render delay:", _renderDelay).c_str(), ColorWhite());
+				RenderProfilerText(GetProfilerDelayText("Update delay:", _updateDelay).c_str(), ColorWhite());
 			}
 
 			if (_iDrawProfiler == 3)

@@ -409,8 +409,7 @@ void CSound::_ProfilerDraw()
 
 		EnterThreadSafeSection();
 
-		const auto ms = floor<chrono::milliseconds>(_mixDelay);
-		Core()->RenderProfilerText(("Mixer delay     :" + to_string(ms.count()) + '.' + to_string((ms - _mixDelay).count()) + " ms").c_str(), ColorWhite());
+		Core()->RenderProfilerText(GetProfilerDelayText("Mixer delay     :", _mixDelay).c_str(), ColorWhite());
 
 		uint cnt = 0;
 
