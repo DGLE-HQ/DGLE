@@ -23,6 +23,7 @@ See "DGLE.h" for more details.
 
 using namespace std;
 using namespace placeholders;
+using namespace chrono;
 
 extern bool bUnhandledFilterEnabled;
 
@@ -361,8 +362,8 @@ _pSplashWindow(NULL), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
 _bDoExit(false), _bInDrawProfilers(false), _bWasFScreen(false), _bRendering(false),
 _bStartedFlag(false), _bInitedFlag(false), _bQuitFlag(false),
 _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
-_bNeedApplyNewWnd(false), _uiLastUpdateDeltaTime(0), _uiLastMemUsage(0),
-_ui64StartTime(0), _ui64PauseTime(0),
+_bNeedApplyNewWnd(false), _lastUpdateDeltaTime(0), _uiLastMemUsage(0),
+_startTime(0), _pauseTime(0),
 //Delegates initialization
 _clDelUpdate(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
 _clDelRender(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
@@ -629,7 +630,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		{
 			_pMainWindow->SetCaption(_pcApplicationCaption);
 			if (_pSound != NULL) _pSound->MasterPause(false);
-			_ui64PauseTime += GetPerfTimer() - _ui64PauseStartTime;
+			_pauseTime += GetPerfTimer<microseconds>() - _pauseStartTime;
 		}
 
 		break;
@@ -645,7 +646,7 @@ void CCore::_MessageProc(const TWindowMessage &stMsg)
 		{
 			_pMainWindow->SetCaption((_pcApplicationCaption + " [Paused]"s).c_str());
 			if (_pSound != NULL) _pSound->MasterPause(true);
-			_ui64PauseStartTime = GetPerfTimer();
+			_pauseStartTime = GetPerfTimer<microseconds>();
 		}
 
 		if ((_stWin.bFullScreen && !_bNeedApplyNewWnd))
@@ -765,8 +766,8 @@ void CCore::_MainLoop()
 	if (FAILED(_pCoreRenderer->MakeCurrent()))
 		return;
 
-	uint64 time = GetPerfTimer();
-	uint time_delta = (uint)(time - _ui64TimeOld);
+	const microseconds time = GetPerfTimer<microseconds>();
+	const auto time_delta = time - _timeOld;
 
 	bool flag = false;
 
@@ -778,10 +779,10 @@ void CCore::_MainLoop()
 		cycles_cnt = 1;
 	else
 		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE)
-			cycles_cnt = time_delta >= _uiUpdateInterval * 1000;
+			cycles_cnt = time_delta >= _updateInterval;
 		else
 		{
-			cycles_cnt = time_delta / (_uiUpdateInterval * 1000);
+			cycles_cnt = time_delta / _updateInterval;
 
 			if (cycles_cnt > _sc_MaxUpdateCycles)
 				cycles_cnt = _sc_MaxUpdateCycles;
@@ -790,11 +791,11 @@ void CCore::_MainLoop()
 	if (cycles_cnt > 0)
 	{
 		if (_eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
-			_uiLastUpdateDeltaTime = _stWin.bVSync && _uiLastFPS >= 5 ? 200 / (_uiLastFPS / 5) : time_delta;
+			_lastUpdateDeltaTime = _stWin.bVSync && _uiLastFPS >= 5 ? 200ms / (_uiLastFPS / 5) : duration_cast<milliseconds>(time_delta);
 		else
-			_uiLastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? time_delta : _uiUpdateInterval;
+			_lastUpdateDeltaTime = (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE) ? duration_cast<milliseconds>(time_delta) : _updateInterval;
 		
-		_ui64UpdateDelay = GetPerfTimer();
+		_updateDelay = GetPerfTimer<microseconds>();
 	}
 	
 	for (uint i = 0; i < cycles_cnt; ++i)
@@ -816,19 +817,18 @@ void CCore::_MainLoop()
 
 	if (flag)
 	{
-		_ui64UpdateDelay = GetPerfTimer() - _ui64UpdateDelay;
+		_updateDelay = GetPerfTimer<microseconds>() - _updateDelay;
 		
-		if (_eInitFlags & EIF_ENABLE_FLOATING_UPDATE || _eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE)
-			_ui64TimeOld = time;
-		else
-			_ui64TimeOld = time - time_delta % (_uiUpdateInterval * 1000);
+		_timeOld = time;
+		if (!(_eInitFlags & EIF_ENABLE_FLOATING_UPDATE || _eInitFlags & EIF_ENABLE_PER_FRAME_UPDATE))
+			_timeOld -= time_delta % _updateInterval;
 	}
 
 	_RenderFrame();
 
 	Console()->LeaveThreadSafeSection();
 
-	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _uiUpdateInterval && _uiLastFPS > 120) || _bPause)) * 8 +
+	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _updateInterval.count() && _uiLastFPS > 120) || _bPause)) * 8 +
 				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && cycles_cnt < 2) * 6;
 
 	if (sleep > 0)
@@ -841,7 +841,7 @@ void CCore::_RenderFrame()
 
 	_pRender->BeginRender();
 
-	_ui64RenderDelay = GetPerfTimer();
+	_renderDelay = GetPerfTimer<microseconds>();
 
 	_pRender->BeginFrame();
 
@@ -861,7 +861,7 @@ void CCore::_RenderFrame()
 
 	_pRender->EndFrame();
 	
-	_ui64RenderDelay = GetPerfTimer() - _ui64RenderDelay;
+	_renderDelay = GetPerfTimer<microseconds>() - _renderDelay;
 
 	if (_iAllowDrawProfilers == 1)
 	{
@@ -876,12 +876,13 @@ void CCore::_RenderFrame()
 		if (_iDrawProfiler > 0)
 		{
 			RenderProfilerText(("FPS:" + to_string(_uiLastFPS)).c_str(), _uiLastFPS < 60 ? ColorRed() : ColorWhite());
-			RenderProfilerText(("UPS:" + to_string(_uiLastUPS)).c_str(), _uiLastUPS < 1000 / _uiUpdateInterval ? ColorRed() : ColorWhite());
+			RenderProfilerText(("UPS:" + to_string(_uiLastUPS)).c_str(), _uiLastUPS < 1s / _updateInterval ? ColorRed() : ColorWhite());
 
 			if (_iDrawProfiler > 1)
 			{
-				RenderProfilerText(("Render delay:" + to_string(_ui64RenderDelay / 1000) + '.' + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
-				RenderProfilerText(("Update delay:" + to_string(_ui64UpdateDelay / 1000) + '.' + to_string(_ui64RenderDelay % 1000) + " ms").c_str(), ColorWhite());
+				milliseconds ms;
+				RenderProfilerText(("Render delay:" + to_string((ms = floor<milliseconds>(_renderDelay)).count()) + '.' + to_string((_renderDelay - ms).count()) + " ms").c_str(), ColorWhite());
+				RenderProfilerText(("Update delay:" + to_string((ms = floor<milliseconds>(_updateDelay)).count()) + '.' + to_string((_renderDelay - ms).count()) + " ms").c_str(), ColorWhite());
 			}
 
 			if (_iDrawProfiler == 3)
@@ -924,10 +925,10 @@ void CCore::_InvokeUserCallback(E_ENGINE_PROCEDURE_TYPE eProcType)
 		for (const auto callback : _vecEngineCallbacks)
 			switch (eProcType)
 			{
-			case EPT_UPDATE:	callback->Update(_uiLastUpdateDeltaTime);	break;
-			case EPT_RENDER:	callback->Render();							break;
-			case EPT_INIT:		callback->Initialize();						break;
-			case EPT_FREE:		callback->Free();							break;
+			case EPT_UPDATE:	callback->Update(_lastUpdateDeltaTime.count());	break;
+			case EPT_RENDER:	callback->Render();								break;
+			case EPT_INIT:		callback->Initialize();							break;
+			case EPT_FREE:		callback->Free();								break;
 			}
 	};
 
@@ -1140,7 +1141,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		setlocale(LC_NUMERIC, "C");
 
 		_stWin = stWindowParam;
-		_uiUpdateInterval = uiUpdateInterval;
+		_updateInterval = milliseconds(uiUpdateInterval);
 		_bPause = false;
 
 		{
@@ -1414,7 +1415,7 @@ void CCore::ToogleSuspendEngine(bool bSuspend)
 
 DGLE_RESULT DGLE_API CCore::SetUpdateInterval(uint uiUpdateInterval)
 {
-	_uiUpdateInterval = uiUpdateInterval;
+	_updateInterval = milliseconds(uiUpdateInterval);
 	return S_OK;
 }
 
@@ -1525,8 +1526,8 @@ DGLE_RESULT DGLE_API CCore::StartEngine()
 
 	_uiLastUPS = _uiUPSCount = _uiLastFPS = _uiFPSCount	= 0;
 	_ui64FPSSumm = _ui64CyclesCount = 0;
-	_ui64StartTime = GetPerfTimer();
-	_ui64TimeOld = _ui64StartTime - _uiUpdateInterval * 1000;
+	_startTime = GetPerfTimer<microseconds>();
+	_timeOld = _startTime - _updateInterval;
 	
 	DGLE_RESULT hr = _pMainWindow->BeginMainLoop();
 
@@ -1581,14 +1582,14 @@ DGLE_RESULT DGLE_API CCore::GetFPS(uint &uiFPS)
 
 DGLE_RESULT DGLE_API CCore::GetLastUpdateDeltaTime(uint &uiDeltaTime)
 {
-	uiDeltaTime = _uiLastUpdateDeltaTime;
+	uiDeltaTime = _lastUpdateDeltaTime.count();
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CCore::GetElapsedTime(uint64 &ui64ElapsedTime)
 {
-	const uint64 tick = GetPerfTimer();
-	ui64ElapsedTime = (tick - _ui64StartTime - _ui64PauseTime - (_iAllowPause && _bPause ? tick - _ui64PauseStartTime : 0)) / 1000;
+	const microseconds tick = GetPerfTimer<microseconds>();
+	ui64ElapsedTime = duration_cast<milliseconds>(tick - _startTime - _pauseTime - (_iAllowPause && _bPause ? tick - _pauseStartTime : 0us)).count();
 	return S_OK;
 }
 
@@ -1600,7 +1601,7 @@ DGLE_RESULT DGLE_API CCore::GetInstanceIndex(uint &uiIdx)
 
 DGLE_RESULT DGLE_API CCore::GetTimer(uint64 &ui64Tick)
 {
-	ui64Tick = GetPerfTimer() / 1000;
+	ui64Tick = GetPerfTimer<milliseconds>().count();
 	return S_OK;
 }
 

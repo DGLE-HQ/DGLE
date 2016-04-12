@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -66,6 +66,7 @@ typedef HMODULE TDynLibHandle;
 #include <utility>
 #include <tuple>
 #include <functional>
+#include <chrono>
 #include <system_error>
 #include <filesystem>
 
@@ -82,6 +83,19 @@ namespace fs = std::filesystem;
 
 #define ENGINE_PLATFORM_BASE
 #include "PlatformAPI.h"
+
+inline auto GetPerfTimer() noexcept
+{
+	using namespace std::chrono;
+	typedef std::conditional_t<high_resolution_clock::is_steady, high_resolution_clock, steady_clock> clock;
+	return clock::now().time_since_epoch();
+}
+
+template<class Duration>
+inline auto GetPerfTimer() noexcept
+{
+	return std::chrono::duration_cast<Duration>(GetPerfTimer());
+}
 
 class CCore;
 class CConsole;

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -16,7 +16,7 @@ class CRender3D: public CInstancedObj, public IRender3D
 	ICoreRenderer *_pCoreRenderer;
 	
 	int _iProfilerState, _iDrawAxes, _iDrawLights;
-	uint64 _ui64DrawDelay;
+	decltype(GetPerfTimer()) _drawDelay;
 	uint _uiObjsDrawnCount;
 
 	struct TState

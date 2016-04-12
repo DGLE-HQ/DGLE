@@ -135,7 +135,7 @@ class CSound final : private CBaseSound, public ISound
 	uint _uiBufferSize;
 	float _fMasterVolume;
 	int _iProfilerState, _iMuteState;
-	volatile uint64 _ui64MixDelay;
+	decltype(GetPerfTimer()) _mixDelay;
 
 	CChannel _clChannels[_sc_uiMaxChannels];
 

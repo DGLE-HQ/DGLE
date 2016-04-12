@@ -161,7 +161,6 @@ struct TSysTimeAndDate
 bool PlatformInit();
 void GetDisplaySize(uint &width, uint &height);
 void GetLocalTimaAndDate(TSysTimeAndDate &time);
-uint64 GetPerfTimer();
 void OutputDebugTxt(const char *pcTxt);
 uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer);
 bool ReleaseTimer(uint id);

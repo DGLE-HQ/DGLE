@@ -101,9 +101,8 @@ class CCore final : public CInstancedObj, public IEngineCore
 
 	TEngineWindow _stWin;
 
-	uint _uiUpdateInterval, _uiLastUpdateDeltaTime; // in milliseconds
-	uint64 _ui64TimeOld, _ui64StartTime, _ui64PauseTime, _ui64PauseStartTime,  // in microseconds
-		_ui64RenderDelay, _ui64UpdateDelay;
+	std::chrono::milliseconds _updateInterval, _lastUpdateDeltaTime;
+	std::chrono::microseconds _timeOld, _startTime, _pauseTime, _pauseStartTime, _renderDelay, _updateDelay;
 
 	bool _bPause, _bWasFScreen;
 	char _pcApplicationCaption[_sc_AppCaptionMaxLength];

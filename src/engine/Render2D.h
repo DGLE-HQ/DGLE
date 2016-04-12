@@ -71,7 +71,7 @@ class CRender2D final : public CInstancedObj, public IRender2D
 
 	bool _bViewportChanged;
 
-	uint64 _ui64DrawDelay, _ui64DrawAverallDelay;
+	decltype(GetPerfTimer()) _drawDelay, _drawAverallDelay;
 	uint _uiObjsDrawnCount;
 
 	int _iProfilerState, _iDoDrawBBoxes;
@@ -84,7 +84,7 @@ public:
 	CRender2D(uint uiInstIdx);
 	~CRender2D();
 
-	inline uint64 GetAverallDelay() const {return _ui64DrawAverallDelay;}
+	inline auto GetAverallDelay() const {return _drawAverallDelay;}
 	inline bool In2DMode() const {return _bIn2D;}
 	FORCE_INLINE bool BBoxInScreen(const float *vertices, bool rotated) const; /**< \note \a vertices size must be 8, x and y for each quad point. \a rotated true if quad is not AABB. */
 	FORCE_INLINE DGLE_RESULT DrawTexture(ITexture *tex, const TPoint2 &coord, const TVector2 &dimension, const TRectF &rect, float angle, E_EFFECT2D_FLAGS flags);

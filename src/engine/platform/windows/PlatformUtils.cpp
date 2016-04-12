@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -34,8 +34,6 @@ extern HMODULE hModule;
 
 namespace DGLE
 {
-
-LARGE_INTEGER perfFreq;
 
 TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
@@ -326,21 +324,7 @@ bool PlatformInit()
 {
 	LoadKeyboardLayout("00000409", KLF_ACTIVATE);
 
-	if (QueryPerformanceFrequency(&perfFreq) == FALSE)
-		return false;
-
 	return true;
-}
-
-uint64 GetPerfTimer()
-{
-	LARGE_INTEGER perf_counter;
-	
-	//DWORD prev_mask = SetThreadAffinityMask(GetCurrentThread(), 0x0001);
-	QueryPerformanceCounter(&perf_counter);
-	//SetThreadAffinityMask(GetCurrentThread(), prev_mask);
-
-	return 1000000 * perf_counter.QuadPart / perfFreq.QuadPart;
 }
 
 void OutputDebugTxt(const char *pcTxt)

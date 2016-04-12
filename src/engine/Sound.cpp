@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -409,7 +409,8 @@ void CSound::_ProfilerDraw()
 
 		EnterThreadSafeSection();
 
-		Core()->RenderProfilerText(("Mixer delay     :" + to_string(_ui64MixDelay / 1000) + '.' + to_string(_ui64MixDelay % 1000) + " ms").c_str(), ColorWhite());
+		const auto ms = floor<chrono::milliseconds>(_mixDelay);
+		Core()->RenderProfilerText(("Mixer delay     :" + to_string(ms.count()) + '.' + to_string((ms - _mixDelay).count()) + " ms").c_str(), ColorWhite());
 
 		uint cnt = 0;
 
@@ -439,7 +440,7 @@ void DGLE_API CSound::_s_StreamToDeviceCallback(void *pParameter, uint8 *pBuffer
 
 void CSound::_MixSoundChannels(TSoundFrame *frames, uint uiFramesCount)
 {
-	_ui64MixDelay = GetPerfTimer();
+	_mixDelay = GetPerfTimer();
 
 	const float master_volume = _iMuteState == 0 ? _fMasterVolume : 0.f;
 
@@ -455,7 +456,7 @@ void CSound::_MixSoundChannels(TSoundFrame *frames, uint uiFramesCount)
 					frames[j] += _clChannels[i].NextFrame(master_volume);
 			}
 
-	_ui64MixDelay = GetPerfTimer() - _ui64MixDelay;
+	_mixDelay = GetPerfTimer() - _mixDelay;
 }
 
 uint CSound::_ReleaseChannel()

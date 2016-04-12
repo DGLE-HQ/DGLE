@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,7 +31,7 @@ CInstancedObj(uiInstIdx),
 _iProfilerState(0), _iDoDrawBBoxes(0),
 _bIn2D(false), _bInProfilerMode(false),
 _bInLocalBatchMode(false), _bLocalBatchUEP(false), _bLocalUEPWasTurnedOn(false),
-_ui64DrawDelay(0), _uiObjsDrawnCount(0),
+_drawDelay(0), _uiObjsDrawnCount(0),
 _batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
 _batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
 _iResCorWidth(0), _iResCorHeight(0), _bResCorConstProp(false), _uiLineWidth(1), _uiPointSize(1),
@@ -105,7 +105,8 @@ void CRender2D::DrawProfiler()
 		Core()->RenderProfilerText("======Render2D Profiler=====", ColorWhite());
 		Core()->RenderProfilerText(("Objects on screen :" + to_string(_uiObjsDrawnCount)).c_str(), ColorWhite());
 		Core()->RenderProfilerText(("Batches per frame :" + to_string(_batchsCount)).c_str(), _batchsCount > _sc_uiMaxBatchsPerFrame ? ColorRed() : ColorWhite());
-		Core()->RenderProfilerText(("Render delay      :" + to_string(_ui64DrawAverallDelay / 1000) + '.' + to_string(_ui64DrawAverallDelay % 1000) + " ms").c_str(), ColorWhite());
+		const auto ms = floor<chrono::milliseconds>(_drawAverallDelay);
+		Core()->RenderProfilerText(("Render delay      :" + to_string(ms.count()) + '.' + to_string((_drawAverallDelay - ms).count()) + " ms").c_str(), ColorWhite());
 
 		if (_iProfilerState > 1)
 		{
@@ -364,7 +365,7 @@ DGLE_RESULT DGLE_API CRender2D::Begin2D()
 	if (_bIn2D)
 		return E_FAIL;
 			
-	_ui64DrawDelay = GetPerfTimer();
+	_drawDelay = GetPerfTimer();
 
 	_pCoreRenderer->PushStates();
 	Core()->pRender()->pRender3D()->PushSelfStates();
@@ -454,8 +455,8 @@ DGLE_RESULT DGLE_API CRender2D::End2D()
 
 	_bIn2D = false;
 
-	_ui64DrawDelay = GetPerfTimer() - _ui64DrawDelay;
-	_ui64DrawAverallDelay += _ui64DrawDelay;
+	_drawDelay = GetPerfTimer() - _drawDelay;
+	_drawAverallDelay += _drawDelay;
 
 	return S_OK;
 }
@@ -475,7 +476,7 @@ void CRender2D::BeginFrame()
 	_batchMinSize = (numeric_limits<uint>::max)();
 	_batchMaxSize = 0;
 
-	_ui64DrawAverallDelay = 0;
+	_drawAverallDelay = {};
 }
 
 void CRender2D::EndFrame()

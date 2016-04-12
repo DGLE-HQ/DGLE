@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -129,13 +129,14 @@ void CRender3D::DrawProfiler()
 		using std::to_string;
 		Core()->RenderProfilerText("======Render3D Profiler=====", ColorWhite());
 		Core()->RenderProfilerText(("Objects on screen :" + to_string(_uiObjsDrawnCount)).c_str(), ColorWhite());
-		Core()->RenderProfilerText(("Render delay      :" + to_string(_ui64DrawDelay / 1000) + '.' + to_string(_ui64DrawDelay % 1000) + " ms").c_str(), ColorWhite());
+		const auto ms = floor<std::chrono::milliseconds>(_drawDelay);
+		Core()->RenderProfilerText(("Render delay      :" + to_string(ms.count()) + '.' + to_string((ms - _drawDelay).count()) + " ms").c_str(), ColorWhite());
 	}
 }
 
 void CRender3D::BeginFrame()
 {
-	_ui64DrawDelay = GetPerfTimer();
+	_drawDelay = GetPerfTimer();
 	_bFrCalculated = false;
 	_uiObjsDrawnCount = 0;
 
@@ -148,7 +149,7 @@ void CRender3D::BeginFrame()
 
 void CRender3D::EndFrame()
 {
-	_ui64DrawDelay = GetPerfTimer() - _ui64DrawDelay - Core()->pRender()->pRender2D()->GetAverallDelay();
+	_drawDelay = GetPerfTimer() - _drawDelay - Core()->pRender()->pRender2D()->GetAverallDelay();
 }
 
 void CRender3D::OnResize(uint uiWidth, uint uiHeight)
