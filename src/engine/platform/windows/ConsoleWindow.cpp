@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -30,7 +30,7 @@ _strOnCreate("DGLE Console created..."),
 _iPrevLineSize(22),
 _bToPrevLineActive(false),
 _hWnd(), _hMemo(), _hEdit(),
-_hInst(), _hThreadHandle(), _threadId(),
+_hInst(), _threadId(),
 _pOldEditProc(), _bVisible(false),
 _pConWindowEvent(), _pConsole()
 {}
@@ -42,11 +42,18 @@ DGLE_RESULT CConsoleWindow::InitWindow(bool bSeparateThread, void (DGLE_API *pCo
 
 	if (bSeparateThread)
 	{
-		InitializeCriticalSection(&_cs);
-		_hThreadHandle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)_s_ThreadProc, (PVOID)this, 0, &_threadId);
+#if _WIN32_WINNT < 0x0502
+		condition_variable thread_id_ready_event;
+		_thread = thread(&CConsoleWindow::_ThreadProc, this, ref(thread_id_ready_event));
+		unique_lock<decltype(_mutex)> lock(_mutex);
+		thread_id_ready_event.wait(lock, [this] { return _threadId; });
+#else
+		_thread = thread(&CConsoleWindow::_ThreadProc, this);
+		_threadId = ::GetThreadId(_thread.native_handle());
+#endif
 	}
 	
-	if (!_hThreadHandle)
+	if (!_thread.native_handle())
 		_WinMain(hModule);
 
 	return S_OK;
@@ -130,7 +137,7 @@ DGLE_RESULT CConsoleWindow::OutputTxt(const char *pcTxt, bool bToPrevLine)
 	{
 		_bToPrevLineActive = bToPrevLine;
 
-		if (_hThreadHandle && _hMemo == NULL)
+		if (_thread.native_handle() && _hMemo == NULL)
 			_strOnCreate += "\r\n"s + pcTxt;
 		else
 		{
@@ -202,30 +209,26 @@ DGLE_RESULT CConsoleWindow::ResetSizeAndPos()
 
 DGLE_RESULT CConsoleWindow::EnterThreadSafeSection()
 {
-	if (_hThreadHandle)
-		EnterCriticalSection(&_cs);
+	if (_thread.native_handle())
+		_mutex.lock();
 
 	return S_OK;
 }
 
 DGLE_RESULT CConsoleWindow::LeaveThreadSafeSection()
 {
-	if (_hThreadHandle)
-		LeaveCriticalSection(&_cs);
+	if (_thread.native_handle())
+		_mutex.unlock();
 
 	return S_OK;
 }
 
 DGLE_RESULT CConsoleWindow::Free()
 {
-	if (_hThreadHandle)
+	if (_thread.native_handle())
 	{
 		PostThreadMessage(_threadId, WM_EXIT, 0, 0);
-
-		WaitForSingleObject(_hThreadHandle, INFINITE);
-
-		CloseHandle(_hThreadHandle);
-		DeleteCriticalSection(&_cs);
+		_thread.join();
 	}
 
 	if (_hWnd && FALSE != DestroyWindow(_hWnd))
@@ -304,6 +307,43 @@ int WINAPI CConsoleWindow::_WinMain(HINSTANCE hInstance)
 		ShowWindow(_hWnd, SW_SHOWNORMAL);
 
 	return S_OK;
+}
+
+#if _WIN32_WINNT < 0x0502
+void CConsoleWindow::_ThreadProc(condition_variable &threadIdReadyEvent)
+{
+	std::unique_lock<decltype(_mutex)> lock(_mutex);
+	_threadId = ::GetCurrentThreadId();
+	lock.unlock();
+	threadIdReadyEvent.notify_one();
+#else
+void CConsoleWindow::_ThreadProc()
+{
+#endif
+	if (_WinMain(GetModuleHandle(NULL)) != S_OK)
+		return;
+
+	MSG msg = {0};
+
+	while (true)
+		if (WaitMessage() && PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			switch (msg.message)
+			{
+			case WM_EXIT:
+				PostQuitMessage(msg.wParam);
+				break;
+			case WM_QUIT:
+				if (FALSE != DestroyWindow(_hWnd))
+					UnregisterClass("DGLEConsoleClass", _hInst);
+				_hWnd = NULL;
+				return;
+			default:
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				break;
+			}
+		}
 }
 
 void CConsoleWindow::_Realign()
@@ -425,34 +465,4 @@ LRESULT CALLBACK CConsoleWindow::_s_WndEditProc(HWND hWnd, UINT message, WPARAM 
 
 callDefWndPros:
 	return CallWindowProc((WNDPROC)this_ptr->_pOldEditProc, hWnd, message, wParam, lParam);
-}
-
-DWORD WINAPI CConsoleWindow::_s_ThreadProc(LPVOID lpParameter)
-{
-	CConsoleWindow *this_ptr = (CConsoleWindow *)lpParameter;
-
-	if (this_ptr->_WinMain(GetModuleHandle(NULL)) != S_OK)
-		return FALSE;
-
-	MSG msg = {0};
-
-	while (true)
-		if (WaitMessage() && PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			switch (msg.message)
-			{
-			case WM_EXIT:
-				PostQuitMessage(msg.wParam);
-				break;
-			case WM_QUIT:
-				if (FALSE != DestroyWindow(this_ptr->_hWnd))
-					UnregisterClass("DGLEConsoleClass", this_ptr->_hInst);
-				this_ptr->_hWnd = NULL;
-				return msg.wParam;
-			default:
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				break;
-			}
-		}
 }

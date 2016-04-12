@@ -73,6 +73,8 @@ typedef HMODULE TDynLibHandle;
 #include <chrono>
 #include <system_error>
 #include <filesystem>
+#include <thread>
+#include <mutex>
 
 #if defined _MSC_VER && _MSC_VER <= 1900
 // VS 2015 ships filesystem as TS

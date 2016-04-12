@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		26.03.2016 (c)Andrey Korotkov
+\date		12.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -47,9 +47,9 @@ void CALLBACK CBaseSound::_s_WaveCallback(HWAVEOUT hWaveOut, UINT uMsg, DWORD dw
 	
 	if (p_this->_pStreamToDeviceCallback)
 	{
-		EnterCriticalSection(&p_this->_cs);
+		p_this->CPlatformBaseSound::EnterThreadSafeSection();
 		p_this->_pStreamToDeviceCallback(p_this->_pParameter, (uint8 *)pWaveHdr->lpData);
-		LeaveCriticalSection(&p_this->_cs);
+		p_this->CPlatformBaseSound::LeaveThreadSafeSection();
 	}
 
 	waveOutPrepareHeader(p_this->_hWaveOut, pWaveHdr, sizeof(WAVEHDR));
@@ -105,8 +105,6 @@ bool CBaseSound::_InitDevice(uint id)
 		LOG("Failed to open audio device.", LT_ERROR);
 		return false;
 	}
-	
-	InitializeCriticalSection(&_cs);
 	
 	_bDeviceClosingFlag = false;
 
@@ -183,7 +181,7 @@ void CBaseSound::CloseDevice()
 
 	_bDeviceClosingFlag = true;
 		
-	EnterCriticalSection(&_cs);
+	CPlatformBaseSound::EnterThreadSafeSection();
 	
 	DWORD tick = GetTickCount();
 	while (!(_stWaveBuffers[0].dwFlags & WHDR_DONE && _stWaveBuffers[1].dwFlags & WHDR_DONE) && GetTickCount() - tick < 500) Sleep(0);
@@ -196,9 +194,7 @@ void CBaseSound::CloseDevice()
 	if (flag)
 		waveOutReset(_hWaveOut);
 	
-	LeaveCriticalSection(&_cs);
-
-	DeleteCriticalSection(&_cs);
+	CPlatformBaseSound::LeaveThreadSafeSection();
 
 	if (MMSYSERR_NOERROR != waveOutClose(_hWaveOut))
 		LOG("Failed to close audio device properly.", LT_ERROR);
@@ -214,13 +210,13 @@ void CBaseSound::CloseDevice()
 void CBaseSound::EnterThreadSafeSection()
 {
 	if (_hWaveOut)
-		EnterCriticalSection(&_cs);
+		CPlatformBaseSound::EnterThreadSafeSection();
 }
 
 void CBaseSound::LeaveThreadSafeSection()
 {
 	if (_hWaveOut)
-		LeaveCriticalSection(&_cs);
+		CPlatformBaseSound::LeaveThreadSafeSection();
 }
 
 void CBaseSound::_PrintDevList()

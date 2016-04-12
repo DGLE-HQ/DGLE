@@ -118,11 +118,12 @@ public:
 
 class CPlatformBaseSound
 {
+	std::mutex _mutex;
 public:
 	bool OpenDevice(uint uiFrequency, uint uiBitsPerSample, bool bStereo, uint &uiBufferSize, void (DGLE_API *pStreamToDeviceCallback)(void *pParameter, uint8 *pBufferData), void *pParameter);
 	void CloseDevice();
-	void EnterThreadSafeSection();
-	void LeaveThreadSafeSection();
+	void EnterThreadSafeSection() { _mutex.lock(); }
+	void LeaveThreadSafeSection() { _mutex.unlock(); }
 };
 
 class CPlatformBaseInput

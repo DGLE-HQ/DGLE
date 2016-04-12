@@ -10,6 +10,9 @@ See "DGLE.h" for more details.
 #pragma once
 
 #include "Common.h"
+#if _WIN32_WINNT < 0x0502
+#include <condition_variable>
+#endif
 
 class CConsoleWindow final : public IConsoleWindow
 {
@@ -24,8 +27,8 @@ class CConsoleWindow final : public IConsoleWindow
 	bool _bToPrevLineActive;
 	HWND _hWnd, _hMemo, _hEdit;
 	HFONT _hFont;
-	CRITICAL_SECTION _cs;
-	HANDLE _hThreadHandle;
+	std::mutex _mutex;
+	std::thread _thread;
 	DWORD _threadId;
 	void *_pOldEditProc;
 	
@@ -34,11 +37,15 @@ class CConsoleWindow final : public IConsoleWindow
 	void (DGLE_API *_pConWindowEvent)(CConsole *pConsole, E_CONSOLE_WINDOW_EVENT eEventType, const char *pcCommand); 
 
 	int WINAPI _WinMain(HINSTANCE hInstance);	
+#if _WIN32_WINNT < 0x0502
+	void _ThreadProc(std::condition_variable &threadIdReadyEvent);
+#else
+	void _ThreadProc();
+#endif
 	void _Realign();
 	
 	static LRESULT CALLBACK _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK _s_WndEditProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static DWORD WINAPI _s_ThreadProc(LPVOID lpParameter);
 
 public:
 

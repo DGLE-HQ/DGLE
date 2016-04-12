@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		12.03.2016 (c)Andrey Korotkov
+\date		12.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -25,7 +25,6 @@ class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 	uint8 *_pBuffersData;
 	void (DGLE_API *_pStreamToDeviceCallback)(void *pParameter, uint8 *pBufferData);
 	void *_pParameter;
-	CRITICAL_SECTION _cs;
 	bool _bDeviceClosingFlag;
 	std::vector<std::string> _vecDevices;
 

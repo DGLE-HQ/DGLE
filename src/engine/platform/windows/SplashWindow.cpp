@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -30,15 +30,13 @@ DGLE_RESULT CSplashWindow::InitWindow(const char *pcBmpFileName)
 	HANDLE thread_handle = NULL;
 
 	if (_bInSeparateThread)
-		thread_handle = CreateThread(NULL, 0, &CSplashWindow::_s_ThreadProc, (PVOID)this, 0, NULL);
-
-	if (thread_handle)
 	{
-		CloseHandle(thread_handle);
-		return S_OK;
+		thread thread(&CSplashWindow::_ThreadProc, this);
+		thread_handle = thread.native_handle();
+		thread.detach();
 	}
-	else
-		return _CreateWindow() ? S_OK : E_ABORT;
+
+	return thread_handle || _CreateWindow() ? S_OK : E_ABORT;
 }
 
 DGLE_RESULT CSplashWindow::Free()
@@ -171,10 +169,10 @@ void CSplashWindow::_DestroyWindow()
 	delete this;
 }
 
-DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
+void CSplashWindow::_ThreadProc()
 {
-	if (!((CSplashWindow *)lpParameter)->_CreateWindow())
-		return 1;
+	if (!_CreateWindow())
+		return;
 
 	MSG st_msg = {0};
 
@@ -188,8 +186,8 @@ DWORD WINAPI CSplashWindow::_s_ThreadProc(LPVOID lpParameter)
 				PostQuitMessage(st_msg.wParam);
 				break;
 			case WM_QUIT:
-				((CSplashWindow *)lpParameter)->_DestroyWindow();
-				return st_msg.wParam;
+				_DestroyWindow();
+				return;
 			default:
 				TranslateMessage(&st_msg);
 				DispatchMessage(&st_msg);
