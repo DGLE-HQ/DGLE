@@ -354,16 +354,16 @@ void CCore::CConnectionsTracker::Remove(Slot slot)
 
 CCore::CCore(uint uiInstIdx):
 CInstancedObj(uiInstIdx),
-_pMainWindow(NULL), _uiFPSTimer(0),
-_uiLogWarningsCount(0), _uiLogErrorsCount(0),
-_pRender(NULL), _pMainFS(NULL), _pResMan(NULL), _pInput(NULL), _pSound(NULL), _pCoreRenderer(NULL),
+_pMainWindow(), _uiFPSTimer(),
+_uiLogWarningsCount(), _uiLogErrorsCount(),
+_pRender(), _pMainFS(), _pResMan(), _pInput(), _pSound(), _pCoreRenderer(),
 _bBuiltInSound(true), _bBuiltInRenderer(true), _bBuiltInInput(true),
-_pSplashWindow(NULL), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
+_pSplashWindow(), _bCmdKeyIsPressed(false), _bFScreenKeyIsPressed(false),
 _bDoExit(false), _bInDrawProfilers(false), _bWasFScreen(false), _bRendering(false),
 _bStartedFlag(false), _bInitedFlag(false), _bQuitFlag(false),
 _iAllowPause(1), _iFPSToCaption(0), _iAllowDrawProfilers(1), _iDrawProfiler(0),
-_bNeedApplyNewWnd(false), _lastUpdateDeltaTime(0), _uiLastMemUsage(0),
-_startTime(0), _pauseTime(0),
+_bNeedApplyNewWnd(false), _lastUpdateDeltaTime(), _uiLastMemUsage(),
+_startTime(), _pauseTime(),
 //Delegates initialization
 _clDelUpdate(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),
 _clDelRender(piecewise_construct, make_tuple(), make_tuple(uiInstIdx)),

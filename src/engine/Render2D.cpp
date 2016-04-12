@@ -31,11 +31,11 @@ CInstancedObj(uiInstIdx),
 _iProfilerState(0), _iDoDrawBBoxes(0),
 _bIn2D(false), _bInProfilerMode(false),
 _bInLocalBatchMode(false), _bLocalBatchUEP(false), _bLocalUEPWasTurnedOn(false),
-_drawDelay(0), _uiObjsDrawnCount(0),
-_batchMode(BM_DISABLED),_batchBufferReadyToRender(false),_batchMaxSize(0),_batchMinSize(0),
-_batchBufferCurCounter(0), _batchBuffersRepetedUseCounter(0), _batchBuffersNotModefiedPerFrameCounter(0),
-_iResCorWidth(0), _iResCorHeight(0), _bResCorConstProp(false), _uiLineWidth(1), _uiPointSize(1),
-_ePrevBlendingMode(BE_NORMAL), _pPolyTrisBuffer(NULL), _uiPolyTrisBufferSize(0),
+_drawDelay(), _uiObjsDrawnCount(),
+_batchMode(BM_DISABLED), _batchBufferReadyToRender(false), _batchMaxSize(), _batchMinSize(),
+_batchBufferCurCounter(), _batchBuffersRepetedUseCounter(), _batchBuffersNotModefiedPerFrameCounter(),
+_iResCorWidth(), _iResCorHeight(), _bResCorConstProp(false), _uiLineWidth(1), _uiPointSize(1),
+_ePrevBlendingMode(BE_NORMAL), _pPolyTrisBuffer(), _uiPolyTrisBufferSize(),
 _uiBufferSize(34)// never less than 34
 {
 	_pBuffer = new float[_uiBufferSize];

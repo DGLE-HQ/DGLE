@@ -19,7 +19,7 @@ See "DGLE.h" for more details.
 CRender3D::CRender3D(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _iProfilerState(0),
 _iDrawAxes(0), _iDrawLights(0),
-_bFrCalculated(false), _uiObjsDrawnCount(0)
+_bFrCalculated(false), _uiObjsDrawnCount()
 {
 	_pCoreRenderer = Core()->pCoreRenderer();
 
