@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -20,7 +20,7 @@ class CRender2D final : public CInstancedObj, public IRender2D
 	bool _bIn2D;
 	bool _bUseGeometryBuffers;
 	
-	static const uint _sc_uiMaxBatchsPerFrame = 64;
+	static constexpr uint _sc_uiMaxBatchsPerFrame = 64;
 
 	std::vector<TVertex2> _vecBatchAccumulator;
 	ICoreTexture *_pBatchCurTex;

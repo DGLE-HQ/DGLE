@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		22.03.2016 (c)Andrey Korotkov
+\date		12.03.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,8 +15,8 @@ See "DGLE.h" for more details.
 
 class CBaseSound : public CInstancedObj, public CPlatformBaseSound
 {
-	static const uint8 _sc_ui8MaxDevicesCount = 8;
-	static const uint8 _sc_ui8Latency = 50;
+	static constexpr uint8 _sc_ui8MaxDevicesCount = 8;
+	static constexpr uint8 _sc_ui8Latency = 50;
 
 	HWAVEOUT _hWaveOut;
 	WAVEFORMATEX _stWaveFormat;

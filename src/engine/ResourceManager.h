@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -57,7 +57,7 @@ struct TResource
 
 class CResourceManager final : public CInstancedObj, public IResourceManager
 {
-	static const uint _sc_EngObjTypeCount = EOT_EMPTY + 1;
+	static constexpr uint _sc_EngObjTypeCount = EOT_EMPTY + 1;
 	static void _s_GetObjTypeName(E_ENGINE_OBJECT_TYPE type, std::string &name);
 
 	TWindowHandle _stWnd;

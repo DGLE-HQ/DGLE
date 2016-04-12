@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		19.04.2013 (c)Andrey Korotkov
+\date		12.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -23,7 +23,7 @@ struct TProfileData
 
 class CToggleState : public CInstancedObj
 {
-	static const uint8 _sc_uiStatesCount = 13, // depends on CToggleState::GetCapIdx supported caps count
+	static constexpr uint8 _sc_uiStatesCount = 13, // depends on CToggleState::GetCapIdx supported caps count
 		_sc_uiMaxVertexAttribs = 16;
 
 public:
@@ -115,7 +115,7 @@ private:
 
 class CModeState
 {
-	static const uint8 _sc_uiModeCount = 4;
+	static constexpr uint8 _sc_uiModeCount = 4;
 
 public:
 	struct TProfileData

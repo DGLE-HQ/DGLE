@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,8 +9,8 @@ See "DGLE.h" for more details.
 
 #pragma once
 
-#include <DGLE.h>
-#include "../FuncDelegate.h"
+#include "DGLE.h""
+#include "Common.h"
 
 class CConsole;
 

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -126,10 +126,10 @@ public:
 class CSound final : private CBaseSound, public ISound
 {
 	// Attention! This sound realization will work correct only with stereo 16 bit output and 44100 frequency.
-	static const uint _sc_uiBitsPerSample = 16;
-	static const uint _sc_uiSamplesPerSec = 44100;
+	static constexpr uint _sc_uiBitsPerSample = 16;
+	static constexpr uint _sc_uiSamplesPerSec = 44100;
 
-	static const uint _sc_uiMaxChannels = 64;
+	static constexpr uint _sc_uiMaxChannels = 64;
 
 	bool _bInited, _bPaused;
 	uint _uiBufferSize;

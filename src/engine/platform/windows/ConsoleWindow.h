@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		12.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,8 +13,8 @@ See "DGLE.h" for more details.
 
 class CConsoleWindow final : public IConsoleWindow
 {
-	static const uint _sc_uiTmpBufferSize = 256;
-	static const uint _sc_uiMaxConsoleTxtLength = 30000;
+	static constexpr uint _sc_uiTmpBufferSize = 256;
+	static constexpr uint _sc_uiMaxConsoleTxtLength = 30000;
 
 	HINSTANCE _hInst;
 	std::string	_strOnCreate;

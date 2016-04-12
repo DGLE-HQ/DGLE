@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		23.03.2016 (c)Andrey Korotkov
+\date		12.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,10 +24,10 @@ class CCoreGeometryBuffer;
 
 class CCoreRendererGL final : private CBaseRendererGL, public ICoreRenderer
 {
-	static const uint _sc_uiMaxVerticesCountForLegacy = 128;
-	static const uint _sc_uiMaxDrawCallsPerFrame = 3000;
-	static const uint _sc_uiMaxFBOIdleTime = 10; // in seconds
-	static const uint _sc_uiFBOMaxCacheSize = 16;
+	static constexpr uint _sc_uiMaxVerticesCountForLegacy = 128;
+	static constexpr uint _sc_uiMaxDrawCallsPerFrame = 3000;
+	static constexpr uint _sc_uiMaxFBOIdleTime = 10; // in seconds
+	static constexpr uint _sc_uiFBOMaxCacheSize = 16;
 
 	struct TFrameBuffer
 	{

@@ -23,7 +23,7 @@ See "DGLE.h" for more details.
 
 void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFileName, int iSrcLineNumber);
 
-#ifdef PLATFORM_WINDOWS
+#ifndef PLATFORM_WINDOWS
 
 const char *FormWin32ExceptionString(DWORD dwCode);
 
