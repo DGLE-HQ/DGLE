@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		11.04.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -467,7 +467,7 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 		{
 			delete ev_fatal_msg;
 			delete this;
-			TerminateProcess(GetCurrentProcess(), 2);
+			quick_exit(2);
 		}
 		else
 			delete ev_fatal_msg;
@@ -828,11 +828,11 @@ void CCore::_MainLoop()
 
 	Console()->LeaveThreadSafeSection();
 
-	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _updateInterval.count() && _uiLastFPS > 120) || _bPause)) * 8 +
-				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && cycles_cnt < 2) * 6;
+	const milliseconds sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _updateInterval.count() && _uiLastFPS > 120) || _bPause)) * 8ms +
+		(int)(_bPause && _iAllowPause) * 15ms + (int)(_stSysInfo.uiCPUCount < 2 && cycles_cnt < 2) * 6ms;
 
-	if (sleep > 0)
-		Suspend(sleep);
+	if (sleep > sleep.zero())
+		this_thread::sleep_for(sleep);
 }
 
 void CCore::_RenderFrame()

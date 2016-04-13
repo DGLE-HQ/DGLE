@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -165,15 +165,13 @@ void GetLocalTimaAndDate(TSysTimeAndDate &time);
 void OutputDebugTxt(const char *pcTxt);
 uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer);
 bool ReleaseTimer(uint id);
-void Suspend(uint uiMilliseconds);
 TDynLibHandle LoadDynamicLib(const char *pcFileName);
 void *GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName);
 bool ReleaseDynamicLib(TDynLibHandle tHandle);
 void ShowModalUserAlert(const char *pcTxt, const char *pcCaption);
 std::string GetEngineFilePath();
-bool FindFilesInDir(const char* pcMask, std::vector<std::string> &strs);
+bool FindFilesInDir(const char *pcMask, std::vector<std::string> &strs);
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
-void Terminate();
 uint32 GetProcessMemoryUsage();
 
 #endif //ENGINE_PLATFORM_BASE
