@@ -168,8 +168,7 @@ TDynLibHandle LoadDynamicLib(const char *pcFileName);
 void *GetFuncAddress(TDynLibHandle tHandle, const char *pcFuncName);
 bool ReleaseDynamicLib(TDynLibHandle tHandle);
 void ShowModalUserAlert(const char *pcTxt, const char *pcCaption);
-std::string GetEngineFilePath();
-bool FindFilesInDir(const char *pcMask, std::vector<std::string> &strs);
+fs::path GetEngineFilePath();
 void GetSystemInformation(std::string &strInfo, TSystemInfo &stSysInfo);
 uint32 GetProcessMemoryUsage();
 

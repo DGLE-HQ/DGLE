@@ -392,48 +392,14 @@ void ShowModalUserAlert(const char *pcTxt, const char *pcCaption)
 	MessageBoxA(NULL, pcTxt, pcCaption, MB_OK | MB_ICONSTOP | MB_SETFOREGROUND | MB_SYSTEMMODAL);
 }
 
-string GetEngineFilePath()
+fs::path GetEngineFilePath()
 {
 	char eng_file_name[MAX_PATH];
 		
 	if (GetModuleFileNameA(hModule, eng_file_name, MAX_PATH) == 0)
 		strcpy(eng_file_name, "");
 
-	return fs::path(eng_file_name).parent_path().string() + '\\';
-}
-
-bool FindFilesInDir(const char *pcMask, vector<string> &fileNames)
-{
-	char *part;
-	char tmp[MAX_PATH];
-	HANDLE hSearch = NULL;
-	WIN32_FIND_DATAA wfd;
-
-	ZeroMemory(&wfd, sizeof(WIN32_FIND_DATAA));
-
-	if (GetFullPathNameA(pcMask, MAX_PATH, tmp, &part) == 0) return false;
-
-	wfd.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
-
-	if (!((hSearch = FindFirstFileA(tmp, &wfd)) == INVALID_HANDLE_VALUE))
-		do
-		{
-			if (!strncmp(wfd.cFileName, ".", 1) || !strncmp(wfd.cFileName, "..", 2))
-				continue;
-
-			string fullname(tmp);
-
-			const auto pos = fullname.find_last_of('\\');
-
-			fullname.erase(pos + 1) += wfd.cFileName;
-			fullname.shrink_to_fit();
-			fileNames.push_back(move(fullname));
-		}
-		while (FindNextFileA(hSearch, &wfd));
-
-		FindClose(hSearch);
-
-		return true;
+	return fs::path(eng_file_name).parent_path();
 }
 
 #ifdef DXDIAG_VIDEO_INFO

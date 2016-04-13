@@ -39,6 +39,11 @@ void LogWrite(uint uiInstIdx, const char *pcTxt, E_LOG_TYPE eType, const char *p
 	vecEngineInstances[uiInstIdx].pclCore->WriteToLogEx(pcTxt, eType, pcSrcFileName, iSrcLineNumber);
 }
 
+void FindFilesInDir(const fs::path &path, const fs::path &ext, vector<fs::path> &files) noexcept(false)
+{
+	copy_if(fs::directory_iterator(path), {}, back_inserter(files), [&ext](fs::directory_iterator::reference item) { return item.path().extension() == ext; });
+}
+
 bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags, uint8 ubtSDKVer)
 {
 	if (ubtSDKVer != _DGLE_SDK_VER_)

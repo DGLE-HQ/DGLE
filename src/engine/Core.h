@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		11.04.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -134,7 +134,7 @@ class CCore final : public CInstancedObj, public IEngineCore
 
 	bool _bBuiltInSound, _bBuiltInRenderer, _bBuiltInInput;
 
-	std::vector<std::string> _vecPluginInitList;
+	std::vector<fs::path> _pluginInitList;
 	std::vector<TPlugin> _vecPlugins;
 	bool _LoadPlugin(const std::string &strFileName, IPlugin *&prPlugin);
 	bool _UnloadPlugin(IPlugin *pPlugin);

@@ -1135,7 +1135,7 @@ DGLE_RESULT DGLE_API CCore::AddPluginToInitializationList(const char *pcFileName
 	if (_bInitedFlag)
 		return S_FALSE;
 
-	_vecPluginInitList.push_back(pcFileName);
+	_pluginInitList.push_back(pcFileName);
 
 	return S_OK;
 }
@@ -1184,13 +1184,13 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		const string eng_path = GetEngineFilePath(), working_path = current_path().string() + '\\';
+		const path eng_path = GetEngineFilePath(), working_path = current_path();
 
 		error_code error;
 		if (canonical(eng_path) == canonical(working_path) || equivalent(eng_path, working_path, error) && error)
-			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
+			LOG("Working directory: \"" + working_path.string() + "\\\"", LT_INFO);
 		else
-			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + '\"', LT_INFO);
+			LOG("Engine working directory: \"" + eng_path.string() + "\\\"\nApplication working directory: \"" + working_path.string() + "\\\"", LT_INFO);
 
 		string system_info;
 		GetSystemInformation(system_info, _stSysInfo);
@@ -1200,19 +1200,25 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 
 		if (_eInitFlags & EIF_LOAD_ALL_PLUGINS)
 		{
-			if (!FindFilesInDir((eng_path + "plugins\\*" PLUGIN_FILE_EXTENSION).c_str(), _vecPluginInitList))
-				LOG("Plugin search routine fails.", LT_ERROR);
+			try
+			{
+				FindFilesInDir(eng_path / "plugins", PLUGIN_FILE_EXTENSION, _pluginInitList);
+			}
+			catch (const exception &error)
+			{
+				LOG("Plugin search routine fails: "s + error.what() + '.', LT_ERROR);
+			}
 		}
 		else
 		{
-			string ext_fnames[] = { eng_path + "Ext" PLUGIN_FILE_EXTENSION, eng_path + "plugins\\Ext" PLUGIN_FILE_EXTENSION };
+			path ext_fnames[] = { eng_path / "Ext" PLUGIN_FILE_EXTENSION, eng_path / "plugins" / "Ext" PLUGIN_FILE_EXTENSION };
 
-			for (string &name : ext_fnames)
+			for (path &name : ext_fnames)
 			{
 				error_code error;
 				if (exists(name, error))
 				{
-					_vecPluginInitList.push_back(move(name));
+					_pluginInitList.push_back(move(name));
 					break;
 				}
 				else if (error)
@@ -1253,21 +1259,22 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		_clDelMLoop.second.Add(bind(&CCore::_MainLoop, this));
 		_clDelMProc.Add(bind(&CCore::_MessageProc, this, _1));
 
-		sort(_vecPluginInitList.begin(), _vecPluginInitList.end(), MakePathCompare(less<>()));
+		sort(_pluginInitList.begin(), _pluginInitList.end(), MakePathCompare(less<>()));
 		// std::unique is more appropriate here and is more efficiend but prevents logging
-		for (auto dup = _vecPluginInitList.cbegin(); (dup = adjacent_find(dup, _vecPluginInitList.cend(), MakePathCompare(equal_to<>()))) != _vecPluginInitList.cend();)
+		for (auto dup = _pluginInitList.cbegin(); (dup = adjacent_find(dup, _pluginInitList.cend(), MakePathCompare(equal_to<>()))) != _pluginInitList.cend();)
 		{
-			LOG("Found duplicated plugin \"" + *dup + "\" in plugins initialization list.", LT_WARNING);
-			dup = _vecPluginInitList.erase(dup);
+			LOG("Found duplicated plugin \"" + dup->string() + "\" in plugins initialization list.", LT_WARNING);
+			dup = _pluginInitList.erase(dup);
 		}
 
-		for (const auto &filename : _vecPluginInitList)
+		for (const auto &filename : _pluginInitList)
 		{
 			IPlugin *plugin;
-			if (S_OK == ConnectPlugin(filename.c_str(), plugin))
+			if (S_OK == ConnectPlugin(filename.string().c_str(), plugin))
 			{
 				char *p_name;
 				uint chars_cnt;
+
 
 				if (FAILED(plugin->GetPluginInterfaceName(NULL, chars_cnt)))
 				{
@@ -1344,7 +1351,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 			}			
 		}
 
-		_vecPluginInitList.clear();
+		_pluginInitList.clear();
 
 		if (_bBuiltInRenderer)
 		{
