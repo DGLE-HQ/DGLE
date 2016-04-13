@@ -1237,8 +1237,6 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 					LOG("Found duplicated plugin \"" + path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
 				}
 
-		_vecPluginInitList.shrink_to_fit();
-
 		for (const auto &filename : _vecPluginInitList)
 		{
 			IPlugin *plugin;
@@ -1321,6 +1319,8 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 
 			}			
 		}
+
+		_vecPluginInitList.clear();
 
 		if (_bBuiltInRenderer)
 		{
