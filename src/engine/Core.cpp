@@ -24,6 +24,7 @@ See "DGLE.h" for more details.
 using namespace std;
 using namespace placeholders;
 using namespace chrono;
+using namespace fs;
 
 extern bool bUnhandledFilterEnabled;
 
@@ -963,7 +964,7 @@ DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 
 DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
 {
 	error_code error;
-	if (fs::exists(pcFileName, error))
+	if (exists(pcFileName, error))
 		return _LoadPlugin(pcFileName, prPlugin) ? S_OK : E_ABORT;
 	else if (error)
 	{
@@ -1159,9 +1160,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		const string eng_path = GetEngineFilePath(), working_path = fs::current_path().string();
+		const string eng_path = GetEngineFilePath(), working_path = current_path().string();
 
-		if (eng_path == working_path)
+		error_code error;
+		if (eng_path == working_path || equivalent(eng_path, working_path, error) && error)
 			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
 		else
 			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + '\"', LT_INFO);
@@ -1184,7 +1186,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 			for (string &name : ext_fnames)
 			{
 				error_code error;
-				if (fs::exists(name, error))
+				if (exists(name, error))
 				{
 					_vecPluginInitList.push_back(move(name));
 					break;
@@ -1231,10 +1233,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		{
 			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
 				for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
-					if (ToUpperCase(fs::path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(fs::path(_vecPluginInitList[j]).replace_extension().string()))
+					if (ToUpperCase(path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(path(_vecPluginInitList[j]).replace_extension().string()))
 					{
 						_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
-						LOG("Found duplicated plugin \"" + fs::path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
+						LOG("Found duplicated plugin \"" + path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
 					}
 
 			for (const auto &filename : _vecPluginInitList)
