@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -1009,11 +1009,6 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	result += str + ' ' + to_string(stSysInfo.uiVideocardRAM) + " MiB " + vcard_advanced_str;
 
 	strInfo = result;
-}
-
-void Terminate()
-{
-	TerminateProcess(GetCurrentProcess(), 2);
 }
 
 uint32 GetProcessMemoryUsage()

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		11.04.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -467,7 +467,7 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 		{
 			delete ev_fatal_msg;
 			delete this;
-			TerminateProcess(GetCurrentProcess(), 2);
+			quick_exit(2);
 		}
 		else
 			delete ev_fatal_msg;

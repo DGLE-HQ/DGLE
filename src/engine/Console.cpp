@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		27.03.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -566,7 +566,7 @@ bool DGLE_API CConsole::_s_Terminate(void *pParameter, const char *pcParam)
 	}
 	else
 	{
-		Terminate();
+		quick_exit(2);
 		return true;
 	}
 }
