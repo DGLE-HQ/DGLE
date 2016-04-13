@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		13.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -73,6 +73,7 @@ typedef HMODULE TDynLibHandle;
 #include <chrono>
 #include <system_error>
 #include <filesystem>
+#include <thread>
 
 #if defined _MSC_VER && _MSC_VER <= 1900
 // VS 2015 ships filesystem as TS

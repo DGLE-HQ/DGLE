@@ -372,11 +372,6 @@ bool ReleaseTimer(uint id)
 	return KillTimer(NULL, id) != FALSE;
 }
 
-void Suspend(uint uiMilliseconds)
-{
-	Sleep(uiMilliseconds);
-}
-
 TDynLibHandle LoadDynamicLib(const char *pcFileName)
 {
 	return LoadLibraryA(pcFileName);

@@ -828,11 +828,11 @@ void CCore::_MainLoop()
 
 	Console()->LeaveThreadSafeSection();
 
-	const uint sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _updateInterval.count() && _uiLastFPS > 120) || _bPause)) * 8 +
-				 (int)(_bPause && _iAllowPause) * 15 + (int)(_stSysInfo.uiCPUCount < 2 && cycles_cnt < 2) * 6;
+	const milliseconds sleep = (int)((_eInitFlags & EIF_FORCE_LIMIT_FPS) && ((_uiLastFPS > _updateInterval.count() && _uiLastFPS > 120) || _bPause)) * 8ms +
+		(int)(_bPause && _iAllowPause) * 15ms + (int)(_stSysInfo.uiCPUCount < 2 && cycles_cnt < 2) * 6ms;
 
-	if (sleep > 0)
-		Suspend(sleep);
+	if (sleep > sleep.zero())
+		this_thread::sleep_for(sleep);
 }
 
 void CCore::_RenderFrame()
