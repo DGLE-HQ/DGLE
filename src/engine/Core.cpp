@@ -1229,98 +1229,97 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		_clDelMLoop.second.Add(bind(&CCore::_MainLoop, this));
 		_clDelMProc.Add(bind(&CCore::_MessageProc, this, _1));
 
-		if (!_vecPluginInitList.empty())
-		{
-			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
-				for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
-					if (ToUpperCase(path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(path(_vecPluginInitList[j]).replace_extension().string()))
-					{
-						_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
-						LOG("Found duplicated plugin \"" + path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
-					}
-
-			for (const auto &filename : _vecPluginInitList)
-			{
-				IPlugin *plugin;
-				if (S_OK == ConnectPlugin(filename.c_str(), plugin))
+		for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
+			for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
+				if (ToUpperCase(path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(path(_vecPluginInitList[j]).replace_extension().string()))
 				{
-					char *p_name;
-					uint chars_cnt;
+					_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
+					LOG("Found duplicated plugin \"" + path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
+				}
 
-					if (FAILED(plugin->GetPluginInterfaceName(NULL, chars_cnt)))
-					{
-						LOG("Failed to get plugin interface name length.", LT_ERROR);
-						_UnloadPlugin(plugin);
-						continue;
-					}
+		_vecPluginInitList.shrink_to_fit();
 
-					p_name = new char[chars_cnt];
+		for (const auto &filename : _vecPluginInitList)
+		{
+			IPlugin *plugin;
+			if (S_OK == ConnectPlugin(filename.c_str(), plugin))
+			{
+				char *p_name;
+				uint chars_cnt;
 
-					if (FAILED(plugin->GetPluginInterfaceName(p_name, chars_cnt)))
-					{
-						LOG("Failed to get plugin interface name.", LT_ERROR);
-						_UnloadPlugin(plugin);
-						continue;
-					}
+				if (FAILED(plugin->GetPluginInterfaceName(NULL, chars_cnt)))
+				{
+					LOG("Failed to get plugin interface name length.", LT_ERROR);
+					_UnloadPlugin(plugin);
+					continue;
+				}
+
+				p_name = new char[chars_cnt];
+
+				if (FAILED(plugin->GetPluginInterfaceName(p_name, chars_cnt)))
+				{
+					LOG("Failed to get plugin interface name.", LT_ERROR);
+					_UnloadPlugin(plugin);
+					continue;
+				}
 				
-					if (strcmp(p_name, "ISubSystemPlugin") == 0)
+				if (strcmp(p_name, "ISubSystemPlugin") == 0)
+				{
+					IEngineSubSystem *pss;
+					((ISubSystemPlugin*)plugin)->GetSubSystemInterface(pss);
+						
+					E_ENGINE_SUB_SYSTEM sst;
+					pss->GetType(sst);
+						
+					switch (sst)
 					{
-						IEngineSubSystem *pss;
-						((ISubSystemPlugin*)plugin)->GetSubSystemInterface(pss);
-						
-						E_ENGINE_SUB_SYSTEM sst;
-						pss->GetType(sst);
-						
-						switch (sst)
+					case ESS_CORE_RENDERER:
+						if (!_bBuiltInRenderer)
 						{
-						case ESS_CORE_RENDERER:
-							if (!_bBuiltInRenderer)
-							{
-								LOG("Only one CoreRenderer plugin could be connected at the same time.", LT_WARNING);
-								_UnloadPlugin(plugin);
-							}
-							else
-							{
-								_pCoreRenderer = (ICoreRenderer*)pss;
-								_bBuiltInRenderer = false;
-							}
-							break;
-						case ESS_INPUT:
-							if (!_bBuiltInInput)
-							{
-								LOG("Only one Input plugin could be connected at the same time.", LT_WARNING);
-								_UnloadPlugin(plugin);
-							}
-							else
-							{
-								_pInput = (IInput*)pss;
-								_bBuiltInInput = false;
-							}
-							break;
-						case ESS_SOUND:
-							if (!_bBuiltInSound)
-							{
-								LOG("Only one Sound plugin could be connected at the same time.", LT_WARNING);
-								_UnloadPlugin(plugin);
-								break;
-							}
-							else
-								if (_bSndEnabled)
-								{ 
-									_pSound = (ISound*)pss;
-									_bBuiltInSound = false;
-									break;
-								}
-						default: 
-							LOG("The subsystem which plugin tries to override is not overridable.", LT_ERROR);
+							LOG("Only one CoreRenderer plugin could be connected at the same time.", LT_WARNING);
 							_UnloadPlugin(plugin);
 						}
+						else
+						{
+							_pCoreRenderer = (ICoreRenderer*)pss;
+							_bBuiltInRenderer = false;
+						}
+						break;
+					case ESS_INPUT:
+						if (!_bBuiltInInput)
+						{
+							LOG("Only one Input plugin could be connected at the same time.", LT_WARNING);
+							_UnloadPlugin(plugin);
+						}
+						else
+						{
+							_pInput = (IInput*)pss;
+							_bBuiltInInput = false;
+						}
+						break;
+					case ESS_SOUND:
+						if (!_bBuiltInSound)
+						{
+							LOG("Only one Sound plugin could be connected at the same time.", LT_WARNING);
+							_UnloadPlugin(plugin);
+							break;
+						}
+						else
+							if (_bSndEnabled)
+							{ 
+								_pSound = (ISound*)pss;
+								_bBuiltInSound = false;
+								break;
+							}
+					default: 
+						LOG("The subsystem which plugin tries to override is not overridable.", LT_ERROR);
+						_UnloadPlugin(plugin);
 					}
+				}
 
-					delete[] p_name;
+				delete[] p_name;
 
-				}			
-			}
+			}			
 		}
 
 		if (_bBuiltInRenderer)
