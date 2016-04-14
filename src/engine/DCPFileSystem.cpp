@@ -17,25 +17,33 @@ See "DGLE.h" for more details.
 using namespace std;
 using fs::path;
 
-#define DCP(prefix) prefix##".dcp"
+#if defined _MSC_VER && _MSC_VER <= 1900 && !__clang__
+static constexpr auto Dcp = L".dcp";
+#else
+namespace DcpImpl
+{
+#	define DCP(prefix) prefix##".dcp"
 
-template<typename Char>
-static constexpr const Char Dcp[] = nullptr;
+	template<typename Char>
+	static constexpr const Char Dcp[] = nullptr;
 
-template<>
-static constexpr const char Dcp<char>[] = DCP();
+	template<>
+	static constexpr const char Dcp<char>[] = DCP();
 
-template<>
-static constexpr const wchar_t Dcp<wchar_t>[] = DCP(L);
+	template<>
+	static constexpr const wchar_t Dcp<wchar_t>[] = DCP(L);
 
-template<>
-static constexpr const char16_t Dcp<char16_t>[] = DCP(u);
+	template<>
+	static constexpr const char16_t Dcp<char16_t>[] = DCP(u);
 
+	template<>
+	static constexpr const char32_t Dcp<char32_t>[] = DCP(U);
 
-template<>
-static constexpr const char32_t Dcp<char32_t>[] = DCP(U);
+#	undef DCP
+}
 
-#undef DCP
+static constexpr auto Dcp = DcpImpl::Dcp<path::value_type>;
+#endif
 
 // CDCPPackager //
 
@@ -47,7 +55,7 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 	{
 		_isOpened = false;
 
-		if (ToLowerCase(path(strFileName).extension().native()) != Dcp<path::value_type>)
+		if (ToLowerCase(path(strFileName).extension().native()) != Dcp)
 		{
 			_strLastError = "Wrong file extension.";
 			return;
@@ -139,7 +147,7 @@ bool CDCPPackager::Save(const string &strFileName)
 		return false;
 	}
 
-	if (ToLowerCase(path(strFileName).extension().native()) != Dcp<path::value_type>)
+	if (ToLowerCase(path(strFileName).extension().native()) != Dcp)
 	{
 		_strLastError = "Wrong file extension.";
 		return false;
