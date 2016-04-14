@@ -11,7 +11,6 @@ See "DGLE.h" for more details.
 
 #include <DGLE.h>
 #include <string>
-#include <locale>
 
 namespace detail
 {
