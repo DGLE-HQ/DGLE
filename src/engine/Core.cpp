@@ -39,9 +39,9 @@ namespace
 		PathCompare(const Compare &compare) : cmp(compare) {}
 
 	public:
-		bool operator ()(const path &left, const path &right) const
+		bool operator ()(path left, path right) const
 		{
-			return cmp(ToUpperCase(left.native()), ToUpperCase(right.native()));
+			return cmp(ToUpperCase(canonical(left.replace_extension()).native()), ToUpperCase(canonical(right.replace_extension()).native()));
 		}
 	};
 
@@ -1184,10 +1184,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		const string eng_path = GetEngineFilePath(), working_path = current_path().string();
+		const string eng_path = GetEngineFilePath(), working_path = current_path().string() + '\\';
 
 		error_code error;
-		if (eng_path == working_path || equivalent(eng_path, working_path, error) && error)
+		if (canonical(eng_path) == canonical(working_path) || equivalent(eng_path, working_path, error) && error)
 			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
 		else
 			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + '\"', LT_INFO);
