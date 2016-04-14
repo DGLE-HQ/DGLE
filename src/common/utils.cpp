@@ -1,6 +1,6 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		14.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,26 +9,35 @@ See "DGLE.h" for more details.
 
 #include "Utils.h"
 
-#include <cctype>
 #include <cstdio>
 #include <algorithm>
+#include <locale>
+#include <functional>
 #include <utility>
 #include <limits>
 
 using namespace DGLE;
 using namespace std;
+using placeholders::_1;
 
-string ToLowerCase(string str)
+template<typename Char>
+basic_string<Char> ToLowerCase(basic_string<Char> str)
 {
-	transform(str.begin(), str.end(), str.begin(), tolower);
+	transform(str.begin(), str.end(), str.begin(), bind(tolower<Char>, _1, locale()));
 	return str;
 }
 
-string ToUpperCase(string str)
+template<typename Char>
+basic_string<Char> ToUpperCase(basic_string<Char> str)
 {
-	transform(str.begin(), str.end(), str.begin(), toupper);
+	transform(str.begin(), str.end(), str.begin(), bind(toupper<Char>, _1, locale()));
 	return str;
 }
+
+template string ToLowerCase(string str);
+template string ToUpperCase(string str);
+template wstring ToLowerCase(wstring str);
+template wstring ToUpperCase(wstring str);
 
 bool StrToBool(string str)
 {
@@ -70,7 +79,7 @@ string BoolToStr(bool val)
 
 uchar EngKeyToASCIIKey(const uint8 key)
 {
-	switch(key)
+	switch (key)
 	{
 		case KEY_ESCAPE			: return 27;
 		case KEY_TAB			: return 9;
@@ -189,7 +198,7 @@ uchar EngKeyToASCIIKey(const uint8 key)
 
 uint8 ASCIIKeyToEngKey(const uchar key)
 {
-	switch(key)
+	switch (key)
 	{
 		case 27             : return KEY_ESCAPE;
 		case 9              : return KEY_TAB;

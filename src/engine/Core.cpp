@@ -41,7 +41,7 @@ namespace
 	public:
 		bool operator ()(const path &left, const path &right) const
 		{
-			return cmp(ToUpperCase(left.string()), ToUpperCase(right.string()));
+			return cmp(ToUpperCase(left.native()), ToUpperCase(right.native()));
 		}
 	};
 
