@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		14.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -27,6 +27,30 @@ using namespace chrono;
 using namespace fs;
 
 extern bool bUnhandledFilterEnabled;
+
+namespace
+{
+	template <class Compare>
+	class PathCompare
+	{
+		Compare cmp;
+
+	public:
+		PathCompare(const Compare &compare) : cmp(compare) {}
+
+	public:
+		bool operator ()(const path &left, const path &right) const
+		{
+			return cmp(ToUpperCase(left.string()), ToUpperCase(right.string()));
+		}
+	};
+
+	template <class Compare>
+	inline PathCompare<Compare> MakePathCompare(const Compare &compare)
+	{
+		return{ compare };
+	}
+}
 
 //Event Classes//
 
@@ -1229,13 +1253,13 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		_clDelMLoop.second.Add(bind(&CCore::_MainLoop, this));
 		_clDelMProc.Add(bind(&CCore::_MessageProc, this, _1));
 
-		for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
-			for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
-				if (ToUpperCase(path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(path(_vecPluginInitList[j]).replace_extension().string()))
-				{
-					_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
-					LOG("Found duplicated plugin \"" + path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
-				}
+		sort(_vecPluginInitList.begin(), _vecPluginInitList.end(), MakePathCompare(less<>()));
+		// std::unique is more appropriate here and is more efficiend but prevents logging
+		for (auto dup = _vecPluginInitList.cbegin(); (dup = adjacent_find(dup, _vecPluginInitList.cend(), MakePathCompare(equal_to<>()))) != _vecPluginInitList.cend();)
+		{
+			LOG("Found duplicated plugin \"" + *dup + "\" in plugins initialization list.", LT_WARNING);
+			dup = _vecPluginInitList.erase(dup);
+		}
 
 		for (const auto &filename : _vecPluginInitList)
 		{
