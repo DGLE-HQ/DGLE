@@ -39,9 +39,9 @@ namespace
 		PathCompare(const Compare &compare) : cmp(compare) {}
 
 	public:
-		bool operator ()(const path &left, const path &right) const
+		bool operator ()(path left, path right) const
 		{
-			return cmp(ToUpperCase(left.native()), ToUpperCase(right.native()));
+			return cmp(ToUpperCase(left.replace_extension().native()), ToUpperCase(right.replace_extension().native()));
 		}
 	};
 
