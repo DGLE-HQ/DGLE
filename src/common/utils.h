@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		14.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -35,8 +35,23 @@ inline constexpr const char *const ExtractFilename(const char (&path)[length])
 	return detail::FindFilename<length - 1>(path);
 }
 
-std::string ToLowerCase(std::string str);
-std::string ToUpperCase(std::string str);
+template<typename Char>
+std::basic_string<Char> ToLowerCase(std::basic_string<Char> str);
+
+template<typename Char>
+std::basic_string<Char> ToUpperCase(std::basic_string<Char> str);
+
+template<typename Char>
+inline auto ToLowerCase(const Char str[])
+{
+	return ToLowerCase(std::basic_string<Char>(str));
+}
+
+template<typename Char>
+inline auto ToUpperCase(const Char str[])
+{
+	return ToUpperCase(std::basic_string<Char>(str));
+}
 
 bool StrToBool(std::string str);
 

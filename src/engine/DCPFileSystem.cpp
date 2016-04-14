@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		26.03.2016 (c)Andrey Korotkov
+\date		14.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -15,6 +15,35 @@ See "DGLE.h" for more details.
 #include <regex>
 
 using namespace std;
+using fs::path;
+
+#if defined _MSC_VER && _MSC_VER <= 1900 && !__clang__
+static constexpr auto Dcp = L".dcp";
+#else
+namespace DcpImpl
+{
+#	define DCP(prefix) prefix##".dcp"
+
+	template<typename Char>
+	static constexpr const Char Dcp[] = nullptr;
+
+	template<>
+	static constexpr const char Dcp<char>[] = DCP();
+
+	template<>
+	static constexpr const wchar_t Dcp<wchar_t>[] = DCP(L);
+
+	template<>
+	static constexpr const char16_t Dcp<char16_t>[] = DCP(u);
+
+	template<>
+	static constexpr const char32_t Dcp<char32_t>[] = DCP(U);
+
+#	undef DCP
+}
+
+static constexpr auto Dcp = DcpImpl::Dcp<path::value_type>;
+#endif
 
 // CDCPPackager //
 
@@ -26,7 +55,7 @@ CDCPPackager::CDCPPackager(const string &strFileName)
 	{
 		_isOpened = false;
 
-		if (ToLowerCase(fs::path(strFileName).extension().string()) != ".dcp")
+		if (ToLowerCase(path(strFileName).extension().native()) != Dcp)
 		{
 			_strLastError = "Wrong file extension.";
 			return;
@@ -118,7 +147,7 @@ bool CDCPPackager::Save(const string &strFileName)
 		return false;
 	}
 
-	if (ToLowerCase(fs::path(strFileName).extension().string()) != ".dcp")
+	if (ToLowerCase(path(strFileName).extension().native()) != Dcp)
 	{
 		_strLastError = "Wrong file extension.";
 		return false;
@@ -163,7 +192,7 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 		return false;
 	}
 
-	string file_name = (strDir / fs::path(strFileName).filename()).string();
+	string file_name = (strDir / path(strFileName).filename()).string();
 
 	if (file_name.size() > 255)
 	{

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		14.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,8 +24,33 @@ See "DGLE.h" for more details.
 using namespace std;
 using namespace placeholders;
 using namespace chrono;
+using namespace fs;
 
 extern bool bUnhandledFilterEnabled;
+
+namespace
+{
+	template <class Compare>
+	class PathCompare
+	{
+		Compare cmp;
+
+	public:
+		PathCompare(const Compare &compare) : cmp(compare) {}
+
+	public:
+		bool operator ()(const path &left, const path &right) const
+		{
+			return cmp(ToUpperCase(left.native()), ToUpperCase(right.native()));
+		}
+	};
+
+	template <class Compare>
+	inline PathCompare<Compare> MakePathCompare(const Compare &compare)
+	{
+		return{ compare };
+	}
+}
 
 //Event Classes//
 
@@ -963,7 +988,7 @@ DGLE_RESULT DGLE_API CCore::RenderProfilerText(const char *pcTxt, const TColor4 
 DGLE_RESULT DGLE_API CCore::ConnectPlugin(const char *pcFileName, IPlugin *&prPlugin)
 {
 	error_code error;
-	if (fs::exists(pcFileName, error))
+	if (exists(pcFileName, error))
 		return _LoadPlugin(pcFileName, prPlugin) ? S_OK : E_ABORT;
 	else if (error)
 	{
@@ -1159,9 +1184,10 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		const string eng_path = GetEngineFilePath(), working_path = fs::current_path().string();
+		const string eng_path = GetEngineFilePath(), working_path = current_path().string();
 
-		if (eng_path == working_path)
+		error_code error;
+		if (eng_path == working_path || equivalent(eng_path, working_path, error) && error)
 			LOG("Working directory: \"" + working_path + '\"', LT_INFO);
 		else
 			LOG("Engine working directory: \"" + eng_path + "\"\nApplication working directory: \"" + working_path + '\"', LT_INFO);
@@ -1184,7 +1210,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 			for (string &name : ext_fnames)
 			{
 				error_code error;
-				if (fs::exists(name, error))
+				if (exists(name, error))
 				{
 					_vecPluginInitList.push_back(move(name));
 					break;
@@ -1227,99 +1253,98 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		_clDelMLoop.second.Add(bind(&CCore::_MainLoop, this));
 		_clDelMProc.Add(bind(&CCore::_MessageProc, this, _1));
 
-		if (!_vecPluginInitList.empty())
+		sort(_vecPluginInitList.begin(), _vecPluginInitList.end(), MakePathCompare(less<>()));
+		// std::unique is more appropriate here and is more efficiend but prevents logging
+		for (auto dup = _vecPluginInitList.cbegin(); (dup = adjacent_find(dup, _vecPluginInitList.cend(), MakePathCompare(equal_to<>()))) != _vecPluginInitList.cend();)
 		{
-			for (size_t i = 0; i < _vecPluginInitList.size(); ++i)
-				for (size_t j = i + 1; j < _vecPluginInitList.size(); ++j)
-					if (ToUpperCase(fs::path(_vecPluginInitList[i]).replace_extension().string()) == ToUpperCase(fs::path(_vecPluginInitList[j]).replace_extension().string()))
-					{
-						_vecPluginInitList.erase(_vecPluginInitList.begin() + j);
-						LOG("Found duplicated plugin \"" + fs::path(_vecPluginInitList[i]).string() + "\" in plugins initialization list.", LT_WARNING);
-					}
+			LOG("Found duplicated plugin \"" + *dup + "\" in plugins initialization list.", LT_WARNING);
+			dup = _vecPluginInitList.erase(dup);
+		}
 
-			for (const auto &filename : _vecPluginInitList)
+		for (const auto &filename : _vecPluginInitList)
+		{
+			IPlugin *plugin;
+			if (S_OK == ConnectPlugin(filename.c_str(), plugin))
 			{
-				IPlugin *plugin;
-				if (S_OK == ConnectPlugin(filename.c_str(), plugin))
+				char *p_name;
+				uint chars_cnt;
+
+				if (FAILED(plugin->GetPluginInterfaceName(NULL, chars_cnt)))
 				{
-					char *p_name;
-					uint chars_cnt;
+					LOG("Failed to get plugin interface name length.", LT_ERROR);
+					_UnloadPlugin(plugin);
+					continue;
+				}
 
-					if (FAILED(plugin->GetPluginInterfaceName(NULL, chars_cnt)))
-					{
-						LOG("Failed to get plugin interface name length.", LT_ERROR);
-						_UnloadPlugin(plugin);
-						continue;
-					}
+				p_name = new char[chars_cnt];
 
-					p_name = new char[chars_cnt];
-
-					if (FAILED(plugin->GetPluginInterfaceName(p_name, chars_cnt)))
-					{
-						LOG("Failed to get plugin interface name.", LT_ERROR);
-						_UnloadPlugin(plugin);
-						continue;
-					}
+				if (FAILED(plugin->GetPluginInterfaceName(p_name, chars_cnt)))
+				{
+					LOG("Failed to get plugin interface name.", LT_ERROR);
+					_UnloadPlugin(plugin);
+					continue;
+				}
 				
-					if (strcmp(p_name, "ISubSystemPlugin") == 0)
+				if (strcmp(p_name, "ISubSystemPlugin") == 0)
+				{
+					IEngineSubSystem *pss;
+					((ISubSystemPlugin*)plugin)->GetSubSystemInterface(pss);
+						
+					E_ENGINE_SUB_SYSTEM sst;
+					pss->GetType(sst);
+						
+					switch (sst)
 					{
-						IEngineSubSystem *pss;
-						((ISubSystemPlugin*)plugin)->GetSubSystemInterface(pss);
-						
-						E_ENGINE_SUB_SYSTEM sst;
-						pss->GetType(sst);
-						
-						switch (sst)
+					case ESS_CORE_RENDERER:
+						if (!_bBuiltInRenderer)
 						{
-						case ESS_CORE_RENDERER:
-							if (!_bBuiltInRenderer)
-							{
-								LOG("Only one CoreRenderer plugin could be connected at the same time.", LT_WARNING);
-								_UnloadPlugin(plugin);
-							}
-							else
-							{
-								_pCoreRenderer = (ICoreRenderer*)pss;
-								_bBuiltInRenderer = false;
-							}
-							break;
-						case ESS_INPUT:
-							if (!_bBuiltInInput)
-							{
-								LOG("Only one Input plugin could be connected at the same time.", LT_WARNING);
-								_UnloadPlugin(plugin);
-							}
-							else
-							{
-								_pInput = (IInput*)pss;
-								_bBuiltInInput = false;
-							}
-							break;
-						case ESS_SOUND:
-							if (!_bBuiltInSound)
-							{
-								LOG("Only one Sound plugin could be connected at the same time.", LT_WARNING);
-								_UnloadPlugin(plugin);
-								break;
-							}
-							else
-								if (_bSndEnabled)
-								{ 
-									_pSound = (ISound*)pss;
-									_bBuiltInSound = false;
-									break;
-								}
-						default: 
-							LOG("The subsystem which plugin tries to override is not overridable.", LT_ERROR);
+							LOG("Only one CoreRenderer plugin could be connected at the same time.", LT_WARNING);
 							_UnloadPlugin(plugin);
 						}
+						else
+						{
+							_pCoreRenderer = (ICoreRenderer*)pss;
+							_bBuiltInRenderer = false;
+						}
+						break;
+					case ESS_INPUT:
+						if (!_bBuiltInInput)
+						{
+							LOG("Only one Input plugin could be connected at the same time.", LT_WARNING);
+							_UnloadPlugin(plugin);
+						}
+						else
+						{
+							_pInput = (IInput*)pss;
+							_bBuiltInInput = false;
+						}
+						break;
+					case ESS_SOUND:
+						if (!_bBuiltInSound)
+						{
+							LOG("Only one Sound plugin could be connected at the same time.", LT_WARNING);
+							_UnloadPlugin(plugin);
+							break;
+						}
+						else
+							if (_bSndEnabled)
+							{ 
+								_pSound = (ISound*)pss;
+								_bBuiltInSound = false;
+								break;
+							}
+					default: 
+						LOG("The subsystem which plugin tries to override is not overridable.", LT_ERROR);
+						_UnloadPlugin(plugin);
 					}
+				}
 
-					delete[] p_name;
+				delete[] p_name;
 
-				}			
-			}
+			}			
 		}
+
+		_vecPluginInitList.clear();
 
 		if (_bBuiltInRenderer)
 		{
