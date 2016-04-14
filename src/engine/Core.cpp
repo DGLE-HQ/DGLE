@@ -1184,7 +1184,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 		if (_eInitFlags & EIF_CATCH_UNHANDLED) 
 			InitDbgHelp(InstIdx());
 
-		const string eng_path = GetEngineFilePath(), working_path = current_path().string();
+		const string eng_path = GetEngineFilePath(), working_path = current_path().string() + '\\';
 
 		error_code error;
 		if (eng_path == working_path || equivalent(eng_path, working_path, error) && error)
