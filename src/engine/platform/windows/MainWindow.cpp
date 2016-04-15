@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		15.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -105,7 +105,8 @@ LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		case WM_ACTIVATEAPP:
 			if (!(eng_inst.eGetEngFlags & GEF_FORCE_SINGLE_THREAD))
 			{
-				this_ptr->_pDelMessageProc->operator ()(TWindowMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
+				if (eng_inst.pclCore->EngineInited())
+					this_ptr->_pDelMessageProc->operator ()(TWindowMessage(wParam == TRUE ? WMT_ACTIVATED : WMT_DEACTIVATED, lParam == eng_inst.pclConsole->GetThreadId() ? 1 : 0));
 				break;
 			}
 

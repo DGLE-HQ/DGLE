@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		11.04.2016 (c)Korotkov Andrey
+\date		15.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -187,6 +187,7 @@ public:
 	inline	TEngineWindow *EngWindow() {return &_stWin;}
 	
 	inline	bool SoundEnabled() const {return _bSndEnabled;}
+	inline	bool EngineInited() const {return _bInitedFlag;}
 	void	ToogleSuspendEngine(bool bSuspend);
 
 	DGLE_RESULT DGLE_API LoadSplashPicture(const char *pcBmpFileName) override;
