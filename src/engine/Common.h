@@ -9,8 +9,8 @@ See "DGLE.h" for more details.
 
 #pragma once
 
-#if defined _MSC_VER && _MSC_VER < 1900
-#error old compiler version
+#if !defined  __clang__  && defined _MSC_FULL_VER && _MSC_FULL_VER < 190023918
+#error Old MSVC compiler version. Visual Studio 2015 Update 2 or later required.
 #endif
 
 #include "DGLE.h"
