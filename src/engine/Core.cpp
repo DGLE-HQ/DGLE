@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		14.04.2016 (c)Korotkov Andrey
+\date		16.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -528,7 +528,7 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 		_clLogFile.width(0);
 		_clLogFile << " - ";
 
-		_clLogFile << pcTxt << endl;
+		_clLogFile << pcTxt << '\n';
 
 		if (bFlush)
 			_clLogFile.flush();
