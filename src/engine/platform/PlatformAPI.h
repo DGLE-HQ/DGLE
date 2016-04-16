@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		16.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -148,20 +148,8 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 
 #endif
 
-struct TSysTimeAndDate
-{
-	uint16 ui16Year;
-	uint16 ui16Month;
-	uint16 ui16Day;
-	uint16 ui16Hour;
-	uint16 ui16Minute;
-	uint16 ui16Second;
-	uint16 ui16Milliseconds;
-};
-
 bool PlatformInit();
 void GetDisplaySize(uint &width, uint &height);
-void GetLocalTimaAndDate(TSysTimeAndDate &time);
 void OutputDebugTxt(const char *pcTxt);
 uint CreateTimer(uint uiInterval, TProcDelegate *pDelOnTimer);
 bool ReleaseTimer(uint id);

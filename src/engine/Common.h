@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		16.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,8 +9,8 @@ See "DGLE.h" for more details.
 
 #pragma once
 
-#if defined _MSC_VER && _MSC_VER < 1900
-#error old compiler version
+#if !defined  __clang__  && defined _MSC_FULL_VER && _MSC_FULL_VER < 190023918
+#error Old MSVC compiler version. Visual Studio 2015 Update 2 or later required.
 #endif
 
 #include "DGLE.h"
@@ -56,6 +56,7 @@ typedef HMODULE TDynLibHandle;
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <ctime>
 #include <string>
 #include <vector>
 #include <map>
@@ -64,6 +65,7 @@ typedef HMODULE TDynLibHandle;
 #include <strstream>
 #include <sstream>
 #include <iomanip>
+#include <locale>
 #include <iterator>
 #include <limits>
 #include <type_traits>
