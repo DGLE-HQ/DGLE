@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		16.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -305,19 +305,6 @@ void GetDisplaySize(uint &width, uint &height)
 	width = GetDeviceCaps(desktop_dc, HORZRES);
 	height = GetDeviceCaps(desktop_dc, VERTRES);
 	ReleaseDC(GetDesktopWindow(), desktop_dc);
-}
-
-void GetLocalTimaAndDate(TSysTimeAndDate &time)
-{
-	SYSTEMTIME t;
-	GetLocalTime(&t);
-	time.ui16Year = t.wYear;
-	time.ui16Month = t.wMonth;
-	time.ui16Day = t.wDay;
-	time.ui16Hour = t.wHour;
-	time.ui16Minute = t.wMinute;
-	time.ui16Second = t.wSecond;
-	time.ui16Milliseconds = t.wMilliseconds;
 }
 
 bool PlatformInit()

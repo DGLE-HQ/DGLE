@@ -406,13 +406,13 @@ _clDelOnFPSTimer(piecewise_construct, make_tuple(), make_tuple(uiInstIdx))
 		_clLogFile.setf(ios_base::right, ios_base::adjustfield);
 		_clLogFile.open(("log" + (InstIdx() != 0 ? to_string(InstIdx()) : "") + ".txt").c_str(), ios::out | ios::trunc);
 
-		TSysTimeAndDate time;
-		GetLocalTimaAndDate(time);
+		time_t cur_time;
+		time(&cur_time);
 
 		_clLogFile << "DGLEngine Log File" << endl;
 		_clLogFile << "Version: "<< DGLE_VERSION << endl;
 		_clLogFile << "Visit http://dglengine.org/ for more information." << endl;
-		_clLogFile << "Log Started at " << time.ui16Day << '.' << time.ui16Month << '.' << time.ui16Year << '.' << endl;
+		_clLogFile << "Log Started at " << put_time(localtime(&cur_time), "%d.%m.%Y.") << endl;
 	}
 }
 
@@ -514,21 +514,12 @@ void CCore::_LogWrite(const char *pcTxt, bool bFlush)
 {
 	if (_clLogFile.is_open())
 	{
-		TSysTimeAndDate time;
-		GetLocalTimaAndDate(time);
+		using namespace chrono;
+		const auto now = system_clock::now();
+		const time_t cur_time = system_clock::to_time_t(now);
+		const milliseconds ms = duration_cast<milliseconds>(now - floor<seconds>(now));
 		_clLogFile.fill('0');
-		_clLogFile.width(2);
-		_clLogFile << time.ui16Hour << ':';
-		_clLogFile.width(2);
-		_clLogFile << time.ui16Minute << ':';
-		_clLogFile.width(2);
-		_clLogFile << time.ui16Second << '.';	
-		_clLogFile.width(3);
-		_clLogFile << time.ui16Milliseconds;
-		_clLogFile.width(0);
-		_clLogFile << " - ";
-
-		_clLogFile << pcTxt << '\n';
+		_clLogFile << put_time(localtime(&cur_time), "%T.") << setw(3) << ms.count() << setw(0) << " - " << pcTxt << '\n';
 
 		if (bFlush)
 			_clLogFile.flush();
