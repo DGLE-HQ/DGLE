@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		10.04.2016 (c)Andrey Korotkov
+\date		19.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -71,7 +71,7 @@ bool CBaseRendererGL::Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eIni
 		}
 		else
 		{		
-			if (strstr((char*)glGetString(GL_EXTENSIONS), "ARB_multisample"))
+			if (strstr((char *)glGetString(GL_EXTENSIONS), "ARB_multisample"))
 			{	
 				int ia_attributes[] =
 				{

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -64,11 +64,11 @@ TWindowMessage WinAPIMsgToEngMsg(UINT Msg, WPARAM wParam, LPARAM lParam)
 		return TWindowMessage(WMT_DEACTIVATED, wParam);
 
 	case WM_MOVING:
-		return TWindowMessage(WMT_MOVE, ((RECT*)lParam)->left, ((RECT*)lParam)->top, (RECT*)lParam);
+		return TWindowMessage(WMT_MOVE, ((RECT *)lParam)->left, ((RECT *)lParam)->top, (RECT *)lParam);
 
 	case WM_SIZING:
 		// This message receives window rectangle not client, so this message should be override in window message handler.
-		return TWindowMessage(WMT_SIZE, ((RECT*)lParam)->right - ((RECT*)lParam)->left, ((RECT*)lParam)->bottom - ((RECT*)lParam)->top, (RECT*)lParam);
+		return TWindowMessage(WMT_SIZE, ((RECT *)lParam)->right - ((RECT *)lParam)->left, ((RECT *)lParam)->bottom - ((RECT *)lParam)->top, (RECT *)lParam);
 
 	case WM_SIZE:
 		RECT r;
@@ -291,7 +291,7 @@ void EngMsgToWinAPIMsg(const TWindowMessage &msg, UINT &Msg, WPARAM &wParam, LPA
 	case WMT_MOUSE_WHEEL:
 		Msg = WM_MOUSEWHEEL;
 		if (msg.pParam3)
-			wParam = MAKEWPARAM(0, *(int*)msg.pParam3);
+			wParam = MAKEWPARAM(0, *(int *)msg.pParam3);
 		else
 			wParam = 0;
 		lParam = 0;
@@ -551,7 +551,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 		RegCloseKey(h_key);
 	}
 	else
-		is_ok = GetVersionEx((OSVERSIONINFO*)&osvi) != FALSE;
+		is_ok = GetVersionEx((OSVERSIONINFO *)&osvi) != FALSE;
 
 	string str = "Operating System: ";
 
@@ -789,7 +789,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 	SYSTEM_INFO st_sys_info; 
 	ZeroMemory(&st_sys_info, sizeof(SYSTEM_INFO));
-	::GetSystemInfo((SYSTEM_INFO*) &st_sys_info);
+	::GetSystemInfo((SYSTEM_INFO *) &st_sys_info);
 
 	str = "CPU: ";
 	str += pc_processor_name + " (~"s + to_string(mhz) + " Mhz";
@@ -911,7 +911,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	ZeroMemory(&dd, sizeof(DISPLAY_DEVICE));
 	dd.cb = sizeof(DISPLAY_DEVICE);
 
-	if (EnumDisplayDevices(NULL, 0, (DISPLAY_DEVICE*)&dd, 0) == 0)
+	if (EnumDisplayDevices(NULL, 0, (DISPLAY_DEVICE *)&dd, 0) == 0)
 		str = "Error getting video device!";
 	else
 		str += dd.DeviceString;
@@ -930,7 +930,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	hr = E_FAIL;
 
 	if (SUCCEEDED(chr))
-		hr = CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (void**)&locator);
+		hr = CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (void **)&locator);
 
 	if (SUCCEEDED(hr))
 	{

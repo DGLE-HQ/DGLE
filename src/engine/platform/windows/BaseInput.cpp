@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		17.03.2016 (c)Andrey Korotkov
+\date		19.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -58,7 +58,7 @@ CInstancedObj(uiInstIdx)
 			LOG("Joystick with id: " + to_string(i) + " name: \"" + _vecJoyCaps[i].info.szPname + '\"', LT_INFO);
 	}
 
-	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, (void*)this);
+	Console()->RegComProc("input_list_joys", "Prints the list of the connected joysticks.", &_s_PrintJoysList, this);
 
 #endif
 }

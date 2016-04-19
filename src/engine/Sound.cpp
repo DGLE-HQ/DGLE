@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -369,7 +369,7 @@ CBaseSound(uiInstIdx), _bPaused(false), _fMasterVolume(1.f), _iProfilerState(0),
 	Console()->RegComVar("snd_profiler", "Displays sound subsystems profiler.", &_iProfilerState, 0, 1);
 	Console()->RegComVar("snd_mute", "Mutes all sound channels.", &_iMuteState, 0, 1);
 	
-	Core()->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
+	Core()->AddEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, this);
 
 	if (_bInited)
 		LOG("Sound Subsystem initialized.", LT_INFO);
@@ -382,7 +382,7 @@ CSound::~CSound()
 	Console()->UnRegCom("snd_mute");
 	Console()->UnRegCom("snd_profiler");
 
-	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, (void*)this);
+	Core()->RemoveEventListener(ET_ON_PROFILER_DRAW, &_s_EventProfilerDraw, this);
 
 	if (_bInited)
 	{

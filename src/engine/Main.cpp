@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -58,7 +58,7 @@ bool CALLBACK CreateEngine(IEngineCore *&pEngineCore, E_GET_ENGINE_FLAGS eFlags,
 	if (eFlags & GEF_FORCE_QUIT)
 		bTerminate = true;
 
-	pEngineCore = (IEngineCore*)(vecEngineInstances[cur_id].pclCore);
+	pEngineCore = (IEngineCore *)(vecEngineInstances[cur_id].pclCore);
 
 	return true;
 }

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -19,7 +19,7 @@ CBaseInput(uiInstIdx),
 _msgConnection(Core()->pDMessageProc()->Add(bind(&CInput::_MessageProc, this, placeholders::_1))),
 _loopConnection(Core()->pDMLoopProc()->Add(bind(&CInput::_Loop, this)))
 {
-	Core()->AddProcedure(EPT_UPDATE, &_s_Update, (void*)this);
+	Core()->AddProcedure(EPT_UPDATE, &_s_Update, this);
 
 	memset(_abKeys, 0, 256 * sizeof(bool));
 	memset(&_stMsts, 0, sizeof(TMouseStates));
@@ -29,7 +29,7 @@ _loopConnection(Core()->pDMLoopProc()->Add(bind(&CInput::_Loop, this)))
 
 CInput::~CInput()
 {
-	Core()->RemoveProcedure(EPT_UPDATE, &_s_Update, (void*)this);
+	Core()->RemoveProcedure(EPT_UPDATE, &_s_Update, this);
 
 	if (_bExclusive)
 		ClipCursor(0, 0, 0, 0);

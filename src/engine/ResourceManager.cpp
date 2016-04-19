@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -63,7 +63,7 @@ class CSSampleDummy: public ISoundSample
 {
 public:
 	DGLE_RESULT DGLE_API Play(int iPan){return E_NOTIMPL;}
-	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags){pSndChnl = (ISoundChannel*)new CSoundChannelDummy; return E_NOTIMPL;}
+	DGLE_RESULT DGLE_API PlayEx(ISoundChannel *&pSndChnl, E_SOUND_SAMPLE_PARAMS eFlags){pSndChnl = (ISoundChannel *)new CSoundChannelDummy; return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API SetVolume(uint uiVolume){return E_NOTIMPL;}
 	DGLE_RESULT DGLE_API GetVolume(uint &uiVolume){uiVolume = 0; return E_NOTIMPL;}
 
@@ -219,17 +219,17 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	_pCoreRenderer = Core()->pCoreRenderer();
 
 	Console()->RegComVar("rman_stats", "Displays resource manager subsystems statistic.", &_iProfilerState, 0, 2);
-	Console()->RegComProc("rman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, (void*)this);
-	Console()->RegComProc("rman_list_resources", "Lists all loaded resources.", &_s_ConListResources, (void*)this);
+	Console()->RegComProc("rman_list_file_formats", "Lists all file formats registered in the Resource Manager.", &_s_ConListFileFormats, this);
+	Console()->RegComProc("rman_list_resources", "Lists all loaded resources.", &_s_ConListResources, this);
 
-	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, (void*)this);
-	RegisterFileFormat("tga", EOT_TEXTURE, "truevision TarGA images.", &_s_LoadTextureTGA, (void*)this);
-	RegisterFileFormat("dtx", EOT_TEXTURE, "Dgle TeXtures images.", &_s_LoadTextureDTX, (void*)this);
-	RegisterFileFormat("dmd", EOT_MODEL, "Dgle MoDel is a bunch of meshes with additionall attributes and material references.", &_s_LoadDMDFile, (void*)this);
-	RegisterFileFormat("dft", EOT_BITMAP_FONT, "Dgle FonT bitmap 2D fonts.", &_s_LoadFontDFT, (void*)this);
+	RegisterFileFormat("bmp", EOT_TEXTURE, "BitMaP images.", &_s_LoadTextureBMP, this);
+	RegisterFileFormat("tga", EOT_TEXTURE, "truevision TarGA images.", &_s_LoadTextureTGA, this);
+	RegisterFileFormat("dtx", EOT_TEXTURE, "Dgle TeXtures images.", &_s_LoadTextureDTX, this);
+	RegisterFileFormat("dmd", EOT_MODEL, "Dgle MoDel is a bunch of meshes with additionall attributes and material references.", &_s_LoadDMDFile, this);
+	RegisterFileFormat("dft", EOT_BITMAP_FONT, "Dgle FonT bitmap 2D fonts.", &_s_LoadFontDFT, this);
 	
 	if (Core()->SoundEnabled())
-		RegisterFileFormat("wav", EOT_SOUND_SAMPLE, "WAVe (PCM) uncompressed sound files.", &_s_LoadSoundWAV, (void*)this);
+		RegisterFileFormat("wav", EOT_SOUND_SAMPLE, "WAVe (PCM) uncompressed sound files.", &_s_LoadSoundWAV, this);
 
 	//Create dummies
 
@@ -238,8 +238,8 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	_pDefSSmpDummy	= new CSSampleDummy();
 	_pDefMusicDummy = new CMusicDummy();
 
-	RegisterDefaultResource(EOT_SOUND_SAMPLE, (IEngineBaseObject*)_pDefSSmpDummy);
-	RegisterDefaultResource(EOT_MUSIC, (IEngineBaseObject*)_pDefMusicDummy);
+	RegisterDefaultResource(EOT_SOUND_SAMPLE, (IEngineBaseObject *)_pDefSSmpDummy);
+	RegisterDefaultResource(EOT_MUSIC, (IEngineBaseObject *)_pDefMusicDummy);
 
 	//Create default texture
 
@@ -251,14 +251,14 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	if (!_CreateTexture(_pDefTex, &ubt_def_tex_dat[0], 2, 2, TDF_RGB8, TCF_DEFAULT, (E_TEXTURE_LOAD_FLAGS)(TLF_FILTERING_NONE | TLF_COORDS_REPEAT)))
 		LOG("Can't create default texture.", LT_FATAL);
 
-	RegisterDefaultResource(EOT_TEXTURE, (IEngineBaseObject*)_pDefTex);
+	RegisterDefaultResource(EOT_TEXTURE, (IEngineBaseObject *)_pDefTex);
 
 	//Create default material
 
 	_pDefMaterial = new CMaterial(uiInstIdx);
 	_pDefMaterial->SetDiffuseTexture(_pDefTex);
 
-	RegisterDefaultResource(EOT_MATERIAL, (IEngineBaseObject*)_pDefMaterial);
+	RegisterDefaultResource(EOT_MATERIAL, (IEngineBaseObject *)_pDefMaterial);
 
 	//Create default mesh
 	
@@ -298,12 +298,12 @@ _iProfilerState(0), _uiResIdxCounter(0)
 	if (!_CreateMesh(_pDefMesh, ubt_mesh_data, sizeof(ubt_mesh_data), size(def_mesh_vtx) / 8, size(def_mesh_fs) / 3, TPoint3(0.f, 0.f, 0.f), TVector3(0.5, 0.5, 0.5), (E_MESH_CREATE_FLAGS)(MCF_TEXTURE_COORDS_PRESENTED | MCF_NORMALS_PRESENTED), (E_MESH_MODEL_LOAD_FLAGS)RES_LOAD_DEFAULT))
 		LOG("Can't create default mesh.", LT_FATAL);
 
-	RegisterDefaultResource(EOT_MESH, (IEngineBaseObject*)_pDefMesh);
+	RegisterDefaultResource(EOT_MESH, (IEngineBaseObject *)_pDefMesh);
 
 	_pDefModel = new CModel(InstIdx());
 	_pDefModel->AddMesh(_pDefMesh);
 
-	RegisterDefaultResource(EOT_MODEL, (IEngineBaseObject*)_pDefModel);
+	RegisterDefaultResource(EOT_MODEL, (IEngineBaseObject *)_pDefModel);
 
 	//Create default font
 	
@@ -317,17 +317,17 @@ _iProfilerState(0), _uiResIdxCounter(0)
 
 	p_rfile->IsOpen(b_rfopened);
 
-	if (!b_rfopened || !_LoadFontDFT((IFile*)p_rfile, _pDefBmpFnt, (E_BITMAP_FONT_LOAD_FLAGS)0))
+	if (!b_rfopened || !_LoadFontDFT((IFile *)p_rfile, _pDefBmpFnt, (E_BITMAP_FONT_LOAD_FLAGS)0))
 		LOG("Can't create default font.", LT_FATAL);
 
 	delete p_rfile;
 #else
-	_pDefBmpFnt = (IBitmapFont*)_pDefBmFntDummy;
+	_pDefBmpFnt = (IBitmapFont *)_pDefBmFntDummy;
 #endif
 
 	_pSysBmpFnt = _pDefBmpFnt;
 
-	RegisterDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject*)_pDefBmpFnt);
+	RegisterDefaultResource(EOT_BITMAP_FONT, (IEngineBaseObject *)_pDefBmpFnt);
 
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_ProfilerEventHandler, this);
 
@@ -355,11 +355,11 @@ void CResourceManager::FreeAllResources()
 		_vecList.begin()->pObj->Free();
 	}
 
-	delete (CMesh*)_pDefMesh;
-	delete (CModel*)_pDefModel;
-	delete (CMaterial*)_pDefMaterial;
-	delete (CTexture*)_pDefTex;
-	delete (CBitmapFont*)_pDefBmpFnt;
+	delete (CMesh *)_pDefMesh;
+	delete (CModel *)_pDefModel;
+	delete (CMaterial *)_pDefMaterial;
+	delete (CTexture *)_pDefTex;
+	delete (CBitmapFont *)_pDefBmpFnt;
 
 	delete _pDefBmFntDummy;
 	delete _pDefSSmpDummy;
@@ -685,7 +685,7 @@ uint CResourceManager::_GenerateScaleImage(const uint8 *const pDataIn, uint uiWi
 {
 	if (format > TDF_BGRA8)
 	{
-		prDataOut = const_cast<uint8*>(pDataIn);
+		prDataOut = const_cast<uint8 *>(pDataIn);
 		return -1;
 	}
 
@@ -1000,7 +1000,7 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	
 	pFile->Seek(0, FSSF_BEGIN, ui32_pos);
 	
-	pFile->Read((void*)&st_header, sizeof(TTGAHeader), ui_read);
+	pFile->Read(&st_header, sizeof(TTGAHeader), ui_read);
 
 	if (st_header.ui8IdLength)
 		pFile->Seek(st_header.ui8IdLength, FSSF_CURRENT, ui32_pos);
@@ -1089,15 +1089,15 @@ bool CResourceManager::_LoadTextureTGA(IFile *pFile, ITexture *&prTex, E_TEXTURE
 		E_TEXTURE_CREATE_FLAGS e_create_params = TCF_DEFAULT;
 		
 		if (st_header.ui16ImageWidth % 4 != 0)
-			(uint&)e_create_params |= TCF_PIXEL_ALIGNMENT_1;
+			(uint &)e_create_params |= TCF_PIXEL_ALIGNMENT_1;
 		
 		b_result = _CreateTexture(prTex, p_out, st_header.ui16ImageWidth, st_header.ui16ImageHeight, TDF_RGB8, e_create_params, eFlags);
 	}
 	else
 		if (i_bytes_per_pixel == 4)
 		{
-			const int *in = (int*)&p_data[!flip ? i_image_size : 0];
-			int *out = (int*)p_out;
+			const int *in = (int *)&p_data[!flip ? i_image_size : 0];
+			int *out = (int *)p_out;
 			const int *p = in;
 			out += st_header.ui16ImageHeight * st_header.ui16ImageWidth;
 
@@ -1161,8 +1161,8 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 	uint ui_read;
 
-	pFile->Read((void*)&st_file_header, sizeof(TBitmapFileHeader), ui_read);
-	pFile->Read((void*)&st_info_header, sizeof(TBitmapInfoHeader), ui_read);
+	pFile->Read(&st_file_header, sizeof(TBitmapFileHeader), ui_read);
+	pFile->Read(&st_info_header, sizeof(TBitmapInfoHeader), ui_read);
 
 	if (st_info_header.ui16BitCount != 24)
 	{
@@ -1192,7 +1192,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 
 	uint8 *p_data = new uint8[ui_bitmap_length];
 
-	pFile->Read((void*)p_data, ui_bitmap_length, ui_read);
+	pFile->Read(p_data, ui_bitmap_length, ui_read);
 
 	if (ui_read != ui_bitmap_length)
 	{
@@ -1206,7 +1206,7 @@ bool CResourceManager::_LoadTextureBMP(IFile *pFile, ITexture *&prTex, E_TEXTURE
 	uint8 *p_out = new uint8[ui_bitmap_length];
 	
 	for (int i = 0; i < st_info_header.i32Height; ++i)
-		memcpy((void*)&p_out[i * i_line_w], (void*)&p_data[ui_bitmap_length - (i + 1) * i_line_w], i_line_w);
+		memcpy(p_out + i * i_line_w, p_data + (ui_bitmap_length - (i + 1) * i_line_w), i_line_w);
 
 	delete[] p_data;
 
@@ -1472,7 +1472,7 @@ bool CResourceManager::_LoadDMDFile(IFile *pFile, IEngineBaseObject *&prObj, E_M
 		E_MESH_CREATE_FLAGS cr_flags = MCF_NORMALS_PRESENTED;
 
 		if (header.isTextured)
-			(int&)cr_flags |= MCF_TEXTURE_COORDS_PRESENTED;
+			(int &)cr_flags |= MCF_TEXTURE_COORDS_PRESENTED;
 
 		IMesh *p_mesh;
 
@@ -1644,17 +1644,17 @@ bool CResourceManager::_LoadFontDFT(IFile *pFile, IBitmapFont *&prFnt, E_BITMAP_
 	if (eFlags & BFLF_GENERATE_MIPMAPS)
 			(int &)tex_flags |= TLF_GENERATE_MIPMAPS;
 
-	if (!_CreateTexture((ITexture*&)p_tex, p_data, header.texWidth, header.texHeight, format, TCF_DEFAULT, tex_flags))
+	if (!_CreateTexture((ITexture *&)p_tex, p_data, header.texWidth, header.texHeight, format, TCF_DEFAULT, tex_flags))
 	{
 		LOG("Error(s) while loading font texture.", LT_ERROR);
 		delete[] p_data;
 		return false;
 	}
 
-	prFnt = (IBitmapFont*) new CBitmapFont(InstIdx(), p_tex, header, chars, (eFlags & BFLF_FORCE_ALPHA_TEST_2D) != 0);
+	prFnt = (IBitmapFont *) new CBitmapFont(InstIdx(), p_tex, header, chars, (eFlags & BFLF_FORCE_ALPHA_TEST_2D) != 0);
 
 	if (_pDefBmpFnt == _pDefBmFntDummy)
-		_pDefBmpFnt = (IBitmapFont*)prFnt;
+		_pDefBmpFnt = (IBitmapFont *)prFnt;
 
 	delete[] p_data;
 
@@ -1666,10 +1666,10 @@ bool CResourceManager::_CreateSound(ISoundSample *&prSndSample, uint uiSamplesPe
 	if (!pData || ui32DataSize == 0 || (uiBitsPerSample != 8 && uiBitsPerSample != 16) || (uiSamplesPerSec != 11025 && uiSamplesPerSec != 22050 && uiSamplesPerSec != 44100))
 		return false;
 
-	uint8 * p_data = new uint8[ui32DataSize];
+	uint8 *p_data = new uint8[ui32DataSize];
 	memcpy(p_data, pData, ui32DataSize);
 
-	prSndSample = (ISoundSample*)(new CSoundSample(InstIdx(), uiSamplesPerSec, uiBitsPerSample, bStereo, p_data, ui32DataSize));
+	prSndSample = (ISoundSample *)(new CSoundSample(InstIdx(), uiSamplesPerSec, uiBitsPerSample, bStereo, p_data, ui32DataSize));
 	
 	return true;
 }
@@ -1681,7 +1681,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateSound(ISoundSample *&prSndSample, u
 	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_AddResource(pcName, (IEngineBaseObject*)prSndSample);
+			_AddResource(pcName, (IEngineBaseObject *)prSndSample);
 		else
 			LOG("Error creating sound with name \""s + pcName + "\".", LT_ERROR);
 	}
@@ -1792,7 +1792,7 @@ bool CResourceManager::_LoadSoundWAV(IFile *pFile, ISoundSample *&prSSample)
 		return false;
 	}
 
-	prSSample = (ISoundSample*)(new CSoundSample(InstIdx(), st_format.ui32SamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
+	prSSample = (ISoundSample *)(new CSoundSample(InstIdx(), st_format.ui32SamplesPerSec, st_format.ui16BitsPerSample, st_format.ui16Channels == 2, p_data, ui32_tmp));
 
 	return true;
 }
@@ -1866,7 +1866,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateTexture(ITexture *&prTex, const uin
 	if (bAddResource)
 	{
 		if (result == S_OK) 
-			_AddResource(pcName, (IEngineBaseObject*)prTex);
+			_AddResource(pcName, (IEngineBaseObject *)prTex);
 		else
 			LOG("Error creating texture with name \""s + pcName + "\".", LT_ERROR);
 	}
@@ -1879,7 +1879,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMaterial(IMaterial *&prMaterial, co
 	prMaterial = new CMaterial(InstIdx());
 
 	if (bAddResource)
-		_AddResource(pcName, (IEngineBaseObject*)prMaterial);
+		_AddResource(pcName, (IEngineBaseObject *)prMaterial);
 
 	return S_OK;
 }
@@ -1889,7 +1889,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateLight(ILight *&prLight, const char 
 	prLight = new CLight(InstIdx());
 
 	if (bAddResource)
-		_AddResource(pcName, (IEngineBaseObject*)prLight);
+		_AddResource(pcName, (IEngineBaseObject *)prLight);
 
 	return S_OK;
 }
@@ -1933,7 +1933,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateMesh(IMesh *&prMesh, const uint8 *p
 	if (bAddResource)
 	{
 		if (result == S_OK)
-			_AddResource(pcName, (IEngineBaseObject*)prMesh);
+			_AddResource(pcName, (IEngineBaseObject *)prMesh);
 		else
 			LOG("Error creating mesh with name \""s + pcName + "\".", LT_ERROR);
 	}
@@ -1946,7 +1946,7 @@ DGLE_RESULT DGLE_API CResourceManager::CreateModel(IModel *&prModel, const char 
 	prModel = new CModel(InstIdx());
 
 	if (bAddResource)
-		_AddResource(pcName, (IEngineBaseObject*)prModel);
+		_AddResource(pcName, (IEngineBaseObject *)prModel);
 	
 	return S_OK;
 }
@@ -1957,7 +1957,7 @@ inline uint CResourceManager::_GetFileFormatLoaderIdx(const char *pcFileName, E_
 
 	if (pcFileName == NULL)
 	{
-		prObj = (IEngineBaseObject*&)_pBObjDummy;
+		prObj = (IEngineBaseObject *&)_pBObjDummy;
 		return ret;
 	}
 
@@ -2116,14 +2116,14 @@ DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&
 
 	if (FAILED(pFile->GetName(NULL, name_length)))
 	{
-		prObj = (IEngineBaseObject*&)_pBObjDummy;
+		prObj = (IEngineBaseObject *&)_pBObjDummy;
 		LOG("Can't get file name length.", LT_ERROR);
 		return E_ABORT;
 	}
 	
 	if (FAILED(pFile->GetPath(NULL, path_length)))
 	{
-		prObj = (IEngineBaseObject*&)_pBObjDummy;
+		prObj = (IEngineBaseObject *&)_pBObjDummy;
 		LOG("Can't get file path length.", LT_ERROR);
 		return E_ABORT;
 	}
@@ -2134,7 +2134,7 @@ DGLE_RESULT DGLE_API CResourceManager::LoadEx(IFile *pFile, IEngineBaseObject *&
 
 	if (FAILED(pFile->GetName(name, name_length)) || FAILED(pFile->GetPath(path, path_length)))
 	{
-		prObj = (IEngineBaseObject*&)_pBObjDummy;
+		prObj = (IEngineBaseObject *&)_pBObjDummy;
 		LOG("Can't get filename of IFile.", LT_ERROR);
 		return E_ABORT;
 	}

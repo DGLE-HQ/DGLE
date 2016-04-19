@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		14.04.2016 (c)Andrey Korotkov
+\date		19.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -174,7 +174,7 @@ bool CDCPPackager::Save(const string &strFileName)
 	}
 
 	if (!_clInfoTable.empty())
-		pack.write((char*)&_clInfoTable[0], _clInfoTable.size() * sizeof(TDCPFileInfo));
+		pack.write((char *)&_clInfoTable[0], _clInfoTable.size() * sizeof(TDCPFileInfo));
 
 	uint32 meta[2] = {size, _clInfoTable.size()};
 	pack.write((const char *)meta, sizeof meta);
@@ -246,7 +246,7 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 
 	memset(&info, 0, sizeof(TDCPFileInfo));
 
-	info.ui32CRC32 = GetCRC32((uint8*)file_name.c_str(), file_name.size());
+	info.ui32CRC32 = GetCRC32((uint8 *)file_name.c_str(), file_name.size());
 	info.ui32Size = size;
 	info.ui32CmprsdSize = cmprsd_size;
 	info.ui32Offset = 0;
@@ -340,8 +340,8 @@ bool CDCPPackager::ExtractFile(const string &strSrcFileName, const string &strDe
 CDCPFileSystem::CDCPFileSystem(uint uiInstIdx):
 CInstancedObj(uiInstIdx), _pPack(NULL), _pPackager(NULL)
 {
-	Console()->RegComProc("dcp_cmd_help", "Prints help for extra text commands which you can send to DCP file system using ExecuteCommand, ExecuteTextCommand2 or ExecuteTextCommand methods of IFileSystem class or via \"dcp_exec_cmd\" console command.", &_s_ConCmdHelp, (void*)this);
-	Console()->RegComProc("dcp_exec_cmd", "Executes extra command of DCP file system. These commands are used to manipulate with DCP packages. See \"dcp_cmd_help\" for more help.", &_s_ConExecCmd, (void*)this);
+	Console()->RegComProc("dcp_cmd_help", "Prints help for extra text commands which you can send to DCP file system using ExecuteCommand, ExecuteTextCommand2 or ExecuteTextCommand methods of IFileSystem class or via \"dcp_exec_cmd\" console command.", &_s_ConCmdHelp, this);
+	Console()->RegComProc("dcp_exec_cmd", "Executes extra command of DCP file system. These commands are used to manipulate with DCP packages. See \"dcp_cmd_help\" for more help.", &_s_ConExecCmd, this);
 }
 
 CDCPFileSystem::~CDCPFileSystem()
@@ -379,7 +379,7 @@ bool CDCPFileSystem::_ReadFileInfo()
 
 	_pPack->GetSize(size);
 	_pPack->Seek(size - 2 * sizeof(uint32), FSSF_BEGIN, pos);
-	_pPack->Read((void*)meta, 2 * sizeof(uint32), read);
+	_pPack->Read(meta, 2 * sizeof(uint32), read);
 
 	if (read != 2 * sizeof(uint32))
 	{
@@ -393,7 +393,7 @@ bool CDCPFileSystem::_ReadFileInfo()
 		
 	_pPack->Seek(size - (meta[1] * sizeof(TDCPFileInfo) + sizeof(meta)), FSSF_BEGIN, pos);
 
-	_pPack->Read((void*)&_clInfoTable[0], sizeof(TDCPFileInfo) * meta[1], read);
+	_pPack->Read(&_clInfoTable[0], sizeof(TDCPFileInfo) * meta[1], read);
 
 	if (read != sizeof(TDCPFileInfo) * meta[1])
 	{
@@ -454,7 +454,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 	_pPack->Seek(_clInfoTable[file_idx].ui32Offset + 7, FSSF_BEGIN, pos);
 
 	uint read;
-	_pPack->Read((void*)cmprsd_buff, _clInfoTable[file_idx].ui32CmprsdSize, read);
+	_pPack->Read(cmprsd_buff, _clInfoTable[file_idx].ui32CmprsdSize, read);
 
 	if (read != _clInfoTable[file_idx].ui32CmprsdSize)
 	{
@@ -510,7 +510,7 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 
 uint32 CDCPFileSystem::s_GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const std::string &strName)
 {
-	const uint32 crc32 = GetCRC32((uint8*)strName.c_str(), (uint32)strName.size());
+	const uint32 crc32 = GetCRC32((uint8 *)strName.c_str(), (uint32)strName.size());
 
 	for (size_t i = 0; i < clInfoTable.size(); ++i)
 		if (crc32 == clInfoTable[i].ui32CRC32)
@@ -569,14 +569,14 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	
 	const regex regexp(reg_exp_mask);
 
-	_clFindedFiles.clear();
+	_clFoundFiles.clear();
 
 	for (const auto &info : _clInfoTable)
 		if (regex_match(info.acPackedFName, regexp))		
-			_clFindedFiles.emplace_back(info.acPackedFName);
+			_clFoundFiles.emplace_back(info.acPackedFName);
 
-	if (!_clFindedFiles.empty())
-		prIterator = new CDCPFileIterator(InstIdx(), _clFindedFiles);
+	if (!_clFoundFiles.empty())
+		prIterator = new CDCPFileIterator(InstIdx(), _clFoundFiles);
 	else
 		prIterator = NULL;
 

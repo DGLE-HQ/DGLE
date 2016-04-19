@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -112,8 +112,8 @@ CInstancedObj(uiInstIdx)
 	_pHDDFS = new CHDDFileSystem(InstIdx());
 	_pDCPFS = new CDCPFileSystem(InstIdx());
 
-	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem*)_pHDDFS, &_s_FSDeleteCallback, this);
-	RegisterVirtualFileSystem("dcp", "Dgle Compiled Package(DCP) file archives.", (IFileSystem*)_pDCPFS, &_s_FSDeleteCallback, this);
+	RegisterVirtualFileSystem("", "base Hard Disc Drive(HDD) file system.", (IFileSystem *)_pHDDFS, &_s_FSDeleteCallback, this);
+	RegisterVirtualFileSystem("dcp", "Dgle Compiled Package(DCP) file archives.", (IFileSystem *)_pDCPFS, &_s_FSDeleteCallback, this);
 	
 	LOG("Filesystem Subsystem initialized.", LT_INFO);
 }

@@ -79,7 +79,7 @@ bool DGLE_API CMainWindow::_s_ConsoleQuit(void *pParameter, const char *pcParam)
 
 LRESULT DGLE_API CMainWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	CMainWindow *this_ptr = (CMainWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CMainWindow *this_ptr = (CMainWindow *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	RECT r = {0, 0, 0, 0};
 
@@ -201,7 +201,7 @@ DGLE_RESULT CMainWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitResu
 		return E_FAIL;
 	}
 
-	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this);
+	Console()->RegComProc("quit", "Quits engine and releases all resources.", &_s_ConsoleQuit, this);
 
 	LOG("Window created successfully.", LT_INFO);
 

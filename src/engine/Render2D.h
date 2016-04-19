@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -200,7 +200,7 @@ FORCE_INLINE bool CRender2D::BBoxInScreen(const float *vertices, bool rotated) c
 		_pCoreRenderer->SetColor(ColorWhite());
 		_pCoreRenderer->SetLineWidth(1.f);
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)vrtcs, -1, -1, true), CRDM_LINE_STRIP, 5);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)vrtcs, -1, -1, true), CRDM_LINE_STRIP, 5);
 
 		_pCoreRenderer->SetLineWidth((float)_uiLineWidth);
 

@@ -211,7 +211,7 @@ namespace DGLE
 				return _data[0] == 1;
 		}
 
-		inline void* AsPointer() const
+		inline void *AsPointer() const
 		{
 			if (_type != DVT_POINTER)
 				return NULL;

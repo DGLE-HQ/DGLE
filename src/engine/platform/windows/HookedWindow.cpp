@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -19,7 +19,7 @@ _uiUpdateTimer(-1)
 
 LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CHookedWindow *this_ptr = (CHookedWindow *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	
 	RECT r = {0, 0, 0, 0};
 
@@ -63,7 +63,7 @@ LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wP
 
 LRESULT CALLBACK CHookedWindow::_s_WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	CHookedWindow *this_ptr = (CHookedWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	CHookedWindow *this_ptr = (CHookedWindow *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	if (msg == WM_DESTROY)
 	{
@@ -119,7 +119,7 @@ DGLE_RESULT CHookedWindow::InitWindow(TWindowHandle tHandle, const TCrRndrInitRe
 			{
 				SetWindowLongPtr(_hRootHWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-				Console()->RegComProc("quit", "Closes owner root window, quits engine and releases all resources.", &_s_ConsoleQuit, (void*)this);
+				Console()->RegComProc("quit", "Closes owner root window, quits engine and releases all resources.", &_s_ConsoleQuit, this);
 			}
 		}
 	}

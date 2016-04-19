@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -50,7 +50,7 @@ struct TResource
 		{
 			pcName = new char[strlen(pcFullName) + 1];
 			strcpy(pcName, pcFullName);
-			nameHash = GetCRC32((uint8*)pcFullName, (uint32)strlen(pcFullName) * sizeof(char));
+			nameHash = GetCRC32((uint8 *)pcFullName, (uint32)strlen(pcFullName) * sizeof(char));
 		}
 	}
 };

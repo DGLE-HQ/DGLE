@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		10.04.2016 (c)Andrey Korotkov
+\date		19.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -109,12 +109,12 @@ public:
 		else
 		{
 			_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ARRAY_BUFFER_ARB, _clGLContainer.GetVerticesVBO());
-			glGetBufferSubData(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid*)stDesc.pData);
+			glGetBufferSubData(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid *)stDesc.pData);
 
 			if (_clGLContainer.GetIndexesVBO() != 0)
 			{
 				_pCoreRenderer->pStateMan()->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _clGLContainer.GetIndexesVBO());
-				glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer);
+				glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid *)stDesc.pIndexBuffer);
 			}
 		}
 
@@ -178,10 +178,10 @@ public:
 			if (_eBufferType == CRBT_HARDWARE_STATIC)
 			{
 				glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, NULL, GL_STATIC_DRAW_ARB);
-				glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid*)stDesc.pData);
+				glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, _uiVerticesDataSize, (GLvoid *)stDesc.pData);
 			}
 			else
-				glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, (GLvoid*)stDesc.pData, GL_DYNAMIC_DRAW_ARB);
+				glBufferDataARB(GL_ARRAY_BUFFER_ARB, _uiVerticesDataSize, (GLvoid *)stDesc.pData, GL_DYNAMIC_DRAW_ARB);
 
 			if (_clGLContainer.GetIndexesVBO() != 0)
 			{
@@ -193,10 +193,10 @@ public:
 				if (_eBufferType == CRBT_HARDWARE_STATIC)
 				{
 					glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, NULL, GL_STATIC_DRAW_ARB);
-					glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer);
+					glBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, _uiIndexesDataSize, (GLvoid *)stDesc.pIndexBuffer);
 				}
 				else
-					glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, (GLvoid*)stDesc.pIndexBuffer, GL_DYNAMIC_DRAW_ARB);
+					glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _uiIndexesDataSize, (GLvoid *)stDesc.pIndexBuffer, GL_DYNAMIC_DRAW_ARB);
 			}
 		}
 
@@ -472,7 +472,7 @@ public:
 		_pCR->BindTexture(this, 0);
 
 		if (_format == TDF_DXT1 || _format == TDF_DXT5)
-			glCompressedTexSubImage2DARB(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), uiDataSize, (GLvoid*)pData);
+			glCompressedTexSubImage2DARB(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), uiDataSize, (GLvoid *)pData);
 		else
 		{
 			const bool packed = TDF_RGB8 || TDF_BGR8 || TDF_ALPHA8;
@@ -480,7 +480,7 @@ public:
 			if (packed)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-			glTexSubImage2D(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), GL_UNSIGNED_BYTE, (GLvoid*)pData);
+			glTexSubImage2D(GL_TEXTURE_2D, uiLodLevel, 0, 0, w, h, _GetGLFormat(), GL_UNSIGNED_BYTE, (GLvoid *)pData);
 			
 			if (packed)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -707,16 +707,16 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, 
 		return E_ABORT;
 	}
 	
-	_strOpenGLExtensions = (char*)glGetString(GL_EXTENSIONS);
+	_strOpenGLExtensions = (char *)glGetString(GL_EXTENSIONS);
 
-	string gl_ver((char*)glGetString(GL_VERSION));
+	string gl_ver((char *)glGetString(GL_VERSION));
 
 	if (GLEW_VERSION_2_1) gl_ver = "2.1";
 
-	LOG("OpenGL " + gl_ver + " on " + (char*)glGetString(GL_RENDERER) + " (" + (char*)glGetString(GL_VENDOR) + ')', LT_INFO);
+	LOG("OpenGL " + gl_ver + " on " + (char *)glGetString(GL_RENDERER) + " (" + (char *)glGetString(GL_VENDOR) + ')', LT_INFO);
 
 #ifdef PLATFORM_WINDOWS
-	if (strstr((char*)glGetString(GL_RENDERER), "GDI") && strstr((char*)glGetString(GL_VENDOR), "Microsoft") && !GLEW_VERSION_1_2)
+	if (strstr((char *)glGetString(GL_RENDERER), "GDI") && strstr((char *)glGetString(GL_VENDOR), "Microsoft") && !GLEW_VERSION_1_2)
 	{
 		LOG("Non hardware accelerated OpenGL implementation found! Videocard drivers are missing, corrupted or outdated.", LT_FATAL);
 		return E_FAIL;
@@ -768,7 +768,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::Initialize(TCrRndrInitResults &stResults, 
 	Core()->AddEventListener(ET_ON_PROFILER_DRAW, _s_EventsHandler, this);
 	Core()->AddEventListener(ET_ON_PER_SECOND_TIMER, _s_EventsHandler, this);
 
-	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, (void*)this);
+	Console()->RegComProc("crgl_print_exts_list", "Reports extensions supported by current OpenGL implementation.\nw - write to logfile.", &_s_ConPrintGLExts, this);
 	Console()->RegComVar("crgl_profiler", "Displays Core Renderer OpenGL subsystems profiler.", &_iProfilerState, 0, 2);
 
 	_stInitResults = stResults;
@@ -1397,9 +1397,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			p_cur_data = const_cast<uint8 *>(&pData[dat_offset]);
 
 			if (b_is_compressed)
-				glCompressedTexImage2D(GL_TEXTURE_2D, i - i_start_level, tex_format, i_cur_w, i_cur_h, 0, data_size, (void*)p_cur_data);
+				glCompressedTexImage2D(GL_TEXTURE_2D, i - i_start_level, tex_format, i_cur_w, i_cur_h, 0, data_size, p_cur_data);
 			else
-				glTexImage2D(GL_TEXTURE_2D, i - i_start_level, tex_internal_format, i_cur_w, i_cur_h, 0, tex_format, GL_UNSIGNED_BYTE, (void*)p_cur_data);
+				glTexImage2D(GL_TEXTURE_2D, i - i_start_level, tex_internal_format, i_cur_w, i_cur_h, 0, tex_format, GL_UNSIGNED_BYTE, p_cur_data);
 
 			dat_offset += data_size;
 		}
@@ -1422,9 +1422,9 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateTexture(ICoreTexture *&prTex, const 
 			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
 		if (b_is_compressed)
-			glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex_format, uiWidth, uiHeight, 0, ((uiWidth + 3) / 4) * ((uiHeight + 3) / 4) * bytes_per_pixel, (void *)pData);
+			glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex_format, uiWidth, uiHeight, 0, ((uiWidth + 3) / 4) * ((uiHeight + 3) / 4) * bytes_per_pixel, pData);
 		else
-			glTexImage2D(GL_TEXTURE_2D, 0, tex_internal_format, uiWidth, uiHeight, 0, tex_format, GL_UNSIGNED_BYTE, (void*)pData);
+			glTexImage2D(GL_TEXTURE_2D, 0, tex_internal_format, uiWidth, uiHeight, 0, tex_format, GL_UNSIGNED_BYTE, pData);
 
 		if (eLoadFlags & TLF_GENERATE_MIPMAPS)
 		{
@@ -1519,12 +1519,12 @@ DGLE_RESULT DGLE_API CCoreRendererGL::CreateGeometryBuffer(ICoreGeometryBuffer *
 		glGenBuffersARB(indexes_data_size != 0 ? 2 : 1, vbos);
 
 		_pStateMan->glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbos[0]);
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices_data_size, (GLvoid*)stDrawDesc.pData, (eType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
+		glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices_data_size, (GLvoid *)stDrawDesc.pData, (eType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
 
 		if (vbos[1] != 0)
 		{
 			_pStateMan->glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, vbos[1]);
-			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexes_data_size, (GLvoid*)stDrawDesc.pIndexBuffer, (eType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
+			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexes_data_size, (GLvoid *)stDrawDesc.pIndexBuffer, (eType == CRBT_HARDWARE_DYNAMIC) ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB);
 		}
 	}
 	else
@@ -1836,7 +1836,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::DrawBuffer(ICoreGeometryBuffer *pBuffer)
 		return S_FALSE;
 	}
 
-	CCoreGeometryBuffer * const buff = (CCoreGeometryBuffer*)pBuffer;
+	CCoreGeometryBuffer *const buff = (CCoreGeometryBuffer *)pBuffer;
 
 	if (buff->GetVerticesVBO() != 0)
 	{
@@ -2003,7 +2003,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::BindTexture(ICoreTexture *pTex, uint uiTex
 	if (pTex == NULL)
 		_pStateMan->glBindTexture(GL_TEXTURE_2D, 0);
 	else
-		_pStateMan->glBindTexture(GL_TEXTURE_2D, ((CCoreTexture*)pTex)->GetTex());
+		_pStateMan->glBindTexture(GL_TEXTURE_2D, ((CCoreTexture *)pTex)->GetTex());
 
 	return S_OK;
 }
@@ -2035,7 +2035,7 @@ DGLE_RESULT DGLE_API CCoreRendererGL::GetBindedTexture(ICoreTexture *&prTex, uin
 			ICoreTexture *p_ctex;
 			((ITexture *)p_obj)->GetCoreTexture(p_ctex);
 			
-			if (((CCoreTexture*)p_ctex)->GetTex() == tex_id)
+			if (((CCoreTexture *)p_ctex)->GetTex() == tex_id)
 			{
 				prTex = p_ctex;
 				return S_OK;

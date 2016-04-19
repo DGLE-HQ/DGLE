@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -473,9 +473,9 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 							
 		ev_fatal_msg = new CEvFatalMessage(msg, this);
 
-		CastEvent(ET_ON_ENGINE_FATAL_MESSAGE, (IBaseEvent*)ev_fatal_msg);
+		CastEvent(ET_ON_ENGINE_FATAL_MESSAGE, (IBaseEvent *)ev_fatal_msg);
 
-		if (((CEvFatalMessage*)ev_fatal_msg)->DoShowMessage())
+		if (((CEvFatalMessage *)ev_fatal_msg)->DoShowMessage())
 		{
 			Console()->Visible(true);
 								
@@ -488,7 +488,7 @@ void CCore::_LogWriteEx(const char *pcTxt, E_LOG_TYPE eType, const char *pcSrcFi
 			ShowModalUserAlert(pcTxt, "DGLE Fatal Error!");
 		}
 
-		if (((CEvFatalMessage*)ev_fatal_msg)->DoHalt())
+		if (((CEvFatalMessage *)ev_fatal_msg)->DoHalt())
 		{
 			delete ev_fatal_msg;
 			delete this;
@@ -1067,7 +1067,7 @@ bool CCore::_LoadPlugin(const string &strFileName, IPlugin *&prPlugin)
 		return false;
 	}
 
-	(*pInitPlugin)((IEngineCore*)this, tmp.pPlugin);
+	(*pInitPlugin)((IEngineCore *)this, tmp.pPlugin);
 
 	if (!tmp.pPlugin)
 	{
@@ -1279,7 +1279,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 				if (strcmp(p_name, "ISubSystemPlugin") == 0)
 				{
 					IEngineSubSystem *pss;
-					((ISubSystemPlugin*)plugin)->GetSubSystemInterface(pss);
+					((ISubSystemPlugin *)plugin)->GetSubSystemInterface(pss);
 						
 					E_ENGINE_SUB_SYSTEM sst;
 					pss->GetType(sst);
@@ -1294,7 +1294,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 						}
 						else
 						{
-							_pCoreRenderer = (ICoreRenderer*)pss;
+							_pCoreRenderer = (ICoreRenderer *)pss;
 							_bBuiltInRenderer = false;
 						}
 						break;
@@ -1306,7 +1306,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 						}
 						else
 						{
-							_pInput = (IInput*)pss;
+							_pInput = (IInput *)pss;
 							_bBuiltInInput = false;
 						}
 						break;
@@ -1320,7 +1320,7 @@ DGLE_RESULT DGLE_API CCore::InitializeEngine(TWindowHandle tHandle, const char *
 						else
 							if (_bSndEnabled)
 							{ 
-								_pSound = (ISound*)pss;
+								_pSound = (ISound *)pss;
 								_bBuiltInSound = false;
 								break;
 							}
@@ -1946,19 +1946,19 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 	switch (eSubSystem)
 	{
 		case ESS_CORE_RENDERER:
-			prSubSystem = (IEngineSubSystem*)_pCoreRenderer;
+			prSubSystem = (IEngineSubSystem *)_pCoreRenderer;
 			break;
 
 		case ESS_RENDER:
-			prSubSystem = (IEngineSubSystem*)_pRender;
+			prSubSystem = (IEngineSubSystem *)_pRender;
 			break;
 
 		case ESS_RESOURCE_MANAGER:
-			prSubSystem = (IEngineSubSystem*)_pResMan;
+			prSubSystem = (IEngineSubSystem *)_pResMan;
 			break;		
 
 		case ESS_FILE_SYSTEM:
-			prSubSystem = (IEngineSubSystem*)_pMainFS;
+			prSubSystem = (IEngineSubSystem *)_pMainFS;
 			break;		
 
 		case ESS_INPUT:
@@ -1968,7 +1968,7 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 				return E_NOTIMPL;
 			}
 			else
-				prSubSystem = (IEngineSubSystem*)_pInput;
+				prSubSystem = (IEngineSubSystem *)_pInput;
 			break;	
 
 		case ESS_SOUND:
@@ -1978,7 +1978,7 @@ DGLE_RESULT DGLE_API CCore::GetSubSystem(E_ENGINE_SUB_SYSTEM eSubSystem, IEngine
 				return E_NOTIMPL;
 			}
 			else
-				prSubSystem = (IEngineSubSystem*)_pSound;
+				prSubSystem = (IEngineSubSystem *)_pSound;
 			break;
 
 		default:

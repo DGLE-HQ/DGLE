@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		13.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -69,16 +69,16 @@ public:
 CConsole::CConsole(uint uiInsIdx):
 CInstancedObj(uiInsIdx), _pConsoleWindow(NULL), _iPrevMarker(0)
 {
-	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, (void*)this);
+	RegComProc("terminate", "Terminates application (causes system to hardly terminate application process). Use it only if application is not responding.", &_s_Terminate, this);
 	RegComProc("help", "", &_s_Help, this);
-	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, (void*)this);
-	RegComProc("clear", "Clears all text in console.", &_s_Clear, (void*)this);
-	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, (void*)this);
-	RegComProc("con_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, (void*)this);
-	RegComProc("con_show", "Shows console window, if is hidden.", &_s_Show, (void*)this);
-	RegComProc("con_hide", "Hides console window.", &_s_Hide, (void*)this);
-	RegComProc("con_pos", "Changes console window position.\nUsage: \"con_pos <x coord> <y coord>\"", &_s_SetPos, (void*)this);
-	RegComProc("con_size", "Changes console window size.\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, (void*)this);
+	RegComProc("cmdlist", "Outputs list of available console commands.", &_s_Cmdlist, this);
+	RegComProc("clear", "Clears all text in console.", &_s_Clear, this);
+	RegComProc("save", "Saves current console output to file. When filename is not specified, output saves to \"console.txt\".\nUsage: \"save [filename]\"", &_s_Save, this);
+	RegComProc("con_resetpos", "Resets and recalculate console window screen position and size. Useful when console windows is out of screen area.", &_s_ResetPos, this);
+	RegComProc("con_show", "Shows console window, if is hidden.", &_s_Show, this);
+	RegComProc("con_hide", "Hides console window.", &_s_Hide, this);
+	RegComProc("con_pos", "Changes console window position.\nUsage: \"con_pos <x coord> <y coord>\"", &_s_SetPos, this);
+	RegComProc("con_size", "Changes console window size.\nUsage: \"con_size <width value> <height value>\"", &_s_SetSize, this);
 
 	_pConsoleWindow = new CConsoleWindow();
 	_pConsoleWindow->InitWindow(!(EngineInstance(InstIdx())->eGetEngFlags & GEF_FORCE_SINGLE_THREAD), &_s_OnConWindowEvent, this);

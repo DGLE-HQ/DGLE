@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -294,7 +294,7 @@ int WINAPI CConsoleWindow::_WinMain(HINSTANCE hInstance)
 	
 	SetWindowLongPtr(_hEdit, GWLP_USERDATA, (LONG_PTR)this);
 
-	_pOldEditProc = (void*)SetWindowLongPtr(_hEdit, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)CConsoleWindow::_s_WndEditProc); 
+	_pOldEditProc = (void *)SetWindowLongPtr(_hEdit, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)CConsoleWindow::_s_WndEditProc); 
 
 	SendMessage(_hEdit, WM_SETFONT, (WPARAM)_hFont, MAKELPARAM(TRUE, 0));
 	
@@ -348,7 +348,7 @@ LRESULT CALLBACK CConsoleWindow::_s_WndProc(HWND hWnd, UINT message, WPARAM wPar
 		POINT pt;
 		pt.x = C_WND_MIN_WIDTH;
 		pt.y = C_WND_MIN_HEIGHT;
-		((MINMAXINFO*)lParam)->ptMinTrackSize = pt;
+		((MINMAXINFO *)lParam)->ptMinTrackSize = pt;
 		break;
 
 	default:

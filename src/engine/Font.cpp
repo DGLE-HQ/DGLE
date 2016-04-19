@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.03.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -273,7 +273,7 @@ DGLE_RESULT DGLE_API CBitmapFont::Draw2D(float fX, float fY, const char *pcTxt, 
 
 	TDrawDataDesc desc;
 
-	desc.pData = (uint8*)_pBuffer;
+	desc.pData = (uint8 *)_pBuffer;
 	desc.uiVertexStride = 4 * sizeof(float);
 	desc.bVertices2D = true;
 	desc.uiTextureVertexOffset = 2 * sizeof(float);

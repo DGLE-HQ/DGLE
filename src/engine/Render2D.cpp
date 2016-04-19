@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -181,7 +181,7 @@ DGLE_RESULT DGLE_API CRender2D::BatchRender(E_BATCH_MODE2D eMode)
 	}
 	
 	_pBatchCurTex = NULL;
-	(uint&)_eBatchDrawMode = -1;
+	(uint &)_eBatchDrawMode = -1;
 	_bBatchColor = false;
 	_bBatchAlphaTest = false;
 	_bBatchBlending = false;
@@ -436,7 +436,7 @@ DGLE_RESULT DGLE_API CRender2D::End2D()
 
 	_bInLocalBatchMode = false;
 
-	(uint&)_eBatchDrawMode = -1;
+	(uint &)_eBatchDrawMode = -1;
 
 	if (_bCameraWasSet)
 		_pCoreRenderer->SetMatrix(_stPrevCamTransform);
@@ -710,7 +710,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawPoint(const TPoint2 &stCoords, const TColor4
 	{
 		_pCoreRenderer->SetColor(stColor);
 
-		_pCoreRenderer->Draw(TDrawDataDesc((uint8*)stCoords.xy, -1, -1, true), CRDM_POINTS, 1);
+		_pCoreRenderer->Draw(TDrawDataDesc((uint8 *)stCoords.xy, -1, -1, true), CRDM_POINTS, 1);
 		
 		++_uiObjsDrawnCount;
 	}
@@ -769,7 +769,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawLine(const TPoint2 &stCoords1, const TPoint2
 		_pBuffer[0] = stCoords1.x; _pBuffer[1] = stCoords1.y;
 		_pBuffer[2] = stCoords2.x; _pBuffer[3] = stCoords2.y;
 
-		TDrawDataDesc desc((uint8*)_pBuffer, -1, -1, true);
+		TDrawDataDesc desc((uint8 *)_pBuffer, -1, -1, true);
 
 		if (eFlags & PF_VERTICES_COLORS)
 		{
@@ -891,7 +891,7 @@ DGLE_RESULT DGLE_API CRender2D::DrawRectangle(const TRectF &stRect, const TColor
 			_pBuffer[4] = _pBuffer[8]; _pBuffer[5] = _pBuffer[9];
 		}
 
-		TDrawDataDesc desc((uint8*)_pBuffer, -1, -1, true);
+		TDrawDataDesc desc((uint8 *)_pBuffer, -1, -1, true);
 
 		if (eFlags & PF_VERTICES_COLORS)
 		{

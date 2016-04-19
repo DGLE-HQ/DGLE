@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Sivkov Ilya
+\date		19.04.2016 (c)Sivkov Ilya
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -29,7 +29,7 @@ public:
 	IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END);	
 };
 
-#pragma pack( push, 1 )
+#pragma pack(push, 1)
 struct TDCPFileInfo
 {
 	uint32	ui32CRC32;
@@ -38,7 +38,7 @@ struct TDCPFileInfo
 	uint32	ui32Offset;
 	char	acPackedFName[256];
 };
-#pragma pack( pop )
+#pragma pack(pop)
 
 class CDCPPackager final
 {
@@ -67,7 +67,7 @@ class CDCPFileSystem final : public CInstancedObj, public IFileSystem
 	std::string _strPackName;	
 	uint32 _ui32DataSize;
 	std::vector<TDCPFileInfo> _clInfoTable;
-	std::vector<std::string> _clFindedFiles;
+	std::vector<std::string> _clFoundFiles;
 
 	CDCPPackager *_pPackager;
 
