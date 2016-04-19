@@ -13,7 +13,6 @@ See "DGLE.h" for more details.
 
 class CDCPFileIterator final : public CInstancedObj, public IFileIterator
 {
-	char _acName[MAX_PATH];
 	std::string _strMask; 
 
 	std::vector<std::string> _clNameList;
