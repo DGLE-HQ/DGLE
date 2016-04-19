@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		24.03.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -22,8 +22,7 @@ class CHDDFile final : public CInstancedObj, public IFile
 		so it can be used in future if required.
 	*/
 	std::FILE *_file;
-	char	_acName[MAX_PATH],
-			_acPath[MAX_PATH];
+	fs::path _path;
 
 public:
 

@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,22 +13,8 @@ See "DGLE.h" for more details.
 using namespace std;
 
 CHDDFile::CHDDFile(uint uiInstIdx, const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags) :
-CInstancedObj(uiInstIdx), _file()
+CInstancedObj(uiInstIdx), _file(), _path(pcName)
 {
-	const fs::path path(pcName);
-	const string	file_name = path.filename().string(),
-					file_path = path.parent_path().string();
-
-	if (file_name.size() < MAX_PATH)
-		strcpy(_acName, file_name.c_str());
-	else
-		strcpy(_acName, "\"file_name\" is too long.");
-
-	if (file_path.size() < MAX_PATH)
-		strcpy(_acPath, file_path.c_str());
-	else
-		strcpy(_acPath, "\"file_path\" is too long.");
-
 	char mode[4], *write_pos = mode;
 
 	if (eFlags & FSOF_TRUNC)
@@ -59,7 +45,7 @@ CInstancedObj(uiInstIdx), _file()
 CHDDFile::~CHDDFile()
 {
 	if (fclose(_file) != 0)
-		LOG("Can't close file \""s + _acName + "\".", LT_ERROR);
+		LOG("Can't close file \""s + _path.filename().string() + "\".", LT_ERROR);
 }
 
 DGLE_RESULT DGLE_API CHDDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
@@ -114,46 +100,50 @@ DGLE_RESULT DGLE_API CHDDFile::IsOpen(bool &bOpened)
 
 DGLE_RESULT DGLE_API CHDDFile::GetName(char *pcName, uint &uiCharsCount)
 {
+	const string name = _path.string();
+
 	if (!pcName)
 	{
-		uiCharsCount = strlen(_acName) + 1;
+		uiCharsCount = name.length() + 1;
 		return S_OK;	
 	}
 	
-	if (uiCharsCount <= strlen(_acName))
+	if (uiCharsCount <= name.length())
 	{
 		if (uiCharsCount > 0)
 			strcpy(pcName, "");
 
-		uiCharsCount = strlen(_acName) + 1;
+		uiCharsCount = name.length() + 1;
 
 		return E_INVALIDARG;
 	}
 
-	strcpy(pcName, _acName);
+	strcpy(pcName, name.c_str());
 
 	return S_OK;
 }
 
 DGLE_RESULT DGLE_API CHDDFile::GetPath(char *pcPath, uint &uiCharsCount)
 {
+	const string path = _path.parent_path().string();
+
 	if (!pcPath)
 	{
-		uiCharsCount = strlen(_acPath) + 1;
+		uiCharsCount = path.length() + 1;
 		return S_OK;	
 	}
 	
-	if (uiCharsCount <= strlen(_acPath))
+	if (uiCharsCount <= path.length())
 	{
 		if (uiCharsCount > 0)
 			strcpy(pcPath, "");
 
-		uiCharsCount = strlen(_acPath) + 1;
+		uiCharsCount = path.length() + 1;
 
 		return E_INVALIDARG;
 	}
 
-	strcpy(pcPath, _acPath);
+	strcpy(pcPath, path.c_str());
 
 	return S_OK;
 }
