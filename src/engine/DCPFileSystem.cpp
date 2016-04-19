@@ -45,6 +45,38 @@ namespace DcpImpl
 static constexpr auto Dcp = DcpImpl::Dcp<path::value_type>;
 #endif
 
+template<typename T>
+static void InsertPrefix(string &str, T stem, char prefix)
+{
+	for (auto pos = str.find_first_of(stem); pos != string::npos; pos = str.find_first_of(stem, pos + 2))
+		str.insert(pos, 1, prefix);
+}
+
+static void CorrectSlashes(string &strFileName)
+{
+	replace(strFileName.begin(), strFileName.end(), '/', '\\');
+}
+
+static string ConvertFormatFromDirToRegEx(string str)
+{
+	CorrectSlashes(str);
+	replace(str.begin(), str.end(), '?', '.');
+	InsertPrefix(str, "\\.", '\\');
+	InsertPrefix(str, '*', '.');
+	return str;
+}
+
+static uint_fast32_t GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const std::string &strName)
+{
+	const uint32 crc32 = GetCRC32((uint8 *)strName.c_str(), (uint32)strName.size());
+
+	for (size_t i = 0; i < clInfoTable.size(); ++i)
+		if (crc32 == clInfoTable[i].ui32CRC32)
+			return i;
+
+	return -1;
+}
+
 // CDCPPackager //
 
 CDCPPackager::CDCPPackager(const string &strFileName)
@@ -200,9 +232,9 @@ bool CDCPPackager::AddFile(const string &strFileName, const string &strDir)
 		return false;
 	}
 
-	CDCPFileSystem::s_CorrectSlashes(file_name);
+	CorrectSlashes(file_name);
 
-	if (-1 != CDCPFileSystem::s_GetTableIdx(_clInfoTable, file_name))
+	if (-1 != GetTableIdx(_clInfoTable, file_name))
 	{
 		_strLastError = "File with such name already exists.";
 		return false;
@@ -267,9 +299,9 @@ bool CDCPPackager::RemoveFile(const string &strFileName)
 
 	string file_name(strFileName);
 
-	CDCPFileSystem::s_CorrectSlashes(file_name);
+	CorrectSlashes(file_name);
 
-	uint32 idx = CDCPFileSystem::s_GetTableIdx(_clInfoTable, file_name);
+	const auto idx = GetTableIdx(_clInfoTable, file_name);
 
 	if (-1 == idx)
 	{
@@ -295,9 +327,9 @@ bool CDCPPackager::ExtractFile(const string &strSrcFileName, const string &strDe
 
 	string file_name(strSrcFileName);
 
-	CDCPFileSystem::s_CorrectSlashes(file_name);
+	CorrectSlashes(file_name);
 
-	uint32 idx = CDCPFileSystem::s_GetTableIdx(_clInfoTable, file_name);
+	const auto idx = GetTableIdx(_clInfoTable, file_name);
 
 	if (-1 == idx)
 	{
@@ -437,9 +469,9 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 		return E_ABORT;
 	}
 
-	s_CorrectSlashes(file_name);
+	CorrectSlashes(file_name);
 
-	const uint32 file_idx = s_GetTableIdx(_clInfoTable, file_name);
+	const auto file_idx = GetTableIdx(_clInfoTable, file_name);
 
 	if (file_idx == -1)
 	{
@@ -508,17 +540,6 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 	return true;
 }
 
-uint32 CDCPFileSystem::s_GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const std::string &strName)
-{
-	const uint32 crc32 = GetCRC32((uint8 *)strName.c_str(), (uint32)strName.size());
-
-	for (size_t i = 0; i < clInfoTable.size(); ++i)
-		if (crc32 == clInfoTable[i].ui32CRC32)
-			return i;
-
-	return -1;
-}
-
 DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExists)
 {
 	string pack_name = pcName;
@@ -537,9 +558,9 @@ DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExist
 	if (!_OpenPack(pack_name))
 		return E_ABORT;
 
-	s_CorrectSlashes(name);
+	CorrectSlashes(name);
 
-	bExists = s_GetTableIdx(_clInfoTable, name) != -1;
+	bExists = GetTableIdx(_clInfoTable, name) != -1;
 		
 	return S_OK;	
 }
@@ -565,7 +586,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	if (_clInfoTable.empty())
 		return E_FAIL;
 
-	const string reg_exp_mask = _s_ConvertFormatFromDirToRegEx(move(mask));
+	const string reg_exp_mask = ConvertFormatFromDirToRegEx(move(mask));
 	
 	const regex regexp(reg_exp_mask);
 
@@ -581,27 +602,6 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 		prIterator = NULL;
 
 	return S_OK;
-}
-
-void CDCPFileSystem::_s_ReplaceSubstrInStr(string &outStr, const string &findCh, const string &repCh)
-{
-	for (auto posCh = outStr.find(findCh); posCh != string::npos; posCh = outStr.find(findCh, posCh + repCh.size()))
-		outStr.replace(posCh, findCh.size(), repCh);
-}
-
-void CDCPFileSystem::s_CorrectSlashes(string &strFileName)
-{
-	replace(strFileName.begin(), strFileName.end(), '/', '\\');
-}
-
-string CDCPFileSystem::_s_ConvertFormatFromDirToRegEx(string str)
-{
-	s_CorrectSlashes(str);
-	_s_ReplaceSubstrInStr(str, "\\", "\\\\");
-	_s_ReplaceSubstrInStr(str, ".", "\\.");
-	_s_ReplaceSubstrInStr(str, "?", ".");
-	_s_ReplaceSubstrInStr(str, "*", ".*");
-	return str;
 }
 
 void CDCPFileSystem::_Clean()
@@ -900,12 +900,12 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 CDCPFileIterator::CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList):
 CInstancedObj(uiInstIdx), _clNameList(clNameList)
 {
-	_clNameListIter = _clNameList.begin();
+	_clNameListIter = _clNameList.cbegin();
 }
 
 DGLE_RESULT DGLE_API CDCPFileIterator::FileName(char *pcName, DGLE::uint &uiCharsCount)
 {
-	if (_clNameListIter == _clNameList.end())
+	if (_clNameListIter == _clNameList.cend())
 	{
 		uiCharsCount = 0;
 		return E_FAIL;
@@ -930,7 +930,7 @@ DGLE_RESULT DGLE_API CDCPFileIterator::FileName(char *pcName, DGLE::uint &uiChar
 
 DGLE_RESULT DGLE_API CDCPFileIterator::Next()
 {
-	if (++_clNameListIter == _clNameList.end())
+	if (++_clNameListIter == _clNameList.cend())
 		return S_FALSE;
 
 	return S_OK;

@@ -17,7 +17,7 @@ class CDCPFileIterator final : public CInstancedObj, public IFileIterator
 	std::string _strMask; 
 
 	std::vector<std::string> _clNameList;
-	std::vector<std::string>::iterator _clNameListIter;
+	std::vector<std::string>::const_iterator _clNameListIter;
 
 public:
 	CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList);
@@ -75,8 +75,6 @@ class CDCPFileSystem final : public CInstancedObj, public IFileSystem
 	bool _OpenPack(const std::string &strPackName);
 	void _Clean();
 	
-	static std::string _s_ConvertFormatFromDirToRegEx(std::string dirStr);
-	static void _s_ReplaceSubstrInStr(std::string &outStr, const std::string &findCh, const std::string &repCh);
 	static bool DGLE_API _s_ConCmdHelp(void *pParameter, const char *pcParam);
 	static bool DGLE_API _s_ConExecCmd(void *pParameter, const char *pcParam);
 
@@ -84,9 +82,6 @@ public:
 
 	CDCPFileSystem(uint uiInstIdx);
 	~CDCPFileSystem();
-
-	static uint32 s_GetTableIdx(const std::vector<TDCPFileInfo> &clInfoTable, const std::string &strName);
-	static void s_CorrectSlashes(std::string &strFileName);
 
 	DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) override;
 	DGLE_RESULT DGLE_API DeleteFile(const char *pcName) override;
