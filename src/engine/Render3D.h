@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		12.04.2016 (c)Korotkov Andrey
+\date		19.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -149,7 +149,6 @@ public:
 	DGLE_RESULT DGLE_API CullSphere(const TPoint3 &stCenter, float fRadius, bool &bCull) override;
 	DGLE_RESULT DGLE_API CullBox(const TPoint3 &stCenter, const TVector3 &stExtents, bool &bCull) override;
 
-	DGLE_RESULT DGLE_API CreateLight(ILight *&prLight) /*override*/;
 	DGLE_RESULT DGLE_API ToggleLighting(bool bEnabled) override;
 	DGLE_RESULT DGLE_API SetGlobalAmbientLighting(const TColor4 &stColor) override;
 	DGLE_RESULT DGLE_API IsLightingEnabled(bool &bEnabled) override;
