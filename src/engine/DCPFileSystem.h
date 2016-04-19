@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2016 (c)Sivkov Ilya
+\date		20.04.2016 (c)Sivkov Ilya
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -71,7 +71,7 @@ class CDCPFileSystem final : public CInstancedObj, public IFileSystem
 	CDCPPackager *_pPackager;
 
 	bool _ReadFileInfo();
-	bool _OpenPack(const std::string &strPackName);
+	bool _OpenPack(std::string strPackName);
 	void _Clean();
 	
 	static bool DGLE_API _s_ConCmdHelp(void *pParameter, const char *pcParam);

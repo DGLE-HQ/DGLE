@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		19.04.2016 (c)Andrey Korotkov
+\date		20.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -461,7 +461,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 	}
 
 	string file_name = pack_name.substr(delim_pos + 1);
-	pack_name.erase(delim_pos).shrink_to_fit();
+	pack_name.erase(delim_pos);
 
 	if (!_OpenPack(pack_name))
 	{
@@ -515,7 +515,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 	return S_OK;
 }
 
-bool CDCPFileSystem::_OpenPack(const string &strPackName)
+bool CDCPFileSystem::_OpenPack(string strPackName)
 {
 	bool open = false;
 	
@@ -525,7 +525,7 @@ bool CDCPFileSystem::_OpenPack(const string &strPackName)
 	{
 		if (open) _Clean();
 
-		_strPackName = strPackName;
+		_strPackName = move(strPackName);
 
 		if (S_OK == Core()->pMainFS()->LoadFile(_strPackName.c_str(), _pPack))
 			_pPack->IsOpen(open);
@@ -555,7 +555,7 @@ DGLE_RESULT DGLE_API CDCPFileSystem::FileExists(const char *pcName, bool &bExist
 	string name = pack_name.substr(delim_pos + 1);
 	pack_name.erase(delim_pos).shrink_to_fit();
 
-	if (!_OpenPack(pack_name))
+	if (!_OpenPack(move(pack_name)))
 		return E_ABORT;
 
 	CorrectSlashes(name);
@@ -580,14 +580,13 @@ DGLE_RESULT DGLE_API CDCPFileSystem::Find(const char *pcMask, E_FIND_FLAGS eFlag
 	string mask = pack_name.substr(delim_pos + 1);	// non-const in order to enable move semantic below
 	pack_name.erase(delim_pos).shrink_to_fit();
 
-	if (!_OpenPack(pack_name))
+	if (!_OpenPack(move(pack_name)))
 		return E_ABORT;
 
 	if (_clInfoTable.empty())
 		return E_FAIL;
 
 	const string reg_exp_mask = ConvertFormatFromDirToRegEx(move(mask));
-	
 	const regex regexp(reg_exp_mask);
 
 	_clFoundFiles.clear();
