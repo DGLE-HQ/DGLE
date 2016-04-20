@@ -206,6 +206,8 @@ inline void LogWrite(uint uiInstIdx, const std::string &str, E_LOG_TYPE eType, c
 	LogWrite(uiInstIdx, str.c_str(), eType, pcSrcFileName, iSrcLineNumber);
 }
 
+void FindFilesInDir(const fs::path &path, const fs::path &ext, std::vector<fs::path> &files) noexcept(false);
+
 // Macroses //
 
 #define PTHIS(cl_name) (reinterpret_cast<cl_name *>(pParameter))
