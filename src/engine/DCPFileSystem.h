@@ -11,64 +11,15 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 
-class CDCPFileIterator final : public CInstancedObj, public IFileIterator
-{
-	std::string _strMask; 
-
-	std::vector<std::string> _clNameList;
-	std::vector<std::string>::const_iterator _clNameListIter;
-
-public:
-	CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList);
-
-	DGLE_RESULT DGLE_API FileName(char *pcName, uint &uiCharsCount) override;
-	DGLE_RESULT DGLE_API Next() override;
-	DGLE_RESULT DGLE_API Free() override;
-
-	IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END);	
-};
-
-#pragma pack(push, 1)
-struct TDCPFileInfo
-{
-	uint32	ui32CRC32;
-	uint32	ui32Size;
-	uint32	ui32CmprsdSize;
-	uint32	ui32Offset;
-	char	acPackedFName[256];
-};
-#pragma pack(pop)
-
-class CDCPPackager final
-{
-	std::vector<TDCPFileInfo> _clInfoTable;
-	std::vector<uint8 *> _data;
-	bool _isOpened;
-	std::string _strLastError;
-
-public:
-
-	CDCPPackager(const std::string &strFileName);
-	~CDCPPackager();
-
-	std::string &GetLastError();
-	bool IsOpened();
-	std::string GetFilesList();
-	bool Save(const std::string &strFileName);
-	bool AddFile(const std::string &strFileName, const std::string &strDir);
-	bool RemoveFile(const std::string &strFileName);
-	bool ExtractFile(const std::string &strSrcFileName, const std::string &strDestFileName);
-};
-
 class CDCPFileSystem final : public CInstancedObj, public IFileSystem
 {
 	IFile *_pPack;
 	std::string _strPackName;	
 	uint32 _ui32DataSize;
-	std::vector<TDCPFileInfo> _clInfoTable;
+	std::vector<struct TDCPFileInfo> _clInfoTable;
 	std::vector<std::string> _clFoundFiles;
 
-	CDCPPackager *_pPackager;
+	class CDCPPackager *_pPackager;
 
 	bool _ReadFileInfo();
 	bool _OpenPack(std::string strPackName);

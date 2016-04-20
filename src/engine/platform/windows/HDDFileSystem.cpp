@@ -13,8 +13,28 @@ See "DGLE.h" for more details.
 
 // CHDDFileIterator //
 
-CHDDFileIterator::CHDDFileIterator(uint uiInstIdx, const char *pcName, HANDLE fileHandle):
-CInstancedObj(uiInstIdx)
+namespace
+{
+	class CHDDFileIterator final : public CInstancedObj, public IFileIterator
+	{
+		char _acName[MAX_PATH];
+		HANDLE _fileHandle;
+
+	public:
+
+		CHDDFileIterator(uint uiInstIdx, const char *pcName, HANDLE fileHandle);
+		~CHDDFileIterator();
+
+		DGLE_RESULT DGLE_API FileName(char *pcName, uint &uiCharsCount) override;
+		DGLE_RESULT DGLE_API Next() override;
+		DGLE_RESULT DGLE_API Free() override;
+
+		IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END)
+	};
+}
+
+CHDDFileIterator::CHDDFileIterator(uint uiInstIdx, const char *pcName, HANDLE fileHandle) :
+	CInstancedObj(uiInstIdx)
 {
 	if (strlen(pcName) <= MAX_PATH)
 		strcpy(_acName, pcName);

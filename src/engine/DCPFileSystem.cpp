@@ -45,6 +45,17 @@ namespace DcpImpl
 static constexpr auto Dcp = DcpImpl::Dcp<path::value_type>;
 #endif
 
+#pragma pack(push, 1)
+struct TDCPFileInfo
+{
+	uint32	ui32CRC32;
+	uint32	ui32Size;
+	uint32	ui32CmprsdSize;
+	uint32	ui32Offset;
+	char	acPackedFName[256];
+};
+#pragma pack(pop)
+
 template<typename T>
 static void InsertPrefix(string &str, T stem, char prefix)
 {
@@ -66,7 +77,7 @@ static string ConvertFormatFromDirToRegEx(string str)
 	return str;
 }
 
-static uint_fast32_t GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const std::string &strName)
+static uint_fast32_t GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const string &strName)
 {
 	const uint32 crc32 = GetCRC32((uint8 *)strName.c_str(), (uint32)strName.size());
 
@@ -77,7 +88,95 @@ static uint_fast32_t GetTableIdx(const vector<TDCPFileInfo> &clInfoTable, const 
 	return -1;
 }
 
+// CDCPFileIterator //
+
+namespace
+{
+	class CDCPFileIterator final : public CInstancedObj, public IFileIterator
+	{
+		string _strMask;
+
+		vector<string> _clNameList;
+		vector<string>::const_iterator _clNameListIter;
+
+	public:
+		CDCPFileIterator(uint uiInstIdx, const vector<string> &clNameList);
+
+		DGLE_RESULT DGLE_API FileName(char *pcName, uint &uiCharsCount) override;
+		DGLE_RESULT DGLE_API Next() override;
+		DGLE_RESULT DGLE_API Free() override;
+
+		IDGLE_BASE_IMPLEMENTATION(IFileIterator, INTERFACE_IMPL_END);
+	};
+}
+
+CDCPFileIterator::CDCPFileIterator(uint uiInstIdx, const vector<string> &clNameList) :
+	CInstancedObj(uiInstIdx), _clNameList(clNameList)
+{
+	_clNameListIter = _clNameList.cbegin();
+}
+
+DGLE_RESULT DGLE_API CDCPFileIterator::FileName(char *pcName, uint &uiCharsCount)
+{
+	if (_clNameListIter == _clNameList.cend())
+	{
+		uiCharsCount = 0;
+		return E_FAIL;
+	}
+
+	if (!pcName)
+	{
+		uiCharsCount = _clNameListIter->size() + 1;
+		return S_OK;
+	}
+
+	if (_clNameListIter->size() >= uiCharsCount)
+	{
+		uiCharsCount = _clNameListIter->size() + 1;
+		return E_INVALIDARG;
+	}
+
+	strcpy(pcName, _clNameListIter->c_str());
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CDCPFileIterator::Next()
+{
+	if (++_clNameListIter == _clNameList.cend())
+		return S_FALSE;
+
+	return S_OK;
+}
+
+DGLE_RESULT DGLE_API CDCPFileIterator::Free()
+{
+	delete this;
+	return S_OK;
+}
+
 // CDCPPackager //
+
+class CDCPPackager final
+{
+	vector<TDCPFileInfo> _clInfoTable;
+	vector<uint8 *> _data;
+	bool _isOpened;
+	string _strLastError;
+
+public:
+
+	CDCPPackager(const string &strFileName);
+	~CDCPPackager();
+
+	string &GetLastError();
+	bool IsOpened();
+	string GetFilesList();
+	bool Save(const string &strFileName);
+	bool AddFile(const string &strFileName, const string &strDir);
+	bool RemoveFile(const string &strFileName);
+	bool ExtractFile(const string &strSrcFileName, const string &strDestFileName);
+};
 
 CDCPPackager::CDCPPackager(const string &strFileName)
 {
@@ -892,51 +991,4 @@ DGLE_RESULT DGLE_API CDCPFileSystem::ExecuteTextCommand(const char *pcCommand, T
 	stVar.Clear();
 
 	return E_INVALIDARG;
-}
-
-// CDCPFileIterator //
-
-CDCPFileIterator::CDCPFileIterator(uint uiInstIdx, const std::vector<std::string> &clNameList):
-CInstancedObj(uiInstIdx), _clNameList(clNameList)
-{
-	_clNameListIter = _clNameList.cbegin();
-}
-
-DGLE_RESULT DGLE_API CDCPFileIterator::FileName(char *pcName, DGLE::uint &uiCharsCount)
-{
-	if (_clNameListIter == _clNameList.cend())
-	{
-		uiCharsCount = 0;
-		return E_FAIL;
-	}
-
-	if (!pcName)
-	{
-		uiCharsCount = _clNameListIter->size() + 1;
-		return S_OK;
-	}
-
-	if (_clNameListIter->size() >= uiCharsCount)
-	{
-		uiCharsCount = _clNameListIter->size() + 1;
-		return E_INVALIDARG;
-	}
-
-	strcpy(pcName, _clNameListIter->c_str());
-
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CDCPFileIterator::Next()
-{
-	if (++_clNameListIter == _clNameList.cend())
-		return S_FALSE;
-
-	return S_OK;
-}
-
-DGLE_RESULT DGLE_API CDCPFileIterator::Free()
-{
-	delete this;
-	return S_OK;
 }
