@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		25.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -11,13 +11,11 @@ See "DGLE.h" for more details.
 #include "HDDFileSystem.h"
 #include "HDDFile.h"
 
-#include <sys\stat.h>
-
 // CHDDFileIterator //
 
-CHDDFileIterator::CHDDFileIterator(uint uiInstIdx, const char* pcName, HANDLE fileHandle):
+CHDDFileIterator::CHDDFileIterator(uint uiInstIdx, const char *pcName, HANDLE fileHandle):
 CInstancedObj(uiInstIdx)
-{	
+{
 	if (strlen(pcName) <= MAX_PATH)
 		strcpy(_acName, pcName);
 	else
@@ -32,7 +30,7 @@ CInstancedObj(uiInstIdx)
 CHDDFileIterator::~CHDDFileIterator()
 {
 	if (FindClose(_fileHandle) == 0)
-		LOG("Can't close find handle.",LT_ERROR);
+		LOG("Can't close find handle.", LT_ERROR);
 }
 
 DGLE_RESULT DGLE_API CHDDFileIterator::FileName(char *pcName, uint &uiCharsCount)
@@ -86,7 +84,10 @@ DGLE_RESULT DGLE_API CHDDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 	prFile = NULL;
 
 	if (pcName[strlen(pcName) - 1] == '\\') //if directory
-		return CreateDirectoryA(pcName, NULL) == 0 ? S_FALSE : S_OK;
+	{
+		std::error_code error;
+		return fs::create_directory(pcName, error) ? S_OK : error ? E_FAIL : S_FALSE;
+	}
 
 	prFile = new CHDDFile(InstIdx(), pcName, eFlags);
 	bool _is_open;
@@ -97,21 +98,12 @@ DGLE_RESULT DGLE_API CHDDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_
 
 DGLE_RESULT DGLE_API CHDDFileSystem::DeleteFile(const char *pcName)
 {
-	if (pcName[strlen(pcName) - 1] == '\\') //if directory
-		return RemoveDirectoryA(pcName) == 0 ? S_FALSE : S_OK;
-
-	return ::DeleteFile(pcName) == 0 ? S_FALSE : S_OK;
+	std::error_code error;
+	return fs::remove(pcName, error) ? S_OK : error ? E_FAIL : S_FALSE;
 }
 
 DGLE_RESULT DGLE_API CHDDFileSystem::FileExists(const char *pcName, bool &bExists)
 {
-	if (pcName[strlen(pcName) - 1] == '\\') //if directory
-	{
-		struct _stat statBuffer;
-		bExists = (_stat(pcName, &statBuffer) == 0 && statBuffer.st_mode & S_IFDIR); 
-		return S_OK;
-	}
-
 	std::error_code error;
 	bExists = fs::exists(pcName, error);
 
