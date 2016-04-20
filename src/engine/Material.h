@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,19 +14,19 @@ See "DGLE.h" for more details.
 
 class CMaterial final : public CInstancedObj, public IMaterial
 {
-	TColor4 _stDiffCol, _stSpecCol;
-	float _fShine;
-	ITexture *_pDiffTex;
+	TColor4 _stDiffCol = ColorWhite(), _stSpecCol = ColorBlack();
+	float _fShine = 50.f;
+	ITexture *_pDiffTex = {};
 	
-	bool _doBlending;
-	E_BLENDING_EFFECT _eBlendingMode;
+	bool _doBlending = false;
+	E_BLENDING_EFFECT _eBlendingMode = BE_NORMAL;
 	
-	bool _doAlphaTest;
-	float _fAlphaTreshold;
+	bool _doAlphaTest = false;
+	float _fAlphaTreshold = .25f;
 
 public:
 
-	CMaterial(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 
 	DGLE_RESULT DGLE_API SetDiffuseColor(const TColor4 &stColor) override;
 	DGLE_RESULT DGLE_API SetSpecularColor(const TColor4 &stColor) override;

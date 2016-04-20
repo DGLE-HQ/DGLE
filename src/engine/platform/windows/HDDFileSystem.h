@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -31,7 +31,7 @@ public:
 class CHDDFileSystem final : public CInstancedObj, public IFileSystem
 {
 public:
-	CHDDFileSystem(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 
 	DGLE_RESULT DGLE_API OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile) override;
 	DGLE_RESULT DGLE_API DeleteFile(const char *pcName) override;

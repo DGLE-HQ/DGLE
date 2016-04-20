@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,8 +14,8 @@ See "DGLE.h" for more details.
 class CSplashWindow final : public CInstancedObj, public ISplashWindow
 {
 	bool _bInSeparateThread;
-	HWND _hOwnerWndHwnd, _hWnd;
-	HBITMAP _hBmp;
+	HWND _hOwnerWndHwnd = {}, _hWnd = {};
+	HBITMAP _hBmp = {};
 	char *_pcBmpFile;
 
 	bool _CreateWindow();
@@ -25,7 +25,7 @@ class CSplashWindow final : public CInstancedObj, public ISplashWindow
 
 public:
 
-	CSplashWindow(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 
 	DGLE_RESULT InitWindow(const char *pcBmpFileName) override;
 	DGLE_RESULT SetOwnerWindow(TWindowHandle tOwnerHwnd) override;

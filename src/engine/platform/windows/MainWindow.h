@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,12 +13,12 @@ See "DGLE.h" for more details.
 
 class CMainWindow final : public CInstancedObj, public IMainWindow
 {
-	HINSTANCE _hInst;
-	HWND _hWnd;
-	HDC _hDC;
+	HINSTANCE _hInst = GetModuleHandle(NULL);
+	HWND _hWnd = {};
+	HDC _hDC = {};
 	TProcDelegate *_pDelMainLoop;
 	TMsgProcDelegate *_pDelMessageProc;
-	bool _bFScreen;
+	bool _bFScreen = false;
 
 	int WINAPI _wWinMain(HINSTANCE hInstance);	
 	static LRESULT DGLE_API _s_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -26,7 +26,7 @@ class CMainWindow final : public CInstancedObj, public IMainWindow
 
 public:
 	
-	CMainWindow(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 	~CMainWindow();
 
 	DGLE_RESULT InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) override;

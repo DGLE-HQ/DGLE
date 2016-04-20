@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,10 +9,6 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 #include "DummyWindow.h"
-
-CDummyWindow::CDummyWindow(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _hWnd(NULL), _hDC(NULL)
-{}
 
 CDummyWindow::~CDummyWindow()
 {

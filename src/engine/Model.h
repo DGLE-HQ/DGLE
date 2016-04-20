@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -42,7 +42,7 @@ class CModel final : public CInstancedObj, public IModel
 
 	TPoint3 _center;
 	TVector3 _extents;
-	IMaterial *_mat;
+	IMaterial *_mat{};
 	std::vector<TMeshWithMat> _meshes;
 
 	bool _HaveMaterialWithBlending() const;
@@ -51,7 +51,7 @@ class CModel final : public CInstancedObj, public IModel
 
 public:
 
-	CModel(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 	~CModel();
 
 	void AddMesh(IMesh *pMesh, const TPoint3 &stCenter, const TVector3 &stExtents);

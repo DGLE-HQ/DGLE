@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,13 +13,13 @@ See "DGLE.h" for more details.
 
 class CHookedWindow final : public CInstancedObj, public IMainWindow
 {
-	HWND _hWnd, _hRootHWnd;
-	HDC _hDC;
-	bool _bNoMloopHook;
+	HWND _hWnd = {}, _hRootHWnd = {};
+	HDC _hDC = {};
+	bool _bNoMloopHook = false;
 	TMsgProcDelegate *_pDelMessageProc;
 	TProcDelegate *_pDelMainLoop;
-	WNDPROC _stOldWindowProc, _stOldRootWindowProc;
-	uint _uiUpdateTimer;
+	WNDPROC _stOldWindowProc = {}, _stOldRootWindowProc = {};
+	uint _uiUpdateTimer = -1;
 
 	void _KillWindow();
 	static bool DGLE_API _s_ConsoleQuit(void *pParameter, const char *pcParam);
@@ -28,7 +28,7 @@ class CHookedWindow final : public CInstancedObj, public IMainWindow
 
 public:
 
-	CHookedWindow(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 
 	DGLE_RESULT InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) override;
 	DGLE_RESULT SendMessage(const TWindowMessage &stMsg) override;

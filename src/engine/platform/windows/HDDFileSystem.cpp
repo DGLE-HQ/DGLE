@@ -75,10 +75,6 @@ DGLE_RESULT DGLE_API CHDDFileIterator::Free()
 
 // CHDDFileSystem //
 
-CHDDFileSystem::CHDDFileSystem(uint uiInstIdx):
-CInstancedObj(uiInstIdx)
-{}
-
 DGLE_RESULT DGLE_API CHDDFileSystem::OpenFile(const char *pcName, E_FILE_SYSTEM_OPEN_FLAGS eFlags, IFile *&prFile)
 {
 	prFile = NULL;

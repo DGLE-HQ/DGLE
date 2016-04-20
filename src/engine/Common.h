@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.04.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -140,9 +140,9 @@ class CInstancedObj
 {
 	const uint _uiInstIdx;
 
-protected:
+public:	// to enable inheriting ctors
 
-	CInstancedObj(uint uiInstIdx):_uiInstIdx(uiInstIdx){}
+	CInstancedObj(uint uiInstIdx) : _uiInstIdx(uiInstIdx) {}
 
 public:
 

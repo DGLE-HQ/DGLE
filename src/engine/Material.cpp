@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -11,13 +11,6 @@ See "DGLE.h" for more details.
 #include "Material.h"
 #include "Render.h"
 #include "Render3D.h"
-
-CMaterial::CMaterial(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _stDiffCol(ColorWhite()),
-_stSpecCol(ColorBlack()), _fShine(50.f), _pDiffTex(NULL),
-_doBlending(false), _eBlendingMode(BE_NORMAL),
-_doAlphaTest(false), _fAlphaTreshold(0.25f)
-{}
 
 DGLE_RESULT DGLE_API CMaterial::SetDiffuseColor(const TColor4 &stColor)
 {

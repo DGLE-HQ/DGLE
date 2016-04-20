@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -9,13 +9,6 @@ See "DGLE.h" for more details.
 
 #include "Common.h"
 #include "HookedWindow.h"
-
-CHookedWindow::CHookedWindow(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _bNoMloopHook(false),
-_stOldWindowProc(NULL), _stOldRootWindowProc(NULL),
-_hWnd(NULL), _hDC(NULL), _hRootHWnd(NULL),
-_uiUpdateTimer(-1)
-{}
 
 LRESULT CALLBACK CHookedWindow::_s_RootWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

@@ -1,6 +1,6 @@
 /**
 \author		Andrey Korotkov aka DRON
-\date		22.03.2016 (c)Andrey Korotkov
+\date		20.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,7 +24,7 @@ class CBaseRendererGL : public CInstancedObj, public CPlatformBaseRenderGL
 
 public:
 	
-	CBaseRendererGL(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 
 	bool Prepare();
 	bool Initialize(TEngineWindow &stWin, E_ENGINE_INIT_FLAGS &eInitFlags);

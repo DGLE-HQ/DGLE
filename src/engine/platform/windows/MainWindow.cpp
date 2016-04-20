@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,11 +14,6 @@ See "DGLE.h" for more details.
 extern HMODULE hModule;
 
 #define UPDATE_TIMER_ID 1
-
-CMainWindow::CMainWindow(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _hWnd(), _hDC(),
-_hInst(GetModuleHandle(NULL)), _bFScreen(false)
-{}
 
 CMainWindow::~CMainWindow()
 {

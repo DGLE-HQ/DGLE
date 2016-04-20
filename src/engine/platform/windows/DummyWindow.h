@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -13,13 +13,13 @@ See "DGLE.h" for more details.
 
 class CDummyWindow final : public CInstancedObj, public IMainWindow
 {
-	HWND _hWnd;
-	HDC _hDC;
+	HWND _hWnd = {};
+	HDC _hDC = {};
 	TMsgProcDelegate *_pDelMessageProc;
 
 public:
 	
-	CDummyWindow(uint uiInstIdx);
+	using CInstancedObj::CInstancedObj;
 	~CDummyWindow();
 
 	DGLE_RESULT InitWindow(TWindowHandle tHandle, const TCrRndrInitResults &stRndrInitResults, TProcDelegate *pDelMainLoop, TMsgProcDelegate *pDelMsgProc) override;

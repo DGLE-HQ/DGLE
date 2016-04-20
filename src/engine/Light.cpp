@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		16.03.2016 (c)Korotkov Andrey
+\date		20.04.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -11,12 +11,6 @@ See "DGLE.h" for more details.
 #include "Light.h"
 #include "Render.h"
 #include "Render3D.h"
-
-CLight::CLight(uint uiInstIdx):
-CInstancedObj(uiInstIdx), _bEnabled(true), _eType(LT_DIRECTIONAL),
-_stMainCol(ColorWhite()), _stPos(TPoint3()), _stDir(TVector3(0.f, 0.f, 1.f)),
-_fRange(100.f), _fIntensity(1.f), _fAngle(90.f)
-{}
 
 DGLE_RESULT DGLE_API CLight::SetEnabled(bool bEnabled)
 {

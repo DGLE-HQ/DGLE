@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		12.04.2016 (c)Andrey Korotkov
+\date		20.04.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -492,7 +492,7 @@ template<>
 class CStateManager<false>: public IStateManager, public CInstancedObj
 {
 public:
-	CStateManager(uint uiInstIdx):CInstancedObj(uiInstIdx){}
+	using CInstancedObj::CInstancedObj;
 
 	void Push();
 	void Pop();
