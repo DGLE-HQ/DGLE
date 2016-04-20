@@ -67,9 +67,6 @@
     <ClCompile Include="..\..\..\src\engine\Sound.cpp" />
     <ClCompile Include="..\..\..\src\engine\Console.cpp" />
     <ClCompile Include="..\..\..\src\engine\Core.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFile.cpp">
-      <Filter>Platform\FileSystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFileSystem.cpp">
       <Filter>Platform\FileSystem</Filter>
     </ClCompile>
@@ -99,6 +96,9 @@
       <Filter>Render\CoreRenderGL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\engine\MainFileSystem.cpp">
+      <Filter>FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\engine\HDDFile.cpp">
       <Filter>FileSystem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,9 +188,6 @@
     <ClInclude Include="..\..\..\src\engine\FuncDelegate.h" />
     <ClInclude Include="..\..\..\src\engine\Console.h" />
     <ClInclude Include="..\..\..\src\engine\Core.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFile.h">
-      <Filter>Platform\FileSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFileSystem.h">
       <Filter>Platform\FileSystem</Filter>
     </ClInclude>
@@ -224,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\engine\bcunpacker_incl.h" />
     <ClInclude Include="..\..\..\src\engine\Signals.h" />
+    <ClInclude Include="..\..\..\src\engine\HDDFile.h">
+      <Filter>FileSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Platform">

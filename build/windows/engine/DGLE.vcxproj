@@ -209,7 +209,7 @@
     <ClCompile Include="..\..\..\src\engine\platform\windows\BaseSound.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\ConsoleWindow.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\DummyWindow.cpp" />
-    <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFile.cpp" />
+    <ClCompile Include="..\..\..\src\engine\HDDFile.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\HDDFileSystem.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\HookedWindow.cpp" />
     <ClCompile Include="..\..\..\src\engine\platform\windows\MainWindow.cpp" />
@@ -258,7 +258,7 @@
     <ClInclude Include="..\..\..\src\engine\platform\windows\BaseSound.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\ConsoleWindow.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\DummyWindow.h" />
-    <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFile.h" />
+    <ClInclude Include="..\..\..\src\engine\HDDFile.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\HDDFileSystem.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\HookedWindow.h" />
     <ClInclude Include="..\..\..\src\engine\platform\windows\MainWindow.h" />
