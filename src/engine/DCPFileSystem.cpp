@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		20.04.2016 (c)Andrey Korotkov
+\date		29.06.2016 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -17,9 +17,6 @@ See "DGLE.h" for more details.
 using namespace std;
 using fs::path;
 
-#if defined _MSC_VER && _MSC_VER <= 1900 && !__clang__
-static constexpr auto Dcp = L".dcp";
-#else
 namespace DcpImpl
 {
 #	define DCP(prefix) prefix##".dcp"
@@ -43,7 +40,6 @@ namespace DcpImpl
 }
 
 static constexpr auto Dcp = DcpImpl::Dcp<path::value_type>;
-#endif
 
 #pragma pack(push, 1)
 struct TDCPFileInfo
