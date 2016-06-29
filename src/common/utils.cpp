@@ -1,36 +1,51 @@
 ﻿/**
 \author		Korotkov Andrey aka DRON
-\date		14.04.2016 (c)Korotkov Andrey
+\date		29.06.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
 See "DGLE.h" for more details.
 */
 
+#if !defined  __clang__  && defined _MSC_FULL_VER && _MSC_FULL_VER < 190024210
+#error Old MSVC compiler version. Visual Studio 2015 Update 3 or later required.
+#endif
+
 #include "Utils.h"
 
 #include <cstdio>
-#include <algorithm>
 #include <locale>
-#include <functional>
-#include <utility>
 #include <limits>
 
 using namespace DGLE;
 using namespace std;
+
+#ifndef _MSC_VER	// completly remove it when C++17 will be supported by all compilers
+#include <algorithm>
+#include <functional>
+#include <utility>
 using placeholders::_1;
+#endif
 
 template<typename Char>
 basic_string<Char> ToLowerCase(basic_string<Char> str)
 {
+#ifdef _MSC_VER
+	use_facet<ctype<Char>>(locale()).tolower(str.data(), str.data() + str.length());
+#else
 	transform(str.begin(), str.end(), str.begin(), bind(tolower<Char>, _1, locale()));
+#endif
 	return str;
 }
 
 template<typename Char>
 basic_string<Char> ToUpperCase(basic_string<Char> str)
 {
+#ifdef _MSC_VER
+	use_facet<ctype<Char>>(locale()).toupper(str.data(), str.data() + str.length());
+#else
 	transform(str.begin(), str.end(), str.begin(), bind(toupper<Char>, _1, locale()));
+#endif
 	return str;
 }
 

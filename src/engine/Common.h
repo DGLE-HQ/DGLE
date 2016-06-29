@@ -29,7 +29,7 @@ typedef HMODULE TDynLibHandle;
 
 #define PLUGIN_FILE_EXTENSION ".dll"
 
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #	ifdef _WIN64
 //#		pragma warning(disable : 4267)
 //#		pragma warning(disable : 4244)
