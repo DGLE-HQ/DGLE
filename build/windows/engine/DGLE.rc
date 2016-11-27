@@ -25,8 +25,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,3,0,0
- PRODUCTVERSION 0,3,0,0
+ FILEVERSION 0,3,5,0
+ PRODUCTVERSION 0,3,5,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -41,15 +41,15 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "Comments", "See more on http://dglengine.org/ ."
+            VALUE "Comments", "dglengine.org"
             VALUE "CompanyName", "Andrey Korotkov"
             VALUE "FileDescription", "DGLE"
-            VALUE "FileVersion", "0.3.0.0"
+            VALUE "FileVersion", "0.3.5.0"
             VALUE "InternalName", "DGLE"
-            VALUE "LegalCopyright", "Andrey Korotkov (C) 2013"
+            VALUE "LegalCopyright", "Andrey Korotkov (C) 2017"
             VALUE "OriginalFilename", "DGLE.dll"
-            VALUE "ProductName", "DGLE ( http://dglengine.org/ )"
-            VALUE "ProductVersion", "0.3.0.0"
+            VALUE "ProductName", "dglengine.org"
+            VALUE "ProductVersion", "0.3.5.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -66,19 +66,16 @@ END
 
 IDB_BITMAP1             BITMAP                  "Logo.bmp"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
 IDB_BITMAP2             BITMAP                  "LogoMini.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // BIN
 //
 
-IDR_FONT1               BIN                     "FONT1.BIN"
+IDR_FONT1               BIN                     "DefaultFont.dft"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -87,7 +84,8 @@ IDR_FONT1               BIN                     "FONT1.BIN"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "DGLE2.ico"
+IDI_ICON1               ICON                    "DGLE.ico"
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 

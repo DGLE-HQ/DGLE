@@ -267,22 +267,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DGLE2.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="FONT1.BIN">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="Logo.bmp">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="LogoMini.bmp">
-      <Filter>Resources</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="DGLE.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="LogoMini.bmp">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="Logo.bmp">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="DGLE.ico">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DefaultFont.dft">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
 </Project>

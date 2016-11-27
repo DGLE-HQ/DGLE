@@ -26,6 +26,7 @@ call :removeBinJunkCPP "plugins"
 call :removeSlnJunkCPP "plugins"
 
 call :removeProjJunkCPP "plugins\template"
+call :removeProjJunkCPP "plugins\common"
 call :removeProjJunkCPP "plugins\ext"
 
 :: Tests
@@ -141,10 +142,12 @@ goto :eof
 set arg=%1
 
 del .\%arg%\*.sdf
+del .\%arg%\*.VC.db
 del /A:H .\%arg%\*.docstates.suo
 del /A:A .\%arg%\*.suo
 del .\%arg%\log.txt
 rd /s /q .\%arg%\ipch
+rd /s /q .\%arg%\.vs
 
 goto :eof
 

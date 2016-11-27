@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2016 (c)Korotkov Andrey
+\date		26.11.2016 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -436,6 +436,194 @@ BOOL EqualsProductType(BYTE productType)
 	return VerifyVersionInfo(&osvi, VER_PRODUCT_TYPE, condition_mask);
 }
 
+void GetWindowsEdition(const OSVERSIONINFOEX &osvi, string &str)
+{
+	DWORD os_type;
+	typedef BOOL(WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+	PGPI p_gpi;
+	p_gpi = (PGPI)GetProcAddress(GetModuleHandle("kernel32.dll"), "GetProductInfo");
+
+	if (p_gpi != NULL && p_gpi(osvi.dwMajorVersion, osvi.dwMinorVersion, 0, 0, &os_type) != 0)
+		switch (os_type)
+		{
+		case PRODUCT_UNLICENSED:
+			str += "Unlicensed copy";
+			break;
+
+		case PRODUCT_BUSINESS:
+		case PRODUCT_BUSINESS_N:
+			str += "Business Edition";
+			break;
+
+		case PRODUCT_CLUSTER_SERVER:
+		case PRODUCT_CLUSTER_SERVER_V:
+			str += "Cluster Server";
+			break;
+
+		case 0x00000050/*PRODUCT_DATACENTER_EVALUATION_SERVER*/:
+		case PRODUCT_DATACENTER_SERVER:
+		case PRODUCT_DATACENTER_SERVER_CORE:
+		case PRODUCT_DATACENTER_SERVER_CORE_V:
+		case PRODUCT_DATACENTER_SERVER_V:
+			str += "Datacenter Server";
+			break;
+
+		case PRODUCT_HOME_PREMIUM_SERVER:
+		case PRODUCT_HOME_SERVER:
+			str += "Home Server";
+			break;
+
+		case 0x00000065/*PRODUCT_CORE*/:
+		case 0x00000063/*PRODUCT_CORE_COUNTRYSPECIFIC*/:
+		case 0x00000062/*PRODUCT_CORE_N*/:
+		case 0x00000064/*PRODUCT_CORE_SINGLELANGUAGE*/:
+			str += "Home";
+			break;
+
+		case PRODUCT_ULTIMATE:
+		case PRODUCT_ULTIMATE_N:
+		case PRODUCT_ULTIMATE_E:
+			str += "Ultimate Edition";
+			break;
+
+		case PRODUCT_PROFESSIONAL:
+		case PRODUCT_PROFESSIONAL_N:
+		case PRODUCT_PROFESSIONAL_E:
+			str += "Professional";
+			break;
+
+		case PRODUCT_HOME_PREMIUM:
+		case PRODUCT_HOME_PREMIUM_N:
+		case PRODUCT_HOME_PREMIUM_E:
+			str += "Home Premium Edition";
+			break;
+
+		case PRODUCT_HOME_BASIC:
+		case PRODUCT_HOME_BASIC_N:
+		case PRODUCT_HOME_BASIC_E:
+			str += "Home Basic Edition";
+			break;
+
+		case PRODUCT_ENTERPRISE:
+		case PRODUCT_ENTERPRISE_N:
+		case PRODUCT_ENTERPRISE_E:
+		case 0x00000048 /*PRODUCT_ENTERPRISE_EVALUATION*/:
+		case 0x00000054 /*PRODUCT_ENTERPRISE_N_EVALUATION*/:
+		case 0x0000007D /*PRODUCT_ENTERPRISE_S*/:
+		case 0x00000081 /*PRODUCT_ENTERPRISE_S_EVALUATION*/:
+		case 0x0000007E /*PRODUCT_ENTERPRISE_S_N*/:
+		case 0x00000082 /*PRODUCT_ENTERPRISE_S_N_EVALUATION*/:
+			str += "Enterprise Edition";
+			break;
+
+		case PRODUCT_STARTER:
+		case PRODUCT_STARTER_N:
+		case PRODUCT_STARTER_E:
+			str += "Starter Edition";
+			break;
+
+		case 0x00000079 /*PRODUCT_EDUCATION*/:
+		case 0x0000007A /*PRODUCT_EDUCATION_N*/:
+			str += "Education";
+			break;
+
+		case PRODUCT_ENTERPRISE_SERVER:
+		case PRODUCT_ENTERPRISE_SERVER_CORE:
+		case PRODUCT_ENTERPRISE_SERVER_CORE_V:
+		case PRODUCT_ENTERPRISE_SERVER_IA64:
+		case PRODUCT_ENTERPRISE_SERVER_V:
+			str += "Enterprise Server";
+			break;
+
+		case PRODUCT_STORAGE_ENTERPRISE_SERVER:
+		case PRODUCT_STORAGE_ENTERPRISE_SERVER_CORE:
+			str += "Enterprise Storage Server";
+			break;
+
+		case PRODUCT_STORAGE_EXPRESS_SERVER:
+		case PRODUCT_STORAGE_EXPRESS_SERVER_CORE:
+		case 0x00000060 /*PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER*/:
+		case PRODUCT_STORAGE_STANDARD_SERVER:
+		case PRODUCT_STORAGE_STANDARD_SERVER_CORE:
+		case 0x0000005F /*PRODUCT_STORAGE_WORKGROUP_EVALUATION_SERVER*/:
+		case PRODUCT_STORAGE_WORKGROUP_SERVER:
+		case PRODUCT_STORAGE_WORKGROUP_SERVER_CORE:
+			str += "Storage Server";
+			break;
+
+		case PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL:
+		case PRODUCT_ESSENTIALBUSINESS_SERVER_ADDLSVC:
+		case PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT:
+		case PRODUCT_ESSENTIALBUSINESS_SERVER_MGMTSVC:
+		case PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT:
+		case PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING:
+		case PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY:
+		case PRODUCT_SB_SOLUTION_SERVER:
+		case PRODUCT_SB_SOLUTION_SERVER_EM:
+		case PRODUCT_SERVER_FOR_SB_SOLUTIONS:
+		case PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM:
+		case PRODUCT_SERVER_FOR_SMALLBUSINESS:
+		case PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
+		case PRODUCT_SMALLBUSINESS_SERVER:
+		case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+		case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE:
+			str += "Business Server";
+			break;
+
+		case PRODUCT_HYPERV:
+			str += "Hyper - V Server";
+			break;
+
+		case 0x0000007B /*PRODUCT_IOTUAP*/:
+		case 0x00000083 /*PRODUCT_IOTUAPCOMMERCIAL*/:
+			str += "IOT Core";
+			break;
+
+		case 0x00000068 /*PRODUCT_MOBILE_CORE*/:
+			str += "Mobile";
+			break;
+
+		case 0x00000085 /*PRODUCT_MOBILE_ENTERPRISE*/:
+			str += "Mobile Enterprise";
+			break;
+
+		case 0x0000004C /*PRODUCT_MULTIPOINT_STANDARD_SERVER*/:
+		case 0x0000004D /*PRODUCT_MULTIPOINT_PREMIUM_SERVER*/:
+			str += "MultiPoint Server";
+			break;
+
+		case 0x00000067 /*PRODUCT_PROFESSIONAL_WMC*/:
+			str += "Professional with Media Center";
+			break;
+
+		case PRODUCT_SERVER_FOUNDATION:
+			str += "Foundation Server";
+			break;
+
+		case PRODUCT_SOLUTION_EMBEDDEDSERVER:
+			str += "MultiPoint Server";
+			break;
+
+		case 0x0000004F /*PRODUCT_STANDARD_EVALUATION_SERVER*/:
+		case PRODUCT_STANDARD_SERVER:
+		case PRODUCT_STANDARD_SERVER_CORE:
+		case PRODUCT_STANDARD_SERVER_CORE_V:
+		case PRODUCT_STANDARD_SERVER_V:
+		case PRODUCT_STANDARD_SERVER_SOLUTIONS:
+		case PRODUCT_STANDARD_SERVER_SOLUTIONS_CORE:
+			str += "Standard Server";
+			break;
+
+		case PRODUCT_WEB_SERVER:
+		case PRODUCT_WEB_SERVER_CORE:
+			str += "Web Server";
+			break;
+
+		default:
+			str.pop_back();
+		}
+}
+
 void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 {
 	string result = "System Information\n\t";
@@ -476,9 +664,16 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 
 		delete[] tmp_string;
 
+		if (IsWindowsVersionOrGreater(10, 0) != FALSE) // fix to the bug when Windows stores wrong value in the registry after the upgrade from Windows 8 to 10
+		{
+			ret = ERROR_INVALID_DATA;
+			osvi.dwMajorVersion = 10;
+			osvi.dwMinorVersion = 0;
+		}
+
 		if (ret != ERROR_SUCCESS || osvi.dwMajorVersion == 0)
-			for (uint32 i = osvi.dwMajorVersion; i < osvi.dwMajorVersion + 3; ++i)
-				for (uint32 j = 0; j < 6; ++j)
+			for (uint32 i = osvi.dwMajorVersion; i < osvi.dwMajorVersion + 10; ++i)
+				for (uint32 j = 0; j < 10; ++j)
 					if (IsWindowsVersionOrGreater(i, j) != FALSE)
 					{
 						if (i > osvi.dwMajorVersion)
@@ -489,6 +684,11 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 						else
 							if (j > osvi.dwMinorVersion)
 								osvi.dwMinorVersion = j;
+					}
+					else
+					{
+						i = osvi.dwMajorVersion + 10;
+						j = 10;
 					}
 
 		dw_size = 0;
@@ -526,102 +726,62 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	else
 	{
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion > 4)
-		{	
+		{
 				str += to_string(osvi.dwMajorVersion) + '.' + to_string(osvi.dwMinorVersion) + ' ';
 				
 				str += "\"Microsoft Windows ";
 
-				if (osvi.dwMajorVersion == 6)
+				if (osvi.dwMajorVersion == 10)
 				{
 					if (osvi.dwMinorVersion == 0)
 					{
 						if (osvi.wProductType == VER_NT_WORKSTATION)
-							str += "Vista ";
+							str += "10 ";
 						else
-							str += "Server 2008 ";
+							str += "Server 2016 ";
 					}
-					else
-						if (osvi.dwMinorVersion == 1)
+					
+					GetWindowsEdition(osvi, str);
+				}
+				else
+					if (osvi.dwMajorVersion == 6)
+					{
+						if (osvi.dwMinorVersion == 0)
 						{
 							if (osvi.wProductType == VER_NT_WORKSTATION)
-								str += "7 ";
+								str += "Vista ";
 							else
-								str += "Server 2008 R2 ";
+								str += "Server 2008 ";
 						}
 						else
-							if (osvi.dwMinorVersion == 2)
+							if (osvi.dwMinorVersion == 1)
 							{
 								if (osvi.wProductType == VER_NT_WORKSTATION)
-									str += "8 ";
+									str += "7 ";
 								else
-									str += "Server 2012 ";
+									str += "Server 2008 R2 ";
 							}
 							else
-								if (osvi.dwMinorVersion == 3)
+								if (osvi.dwMinorVersion == 2)
 								{
 									if (osvi.wProductType == VER_NT_WORKSTATION)
-										str += "8.1 ";
+										str += "8 ";
 									else
-										str += "Server 2012 R2 ";
+										str += "Server 2012 ";
 								}
 								else
-									if (osvi.dwMinorVersion == 4)
+									if (osvi.dwMinorVersion == 3)
 									{
 										if (osvi.wProductType == VER_NT_WORKSTATION)
-											str += "10 ";
+											str += "8.1 ";
 										else
-											str += "10 Server "; // marketing name yet unknown
+											str += "Server 2012 R2 ";
 									}
 									else
 										if (osvi.wProductType != VER_NT_WORKSTATION)
 											str += "Server ";
 
-					DWORD os_type;
-					typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
-					PGPI p_gpi;
-					p_gpi = (PGPI)GetProcAddress(GetModuleHandle("kernel32.dll"), "GetProductInfo");
-					
-					if (p_gpi(osvi.dwMajorVersion, osvi.dwMinorVersion, 0, 0, &os_type) != 0)
-						switch ( os_type )
-						{
-							case PRODUCT_UNLICENSED:
-								str += "Unlicensed copy";
-								break;
-							case PRODUCT_ULTIMATE:
-							case PRODUCT_ULTIMATE_N:
-							case PRODUCT_ULTIMATE_E:
-								str += "Ultimate Edition";
-								break;
-							case PRODUCT_PROFESSIONAL:
-							case PRODUCT_PROFESSIONAL_N:
-							case PRODUCT_PROFESSIONAL_E:
-								str += "Professional";
-								break;
-							case PRODUCT_HOME_PREMIUM:
-							case PRODUCT_HOME_PREMIUM_N:
-							case PRODUCT_HOME_PREMIUM_E:
-								str += "Home Premium Edition";
-								break;
-							case PRODUCT_HOME_BASIC:
-							case PRODUCT_HOME_BASIC_N:
-							case PRODUCT_HOME_BASIC_E:
-								str += "Home Basic Edition";
-								break;
-							case PRODUCT_ENTERPRISE:
-							case PRODUCT_ENTERPRISE_N:
-							case PRODUCT_ENTERPRISE_E:
-								str += "Enterprise Edition";
-								break;
-							case PRODUCT_BUSINESS:
-							case PRODUCT_BUSINESS_N:
-								str += "Business Edition";
-								break;
-							case PRODUCT_STARTER:
-							case PRODUCT_STARTER_N:
-							case PRODUCT_STARTER_E:
-								str += "Starter Edition";
-								break;
-						}
+					GetWindowsEdition(osvi, str);
 				}
 				else
 					if (osvi.dwMajorVersion == 5)
@@ -713,7 +873,6 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 						str+= ", 32-bit";
 #endif
 				}
-
 		}
 		else 
 			str += "Unsupported or unknown Microsoft Windows version.";

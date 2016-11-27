@@ -20,7 +20,6 @@ Icon?
 *.DS_Store
 
 # Misc
-SyncToy_*
 log.txt
 docs/api_help/
 
