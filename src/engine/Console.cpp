@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2016 (c)Korotkov Andrey
+\date		02.01.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -257,12 +257,13 @@ bool CConsole::_ProcessConCmd(const std::string &strCommand)
 				}
 				else
 				{
-					const int t = stoi(param);
+					errno = 0;
+					const long int t = strtol(param.c_str(), NULL, 10);
 
 					if (t == 0 && param != "0")
 						Write(('\"' + param + "\" is not a valid integer value.").c_str());
 					else
-						if (t < entry.iMinValue || t > entry.iMaxValue)
+						if (t < entry.iMinValue || t > entry.iMaxValue || errno ==  ERANGE)
 							Write(("Value may vary from " + to_string(entry.iMinValue) + " up to " + to_string(entry.iMaxValue) + '.').c_str());
 						else
 						{
@@ -402,7 +403,7 @@ bool CConsole::_SetPos(const char* pcParam)
 	{
 		CON_SPLIT_TWO_PARAMS(par);
 
-		x = stoi(par1);
+		x = atoi(par1.c_str());
 		
 		if (x == 0 && par1 != "0") 
 		{
@@ -410,7 +411,7 @@ bool CConsole::_SetPos(const char* pcParam)
 			return false;
 		}
 
-		y = stoi(par2);
+		y = atoi(par2.c_str());
 		
 		if (y == 0 && par2 != "0") 
 		{
@@ -443,7 +444,7 @@ bool CConsole::_SetSize(const char *pcParam)
 	{
 		CON_SPLIT_TWO_PARAMS(par);
 
-		w = stoi(par1);
+		w = atoi(par1.c_str());
 		
 		if (w == 0 && par1 != "0") 
 		{
@@ -451,7 +452,7 @@ bool CConsole::_SetSize(const char *pcParam)
 			return false;
 		}
 
-		h = stoi(par2);
+		h = atoi(par2.c_str());
 		
 		if (h == 0 && par2 != "0") 
 		{
