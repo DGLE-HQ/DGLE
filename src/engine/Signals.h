@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		12.04.2016 (c)Andrey Korotkov
+\date		02.01.2017 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -90,11 +90,12 @@ namespace Signals
 	template<typename ...Args>
 	struct ScopedConnection : Connection<Args...>
 	{
+		typedef Connection<Args...> Connection;
 		ScopedConnection(ScopedConnection &&) = default;
-		ScopedConnection(Connection<Args...> &&src) noexcept : Connection<Args...>(std::move(src)) {}
-		ScopedConnection &operator =(Connection<Args...> &&src) noexcept { return Connection<Args...>::operator =(std::move(src)), *this; }
+		ScopedConnection(Connection &&src) noexcept : Connection(std::move(src)) {}
+		ScopedConnection &operator =(Connection &&src) noexcept { return Connection::operator =(std::move(src)), *this; }
 		ScopedConnection &operator =(ScopedConnection &&src) = default;
-		~ScopedConnection() noexcept { Disconnect(); }
+		~ScopedConnection() noexcept { Connection::Disconnect(); }
 	};
 }
 
@@ -138,7 +139,7 @@ auto Signals::Signal<Args...>::Connect(std::function<void(Args...)> slot) -> Con
 template<typename ...Args>
 bool Signals::Signal<Args...>::Empty() const noexcept
 {
-	return dirty ? std::find_if(slots.cbegin(), slots.cend(), [](decltype(slots)::const_reference slot) { return slot; }) == slots.cend() : slots.empty();
+	return dirty ? std::find_if(slots.cbegin(), slots.cend(), [](typename decltype(slots)::const_reference slot) { return slot; }) == slots.cend() : slots.empty();
 }
 
 template<typename ...Args>

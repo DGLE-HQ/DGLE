@@ -1218,6 +1218,12 @@ namespace DGLE
 	template<class TTransform>
 	class TTransformStack: private std::stack<TTransform>
 	{
+		typedef std::stack<TTransform> Stack;
+		using Stack::push;
+		using Stack::pop;
+		using Stack::top;
+		using Stack::empty;
+		using Stack::size;
 	public:
 		/** Creates stack with base transform loaded to top. */
 		TTransformStack(const TTransform &base_transform = TTransform());
