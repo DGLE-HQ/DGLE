@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		02.01.2017 (c)Andrey Korotkov
+\date		08.03.2017 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -39,11 +39,11 @@ namespace Signals
 		class Allocator;
 
 		/*
-			VS 2015 STL uses allocator's construct() to construct combined object (main object + shared ptr data)
+			VS 2015/2017 STL uses allocator's construct() to construct combined object (main object + shared ptr data)
 			but constructs containing object directly via placement new which does not have access to private members.
 			GCC at the same time compiles it fine.
 		*/
-#if defined _MSC_VER && _MSC_VER <= 1900
+#if defined _MSC_VER && _MSC_VER <= 1910
 	public:
 #else
 	private:

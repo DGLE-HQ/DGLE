@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		02.01.2017 (c)Korotkov Andrey
+\date		08.03.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -78,8 +78,8 @@ typedef HMODULE TDynLibHandle;
 #include <filesystem>
 #include <thread>
 
-#if defined _MSC_VER && _MSC_VER <= 1900
-// VS 2015 ships filesystem as TS
+#if defined _MSC_VER && _MSC_VER <= 1910
+// VS 2015/2017 ships filesystem as TS
 namespace fs = std::experimental::filesystem;
 #else
 // for fully C++17 conformant toolchain
