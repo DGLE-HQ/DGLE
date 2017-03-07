@@ -43,6 +43,9 @@ ipch/
 *.ipdb
 *.opendb
 *.VC.db
+*.VC.db-shm
+*.VC.db-wal
+*.tmp
 
 # Monodevelop and C#
 *.userprefs
