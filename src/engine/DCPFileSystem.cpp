@@ -1,6 +1,6 @@
 /**
 \author		Sivkov Ilya
-\date		29.06.2016 (c)Andrey Korotkov
+\date		08.03.2017 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -24,6 +24,19 @@ namespace DcpImpl
 	template<typename Char>
 	static constexpr const Char Dcp[] = nullptr;
 
+#if defined _MSC_VER && _MSC_VER == 1910
+	template<>
+	static constexpr const char Dcp<char>[size(DCP())] = DCP();
+
+	template<>
+	static constexpr const wchar_t Dcp<wchar_t>[size(DCP(L))] = DCP(L);
+
+	template<>
+	static constexpr const char16_t Dcp<char16_t>[size(DCP(u))] = DCP(u);
+
+	template<>
+	static constexpr const char32_t Dcp<char32_t>[size(DCP(U))] = DCP(U);
+#else
 	template<>
 	static constexpr const char Dcp<char>[] = DCP();
 
@@ -35,6 +48,7 @@ namespace DcpImpl
 
 	template<>
 	static constexpr const char32_t Dcp<char32_t>[] = DCP(U);
+#endif
 
 #	undef DCP
 }
