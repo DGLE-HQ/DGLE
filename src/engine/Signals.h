@@ -74,7 +74,7 @@ namespace Signals
 
 	private:
 		std::weak_ptr<Signal<Args...>> signal;
-		typename std::enable_if_t<true, decltype(Signal<Args...>::slots)>::iterator slot;	// enable_if_t - workaround for VS 2015
+		typename std::enable_if_t<true, decltype(Signal<Args...>::slots)>::iterator slot;	// enable_if_t - workaround for VS 2015/2017
 
 	public:
 		Connection(Connection &&) = default;
