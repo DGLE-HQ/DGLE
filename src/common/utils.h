@@ -9,30 +9,23 @@ See "DGLE.h" for more details.
 
 #pragma once
 
+#if !defined  __clang__  && defined _MSC_VER && _MSC_VER < 1910
+#error Old MSVC compiler version. Visual Studio 2017 or later required.
+#endif
+
 #include <DGLE.h>
 #include <string>
 
-namespace detail
-{
-	template<signed offset>
-	inline constexpr const char *const FindFilename(const char path[])
-	{
-		return path[offset] == '\\' || path[offset] == '/' ? path + offset + 1 : FindFilename<offset - 1>(path);
-	}
-
-	template<>
-	inline constexpr const char *const FindFilename<-1>(const char path[])
-	{
-		return path;
-	}
-}
-
-// use C++14 extended constexpr
-template<signed length>
+template<size_t length>
 inline constexpr const char *const ExtractFilename(const char (&path)[length])
 {
 	static_assert(length > 0, "path must be null-terminated string");
-	return detail::FindFilename<length - 1>(path);
+	auto offset = length;
+	do
+		if (path[offset - 1] == '\\' || path[offset - 1] == '/')
+			return path + offset;
+	while (--offset);
+	return path;
 }
 
 template<typename Char>
