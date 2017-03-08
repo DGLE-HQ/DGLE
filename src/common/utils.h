@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		14.04.2016 (c)Korotkov Andrey
+\date		08.03.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -14,21 +14,21 @@ See "DGLE.h" for more details.
 
 namespace detail
 {
-	template<size_t offset>
+	template<signed offset>
 	inline constexpr const char *const FindFilename(const char path[])
 	{
 		return path[offset] == '\\' || path[offset] == '/' ? path + offset + 1 : FindFilename<offset - 1>(path);
 	}
 
 	template<>
-	inline constexpr const char *const FindFilename<0>(const char path[])
+	inline constexpr const char *const FindFilename<-1>(const char path[])
 	{
 		return path;
 	}
 }
 
 // use C++14 extended constexpr
-template<size_t length>
+template<signed length>
 inline constexpr const char *const ExtractFilename(const char (&path)[length])
 {
 	static_assert(length > 0, "path must be null-terminated string");
