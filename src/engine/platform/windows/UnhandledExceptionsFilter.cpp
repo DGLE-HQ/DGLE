@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		10.04.2016 (c)Korotkov Andrey
+\date		25.03.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -337,7 +337,7 @@ const char *FormWin32ExceptionString(DWORD dwCode)
 
 	static char szBuffer[512] = { 0 };
 
-	strcpy(szBuffer, ("We are very sorry, but program crashed! Unhandled WIN32 exception "s + exp_txt + " occured.").c_str());
+	strcpy(szBuffer, ("We are very sorry, but program crashed! Unhandled WIN32 exception " + exp_txt + " occured.").c_str());
 
 	return szBuffer;
 }

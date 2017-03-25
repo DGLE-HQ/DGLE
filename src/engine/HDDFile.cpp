@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2016 (c)Korotkov Andrey
+\date		25.03.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -45,7 +45,7 @@ CInstancedObj(uiInstIdx), _file(), _path(pcName)
 CHDDFile::~CHDDFile()
 {
 	if (fclose(_file) != 0)
-		LOG("Can't close file \""s + _path.filename().string() + "\".", LT_ERROR);
+		LOG("Can't close file \"" + _path.filename().string() + "\".", LT_ERROR);
 }
 
 DGLE_RESULT DGLE_API CHDDFile::Read(void *pBuffer, uint uiCount, uint &uiRead)
