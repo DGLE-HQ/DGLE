@@ -926,7 +926,7 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	stSysInfo.uiCPUFrequency = mhz;
 	stSysInfo.uiCPUCount = st_sys_info.dwNumberOfProcessors;
 	
-	if (strlen(pc_processor_name) <= 128)
+	if (strlen(pc_processor_name) <= 127)
 		strcpy(stSysInfo.cCPUName, pc_processor_name);
 	else
 	{
