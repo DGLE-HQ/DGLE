@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		26.11.2016 (c)Korotkov Andrey
+\date		29.03.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -899,8 +899,9 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	ret = RegQueryValueEx(h_key, "ProcessorNameString", NULL, &dw_type, NULL, &dw_size);
 	_ASSERT(dw_size > 0);
 	
-	char *pc_processor_name = new char[dw_size];
-	ret = RegQueryValueEx(h_key, "ProcessorNameString", NULL, &dw_type, (LPBYTE)pc_processor_name, &dw_size);
+	char *const pc_processor_name_buff = new char[dw_size];
+	const char *pc_processor_name = pc_processor_name_buff;
+	ret = RegQueryValueEx(h_key, "ProcessorNameString", NULL, &dw_type, (LPBYTE)pc_processor_name_buff, &dw_size);
 	
 	if (ret != ERROR_SUCCESS)
 		pc_processor_name = "Couldn't get CPU name!";
@@ -925,15 +926,9 @@ void GetSystemInformation(string &strInfo, TSystemInfo &stSysInfo)
 	stSysInfo.uiCPUFrequency = mhz;
 	stSysInfo.uiCPUCount = st_sys_info.dwNumberOfProcessors;
 	
-	if (strlen(pc_processor_name) <= 128)
-		strcpy(stSysInfo.cCPUName, pc_processor_name);
-	else
-	{
-		memcpy(stSysInfo.cCPUName, pc_processor_name, 127);
-		stSysInfo.cCPUName[127] = '\0';
-	}
+	strncpy(stSysInfo.cCPUName, pc_processor_name, size(stSysInfo.cCPUName) - 1)[size(stSysInfo.cCPUName) - 1] = '\0';
 	
-	delete[] pc_processor_name;
+	delete[] pc_processor_name_buff;
 
 	MEMORYSTATUSEX stat;
 	stat.dwLength = sizeof(stat);

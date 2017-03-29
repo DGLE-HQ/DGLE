@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		23.03.2016 (c)Korotkov Andrey
+\date		29.03.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -375,9 +375,8 @@ bool CPluginCore::_LoadMP3(IFile *pFile, IMusic *&prMusic)
 	mad_timer_reset(&timer);
 
 	stream.next_frame = data;
-	uint32 data_remainind = size;
 
-	while (data_remainind != MAD_BUFFER_GUARD && stream.next_frame < data + size)
+	for (uint32 data_remainind = size; data_remainind != MAD_BUFFER_GUARD && stream.next_frame < data + size; data_remainind = stream.bufend - stream.next_frame)
 	{
 		mad_stream_buffer(&stream, stream.next_frame, data_remainind);
 
@@ -388,8 +387,6 @@ bool CPluginCore::_LoadMP3(IFile *pFile, IMusic *&prMusic)
 		}
 
 		mad_timer_add(&timer, frame.header.duration);
-
-		data_remainind = stream.bufend - stream.next_frame;
 	}
 
 	mad_frame_finish(&frame);
