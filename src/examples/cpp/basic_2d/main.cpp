@@ -196,7 +196,7 @@ void DrawPrimitives(const TRectF &screen)
 
 void DrawFont(const TRectF &screen)
 {
-	char *txt;
+	const char *txt;
 	uint width, height;
 	
 	txt = "I'm rotating... +_+";
