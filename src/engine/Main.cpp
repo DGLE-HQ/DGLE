@@ -1,6 +1,6 @@
 /**
 \author		Korotkov Andrey aka DRON
-\date		19.04.2016 (c)Korotkov Andrey
+\date		28.05.2017 (c)Korotkov Andrey
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -8,6 +8,7 @@ See "DGLE.h" for more details.
 */
 
 #include "Common.h"
+#pragma hdrstop
 
 using namespace std;
 
