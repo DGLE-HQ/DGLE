@@ -52,6 +52,8 @@ ipch/
 *.mdb
 *.exe.manifest
 *.vshost.exe
+db.lock
+storage.ide
 
 # Delphi and C++ Builder
 *__history*
