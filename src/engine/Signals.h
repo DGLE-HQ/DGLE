@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		08.03.2017 (c)Andrey Korotkov
+\date		30.10.2017 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -119,7 +119,7 @@ public:
 	template<class Class, typename ...Params>
 	void construct(Class *p, Params &&...params)
 	{
-		new(p) Class(std::forward<Params>(params)...);
+		::new((void *)p) Class(std::forward<Params>(params)...);
 	}
 
 	template<class Class>
@@ -192,6 +192,6 @@ void Signals::Connection<Args...>::Disconnect() noexcept
 template<typename ...Args>
 auto Signals::MakeSignal() -> std::shared_ptr<Signal<Args...>>
 {
-	return std::allocate_shared<Signal<Args...>>(typename Signal<Args...>::Allocator<>());
+	return std::allocate_shared<Signal<Args...>>(typename Signal<Args...>::template Allocator<>());
 }
 #pragma endregion
