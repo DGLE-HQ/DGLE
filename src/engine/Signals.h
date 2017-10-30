@@ -192,6 +192,6 @@ void Signals::Connection<Args...>::Disconnect() noexcept
 template<typename ...Args>
 auto Signals::MakeSignal() -> std::shared_ptr<Signal<Args...>>
 {
-	return std::allocate_shared<Signal<Args...>>(typename Signal<Args...>::Allocator<>());
+	return std::allocate_shared<Signal<Args...>>(typename Signal<Args...>::template Allocator<>());
 }
 #pragma endregion
