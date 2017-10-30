@@ -1,6 +1,6 @@
 /**
 \author		Alexey Shaydurov aka ASH
-\date		02.01.2017 (c)Andrey Korotkov
+\date		30.10.2017 (c)Andrey Korotkov
 
 This file is a part of DGLE project and is distributed
 under the terms of the GNU Lesser General Public License.
@@ -119,7 +119,7 @@ public:
 	template<class Class, typename ...Params>
 	void construct(Class *p, Params &&...params)
 	{
-		new(p) Class(std::forward<Params>(params)...);
+		::new((void *)p) Class(std::forward<Params>(params)...);
 	}
 
 	template<class Class>
