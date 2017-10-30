@@ -43,7 +43,7 @@ namespace Signals
 			but constructs containing object directly via placement new which does not have access to private members.
 			GCC at the same time compiles it fine.
 		*/
-#if defined _MSC_VER && _MSC_VER <= 1910
+#if defined _MSC_VER && _MSC_VER <= 1911
 	public:
 #else
 	private:
